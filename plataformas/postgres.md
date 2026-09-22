@@ -1,21 +1,13 @@
 # PostgreSQL y PostGIS
 
-Aplica a un repositorio con base de datos propia. Hoy: los seis.
-
-PostgreSQL es la única base, y los modelos usan sus tipos directamente en vez de los genéricos de
-SQLAlchemy: nada tiene que correr sobre otro motor. PostGIS solo donde el dominio tiene geografía
-(navetta, presenze, vettore, banditore, concordia, cadenza declaran `geoalchemy2` de forma
-condicional en `base.py`).
+Cómo se modelan los datos. PostgreSQL es la única base, y los modelos usan sus tipos directamente en
+vez de los genéricos de SQLAlchemy: nada tiene que correr sobre otro motor.
 
 ## `models/base.py` es un archivo canónico
 
-Vive en [`plantilla/server/app/models/base.py`](../plantilla/server/app/models/base.py) y se copia
-sin editar — ver [ADR-0002](../adr/0002-los-archivos-base-se-copian-y-se-verifican.md). Hoy existe en
-seis copias con cinco contenidos distintos, y dos de las diferencias son defectos: ver
-[homologacion.md](../homologacion.md).
-
-Si un repositorio necesita un tipo propio (`Amount`, `TaxRate`, `ExchangeRate` en vettore), lo
-declara **en otro archivo**, no dentro del canónico.
+Se copia de [`plantilla/`](../plantilla/server/app/models/base.py) sin editar. Un tipo propio del
+dominio (`Amount`, `TaxRate`, `ExchangeRate`) se declara **en otro archivo**, no dentro del
+canónico.
 
 ## Mapa de tipos
 
@@ -47,10 +39,12 @@ error es legible; un `VARCHAR(50)` en la base solo produce un error de driver.
 | `UpdatedAt` | `TIMESTAMPTZ DEFAULT now() ON UPDATE now()` |
 
 Importes: nunca `float`. `Money` topa en 999,999.99, que alcanza para una cuota individual pero no
-para un total agregado; para eso se declara un `NUMERIC(14, 2)` propio.
+para un total agregado; para eso se declara un `NUMERIC(14, 2)` propio. Una tasa fiscal necesita
+seis decimales: con dos, una retención de dos terceras partes (10.666667 %) se trunca y el importe
+no cuadra.
 
 Un importe **opcional** se declara a mano y sin `server_default`: dejarle el `"0.00"` convierte «no
-aplica» en «cero», que no es lo mismo.
+aplica» en «cero», que en un documento fiscal no es lo mismo.
 
 ## Enums
 
@@ -58,12 +52,15 @@ aplica» en «cero», que no es lo mismo.
 `VARCHAR` + `CHECK`.
 
 **`create_constraint=True` es obligatorio y no es el valor por defecto.** Desde SQLAlchemy 1.4 vale
-`False`, con lo cual `native_enum=False` deja un TEXT pelado: `validate_strings` solo valida del
-lado de Python, y la base acepta cualquier cadena escrita por SQL directo, una carga masiva o un job
-de mantenimiento.
+`False`, con lo cual `native_enum=False` deja un TEXT pelado: `validate_strings` solo valida del lado
+de Python, y la base acepta cualquier cadena escrita por SQL directo, una carga masiva o un job de
+mantenimiento.
 
 No se usa el tipo `ENUM` nativo de PostgreSQL: agregar un valor exige `ALTER TYPE` y no se puede
 quitar ninguno.
+
+Que agregar un valor al enum pida una migración es deseable: en estos dominios, cambiar el conjunto
+de valores permitidos **es** un cambio de esquema y conviene que se note.
 
 ## Geografía
 
@@ -90,17 +87,31 @@ sobre qué columnas vale la pena.
 | Índice | `ix_<tabla>_<columnas>` | `ix_trips_vehicle_id` |
 | Restricción | `ck_` / `uq_` / `fk_` + tabla + qué | `uq_users_email` |
 
+## Idempotencia
+
+Cuando un efecto no se puede aplicar dos veces —acreditar un pago, consumir un cupón—, **el árbitro
+es la base, no el código**: se inserta una fila con un `UNIQUE` sobre el identificador del evento
+dentro de la misma transacción que aplica el efecto, y si el `UNIQUE` la rechaza, el evento ya se
+procesó.
+
+Comprobar primero y luego insertar no sirve: dos llegadas concurrentes pasan las dos la
+comprobación —ninguna ve la fila de la otra, que todavía no existe— y ambas aplican el efecto.
+
 ## Migraciones
 
 - Alembic, autogeneradas y **siempre revisadas a mano**: no detecta renombres (los ve como drop +
   add, y eso pierde datos), ni cambios de CHECK, ni índices GiST.
 - Una migración por commit que cambia el esquema.
 - `alembic/versions/` queda fuera de ruff: son archivos generados.
-- Ningún repositorio está en producción: si una migración se complica, el camino correcto es
+- Mientras un producto no esté en producción, si una migración se complica el camino correcto es
   rehacer la base, no escribir una migración defensiva.
 
 ## Borrado
 
 Cada entidad declara explícitamente qué pasa con sus hijos: `ON DELETE CASCADE` en la FK o borrado
 en el servicio, pero escrito. Antes de cerrar una entidad nueva se prueban los caminos de purgado y
-borrado, igual que los de su entidad hermana — ver [principios.md](../principios.md).
+borrado, igual que los de su entidad hermana.
+
+Una fila que representa algo externo que se invalidó —una suscripción de push caducada, un
+dispositivo desvinculado— se **desactiva**, no se borra: `is_active = false` dice «no la uses» sin
+perder el rastro de qué hubo.

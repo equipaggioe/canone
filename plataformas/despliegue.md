@@ -1,9 +1,6 @@
 # Despliegue: VPS, Caddy y `consola`
 
-Aplica a todo repositorio que se despliegue. Hoy: los seis.
-
-Leído de `consola/core` y de `.consola/config.env` y `.consola/Caddyfile.generado` de los
-repositorios.
+Cómo se despliega un repositorio.
 
 ## El contrato
 
@@ -23,7 +20,7 @@ commitea: tiene tokens, contraseñas de base y secretos de TURN.
 | Web | `PUBLIC_ROUTES`, `CSP` |
 | GitHub | `GIT_REPO_URL`, `GITHUB_TOKEN`, `GITHUB_KEY_TITLE` |
 | systemd | `SERVER_DIR`, `BACKEND_HOST`, `BACKEND_PORT`, `CERT_FILE_PATH`, `KEY_FILE_PATH`, `UVICORN_APP`, `SERVICE_DIRS` |
-| TURN | `TURN_SECRET`, `TURN_PORT`, `TURN_RELAY_RANGE`, solo si el producto tiene llamadas |
+| TURN | `TURN_SECRET`, `TURN_PORT`, `TURN_RELAY_RANGE`, solo si el producto tiene llamadas — ver [tiempo-real.md](tiempo-real.md) |
 
 Un repositorio por usuario del VPS y una base por usuario: los valores por defecto son el nombre del
 repositorio y `<VPS_USER>_db`.
@@ -62,5 +59,5 @@ El backend escucha en `127.0.0.1`, nunca en `0.0.0.0`: lo único expuesto es Cad
 ## Todas las piezas se despliegan juntas
 
 No hay versionado entre piezas ni clientes viejos que sostener — ver
-[principios.md](../principios.md). El repositorio que llegue a producción lo dirá en su
-`docs/arquitectura/00_sistema.md`.
+[principios.md](../principios.md). El repositorio que llegue a producción lo dice en su
+`docs/arquitectura/00_sistema.md`; mientras no lo diga, no lo está.

@@ -1,10 +1,6 @@
 # PySide6 (Qt)
 
-Aplica a un repositorio con aplicación de escritorio. Hoy: `consola`, `presenze/terminal` y
-`spazio/app`.
-
-Leído de esas tres. **`consola/ui` es la referencia**: es la única con tokens tipados, hoja de
-estilos generada desde ellos y ayudantes de contraste.
+Cómo se construye una aplicación de escritorio.
 
 ## Layout
 
@@ -15,22 +11,20 @@ app/
     api_client.py       QNetworkAccessManager + señales
     session.py          tokens y estado de sesión
     constants.py        URL del servidor, timeouts, tamaños
-  ui/  (o views/)
+  ui/
     theme.py            tokens + hoja de estilos global
     main_window.py
     <vista>_view.py     una por pantalla
     <algo>_panel.py     paneles reutilizables
 ```
 
-`consola` separa `core/` (catálogo, tareas, SSH, base) de `ui/` (vistas y paneles) y ninguna vista
-habla con el sistema directamente. `presenze/terminal` usa `core/` + `views/`, que es lo mismo con
-otro nombre. `spazio/app` tiene todo plano en la raíz (`api.py`, `theme.py`, `widgets.py`,
-`pages/`), y se alinea a esta forma.
+Ninguna vista habla con la red, la base ni el sistema directamente.
 
 ## Tema
 
-**Todos los tokens en un módulo, y la hoja de estilos generada desde ellos.** Es lo que hace
-`consola/ui/theme.py` y es lo que se adopta:
+**Todos los tokens en un módulo, y la hoja de estilos generada desde ellos.** Nunca un `.qss`
+estático con los colores escritos aparte, ni `setStyleSheet` con literales dentro de un widget: en
+los dos casos los colores viven dos veces y uno de los dos se queda viejo.
 
 ```python
 class Colors:
@@ -52,64 +46,37 @@ class Radius:   SM, MD, LG, XL = 4, 8, 12, 16
 def apply_theme(app: QApplication) -> None:
     app.setFont(...)
     app.setStyleSheet(global_stylesheet())   # f-string que interpola los tokens
-    app.setPalette(...)                      # la QPalette también sale de Colors
+    app.setPalette(palette_from(Colors))
 ```
 
-Las tres formas que hay hoy, y por qué gana esta:
+**La `QPalette` se llena con los mismos tokens.** Sin eso, los diálogos nativos y los menús
+contextuales salen con los colores del sistema y no con los de la aplicación.
 
-| Forma | Dónde | Problema |
-|---|---|---|
-| Tokens + QSS generada desde ellos | `consola` | — |
-| Archivo `.qss` estático | `presenze/terminal` (`theme_dark_glass.qss`) | Los colores viven dos veces: en el `.qss` y en el código que los necesita en Python |
-| `STYLESHEET` global + `setStyleSheet` por widget | `spazio/app` | Tiene literales sueltos (`"font-size:18px; font-weight:bold;"`) que ningún token controla |
-
-**Ningún color ni tamaño literal fuera del módulo de tema**, igual que en Flutter, Flet y UnoCSS. Si
-el producto también tiene panel web, la paleta es la misma y el archivo dice de cuál es espejo
-(`spazio/app/theme.py` ya lo declara: «replica los colores de `uno.config.js`»).
-
-Dos ayudantes que valen la pena copiar de `consola/ui/theme.py`:
+Dos ayudantes que evitan inventar tokens y elegir colores a ojo:
 
 | Función | Qué resuelve |
 |---|---|
-| `tint(hex, alpha)` | `rgba(...)` desde un hex, para halos y fondos teñidos, sin inventar un token nuevo |
-| `on_color(hex)` | Texto legible sobre ese fondo, por luminancia relativa (WCAG), en vez de elegir a ojo |
+| `tint(hex, alpha)` | `rgba(...)` desde un hex, para halos y fondos teñidos |
+| `on_color(hex)` | Color de texto legible sobre ese fondo, por luminancia relativa (WCAG) |
 
-Además, `QPalette` se llena con los mismos tokens: sin eso, los diálogos nativos y los menús
-contextuales quedan con los colores del sistema y no con los de la aplicación.
+Si el producto también tiene superficie web, la paleta es la misma y el archivo dice de cuál es
+espejo.
 
 ## Red
 
-`QNetworkAccessManager` con señales, no `requests` en el hilo de la interfaz: una petición síncrona
-congela la ventana. `spazio/app` depende de `requests`, y ahí hay que revisar desde qué hilo se
-llama.
+`QNetworkAccessManager` con señales. **Nada de `requests` en el hilo de la interfaz**: una petición
+síncrona congela la ventana.
 
-El sobre de error del servidor se traduce a una excepción tipada con los mismos campos que en las
-otras plataformas — ver [fastapi.md](fastapi.md):
+El sobre de error se traduce a un error tipado con los mismos campos que en las demás plataformas:
+la plataforma cambia el transporte, no el contrato — ver [fastapi.md](fastapi.md).
 
-```python
-@dataclass(frozen=True)
-class ApiError:
-    path: str
-    status_code: int | None
-    detail: str
-    error_code: str | None
-    request_id: str | None
-```
+## Hilos
 
-`presenze/terminal` ya lo tiene así, y es idéntico en forma al de `presenze/app`, que es Flet. Esa
-es la convención que importa: **la plataforma cambia el transporte, no el contrato**.
+Nada que tarde corre en el hilo de la interfaz. Las consultas a la base van en un worker dedicado y
+las tareas largas, fuera del hilo principal. Una consulta síncrona en el hilo de la ventana la
+congela sin aviso y sin error.
 
-## Trabajo pesado
+## Dependencias, lint y tipos
 
-Nada que tarde corre en el hilo de la interfaz. `consola` tiene un worker dedicado para la base
-(`ui/db_worker.py`) y ejecuta las tareas largas fuera del hilo principal; una consulta síncrona en
-el hilo de la ventana la congela sin aviso.
-
-## Dependencias y lint
-
-`pyproject.toml` + `uv.lock` como cualquier pieza de Python — ver
-[ADR-0006](../adr/0006-dependencias-con-pyproject-y-uv.md). Hoy las tres usan `requirements.txt`, y
-`presenze/requirements.txt` además arrastra `psycopg2-binary`, `python-jose` y `passlib[bcrypt]`,
-que están reemplazados — ver [fastapi.md](fastapi.md).
-
-`ruff` y `mypy` con la misma configuración que el servidor. Hoy ninguna de las tres los tiene.
+`pyproject.toml` + `uv.lock`. `ruff` y `mypy` con la misma configuración que el servidor — ver
+[fastapi.md](fastapi.md).

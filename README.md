@@ -22,22 +22,20 @@ convención de `docs/` y lo mínimo del repositorio.
 
 ## Plataformas documentadas
 
-Una página existe porque la tecnología ya está en uso en algún repositorio. No se documenta lo que
-no se usa, y usar una tecnología nueva empieza por escribir su página leyendo el código que la
-estrenó.
+Una página existe porque la tecnología ya está en uso, aunque sea en un solo repositorio y aunque
+todavía sea poco código. Usar una tecnología nueva empieza por escribir su página leyendo el código
+que la estrenó.
 
-| Plataforma | Página | Dónde está en uso hoy |
+| Servidor y datos | Cliente | Transversal |
 |---|---|---|
-| FastAPI + SQLAlchemy async | [fastapi.md](plataformas/fastapi.md) | Los 6 servidores |
-| PostgreSQL y PostGIS | [postgres.md](plataformas/postgres.md) | Los 6 |
-| SvelteKit + UnoCSS | [sveltekit.md](plataformas/sveltekit.md) | 15 superficies web |
-| Flutter | [flutter.md](plataformas/flutter.md) | navetta (3), vettore |
-| Flet | [flet.md](plataformas/flet.md) | presenze, banditore (2), cadenza |
-| PySide6 (Qt) | [qt.md](plataformas/qt.md) | consola, presenze/terminal, spazio/app |
-| VPS, Caddy y `consola` | [despliegue.md](plataformas/despliegue.md) | Los 6 |
+| [fastapi.md](plataformas/fastapi.md) | [sveltekit.md](plataformas/sveltekit.md) | [seguridad.md](plataformas/seguridad.md) |
+| [postgres.md](plataformas/postgres.md) | [flutter.md](plataformas/flutter.md) | [tiempo-real.md](plataformas/tiempo-real.md) |
+| [despliegue.md](plataformas/despliegue.md) | [flet.md](plataformas/flet.md) | [notificaciones.md](plataformas/notificaciones.md) |
+| | [qt.md](plataformas/qt.md) | [pagos.md](plataformas/pagos.md) · [i18n.md](plataformas/i18n.md) |
 
-**Ninguna página dice cuándo elegir una plataforma sobre otra.** Eso se decide producto por
-producto; `canone` solo fija cómo se usa cada una.
+**Ninguna página dice qué repositorio usa qué, ni cuándo elegir una plataforma sobre otra.** Lo
+primero es un dato que envejece y vive en [homologacion.md](homologacion.md); lo segundo se decide
+producto por producto.
 
 ## Las dos reglas que sostienen esto
 
@@ -53,7 +51,7 @@ lo notó.
 ## Verificar
 
 ```
-python scripts/verificar.py --repo ../navetta
+python scripts/verificar.py --repo ../<repo>
 python scripts/verificar.py --todos ..
 ```
 

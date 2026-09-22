@@ -17,15 +17,16 @@ Cada producto tiene las que necesita. El nombre es lo que se fija, no la existen
 | `scripts/` | Utilidades del repositorio, no de una superficie |
 | `.consola/` | `params.json` y `config.env`. Lo lee `consola`; no se edita a mano |
 
-**`panel` y `backoffice` no son sinónimos.** vettore tiene las dos y significan cosas distintas:
-`panel/` es el cliente web del usuario final, `backoffice/` es la operación interna. Un producto con
-una sola superficie usa el nombre que dice para quién es, no cuál se escribió primero.
+**`panel` y `backoffice` no son sinónimos.** Un producto puede tener las dos, y significan cosas
+distintas: `panel/` es el cliente web del usuario final, `backoffice/` es la operación interna. Un
+producto con una sola superficie usa el nombre que dice para quién es, no el que se escribió
+primero.
 
 Una superficie con nombre propio del dominio (`terminal/`, `vendor/`, `customer/`, `pwa/`) es
 legítima cuando el dominio la nombra así; su `README.md` dice qué es y a quién sirve.
 
-Varias piezas de la misma tecnología que comparten código extraen un paquete local: `mobile-shared/`
-en navetta, `mobile_common/` en banditore, `plugins/` en vettore.
+Varias piezas de la misma tecnología que comparten código extraen un paquete local instalable, no
+copiado. Lo que necesita canal nativo va en un plugin local bajo `plugins/`.
 
 ## Archivos del raíz
 
@@ -38,17 +39,16 @@ en navetta, `mobile_common/` en banditore, `plugins/` en vettore.
 
 ### `.gitattributes`
 
-Hoy no existe en ningún repositorio, y `navetta/.gitignore` ya mezcla CRLF y LF dentro del mismo
-archivo. Sin él, un archivo editado en Windows y otro en WSL aparecen como cambiados enteros y un
-`.sh` con CRLF no arranca.
+Se copia sin editar. Sin él, un archivo editado en Windows y otro en WSL aparecen como cambiados
+enteros y un `.sh` con CRLF no arranca.
 
 ### `.gitignore`
 
-`node_modules/` va en el raíz, no solo en cada superficie web: hoy depende de que toda superficie
-nueva traiga el suyo, y `banditore/customer` y `cadenza/frontend` no lo tienen.
+`node_modules/` va en el raíz, no solo en el de cada superficie web: dejarlo solo ahí hace que
+cualquier pieza nueva sin su propio `.gitignore` lo suba.
 
-Nunca se commitean: secretos (`.env`, `*service-account*.json`, certificados), artefactos de build,
-caches, y media subida por personas.
+Nunca se commitean: secretos (`.env`, `.consola/config.env`, `*service-account*.json`,
+certificados), artefactos de build, caches, y media subida por personas.
 
 ## Git
 
@@ -58,8 +58,8 @@ caches, y media subida por personas.
 
 ## CI
 
-Un job por pieza, y solo por las piezas que existen. Lo que corre cada uno está en la página de su
-plataforma. `concordia/.github/workflows/ci.yml` es el único que existe hoy y es el modelo.
+Un job por pieza, y solo por las piezas que existen. Lo que corre cada job está en la página de su
+plataforma.
 
 **Una regla de `canone` que no rompe CI no es una regla, es una sugerencia.** Una convención nueva
 se agrega junto con lo que la verifica.

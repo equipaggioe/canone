@@ -123,20 +123,24 @@ No hay nada que decidir; solo hay que impedir que se separe.
 | 42 | `docs/` con archivos sueltos | banditore (`api_response_standard.md`, `descripcion.md`, `implementaciones_futuras.md`), cadenza (`memoria_tecnica.md`), presenze (`4500/`, `mockups/`), concordia (`postman/`) | **se reubica** | El estándar de respuesta pasa a `plataformas/fastapi.md`, las implementaciones futuras al documento 30, y el resto a `arquitectura/` o se borra |
 | 43 | `README.md` raíz | Solo vettore | **se agrega en todos** | Qué es, qué piezas tiene, cómo se levanta cada una |
 
-## Sin convención todavía
+## Piezas en un solo repositorio
 
-Tecnologías que están en el código de un solo repositorio. No tienen página porque una convención
-sacada de un solo caso no es una convención: cuando un segundo repositorio las use, se escribe la
-página comparando los dos.
+Tienen página igual que las demás: la guía dice cómo se usan, no cuántos repositorios las usan.
 
-| Pieza | Dónde | Qué falta |
-|---|---|---|
-| Stripe | concordia (cobro) | Si es el cobro de todos los productos o solo de ese |
-| Resend | concordia (correo transaccional) | Ídem |
-| `slowapi` | concordia | vettore tiene su propio `core/rate_limit.py`: son dos implementaciones del mismo problema, y eso sí hay que resolverlo |
-| Celery | navetta | Está en `requirements.txt`; **no verifiqué si se usa** |
-| WebRTC y TURN | vettore (`flutter_webrtc`, coturn en el VPS) | Coturn ya tiene sus claves en `.consola/config.env` |
-| Emuladores de Android | consola (`core/android.py`) | Es parte de la cadena de Flutter, no una plataforma aparte |
+| Pieza | Página |
+|---|---|
+| Stripe y el contrato de proveedor de pago | [pagos.md](plataformas/pagos.md) |
+| Resend y el correo transaccional | [notificaciones.md](plataformas/notificaciones.md) |
+| WebRTC, STUN y TURN | [tiempo-real.md](plataformas/tiempo-real.md) |
+| TOTP y los tipos de token | [seguridad.md](plataformas/seguridad.md) |
+| Paraglide | [i18n.md](plataformas/i18n.md) |
+
+Lo que sí es una divergencia: **`slowapi` en concordia contra `core/rate_limit.py` propio en
+vettore** son dos implementaciones del mismo problema, y el propio `rate_limit.py` documenta que su
+conteo en memoria no sirve con varias instancias.
+
+Y una dependencia muerta: **`celery` está en el `requirements.txt` de navetta y ningún archivo de
+`server/app` lo importa.** Se borra.
 
 ## Hay más repositorios que los seis
 

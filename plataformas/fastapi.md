@@ -1,9 +1,6 @@
 # FastAPI + SQLAlchemy async
 
-Aplica a un repositorio con `server/`. Hoy: los seis.
-
-Leído de `navetta`, `presenze`, `vettore`, `banditore`, `concordia` y `cadenza`. Donde había varias
-formas, la página dice cuál se adopta y por qué.
+Cómo se construye un `server/`.
 
 ## Layout
 
@@ -30,9 +27,8 @@ server/
   scripts/
 ```
 
-Los routers van en `routers/`, no en `api/routers/` (banditore). Las dependencias van en
-`core/deps.py`, no en `api/dependencies.py`. Un dominio grande usa una carpeta dentro de `models/`
-y `schemas/`, como ya hacen concordia y vettore.
+Los routers van en `routers/`; las dependencias, en `core/deps.py`. Un dominio con muchos archivos
+usa una carpeta dentro de `models/` y `schemas/`, no un módulo de mil líneas.
 
 ## Quién puede llamar a quién
 
@@ -52,46 +48,69 @@ API_PREFIX = "/api"
 app.include_router(auth.router, prefix=API_PREFIX)
 ```
 
-El prefijo se aplica al montar, no dentro de cada `APIRouter`, y **no lleva versión** — ver
-[ADR-0005](../adr/0005-prefijo-api-al-montar.md). Las rutas de operación interna van bajo
-`/api/backoffice/...`.
+El prefijo se aplica al montar, no dentro de cada `APIRouter`, y **no lleva versión**: todas las
+piezas se despliegan juntas y no hay cliente viejo que sostener. Las rutas de operación interna van
+bajo `/api/backoffice/...`.
 
 ## `core/settings.py`
 
 - Una clase `Settings(BaseSettings)` y una instancia `settings`.
 - **Nada lee `os.environ` fuera de este archivo.**
-- Sin valores por defecto para secretos: una variable que falta revienta al arranque.
+- Sin valores por defecto para secretos: una variable que falta revienta al arranque, no a la
+  primera petición que la necesita.
 
 ## `core/database.py`
 
-Punto de partida en [`plantilla/server/app/core/database.py`](../plantilla/server/app/core/database.py).
-Los cuatro puntos que no son negociables, y que hoy solo concordia tiene casi todos:
+```python
+engine = create_async_engine(
+    settings.database_url_async,
+    pool_size=settings.db_pool_size,
+    max_overflow=settings.db_max_overflow,
+    pool_timeout=settings.db_pool_timeout,
+    pool_pre_ping=True,
+)
+SessionLocal = async_sessionmaker(
+    autocommit=False, autoflush=False, bind=engine,
+    class_=AsyncSession, expire_on_commit=False,
+)
 
-| Regla | Qué pasa si falta | Dónde falta hoy |
-|---|---|---|
-| `expire_on_commit=False` | Una `AsyncSession` no hace lazy-load: leer el modelo después del commit revienta | navetta |
-| `pool_pre_ping=True` | Una conexión muerta en el pool (túnel caído) hace fallar el primer request que la tome | presenze, concordia |
-| `rollback` explícito en el `except` de `get_db` | La conexión vuelve al pool con la transacción abierta | todos menos concordia |
-| Tipo de retorno explícito en `get_db` | Sin él, mypy no revisa el cuerpo de la función | todos menos concordia |
+async def get_db() -> AsyncGenerator[AsyncSession]:
+    db: AsyncSession = SessionLocal()
+    try:
+        yield db
+    except Exception:
+        await db.rollback()
+        raise
+    finally:
+        await db.close()
+```
+
+Los cuatro puntos, y qué pasa si falta cada uno:
+
+| Regla | Si falta |
+|---|---|
+| `expire_on_commit=False` | Una `AsyncSession` no hace lazy-load: leer el modelo después del commit revienta |
+| `pool_pre_ping=True` | Una conexión muerta en el pool hace fallar el primer request que la tome, mucho después de que la red se cayera |
+| `rollback` en el `except` | La conexión vuelve al pool con la transacción abierta |
+| Tipo de retorno explícito | mypy no revisa el cuerpo de la función sin él |
 
 ## Forma de los datos
 
-`app/schemas/base.py` es un **archivo canónico**: hoy es idéntico byte a byte en los seis
-repositorios y se copia sin editar — ver [ADR-0002](../adr/0002-los-archivos-base-se-copian-y-se-verifican.md).
+`app/schemas/base.py` es un **archivo canónico**: se copia de `plantilla/` sin editar.
 
 - **Entrada y salida en camelCase.** `alias_generator=to_camel` con `validate_by_name` y
   `validate_by_alias`: el servidor acepta las dos formas al entrar y siempre responde en camelCase,
-  así los clientes TypeScript y Dart no traducen nombres.
+  para que los clientes TypeScript y Dart no traduzcan nombres.
 - `bytes` en base64. Fechas en ISO 8601 con zona.
 
 | Clase | Para qué | Config |
 |---|---|---|
 | `SchemaBase` | Salida | `from_attributes=True` |
-| `SchemaInputBase` | Entrada | `extra="forbid"` — un campo de más es un error, no algo que se ignora |
+| `SchemaInputBase` | Entrada | `extra="forbid"` |
 | `QueryParamsBase` | Parámetros de query | |
 
 `extra="forbid"` es la aplicación directa de «sin fallbacks»: un cliente que manda un campo mal
-escrito se entera en el momento.
+escrito se entera en el momento, no cuando alguien nota que ese dato nunca llegó.
 
 ## Respuestas
 
@@ -105,8 +124,6 @@ escrito se entera en el momento.
 recalcula. Paginación: `page` (>= 1), `perPage` (1 a 200, por defecto 50), `sort`, `order`.
 
 ## El sobre de error
-
-Es lo único de esta página que cruza a las otras plataformas: todo cliente lo consume igual.
 
 ```json
 {
@@ -126,76 +143,60 @@ Es lo único de esta página que cruza a las otras plataformas: todo cliente lo 
 | `errors` | El formulario: errores por campo |
 | `requestId` | El log |
 
-**Un cliente nunca ramifica sobre `detail`.** El texto cambia; el `errorCode` es el contrato.
+**Un cliente nunca ramifica sobre `detail`.** El texto cambia; el `errorCode` es el contrato. Todo
+cliente —web, Flutter, Flet, Qt— traduce este sobre a un error tipado con estos mismos campos.
 
-Los handlers se registran en `main.py`, uno por familia de excepción. Un router no arma un error a
-mano. Un servicio levanta una excepción de `core/exceptions.py`.
+Un servicio levanta una excepción de `core/exceptions.py`; un handler registrado en `main.py` la
+traduce. Un router no arma un error a mano.
 
 ## Enums hacia el cliente
 
 `EnumOption` (`value` + `label`) es la forma de mandar un catálogo a un select. El `label` en
-español lo produce el servidor: es la misma lista que valida, y así no hay dos traducciones que se
+español lo produce el servidor: es la misma lista que valida, así no hay dos traducciones que se
 desincronicen.
 
 ## OpenAPI
 
-El servidor exporta `openapi.json` con un script. Los clientes que puedan generar tipos a partir de
-él lo hacen; se commitea el archivo de tipos generado y **no** el `openapi.json` intermedio
-(concordia ya lo tiene resuelto así).
+El servidor exporta `openapi.json` con un script y los clientes que puedan generan sus tipos desde
+él. Se commitea el archivo de tipos generado; el `openapi.json` intermedio, no.
 
-## WebSocket
+## Trabajo que no cabe en el request
 
-- Bajo `/ws`, autenticado igual que el resto.
-- Cada mensaje lleva un campo de tipo, y el payload es un schema de Pydantic serializado igual que
-  una respuesta HTTP: camelCase, mismo formato de fecha.
-- Un registro de conexiones en memoria solo sirve con un proceso. Con varios workers hace falta
-  pub/sub en Redis, y entonces **Redis es obligatorio**: arrancar con varios workers sin Redis tiene
-  que fallar al arranque, no partir las conexiones en silencio. Hoy concordia lo deja opcional, que
-  es el degradado silencioso que `principios.md` prohíbe.
+No hay cola de tareas. Lo que no cabe en la respuesta se resuelve así:
 
-## Notificaciones push
+- **Un SDK bloqueante va en `asyncio.to_thread`.** Llamarlo directo desde una corrutina congela el
+  event loop entero, y con eso los WebSocket del mismo proceso.
+- **Primero la evidencia, después la entrega.** Lo que hay que conservar se escribe en la
+  transacción de quien llama; el envío al mundo exterior ocurre después y es best-effort.
+- **Un fallo de entrega no tumba la operación que lo originó.** Se registra y se sigue.
 
-Hay dos mecanismos en uso y responden a destinos distintos, no a dos formas de hacer lo mismo:
-
-| Mecanismo | Dónde | Destino |
-|---|---|---|
-| FCM (`firebase-admin`) | `vettore/server/app/services/push_notification_service.py` | App nativa |
-| Web Push (`pywebpush`) | `concordia/server/app/services/notifications/push_service.py` | Navegador y PWA |
-
-**El destino decide, no el repositorio**: una app nativa usa FCM, una PWA usa Web Push. Un producto
-con las dos superficies necesita los dos, y el servicio elige por el tipo de token registrado, no
-por configuración.
-
-El servicio de push vive en `services/`, y el envío no bloquea la respuesta del request que lo
-disparó.
+Si algún día hace falta una cola de verdad, es un ADR del repositorio que la necesite, y empieza por
+nombrar el síntoma que elimina.
 
 ## Dependencias
 
-`pyproject.toml` + `uv.lock`, sin `requirements.txt` en paralelo — ver
-[ADR-0006](../adr/0006-dependencias-con-pyproject-y-uv.md). Base en
+`pyproject.toml` + `uv.lock`, sin `requirements.txt` en paralelo. Base en
 [`plantilla/server/pyproject.toml`](../plantilla/server/pyproject.toml).
 
-Bibliotecas que no se usan más, con lo que las reemplaza:
+| No se usa | Se usa | Por qué |
+|---|---|---|
+| `python-jose` | `PyJWT[crypto]` | Sin mantenimiento desde 2021, con vulnerabilidades publicadas |
+| `passlib` | `argon2-cffi` directo | Sin mantenimiento desde 2020, roto contra las versiones nuevas de bcrypt |
+| `psycopg2-binary` | `psycopg[binary]` (v3) | psycopg2 está en mantenimiento pasivo |
+| Un ORM sync | SQLAlchemy async | El servidor entero es async |
 
-| No | Sí | Por qué | Dónde está todavía |
-|---|---|---|---|
-| `python-jose` | `PyJWT[crypto]` | Sin mantenimiento desde 2021, con vulnerabilidades publicadas | presenze |
-| `passlib` | `argon2-cffi` directo | Sin mantenimiento desde 2020, roto contra las versiones nuevas de bcrypt | navetta |
-| `psycopg2-binary` | `psycopg[binary]` (v3) | psycopg2 está en mantenimiento pasivo | navetta |
+Una dependencia que ningún archivo importa se borra del `pyproject.toml`.
 
 ## Tests
 
-- `pytest` con `asyncio_mode = "auto"`, configurado en `pyproject.toml`. Nada de `pytest.ini`
-  suelto (vettore).
+- `pytest` con `asyncio_mode = "auto"`, configurado en `pyproject.toml`. Nada de `pytest.ini`.
 - Contra Postgres real, en un schema dedicado. **No SQLite**: `models/base.py` es de PostgreSQL puro
   (JSONB, `gen_random_uuid()`, `Geography`) y nada de eso existe en SQLite.
-- Un test por regla que se pueda romper en silencio. El
-  `test_camel_and_snake_case_are_both_accepted_on_input` de concordia es el modelo: verifica una
-  convención, no una funcionalidad.
+- Un test por regla que se pueda romper en silencio: que la entrada acepte camelCase y snake_case,
+  que un enum inválido sea rechazado por la base, que el contraste de los tokens se mantenga. Son
+  tests de convención, y son los que avisan cuando alguien deshace una decisión sin saberlo.
 
 ## Lint y tipos
-
-En `pyproject.toml`, igual en todos los repositorios que tengan servidor:
 
 ```toml
 [tool.ruff]
@@ -224,5 +225,3 @@ Los archivos canónicos quedan fuera de ruff: reformatearlos los separa de su fu
 - run: uv run mypy app
 - run: uv run pytest     # DATABASE_URL apunta al schema de prueba, nunca al real
 ```
-
-Hoy solo concordia lo tiene.

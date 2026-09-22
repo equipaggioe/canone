@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.venv/
+dist/
+build/
+.eggs/
+
+# Caches de test y herramientas
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Base de datos local y respaldos
+*.db
+*.sqlite
+*.sqlite3
+.backups/
+
+# Proceso
+*.log
+logs/
+*.pid

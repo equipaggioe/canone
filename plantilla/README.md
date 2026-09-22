@@ -10,7 +10,9 @@ repositorio debe tener**: se copia solo lo de las plataformas que el producto us
 | `server/app/core/database.py` | Punto de partida. `settings` es de cada repositorio |
 | `server/pyproject.toml` | Dependencias, ruff, mypy y pytest — [ADR-0006](../adr/0006-dependencias-con-pyproject-y-uv.md) |
 | `.gitattributes` | Se copia sin editar |
-| `.gitignore` | Punto de partida; lo propio del repositorio se agrega con un comentario que diga por qué |
+| `.gitignore` | Del raíz: editores, sistema operativo y secretos. Nada de una tecnología |
+| `server/.gitignore` | Se copia a `server/` |
+| `web/.gitignore` | Se copia a cada superficie web (`panel/`, `backoffice/`, `landing/`) |
 | `.github/workflows/ci.yml` | Un job por pieza; se quitan los que el repositorio no tenga |
 
 Todavía no hay plantilla de Flutter ni de Flet: cuando la haya, sale de `vettore/app` y de

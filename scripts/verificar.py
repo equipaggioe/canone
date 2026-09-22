@@ -47,9 +47,8 @@ def revisar(repo: Path) -> list[str]:
     if not (repo / ".gitattributes").exists():
         fallas.append("repositorio.md: falta .gitattributes")
 
-    gitignore = repo / ".gitignore"
-    if gitignore.exists() and "node_modules" not in gitignore.read_text(encoding="utf-8"):
-        fallas.append("repositorio.md: el .gitignore raíz no ignora node_modules/")
+    if not (repo / ".gitignore").exists():
+        fallas.append("repositorio.md: falta .gitignore en el raíz")
 
     if not (repo / "README.md").exists():
         fallas.append("repositorio.md: falta README.md en el raíz")
@@ -67,12 +66,21 @@ def revisar(repo: Path) -> list[str]:
             fallas.append("ADR-0006: pytest.ini suelto; la configuración va en pyproject.toml")
         if (servidor / "app/api").is_dir() and (servidor / "app/routers").is_dir():
             fallas.append("plataformas/fastapi.md: hay app/api/ y app/routers/ a la vez")
+        if not (servidor / ".gitignore").exists():
+            fallas.append("repositorio.md: server/ no tiene su propio .gitignore")
 
     # SvelteKit: solo para las superficies web que existan.
     for paquete in repo.glob("*/package.json"):
         if "node_modules" in str(paquete):
             continue
         superficie = paquete.parent
+        # El .gitignore de la superficie es lo único que ignora node_modules/: el del raíz
+        # ya no lo tapa, así que el olvido tiene que romper CI.
+        ignore = superficie / ".gitignore"
+        if not ignore.exists() or "node_modules" not in ignore.read_text(encoding="utf-8"):
+            fallas.append(
+                f"repositorio.md: {superficie.name}/ no ignora node_modules/ en su .gitignore"
+            )
         datos = json.loads(paquete.read_text(encoding="utf-8"))
         deps = {**datos.get("dependencies", {}), **datos.get("devDependencies", {})}
         if "@sveltejs/kit" not in deps:

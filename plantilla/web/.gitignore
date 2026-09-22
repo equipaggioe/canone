@@ -1,0 +1,8 @@
+# Se copia a cada superficie web: panel/, backoffice/, landing/, pwa/…
+node_modules/
+.svelte-kit/
+.vite/
+build/
+dist/
+.output/
+.vercel/

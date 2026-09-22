@@ -121,6 +121,7 @@ No hay nada que decidir; solo hay que impedir que se separe.
 | 40 | `.gitattributes` | No existe en ninguno | **se agrega** | `navetta/.gitignore` ya mezcla CRLF y LF dentro del mismo archivo |
 | 41 | `.gitignore` por pieza | Ausente en `banditore/customer` y `cadenza/frontend`; el resto tiene el suyo | **uno por pieza, y el raíz sin nada de tecnología** | Subir `node_modules/` al raíz tapa el olvido en silencio; `verificar.py` falla si una carpeta con `package.json` no ignora `node_modules/` |
 | 42 | `docs/` con archivos sueltos | banditore (`api_response_standard.md`, `descripcion.md`, `implementaciones_futuras.md`), cadenza (`memoria_tecnica.md`), presenze (`4500/`, `mockups/`), concordia (`postman/`) | **se reubica** | El estándar de respuesta pasa a `plataformas/fastapi.md`, las implementaciones futuras al documento 30, y el resto a `arquitectura/` o se borra |
+| 44 | Nombre de las piezas | Tres criterios a la vez: la tecnología (`frontend`, `pwa`, `flet_app`), el usuario (`customer`, `clientes`, `vendor`) y lo que hace (`backoffice`, `terminal`, `app`) | **`<dónde corre>[-<a quién sirve>]`** | Un solo criterio y dos preguntas con respuesta objetiva; `panel` y `landing` quedan porque es como las nombra la industria |
 | 43 | `README.md` raíz | Solo vettore | **se agrega en todos** | Qué es, qué piezas tiene, cómo se levanta cada una |
 
 ## Piezas en un solo repositorio

@@ -22,6 +22,20 @@ CANONICOS = [
     Path("server/app/schemas/base.py"),
 ]
 
+# Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del
+# dominio. `panel` y `landing` son las dos excepciones, con el nombre que ya usa la industria.
+PREFIJOS = ("server", "web", "mobile", "desktop")
+FIJAS = {"panel", "landing", "packages", "docs", "scripts", "infra", "plugins"}
+
+
+def nombre_valido(nombre: str) -> bool:
+    if nombre in FIJAS:
+        return True
+    base, _, rol = nombre.partition("-")
+    if base not in PREFIJOS:
+        return False
+    return rol.isidentifier() or not rol
+
 
 def normalizar(texto: str) -> str:
     return texto.replace("\r\n", "\n").rstrip() + "\n"
@@ -43,6 +57,12 @@ def revisar(repo: Path) -> list[str]:
             canonico.read_text(encoding="utf-8")
         ):
             fallas.append(f"ADR-0002: {rel} no coincide con el canónico de canone")
+
+    for carpeta in sorted(p for p in repo.iterdir() if p.is_dir()):
+        if carpeta.name.startswith("."):
+            continue
+        if not nombre_valido(carpeta.name):
+            fallas.append(f"repositorio.md: {carpeta.name}/ no es un nombre de pieza")
 
     if not (repo / ".gitattributes").exists():
         fallas.append("repositorio.md: falta .gitattributes")

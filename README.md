@@ -31,8 +31,13 @@ estrenó.
 | FastAPI + SQLAlchemy async | [fastapi.md](plataformas/fastapi.md) | Los 6 servidores |
 | PostgreSQL y PostGIS | [postgres.md](plataformas/postgres.md) | Los 6 |
 | SvelteKit + UnoCSS | [sveltekit.md](plataformas/sveltekit.md) | 15 superficies web |
-| Flutter | [flutter.md](plataformas/flutter.md) | navetta (3 apps), vettore |
-| Flet | [flet.md](plataformas/flet.md) | presenze (2), banditore (2), cadenza |
+| Flutter | [flutter.md](plataformas/flutter.md) | navetta (3), vettore |
+| Flet | [flet.md](plataformas/flet.md) | presenze, banditore (2), cadenza |
+| PySide6 (Qt) | [qt.md](plataformas/qt.md) | consola, presenze/terminal, spazio/app |
+| VPS, Caddy y `consola` | [despliegue.md](plataformas/despliegue.md) | Los 6 |
+
+**Ninguna página dice cuándo elegir una plataforma sobre otra.** Eso se decide producto por
+producto; `canone` solo fija cómo se usa cada una.
 
 ## Las dos reglas que sostienen esto
 

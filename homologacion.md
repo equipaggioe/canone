@@ -11,7 +11,8 @@ Inventario verificado el 2026-09-22 leyendo el código de `navetta`, `presenze`,
 | Repositorio | Servidor | Base | Web | Cliente instalable |
 |---|---|---|---|---|
 | navetta | FastAPI | PostGIS | panel, landing | Flutter ×3 (`mobile-driver`, `mobile-passenger`, `mobile-shared`) |
-| presenze | FastAPI | PostGIS | panel, landing | Flet ×2 (`app`, `terminal`) |
+| consola | — | — | — | Qt (`ui/`) |
+| presenze | FastAPI | PostGIS | panel, landing | Flet (`app`) + Qt (`terminal`) |
 | vettore | FastAPI | PostGIS | panel, backoffice, landing, demo | Flutter (`app`) + plugins propios |
 | banditore | FastAPI | PostGIS | backoffice, landing | Flet ×2 (`customer`, `vendor`) + `mobile_common` |
 | concordia | FastAPI | PostGIS | backoffice, landing, pwa | PWA |
@@ -91,38 +92,51 @@ No hay nada que decidir; solo hay que impedir que se separe.
 | # | Tema | Qué hay hoy | Se adopta | Por qué |
 |---|---|---|---|---|
 | 28 | Layout | `core/` + `views/` en presenze/app; `pages/` + `components/` con el resto plano en banditore; todo suelto con `app_state.py` en cadenza | **`core/` + `views/`** *(propuesta)* | Es el único que separa red, sesión y tema de la interfaz |
-| 29 | Código compartido | Paquete instalable `mobile_common` en banditore; copiado entre `app/` y `terminal/` en presenze | **paquete local** | Ya funciona en banditore |
+| 29 | Código compartido | Paquete instalable `mobile_common` en banditore; nada en presenze ni cadenza | **paquete local** | Ya funciona en banditore |
 | 30 | Dependencias | `pyproject.toml` + `uv.lock` en banditore; `requirements.txt` en presenze y cadenza | **`pyproject.toml` + `uv`** *(propuesta)* | Un `>=` sin lock no es reproducible |
 | 31 | Lint y tipos | Ninguna pieza Flet tiene `ruff` ni `mypy` | **la misma config que el servidor** | Es Python |
-| 32 | Cuándo Flet y cuándo Flutter | No está escrito en ningún lado | **falta decidir** | Ver abajo |
+
+## PySide6 (Qt)
+
+| # | Tema | Qué hay hoy | Se adopta | Por qué |
+|---|---|---|---|---|
+| 32 | Hoja de estilos | Tokens + QSS generada desde ellos (consola); `.qss` estático (presenze/terminal); `STYLESHEET` global con literales inline (spazio/app) | **la de consola** | En el `.qss` estático los colores viven dos veces; spazio tiene `"font-size:18px"` suelto que ningún token controla |
+| 33 | Layout | `core/` + `ui/` (consola); `core/` + `views/` (presenze/terminal); todo plano (spazio/app) | **`core/` + `ui/`** *(propuesta)* | Los dos primeros son lo mismo con otro nombre; el plano no separa red de interfaz |
+| 34 | Cliente HTTP | `QNetworkAccessManager` con señales (presenze/terminal); `requests` (spazio/app) | **`QNetworkAccessManager`** | Una petición síncrona en el hilo de la interfaz congela la ventana |
+| 35 | `QPalette` | Solo consola la llena desde los tokens | **consola** | Sin eso, los diálogos nativos y los menús contextuales quedan con los colores del sistema |
+| 36 | Contraste | Solo consola tiene `on_color()` por luminancia WCAG | **consola** | El resto elige el color del texto a ojo |
+
+## Transversal a los clientes
+
+| # | Tema | Qué hay hoy | Se adopta | Por qué |
+|---|---|---|---|---|
+| 37 | Sobre de error | `ApiError` con los mismos campos en presenze/app (Flet, httpx) y presenze/terminal (Qt, QNetwork) | **esa forma en los cuatro clientes** | La plataforma cambia el transporte, no el contrato. Flutter y SvelteKit leen `errorCode` igual |
+| 38 | Textos | Paraglide en concordia/pwa y banditore/landing; `i18n.py` + `locales/` en banditore Flet; nada en el resto | **Paraglide en web, `i18n.py` en Flet** | Los dos ya tienen ADR propio en su repositorio |
+| 39 | Push | FCM en vettore, Web Push en concordia | **lo decide el destino** | App nativa → FCM; navegador y PWA → Web Push. No son dos formas de hacer lo mismo |
 
 ## Cualquier repositorio
 
 | # | Tema | Qué hay hoy | Se adopta | Por qué |
 |---|---|---|---|---|
-| 33 | `.gitattributes` | No existe en ninguno | **se agrega** | `navetta/.gitignore` ya mezcla CRLF y LF dentro del mismo archivo |
-| 34 | `node_modules` en el `.gitignore` raíz | Ausente en los 6; cubierto por el de cada superficie web | **se sube al raíz** | `banditore/customer` y `cadenza/frontend` no tienen el suyo |
-| 35 | `docs/` con archivos sueltos | banditore (`api_response_standard.md`, `descripcion.md`, `implementaciones_futuras.md`), cadenza (`memoria_tecnica.md`), presenze (`4500/`, `mockups/`), concordia (`postman/`) | **se reubica** | El estándar de respuesta pasa a `plataformas/fastapi.md`, las implementaciones futuras al documento 30, y el resto a `arquitectura/` o se borra |
-| 36 | `README.md` raíz | Solo vettore | **se agrega en todos** | Qué es, qué piezas tiene, cómo se levanta cada una |
+| 40 | `.gitattributes` | No existe en ninguno | **se agrega** | `navetta/.gitignore` ya mezcla CRLF y LF dentro del mismo archivo |
+| 41 | `node_modules` en el `.gitignore` raíz | Ausente en los 6; cubierto por el de cada superficie web | **se sube al raíz** | `banditore/customer` y `cadenza/frontend` no tienen el suyo |
+| 42 | `docs/` con archivos sueltos | banditore (`api_response_standard.md`, `descripcion.md`, `implementaciones_futuras.md`), cadenza (`memoria_tecnica.md`), presenze (`4500/`, `mockups/`), concordia (`postman/`) | **se reubica** | El estándar de respuesta pasa a `plataformas/fastapi.md`, las implementaciones futuras al documento 30, y el resto a `arquitectura/` o se borra |
+| 43 | `README.md` raíz | Solo vettore | **se agrega en todos** | Qué es, qué piezas tiene, cómo se levanta cada una |
 
-## La decisión que falta
+## Sin convención todavía
 
-**Cuándo un cliente instalable es Flet y cuándo es Flutter.** Hoy hay tres respuestas distintas sin
-criterio escrito: Flutter en navetta y vettore, Flet en presenze, banditore y cadenza, y una PWA en
-concordia.
+Tecnologías que están en el código de un solo repositorio. No tienen página porque una convención
+sacada de un solo caso no es una convención: cuando un segundo repositorio las use, se escribe la
+página comparando los dos.
 
-No hace falta unificar la tecnología —cada producto puede elegir— pero sí hace falta el criterio,
-porque hoy la elección parece histórica y no razonada. Lo que el código sugiere:
-
-| Si la pieza… | Va en |
-|---|---|
-| Se publica en tienda y necesita push confiable, segundo plano o hardware | Flutter. Es lo que hacen vettore y navetta |
-| La operamos nosotros o vive en hardware propio, y no conviene salir de Python | Flet. Es el caso de `presenze/terminal` |
-| Se puede resolver en el navegador | PWA con SvelteKit, que reutiliza el stack que ya está en los seis |
-
-Para escribirlo como ADR falta verificar dos cosas que no se comprobaron: qué hace exactamente
-`presenze/terminal` con el hardware, y si `banditore/customer` y `banditore/vendor` se publican en
-tiendas o son internas.
+| Pieza | Dónde | Qué falta |
+|---|---|---|
+| Stripe | concordia (cobro) | Si es el cobro de todos los productos o solo de ese |
+| Resend | concordia (correo transaccional) | Ídem |
+| `slowapi` | concordia | vettore tiene su propio `core/rate_limit.py`: son dos implementaciones del mismo problema, y eso sí hay que resolverlo |
+| Celery | navetta | Está en `requirements.txt`; **no verifiqué si se usa** |
+| WebRTC y TURN | vettore (`flutter_webrtc`, coturn en el VPS) | Coturn ya tiene sus claves en `.consola/config.env` |
+| Emuladores de Android | consola (`core/android.py`) | Es parte de la cadena de Flutter, no una plataforma aparte |
 
 ## Hay más repositorios que los seis
 
@@ -138,12 +152,12 @@ Cada paso es un commit por repositorio, y se puede detener en cualquier punto.
 1. **Los defectos de base** (14, 15, 1, 2, 3): eliminan fallas reales y no tienen consecuencias de
    diseño. Una migración regenera los CHECK de los enums.
 2. **Las bibliotecas sin mantenimiento** (6, 7, 8): tocan solo a navetta y presenze.
-3. **`.gitattributes`, `.gitignore`, `README.md`** (33 a 36): mecánico.
+3. **`.gitattributes`, `.gitignore`, `README.md`** (40 a 43): mecánico.
 4. **`ruff`, `mypy`, `pytest` y CI** (9 a 11, 31): la primera corrida va a fallar; ese ruido es el
    inventario real de la deuda.
 5. **Layout y prefijo** (4, 5, 23, 28): renombres amplios, mejor solos.
 6. **Cliente web** (17 a 22): se verifica levantando cada superficie.
-7. **El criterio Flet/Flutter**: decisión abierta, no un renombre.
+7. **Qt** (32 a 36): `consola` ya es el modelo; `spazio/app` es el que más cambia.
 
 **cadenza no se homologa: se termina primero.** No tiene `main.py`, ni settings, ni conexión a la
 base; aplicarle convenciones a un esqueleto es escribir reglas contra código que no existe.

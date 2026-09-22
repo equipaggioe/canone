@@ -73,6 +73,18 @@ Svelte 4 quedan para lo que ya está escrito; no se agregan nuevos.
   (`src/lib/api-types/schema.d.ts` en concordia); el `openapi.json` no.
 - Los errores se leen por `errorCode`, nunca por `detail` — ver [fastapi.md](fastapi.md).
 
+## Textos
+
+**Paraglide**, que compila `messages/*.json` a funciones estáticas tree-shakeables en
+`src/lib/paraglide`, sin catálogo JSON cargado en runtime. Lo usan `concordia/pwa` y
+`banditore/landing`, cada uno con su propio ADR.
+
+- La elección de idioma persiste en la cookie `PARAGLIDE_LOCALE`; sin cookie, el idioma base.
+- Un envoltorio delgado (`i18n.svelte.ts`) agrega la reactividad de Svelte: Paraglide persiste y
+  recarga, lo que falta es el `$state` que refresca los componentes.
+- **Nada se guarda traducido en la base.** El servidor guarda el tipo y los datos, o un `slug`, y el
+  cliente traduce. El contenido escrito por el usuario no se traduce.
+
 ## Tipos y tests
 
 - `npm run check` (svelte-check) corre en CI y pasa limpio.

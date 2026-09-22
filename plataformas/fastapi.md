@@ -153,6 +153,22 @@ El servidor exporta `openapi.json` con un script. Los clientes que puedan genera
   que fallar al arranque, no partir las conexiones en silencio. Hoy concordia lo deja opcional, que
   es el degradado silencioso que `principios.md` prohíbe.
 
+## Notificaciones push
+
+Hay dos mecanismos en uso y responden a destinos distintos, no a dos formas de hacer lo mismo:
+
+| Mecanismo | Dónde | Destino |
+|---|---|---|
+| FCM (`firebase-admin`) | `vettore/server/app/services/push_notification_service.py` | App nativa |
+| Web Push (`pywebpush`) | `concordia/server/app/services/notifications/push_service.py` | Navegador y PWA |
+
+**El destino decide, no el repositorio**: una app nativa usa FCM, una PWA usa Web Push. Un producto
+con las dos superficies necesita los dos, y el servicio elige por el tipo de token registrado, no
+por configuración.
+
+El servicio de push vive en `services/`, y el envío no bloquea la respuesta del request que lo
+disparó.
+
 ## Dependencias
 
 `pyproject.toml` + `uv.lock`, sin `requirements.txt` en paralelo — ver

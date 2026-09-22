@@ -1,15 +1,12 @@
 # Flet
 
-Aplica a un repositorio con cliente en Flet. Hoy: `presenze` (`app`, `terminal`), `banditore`
-(`customer`, `vendor`, `mobile_common`) y `cadenza` (`frontend`).
+Aplica a un repositorio con cliente en Flet. Hoy: `presenze/app`, `banditore` (`customer`,
+`vendor`, `mobile_common`) y `cadenza/frontend`.
 
-Leído de esas seis piezas. **`presenze/app` es la referencia de estructura** y `banditore` la de
+Leído de esas cinco piezas. **`presenze/app` es la referencia de estructura** y `banditore` la de
 empaquetado y código compartido. `cadenza/frontend` está plano y con datos mock; no es modelo.
 
-Flet se elige cuando la pieza la operamos nosotros o vive en hardware propio, y no hay que salir del
-lenguaje del servidor. Una app que se publica en tiendas y necesita segundo plano, push confiable o
-hardware es un caso de [flutter.md](flutter.md). Ese criterio hoy no está escrito en ningún ADR:
-`presenze/terminal` y `banditore/customer` no se compararon contra él.
+`presenze/terminal` **no** es Flet: es PySide6 — ver [qt.md](qt.md).
 
 ## Layout
 
@@ -41,6 +38,11 @@ app/
 El código compartido entre dos apps del mismo producto va en un paquete local instalable, como
 `banditore/mobile_common` (`api.py`, `session.py`, `secure_store.py`, `models.py`, `i18n.py`), no
 copiado.
+
+## Textos
+
+Un módulo `i18n.py` y un catálogo por idioma en `locales/`, como `banditore/customer` y
+`banditore/vendor`. Ningún texto visible se escribe dentro de un widget.
 
 ## Cliente de la API
 

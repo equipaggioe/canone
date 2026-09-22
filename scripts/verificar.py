@@ -45,17 +45,17 @@ def revisar(repo: Path) -> list[str]:
             fallas.append(f"ADR-0002: {rel} no coincide con el canónico de canone")
 
     if not (repo / ".gitattributes").exists():
-        fallas.append("convenciones/repo.md: falta .gitattributes")
+        fallas.append("repositorio.md: falta .gitattributes")
 
     gitignore = repo / ".gitignore"
     if gitignore.exists() and "node_modules" not in gitignore.read_text(encoding="utf-8"):
-        fallas.append("convenciones/repo.md: el .gitignore raíz no ignora node_modules/")
+        fallas.append("repositorio.md: el .gitignore raíz no ignora node_modules/")
 
     if not (repo / "README.md").exists():
-        fallas.append("convenciones/repo.md: falta README.md en el raíz")
+        fallas.append("repositorio.md: falta README.md en el raíz")
 
     if not (repo / ".github/workflows/ci.yml").exists():
-        fallas.append("convenciones/repo.md: falta .github/workflows/ci.yml")
+        fallas.append("repositorio.md: falta .github/workflows/ci.yml")
 
     servidor = repo / "server"
     if servidor.is_dir():
@@ -66,15 +66,30 @@ def revisar(repo: Path) -> list[str]:
         if (servidor / "pytest.ini").exists():
             fallas.append("ADR-0006: pytest.ini suelto; la configuración va en pyproject.toml")
         if (servidor / "app/api").is_dir() and (servidor / "app/routers").is_dir():
-            fallas.append("convenciones/servidor-python.md: hay app/api/ y app/routers/ a la vez")
+            fallas.append("plataformas/fastapi.md: hay app/api/ y app/routers/ a la vez")
 
+    # SvelteKit: solo para las superficies web que existan.
     for paquete in repo.glob("*/package.json"):
         if "node_modules" in str(paquete):
             continue
+        superficie = paquete.parent
         datos = json.loads(paquete.read_text(encoding="utf-8"))
         deps = {**datos.get("dependencies", {}), **datos.get("devDependencies", {})}
+        if "@sveltejs/kit" not in deps:
+            continue
         if "@sveltejs/adapter-auto" in deps:
-            fallas.append(f"ADR-0007: {paquete.parent.name}/ usa adapter-auto")
+            fallas.append(f"ADR-0007: {superficie.name}/ usa adapter-auto")
+        if not (superficie / "uno.config.ts").exists():
+            fallas.append(
+                f"plataformas/sveltekit.md: {superficie.name}/ no tiene uno.config.ts"
+                " (la config de UnoCSS no va dentro de vite.config.ts)"
+            )
+
+    # Flutter: solo para las apps que existan.
+    for pubspec in repo.glob("*/pubspec.yaml"):
+        app = pubspec.parent
+        if not (app / "analysis_options.yaml").exists():
+            fallas.append(f"plataformas/flutter.md: {app.name}/ no tiene analysis_options.yaml")
 
     docs = repo / "docs"
     if docs.is_dir():
@@ -82,7 +97,7 @@ def revisar(repo: Path) -> list[str]:
         sueltos = sorted(p.name for p in docs.iterdir() if p.name not in permitidos)
         if sueltos:
             fallas.append(
-                "convenciones/documentacion.md: docs/ tiene archivos fuera de la convención: "
+                "documentacion.md: docs/ tiene archivos fuera de la convención: "
                 + ", ".join(sueltos)
             )
 

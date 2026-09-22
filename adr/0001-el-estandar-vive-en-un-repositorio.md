@@ -16,19 +16,23 @@ regla que el propio `docs/README.md` enuncia y que la práctica de copiarlo incu
 
 ## Decisión
 
-1. `canone` contiene los principios, el stack, las convenciones y los ADR transversales. Es la
-   única copia.
-2. El `docs/README.md` de un repositorio no repite la convención: la enlaza.
-3. `~/.claude/CLAUDE.md` queda reducido a un puntero a `canone/principios.md`. Las reglas de método
+1. `canone` contiene los principios de método, la convención de `docs/`, lo mínimo del repositorio
+   y **una página por plataforma**. Es la única copia.
+2. **`canone` no obliga a ningún repositorio a adoptar una tecnología.** Cada producto elige sus
+   piezas; la página de una plataforma solo aplica a quien la usa. Una página existe porque la
+   tecnología ya está en uso, y se escribe leyendo ese código.
+3. El `docs/README.md` de un repositorio no repite la convención: la enlaza.
+4. `~/.claude/CLAUDE.md` queda reducido a un puntero a `canone/principios.md`. Las reglas de método
    no se mantienen en dos lugares.
-4. Un repositorio que necesita apartarse de una regla abre un ADR propio que declare la desviación
+5. Un repositorio que necesita apartarse de una regla abre un ADR propio que declare la desviación
    y el motivo, y lo enlaza desde su `docs/arquitectura/`.
-5. Si una desviación resulta mejor que la regla, se promueve a `canone` y el ADR del repositorio
+6. Si una desviación resulta mejor que la regla, se promueve a `canone` y el ADR del repositorio
    pasa a «Reemplazada».
 
 ## Consecuencias
 
 - Hay un lugar donde mirar antes de decidir, y un lugar donde escribir después de decidir.
+- La pregunta que responde `canone` es «si uso X, ¿cómo lo uso?», no «qué debe tener todo repositorio».
 - `canone` se vuelve una dependencia de lectura de todos los repositorios. Si se queda viejo, se
   queda viejo para todos a la vez, que es preferible a seis versiones que nadie compara.
 - Obliga a tocar dos repositorios cuando una decisión de uno generaliza.
@@ -39,3 +43,6 @@ regla que el propio `docs/README.md` enuncia y que la práctica de copiarlo incu
   explique por qué una regla cambió.
 - **Dejar cada repositorio con su copia y sincronizar a mano:** es exactamente lo que produjo las
   seis copias divergentes de `models/base.py`.
+- **Fijar un stack único obligatorio para todos los repositorios:** haría que un producto sin web
+  tuviera que justificar por qué no tiene web, y que la página de una tecnología se escribiera antes
+  de que existiera el código que la usa.

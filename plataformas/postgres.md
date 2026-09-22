@@ -1,12 +1,18 @@
-# Convención: datos
+# PostgreSQL y PostGIS
 
-PostgreSQL es la única base. Los modelos usan tipos de PostgreSQL directamente, no los genéricos de
-SQLAlchemy: nada tiene que correr sobre otro motor.
+Aplica a un repositorio con base de datos propia. Hoy: los seis.
+
+PostgreSQL es la única base, y los modelos usan sus tipos directamente en vez de los genéricos de
+SQLAlchemy: nada tiene que correr sobre otro motor. PostGIS solo donde el dominio tiene geografía
+(navetta, presenze, vettore, banditore, concordia, cadenza declaran `geoalchemy2` de forma
+condicional en `base.py`).
 
 ## `models/base.py` es un archivo canónico
 
-Vive en [`plantilla/server/app/models/base.py`](../plantilla/) y se copia sin editar. Hoy hay seis
-copias distintas, y dos de las diferencias son defectos: ver `homologacion.md`, filas 1 y 2.
+Vive en [`plantilla/server/app/models/base.py`](../plantilla/server/app/models/base.py) y se copia
+sin editar — ver [ADR-0002](../adr/0002-los-archivos-base-se-copian-y-se-verifican.md). Hoy existe en
+seis copias con cinco contenidos distintos, y dos de las diferencias son defectos: ver
+[homologacion.md](../homologacion.md).
 
 Si un repositorio necesita un tipo propio (`Amount`, `TaxRate`, `ExchangeRate` en vettore), lo
 declara **en otro archivo**, no dentro del canónico.
@@ -97,4 +103,4 @@ sobre qué columnas vale la pena.
 
 Cada entidad declara explícitamente qué pasa con sus hijos: `ON DELETE CASCADE` en la FK o borrado
 en el servicio, pero escrito. Antes de cerrar una entidad nueva se prueban los caminos de purgado y
-borrado, igual que los de su entidad hermana — ver `principios.md`.
+borrado, igual que los de su entidad hermana — ver [principios.md](../principios.md).

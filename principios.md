@@ -1,7 +1,7 @@
 # Principios
 
-Reglas de método. Valen en cualquier repositorio y no dependen del stack. Lo que depende del
-stack está en `convenciones/`.
+Reglas de método. Valen en cualquier repositorio y no dependen del stack: lo que depende de una
+tecnología está en [`plataformas/`](plataformas/), y solo aplica a los repositorios que la usan.
 
 Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 
@@ -102,14 +102,10 @@ corren sobre el commit anterior (`git worktree`) para distinguir podredumbre pre
 ## Trampas verificadas
 
 Comprobadas contra el código o reproducidas. No se vuelven a investigar ni se proponen teorías
-nuevas sobre ellas.
+nuevas sobre ellas. Cada una vive en la página de su plataforma, junto al código que la sufre:
 
-| Trampa | Qué ocurre |
+| Plataforma | Trampas |
 |---|---|
-| flutter_map: rueda del mouse | No hace zoom, y no tiene arreglo desde la app |
-| flutter_map: capa encima | No gana el arrastre. El mapa acepta el gesto a 18 px y el paneo normal a 36, así que hay que aceptar en el *pointer down* |
-| flutter_map: teselas | Relanzan fallos de red. Un `HandshakeException` que parece del backend propio puede venir de las teselas de OSM; nace en un `ImageProvider` y ningún try/catch la atrapa |
-| UnoCSS: atajo con prefijo de variante | `link-`, `first-`, `open-`… no generan nada, en silencio |
-| UnoCSS: archivos `.ts` | No se escanean. Las clases que salen de un `.ts` no se generan salvo que se declaren en `content.pipeline.include` |
-| geoalchemy2: `Geography` en un `Annotated` | Comparte una instancia del tipo entre todas las columnas y la última procesada impone su `nullable` a todas. Ver `convenciones/datos.md` |
-| SQLAlchemy: `native_enum=False` sin `create_constraint` | Produce un TEXT sin CHECK, y desde 1.4 `create_constraint` vale `False` por defecto |
+| [flutter.md](plataformas/flutter.md) | `flutter_map`: la rueda del mouse, el arrastre de una capa encima, las teselas que relanzan fallos de red |
+| [sveltekit.md](plataformas/sveltekit.md) | UnoCSS: los atajos con prefijo de variante y los archivos `.ts` sin escanear |
+| [postgres.md](plataformas/postgres.md) | `Geography` compartido en un `Annotated`; `native_enum=False` sin `create_constraint` |

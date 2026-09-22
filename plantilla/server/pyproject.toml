@@ -1,0 +1,61 @@
+[project]
+name = "PRODUCTO-server"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "sqlalchemy>=2.0",
+  "asyncpg>=0.29",
+  "psycopg[binary]>=3.2",
+  "alembic>=1.13",
+  "pydantic[email]>=2.9",
+  "pydantic-settings>=2.0",
+  "argon2-cffi>=25.1",
+  "pyjwt[crypto]>=2.9",
+  "httpx>=0.28",
+  # geoalchemy2 solo si el producto usa PostGIS.
+]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.8",
+  "mypy>=1.13",
+  "pytest>=8.0",
+  "pytest-asyncio>=0.24",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+# Los archivos canónicos de canone no se reformatean: reformatearlos los separa de su fuente.
+# alembic/versions/ es generado.
+extend-exclude = [
+    "alembic/env.py",
+    "alembic/versions/",
+    "app/models/base.py",
+    "app/schemas/base.py",
+    "scripts/",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+# UP042 pide heredar de enum.StrEnum. ADR-0003 fija `class X(str, Enum)` como convención, y
+# StringEnumType() de models/base.py la consume así.
+ignore = ["UP042"]
+
+[tool.mypy]
+python_version = "3.13"
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true
+disallow_untyped_defs = false
+exclude = ["alembic/"]
+
+[[tool.mypy.overrides]]
+# Choque conocido de mypy con @computed_field sobre @property de Pydantic, no un error del archivo.
+module = "app.schemas.base"
+ignore_errors = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

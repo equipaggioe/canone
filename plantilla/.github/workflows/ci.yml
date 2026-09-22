@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  canone:
+    name: canone (archivos canónicos)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: OWNER/canone
+          path: .canone
+      - run: python .canone/scripts/verificar.py --repo .
+
+  server:
+    name: server (lint, tipos, tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Instalar dependencias
+        run: uv sync --frozen
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Tipos (mypy)
+        run: uv run mypy app
+
+      # Contra el schema de prueba del Postgres remoto, nunca contra el real.
+      - name: Tests (pytest)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
+        run: uv run pytest
+
+  # Un job igual a este por superficie web: panel, backoffice, landing, pwa.
+  panel:
+    name: panel (tipos, tests, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: panel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: panel/package-lock.json
+
+      - run: npm ci
+      - name: Tipos (svelte-check)
+        run: npm run check
+      - name: Tests (vitest)
+        run: npm run test:unit
+      - name: Build
+        run: npm run build

@@ -68,41 +68,26 @@ campo. Eso es separar lo verificable, no elegir lo barato.
 Si al implementar no se puede nombrar el síntoma concreto que el cambio elimina, el cambio no va
 todavía. Optimizar una escala que no existe es sobre-ingeniería aunque el código sea correcto.
 
-## Cómo se reporta
-
-- **La salvedad se repite al ejecutar.** Una advertencia dicha al proponer («hoy no se nota», «es
-  deuda que crece sola») se vuelve a plantear al implementar, aunque ya esté aprobada. Aprobar una
-  lista no es aprobar cada elemento con el mismo peso.
-- **No se inventan decisiones.** Algo se escribe como decidido solo si se respondió *esa* pregunta
-  puntual, nunca por inferencia de que «sigue la misma lógica» que otra. Sin respuesta directa, se
-  anota como propuesta abierta. En los ADR: `Aceptada` solo con confirmación explícita.
-- **Se reporta lo que el código hace.** Al describir un cambio cerrado se lidera con el resultado
-  concreto, no con «no hice X».
-- **Las causas se verifican antes de afirmarlas**, con un experimento reproducible en vez de un
-  razonamiento leyendo el código. Si no se puede comprobar, se dice. Un hallazgo de lectura es
-  **sin confirmar**, no un defecto confirmado.
-- **Conciso.** Tablas antes que párrafos.
-
 ## Antes de cerrar un paso
 
-1. **¿Se entregó en todas las superficies?** Si el proyecto tiene varias (app, panel, backoffice),
-   se porta a todas.
+1. **¿Se entregó en todos los clientes?** Si el proyecto tiene varios (app, panel, backoffice),
+   se porta a todos.
 2. **Si el trabajo dice «aplico el patrón X», ¿está el patrón completo?** Se lee X entero y se
    enumeran sus piezas. Un campo declarado «por adelantado para la fase X» no está entregado hasta
    que tiene consumidores.
-3. **¿La entidad nueva se comporta como su hermana ante el borrado?** Se prueban los caminos de
-   purgado y borrado.
+3. **¿El tipo de fila o entidad nueva se comporta como su hermana ante el borrado?** Se prueban
+   los caminos de purgado y borrado.
 4. **¿Quedó código que no llama nadie?** Nada «por simetría».
 5. **¿Se recorrieron todas las puertas de entrada?** Se prueban todos los caminos que llegan a la
    pantalla o la función, no solo el que se tocó.
 
-Además: se verifica el baseline de los tests antes de culpar al cambio propio. Los que fallan se
-corren sobre el commit anterior (`git worktree`) para distinguir podredumbre preexistente.
+Si alguna falla, se arregla o se dice explícitamente que quedó fuera y por qué. **Nunca se reporta
+«terminado» con parte del alcance faltante.**
 
 ## Trampas verificadas
 
-Comprobadas contra el código o reproducidas. No se vuelven a investigar ni se proponen teorías
-nuevas sobre ellas. Cada una vive en la página de su plataforma, junto al código que la sufre:
+Comprobadas contra el código o reproducidas. Cada una vive en la página de su plataforma, junto al
+código que la sufre:
 
 | Plataforma | Trampas |
 |---|---|

@@ -24,6 +24,26 @@ pre-auth interceptado a medio login no es una sesión.
 
 El refresh token se guarda hasheado en la base: un volcado de la tabla no da sesiones.
 
+## El login
+
+Cómo se comporta el endpoint, no solo qué guarda (ADR-0009):
+
+- **Se verifica siempre una contraseña**, exista la cuenta o no, contra un hash señuelo calculado
+  al arrancar. argon2 cuesta ~100 ms a propósito: responder de inmediato cuando el identificador no
+  existe mide la diferencia desde fuera y vuelve inútil el mensaje de error uniforme.
+- **Un solo `errorCode`** para identificador desconocido, contraseña mala y cuenta inactiva. El
+  motivo real va al registro de eventos.
+- **El bloqueo por fuerza bruta se calcula sobre la tabla `login_attempt`**, con umbral por
+  identificador y por IP sobre una ventana de minutos. **Nunca en memoria del proceso**: se pierde
+  al reiniciar y con N workers el límite real es N veces el declarado.
+- **Cambiar o restablecer la contraseña cierra todas las sesiones.**
+- **El reuso de un refresh ya rotado revoca todo lo del usuario.** Sin detección, rotar solo cambia
+  el token que hay que copiar.
+
+Que el alta y la recuperación también respondan igual exista o no la cuenta **no es universal**:
+aplica donde la pertenencia al producto es dato sensible, y el repositorio que lo necesita lo
+declara en un ADR propio.
+
 ## Segundo factor
 
 TOTP en las superficies de operación. El secreto se guarda cifrado, no en claro. El paso 1
@@ -57,8 +77,8 @@ endpoint a mano.
 
 ## Cabeceras y CSP
 
-Las pone Caddy, no la aplicación — ver [despliegue.md](despliegue.md). **Cada regla de la CSP lleva
-su host**: una CSP sin host es la de todos los sitios.
+**Cada regla de la CSP lleva su host**: una CSP sin host es la de todos los sitios. Quién las emite
+—el proxy, no la aplicación— está en [despliegue.md](despliegue.md).
 
 ## Lo que depende de la topología de dominios
 

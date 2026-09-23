@@ -102,9 +102,27 @@ comprobación —ninguna ve la fila de la otra, que todavía no existe— y amba
 - Alembic, autogeneradas y **siempre revisadas a mano**: no detecta renombres (los ve como drop +
   add, y eso pierde datos), ni cambios de CHECK, ni índices GiST.
 - Una migración por commit que cambia el esquema.
+- **Las revisiones se generan en local y se commitean; en el servidor solo se aplican**
+  (`alembic upgrade head`). Autogenerar contra la base desplegada produce revisiones a partir de un
+  modelo que quizá ni está commiteado.
 - `alembic/versions/` queda fuera de ruff: son archivos generados.
 - Mientras un producto no esté en producción, si una migración se complica el camino correcto es
   rehacer la base, no escribir una migración defensiva.
+
+## Retención
+
+Una tabla que crece con el uso **declara su ventana al nacer**, junto a su regla de borrado. Una
+variable por tabla, y **`0` significa retención indefinida**: cero es una decisión escrita, la
+ausencia de la variable es un olvido.
+
+Las bitácoras siguen además el ADR-0008: se escriben en la transacción de la acción que registran,
+**ninguna API las escribe ni las edita**, y los valores anteriores se guardan con lista blanca por
+tabla y por campo. Sin la lista blanca, la bitácora se vuelve un segundo almacén de datos
+personales que sobrevive al derecho de supresión.
+
+Hoy se borra por edad. **La forma correcta a volumen es particionar por mes y soltar la
+partición**: un `DELETE` masivo genera WAL, deja bloat y exige VACUUM. Es la meta declarada, no una
+obligación mientras no haya volumen que lo justifique.
 
 ## Borrado
 

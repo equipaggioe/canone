@@ -29,8 +29,10 @@ WebRTC, con los servidores ICE entregados por la API:
   cuesta nada mantenerlo.
 - **TURN propio con credenciales efímeras.** El endpoint las firma con el secreto compartido y
   tienen vencimiento; no se reparte una credencial fija.
-- El secreto, el puerto y el rango de relay de coturn se declaran en `.consola/config.env` — ver
-  [despliegue.md](despliegue.md).
+- El secreto, el puerto y el realm de coturn son **datos del despliegue**, no valores que el backend
+  elija: anuncia en sus URLs `turn:` exactamente lo que quedó en el servidor — ver
+  [despliegue.md](despliegue.md). Si los genera por su cuenta, el servidor exige un secreto que el
+  backend ya no tiene y las llamadas se caen sin que nada lo diga.
 
 ## Trabajo pesado en el mismo proceso
 

@@ -52,6 +52,18 @@ El prefijo se aplica al montar, no dentro de cada `APIRouter`, y **no lleva vers
 piezas se despliegan juntas y no hay cliente viejo que sostener. Las rutas de operación interna van
 bajo `/api/backoffice/...`.
 
+## Detrás del proxy
+
+El servidor corre detrás de un proxy inverso — ver [despliegue.md](despliegue.md).
+
+- **Los encabezados reenviados se aceptan solo del proxy**: `--proxy-headers` con
+  `--forwarded-allow-ips` apuntando a él, nunca a `*`. Si se confía en cualquier origen, el límite
+  de tasa por IP se saltea mandando un `X-Forwarded-For` falso, y los logs registran la dirección
+  que el cliente quiera.
+- **Un endpoint de salud que comprueba sus dependencias**, no que el proceso vive: responde bien
+  solo si la base contesta. Es lo que mira el despliegue para decidir si el servicio quedó arriba, y
+  uno que devuelve `200` siempre convierte esa comprobación en un adorno.
+
 ## `core/settings.py`
 
 - Una clase `Settings(BaseSettings)` y una instancia `settings`.

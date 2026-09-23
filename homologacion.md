@@ -66,6 +66,25 @@ No hay nada que decidir; solo hay que impedir que se separe.
 | cadenza | `server/app/main.py` está vacío (0 líneas) y `app/api/` no tiene routers |
 | cadenza | No existe `app/core/settings.py` ni `app/core/database.py` |
 
+## Autenticación y bitácoras
+
+Verificado el 2026-09-23 leyendo `services/auth*`, `models/**/*log*` y `core/enums.py` de los cinco
+servidores con autenticación. Se adopta lo del [ADR-0008](adr/0008-un-sobre-unico-de-evento-y-el-catalogo-es-del-repositorio.md)
+y el [ADR-0009](adr/0009-el-login-no-delata-cuentas-y-el-bloqueo-vive-en-la-base.md).
+
+| # | Tema | Qué hay hoy | Se adopta | Por qué |
+|---|---|---|---|---|
+| 45 | Forma de la bitácora | 3 tablas por categoría (navetta, presenze); 1 sobre único (vettore); solo `audit_log` (banditore); `audit_log` + `login_attempt` (concordia) | **el sobre único de vettore** | Con una tabla por categoría, «todo lo que pasó alrededor de las 3:14» es la unión de cuatro consultas con esquemas distintos |
+| 46 | Quién escribe la bitácora | presenze expone `POST` y `PATCH` sobre `audit_log` y `auth_log` con permiso `*:manage` | **solo el servicio que ejecuta la acción** | Una bitácora que se puede editar por HTTP no es una bitácora |
+| 47 | `login` dentro de `AuditAction` | navetta y banditore lo mezclan con `insert`/`update`/`delete`; presenze y concordia ya lo separaron | **presenze** | «Una fila cambió» y «una persona entró» son dos preguntas sin nada en común |
+| 48 | Tablas de bitácora sin escritores | navetta tiene las tres y **ningún código escribe en ninguna** | — | No es convención, es esquema muerto: va a su documento 30 |
+| 49 | Bloqueo por fuerza bruta | Ninguno (navetta, presenze, banditore); en memoria del proceso (vettore); sobre `login_attempt` (concordia) | **concordia** | El de memoria se pierde al reiniciar y con N workers el límite real es N veces el declarado, como documenta el propio `rate_limit.py` de vettore |
+| 50 | El tiempo del login delata la cuenta | presenze sale antes de verificar si el usuario no existe; banditore corta por la izquierda en `user is None or not verify_password(...)` | **el hash señuelo de concordia** | argon2 cuesta ~100 ms: sin verificar siempre, el mensaje de error uniforme no sirve de nada |
+| 51 | Lista blanca en `old`/`new` | Solo concordia | **concordia** | Serializar la fila entera convierte la bitácora en un almacén de datos personales que sobrevive al derecho de supresión |
+| 52 | Ventanas de retención | 8 con interruptor (vettore); 3 (banditore); 2 (concordia); **ninguna** en navetta y presenze | **una por tabla, `0` = indefinida** | Cero es una decisión escrita; la ausencia de la variable es un olvido |
+| 53 | Disparador de la limpieza | 7 lazos en `main.py` con `@app.on_event` y sin candado (vettore); `lifespan` + script de cron sobre la misma función (concordia); proceso aparte a mano (banditore) | **concordia** *(propuesta)* | La pasada es una función; el disparador es aparte y puede ser los dos. Sin candado, cada worker corre las 7 |
+| 54 | Nombre de tabla | `postgres.md` pide plural; solo vettore lo cumple (`auth_sessions`, `security_logs`). navetta, presenze, banditore y concordia usan singular | **falta decidir** | Cuatro de cinco incumplen la página. O se cambia la página o se renombra: hoy la regla no describe nada |
+
 ## SvelteKit
 
 | # | Tema | Qué hay hoy | Se adopta | Por qué |
@@ -163,6 +182,8 @@ Cada paso es un commit por repositorio, y se puede detener en cualquier punto.
 5. **Layout y prefijo** (4, 5, 23, 28): renombres amplios, mejor solos.
 6. **Cliente web** (17 a 22): se verifica levantando cada superficie.
 7. **Qt** (32 a 36): `consola` ya es el modelo; `spazio/app` es el que más cambia.
+8. **Autenticación y bitácoras** (45 a 53): es rediseño, no homologación mecánica. Empieza por
+   50 y 49, que son defectos de seguridad reales y cortos; 45 y 47 arrastran migración.
 
 **cadenza no se homologa: se termina primero.** No tiene `main.py`, ni settings, ni conexión a la
 base; aplicarle convenciones a un esqueleto es escribir reglas contra código que no existe.

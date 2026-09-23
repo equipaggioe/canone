@@ -25,7 +25,7 @@ dominio. Un producto con una sola web tiene `web/`; uno con tres tiene `web/`, `
 | `packages/` | Código compartido entre piezas, como paquete instalable y no copiado. Dentro, el nombre es el del dominio a secas: `packages/mobile/`, `packages/protocol/` |
 | `docs/` | `arquitectura/`, `adr/`, `planes/`. Nada más — ver [documentacion.md](documentacion.md) |
 | `scripts/` | Lo que es del repositorio entero y `consola` no hace |
-| `.consola/` | `params.json` y `config.env`. Lo lee `consola`; no se edita a mano |
+| `.consola/` | `params.json` y `config.env`. Lo lee `consola`; no se edita a mano y no se commitea |
 
 `panel/` y `landing/` son las dos excepciones al patrón, y lo son porque la industria ya las nombra
 así: un *admin panel* es la interfaz interna de gestión y una *landing page* es el sitio público.
@@ -39,6 +39,9 @@ Lo que necesita canal nativo va en un plugin local bajo `plugins/`.
 
 Lo que `consola` hace no se duplica en un script del repositorio. Lo de una sola pieza va dentro de
 ella, no en `scripts/`.
+
+El repositorio no trae scripts de despliegue propios. Cómo tiene que quedar el servidor está en
+[plataformas/despliegue.md](plataformas/despliegue.md).
 
 ## Archivos del raíz
 

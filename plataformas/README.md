@@ -15,7 +15,7 @@ Una página por tecnología. **Se lee la de lo que el repositorio use**; las dem
 | [flutter.md](flutter.md) | Layout de `lib/`, tokens, estado, red, almacenamiento, analizador, mapas |
 | [flet.md](flet.md) | Layout de `src/`, `core/`, tokens, cliente de la API, sesión, empaquetado |
 | [qt.md](qt.md) | Layout, tokens y hoja de estilos generada, red y hilos sin congelar la ventana |
-| [despliegue.md](despliegue.md) | El contrato de `.consola/config.env`, Caddy generado, qué no se commitea |
+| [despliegue.md](despliegue.md) | Cómo tiene que quedar el servidor: qué se expone, los procesos, los datos, la configuración |
 
 ## Qué es y qué no es una página
 

@@ -41,6 +41,26 @@ def normalizar(texto: str) -> str:
     return texto.replace("\r\n", "\n").rstrip() + "\n"
 
 
+# ADR-0008: una bitácora que se puede editar por HTTP no es una bitácora. Se busca por el nombre
+# del archivo del router, que es como se nombran en los seis repositorios; un router que escriba
+# una bitácora con otro nombre se escapa, y eso se revisa leyendo, no aquí.
+BITACORAS = ("audit_log", "auth_log", "activity_log", "security_log", "event_log", "login_attempt")
+ESCRITURA = ("@router.post", "@router.patch", "@router.put", "@router.delete")
+
+
+def bitacoras_solo_lectura(servidor: Path) -> list[str]:
+    fallas = []
+    for carpeta in ("app/routers", "app/api/routers"):
+        for router in (servidor / carpeta).glob("*.py"):
+            if not any(nombre in router.stem for nombre in BITACORAS):
+                continue
+            texto = router.read_text(encoding="utf-8")
+            verbos = sorted({v.split(".")[1] for v in ESCRITURA if v in texto})
+            if verbos:
+                fallas.append(f"ADR-0008: {carpeta}/{router.name} expone {', '.join(verbos)} sobre una bitácora")
+    return fallas
+
+
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
     tiene_servidor = (repo / "server").is_dir()
@@ -88,6 +108,7 @@ def revisar(repo: Path) -> list[str]:
             fallas.append("plataformas/fastapi.md: hay app/api/ y app/routers/ a la vez")
         if not (servidor / ".gitignore").exists():
             fallas.append("repositorio.md: server/ no tiene su propio .gitignore")
+        fallas.extend(bitacoras_solo_lectura(servidor))
 
     # SvelteKit: solo para las superficies web que existan.
     for paquete in repo.glob("*/package.json"):

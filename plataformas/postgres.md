@@ -79,13 +79,13 @@ sobre qué columnas vale la pena.
 
 | Objeto | Forma | Ejemplo |
 |---|---|---|
-| Tabla | `snake_case`, plural, inglés | `vehicle_locations` |
+| Tabla | `snake_case`, **singular**, inglés | `vehicle_location` |
 | Columna | `snake_case`, inglés | `created_at` |
-| Clave foránea | `<singular>_id` | `vehicle_id` |
+| Clave foránea | `<tabla>_id` | `vehicle_id` |
 | Booleano | `is_` / `has_` | `is_active` |
 | Instante | `_at` | `deleted_at` |
-| Índice | `ix_<tabla>_<columnas>` | `ix_trips_vehicle_id` |
-| Restricción | `ck_` / `uq_` / `fk_` + tabla + qué | `uq_users_email` |
+| Índice | `ix_<tabla>_<columnas>` | `ix_trip_vehicle_id` |
+| Restricción | `ck_` / `uq_` / `fk_` + tabla + qué | `uq_user_email` |
 
 ## Idempotencia
 

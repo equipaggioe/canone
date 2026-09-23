@@ -82,8 +82,9 @@ y el [ADR-0009](adr/0009-el-login-no-delata-cuentas-y-el-bloqueo-vive-en-la-base
 | 50 | El tiempo del login delata la cuenta | presenze sale antes de verificar si el usuario no existe; banditore corta por la izquierda en `user is None or not verify_password(...)` | **el hash señuelo de concordia** | argon2 cuesta ~100 ms: sin verificar siempre, el mensaje de error uniforme no sirve de nada |
 | 51 | Lista blanca en `old`/`new` | Solo concordia | **concordia** | Serializar la fila entera convierte la bitácora en un almacén de datos personales que sobrevive al derecho de supresión |
 | 52 | Ventanas de retención | 8 con interruptor (vettore); 3 (banditore); 2 (concordia); **ninguna** en navetta y presenze | **una por tabla, `0` = indefinida** | Cero es una decisión escrita; la ausencia de la variable es un olvido |
-| 53 | Disparador de la limpieza | 7 lazos en `main.py` con `@app.on_event` y sin candado (vettore); `lifespan` + script de cron sobre la misma función (concordia); proceso aparte a mano (banditore) | **concordia** *(propuesta)* | La pasada es una función; el disparador es aparte y puede ser los dos. Sin candado, cada worker corre las 7 |
+| 53 | Disparador de la limpieza | 7 lazos en `main.py` con `@app.on_event` y sin candado (vettore); `lifespan` + script de cron sobre la misma función (concordia); proceso aparte a mano (banditore) | **concordia**, según el [ADR-0011](adr/0011-la-pasada-es-una-funcion-y-el-disparador-va-aparte.md) | La pasada es una función; el disparador es aparte y puede ser los dos. Sin candado, cada worker corre las 7 |
 | 54 | Nombre de tabla | `postgres.md` pide plural; solo vettore lo cumple (`auth_sessions`, `security_logs`). navetta, presenze, banditore y concordia usan singular | **falta decidir** | Cuatro de cinco incumplen la página. O se cambia la página o se renombra: hoy la regla no describe nada |
+| 55 | Forma de la fila de sesión | Una por sesión con el digesto sobrescrito (navetta, presenze); una por rotación, encadenada (banditore); una por token emitido (vettore) | **una por sesión con el digesto vigente y el anterior**, según el [ADR-0010](adr/0010-la-sesion-es-estado-vivo-y-la-historia-esta-en-los-eventos.md) | Detecta el reuso sin que el número de filas dependa de cuántas veces se renovó |
 
 ## SvelteKit
 
@@ -182,8 +183,8 @@ Cada paso es un commit por repositorio, y se puede detener en cualquier punto.
 5. **Layout y prefijo** (4, 5, 23, 28): renombres amplios, mejor solos.
 6. **Cliente web** (17 a 22): se verifica levantando cada superficie.
 7. **Qt** (32 a 36): `consola` ya es el modelo; `spazio/app` es el que más cambia.
-8. **Autenticación y bitácoras** (45 a 53): es rediseño, no homologación mecánica. Empieza por
-   50 y 49, que son defectos de seguridad reales y cortos; 45 y 47 arrastran migración.
+8. **Autenticación y bitácoras** (45 a 55): es rediseño, no homologación mecánica. Empieza por
+   50 y 49, que son defectos de seguridad reales y cortos; 45, 47 y 55 arrastran migración.
 
 **cadenza no se homologa: se termina primero.** No tiene `main.py`, ni settings, ni conexión a la
 base; aplicarle convenciones a un esqueleto es escribir reglas contra código que no existe.

@@ -28,7 +28,8 @@ timbra nóminas y banditore pide paradas. Lo que sí se puede fijar es el sobre 
 
 ## Decisión
 
-1. **Una tabla de eventos por repositorio, con un sobre fijo.** Columnas, y todas menos las
+1. **Una tabla de eventos por repositorio, con un sobre fijo.** Se llama `event_log`, y si la
+   fila 54 de la homologación decide el plural, `event_logs`. Columnas, y todas menos las
    marcadas son obligatorias:
 
    | Columna | Para qué |

@@ -185,6 +185,20 @@ No hay cola de tareas. Lo que no cabe en la respuesta se resuelve así:
 Si algún día hace falta una cola de verdad, es un ADR del repositorio que la necesite, y empieza por
 nombrar el síntoma que elimina.
 
+## Trabajo periódico
+
+Distinto del anterior: nadie lo pidió y hay que hacerlo igual —purgar lo que caducó, asegurar una
+partición, barrer lo que venció—. El ADR-0011 lo resuelve así:
+
+- **La pasada es una función de `services/`**, idempotente, que devuelve cuántas filas tocó y no
+  sabe quién la llamó.
+- **El disparador va aparte y pueden convivir dos**: un script en `scripts/ops/` para cron o
+  systemd, y el lazo del `lifespan`.
+- **Si hay lazo, hay candado**: `pg_try_advisory_lock` para una operación global, `FOR UPDATE SKIP
+  LOCKED` cuando reparte filas. Sin él, el lazo multiplica el trabajo por número de workers.
+- **`lifespan`, nunca `@app.on_event`**, y se espera a que la tarea termine al cerrar.
+- **Una excepción nunca mata el lazo**, y un interruptor por tarea, apagado por defecto.
+
 ## Dependencias
 
 `pyproject.toml` + `uv.lock`, sin `requirements.txt` en paralelo. Base en

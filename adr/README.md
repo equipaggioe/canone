@@ -17,3 +17,5 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0007](0007-adapter-static.md) | Toda superficie web usa `adapter-static` | Con SvelteKit | Propuesta |
 | [0008](0008-un-sobre-unico-de-evento-y-el-catalogo-es-del-repositorio.md) | Lo que pasa se registra en un sobre único, y el catálogo es de cada repositorio | Con `server/` | Propuesta |
 | [0009](0009-el-login-no-delata-cuentas-y-el-bloqueo-vive-en-la-base.md) | El login no delata cuentas por tiempo y el bloqueo vive en una tabla | Con autenticación | Propuesta |
+| [0010](0010-la-sesion-es-estado-vivo-y-la-historia-esta-en-los-eventos.md) | La tabla de sesiones es estado vivo, no historia | Con autenticación | Propuesta |
+| [0011](0011-la-pasada-es-una-funcion-y-el-disparador-va-aparte.md) | La pasada periódica es una función, y el disparador va aparte | Con `server/` | Propuesta |

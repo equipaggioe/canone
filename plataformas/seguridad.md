@@ -50,6 +50,16 @@ TOTP en las superficies de operación. El secreto se guarda cifrado, no en claro
 (contraseña) entrega un `backoffice_preauth` de vida corta y el paso 2 (código) lo cambia por la
 sesión real.
 
+## La fila de sesión
+
+**Una fila por sesión, con el digesto vigente y el anterior** (ADR-0010). Rotar mueve el vigente al
+anterior; presentar el anterior es reuso y revoca. Ni una fila por rotación ni una por token
+emitido: el conteo no depende de cuántas veces se renovó.
+
+Cerrar sesión **borra la fila**, no la marca. La tabla es estado vivo —qué sesiones existen ahora—
+y lo que pasó con ellas es un evento de categoría `auth` en `event_log` (ADR-0008), que le
+sobrevive. La purga son las vencidas pasada una gracia.
+
 ## Qué guarda cada cliente
 
 | Cliente | Dónde |

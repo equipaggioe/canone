@@ -2,12 +2,12 @@ from datetime import date, datetime, time
 from decimal import Decimal
 from enum import Enum
 from importlib.util import find_spec
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import UUID
 
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import BOOLEAN, BYTEA, DATE, DOUBLE_PRECISION, INTEGER, JSONB, TEXT, TIME, TIMESTAMP, NUMERIC, BIGINT, SMALLINT, UUID as PG_UUID
-from sqlalchemy.orm import DeclarativeBase, mapped_column
+from sqlalchemy.orm import DeclarativeBase, MappedColumn, mapped_column
 
 
 class Base(DeclarativeBase):
@@ -55,14 +55,14 @@ if find_spec("geoalchemy2") is not None:
     GeoPoint = WKBElement
     GeoLine = WKBElement
 
-    def geo_point(*, nullable: bool = False, **kwargs):
+    def geo_point(*, nullable: bool = False, **kwargs: Any) -> MappedColumn[Any]:
         return mapped_column(
             Geography(geometry_type="POINT", srid=4326, spatial_index=False, nullable=nullable),
             nullable=nullable,
             **kwargs,
         )
 
-    def geo_line(*, nullable: bool = False, **kwargs):
+    def geo_line(*, nullable: bool = False, **kwargs: Any) -> MappedColumn[Any]:
         return mapped_column(
             Geography(geometry_type="LINESTRING", srid=4326, spatial_index=False, nullable=nullable),
             nullable=nullable,

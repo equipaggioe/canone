@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.core.settings import settings
 
 engine = create_async_engine(
-    settings.database_url_async,
+    settings.database_url,
     pool_size=settings.db_pool_size,
     max_overflow=settings.db_max_overflow,
     pool_timeout=settings.db_pool_timeout,
@@ -14,10 +14,8 @@ engine = create_async_engine(
     pool_pre_ping=True,
 )
 SessionLocal = async_sessionmaker(
-    autocommit=False,
-    autoflush=False,
     bind=engine,
-    class_=AsyncSession,
+    autoflush=False,
     # Una AsyncSession no puede hacer lazy-load: sin esto, leer un modelo después del commit
     # revienta (por ejemplo, serializar el usuario recién creado tras emitir los tokens).
     expire_on_commit=False,
@@ -27,16 +25,8 @@ SessionLocal = async_sessionmaker(
 async def get_db() -> AsyncGenerator[AsyncSession]:
     """Sesión por request.
 
-    El tipo de retorno es explícito porque sin él mypy no revisa el cuerpo de la función.
-
-    El `rollback` es explícito: si un servicio revienta a mitad de una escritura, la conexión no
-    puede volver al pool arrastrando una transacción abierta.
+    Sin `rollback` a mano: al salir del bloque, `close()` revierte lo que quedó sin commit, también
+    si el servicio levantó una excepción, y la conexión vuelve limpia al pool.
     """
-    db: AsyncSession = SessionLocal()
-    try:
+    async with SessionLocal() as db:
         yield db
-    except Exception:
-        await db.rollback()
-        raise
-    finally:
-        await db.close()

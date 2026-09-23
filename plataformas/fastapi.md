@@ -19,8 +19,8 @@ server/
       enums.py          enums del dominio + ErrorCode
       exceptions.py     excepciones de la aplicación
       security.py       hash, tokens
-    models/             SQLAlchemy. base.py + un archivo o carpeta por dominio
-    schemas/            Pydantic. base.py + un archivo o carpeta por dominio
+    models/             SQLAlchemy. base.py + una carpeta por dominio, con un archivo por tabla
+    schemas/            Pydantic. base.py + una carpeta por dominio, con un archivo por modelo (o por recurso sin tabla)
     routers/            un archivo por recurso
     services/           la lógica; no sabe de FastAPI
   tests/
@@ -44,13 +44,23 @@ Un router valida, delega y responde. La lógica vive en `services/`.
 ## `main.py`
 
 ```python
-API_PREFIX = "/api"
+API_PREFIX = "/api/v1"
 app.include_router(auth.router, prefix=API_PREFIX)
 ```
 
-El prefijo se aplica al montar, no dentro de cada `APIRouter`, y **no lleva versión**: todas las
-piezas se despliegan juntas y no hay cliente viejo que sostener. Las rutas de operación interna van
-bajo `/api/backoffice/...`.
+El prefijo se aplica al montar, no dentro de cada `APIRouter`, y **lleva versión** (ADR-0012). Las
+rutas de operación interna van bajo `/api/v1/backoffice/...`.
+
+Las dependencias se declaran con `Annotated`, no como valor por defecto:
+
+```python
+DbSession = Annotated[AsyncSession, Depends(get_db)]
+
+async def get_vehicle(vehicle_id: UUID, db: DbSession) -> VehicleOut: ...
+```
+
+Es la forma que recomienda FastAPI: el tipo y la dependencia se escriben una vez en `core/deps.py`
+y se reusan. `ruff` la hace cumplir con `FAST002`.
 
 ## Detrás del proxy
 
@@ -75,36 +85,29 @@ El servidor corre detrás de un proxy inverso — ver [despliegue.md](despliegue
 
 ```python
 engine = create_async_engine(
-    settings.database_url_async,
+    settings.database_url,
     pool_size=settings.db_pool_size,
     max_overflow=settings.db_max_overflow,
     pool_timeout=settings.db_pool_timeout,
     pool_pre_ping=True,
 )
-SessionLocal = async_sessionmaker(
-    autocommit=False, autoflush=False, bind=engine,
-    class_=AsyncSession, expire_on_commit=False,
-)
+SessionLocal = async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 async def get_db() -> AsyncGenerator[AsyncSession]:
-    db: AsyncSession = SessionLocal()
-    try:
+    async with SessionLocal() as db:
         yield db
-    except Exception:
-        await db.rollback()
-        raise
-    finally:
-        await db.close()
 ```
 
-Los cuatro puntos, y qué pasa si falta cada uno:
+Los tres puntos, y qué pasa si falta cada uno:
 
 | Regla | Si falta |
 |---|---|
 | `expire_on_commit=False` | Una `AsyncSession` no hace lazy-load: leer el modelo después del commit revienta |
 | `pool_pre_ping=True` | Una conexión muerta en el pool hace fallar el primer request que la tome, mucho después de que la red se cayera |
-| `rollback` en el `except` | La conexión vuelve al pool con la transacción abierta |
-| Tipo de retorno explícito | mypy no revisa el cuerpo de la función sin él |
+| `async with` | La sesión no se cierra si el servicio revienta. Al salir del bloque, `close()` revierte lo que quedó sin commit y devuelve la conexión limpia al pool; no hace falta un `rollback` a mano |
+
+`settings.database_url` es una sola URL `postgresql+asyncpg://...`, la misma para la app, Alembic y
+los scripts.
 
 ## Forma de los datos
 
@@ -208,8 +211,12 @@ partición, barrer lo que venció—. El ADR-0011 lo resuelve así:
 |---|---|---|
 | `python-jose` | `PyJWT[crypto]` | Sin mantenimiento desde 2021, con vulnerabilidades publicadas |
 | `passlib` | `argon2-cffi` directo | Sin mantenimiento desde 2020, roto contra las versiones nuevas de bcrypt |
-| `psycopg2-binary` | `psycopg[binary]` (v3) | psycopg2 está en mantenimiento pasivo |
+| `psycopg2-binary`, `psycopg` | `asyncpg`, también para Alembic | Un solo driver y una sola URL. `psycopg` en modo async no corre sobre el event loop por defecto de Windows |
 | Un ORM sync | SQLAlchemy async | El servidor entero es async |
+
+Alembic usa la plantilla async (`alembic init -t async`): `env.py` corre las migraciones con
+`connection.run_sync` sobre el mismo engine async. Los scripts de `scripts/` también son async y
+arrancan con `asyncio.run`.
 
 Una dependencia que ningún archivo importa se borra del `pyproject.toml`.
 
@@ -231,15 +238,27 @@ target-version = "py313"
 extend-exclude = ["alembic/env.py", "alembic/versions/", "app/models/base.py", "app/schemas/base.py", "scripts/"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP"]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "SIM", "FAST"]
 ignore = ["UP042"]   # los enums son `class X(str, Enum)`, no StrEnum
 
 [tool.mypy]
 python_version = "3.13"
 plugins = ["pydantic.mypy"]
-ignore_missing_imports = true
+strict = true
 exclude = ["alembic/"]
 ```
+
+| Regla | Qué atrapa |
+|---|---|
+| `B` (bugbear) | Argumentos por defecto mutables, `return` dentro de `finally`, variables de lazo capturadas tarde |
+| `ASYNC` | Llamadas bloqueantes dentro de una corrutina (`time.sleep`, `open`, `requests`): congelan el event loop |
+| `SIM` | Código que se puede escribir más simple |
+| `FAST` | Dependencias sin `Annotated`, `response_model` redundante, parámetros de ruta sin usar |
+| mypy `strict` | Funciones sin tipos, `Any` implícito, `type: ignore` que ya no hace falta |
+
+Un paquete sin tipos se declara en un `[[tool.mypy.overrides]]` propio con
+`ignore_missing_imports = true`, nunca en el bloque global: el global apaga la revisión de cada
+import mal escrito.
 
 Los archivos canónicos quedan fuera de ruff: reformatearlos los separa de su fuente.
 

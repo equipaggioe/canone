@@ -37,14 +37,14 @@ No hay nada que decidir; solo hay que impedir que se separe.
 | # | Tema | Qué hay hoy | Se adopta | Por qué |
 |---|---|---|---|---|
 | 1 | `expire_on_commit` | `False` en presenze, vettore, banditore, concordia; default `True` en navetta | **`False`** | Una `AsyncSession` no hace lazy-load: leer un modelo después del commit revienta |
-| 2 | `rollback` en `get_db` | Solo concordia | **concordia** | Sin él, un servicio que falla a mitad de una escritura devuelve la conexión al pool con la transacción abierta |
+| 2 | Cierre de la sesión en `get_db` | `rollback` a mano solo en concordia | **`async with SessionLocal()`** *(propuesta)* | Al salir, `close()` revierte lo que quedó sin commit, también cuando el servicio revienta (reproducido). El `rollback` a mano sobra |
 | 3 | `pool_pre_ping` | navetta, vettore, banditore sí; presenze y concordia no | **sí** | Las bases se alcanzan por túnel; una conexión muerta en el pool falla el primer request que la tome |
 | 4 | Carpeta de routers | `routers/` en navetta, presenze, vettore, concordia; `api/routers/` en banditore; `api/` vacío en cadenza | **`routers/`** *(propuesta)* | Mayoría, y un nivel menos |
-| 5 | Prefijo de la API | Sin prefijo (navetta, vettore); `/api` en cada router (presenze); `/api` al montar (concordia); `/api/v1` (banditore) | **`/api` al montar** *(propuesta)* | Un solo lugar que cambiar. Sin `v1`: nada está en producción |
+| 5 | Prefijo de la API | Sin prefijo (navetta, vettore); `/api` en cada router (presenze); `/api` al montar (concordia); `/api/v1` (banditore) | **`/api/v1` al montar** *(propuesta)* | Un solo lugar que cambiar, con versión — [ADR-0012](adr/0012-el-prefijo-api-v1-se-aplica-al-montar.md) |
 | 6 | Biblioteca de JWT | `python-jose` (presenze); `PyJWT` (navetta, banditore, concordia) | **PyJWT** | `python-jose` está sin mantenimiento desde 2021 y con vulnerabilidades publicadas |
 | 7 | Hash de contraseña | `passlib[argon2]` (navetta); `argon2-cffi` directo (presenze, vettore, banditore, concordia) | **`argon2-cffi`** | `passlib` está sin mantenimiento desde 2020 |
-| 8 | Driver sync | `psycopg2-binary` (navetta); `psycopg[binary]` v3 (el resto) | **psycopg 3** | psycopg2 está en mantenimiento pasivo |
-| 9 | Lint y tipos | Solo concordia tiene `ruff` + `mypy` | **concordia** | Es la única configuración que existe |
+| 8 | Driver sync | `psycopg2-binary` (navetta); `psycopg[binary]` v3 (el resto) | **ninguno: asyncpg también para Alembic** *(propuesta)* | Un solo driver y una sola URL. `psycopg` async no corre sobre el event loop por defecto de Windows (reproducido) |
+| 9 | Lint y tipos | Solo concordia tiene `ruff` + `mypy` | **concordia, más `B`, `ASYNC`, `SIM`, `FAST` y mypy `strict`** *(propuesta)* | Es la única configuración que existe; se le suman las reglas que recomienda hoy cada herramienta |
 | 10 | Configuración de pytest | `pyproject.toml` (banditore, concordia); `pytest.ini` (vettore); ninguna (navetta, presenze, cadenza) | **`pyproject.toml`** | Un archivo de configuración por proyecto |
 | 11 | CI | Solo concordia | **concordia** | Es la única regla que hoy se hace cumplir sola |
 | 12 | Cobertura de tests | vettore 39 archivos, presenze 20, concordia 16, banditore 7, navetta 4, cadenza 0 | — | No es convención, es deuda: va al documento 30 de cada repositorio |

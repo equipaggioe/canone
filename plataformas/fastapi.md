@@ -27,8 +27,19 @@ server/
   scripts/
 ```
 
-Los routers van en `routers/`; las dependencias, en `core/deps.py`. Un dominio con muchos archivos
-usa una carpeta dentro de `models/` y `schemas/`, no un módulo de mil líneas.
+Los routers van en `routers/`; las dependencias, en `core/deps.py`.
+
+En `models/` y `schemas/` la carpeta del dominio existe aunque tenga un solo archivo:
+
+- **Una tabla por archivo**, también las de asociación (`Table(...)` de un muchos a muchos), que no
+  van dentro del modelo de ninguno de los dos lados.
+- **`models/__init__.py` importa cada tabla.** SQLAlchemy y Alembic solo conocen las que están
+  importadas: una que falte ahí no aparece en la autogeneración de migraciones, y nada avisa.
+- **Una relación entre archivos** se declara con el nombre como texto (`relationship("User")`) y el
+  import del tipo bajo `TYPE_CHECKING`. Importarse mutuamente produce un import circular.
+- **Un archivo de `schemas/` por modelo** agrupa sus variantes (`UserCreate`, `UserUpdate`,
+  `UserRead`). Lo que no corresponde a una tabla (`LoginRequest`, `TokenResponse`) va en un
+  archivo por recurso dentro de la carpeta de su dominio.
 
 ## Quién puede llamar a quién
 
@@ -239,7 +250,6 @@ extend-exclude = ["alembic/env.py", "alembic/versions/", "app/models/base.py", "
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC", "SIM", "FAST"]
-ignore = ["UP042"]   # los enums son `class X(str, Enum)`, no StrEnum
 
 [tool.mypy]
 python_version = "3.13"
@@ -250,6 +260,7 @@ exclude = ["alembic/"]
 
 | Regla | Qué atrapa |
 |---|---|
+| `UP` | Sintaxis vieja de Python. Incluye `UP042`: un enum de texto hereda de `StrEnum` (ADR-0013) |
 | `B` (bugbear) | Argumentos por defecto mutables, `return` dentro de `finally`, variables de lazo capturadas tarde |
 | `ASYNC` | Llamadas bloqueantes dentro de una corrutina (`time.sleep`, `open`, `requests`): congelan el event loop |
 | `SIM` | Código que se puede escribir más simple |

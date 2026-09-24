@@ -48,8 +48,8 @@ aplica» en «cero», que en un documento fiscal no es lo mismo.
 
 ## Enums
 
-`class X(str, Enum)` en `core/enums.py`, y la columna con `StringEnumType(X)`, que produce
-`VARCHAR` + `CHECK`.
+`class X(StrEnum)` en `core/enums.py`, y la columna con `StringEnumType(X)`, que produce
+`VARCHAR` + `CHECK` (ADR-0013).
 
 **`create_constraint=True` es obligatorio y no es el valor por defecto.** Desde SQLAlchemy 1.4 vale
 `False`, con lo cual `native_enum=False` deja un TEXT pelado: `validate_strings` solo valida del lado

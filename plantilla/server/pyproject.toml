@@ -39,9 +39,6 @@ extend-exclude = [
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC", "SIM", "FAST"]
-# UP042 pide heredar de enum.StrEnum. ADR-0003 fija `class X(str, Enum)` como convención, y
-# StringEnumType() de models/base.py la consume así.
-ignore = ["UP042"]
 
 [tool.mypy]
 python_version = "3.13"

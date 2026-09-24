@@ -57,6 +57,8 @@ No hay nada que decidir; solo hay que impedir que se separe.
 | 14 | `StringEnumType`, CHECK | `create_constraint=True` en banditore y concordia; ausente en navetta, presenze, vettore, cadenza | **concordia** | Sin el CHECK, `native_enum=False` deja un TEXT pelado y la base acepta cualquier cadena escrita por SQL directo o una carga masiva |
 | 15 | Columnas geográficas | `Annotated[..., mapped_column(Geography(...))]` en 5; funciones `geo_point()` / `geo_line()` en concordia | **concordia** | geoalchemy2 guarda `nullable` en la instancia del tipo y la muta por columna; un `Annotated` comparte una sola instancia y la última procesada se lo impone a todas |
 | 16 | `UpdatedAt` | `datetime \| None` en 5; `datetime` en banditore | **banditore** *(propuesta)* | Lleva `server_default=now()`, así que la columna nunca es nula: el tipo opcional describe algo que no ocurre |
+| 56 | Clase base de los enums | `class X(str, Enum)` en los 6; concordia ignora `UP042` | **`StrEnum`** *(propuesta)* — [ADR-0013](adr/0013-un-enum-hereda-de-strenum-y-se-guarda-como-varchar-con-check.md) | Se comporta igual ante `StringEnumType`, Pydantic y JSON; en un f-string da el valor y no `"X.MIEMBRO"` |
+| 57 | Layout de `models/` y `schemas/` | `models/` con carpetas por dominio en 5 (cadenza plano); `schemas/` plano en navetta, presenze, vettore, banditore; con carpetas en concordia. Tablas por archivo, sin medir | **carpeta por dominio; una tabla por archivo y un archivo de schemas por modelo** *(propuesta)* | Cada tabla y cada schema tienen un solo lugar posible — [fastapi.md](plataformas/fastapi.md) |
 
 ### Defectos encontrados de paso (sin confirmar)
 

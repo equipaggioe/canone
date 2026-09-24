@@ -10,7 +10,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 |---|---|---|---|
 | [0001](0001-el-estandar-vive-en-un-repositorio.md) | El estándar vive en un repositorio y los demás lo enlazan | Todos | Propuesta |
 | [0002](0002-los-archivos-base-se-copian-y-se-verifican.md) | Los archivos base se copian y un script verifica la copia | Con `server/` | Propuesta |
-| [0003](0003-enum-como-varchar-con-check.md) | Un enum se guarda como VARCHAR con CHECK | Con base de datos | Propuesta |
+| [0003](0003-enum-como-varchar-con-check.md) | Un enum se guarda como VARCHAR con CHECK | Con base de datos | Reemplazada por ADR-0013 |
 | [0004](0004-geografia-con-funciones.md) | Una columna geográfica se declara con una función, no con un Annotated | Con PostGIS | Propuesta |
 | [0005](0005-prefijo-api-al-montar.md) | El prefijo `/api` se aplica al montar, y la ruta no lleva versión | Con FastAPI | Reemplazada por ADR-0012 |
 | [0006](0006-dependencias-con-pyproject-y-uv.md) | Las dependencias de Python se declaran en `pyproject.toml` con `uv` | Con Python | Propuesta |
@@ -20,3 +20,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0010](0010-la-sesion-es-estado-vivo-y-la-historia-esta-en-los-eventos.md) | La tabla de sesiones es estado vivo, no historia | Con autenticación | Propuesta |
 | [0011](0011-la-pasada-es-una-funcion-y-el-disparador-va-aparte.md) | La pasada periódica es una función, y el disparador va aparte | Con `server/` | Propuesta |
 | [0012](0012-el-prefijo-api-v1-se-aplica-al-montar.md) | El prefijo `/api/v1` se aplica al montar | Con FastAPI | Propuesta |
+| [0013](0013-un-enum-hereda-de-strenum-y-se-guarda-como-varchar-con-check.md) | Un enum hereda de `StrEnum` y se guarda como VARCHAR con CHECK | Con base de datos | Propuesta |

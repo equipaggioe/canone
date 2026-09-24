@@ -215,7 +215,7 @@ partición, barrer lo que venció—. El ADR-0011 lo resuelve así:
 
 ## Dependencias
 
-`pyproject.toml` + `uv.lock`, sin `requirements.txt` en paralelo. Base en
+Lo común a todo Python está en [python.md](python.md). Base del servidor en
 [`plantilla/server/pyproject.toml`](../plantilla/server/pyproject.toml).
 
 | No se usa | Se usa | Por qué |
@@ -229,8 +229,6 @@ Alembic usa la plantilla async (`alembic init -t async`): `env.py` corre las mig
 `connection.run_sync` sobre el mismo engine async. Los scripts de `scripts/` también son async y
 arrancan con `asyncio.run`.
 
-Una dependencia que ningún archivo importa se borra del `pyproject.toml`.
-
 ## Tests
 
 - `pytest` con `asyncio_mode = "auto"`, configurado en `pyproject.toml`. Nada de `pytest.ini`.
@@ -242,42 +240,31 @@ Una dependencia que ningún archivo importa se borra del `pyproject.toml`.
 
 ## Lint y tipos
 
+La base es la de [python.md](python.md). El servidor le suma:
+
 ```toml
 [tool.ruff]
-line-length = 120
-target-version = "py313"
 extend-exclude = ["alembic/env.py", "alembic/versions/", "app/models/base.py", "app/schemas/base.py", "scripts/"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "ASYNC", "SIM", "FAST"]
+extend-select = ["FAST"]
 
 [tool.mypy]
-python_version = "3.13"
 plugins = ["pydantic.mypy"]
-strict = true
 exclude = ["alembic/"]
 ```
 
 | Regla | Qué atrapa |
 |---|---|
-| `UP` | Sintaxis vieja de Python. Incluye `UP042`: un enum de texto hereda de `StrEnum` (ADR-0013) |
-| `B` (bugbear) | Argumentos por defecto mutables, `return` dentro de `finally`, variables de lazo capturadas tarde |
-| `ASYNC` | Llamadas bloqueantes dentro de una corrutina (`time.sleep`, `open`, `requests`): congelan el event loop |
-| `SIM` | Código que se puede escribir más simple |
 | `FAST` | Dependencias sin `Annotated`, `response_model` redundante, parámetros de ruta sin usar |
-| mypy `strict` | Funciones sin tipos, `Any` implícito, `type: ignore` que ya no hace falta |
-
-Un paquete sin tipos se declara en un `[[tool.mypy.overrides]]` propio con
-`ignore_missing_imports = true`, nunca en el bloque global: el global apaga la revisión de cada
-import mal escrito.
+| `pydantic.mypy` | Que mypy entienda los constructores y validadores de Pydantic |
 
 Los archivos canónicos quedan fuera de ruff: reformatearlos los separa de su fuente.
 
 ## CI
 
+Los pasos de [python.md](python.md), con `mypy app`, y después:
+
 ```yaml
-- run: uv sync --frozen
-- run: uv run ruff check .
-- run: uv run mypy app
 - run: uv run pytest     # DATABASE_URL apunta al schema de prueba, nunca al real
 ```

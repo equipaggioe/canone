@@ -72,5 +72,4 @@ de un widget — ver [i18n.md](i18n.md).
 
 ## Dependencias, lint y tipos
 
-`pyproject.toml` + `uv.lock`. Es Python: `ruff` y `mypy` con la misma configuración que el servidor
-— ver [fastapi.md](fastapi.md).
+Los de [python.md](python.md), sin agregados.

@@ -78,5 +78,5 @@ congela sin aviso y sin error.
 
 ## Dependencias, lint y tipos
 
-`pyproject.toml` + `uv.lock`. `ruff` y `mypy` con la misma configuración que el servidor — ver
-[fastapi.md](fastapi.md).
+Los de [python.md](python.md). Los métodos que Qt obliga a sobrescribir (`paintEvent`, `rowCount`,
+`eventFilter`) llevan `@override`: así conservan su nombre en camelCase sin apagar `N802`.

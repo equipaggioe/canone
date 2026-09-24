@@ -59,6 +59,7 @@ No hay nada que decidir; solo hay que impedir que se separe.
 | 16 | `UpdatedAt` | `datetime \| None` en 5; `datetime` en banditore | **banditore** *(propuesta)* | Lleva `server_default=now()`, así que la columna nunca es nula: el tipo opcional describe algo que no ocurre |
 | 56 | Clase base de los enums | `class X(str, Enum)` en los 6; concordia ignora `UP042` | **`StrEnum`** *(propuesta)* — [ADR-0013](adr/0013-un-enum-hereda-de-strenum-y-se-guarda-como-varchar-con-check.md) | Se comporta igual ante `StringEnumType`, Pydantic y JSON; en un f-string da el valor y no `"X.MIEMBRO"` |
 | 57 | Layout de `models/` y `schemas/` | `models/` con carpetas por dominio en 5 (cadenza plano); `schemas/` plano en navetta, presenze, vettore, banditore; con carpetas en concordia. Tablas por archivo, sin medir | **carpeta por dominio; una tabla por archivo y un archivo de schemas por modelo** *(propuesta)* | Cada tabla y cada schema tienen un solo lugar posible — [fastapi.md](plataformas/fastapi.md) |
+| 58 | Estilo de Python | Imports relativos: banditore/server 13 de 91 archivos, banditore/customer y vendor 2 cada uno, consola/ui 8 de 33, concordia 1, presenze/terminal 1; el resto absolutos. Ningún repositorio corre `ruff format` (concordia/server: 61 archivos cambiarían). consola/ui: 60 métodos de Qt en camelCase sin `@override`. concordia/server: 48 excepciones sin sufijo `Error` | **[python.md](plataformas/python.md)**: imports absolutos, `ruff format`, nombres de PEP 8, `__init__.py` en toda carpeta *(propuesta)* | Una sola forma, hecha cumplir por `ruff` y no por revisión |
 
 ### Defectos encontrados de paso (sin confirmar)
 
@@ -116,7 +117,7 @@ y el [ADR-0009](adr/0009-el-login-no-delata-cuentas-y-el-bloqueo-vive-en-la-base
 | 28 | Layout | `core/` + `views/` en presenze/app; `pages/` + `components/` con el resto plano en banditore; todo suelto con `app_state.py` en cadenza | **`core/` + `views/`** *(propuesta)* | Es el único que separa red, sesión y tema de la interfaz |
 | 29 | Código compartido | Paquete instalable `mobile_common` en banditore; nada en presenze ni cadenza | **paquete local** | Ya funciona en banditore |
 | 30 | Dependencias | `pyproject.toml` + `uv.lock` en banditore; `requirements.txt` en presenze y cadenza | **`pyproject.toml` + `uv`** *(propuesta)* | Un `>=` sin lock no es reproducible |
-| 31 | Lint y tipos | Ninguna pieza Flet tiene `ruff` ni `mypy` | **la misma config que el servidor** | Es Python |
+| 31 | Lint y tipos | Ninguna pieza Flet tiene `ruff` ni `mypy` | **la base de [python.md](plataformas/python.md)** *(propuesta)* | Es Python; las reglas de FastAPI no le tocan |
 
 ## PySide6 (Qt)
 

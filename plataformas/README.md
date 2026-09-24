@@ -4,6 +4,7 @@ Una página por tecnología. **Se lee la de lo que el repositorio use**; las dem
 
 | Página | Cubre |
 |---|---|
+| [python.md](python.md) | Versión, dependencias, PEP 8 con `ruff format`, imports absolutos, `__init__.py`, tipos, lint base |
 | [fastapi.md](fastapi.md) | Layout de `server/`, capas, settings, sesión de base, el sobre de error, paginación, OpenAPI, tests, lint |
 | [postgres.md](postgres.md) | Tipos, alias de columna, enums, geografía, nombres, idempotencia, migraciones, borrado |
 | [seguridad.md](seguridad.md) | Contraseñas, tipos de token, TOTP, qué guarda cada cliente, límite de tasa, permisos |

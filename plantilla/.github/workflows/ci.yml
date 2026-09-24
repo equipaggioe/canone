@@ -42,6 +42,14 @@ jobs:
       - name: Tipos (mypy)
         run: uv run mypy app
 
+      - name: Dependencias sin usar (deptry)
+        run: uv run deptry .
+
+      - name: Vulnerabilidades (pip-audit)
+        run: |
+          uv export --format requirements-txt --locked -o "$RUNNER_TEMP/audit.txt"
+          uv run pip-audit -r "$RUNNER_TEMP/audit.txt" --require-hashes --disable-pip
+
       # Contra el schema de prueba del Postgres remoto, nunca contra el real.
       - name: Tests (pytest)
         env:

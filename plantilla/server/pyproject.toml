@@ -22,10 +22,12 @@ dev = [
   "mypy>=1.13",
   "pytest>=8.0",
   "pytest-asyncio>=0.24",
+  "deptry>=0.25",
+  "pip-audit>=2.9",
 ]
 
 [tool.ruff]
-line-length = 120
+line-length = 99
 # Los archivos canónicos de canone no se reformatean: reformatearlos los separa de su fuente.
 # alembic/versions/ es generado.
 extend-exclude = [
@@ -37,9 +39,12 @@ extend-exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "W", "F", "I", "N", "UP", "B", "SIM", "ASYNC", "TID", "INP", "RUF", "DTZ", "BLE", "S110", "FAST"]
+select = ["E", "W", "F", "I", "N", "UP", "B", "SIM", "ASYNC", "TID", "INP", "RUF", "DTZ", "BLE", "S110", "PGH004", "T20", "G", "LOG", "FAST"]
 # La raya corta es puntuación del español, no un guion confundido.
 allowed-confusables = ["–"]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 72
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -62,3 +67,13 @@ ignore_errors = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+addopts = ["--import-mode=importlib"]
+
+[tool.uv]
+python-preference = "only-system"
+
+[tool.deptry.per_rule_ignores]
+# Solo se importa si el producto usa PostGIS: app/models/base.py lo busca con find_spec.
+DEP001 = ["geoalchemy2"]
+# uvicorn lo arranca la unidad del servicio; asyncpg lo carga SQLAlchemy por la URL de la base.
+DEP002 = ["uvicorn", "asyncpg"]

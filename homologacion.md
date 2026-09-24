@@ -3,6 +3,10 @@
 Qué divergencias hay hoy, **agrupadas por plataforma**. Una fila solo le toca a los repositorios que
 usan esa plataforma: nada de esto obliga a un repositorio a adoptar una pieza que no necesita.
 
+**La sección de una plataforma se actualiza cuando su página queda aceptada**, no con cada cambio
+mientras la página se discute: una fila escrita contra una página que todavía cambia se reescribe
+después.
+
 Inventario verificado el 2026-09-22 leyendo el código de `navetta`, `presenze`, `vettore`,
 `banditore`, `concordia`, `cadenza` y `consola`. Lo marcado **(propuesta)** no está confirmado.
 
@@ -44,7 +48,7 @@ No hay nada que decidir; solo hay que impedir que se separe.
 | 6 | Biblioteca de JWT | `python-jose` (presenze); `PyJWT` (navetta, banditore, concordia) | **PyJWT** | `python-jose` está sin mantenimiento desde 2021 y con vulnerabilidades publicadas |
 | 7 | Hash de contraseña | `passlib[argon2]` (navetta); `argon2-cffi` directo (presenze, vettore, banditore, concordia) | **`argon2-cffi`** | `passlib` está sin mantenimiento desde 2020 |
 | 8 | Driver sync | `psycopg2-binary` (navetta); `psycopg[binary]` v3 (el resto) | **ninguno: asyncpg también para Alembic** *(propuesta)* | Un solo driver y una sola URL. `psycopg` async no corre sobre el event loop por defecto de Windows (reproducido) |
-| 9 | Lint y tipos | Solo concordia tiene `ruff` + `mypy` | **concordia, más `B`, `ASYNC`, `SIM`, `FAST` y mypy `strict`** *(propuesta)* | Es la única configuración que existe; se le suman las reglas que recomienda hoy cada herramienta |
+| 9 | Lint y tipos | Solo concordia tiene `ruff` + `mypy` | **la base de [python.md](plataformas/python.md), más `FAST`** *(propuesta)* | Es la única configuración que existe; se le suman las reglas que recomienda hoy cada herramienta |
 | 10 | Configuración de pytest | `pyproject.toml` (banditore, concordia); `pytest.ini` (vettore); ninguna (navetta, presenze, cadenza) | **`pyproject.toml`** | Un archivo de configuración por proyecto |
 | 11 | CI | Solo concordia | **concordia** | Es la única regla que hoy se hace cumplir sola |
 | 12 | Cobertura de tests | vettore 39 archivos, presenze 20, concordia 16, banditore 7, navetta 4, cadenza 0 | — | No es convención, es deuda: va al documento 30 de cada repositorio |

@@ -252,6 +252,12 @@ extend-select = ["FAST"]
 [tool.mypy]
 plugins = ["pydantic.mypy"]
 exclude = ["alembic/"]
+
+[tool.deptry.per_rule_ignores]
+# Solo se importa si el producto usa PostGIS: app/models/base.py lo busca con find_spec.
+DEP001 = ["geoalchemy2"]
+# uvicorn lo arranca la unidad del servicio; asyncpg lo carga SQLAlchemy por la URL de la base.
+DEP002 = ["uvicorn", "asyncpg"]
 ```
 
 | Regla | Qué atrapa |

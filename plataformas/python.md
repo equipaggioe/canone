@@ -5,9 +5,11 @@ suma a esto.
 
 ## Versión y dependencias
 
-- Python 3.13: `requires-python = ">=3.13"` y `target-version = "py313"`.
+- Python 3.13, la que trae Debian 13: `requires-python = ">=3.13"`. Es la única declaración de la
+  versión: `ruff` la lee de ahí, así que no se repite en `target-version`.
 - `pyproject.toml` + `uv.lock`, sin `requirements.txt` en paralelo ([ADR-0006](../adr/0006-dependencias-con-pyproject-y-uv.md)).
-  CI instala con `uv sync --frozen`.
+  CI instala con `uv sync --locked`, que falla si el lock no corresponde al `pyproject.toml`.
+  `--frozen` no lo comprueba: instala el lock viejo y termina bien.
 - Una dependencia que ningún archivo importa se borra del `pyproject.toml`.
 
 ## Estilo: PEP 8, hecho cumplir por herramienta
@@ -17,8 +19,8 @@ suma a esto.
 - **Nombres de PEP 8** (`N`): funciones, variables y módulos en `snake_case`; clases en
   `PascalCase`; constantes en `UPPER_CASE`; una excepción que es un error termina en `Error`.
 - Un método que sobrescribe uno de una biblioteca lleva `@override` (`typing`). Es lo que exime de
-  `N802` a los nombres en camelCase que impone Qt (`paintEvent`, `rowCount`), y mypy comprueba que
-  de verdad sobrescriba algo.
+  `N802` a los nombres en camelCase que impone Qt (`paintEvent`, `rowCount`). mypy exige que esté
+  (`explicit-override`) y que de verdad sobrescriba algo.
 - Un enum de texto hereda de `StrEnum` ([ADR-0013](../adr/0013-un-enum-hereda-de-strenum-y-se-guarda-como-varchar-con-check.md)).
 
 ## Imports
@@ -28,6 +30,8 @@ suma a esto.
   archivo se mueve. `TID252` lo hace cumplir.
 - El orden lo pone `ruff` (`I`), no la mano.
 - Un import que solo sirve para anotar un tipo y crearía un ciclo va bajo `if TYPE_CHECKING:`.
+  **Nunca en un schema de Pydantic ni en los parámetros de un endpoint o una dependencia de
+  FastAPI:** leen las anotaciones al correr, y el tipo que no se importó hace fallar el modelo.
 
 ## `__init__.py`
 
@@ -50,10 +54,11 @@ import mal escrito.
 ```toml
 [tool.ruff]
 line-length = 120
-target-version = "py313"
 
 [tool.ruff.lint]
-select = ["E", "W", "F", "I", "N", "UP", "B", "SIM", "ASYNC", "TID", "INP"]
+select = ["E", "W", "F", "I", "N", "UP", "B", "SIM", "ASYNC", "TID", "INP", "RUF", "DTZ", "BLE", "S110"]
+# La raya corta es puntuación del español, no un guion confundido.
+allowed-confusables = ["–"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -64,6 +69,7 @@ ban-relative-imports = "all"
 [tool.mypy]
 python_version = "3.13"
 strict = true
+enable_error_code = ["explicit-override", "ignore-without-code"]
 ```
 
 | Regla | Qué atrapa |
@@ -78,12 +84,18 @@ strict = true
 | `ASYNC` | Llamadas bloqueantes dentro de una corrutina (`time.sleep`, `open`, `requests`): congelan el event loop |
 | `TID252` | Imports relativos |
 | `INP001` | Carpetas de código sin `__init__.py` |
+| `RUF` | Las reglas propias de ruff. Entre ellas `RUF006`: `asyncio.create_task` sin guardar la tarea, que el recolector de basura puede cortar a medias |
+| `DTZ` | Fechas sin zona horaria: `datetime.now()`, `datetime.utcnow()` |
+| `BLE` | `except Exception` genérico, que se traga errores que nadie esperaba |
+| `S110` | `try`-`except`-`pass`: un error que desaparece sin dejar rastro |
 | mypy `strict` | Funciones sin tipos, `Any` implícito, `type: ignore` que ya no hace falta |
+| mypy `explicit-override` | Un método que sobrescribe sin `@override` |
+| mypy `ignore-without-code` | Un `type: ignore` sin el código del error que calla |
 
 ## CI
 
 ```yaml
-- run: uv sync --frozen
+- run: uv sync --locked
 - run: uv run ruff format --check .
 - run: uv run ruff check .
 - run: uv run mypy <paquete>

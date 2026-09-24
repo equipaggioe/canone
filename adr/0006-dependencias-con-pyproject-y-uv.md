@@ -19,7 +19,8 @@ Un `>=` sin lock significa que dos instalaciones de la misma revisión traen ár
 2. `requirements.txt` se borra. No se mantiene en paralelo.
 3. `pyproject.toml` también contiene la configuración de `ruff`, `mypy` y `pytest`. Se borran
    `pytest.ini` y cualquier otro archivo de configuración suelto.
-4. CI instala con `uv sync --frozen`: un lock desactualizado falla en vez de resolver otra cosa.
+4. CI instala con `uv sync --locked`: un lock desactualizado falla en vez de resolver otra cosa.
+   `--frozen` no sirve para esto: instala el lock viejo sin comprobarlo y termina bien.
 
 ## Consecuencias
 

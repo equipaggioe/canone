@@ -11,7 +11,9 @@ suma a esto.
 - Una dependencia que nada usa se borra.
 - Ninguna dependencia, directa o transitiva, con una vulnerabilidad publicada.
 
-## Estilo (PEP 8, PEP 257 y PEP 498)
+## Estilo
+
+Estándares: PEP 8, PEP 257 y PEP 498.
 
 Sobre PEP 8:
 
@@ -28,7 +30,9 @@ Sobre PEP 498:
 
 Un `# noqa` lleva el código de la regla que calla.
 
-## Tipos (PEP 484, PEP 585, PEP 604, PEP 695 y PEP 698)
+## Tipos
+
+Estándares: PEP 484, PEP 585, PEP 604, PEP 695 y PEP 698.
 
 Sobre PEP 484:
 
@@ -48,9 +52,7 @@ Sobre PEP 698:
 
 Un enum de texto hereda de `StrEnum`.
 
-## Paquetes (PEP 420)
-
-Sobre PEP 420:
+## Paquetes
 
 - Toda carpeta con código lleva su `__init__.py`, vacío. Dos excepciones:
   - El de un registro que hay que importar por su efecto.

@@ -78,5 +78,4 @@ congela sin aviso y sin error.
 
 ## Dependencias, lint y tipos
 
-Los de [python.md](python.md). Los métodos que Qt obliga a sobrescribir (`paintEvent`, `rowCount`,
-`eventFilter`) llevan `@override`: así conservan su nombre en camelCase sin apagar `N802`.
+Los de [python.md](python.md).

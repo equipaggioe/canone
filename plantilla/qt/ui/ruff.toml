@@ -1,0 +1,11 @@
+extend = "../pyproject.toml"
+
+# extend-banned-api se suma a la lista de pyproject.toml; banned-api la reemplazaría.
+[lint.flake8-tidy-imports.extend-banned-api]
+"PySide6.QtNetwork".msg = "Una vista no habla con la red: eso va en core/"
+"PySide6.QtSql".msg = "Una vista no habla con la base: eso va en core/"
+"sqlite3".msg = "Una vista no habla con la base: eso va en core/"
+"psycopg".msg = "Una vista no habla con la base: eso va en core/"
+"asyncpg".msg = "Una vista no habla con la base: eso va en core/"
+"sqlalchemy".msg = "Una vista no habla con la base: eso va en core/"
+"subprocess".msg = "Una vista no habla con el sistema: eso va en core/"

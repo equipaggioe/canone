@@ -56,6 +56,50 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
         run: uv run pytest
 
+  desktop:
+    name: desktop (lint, tipos, tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Instalar dependencias
+        run: uv sync --locked
+
+      - name: Formularios generados (pyside6-uic)
+        run: |
+          for ui in ui/forms/*.ui; do
+            [ -e "$ui" ] || continue
+            uv run pyside6-uic "$ui" -o "ui/forms/ui_$(basename "$ui" .ui).py"
+          done
+          test -z "$(git status --porcelain -- ui/forms)"
+
+      - name: Formato (ruff)
+        run: uv run ruff format --check .
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Tipos (mypy)
+        run: uv run mypy .
+
+      - name: Dependencias sin usar (deptry)
+        run: uv run deptry .
+
+      - name: Vulnerabilidades (pip-audit)
+        run: |
+          uv export --format requirements-txt --locked -o "$RUNNER_TEMP/audit.txt"
+          uv run pip-audit -r "$RUNNER_TEMP/audit.txt" --require-hashes --disable-pip
+
+      - name: Tests (pytest)
+        run: uv run pytest
+
   # Un job igual a este por superficie web: panel, backoffice, landing, pwa.
   panel:
     name: panel (tipos, tests, build)

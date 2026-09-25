@@ -1,0 +1,71 @@
+[project]
+name = "PRODUCTO-desktop"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+  "pyside6>=6.11",
+]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.16",
+  "mypy>=2.3",
+  "pytest>=9.1",
+  "pytest-qt>=4.5",
+  "deptry>=0.25",
+  "pip-audit>=2.9",
+]
+
+[tool.ruff]
+line-length = 99
+extend-exclude = ["ui/forms/ui_*.py"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "D", "UP", "B", "SIM", "ASYNC", "TID", "INP", "RUF", "DTZ", "BLE", "S110", "PGH004", "T20", "G", "LOG"]
+ignore = ["D1"]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 72
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"requests".msg = "HTTP va por QNetworkAccessManager"
+"httpx".msg = "HTTP va por QNetworkAccessManager"
+"urllib.request".msg = "HTTP va por QNetworkAccessManager"
+"asyncio".msg = "El lazo de eventos es el de Qt"
+"PySide6.QtAsyncio".msg = "El lazo de eventos es el de Qt"
+"PySide6.QtCore.SIGNAL".msg = "Se conecta con signal.connect(slot)"
+"PySide6.QtCore.SLOT".msg = "Se conecta con signal.connect(slot)"
+"PySide6.QtUiTools".msg = "Un .ui se compila con pyside6-uic"
+"__feature__.snake_case".msg = "La API de Qt se usa en camelCase, como en su documentación"
+"PySide6.QtWidgets.QTableWidget".msg = "Un modelo con QTableView"
+"PySide6.QtWidgets.QListWidget".msg = "Un modelo con QListView"
+"PySide6.QtWidgets.QTreeWidget".msg = "Un modelo con QTreeView"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["INP001"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+enable_error_code = ["explicit-override", "ignore-without-code"]
+untyped_calls_exclude = ["ui.forms"]
+
+[[tool.mypy.overrides]]
+module = "ui.forms.*"
+ignore_errors = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = ["--import-mode=importlib"]
+qt_log_level_fail = "WARNING"
+filterwarnings = ["error:.*is marked as deprecated:DeprecationWarning"]
+
+[tool.uv]
+python-preference = "only-system"

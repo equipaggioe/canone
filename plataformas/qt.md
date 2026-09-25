@@ -1,81 +1,116 @@
 # PySide6 (Qt)
 
-Cómo se construye una aplicación de escritorio.
+Aplicación de escritorio con Qt Widgets. Se suma a [python.md](python.md). Archivos base en
+[`plantilla/qt/`](../plantilla/qt/).
 
 ## Layout
 
 ```
-app/
-  main.py               crea QApplication, aplica el tema, abre la ventana
-  core/                 lo que no es interfaz
-    api_client.py       QNetworkAccessManager + señales
-    session.py          tokens y estado de sesión
-    constants.py        URL del servidor, timeouts, tamaños
+desktop/
+  pyproject.toml
+  main.py
+  core/
+    api_client.py
+    session.py
+    constants.py
   ui/
-    theme.py            tokens + hoja de estilos global
+    ruff.toml
+    theme.py
     main_window.py
-    <vista>_view.py     una por pantalla
-    <algo>_panel.py     paneles reutilizables
+    <vista>_view.py
+    <algo>_panel.py
+    forms/
+      <nombre>.ui
+      ui_<nombre>.py
+  tests/
+    conftest.py
+    test_conventions.py
+    test_theme.py
 ```
 
-Ninguna vista habla con la red, la base ni el sistema directamente.
+- La red, la base y el sistema solo se tocan desde `core/`.
+
+## PySide6
+
+Estándares: *Considerations* y *Porting from PySide2 to PySide6* de Qt for Python, y su tutorial
+*Signals and Slots*.
+
+Sobre *Considerations* y *Porting*:
+
+- Enums con su nombre completo.
+- `exec()`, nunca `exec_()`.
+- Nada de API que PySide6 marque como obsoleta, como `QMouseEvent.pos()` o los atributos de alta
+  resolución.
+
+Sobre *Signals and Slots*:
+
+- Conexiones con `signal.connect(slot)`, nunca con `SIGNAL()` ni `SLOT()`.
+- Todo método conectado a una señal lleva `@Slot`.
+
+Donde la documentación admite dos caminos:
+
+- La API de Qt se usa en `camelCase`, como en su documentación. Nada de
+  `from __feature__ import snake_case`.
+- Un `.ui` se compila con `pyside6-uic` a `ui/forms/ui_<nombre>.py`, nunca se carga con
+  `QUiLoader`: así mypy ve cada widget con su tipo.
+- El `ui_<nombre>.py` generado se commitea junto a su `.ui` y nunca se edita a mano.
 
 ## Tema
 
-**Todos los tokens en un módulo, y la hoja de estilos generada desde ellos.** Nunca un `.qss`
-estático con los colores escritos aparte, ni `setStyleSheet` con literales dentro de un widget: en
-los dos casos los colores viven dos veces y uno de los dos se queda viejo.
+Estándar: Qt Style Sheets.
 
-```python
-class Colors:
-    BG      = '#0d1117'
-    SURFACE = '#1c212b'
-    ACCENT  = '#58a6ff'
-    ERROR   = '#f85149'
+- Estilo `Fusion`.
+- Colores solo en `ui/theme.py`.
+- Los colores van en una sola hoja de estilos, aplicada a la `QApplication`. Ningún widget llama a
+  `setStyleSheet`.
+- Nada de `setPalette`: la documentación de Qt desaconseja combinarlo con una hoja de estilos.
+- Una variante es una propiedad dinámica con su selector en la hoja global. Al cambiarla, `unpolish`
+  y `polish` del widget.
 
-class Fonts:
-    FAMILY = '"Inter", "Segoe UI", sans-serif'
-    MONO   = '"Cascadia Code", "Consolas", monospace'
-    SIZE_BASE = 15
+## Red e hilos
 
-class Spacing:  XS, SM, MD, LG, XL, XXL = 4, 8, 12, 16, 24, 32
-class Radius:   SM, MD, LG, XL = 4, 8, 12, 16
-```
+Estándar: hilos de Qt y `QNetworkAccessManager`.
 
-```python
-def apply_theme(app: QApplication) -> None:
-    app.setFont(...)
-    app.setStyleSheet(global_stylesheet())   # f-string que interpola los tokens
-    app.setPalette(palette_from(Colors))
-```
+- Los widgets solo se usan desde el hilo principal.
+- Nada que tarde corre en el hilo principal.
+- HTTP solo por `QNetworkAccessManager`: una instancia para toda la aplicación, usada desde el hilo
+  que la creó.
+- La instancia se crea con `setAutoDeleteReplies(True)`: cada `QNetworkReply` se libera sola al
+  terminar.
+- Nada de `asyncio` ni `QtAsyncio`.
+- Un trabajo con comandos es un `QObject` movido con `moveToThread`. Una tarea suelta, un
+  `QRunnable` en el `QThreadPool`. Un bucle permanente sin eventos, un `QThread` con `run()`.
+- El resultado vuelve por una señal. Un worker no toca widgets.
+- La conexión a la base se abre en el hilo que la usa.
 
-**La `QPalette` se llena con los mismos tokens.** Sin eso, los diálogos nativos y los menús
-contextuales salen con los colores del sistema y no con los de la aplicación.
+## Tests
 
-Dos ayudantes que evitan inventar tokens y elegir colores a ojo:
+- `pytest-qt`.
+- Una advertencia de Qt hace fallar el test.
+- Plataforma `offscreen` y la categoría `qt.pyside.libpyside` activa.
 
-| Función | Qué resuelve |
+## Cómo se hace cumplir
+
+| Convención | Con qué |
 |---|---|
-| `tint(hex, alpha)` | `rgba(...)` desde un hex, para halos y fondos teñidos |
-| `on_color(hex)` | Color de texto legible sobre ese fondo, por luminancia relativa (WCAG) |
+| Enums con nombre completo | mypy `strict` |
+| `exec()`, no `exec_()` | `tests/test_conventions.py` |
+| Sin API obsoleta | `filterwarnings` de pytest vuelve error el `DeprecationWarning` de PySide6, en lo que recorren los tests |
+| Estilo `Fusion` | `tests/test_conventions.py` |
+| `@Slot` | `qt.pyside.libpyside` y `qt_log_level_fail`, en lo que recorren los tests |
+| Sin `SIGNAL()` ni `SLOT()` | `TID251` en `pyproject.toml` |
+| Solo `QNetworkAccessManager`, sin `asyncio` | `TID251` en `pyproject.toml` |
+| Una sola instancia de `QNetworkAccessManager`, con `setAutoDeleteReplies(True)` | `tests/test_conventions.py` |
+| Sin `snake_case` ni `QUiLoader` | `TID251` en `pyproject.toml` |
+| `ui_*.py` generados | Fuera de ruff con `extend-exclude`; en mypy, `ignore_errors` y `untyped_calls_exclude` para `ui.forms` |
+| `ui_*.py` commiteado y sin editar | CI lo regenera con `pyside6-uic` y falla si `ui/forms/` cambia |
+| Sin `setPalette` | `tests/test_conventions.py` |
+| Red, base y sistema solo en `core/` | `TID251` en `ui/ruff.toml` |
+| Colores y `setStyleSheet` solo en `theme.py` | `tests/test_theme.py` |
+| `ui/ruff.toml`, `tests/test_theme.py` y `tests/test_conventions.py` iguales a los de canone | `scripts/verificar.py` |
 
-Si el producto también tiene superficie web, la paleta es la misma y el archivo dice de cuál es
-espejo.
+### CI
 
-## Red
-
-`QNetworkAccessManager` con señales. **Nada de `requests` en el hilo de la interfaz**: una petición
-síncrona congela la ventana.
-
-El sobre de error se traduce a un error tipado con los mismos campos que en las demás plataformas:
-la plataforma cambia el transporte, no el contrato — ver [fastapi.md](fastapi.md).
-
-## Hilos
-
-Nada que tarde corre en el hilo de la interfaz. Las consultas a la base van en un worker dedicado y
-las tareas largas, fuera del hilo principal. Una consulta síncrona en el hilo de la ventana la
-congela sin aviso y sin error.
-
-## Dependencias, lint y tipos
-
-Los de [python.md](python.md).
+Los pasos de [python.md](python.md), con `mypy .`, y después `uv run pytest`. Antes de ruff, el paso
+que regenera los formularios. Todo está en el job `desktop` de
+[`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml).

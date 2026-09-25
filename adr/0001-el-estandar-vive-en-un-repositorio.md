@@ -1,6 +1,7 @@
 # ADR-0001 · El estándar vive en un repositorio y los demás lo enlazan
 
-- **Estado:** Propuesta
+- **Estado:** Propuesta. La última frase del punto 2 está reemplazada por
+  [ADR-0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md)
 - **Fecha:** 2026-09-22
 - **Alcance:** todos los repositorios
 

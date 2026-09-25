@@ -21,3 +21,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0011](0011-la-pasada-es-una-funcion-y-el-disparador-va-aparte.md) | La pasada periódica es una función, y el disparador va aparte | Con `server/` | Propuesta |
 | [0012](0012-el-prefijo-api-v1-se-aplica-al-montar.md) | El prefijo `/api/v1` se aplica al montar | Con FastAPI | Propuesta |
 | [0013](0013-un-enum-hereda-de-strenum-y-se-guarda-como-varchar-con-check.md) | Un enum hereda de `StrEnum` y se guarda como VARCHAR con CHECK | Con base de datos | Propuesta |
+| [0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md) | Una página de plataforma se escribe desde la recomendación oficial, no desde el código | `plataformas/` | Aceptada |

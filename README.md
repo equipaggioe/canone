@@ -23,8 +23,9 @@ convención de `docs/` y lo mínimo del repositorio.
 ## Plataformas documentadas
 
 Una página existe porque la tecnología ya está en uso, aunque sea en un solo repositorio y aunque
-todavía sea poco código. Usar una tecnología nueva empieza por escribir su página leyendo el código
-que la estrenó.
+todavía sea poco código. Se escribe desde la documentación oficial más reciente de la tecnología, o
+desde la mejor práctica establecida donde no la hay, nunca desde el código existente — ver
+[ADR-0014](adr/0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md).
 
 | Servidor y datos | Cliente | Transversal |
 |---|---|---|

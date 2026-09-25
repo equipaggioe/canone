@@ -22,6 +22,13 @@ CANONICOS = [
     Path("server/app/schemas/base.py"),
 ]
 
+# Relativos a cada pieza Qt, que es la que declara pyside6 en sus dependencias.
+CANONICOS_QT = [
+    Path("ui/ruff.toml"),
+    Path("tests/test_theme.py"),
+    Path("tests/test_conventions.py"),
+]
+
 # Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del
 # dominio. `panel` y `landing` son las dos excepciones, con el nombre que ya usa la industria.
 PREFIJOS = ("server", "web", "mobile", "desktop")
@@ -133,6 +140,24 @@ def revisar(repo: Path) -> list[str]:
                 f"plataformas/sveltekit.md: {superficie.name}/ no tiene uno.config.ts"
                 " (la config de UnoCSS no va dentro de vite.config.ts)"
             )
+
+    # Qt: solo para las piezas que dependan de PySide6.
+    for pieza in sorted(p for p in repo.iterdir() if p.is_dir() and not p.name.startswith(".")):
+        declaraciones = [pieza / "pyproject.toml", pieza / "requirements.txt"]
+        if not any(
+            d.exists() and "pyside6" in d.read_text(encoding="utf-8").lower() for d in declaraciones
+        ):
+            continue
+        for rel in CANONICOS_QT:
+            copia = pieza / rel
+            if not copia.exists():
+                fallas.append(f"ADR-0002: falta {pieza.name}/{rel.as_posix()}")
+            elif normalizar(copia.read_text(encoding="utf-8")) != normalizar(
+                (PLANTILLA / "qt" / rel).read_text(encoding="utf-8")
+            ):
+                fallas.append(
+                    f"ADR-0002: {pieza.name}/{rel.as_posix()} no coincide con el canónico de canone"
+                )
 
     # Flutter: solo para las apps que existan.
     for pubspec in repo.glob("*/pubspec.yaml"):

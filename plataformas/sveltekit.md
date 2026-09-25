@@ -64,7 +64,6 @@ mantienen donde ya estén escritos; no se agregan nuevos.
 - Un solo módulo arma las peticiones y aplica el token. Ningún componente llama a `fetch` directo.
 - Los tipos salen del `openapi.json` del servidor. Se commitea el archivo generado; el
   `openapi.json`, no.
-- Los errores se leen por `errorCode`, nunca por `detail` — ver [fastapi.md](fastapi.md).
 
 ## Tipos y tests
 

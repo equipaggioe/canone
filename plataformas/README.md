@@ -15,7 +15,7 @@ Una página por tecnología. **Se lee la de lo que el repositorio use**; las dem
 | [sveltekit.md](sveltekit.md) | Adaptador, layout de `src/lib`, UnoCSS, runes, cliente de la API, tests |
 | [flutter.md](flutter.md) | Layout de `lib/`, tokens, estado, red, almacenamiento, analizador, mapas |
 | [flet.md](flet.md) | Layout de `src/`, `core/`, tokens, cliente de la API, sesión, empaquetado |
-| [qt.md](qt.md) | Layout, tokens y hoja de estilos generada, red y hilos sin congelar la ventana |
+| [qt.md](qt.md) | Layout, API de PySide6, archivos `.ui`, padres, layouts, diálogos, model/view, `QSettings`, Fusion y hoja de estilos global, red e hilos, tests con `pytest-qt`, empaquetado con `pyside6-deploy` |
 | [despliegue.md](despliegue.md) | Cómo tiene que quedar el servidor: qué se expone, los procesos, los datos, la configuración |
 
 ## Qué es y qué no es una página
@@ -23,10 +23,12 @@ Una página por tecnología. **Se lee la de lo que el repositorio use**; las dem
 Una página dice **cómo se hace**. No dice qué repositorio la usa hoy ni cuándo elegir una plataforma
 sobre otra: lo primero es un dato que envejece, lo segundo se decide producto por producto.
 
-Se agrega una página cuando la tecnología se estrena en algún repositorio, y se escribe leyendo ese
-código. Si dos repositorios ya la usan distinto, la página fija una sola forma y la diferencia va a
-[homologacion.md](../homologacion.md), que es el documento de trabajo y se borra cuando la
-homologación termine.
+Se agrega una página cuando la tecnología se estrena en algún repositorio. Se escribe desde la
+documentación oficial más reciente, o desde la mejor práctica establecida donde no la hay, y nunca
+desde el código existente — ver
+[ADR-0014](../adr/0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md). Lo que un
+repositorio hace distinto va a [homologacion.md](../homologacion.md), que es el documento de trabajo
+y se borra cuando la homologación termine.
 
 ## Lo que cruza plataformas
 

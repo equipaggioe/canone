@@ -20,6 +20,7 @@ Sobre PEP 8:
 - El formato de Black.
 - Líneas de 99 caracteres.
 - Imports siempre absolutos y, dentro de cada bloque, en el orden de isort.
+- Las constantes de módulo en `UPPER_CASE`.
 - Un método que sobrescribe uno de una biblioteca conserva el nombre que esta le impone, aunque no
   sea `snake_case`.
 - Se atrapa la excepción que se espera, nunca `except Exception`. Un `except` no termina en `pass`.
@@ -106,42 +107,10 @@ Siempre con zona horaria.
 | Async | `ASYNC`, `RUF006` |
 | `__init__.py` | `INP001`, apagada en `tests/`, y pytest con `--import-mode=importlib` |
 | Sin convención propia | `F`, `B`, `SIM`, `RUF` |
-| Se revisa leyendo | El logger con `__name__`, las constantes en `UPPER_CASE` y que la referencia de una tarea viva mientras corre (`RUF006` solo exige que se asigne) |
 
-### Configuración base
+### Configuración
 
-```toml
-[tool.ruff]
-line-length = 99
-
-[tool.ruff.lint]
-select = ["E", "W", "F", "I", "N", "D", "UP", "B", "SIM", "ASYNC", "TID", "INP", "RUF", "DTZ", "BLE",
-          "S110", "PGH004", "T20", "G", "LOG"]
-ignore = ["D1"]
-
-[tool.ruff.lint.pycodestyle]
-max-doc-length = 72
-
-[tool.ruff.lint.pydocstyle]
-convention = "pep257"
-
-[tool.ruff.lint.flake8-tidy-imports]
-ban-relative-imports = "all"
-
-[tool.ruff.lint.per-file-ignores]
-"tests/**" = ["INP001"]
-
-[tool.mypy]
-python_version = "3.13"
-strict = true
-enable_error_code = ["explicit-override", "ignore-without-code"]
-
-[tool.pytest.ini_options]
-addopts = ["--import-mode=importlib"]
-
-[tool.uv]
-python-preference = "only-system"
-```
+La base está en [`plantilla/python/pyproject.toml`](../plantilla/python/pyproject.toml).
 
 - Un paquete sin tipos va en su propio `[[tool.mypy.overrides]]`, nunca en el bloque global.
 - Una dependencia que se usa sin importarse va en `[tool.deptry.per_rule_ignores]`, con el motivo
@@ -151,12 +120,5 @@ python-preference = "only-system"
 
 ### CI
 
-```yaml
-- run: uv sync --locked
-- run: uv run ruff format --check .
-- run: uv run ruff check .
-- run: uv run mypy <paquete>
-- run: uv run deptry .
-- run: uv export --format requirements-txt --locked -o "$RUNNER_TEMP/audit.txt"
-- run: uv run pip-audit -r "$RUNNER_TEMP/audit.txt" --require-hashes --disable-pip
-```
+Los pasos están en el job de cada pieza de
+[`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml).

@@ -60,9 +60,6 @@ core/network/
 Ante un 401 se refresca la sesión **una sola vez** y se reintenta una vez. Nunca un bucle de
 reintentos silencioso.
 
-El sobre de error del servidor se traduce a un error tipado con los mismos campos que en las demás
-plataformas; la app ramifica sobre `errorCode` y muestra `detail` — ver [fastapi.md](fastapi.md).
-
 ## Almacenamiento
 
 | Qué | Dónde |

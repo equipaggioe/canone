@@ -1,6 +1,6 @@
 # ADR-0014 · Una página de plataforma se escribe desde la recomendación oficial, no desde el código
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0016](0016-una-pagina-es-un-catalogo-de-convenciones-que-sale-de-la-recomendacion-oficial.md)
 - **Fecha:** 2026-09-24
 - **Alcance:** `plataformas/`
 

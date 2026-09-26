@@ -31,7 +31,7 @@ Cómo se comporta el endpoint, no solo qué guarda (ADR-0009):
 - **Se verifica siempre una contraseña**, exista la cuenta o no, contra un hash señuelo calculado
   al arrancar. argon2 cuesta ~100 ms a propósito: responder de inmediato cuando el identificador no
   existe mide la diferencia desde fuera y vuelve inútil el mensaje de error uniforme.
-- **Un solo `errorCode`** para identificador desconocido, contraseña mala y cuenta inactiva. El
+- **Un solo `type`** de error para identificador desconocido, contraseña mala y cuenta inactiva. El
   motivo real va al registro de eventos.
 - **El bloqueo por fuerza bruta se calcula sobre la tabla `login_attempt`**, con umbral por
   identificador y por IP sobre una ventana de minutos. **Nunca en memoria del proceso**: se pierde

@@ -11,7 +11,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
+import tomllib
 from pathlib import Path
 
 CANONE = Path(__file__).resolve().parent.parent
@@ -20,7 +22,16 @@ PLANTILLA = CANONE / "plantilla"
 CANONICOS = [
     Path("server/app/models/base.py"),
     Path("server/app/schemas/base.py"),
+    Path("server/app/core/tracing.py"),
+    Path("server/app/models/ruff.toml"),
+    Path("server/app/schemas/ruff.toml"),
+    Path("server/app/services/ruff.toml"),
+    Path("server/tests/test_conventions.py"),
 ]
+
+# plataformas/fastapi.md, tabla de dependencias. pytest-asyncio no se importa: se descarta por la
+# dependencia declarada, y el resto también, así un paquete se ve aunque nadie lo importe todavía.
+DESCARTADAS = {"python-jose", "passlib", "psycopg", "psycopg2", "psycopg2-binary", "pytest-asyncio"}
 
 # Relativos a cada pieza Qt, que es la que declara pyside6 en sus dependencias.
 CANONICOS_QT = [
@@ -68,6 +79,19 @@ def bitacoras_solo_lectura(servidor: Path) -> list[str]:
     return fallas
 
 
+def dependencias(pyproject: Path) -> set[str]:
+    datos = tomllib.loads(pyproject.read_text(encoding="utf-8"))
+    declaradas = list(datos.get("project", {}).get("dependencies", []))
+    for grupo in datos.get("dependency-groups", {}).values():
+        declaradas.extend(d for d in grupo if isinstance(d, str))
+    nombres = set()
+    for declarada in declaradas:
+        nombre = re.match(r"[A-Za-z0-9._-]+", declarada)
+        if nombre:
+            nombres.add(re.sub(r"[._]", "-", nombre.group()).lower())
+    return nombres
+
+
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
     tiene_servidor = (repo / "server").is_dir()
@@ -109,6 +133,9 @@ def revisar(repo: Path) -> list[str]:
             fallas.append("ADR-0006: server/requirements.txt sigue existiendo")
         if not (servidor / "pyproject.toml").exists():
             fallas.append("ADR-0006: falta server/pyproject.toml")
+        else:
+            for nombre in sorted(dependencias(servidor / "pyproject.toml") & DESCARTADAS):
+                fallas.append(f"plataformas/fastapi.md: server/ declara {nombre}, que está descartada")
         if (servidor / "pytest.ini").exists():
             fallas.append("ADR-0006: pytest.ini suelto; la configuración va en pyproject.toml")
         if (servidor / "app/api").is_dir() and (servidor / "app/routers").is_dir():

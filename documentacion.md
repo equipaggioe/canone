@@ -82,7 +82,7 @@ Un pendiente se **borra** de aquí en el commit que lo resuelve. No se tacha ni 
 
 ### Reglas
 
-1. **Un ADR por decisión con consecuencias**, no por tarea. Va un ADR si leer el código no basta para saber por qué es así, o si alguien podría «arreglarlo» y romper algo.
+1. **Un ADR por decisión con consecuencias**, no por tarea. Va un ADR si leer el código no basta para saber por qué es así, o si alguien podría «arreglarlo» y romper algo. **Se escribe cuando la decisión está bien definida**, no con cada cambio mientras se discute. Corregir un error no es una decisión y no lleva ADR.
 2. **Un ADR no se edita para cambiar de opinión.** Una decisión que reemplaza a otra es un ADR nuevo; en el viejo solo cambia el estado a «Reemplazada por ADR-NNNN», con enlace. Nadie lee como vigente una regla que ya no rige.
 3. **Estados:** `Propuesta` · `Aceptada` · `En evaluación` · `Reemplazada por ADR-NNNN` · `Descartada`. **El estado es de la decisión, no de la implementación.** «Aceptada y sin construir» es normal: lo que falta construir va en el 30, nunca en el ADR.
 4. **`Aceptada` solo si la persona que decide la confirmó explícitamente.** Lo que se eligió al implementar sin preguntar va como `Propuesta`, o como un punto marcado *(propuesta)* dentro de un ADR aceptado. Que algo «siga la misma lógica» que otra decisión confirmada no lo convierte en confirmado.

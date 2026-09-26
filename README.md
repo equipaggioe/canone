@@ -22,10 +22,7 @@ convención de `docs/` y lo mínimo del repositorio.
 
 ## Plataformas documentadas
 
-Una página existe porque la tecnología ya está en uso, aunque sea en un solo repositorio y aunque
-todavía sea poco código. Se escribe desde la documentación oficial más reciente de la tecnología, o
-desde la mejor práctica establecida donde no la hay, nunca desde el código existente — ver
-[ADR-0014](adr/0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md).
+Qué es una página y de dónde sale: [plataformas/README.md](plataformas/README.md).
 
 | Servidor y datos | Cliente | Transversal |
 |---|---|---|
@@ -33,10 +30,6 @@ desde la mejor práctica establecida donde no la hay, nunca desde el código exi
 | [postgres.md](plataformas/postgres.md) | [flutter.md](plataformas/flutter.md) | [tiempo-real.md](plataformas/tiempo-real.md) |
 | [despliegue.md](plataformas/despliegue.md) | [flet.md](plataformas/flet.md) | [notificaciones.md](plataformas/notificaciones.md) |
 | | [qt.md](plataformas/qt.md) | [pagos.md](plataformas/pagos.md) · [i18n.md](plataformas/i18n.md) |
-
-**Ninguna página dice qué repositorio usa qué, ni cuándo elegir una plataforma sobre otra.** Lo
-primero es un dato que envejece y vive en [homologacion.md](homologacion.md); lo segundo se decide
-producto por producto.
 
 ## Las dos reglas que sostienen esto
 

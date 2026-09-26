@@ -1,11 +1,11 @@
 from datetime import datetime
-from typing import Generic, Literal, TypeVar
+from typing import Any, Generic, Literal, TypeVar
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field
 from pydantic.alias_generators import to_camel
 
-from app.core.enums import ErrorCode
+from app.core.enums import ProblemType
 
 T = TypeVar("T")
 
@@ -77,12 +77,35 @@ class PageResponse(SchemaBase, Generic[T]):
     meta: PageMeta = Field(description="Pagination metadata")
 
 
-class ErrorResponse(SchemaBase):
-    status: int = Field(ge=400, le=599, description="HTTP error code")
+# RFC 9457 problem details, served as application/problem+json
+class FieldError(SchemaBase):
+    detail: str = Field(description="What is wrong with the field")
+    pointer: str = Field(description="JSON Pointer to the field in the request content")
+
+
+class ProblemDetails(SchemaBase):
+    type: ProblemType = Field(description="Problem type URI; the client branches on it")
+    title: str = Field(description="Short summary of the problem type")
+    status: int = Field(ge=400, le=599, description="Same HTTP status code as the response")
     detail: str = Field(description="Specific detail of this occurrence")
-    error_code: ErrorCode = Field(description="Business error code")
-    errors: dict[str, list[str]] | None = Field(None, description="Field validation errors")
-    request_id: str | None = Field(None, description="Request identifier")
+    errors: list[FieldError] | None = Field(None, description="Field validation errors")
+    trace_id: str | None = Field(None, description="W3C Trace Context trace-id of the request")
+
+
+# ADR-0015: FastAPI documents `model` under the route's media type, application/json, so
+# application/problem+json points to the same schema by hand. 422 is listed because FastAPI
+# would otherwise document its own validation error.
+_PROBLEM_RESPONSE: dict[str, Any] = {
+    "model": ProblemDetails,
+    "content": {
+        "application/problem+json": {"schema": {"$ref": "#/components/schemas/ProblemDetails"}}
+    },
+}
+PROBLEM_RESPONSES: dict[int | str, dict[str, Any]] = {
+    "4XX": _PROBLEM_RESPONSE,
+    422: _PROBLEM_RESPONSE,
+    "5XX": _PROBLEM_RESPONSE,
+}
 
 
 class EnumOption(SchemaBase):

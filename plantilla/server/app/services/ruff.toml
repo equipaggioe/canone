@@ -1,0 +1,7 @@
+extend = "../../pyproject.toml"
+
+# extend-banned-api se suma a la lista de pyproject.toml; banned-api la reemplazaría.
+[lint.flake8-tidy-imports.extend-banned-api]
+"fastapi".msg = "Un servicio no sabe de FastAPI: levanta AppError y el router responde"
+"starlette".msg = "Un servicio no sabe de FastAPI: levanta AppError y el router responde"
+"app.routers".msg = "Un servicio no importa routers"

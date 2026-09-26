@@ -42,7 +42,8 @@ timbra nóminas y banditore pide paradas. Lo que sí se puede fijar es el sobre 
    | `target_type` / `target_id` | Sobre qué. Opcionales |
    | `outcome` | `success` o `failure` |
    | `severity` | `low`, `medium`, `high`, `critical` |
-   | `ip_address`, `user_agent`, `request_id` | De dónde vino |
+   | `ip_address`, `user_agent` | De dónde vino |
+   | `trace_id` | El trace-id del W3C Trace Context, el mismo del log y del `traceId` del error |
    | `details` | JSONB, con la regla del punto 5 |
 
 2. **La categoría es de la convención; la acción es del repositorio.** El enum de `action` vive en

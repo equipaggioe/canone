@@ -47,11 +47,11 @@ class ApiError(Exception):
     path: str
     status_code: int | None
     detail: str
-    error_code: str | None
-    request_id: str | None
+    type: str | None
+    trace_id: str | None
 ```
 
-La interfaz ramifica sobre `error_code` y muestra `detail` — ver [fastapi.md](fastapi.md).
+La interfaz ramifica sobre `type` y muestra `detail` — ver [fastapi.md](fastapi.md).
 
 ## Tema
 

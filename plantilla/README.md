@@ -33,6 +33,6 @@ repositorio debe tener**: se copia solo lo de las plataformas que el producto us
 
 Todavía no hay plantilla de código de Flutter ni de Flet, solo su `.gitignore`. Cuando la haya,
 sale de la documentación oficial, no de un repositorio — ver
-[ADR-0016](../adr/0016-una-pagina-es-un-catalogo-de-convenciones-que-sale-de-la-recomendacion-oficial.md).
+[ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md).
 
 `canone/scripts/verificar.py` comprueba que las copias no se hayan separado.

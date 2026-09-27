@@ -23,5 +23,6 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0013](0013-un-enum-hereda-de-strenum-y-se-guarda-como-varchar-con-check.md) | Un enum hereda de `StrEnum` y se guarda como VARCHAR con CHECK | Con base de datos | Propuesta |
 | [0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md) | Una página de plataforma se escribe desde la recomendación oficial, no desde el código | `plataformas/` | Reemplazada por ADR-0016 |
 | [0015](0015-el-sobre-de-error-sigue-el-rfc-9457.md) | El sobre de error sigue el RFC 9457 | Con `server/` y sus clientes | Aceptada |
-| [0016](0016-una-pagina-es-un-catalogo-de-convenciones-que-sale-de-la-recomendacion-oficial.md) | Una página de plataforma es un catálogo de convenciones que sale de la recomendación oficial | `plataformas/` | Aceptada |
+| [0016](0016-una-pagina-es-un-catalogo-de-convenciones-que-sale-de-la-recomendacion-oficial.md) | Una página de plataforma es un catálogo de convenciones que sale de la recomendación oficial | `plataformas/` | Reemplazada por ADR-0018 |
 | [0017](0017-la-marca-vive-en-brand.md) | El logo y los colores del producto viven en `brand/` | Todos | Aceptada |
+| [0018](0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md) | Una página se revisa contra la copia de sus estándares y solo dice lo que elige, endurece o no cubren | `plataformas/` | Aceptada |

@@ -62,7 +62,7 @@ herramienta la haga cumplir.
 
 Se agrega una página cuando la tecnología se estrena en algún repositorio.
 
-El porqué, en el [ADR-0016](../adr/0016-una-pagina-es-un-catalogo-de-convenciones-que-sale-de-la-recomendacion-oficial.md).
+El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md).
 
 ## Lo que cruza plataformas
 

@@ -1,6 +1,6 @@
 # ADR-0016 · Una página de plataforma es un catálogo de convenciones que sale de la recomendación oficial
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0018](0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md)
 - **Fecha:** 2026-09-26
 - **Alcance:** `plataformas/` y los archivos de `plantilla/` que rige cada página
 

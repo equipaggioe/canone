@@ -3,120 +3,120 @@
 Lo común a toda pieza en Python: `server/`, Flet y Qt. Lo propio de cada una va en su página y se
 suma a esto.
 
-## Versión y dependencias
+## Proyecto
 
-- Python 3.13, el del sistema (Debian 13). Nunca uno descargado por `uv`.
-- `pyproject.toml` (PEP 621) + `uv.lock`, sin `requirements.txt`. El lock siempre corresponde al
+Estándares: [*pyproject.toml specification*](../estandares/pypa/pyproject-toml.rst) y
+[*Dependency Groups*](../estandares/pypa/dependency-groups.rst) de PyPA.
+
+- Python 3.13, el del sistema (Debian 13).
+- Las dependencias se instalan con `uv` y se bloquean en `uv.lock`, que siempre corresponde al
   `pyproject.toml`.
+- Las herramientas de desarrollo van en el grupo `dev`.
 - Una dependencia que nada usa se borra.
 - Ninguna dependencia, directa o transitiva, con una vulnerabilidad publicada.
 
 ## Estilo
 
-Estándares: PEP 8, PEP 257 y PEP 498.
-
-Sobre PEP 8:
+Estándares: [PEP 8](../estandares/python/pep-0008.rst),
+[PEP 257](../estandares/python/pep-0257.rst) y [PEP 498](../estandares/python/pep-0498.rst).
 
 - El formato de Black.
 - Líneas de 99 caracteres.
-- Imports siempre absolutos y, dentro de cada bloque, en el orden de isort.
-- Las constantes de módulo en `UPPER_CASE`.
-- Un método que sobrescribe uno de una biblioteca conserva el nombre que esta le impone, aunque no
-  sea `snake_case`.
-- Se atrapa la excepción que se espera, nunca `except Exception`. Un `except` no termina en `pass`.
-
-Sobre PEP 498:
-
-- Siempre f-strings, nunca `%` ni `.format()`.
-
-Un `# noqa` lleva el código de la regla que calla.
+- Imports absolutos, en el orden de isort dentro de cada grupo.
+- El texto se arma con f-strings.
+- `except Exception` solo para registrar el traceback, o para limpiar y relanzar: en cualquier otro
+  caso esconde el error.
+- Un `except` registra, traduce o relanza el error.
+- Un `# noqa` lleva el código de la regla que calla.
 
 ## Tipos
 
-Estándares: PEP 484, PEP 585, PEP 604, PEP 695 y PEP 698.
+Estándares: [PEP 484](../estandares/python/pep-0484.rst),
+[PEP 604](../estandares/python/pep-0604.rst), [PEP 695](../estandares/python/pep-0695.rst),
+[PEP 698](../estandares/python/pep-0698.rst) y [`enum`](../estandares/python/enum.rst).
 
-Sobre PEP 484:
-
-- Toda función anotada y nada de `Any` implícito.
-- Un import que solo anota un tipo y crearía un ciclo va bajo `if TYPE_CHECKING:`. Nunca en un
-  schema de Pydantic ni en los parámetros de un endpoint o una dependencia de FastAPI.
+- Toda función y todo genérico con sus tipos completos: un parámetro sin anotar es `Any`, y mypy
+  no revisa lo que pasa por él.
+- Uniones con `X | Y`. Genéricos y alias con la sintaxis de PEP 695: `class Box[T]`,
+  `type Pair = ...`.
+- `@override` en todo método que sobrescribe otro: si la clase base lo renombra o lo borra, mypy lo
+  marca.
+- Un import que solo lee mypy y crearía un ciclo va bajo `if TYPE_CHECKING:`.
 - Un `# type: ignore` lleva el código del error que calla.
+- Un enum de texto hereda de `StrEnum`.
 
-Sobre PEP 585, PEP 604 y PEP 695:
+## Paquetes y tests
 
-- Siempre su sintaxis: `list[int]`, `X | None`, `class Box[T]`. Nunca `typing.List`, `Optional`,
-  `Union`, `TypeVar` ni `Generic`.
+Estándares: [PEP 420](../estandares/python/pep-0420.rst) y
+[*Good Integration Practices*](../estandares/pytest/goodpractices.rst) de pytest.
 
-Sobre PEP 698:
-
-- Un método que sobrescribe uno de una biblioteca lleva `@override`.
-
-Un enum de texto hereda de `StrEnum`.
-
-## Paquetes
-
-- Toda carpeta con código lleva su `__init__.py`, vacío. Dos excepciones:
-  - El de un registro que hay que importar por su efecto.
-  - El de un paquete de `packages/`, que reexporta su API pública.
-- `tests/` no lleva `__init__.py`. Lo que comparten varios tests va en `conftest.py`.
+- Toda carpeta con código es un paquete regular, con su `__init__.py` vacío. Solo dos llevan código:
+  el de un registro que se importa por su efecto, y el de un paquete de `packages/`, que reexporta
+  su API pública.
+- Los tests van en `tests/`, fuera del código y sin `__init__.py`.
 
 ## Logging
 
-- Cada módulo que registra algo declara `logger = logging.getLogger(__name__)`. Nada va al logger
-  raíz.
-- El nivel, el formato y el destino se configuran una sola vez, en el punto de entrada. Un módulo no
-  agrega handlers.
-- Los argumentos van aparte, nunca en un f-string.
+Estándar: la [guía de logging](../estandares/python/logging-howto.rst).
+
+- Todo mensaje sale por `logging`.
+- Cada módulo registra en `logging.getLogger(__name__)`: así cada mensaje dice de qué módulo sale.
+- El nivel, el formato y los handlers se configuran una sola vez, en el punto de entrada.
+- Los argumentos del mensaje van como parámetros del logger: se formatean solo si el mensaje se
+  emite.
 - Dentro de un `except`, `logger.exception(...)`.
-- Nada de `print`.
 
 ## Fechas
 
-Siempre con zona horaria.
+Estándar: [`datetime`](../estandares/python/datetime.rst).
+
+- Siempre con zona horaria: una fecha sin zona no dice a qué instante corresponde.
 
 ## Async
 
-- Nada bloqueante dentro de una corrutina: va en `asyncio.to_thread`.
-- La tarea de `asyncio.create_task` se guarda en una referencia que vive mientras corre, o se
-  lanza desde un `asyncio.TaskGroup`.
+Estándares: la [guía de desarrollo con asyncio](../estandares/python/asyncio-dev.rst) y la de
+[tareas](../estandares/python/asyncio-task.rst).
+
+- El código bloqueante va en `asyncio.to_thread`.
 
 ## Cómo se hace cumplir
 
 | Convención | Con qué |
 |---|---|
-| Versión | `requires-python`, que lee ruff (sin `target-version`), y `python_version` en `[tool.mypy]` |
+| Python 3.13 | `requires-python`, que lee ruff (sin `target-version`), y `python_version` en `[tool.mypy]` |
 | Python del sistema | `python-preference = "only-system"` |
-| Lock | `uv sync --locked` en CI |
+| `uv.lock` al día | `uv sync --locked` en CI |
 | Dependencias sin usar | `deptry` en CI |
 | Vulnerabilidades | `pip-audit` sobre el lock, en CI |
-| PEP 8 | `E`, `W` (con `max-doc-length = 72`), `N` |
+| [PEP 8](../estandares/python/pep-0008.rst) | `E`, `W` (con `max-doc-length = 72`), `N` |
 | Formato de Black | `ruff format --check` |
-| PEP 257 | `D` con `convention = "pep257"`, sin `D1` |
-| PEP 498 | `UP031`, `UP032` |
 | Imports absolutos | `TID252` |
-| Orden de los imports | `I` |
-| Errores | `BLE`, `S110` |
+| Orden de isort | `I` |
+| f-strings | `UP031`, `UP032` |
+| `except Exception` y `except` sin tratar el error | `BLE`, `S110` |
 | `# noqa` con código | `PGH004` |
-| Tipos | mypy `strict` |
-| PEP 585, PEP 604 y PEP 695 | `UP006`, `UP007`, `UP035`, `UP040`, `UP045`, `UP046`, `UP047` |
+| [PEP 257](../estandares/python/pep-0257.rst) | `D` con `convention = "pep257"`, sin `D1` |
+| Funciones anotadas | mypy `strict` |
+| [PEP 585](../estandares/python/pep-0585.rst) | `UP006`, `UP035` |
+| Uniones, genéricos y alias | `UP007`, `UP040`, `UP045`, `UP046`, `UP047` |
 | `@override` | mypy `explicit-override` |
 | `# type: ignore` con código | mypy `ignore-without-code` |
 | `StrEnum` | `UP` |
+| Paquetes regulares | `INP001`, apagada en `tests/` |
+| [pytest, modo `importlib`](../estandares/pytest/goodpractices.rst) | `--import-mode=importlib` |
 | Logging | `G`, `LOG`, `T20` |
-| Fechas | `DTZ` |
-| Async | `ASYNC`, `RUF006` |
-| `__init__.py` | `INP001`, apagada en `tests/`, y pytest con `--import-mode=importlib` |
+| Fechas con zona | `DTZ` |
+| [asyncio, *Running Blocking Code*](../estandares/python/asyncio-dev.rst) | `ASYNC` |
+| [asyncio, referencia a las tareas de `create_task`](../estandares/python/asyncio-task.rst) | `RUF006` |
 | Sin convención propia | `F`, `B`, `SIM`, `RUF` |
 
 ### Configuración
 
 La base está en [`plantilla/python/pyproject.toml`](../plantilla/python/pyproject.toml).
 
-- Un paquete sin tipos va en su propio `[[tool.mypy.overrides]]`, nunca en el bloque global.
+- Un paquete sin tipos va en su propio `[[tool.mypy.overrides]]`.
 - Una dependencia que se usa sin importarse va en `[tool.deptry.per_rule_ignores]`, con el motivo
   en un comentario.
-- `ruff`, `mypy`, `pytest`, `deptry` y `pip-audit` van en el grupo `dev` de
-  `[dependency-groups]`.
 
 ### CI
 

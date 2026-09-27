@@ -10,17 +10,21 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 |---|---|---|
 | [python/pep-0008.rst](python/pep-0008.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0008.rst> |  |
 | [python/pep-0257.rst](python/pep-0257.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0257.rst> |  |
+| [python/pep-0420.rst](python/pep-0420.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0420.rst> |  |
 | [python/pep-0484.rst](python/pep-0484.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0484.rst> |  |
 | [python/pep-0498.rst](python/pep-0498.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0498.rst> |  |
 | [python/pep-0585.rst](python/pep-0585.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0585.rst> |  |
 | [python/pep-0604.rst](python/pep-0604.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0604.rst> |  |
 | [python/pep-0695.rst](python/pep-0695.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0695.rst> |  |
 | [python/pep-0698.rst](python/pep-0698.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0698.rst> |  |
+| [python/enum.rst](python/enum.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/enum.rst> |  |
 | [python/logging-howto.rst](python/logging-howto.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/howto/logging.rst> |  |
 | [python/asyncio-dev.rst](python/asyncio-dev.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/asyncio-dev.rst> |  |
 | [python/asyncio-task.rst](python/asyncio-task.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/asyncio-task.rst> |  |
 | [python/datetime.rst](python/datetime.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/datetime.rst> |  |
 | [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pyproject-toml.rst> |  |
+| [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/dependency-groups.rst> |  |
+| [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |
 | [fastapi/dependencies.md](fastapi/dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/dependencies/index.md> |  |
 | [fastapi/bigger-applications.md](fastapi/bigger-applications.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/bigger-applications.md> |  |
 | [fastapi/handling-errors.md](fastapi/handling-errors.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/handling-errors.md> |  |

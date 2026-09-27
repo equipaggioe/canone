@@ -32,6 +32,7 @@ Una regla que no sirve para ninguna de las tres no va. Una convención vale aunq
 herramienta la haga cumplir.
 
 - Dice qué se usa y cómo queda. No es un procedimiento ni un tutorial.
+- Cada regla dice lo que se hace. Lo que la página no dice lo decide el estándar.
 - Sale de la recomendación oficial más reciente. Una regla propia va solo donde lo oficial tiene
   una deficiencia, no existe o deja la elección abierta.
 - Es oficial el texto normativo de un estándar (MUST, SHOULD o RECOMMENDED) y la recomendación
@@ -49,9 +50,10 @@ herramienta la haga cumplir.
 - La tabla «Cómo se hace cumplir» nombra en su primera columna el estándar o su sección, o una
   regla que la página ya escribió. Nunca redacta una regla nueva para llenar la fila.
 - Nombra los archivos de `plantilla/` que salen de ella.
-- Ni el código de los repositorios ni lo que la página ya dice son fuente. Lo que un repositorio
-  hace distinto va a [homologacion.md](../homologacion.md), que es el documento de trabajo y se
-  borra cuando la homologación termine.
+- Ni el código de los repositorios ni lo que la página ya dice son fuente. Una página se escribe de
+  cero desde sus estándares, nunca corrigiendo la versión anterior. Lo que un repositorio hace
+  distinto va a [homologacion.md](../homologacion.md), que es el documento de trabajo y se borra
+  cuando la homologación termine.
 - Sin comentarios ni explicaciones, salvo dos, cada una en una frase corta: por qué la página
   contradice o endurece el estándar, y cómo ayuda una elección que no es trivial. Una regla trivial,
   como un color o el largo de línea, no lleva frase: su razón es una preferencia. Vale también para

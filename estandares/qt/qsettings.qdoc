@@ -1,0 +1,1268 @@
+/*!
+    \class QSettings
+    \inmodule QtCore
+    \brief The QSettings class provides persistent platform-independent application settings.
+
+    \ingroup io
+
+    \reentrant
+
+    Users normally expect an application to remember its settings
+    (window sizes and positions, options, etc.) across sessions. This
+    information is often stored in the system registry on Windows,
+    and in property list files on \macos and iOS. On Unix systems, in the
+    absence of a standard, many applications (including the KDE
+    applications) use INI text files.
+
+    QSettings is an abstraction around these technologies, enabling
+    you to save and restore application settings in a portable
+    manner. It also supports \l{registerFormat()}{custom storage
+    formats}.
+
+    QSettings's API is based on QVariant, allowing you to save
+    most value-based types, such as QString, QRect, and QImage,
+    with the minimum of effort.
+
+    If all you need is a non-persistent memory-based structure,
+    consider using QMap<QString, QVariant> instead.
+
+    \section1 Basic Usage
+
+    When creating a QSettings object, you must pass the name of your
+    company or organization as well as the name of your application.
+    For example, if your product is called Star Runner and your
+    company is called MySoft, you would construct the QSettings
+    object as follows:
+
+    \snippet settings/settings.cpp 0
+
+    QSettings objects can be created either on the stack or on
+    the heap (i.e. using \c new). Constructing and destroying a
+    QSettings object is very fast.
+
+    If you use QSettings from many places in your application, you
+    might want to specify the organization name and the application
+    name using QCoreApplication::setOrganizationName() and
+    QCoreApplication::setApplicationName(), and then use the default
+    QSettings constructor:
+
+    \snippet settings/settings.cpp 1
+    \snippet settings/settings.cpp 2
+    \snippet settings/settings.cpp 3
+    \dots
+    \snippet settings/settings.cpp 4
+
+    (Here, we also specify the organization's Internet domain. When
+    the Internet domain is set, it is used on \macos and iOS instead of the
+    organization name, since \macos and iOS applications conventionally use
+    Internet domains to identify themselves. If no domain is set, a
+    fake domain is derived from the organization name. See the
+    \l{Platform-Specific Notes} below for details.)
+
+    QSettings stores settings. Each setting consists of a QString
+    that specifies the setting's name (the \e key) and a QVariant
+    that stores the data associated with the key. To write a setting,
+    use setValue(). For example:
+
+    \snippet settings/settings.cpp 5
+
+    If there already exists a setting with the same key, the existing
+    value is overwritten by the new value. For efficiency, the
+    changes may not be saved to permanent storage immediately. (You
+    can always call sync() to commit your changes.)
+
+    You can get a setting's value back using value():
+
+    \snippet settings/settings.cpp 6
+
+    If there is no setting with the specified name, QSettings
+    returns a null QVariant (which can be converted to the integer 0).
+    You can specify another default value by passing a second
+    argument to value():
+
+    \snippet settings/settings.cpp 7
+
+    To test whether a given key exists, call contains(). To remove
+    the setting associated with a key, call remove(). To obtain the
+    list of all keys, call allKeys(). To remove all keys, call
+    clear().
+
+    \section1 QVariant and GUI Types
+
+    Because QVariant is part of the Qt Core module, it cannot provide
+    conversion functions to data types such as QColor, QImage, and
+    QPixmap, which are part of Qt GUI. In other words, there is no
+    \c toColor(), \c toImage(), or \c toPixmap() functions in QVariant.
+
+    Instead, you can use the QVariant::value() template function.
+    For example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 0
+
+    The inverse conversion (e.g., from QColor to QVariant) is
+    automatic for all data types supported by QVariant, including
+    GUI-related types:
+
+    \snippet code/src_corelib_io_qsettings.cpp 1
+
+    Custom types registered using qRegisterMetaType() that have
+    operators for streaming to and from a QDataStream can be stored
+    using QSettings.
+
+    \section1 Section and Key Syntax
+
+    Setting keys can contain any Unicode characters. The file format and
+    operating system will determine if they are sensitive to case or not. On
+    Windows, the registry and INI files will use case-insensitive keys, while
+    user-specified formats registered with registerFormat() may be either. On
+    Unix systems, keys are always case-sensitive.
+
+    To avoid portability problems, follow these simple rules:
+
+    \list 1
+    \li Always refer to the same key using the same case. For example,
+       if you refer to a key as "text fonts" in one place in your
+       code, don't refer to it as "Text Fonts" somewhere else.
+
+    \li Avoid key names that are identical except for the case. For
+       example, if you have a key called "MainWindow", don't try to
+       save another key as "mainwindow".
+
+    \li Do not use slashes ('/' and '\\') in section or key names; the
+       backslash character is used to separate sub keys (see below). On
+       windows '\\' are converted by QSettings to '/', which makes
+       them identical.
+    \endlist
+
+    You can form hierarchical keys using the '/' character as a
+    separator, similar to Unix file paths. For example:
+
+    \snippet settings/settings.cpp 8
+    \snippet settings/settings.cpp 9
+    \snippet settings/settings.cpp 10
+
+    If you want to save or restore many settings with the same
+    prefix, you can specify the prefix using beginGroup() and call
+    endGroup() at the end. Here's the same example again, but this
+    time using the group mechanism:
+
+    \snippet settings/settings.cpp 11
+    \codeline
+    \snippet settings/settings.cpp 12
+
+    If a group is set using beginGroup(), the behavior of most
+    functions changes consequently. Groups can be set recursively.
+
+    In addition to groups, QSettings also supports an "array"
+    concept. See beginReadArray() and beginWriteArray() for details.
+
+    \section1 Fallback Mechanism
+
+    Let's assume that you have created a QSettings object with the
+    organization name MySoft and the application name Star Runner.
+    When you look up a value, up to four locations are searched in
+    that order:
+
+    \list 1
+    \li a user-specific location for the Star Runner application
+    \li a user-specific location for all applications by MySoft
+    \li a system-wide location for the Star Runner application
+    \li a system-wide location for all applications by MySoft
+    \endlist
+
+    (See \l{Platform-Specific Notes} below for information on what
+    these locations are on the different platforms supported by Qt.)
+
+    If a key cannot be found in the first location, the search goes
+    on in the second location, and so on. This enables you to store
+    system-wide or organization-wide settings and to override them on
+    a per-user or per-application basis. To turn off this mechanism,
+    call setFallbacksEnabled(false).
+
+    Although keys from all four locations are available for reading,
+    only the first file (the user-specific location for the
+    application at hand) is accessible for writing. To write to any
+    of the other files, omit the application name and/or specify
+    QSettings::SystemScope (as opposed to QSettings::UserScope, the
+    default).
+
+    Let's see with an example:
+
+    \snippet settings/settings.cpp 13
+    \snippet settings/settings.cpp 14
+
+    The table below summarizes which QSettings objects access
+    which location. "\b{X}" means that the location is the main
+    location associated to the QSettings object and is used both
+    for reading and for writing; "o" means that the location is used
+    as a fallback when reading.
+
+    \table
+    \header \li Locations               \li \c{obj1} \li \c{obj2} \li \c{obj3} \li \c{obj4}
+    \row    \li 1. User, Application    \li \b{X} \li          \li          \li
+    \row    \li 2. User, Organization   \li o        \li \b{X} \li          \li
+    \row    \li 3. System, Application  \li o        \li          \li \b{X} \li
+    \row    \li 4. System, Organization \li o        \li o        \li o        \li \b{X}
+    \endtable
+
+    The beauty of this mechanism is that it works on all platforms
+    supported by Qt and that it still gives you a lot of flexibility,
+    without requiring you to specify any file names or registry
+    paths.
+
+    If you want to use INI files on all platforms instead of the
+    native API, you can pass QSettings::IniFormat as the first
+    argument to the QSettings constructor, followed by the scope, the
+    organization name, and the application name:
+
+    \snippet settings/settings.cpp 15
+
+    Note that INI files lose the distinction between numeric data and the
+    strings used to encode them, so values written as numbers shall be read back
+    as QString. The numeric value can be recovered using \l QString::toInt(), \l
+    QString::toDouble() and related functions.
+
+    \section1 Restoring the State of a GUI Application
+
+    QSettings is often used to store the state of a GUI
+    application. The following example illustrates how to use QSettings
+    to save and restore the geometry of an application's main window.
+
+    \snippet settings/settings.cpp 16
+    \codeline
+    \snippet settings/settings.cpp 17
+
+    See \l{Window Geometry} for a discussion on why it is better to
+    call QWidget::resize() and QWidget::move() rather than QWidget::setGeometry()
+    to restore a window's geometry.
+
+    The \c readSettings() and \c writeSettings() functions must be
+    called from the main window's constructor and close event handler
+    as follows:
+
+    \snippet settings/settings.cpp 18
+    \dots
+    \snippet settings/settings.cpp 19
+    \snippet settings/settings.cpp 20
+    \codeline
+    \snippet settings/settings.cpp 21
+
+    \section1 Accessing Settings from Multiple Threads or Processes Simultaneously
+
+    QSettings is \l{reentrant}. This means that you can use
+    distinct QSettings object in different threads
+    simultaneously. This guarantee stands even when the QSettings
+    objects refer to the same files on disk (or to the same entries
+    in the system registry). If a setting is modified through one
+    QSettings object, the change will immediately be visible in
+    any other QSettings objects that operate on the same location
+    and that live in the same process.
+
+    QSettings can safely be used from different processes (which can
+    be different instances of your application running at the same
+    time or different applications altogether) to read and write to
+    the same system locations, provided certain conditions are met. For
+    QSettings::IniFormat, it uses advisory file locking and a smart merging
+    algorithm to ensure data integrity. The condition for that to work is that
+    the writeable configuration file must be a regular file and must reside in
+    a directory that the current user can create new, temporary files in. If
+    that is not the case, then one must use setAtomicSyncRequired() to turn the
+    safety off.
+
+    Note that sync() imports changes made by other processes (in addition to
+    writing the changes from this QSettings).
+
+    \section1 Platform-Specific Notes
+
+    \section2 Locations Where Application Settings Are Stored
+
+    As mentioned in the \l{Fallback Mechanism} section, QSettings
+    stores settings for an application in up to four locations,
+    depending on whether the settings are user-specific or
+    system-wide and whether the settings are application-specific
+    or organization-wide. For simplicity, we're assuming the
+    organization is called MySoft and the application is called Star
+    Runner.
+
+    On Unix systems, if the file format is NativeFormat, the
+    following files are used by default:
+
+    \list 1
+    \li \c{$HOME/.config/MySoft/Star Runner.conf}
+    \li \c{$HOME/.config/MySoft.conf}
+    \li for each directory <dir> in $XDG_CONFIG_DIRS: \c{<dir>/MySoft/Star Runner.conf}
+    \li for each directory <dir> in $XDG_CONFIG_DIRS: \c{<dir>/MySoft.conf}
+    \endlist
+    \note If XDG_CONFIG_DIRS is unset, the default value of \c{/etc/xdg} is used.
+
+    On \macos and iOS, if the file format is NativeFormat, these files are used by
+    default:
+
+    \list 1
+    \li \c{$HOME/Library/Preferences/com.MySoft.Star Runner.plist}
+    \li \c{$HOME/Library/Preferences/com.MySoft.plist}
+    \li \c{/Library/Preferences/com.MySoft.Star Runner.plist}
+    \li \c{/Library/Preferences/com.MySoft.plist}
+    \endlist
+
+    On Windows, NativeFormat settings are stored in the following
+    registry paths:
+
+    \list 1
+    \li \c{HKEY_CURRENT_USER\Software\MySoft\Star Runner}
+    \li \c{HKEY_CURRENT_USER\Software\MySoft\OrganizationDefaults}
+    \li \c{HKEY_LOCAL_MACHINE\Software\MySoft\Star Runner}
+    \li \c{HKEY_LOCAL_MACHINE\Software\MySoft\OrganizationDefaults}
+    \endlist
+
+    \note On Windows, for 32-bit programs running in WOW64 mode, settings are
+    stored in the following registry path:
+    \c{HKEY_LOCAL_MACHINE\Software\WOW6432node}.
+
+    If the file format is NativeFormat, this is "Settings/MySoft/Star Runner.conf"
+    in the application's home directory.
+
+    If the file format is IniFormat, the following files are
+    used on Unix, \macos, and iOS:
+
+    \list 1
+    \li \c{$HOME/.config/MySoft/Star Runner.ini}
+    \li \c{$HOME/.config/MySoft.ini}
+    \li for each directory <dir> in $XDG_CONFIG_DIRS: \c{<dir>/MySoft/Star Runner.ini}
+    \li for each directory <dir> in $XDG_CONFIG_DIRS: \c{<dir>/MySoft.ini}
+    \endlist
+    \note If XDG_CONFIG_DIRS is unset, the default value of \c{/etc/xdg} is used.
+
+    On Windows, the following files are used:
+
+    \list 1
+    \li \c{FOLDERID_RoamingAppData\MySoft\Star Runner.ini}
+    \li \c{FOLDERID_RoamingAppData\MySoft.ini}
+    \li \c{FOLDERID_ProgramData\MySoft\Star Runner.ini}
+    \li \c{FOLDERID_ProgramData\MySoft.ini}
+    \endlist
+
+    The identifiers prefixed by \c{FOLDERID_} are special item ID lists to be passed
+    to the Win32 API function \c{SHGetKnownFolderPath()} to obtain the
+    corresponding path.
+
+    \c{FOLDERID_RoamingAppData} usually points to \tt{C:\\Users\\\e{User Name}\\AppData\\Roaming},
+    also shown by the environment variable \c{%APPDATA%}.
+
+    \c{FOLDERID_ProgramData} usually points to \tt{C:\\ProgramData}.
+
+    If the file format is IniFormat, this is "Settings/MySoft/Star Runner.ini"
+    in the application's home directory.
+
+    The paths for the \c .ini and \c .conf files can be changed using
+    setPath(). On Unix, \macos, and iOS the user can override them by
+    setting the \c XDG_CONFIG_HOME environment variable; see
+    setPath() for details.
+
+    \section2 Accessing INI and .plist Files Directly
+
+    Sometimes you do want to access settings stored in a specific
+    file or registry path. On all platforms, if you want to read an
+    INI file directly, you can use the QSettings constructor that
+    takes a file name as first argument and pass QSettings::IniFormat
+    as second argument. For example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 2
+
+    You can then use the QSettings object to read and write settings
+    in the file.
+
+    On \macos and iOS, you can access property list \c .plist files by passing
+    QSettings::NativeFormat as second argument. For example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 3
+
+    \section2 Accessing the Windows Registry Directly
+
+    On Windows, QSettings lets you access settings that have been
+    written with QSettings (or settings in a supported format, e.g., string
+    data) in the system registry. This is done by constructing a QSettings
+    object with a path in the registry and QSettings::NativeFormat.
+
+    For example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 4
+
+    All the registry entries that appear under the specified path can
+    be read or written through the QSettings object as usual (using
+    forward slashes instead of backslashes). For example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 5
+
+    Note that the backslash character is, as mentioned, used by
+    QSettings to separate subkeys. As a result, you cannot read or
+    write windows registry entries that contain slashes or
+    backslashes; you should use a native windows API if you need to do
+    so.
+
+    \section2 Accessing Common Registry Settings on Windows
+
+    On Windows, it is possible for a key to have both a value and subkeys.
+    Its default value is accessed by using "Default" or "." in
+    place of a subkey:
+
+    \snippet code/src_corelib_io_qsettings.cpp 6
+
+    On other platforms than Windows, "Default" and "." would be
+    treated as regular subkeys.
+
+    \section2 Platform Limitations
+
+    While QSettings attempts to smooth over the differences between
+    the different supported platforms, there are still a few
+    differences that you should be aware of when porting your
+    application:
+
+    \list
+    \li  The Windows system registry has the following limitations: A
+        subkey may not exceed 255 characters, an entry's value may
+        not exceed 16,383 characters, and all the values of a key may
+        not exceed 65,535 characters. One way to work around these
+        limitations is to store the settings using the IniFormat
+        instead of the NativeFormat.
+
+    \li  On Windows, when the Windows system registry is used, QSettings
+         does not preserve the original type of the value. Therefore,
+         the type of the value might change when a new value is set. For
+         example, a value with type \c REG_EXPAND_SZ will change to \c REG_SZ.
+
+    \li  On \macos and iOS, allKeys() will return some extra keys for global
+        settings that apply to all applications. These keys can be
+        read using value() but cannot be changed, only shadowed.
+        Calling setFallbacksEnabled(false) will hide these global
+        settings.
+
+    \li  On \macos and iOS, the CFPreferences API used by QSettings expects
+        Internet domain names rather than organization names. To
+        provide a uniform API, QSettings derives a fake domain name
+        from the organization name (unless the organization name
+        already is a domain name, e.g. OpenOffice.org). The algorithm
+        appends ".com" to the company name and replaces spaces and
+        other illegal characters with hyphens. If you want to specify
+        a different domain name, call
+        QCoreApplication::setOrganizationDomain(),
+        QCoreApplication::setOrganizationName(), and
+        QCoreApplication::setApplicationName() in your \c main()
+        function and then use the default QSettings constructor.
+        Another solution is to use preprocessor directives, for
+        example:
+
+        \snippet code/src_corelib_io_qsettings.cpp 7
+
+    \li On \macos, permissions to access settings not belonging to the
+       current user (i.e. SystemScope) have changed with 10.7 (Lion). Prior to
+       that version, users having admin rights could access these. For 10.7 and
+       10.8 (Mountain Lion), only root can. However, 10.9 (Mavericks) changes
+       that rule again but only for the native format (plist files).
+
+    \endlist
+
+    \section1 Security Considerations
+
+    The class uses \l QDataStream to deserialize data into \l QVariant.
+    Therefore, it has the same \l {QDataStream#Corruption and Security}
+    {security consideration as QDataStream}, and should be used for trusted
+    input only.
+
+    \sa QVariant, QSessionManager
+*/
+
+/*! \enum QSettings::Status
+
+    The following status values are possible:
+
+    \value NoError  No error occurred.
+    \value AccessError  An access error occurred (e.g. trying to write to a read-only file).
+    \value FormatError  A format error occurred (e.g. loading a malformed INI file).
+
+    \sa status()
+*/
+
+/*! \enum QSettings::Format
+
+    This enum type specifies the storage format used by QSettings.
+
+    \value NativeFormat     Store the settings using the most
+                            appropriate storage format for the platform.
+                            On Windows, this means the system registry;
+                            on \macos and iOS, this means the CFPreferences
+                            API; on Unix, this means textual
+                            configuration files in INI format.
+    \value Registry32Format Windows only: Explicitly access the 32-bit system registry
+                            from a 64-bit application running on 64-bit Windows.
+                            On 32-bit Windows or from a 32-bit application on 64-bit Windows,
+                            this works the same as specifying NativeFormat.
+                            This enum value was added in Qt 5.7.
+    \value Registry64Format Windows only: Explicitly access the 64-bit system registry
+                            from a 32-bit application running on 64-bit Windows.
+                            On 32-bit Windows or from a 64-bit application on 64-bit Windows,
+                            this works the same as specifying NativeFormat.
+                            This enum value was added in Qt 5.7.
+    \value IniFormat        Store the settings in INI files. Note that INI files
+                            lose the distinction between numeric data and the
+                            strings used to encode them, so values written as
+                            numbers shall be read back as QString.
+    \value WebLocalStorageFormat
+                            WASM only: Store the settings in window.localStorage for the current
+                            origin. If cookies are not allowed, this falls back to the INI format.
+                            This provides up to 5MiB storage per origin, but access to it is
+                            synchronous and JSPI is not required.
+    \value WebIndexedDBFormat
+                            WASM only: Store the settings in an Indexed DB for the current
+                            origin. If cookies are not allowed, this falls back to the INI format.
+                            This requires JSPI, but provides more storage than
+                            WebLocalStorageFormat.
+
+    \value InvalidFormat    Special value returned by registerFormat().
+    \omitvalue CustomFormat1
+    \omitvalue CustomFormat2
+    \omitvalue CustomFormat3
+    \omitvalue CustomFormat4
+    \omitvalue CustomFormat5
+    \omitvalue CustomFormat6
+    \omitvalue CustomFormat7
+    \omitvalue CustomFormat8
+    \omitvalue CustomFormat9
+    \omitvalue CustomFormat10
+    \omitvalue CustomFormat11
+    \omitvalue CustomFormat12
+    \omitvalue CustomFormat13
+    \omitvalue CustomFormat14
+    \omitvalue CustomFormat15
+    \omitvalue CustomFormat16
+
+    On Unix, NativeFormat and IniFormat mean the same thing, except
+    that the file extension is different (\c .conf for NativeFormat,
+    \c .ini for IniFormat).
+
+    The INI file format is a Windows file format that Qt supports on
+    all platforms. In the absence of an INI standard, we try to
+    follow what Microsoft does, with the following exceptions:
+
+    \list
+    \li  If you store types that QVariant can't convert to QString
+        (e.g., QPoint, QRect, and QSize), Qt uses an \c{@}-based
+        syntax to encode the type. For example:
+
+        \snippet code/src_corelib_io_qsettings.cpp 8
+
+        To minimize compatibility issues, any \c @ that doesn't
+        appear at the first position in the value or that isn't
+        followed by a Qt type (\c Point, \c Rect, \c Size, etc.) is
+        treated as a normal character.
+
+    \li  Although backslash is a special character in INI files, most
+        Windows applications don't escape backslashes (\c{\}) in file
+        paths:
+
+        \snippet code/src_corelib_io_qsettings.cpp 9
+
+        QSettings always treats backslash as a special character and
+        provides no API for reading or writing such entries.
+
+    \li  The INI file format has severe restrictions on the syntax of
+        a key. Qt works around this by using \c % as an escape
+        character in keys. In addition, if you save a top-level
+        setting (a key with no slashes in it, e.g., "someKey"), it
+        will appear in the INI file's "General" section. To avoid
+        overwriting other keys, if you save something using a key
+        such as "General/someKey", the key will be located in the
+        "%General" section, \e not in the "General" section.
+
+    \li In line with most implementations today, QSettings will assume that
+        \e values in the INI file are UTF-8 encoded. This means that \e values
+        will be decoded as UTF-8 encoded entries and written back as UTF-8.
+        To retain backward compatibility with older Qt versions, \e keys in the
+        INI file are written in %-encoded format, but can be read in both
+        %-encoded and UTF-8 formats.
+
+    \endlist
+
+    \section2 Compatibility with older Qt versions
+
+    Please note that this behavior is different to how QSettings behaved
+    in versions of Qt prior to Qt 6. INI files written with Qt 5 or earlier are
+    however fully readable by a Qt 6 based application (unless a ini codec
+    different from utf8 had been set). But INI files written with Qt 6
+    will only be readable by older Qt versions if you set the "iniCodec" to
+    a UTF-8 textcodec.
+
+    \sa registerFormat(), setPath()
+*/
+
+/*! \enum QSettings::Scope
+
+    This enum specifies whether settings are user-specific or shared
+    by all users of the same system.
+
+    \value UserScope  Store settings in a location specific to the
+                      current user (e.g., in the user's home
+                      directory).
+    \value SystemScope  Store settings in a global location, so that
+                        all users on the same machine access the same
+                        set of settings.
+
+    \sa setPath()
+*/
+
+/*!
+    Constructs a QSettings object for accessing settings of the
+    application called \a application from the organization called \a
+    organization, and with parent \a parent.
+
+    Example:
+    \snippet code/src_corelib_io_qsettings.cpp 10
+
+    The scope is set to QSettings::UserScope, and the format is
+    set to QSettings::NativeFormat (i.e. calling setDefaultFormat()
+    before calling this constructor has no effect).
+
+    \sa setDefaultFormat(), {Fallback Mechanism}
+*/
+
+/*!
+    Constructs a QSettings object for accessing settings of the
+    application called \a application from the organization called \a
+    organization, and with parent \a parent.
+
+    If \a scope is QSettings::UserScope, the QSettings object searches
+    user-specific settings first, before it searches system-wide
+    settings as a fallback. If \a scope is QSettings::SystemScope, the
+    QSettings object ignores user-specific settings and provides
+    access to system-wide settings.
+
+    The storage format is set to QSettings::NativeFormat (i.e. calling
+    setDefaultFormat() before calling this constructor has no effect).
+
+    If no application name is given, the QSettings object will
+    only access the organization-wide \l{Fallback Mechanism}{locations}.
+
+    \sa setDefaultFormat()
+*/
+
+/*!
+    Constructs a QSettings object for accessing settings of the
+    application called \a application from the organization called
+    \a organization, and with parent \a parent.
+
+    If \a scope is QSettings::UserScope, the QSettings object searches
+    user-specific settings first, before it searches system-wide
+    settings as a fallback. If \a scope is
+    QSettings::SystemScope, the QSettings object ignores user-specific
+    settings and provides access to system-wide settings.
+
+    If \a format is QSettings::NativeFormat, the native API is used for
+    storing settings. If \a format is QSettings::IniFormat, the INI format
+    is used.
+
+    If no application name is given, the QSettings object will
+    only access the organization-wide \l{Fallback Mechanism}{locations}.
+*/
+
+/*!
+    Constructs a QSettings object for accessing the settings
+    stored in the file called \a fileName, with parent \a parent. If
+    the file doesn't already exist, it is created.
+
+    If \a format is QSettings::NativeFormat, the meaning of \a
+    fileName depends on the platform. On Unix, \a fileName is the
+    name of an INI file. On \macos and iOS, \a fileName is the name of a
+    \c .plist file. On Windows, \a fileName is a path in the system
+    registry.
+
+    If \a format is QSettings::IniFormat, \a fileName is the name of an INI
+    file.
+
+    \warning This function is provided for convenience. It works well for
+    accessing INI or \c .plist files generated by Qt, but might fail on some
+    syntaxes found in such files originated by other programs. In particular,
+    be aware of the following limitations:
+
+    \list
+    \li QSettings provides no way of reading INI "path" entries, i.e., entries
+       with unescaped slash characters. (This is because these entries are
+       ambiguous and cannot be resolved automatically.)
+    \li In INI files, QSettings uses the \c @ character as a metacharacter in some
+       contexts, to encode Qt-specific data types (e.g., \c @Rect), and might
+       therefore misinterpret it when it occurs in pure INI files.
+    \endlist
+
+    \sa fileName()
+*/
+
+/*!
+    Constructs a QSettings object for accessing settings of the
+    application and organization set previously with a call to
+    QCoreApplication::setOrganizationName(),
+    QCoreApplication::setOrganizationDomain(), and
+    QCoreApplication::setApplicationName().
+
+    The scope is QSettings::UserScope and the format is
+    defaultFormat() (QSettings::NativeFormat by default).
+    Use setDefaultFormat() before calling this constructor
+    to change the default format used by this constructor.
+
+    The code
+
+    \snippet code/src_corelib_io_qsettings.cpp 11
+
+    is equivalent to
+
+    \snippet code/src_corelib_io_qsettings.cpp 12
+
+    If QCoreApplication::setOrganizationName() and
+    QCoreApplication::setApplicationName() has not been previously
+    called, the QSettings object will not be able to read or write
+    any settings, and status() will return AccessError.
+
+    You should supply both the domain (used by default on \macos and iOS) and
+    the name (used by default elsewhere), although the code will cope if you
+    supply only one, which will then be used (on all platforms), at odds with
+    the usual naming of the file on platforms for which it isn't the default.
+
+    \sa QCoreApplication::setOrganizationName(),
+        QCoreApplication::setOrganizationDomain(),
+        QCoreApplication::setApplicationName(),
+        setDefaultFormat()
+*/
+
+/*!
+    \since 5.13
+
+    Constructs a QSettings object in the same way as
+    QSettings(QObject *parent) but with the given \a scope.
+
+    \sa QSettings(QObject *parent)
+*/
+
+/*!
+    Destroys the QSettings object.
+
+    Any unsaved changes will eventually be written to permanent
+    storage.
+
+    \sa sync()
+*/
+
+/*!
+    Removes all entries in the primary location associated to this
+    QSettings object.
+
+    Entries in fallback locations are not removed.
+
+    If you only want to remove the entries in the current group(),
+    use remove("") instead.
+
+    \sa remove(), setFallbacksEnabled()
+*/
+
+/*!
+    Writes any unsaved changes to permanent storage, and reloads any
+    settings that have been changed in the meantime by another
+    application.
+
+    This function is called automatically from QSettings's destructor and
+    by the event loop at regular intervals, so you normally don't need to
+    call it yourself.
+
+    \sa status()
+*/
+
+/*!
+    Returns the path where settings written using this QSettings
+    object are stored.
+
+    On Windows, if the format is QSettings::NativeFormat, the return value
+    is a system registry path, not a file path.
+
+    \sa isWritable(), format()
+*/
+
+/*!
+    \since 4.4
+
+    Returns the format used for storing the settings.
+
+    \sa defaultFormat(), fileName(), scope(), organizationName(), applicationName()
+*/
+
+/*!
+    \since 4.4
+
+    Returns the scope used for storing the settings.
+
+    \sa format(), organizationName(), applicationName()
+*/
+
+/*!
+    \since 4.4
+
+    Returns the organization name used for storing the settings.
+
+    \sa QCoreApplication::organizationName(), format(), scope(), applicationName()
+*/
+
+/*!
+    \since 4.4
+
+    Returns the application name used for storing the settings.
+
+    \sa QCoreApplication::applicationName(), format(), scope(), organizationName()
+*/
+
+/*!
+    Returns a status code indicating the first error that was met by
+    QSettings, or QSettings::NoError if no error occurred.
+
+    Be aware that QSettings delays performing some operations. For this
+    reason, you might want to call sync() to ensure that the data stored
+    in QSettings is written to disk before calling status().
+
+    \sa sync()
+*/
+
+/*!
+    \since 5.10
+
+    Returns \c true if QSettings is only allowed to perform atomic saving and
+    reloading (synchronization) of the settings. Returns \c false if it is
+    allowed to save the settings contents directly to the configuration file.
+
+    The default is \c true.
+
+    \sa setAtomicSyncRequired(), QSaveFile
+*/
+
+/*!
+    \since 5.10
+
+    Configures whether QSettings is required to perform atomic saving and
+    reloading (synchronization) of the settings. If the \a enable argument is
+    \c true (the default), sync() will only perform synchronization operations
+    that are atomic. If this is not possible, sync() will fail and status()
+    will be an error condition.
+
+    Setting this property to \c false will allow QSettings to write directly to
+    the configuration file and ignore any errors trying to lock it against
+    other processes trying to write at the same time. Because of the potential
+    for corruption, this option should be used with care, but is required in
+    certain conditions, like a QSettings::IniFormat configuration file that
+    exists in an otherwise non-writeable directory or NTFS Alternate Data
+    Streams.
+
+    See \l QSaveFile for more information on the feature.
+
+    \sa isAtomicSyncRequired(), QSaveFile
+*/
+
+/*!
+    Appends \a prefix to the current group.
+
+    The current group is automatically prepended to all keys
+    specified to QSettings. In addition, query functions such as
+    childGroups(), childKeys(), and allKeys() are based on the group.
+    By default, no group is set.
+
+    Groups are useful to avoid typing in the same setting paths over
+    and over. For example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 13
+
+    This will set the value of three settings:
+
+    \list
+    \li \c mainwindow/size
+    \li \c mainwindow/active
+    \li \c outputpanel/visible
+    \endlist
+
+    Call endGroup() to reset the current group to what it was before
+    the corresponding beginGroup() call. Groups can be nested.
+
+    \note In Qt versions prior to 6.4, this function took QString, not
+    QAnyStringView.
+
+    \sa endGroup(), group()
+*/
+
+/*!
+    Resets the group to what it was before the corresponding
+    beginGroup() call.
+
+    Example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 14
+
+    \sa beginGroup(), group()
+*/
+
+/*!
+    Returns the current group.
+
+    \sa beginGroup(), endGroup()
+*/
+
+/*!
+    Adds \a prefix to the current group and starts reading from an
+    array. Returns the size of the array.
+
+    Example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 15
+
+    Use beginWriteArray() to write the array in the first place.
+
+    \note In Qt versions prior to 6.4, this function took QString, not
+    QAnyStringView.
+
+    \sa beginWriteArray(), endArray(), setArrayIndex()
+*/
+
+/*!
+    Adds \a prefix to the current group and starts writing an array
+    of size \a size. If \a size is -1 (the default), it is automatically
+    determined based on the indexes of the entries written.
+
+    If you have many occurrences of a certain set of keys, you can
+    use arrays to make your life easier. For example, let's suppose
+    that you want to save a variable-length list of user names and
+    passwords. You could then write:
+
+    \snippet code/src_corelib_io_qsettings.cpp 16
+
+    The generated keys will have the form
+
+    \list
+    \li \c logins/size
+    \li \c logins/1/userName
+    \li \c logins/1/password
+    \li \c logins/2/userName
+    \li \c logins/2/password
+    \li \c logins/3/userName
+    \li \c logins/3/password
+    \li ...
+    \endlist
+
+    To read back an array, use beginReadArray().
+
+    \note In Qt versions prior to 6.4, this function took QString, not
+    QAnyStringView.
+
+    \sa beginReadArray(), endArray(), setArrayIndex()
+*/
+
+/*!
+    Closes the array that was started using beginReadArray() or
+    beginWriteArray().
+
+    \sa beginReadArray(), beginWriteArray()
+*/
+
+/*!
+    Sets the current array index to \a i. Calls to functions such as
+    setValue(), value(), remove(), and contains() will operate on the
+    array entry at that index.
+
+    You must call beginReadArray() or beginWriteArray() before you
+    can call this function.
+*/
+
+/*!
+    Returns a list of all keys, including subkeys, that can be read
+    using the QSettings object.
+
+    Example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 17
+
+    If a group is set using beginGroup(), only the keys in the group
+    are returned, without the group prefix:
+
+    \snippet code/src_corelib_io_qsettings.cpp 18
+
+    \sa childGroups(), childKeys()
+*/
+
+/*!
+    Returns a list of all top-level keys that can be read using the
+    QSettings object.
+
+    Example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 19
+
+    If a group is set using beginGroup(), the top-level keys in that
+    group are returned, without the group prefix:
+
+    \snippet code/src_corelib_io_qsettings.cpp 20
+
+    You can navigate through the entire setting hierarchy using
+    childKeys() and childGroups() recursively.
+
+    \sa childGroups(), allKeys()
+*/
+
+/*!
+    Returns a list of all key top-level groups that contain keys that
+    can be read using the QSettings object.
+
+    Example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 21
+
+    If a group is set using beginGroup(), the first-level keys in
+    that group are returned, without the group prefix.
+
+    \snippet code/src_corelib_io_qsettings.cpp 22
+
+    You can navigate through the entire setting hierarchy using
+    childKeys() and childGroups() recursively.
+
+    \sa childKeys(), allKeys()
+*/
+
+/*!
+    Returns \c true if settings can be written using this QSettings
+    object; returns \c false otherwise.
+
+    One reason why isWritable() might return false is if
+    QSettings operates on a read-only file.
+
+    \warning This function is not perfectly reliable, because the
+    file permissions can change at any time.
+
+    \sa fileName(), status(), sync()
+*/
+
+/*!
+
+  Sets the value of setting \a key to \a value. If the \a key already
+  exists, the previous value is overwritten.
+
+//! [key-case-sensitivity]
+  Key lookup will either be sensitive or insensitive to case depending on
+  file format and operating system. To avoid portability problems, see the
+  \l{Section and Key Syntax} rules.
+//! [key-case-sensitivity]
+
+  Example:
+
+  \snippet code/src_corelib_io_qsettings.cpp 23
+
+  \note In Qt versions prior to 6.4, this function took QString, not
+  QAnyStringView.
+
+  \sa value(), remove(), contains()
+*/
+
+/*!
+    Removes the setting \a key and any sub-settings of \a key.
+
+    Example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 24
+
+    Be aware that if one of the fallback locations contains a setting
+    with the same key, that setting will be visible after calling
+    remove().
+
+    If \a key is an empty string, all keys in the current group() are
+    removed. For example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 25
+
+    \include qsettings.cpp key-case-sensitivity
+
+    \note In Qt versions prior to 6.4, this function took QString, not
+    QAnyStringView.
+
+    \sa setValue(), value(), contains()
+*/
+
+/*!
+    Returns \c true if there exists a setting called \a key; returns
+    false otherwise.
+
+    If a group is set using beginGroup(), \a key is taken to be
+    relative to that group.
+
+    \include qsettings.cpp key-case-sensitivity
+
+    \note In Qt versions prior to 6.4, this function took QString, not
+    QAnyStringView.
+
+    \sa value(), setValue()
+*/
+
+/*!
+    Sets whether fallbacks are enabled to \a b.
+
+    By default, fallbacks are enabled.
+
+    \sa fallbacksEnabled()
+*/
+
+/*!
+    Returns \c true if fallbacks are enabled; returns \c false otherwise.
+
+    By default, fallbacks are enabled.
+
+    \sa setFallbacksEnabled()
+*/
+
+/*!
+    \reimp
+*/
+
+/*!
+    \fn QSettings::value(QAnyStringView key) const
+    \fn QSettings::value(QAnyStringView key, const QVariant &defaultValue) const
+
+    Returns the value for setting \a key. If the setting doesn't
+    exist, returns \a defaultValue.
+
+    If no default value is specified, a default QVariant is
+    returned.
+
+    \include qsettings.cpp key-case-sensitivity
+
+    Example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 26
+
+    \note In Qt versions prior to 6.4, this function took QString, not
+    QAnyStringView.
+
+    \sa setValue(), contains(), remove()
+*/
+
+/*!
+    \since 4.4
+
+    Sets the default file format to the given \a format, which is used
+    for storing settings for the QSettings(QObject *) constructor.
+
+    If no default format is set, QSettings::NativeFormat is used. See
+    the documentation for the QSettings constructor you are using to
+    see if that constructor will ignore this function.
+
+    \sa format()
+*/
+
+/*!
+    \since 4.4
+
+    Returns default file format used for storing settings for the QSettings(QObject *) constructor.
+    If no default format is set, QSettings::NativeFormat is used.
+
+    \sa format()
+*/
+
+/*!
+    \since 4.1
+
+    Sets the path used for storing settings for the given \a format
+    and \a scope, to \a path. The \a format can be a custom format.
+
+    The table below summarizes the default values:
+
+    \table
+    \header \li Platform         \li Format                       \li Scope       \li Path
+    \row    \li{1,2} Windows     \li{1,2} IniFormat               \li UserScope   \li \c FOLDERID_RoamingAppData
+    \row                                                          \li SystemScope \li \c FOLDERID_ProgramData
+    \row    \li{1,2} Unix        \li{1,2} NativeFormat, IniFormat \li UserScope   \li \c $HOME/.config (\c $XDG_CONFIG_HOME)
+    \row                                                          \li SystemScope \li \c /etc/xdg
+    \row    \li{1,2} \macos      \li{1,2} IniFormat               \li UserScope   \li \c $HOME/.config (\c $XDG_CONFIG_HOME)
+    \row                                                          \li SystemScope \li \c /Library/Preferences/Qt
+    \row    \li{1,2} iOS         \li{1,2} IniFormat               \li UserScope   \li \c $HOME/Library/Preferences
+    \row                                                          \li SystemScope \li \c /Library/Preferences/Qt
+    \row    \li{1,2} \macos and iOS \li{1,2} NativeFormat         \li UserScope   \li \c $HOME/Library/Preferences
+    \row                                                          \li SystemScope \li \c /Library/Preferences
+    \endtable
+
+    The default SystemScope paths can be overridden when building Qt
+    by passing \c -sysconfdir to the \c configure script (see
+    QLibraryInfo for details).
+
+    \note Setting the NativeFormat paths on Windows, \macos, and iOS has no
+    effect.
+
+    \warning This function doesn't affect existing QSettings objects.
+
+    \sa registerFormat()
+*/
+
+/*!
+    \typedef QSettings::SettingsMap
+
+    Typedef for QMap<QString, QVariant>.
+
+    \sa registerFormat()
+*/
+
+/*!
+    \typedef QSettings::ReadFunc
+
+    Typedef for a pointer to a function with the following signature:
+
+    \snippet code/src_corelib_io_qsettings.cpp 27
+
+    \c ReadFunc is used in \c registerFormat() as a pointer to a function
+    that reads a set of key/value pairs. \c ReadFunc should read all the
+    options in one pass, and return all the settings in the \c SettingsMap
+    container, which is initially empty.
+
+    \sa WriteFunc, registerFormat()
+*/
+
+/*!
+    \typedef QSettings::WriteFunc
+
+    Typedef for a pointer to a function with the following signature:
+
+    \snippet code/src_corelib_io_qsettings.cpp 28
+
+    \c WriteFunc is used in \c registerFormat() as a pointer to a function
+    that writes a set of key/value pairs. \c WriteFunc is only called once,
+    so you need to output the settings in one go.
+
+    \sa ReadFunc, registerFormat()
+*/
+
+/*!
+    \since 4.1
+    \threadsafe
+
+    Registers a custom storage format. On success, returns a special
+    Format value that can then be passed to the QSettings constructor.
+    On failure, returns InvalidFormat.
+
+    The \a extension is the file
+    extension associated to the format (without the '.').
+
+    The \a readFunc and \a writeFunc parameters are pointers to
+    functions that read and write a set of key/value pairs. The
+    QIODevice parameter to the read and write functions is always
+    opened in binary mode (i.e., without the \l QIODeviceBase::Text flag).
+
+    The \a caseSensitivity parameter specifies whether keys are case-sensitive
+    or not. This makes a difference when looking up values using QSettings. The
+    default is case-sensitive. The parameter must be \c{Qt::CaseSensitive} on
+    Unix systems.
+
+    By default, if you use one of the constructors that work in terms
+    of an organization name and an application name, the file system
+    locations used are the same as for IniFormat. Use setPath() to
+    specify other locations.
+
+    Example:
+
+    \snippet code/src_corelib_io_qsettings.cpp 29
+
+    \sa setPath()
+*/

@@ -15,6 +15,7 @@ convención de `docs/` y lo mínimo del repositorio.
 | [repositorio.md](repositorio.md) | Siempre. Git, estructura de carpetas, README, CI |
 | [documentacion.md](documentacion.md) | Siempre. La convención `docs/` |
 | [plataformas/](plataformas/) | **Solo la página de cada tecnología que el repositorio use** |
+| [estandares/](estandares/) | Al escribir o revisar una página. Los textos oficiales de los que sale |
 | [homologacion.md](homologacion.md) | Qué divergencias hay hoy, agrupadas por plataforma |
 | [adr/](adr/) | Por qué cada regla es como es |
 | [plantilla/](plantilla/) | Los archivos que se copian tal cual, por plataforma |

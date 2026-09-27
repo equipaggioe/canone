@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>
+      Push API
+    </title>
+    <meta charset="utf-8">
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+    <script class="remove">
+      // See http://www.w3.org/respec/ for ReSpec documentation.
+      var respecConfig = {
+          specStatus: "ED",
+          shortName: "push-api",
+          previousMaturity: "WD",
+          editors: [
+            {
+              name: "Peter Beverloo",
+              company: "Google",
+              companyURL: "https://www.google.com/",
+              w3cid: "44819",
+              retiredDate: "2025-09-25"
+            },
+            {
+              name: "Martin Thomson",
+              company: "Mozilla Foundation",
+              companyURL: "https://www.mozilla.org/",
+              w3cid: "68503",
+              retiredDate: "2025-09-25"
+            },
+            {
+              name: "Marcos Caceres",
+              company: "Apple Inc.",
+              companyURL: "https://www.apple.com/",
+              w3cid: "39125"
+            },
+            {
+              name: "Bryan Sullivan",
+              company: "AT&T",
+              companyURL: "http://www.att.com/",
+              retiredDate: "2015-05-01",
+            },
+            {
+              name: "Eduardo Fullea",
+              company: "Telefonica",
+              companyURL: "http://www.telefonica.com/",
+              retiredDate: "2015-05-01",
+            },
+            {
+              name: "Michaël van Ouwerkerk",
+              company: "Google",
+              companyURL: "https://www.google.com/",
+              retiredDate: "2016-11-08",
+            },
+            {
+              name: "Kagami Rosylight",
+              company: "Mozilla Foundation",
+              companyURL: "https://www.mozilla.org/",
+              w3cid: "107856"
+            }
+          ],
+          group: "webapps",
+          github: "w3c/push-api",
+          xref: "web-platform",
+      };
+    </script>
+  </head>
+  <body data-cite=
+  "SERVICE-WORKERS FILEAPI SECURE-CONTEXTS HR-TIME PERMISSIONS ECMASCRIPT NOTIFICATIONS BADGING">
+    <section id="abstract">
+      <p>
+        The <cite>Push API</cite> enables sending of a <a>push message</a> to a web application via
+        a <a>push service</a>. An <a>application server</a> can send a <a>push message</a> at any
+        time, even when a web application or <a>user agent</a> is inactive. The <a>push service</a>
+        ensures reliable and efficient delivery to the <a>user agent</a>. <a>Push messages</a> are
+        delivered to a <a>Service Worker</a> that runs in the origin of the web application, which
+        can use the information in the message to update local state or display a notification to
+        the user.
+      </p>
+      <p>
+        This specification is designed for use with the <a>web push protocol</a>, which describes
+        how an <a>application server</a> or <a>user agent</a> interacts with a <a>push service</a>.
+      </p>
+    </section>
+    <section id="sotd"></section>
+    <section class="informative" id="introduction">
+      <h2>
+        Introduction
+      </h2>
+      <p>
+        The Push API allows a web application to communicate with a <a>user agent</a>
+        asynchronously. This allows an <a>application server</a> to provide the <a>user agent</a>
+        with time-sensitive information whenever that information becomes known, rather than
+        waiting for a user to open the web application.
+      </p>
+      <p>
+        As defined here, <a>push services</a> support delivery of <a>push messages</a> at any time.
+      </p>
+      <p>
+        In particular, a <a>push message</a> will be delivered to the web application even if that
+        web application is not currently active in a browser window: this relates to use cases in
+        which the user may close the web application, but still benefits from the web application
+        being able to be restarted when a <a>push message</a> is received. For example, a <a>push
+        message</a> might be used to inform the user of an incoming WebRTC call.
+      </p>
+      <p>
+        A <a>push message</a> can also be sent when the <a>user agent</a> is temporarily offline.
+        In support of this, the <a>push service</a> stores messages for the <a>user agent</a> until
+        the <a>user agent</a> becomes available. This supports use cases where a web application
+        learns of changes that occur while a user is offline and ensures that the <a>user agent</a>
+        can be provided with relevant information in a timely fashion. <a>Push messages</a> are
+        stored by the <a>push service</a> until the <a>user agent</a> becomes reachable and the
+        message can be delivered.
+      </p>
+      <p>
+        The Push API will also ensure reliable delivery of push messages while a <a>user agent</a>
+        is actively using a web application, for instance if a user is actively using the web
+        application or the web application is in active communication with an <a>application
+        server</a> through an active worker, frame, or background window. This is not the primary
+        use case for the Push API. A web application might choose to use the Push API for
+        infrequent messages to avoid having to maintain constant communications with the
+        <a>application server</a>.
+      </p>
+      <p>
+        Push messaging is best suited to occasions where there is not already an active
+        communications channel established between the <a>user agent</a> and the web application.
+        Sending <a>push messages</a> requires considerably more resources when compared with more
+        direct methods of communication such as the [[Fetch|Fetch API]] or [[WebSockets]]. <a>Push
+        messages</a> usually have higher latency than direct communications and they can also be
+        subject to restrictions on use. Most <a>push services</a> limit the size and quantity of
+        <a>push messages</a> that can be sent.
+      </p>
+    </section>
+    <section>
+      <h2>
+        Dependencies
+      </h2>
+      <p>
+        The <dfn>web push protocol</dfn> [[RFC8030]] describes a protocol that enables
+        communication between a <a>user agent</a> or <a>application server</a> and a <a>push
+        service</a>. Alternative protocols could be used in place of this protocol, but this
+        specification assumes the use of this protocol; alternative protocols are expected to
+        provide compatible semantics.
+      </p>
+      <p>
+        The <code><dfn>Content-Encoding</dfn></code> HTTP header, described in Section 8.4 of
+        [[RFC9110]], indicates the content coding applied to the payload of a <a>push message</a>.
+      </p>
+    </section>
+    <section>
+      <h2>
+        Concepts
+      </h2>
+      <section>
+        <h2>
+          Application server
+        </h2>
+        <p>
+          The term <dfn>application server</dfn> refers to server-side components of a web
+          application.
+        </p>
+      </section>
+      <section>
+        <h2>
+          Push message
+        </h2>
+        <p>
+          A <dfn>push message</dfn> is data sent to a web application from an <a>application
+          server</a>.
+        </p>
+        <p>
+          A <a>push message</a> is delivered to the [=service worker registration/active worker=]
+          associated with the <a>push subscription</a> to which the message was submitted. If the
+          service worker is not currently running, the worker is started to enable delivery.
+        </p>
+      </section>
+      <section>
+        <h2>
+          Declarative push message
+        </h2>
+        <p>
+          A <dfn>declarative push message</dfn> is a [=push message=] whose data is a JSON document
+          that is understood by the user agent. A user agent opportunistically parses each incoming
+          [=push message=] to determine if it is a [=declarative push message=] using the
+          [=declarative push message parser=].
+        </p>
+        <p>
+          A [=declarative push message=] allows for the creation and display of a notification
+          without the involvement of a service worker. Nevertheless, a service worker can still be
+          involved if desired by the [=application server=]. In such a scenario the declarative
+          nature of the [=push message=] serves as a backup in case the service worker was evicted
+          due to storage pressure, for instance. And also provides a more object-oriented approach
+          to transmitting notification data.
+        </p>
+        <pre class="example">
+          {
+            "web_push": 8030,
+            "notification": {
+              "title": "Ada emailed ‘London’",
+              "lang": "en-US",
+              "dir": "ltr",
+              "body": "Did you hear about the tube strikes?",
+              "navigate": "https://email.example/message/12"
+            }
+          }
+        </pre>
+        <section>
+          <h3>
+            Members
+          </h3>
+          <p>
+            A [=declarative push message=] has the following members:
+          </p>
+          <dl>
+            <dt>
+              <code>web_push</code> (required)
+            </dt>
+            <dd>
+              <p>
+                An integer that must be 8030. Used to disambiguate a [=declarative push message=]
+                from other JSON documents.
+              </p>
+            </dd>
+            <dt>
+              <code>notification</code> (required)
+            </dt>
+            <dd>
+              <p>
+                A JSON object consisting of the following members, all analogous to Notifications
+                API features, though sometimes with a slightly stricter type. Apart from
+                <code>title</code> all members are derived from the {{NotificationOptions}}
+                dictionary and to be maintained in tandem. [[NOTIFICATIONS]]
+              </p>
+              <dl>
+                <dt>
+                  <code>title</code> (required)
+                </dt>
+                <dd>
+                  <p>
+                    A string.
+                  </p>
+                </dd>
+                <dt>
+                  <code>dir</code>
+                </dt>
+                <dd>
+                  <p>
+                    "<code>auto</code>", "<code>ltr</code>", or "<code>rtl</code>".
+                  </p>
+                </dd>
+                <dt>
+                  <code>lang</code>
+                </dt>
+                <dd>
+                  <p>
+                    A string that holds a language tag.
+                  </p>
+                </dd>
+                <dt>
+                  <code>body</code>
+                </dt>
+                <dd>
+                  <p>
+                    A string.
+                  </p>
+                </dd>
+                <dt>
+                  <code>navigate</code> (required)
+                </dt>
+                <dd>
+                  <p>
+                    A string that holds a URL.
+                  </p>
+                </dd>
+                <dt>
+                  <code>tag</code>
+                </dt>
+                <dd>
+                  <p>
+                    A string.
+                  </p>
+                </dd>
+                <dt>
+                  <code>image</code>
+                </dt>
+                <dd>
+                  <p>
+                    A string that holds a URL.
+                  </p>
+                </dd>
+                <dt>
+                  <code>icon</code>
+                </dt>
+                <dd>
+                  <p>
+                    A string that holds a URL.
+                  </p>
+                </dd>
+                <dt>
+                  <code>badge</code>
+                </dt>
+                <dd>
+                  <p>
+                    A string that holds a URL.
+                  </p>
+                </dd>
+                <dt>
+                  <code>vibrate</code>
+                </dt>
+                <dd>
+                  <p>
+                    An array of [=/32-bit unsigned integers=].
+                  </p>
+                </dd>
+                <dt>
+                  <code>timestamp</code>
+                </dt>
+                <dd>
+                  <p>
+                    A [=/64-bit unsigned integer=].
+                  </p>
+                </dd>
+                <dt>
+                  <code>renotify</code>
+                </dt>
+                <dd>
+                  <p>
+                    A boolean.
+                  </p>
+                </dd>
+                <dt>
+                  <code>silent</code>
+                </dt>
+                <dd>
+                  <p>
+                    A boolean.
+                  </p>
+                </dd>
+                <dt>
+                  <code>requireInteraction</code>
+                </dt>
+                <dd>
+                  <p>
+                    A boolean.
+                  </p>
+                  <p class="note">
+                    This is not named <code>require_interaction</code> for consistency with the
+                    {{NotificationOptions}} dictionary.
+                  </p>
+                </dd>
+                <dt>
+                  <code>data</code>
+                </dt>
+                <dd>
+                  <p>
+                    Any JSON value.
+                  </p>
+                </dd>
+                <dt>
+                  <code>actions</code>
+                </dt>
+                <dd>
+                  <p>
+                    An array of JSON objects consisting of the following members, all derived from
+                    the {{NotificationAction}} dictionary and to be maintained in tandem.
+                  </p>
+                  <dl>
+                    <dt>
+                      <code>action</code> (required)
+                    </dt>
+                    <dd>
+                      <p>
+                        A string.
+                      </p>
+                    </dd>
+                    <dt>
+                      <code>title</code> (required)
+                    </dt>
+                    <dd>
+                      <p>
+                        A string.
+                      </p>
+                    </dd>
+                    <dt>
+                      <code>navigate</code> (required)
+                    </dt>
+                    <dd>
+                      <p>
+                        A string that holds a URL.
+                      </p>
+                    </dd>
+                    <dt>
+                      <code>icon</code>
+                    </dt>
+                    <dd>
+                      <p>
+                        A string that holds a URL.
+                      </p>
+                    </dd>
+                  </dl>
+                </dd>
+              </dl>
+            </dd>
+            <dt>
+              <code>mutable</code>
+            </dt>
+            <dd>
+              <p>
+                A boolean. When true causes a <code>push</code> event to be dispatched to a service
+                worker (if any) containing the {{Notification}} object described by the
+                <a>declarative push message</a>.
+              </p>
+            </dd>
+          </dl>
+        </section>
+        <section>
+          <h3>
+            Parser
+          </h3>
+          <p>
+            A <dfn>declarative push message parser result</dfn> is a [=/tuple=] consisting of a
+            <dfn data-dfn-for="declarative push message parser result">notification</dfn> (a
+            [=/notification=]) and a <dfn data-dfn-for=
+            "declarative push message parser result">mutable</dfn> (a boolean).
+          </p>
+          <p>
+            The <dfn>declarative push message parser</dfn> given a [=/byte sequence=]
+            <var>bytes</var>, [=/origin=] <var>origin</var>, [=/URL=] <var>baseURL</var>, and
+            {{EpochTimeStamp}} <var>fallbackTimestamp</var> runs these steps. They return failure
+            or a [=/declarative push message parser result=].
+          </p>
+          <ol>
+            <li>
+              <p>
+                Let <var>message</var> be the result of [=parse JSON bytes to an Infra
+                value|parsing JSON bytes to an Infra value=] given <var>bytes</var>. If that throws
+                an exception, then return failure.
+              </p>
+            </li>
+            <li>
+              <p data-cite="INFRA">
+                If <var>message</var> is not a [=/map=], then return failure.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>message</var>["`web_push`"] does not [=map/exist=] or is not 8030, then
+                return failure.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>message</var>["`notification`"] does not [=map/exist=], then return
+                failure.
+              </p>
+            </li>
+            <li>
+              <p>
+                Let <var>notificationInput</var> be <var>message</var>["`notification`"].
+              </p>
+            </li>
+            <li>
+              <p data-cite="INFRA">
+                If <var>notificationInput</var> is not a [=/map=], then return failure.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`title`"] does not [=map/exist=] or is not a
+                string, then return failure.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`navigate`"] does not [=map/exist=] or is not a
+                string, then return failure.
+              </p>
+            </li>
+            <!-- We could also handle this the same way as any other NotificationOptions members as we still need to check that the final notification has a navigation URL regardless, but it seems better to illustrate early failures are possible. -->
+            <li>
+              <p>
+                Let <var>notificationTitle</var> be <var>notificationInput</var>["`title`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                Let <var>notificationOptions</var> be a {{NotificationOptions}} dictionary.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`dir`"] [=map/exists=] and is "`auto`", "`ltr`",
+                or "`rtl`", then set <var>notificationOptions</var>["{{NotificationOptions/dir}}"]
+                to <var>notificationInput</var>["`dir`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`lang`"] [=map/exists=] and is a string, then set
+                <var>notificationOptions</var>["{{NotificationOptions/lang}}"] to
+                <var>notificationInput</var>["`lang`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`body`"] [=map/exists=] and is a string, then set
+                <var>notificationOptions</var>["{{NotificationOptions/body}}"] to
+                <var>notificationInput</var>["`body`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                Set <var>notificationOptions</var>["{{NotificationOptions/navigate}}"] to
+                <var>notificationInput</var>["`navigate`"], [=string/converted=].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`tag`"] [=map/exists=] and is a string, then set
+                <var>notificationOptions</var>["{{NotificationOptions/tag}}"] to
+                <var>notificationInput</var>["`tag`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`image`"] [=map/exists=] and is a string, then set
+                <var>notificationOptions</var>["{{NotificationOptions/image}}"] to
+                <var>notificationInput</var>["`image`"], [=string/converted=].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`icon`"] [=map/exists=] and is a string, then set
+                <var>notificationOptions</var>["{{NotificationOptions/icon}}"] to
+                <var>notificationInput</var>["`icon`"], [=string/converted=].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`badge`"] [=map/exists=] and is a string, then set
+                <var>notificationOptions</var>["{{NotificationOptions/badge}}"] to
+                <var>notificationInput</var>["`badge`"], [=string/converted=].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`vibrate`"] [=map/exists=] and is a [=/list=] of
+                which each [=list/item=] is a [=/32-bit unsigned integer=], then set
+                <var>notificationOptions</var>["{{NotificationOptions/vibrate}}"] to
+                <var>notificationInput</var>["`vibrate`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`timestamp`"] [=map/exists=] and is a [=/64-bit
+                unsigned integer=], then set
+                <var>notificationOptions</var>["{{NotificationOptions/timestamp}}"] to
+                <var>notificationInput</var>["`timestamp`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`renotify`"] [=map/exists=] and is a boolean, then
+                set <var>notificationOptions</var>["{{NotificationOptions/renotify}}"] to
+                <var>notificationInput</var>["`renotify`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`silent`"] [=map/exists=] and is a boolean, then
+                set <var>notificationOptions</var>["{{NotificationOptions/silent}}"] to
+                <var>notificationInput</var>["`silent`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`requireInteraction`"] [=map/exists=] and is a
+                boolean, then set
+                <var>notificationOptions</var>["{{NotificationOptions/requireInteraction}}"] to
+                <var>notificationInput</var>["`requireInteraction`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`data`"] [=map/exists=], then set
+                <var>notificationOptions</var>["{{NotificationOptions/data}}"] to the result of
+                running <a>convert an Infra value to a JSON-compatible JavaScript value</a> given
+                <var>notificationInput</var>["`data`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notificationInput</var>["`actions`"] [=map/exists=] and is a [=/list=]:
+              </p>
+              <ol>
+                <li>
+                  <p>
+                    Let <var>notificationActions</var> be « ».
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    [=list/For each=] <var>actionInput</var> of
+                    <var>notificationInput</var>["`actions`"]:
+                  </p>
+                  <ol>
+                    <li>
+                      <p>
+                        If <var>actionInput</var>["`action`"] does not [=map/exist=] or is not a
+                        string, then [=iteration/continue=].
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        If <var>actionInput</var>["`title`"] does not [=map/exist=] or is not a
+                        string, then [=iteration/continue=].
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        If <var>actionInput</var>["`navigate`"] does not [=map/exist=] or is not a
+                        string, then [=iteration/continue=].
+                      </p>
+                    </li>
+                    <!-- We still need to check the final action for a navigation URL regardless, but failing early seems good as per above. -->
+                    <li>
+                      <p>
+                        Let <var>actionNavigate</var> be <var>actionInput</var>["`navigate`"],
+                        [=string/converted=].
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        Let <var>notificationAction</var> be the {{NotificationAction}} dictionary
+                        «[ "{{NotificationAction/action}}" → <var>actionInput</var>["`action`"],
+                        "{{NotificationAction/title}}" → <var>actionInput</var>["`title`"],
+                        "{{NotificationAction/navigate}}" → <var>actionNavigate</var> ]».
+                      </p>
+                    </li>
+                    <!-- Initialize the dictionary mostly at once here to account for required members. -->
+                    <li>
+                      <p>
+                        If <var>actionInput</var>["`icon`"] [=map/exists=] and is a string, then
+                        set <var>notificationAction</var>["{{NotificationAction/icon}}"] to
+                        <var>actionInput</var>["`icon`"], [=string/converted=].
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        [=list/Append=] <var>notificationAction</var> to
+                        <var>notificationActions</var>.
+                      </p>
+                    </li>
+                  </ol>
+                </li>
+                <li>
+                  <p>
+                    Set <var>notificationOptions</var>["{{NotificationOptions/actions}}"] to
+                    <var>notificationActions</var>.
+                  </p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>
+                Let <var>notification</var> be the result of <a data-lt=
+                "create a notification">creating a notification</a> given
+                <var>notificationTitle</var>, <var>notificationOptions</var>, <var>origin</var>,
+                <var>baseURL</var>, and <var>fallbackTimestamp</var>. If this throws an exception,
+                then return failure.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>notification</var>'s [=notification/navigation URL=] is null, then return
+                failure.
+              </p>
+            </li>
+            <li>
+              <p>
+                If the [=notification action/navigation URL=] of any [=/notification action=] of
+                <var>notification</var>'s [=notification/actions=] is null, then return failure.
+              </p>
+            </li>
+            <li>
+              <p>
+                Let <var>mutable</var> be false.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>message</var>["`mutable`"] [=map/exists=] and
+                <var>message</var>["`mutable`"] is a boolean, then set <var>mutable</var> to
+                <var>message</var>["`mutable`"].
+              </p>
+            </li>
+            <li>
+              <p>
+                Return (<var>notification</var>, <var>mutable</var>).
+              </p>
+            </li>
+          </ol>
+        </section>
+      </section>
+      <section>
+        <h2>
+          Push subscription
+        </h2>
+        <p>
+          A <dfn>push subscription</dfn> is a message delivery context established between the
+          <a>user agent</a> and the <a>push service</a> on behalf of a web application.
+        </p>
+        <p>
+          A [=push subscription=] has an associated <dfn data-dfn-for=
+          "push subscription">scope</dfn>, which is a [=/URL=].
+        </p>
+        <p>
+          A [=push subscription=] is considered to have a <dfn data-dfn-for=
+          "push subscription">window-accessible scope</dfn> when its [=push subscription/scope=]'s
+          [=url/path=] is a [=/list=] of [=list/size=] 1 and [=push subscription/scope=]'s
+          [=url/path=][0] is the empty string.
+        </p>
+        <p class="note">
+          I.e., the [=url/path=] component of the [=/URL=] serializes as "`/`".
+        </p>
+        <p>
+          A <a>push subscription</a> has an associated <dfn>push endpoint</dfn>. It MUST be the
+          absolute URL exposed by the <a>push service</a> where the <a>application server</a> can
+          send <a>push messages</a> to. A <a>push endpoint</a> MUST uniquely identify the <a>push
+          subscription</a>.
+        </p>
+        <p>
+          A <a>push subscription</a> MAY have an associated <dfn>subscription expiration
+          time</dfn>. When set, it MUST be the time, in milliseconds since 00:00:00 UTC on 1
+          January 1970, at which the subscription will be <a>deactivated</a>. The <a>user agent</a>
+          SHOULD attempt to <a>refresh</a> the push subscription before the subscription expires.
+        </p>
+        <p>
+          A <a>push subscription</a> has internal slots for a P-256 <a>ECDH</a> key pair and an
+          authentication secret in accordance with [[RFC8291]]. These slots MUST be populated when
+          creating the <a>push subscription</a>.
+        </p>
+        <p>
+          If the <a>user agent</a> has to change the keys of a [=push subscription=] for any reason
+          and the [=push subscription=]'s [=associated service worker registration=] is non-null,
+          it MUST [=refresh=] the [=push subscription=].
+        </p>
+        <p>
+          To <dfn>create a push subscription</dfn>, given an {{PushSubscriptionOptionsInit}}
+          |optionsDictionary:PushSubscriptionOptionsInit|:
+        </p>
+        <ol class="algorithm">
+          <li>Let |subscription:PushSubscription| be a new {{PushSubscription}}.
+          </li>
+          <li>Let |options:PushSubscriptionOptions| be a newly created {{PushSubscriptionOptions}}
+          object, initializing its attributes with the corresponding members and values of
+          |optionsDictionary|.
+          </li>
+          <li>Set |subscription|'s {{PushSubscription/options}} attribute to |options|.
+          </li>
+          <li>Generate a new P-256 <a>ECDH</a> key pair [[ANSI-X9-62]]. Store the private key in an
+          internal slot on |subscription|; this value MUST NOT be made available to applications.
+          The public key is also stored in an internal slot and can be retrieved by calling the
+          {{PushSubscription/getKey()}} method of the {{PushSubscription}} with an argument of
+          {{PushEncryptionKeyName/"p256dh"}}.
+          </li>
+          <li>Generate a new authentication secret, which is a sequence of octets as defined in
+          [[RFC8291]]. Store the authentication secret in an internal slot on |subscription|. This
+          key can be retrieved by calling the {{PushSubscription/getKey()}} method of the
+          {{PushSubscription}} with an argument of {{PushEncryptionKeyName/"auth"}}.
+          </li>
+          <li>Request a new <a>push subscription</a>. Include the
+          {{PushSubscriptionOptions/applicationServerKey}} attribute of |options| when it has been
+          set. Rethrow any [=exceptions=].
+          </li>
+          <li>When the <a>push subscription</a> request has completed successfully:
+            <ol>
+              <li>Set |subscription|'s {{PushSubscription/endpoint}} attribute to the <a>push
+              subscription</a>'s <a>push endpoint</a>.
+              </li>
+              <li>If provided by the <a>push subscription</a>, set |subscription|'s
+              {{PushSubscription/expirationTime}}.
+              </li>
+            </ol>
+          </li>
+          <li>Return |subscription|.
+          </li>
+        </ol>
+        <section>
+          <h2>
+            Relationship to service worker registrations
+          </h2>
+          <p>
+            A [=push subscription=]'s <dfn>associated service worker registration</dfn> is the
+            [=service worker registration=] whose [=service worker registration/scope URL=]
+            [=URL/equals=] the [=push subscription=]'s [=push subscription/scope=], if any;
+            otherwise null.
+          </p>
+          <p class="note">
+            A [=push subscription=]'s [=associated service worker registration=] can only be null
+            when it has a [=push subscription/window-accessible scope=].
+          </p>
+          <p>
+            And vice versa, a [=service worker registration=]'s <dfn>associated push
+            subscription</dfn> is the [=push subscription=] whose [=push subscription/scope=]
+            [=URL/equals=] the [=service worker registration=]'s [=service worker
+            registration/scope URL=], if any; otherwise null.
+          </p>
+        </section>
+        <section>
+          <h2>
+            Subscription refreshes
+          </h2>
+          <p>
+            A <a>user agent</a> or <a>push service</a> MAY choose to <dfn>refresh</dfn> a <a>push
+            subscription</a> whose [=associated service worker registration=] is non-null at any
+            time, for example because it has reached a certain age.
+          </p>
+          <p>
+            When this happens, the <a>user agent</a> MUST run the steps to <a>create a push
+            subscription</a> given the <a>PushSubscriptionOptions</a> that were provided for
+            creating the current <a>push subscription</a>, and set the new [=push subscription=]'s
+            [=push subscription/scope=] to the original subscription's [=push subscription/scope=].
+            The new <a>push subscription</a> MUST have a key pair that's different from the
+            original subscription.
+          </p>
+          <p>
+            When successful, <a>user agent</a> then MUST <a>fire the "`pushsubscriptionchange`"
+            event</a> with the <a>service worker registration</a> associated with the <a>push
+            subscription</a> as |registration|, a {{PushSubscription}} instance representing the
+            initial <a>push subscription</a> as |oldSubscription| and a {{PushSubscription}}
+            instance representing the new <a>push subscription</a> as |newSubscription|.
+          </p>
+          <p>
+            To allow for time to propagate changes to <a>application servers</a>, a <a>user
+            agent</a> MAY continue to accept messages for an old <a>push subscription</a> for a
+            brief time after a refresh. Once messages have been received for a refreshed <a>push
+            subscription</a>, any old <a>push subscriptions</a> MUST be <a>deactivated</a>.
+          </p>
+          <p>
+            If the <a>user agent</a> is not able to refresh the <a>push subscription</a>, it SHOULD
+            periodically retry the refresh. When the <a>push subscription</a> can no longer be
+            used, for example because it has expired, the <a>user agent</a> MUST <a>fire the
+            "`pushsubscriptionchange`" event</a> with the <a>service worker registration</a>
+            associated with the <a>push subscription</a> as |registration|, a {{PushSubscription}}
+            instance representing the deactivating <a>push subscription</a> as |oldSubscription|
+            and `null` as the |newSubscription|.
+          </p>
+        </section>
+        <section>
+          <h2>
+            Subscription deactivation
+          </h2>
+          <p>
+            When a <a>push subscription</a> is <dfn data-lt="deactivate">deactivated</dfn>, both
+            the <a>user agent</a> and the <a>push service</a> MUST delete any stored copies of its
+            details. Subsequent <a>push messages</a> for this <a>push subscription</a> MUST NOT be
+            delivered.
+          </p>
+          <p>
+            A <a>push subscription</a> without a [=push subscription/window-accessible scope=] MUST
+            be <a>deactivated</a> when its associated <a>service worker registration</a> is
+            unregistered, though a <a>push subscription</a> MAY be <a>deactivated</a> earlier.
+          </p>
+          <p class="note">
+            A <a>push subscription</a> without a [=push subscription/window-accessible scope=] is
+            removed when <a>service worker registration</a> is cleared.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h2>
+          Push service
+        </h2>
+        <p>
+          The term <dfn>push service</dfn> refers to a system that allows <a>application
+          servers</a> to send <a>push messages</a> to a web application. A push service serves the
+          <a>push endpoint</a> or <a data-lt="push endpoints">endpoints</a> for the <a>push
+          subscriptions</a> it serves.
+        </p>
+        <p>
+          The <a>user agent</a> connects to the <a>push service</a> used to create <a>push
+          subscriptions</a>. <a>User agents</a> MAY limit the choice of <a>push services</a>
+          available. Reasons for doing so include performance-related concerns such as service
+          availability (including whether services are blocked by firewalls in specific countries,
+          or networks at workplaces and the like), reliability, impact on battery lifetime, and
+          agreements to steer metadata to, or away from, specific <a>push services</a>.
+        </p>
+      </section>
+      <section>
+        <h2>
+          Permission
+        </h2>
+        <p>
+          The Push API is a [=powerful feature=] identified by the [=powerful feature/name=]
+          <dfn class="permission export">"push"</dfn>.
+        </p>
+        <p>
+          For integration with the [[[Permissions]]] specification, this specification defines the
+          {{PushPermissionDescriptor}} [=powerful feature/permission descriptor type=].
+        </p>
+        <pre class="idl">
+          dictionary PushPermissionDescriptor : PermissionDescriptor {
+            boolean userVisibleOnly = false;
+          };
+        </pre>
+        <p data-dfn-for="PushPermissionDescriptor">
+          The <dfn>userVisibleOnly</dfn> has the same semantics as
+          {{PushSubscriptionOptionsInit/userVisibleOnly}}.
+        </p>
+        <p>
+          `{name: "push", userVisibleOnly: false}` is [=PermissionDescriptor/stronger than=]
+          `{name: "push", userVisibleOnly: true}`.
+        </p>
+      </section>
+    </section>
+    <section>
+      <h2>
+        Security and privacy considerations
+      </h2>
+      <p>
+        The contents of a <a>push message</a> are encrypted [[RFC8291]]. However, the <a>push
+        service</a> is still exposed to the metadata of messages sent by an <a>application
+        server</a> to a <a>user agent</a> over a <a>push subscription</a>. This includes the
+        timing, frequency, and size of messages. Other than changing <a>push services</a>, which
+        user agents may disallow, the only known mitigation is to increase the apparent message
+        size by padding.
+      </p>
+      <p>
+        There is no guarantee that a <a>push message</a> was sent by an <a>application server</a>
+        having the same origin as the web application. The <a>application server</a> is able to
+        share the details necessary to use a <a>push subscription</a> with a third party at its own
+        discretion.
+      </p>
+      <p>
+        The following requirements are intended to protect the privacy and security of the user as
+        far as possible, and subject to meeting that goal, to protect the integrity of the
+        <a>application server</a>'s communication with the user.
+      </p>
+      <p>
+        The Push API may have to wake up the Service Worker associated with the <a>service worker
+        registration</a> in order to run the developer-provided event handlers. This can cause
+        resource usage, such as network traffic, that the <a>user agent</a> SHOULD attribute to the
+        web application that created the <a>push subscription</a>.
+      </p>
+      <p>
+        The <a>user agent</a> MAY consider the <a>PushSubscriptionOptions</a> when acquiring
+        permission or determining the permission status.
+      </p>
+      <p>
+        When a permission is revoked, the <a>user agent</a> MAY <a>fire the
+        "`pushsubscriptionchange`" event</a> for subscriptions created with that permission, with
+        the <a>service worker registration</a> associated with the <a>push subscription</a> as
+        |registration|, a {{PushSubscription}} instance representing the <a>push subscription</a>
+        as |oldSubscription|, and `null` as |newSubscription|. The <a>user agent</a> MUST
+        <a>deactivate</a> the affected subscriptions in parallel.
+      </p>
+      <p>
+        The <a>push endpoint</a> MUST NOT expose information about the user to be derived by actors
+        other than the <a>push service</a>, such as the user's device, identity or location. See
+        the Privacy Considerations in [[RFC8030]] for the exact requirements.
+      </p>
+      <p>
+        The <a>push endpoint</a> of a <a>deactivated</a> <a>push subscription</a> MUST NOT be
+        reused for a new <a>push subscription</a>. This prevents the creation of a persistent
+        identifier that the user cannot remove. This also prevents reuse of the details of one
+        <a>push subscription</a> to send <a>push messages</a> to another <a>push subscription</a>.
+      </p>
+    </section>
+    <section class="informative" id="pushframework">
+      <h2>
+        Push Framework
+      </h2>
+      <p>
+        A <a>push message</a> is sent from an <a>application server</a> to a web application as
+        follows:
+      </p>
+      <ul>
+        <li>the <a>application server</a> requests that the <a>push service</a> deliver a <a>push
+        message</a> using the [[RFC8030]]. This request uses the <a>push endpoint</a> included in
+        the <a>push subscription</a>;
+        </li>
+        <li>the <a>push service</a> delivers the message to a specific <a>user agent</a>,
+        identifying the <a>push endpoint</a> in the message;
+        </li>
+        <li>the <a>user agent</a> identifies the intended <a>Service Worker</a> and activates it as
+        necessary, and delivers the <a>push message</a> to the <a>Service Worker</a>.
+        </li>
+      </ul>
+      <p>
+        This overall framework allows <a>application servers</a> to activate a <a>Service
+        Worker</a> in response to events at the <a>application server</a>. Information about those
+        events can be included in the <a>push message</a>, which allows the web application to
+        react appropriately to those events, potentially without needing to initiate network
+        requests.
+      </p>
+      <p>
+        The following code and diagram illustrate a hypothetical use of the push API.
+      </p>
+      <section class="informative">
+        <h2>
+          Example
+        </h2>
+        <pre class="example">
+          // https://example.com/serviceworker.js
+          this.onpush = event =&gt; {
+            console.log(event.data);
+            // From here we can write the data to IndexedDB, send it to any open
+            // windows, display a notification, etc.
+          }
+
+          // https://example.com/webapp.js
+          // inside an async function...
+          try {
+            const serviceWorkerRegistration = await navigator.serviceWorker.register(
+              "serviceworker.js"
+            );
+            const pushSubscription = await serviceWorkerRegistration.pushManager.subscribe();
+            // The push subscription details needed by the application
+            // server are now available, and can be sent to it using,
+            // for example, an XMLHttpRequest.
+            console.log(pushSubscription.endpoint);
+            console.log(pushSubscription.getKey("p256dh"));
+            console.log(pushSubscription.getKey("auth"));
+          } catch (err) {
+            // In a production environment it might make sense to
+            // also report information about errors back to the
+            // application server.
+            console.log(error);
+          }
+      </pre>
+      </section>
+      <section class="informative">
+        <h2>
+          Sequence diagram
+        </h2>
+        <figure>
+          <a href="images/sequence_diagram.png"><img src="images/sequence_diagram.png" width="795"
+          height="870" alt=
+          "Example flow of events for subscription, push message delivery, and unsubscription"></a>
+          <figcaption>
+            Example flow of events for subscription, push message delivery, and unsubscription
+          </figcaption>
+        </figure>
+      </section>
+      <section>
+        <h3>
+          Push service use
+        </h3>
+        <p>
+          The fields included in the {{PushSubscription}} is all the information needed for an
+          <a>application server</a> to send a <a>push message</a>. Push services that are
+          compatible with the Push API provide a <a>push endpoint</a> that conforms to the <a>web
+          push protocol</a>. These parameters and attributes include:
+        </p>
+        <ul>
+          <li>The <a>push endpoint</a> of a {{PushSubscription}} is a URL that allows an
+          <a>application server</a> to request delivery of a <a>push message</a> to a web
+          application.
+          </li>
+          <li>The {{PushSubscription/getKey()}} method on a {{PushSubscription}} is used to
+          retrieve keying material used to encrypt and authenticate <a>push messages</a>. Each
+          invocation of the function returns a new {{ArrayBuffer}} that contains the value of the
+          corresponding key, or `null` if the identified key doesn't exist. Passing a value of
+          {{PushEncryptionKeyName/"p256dh"}} retrieves a <dfn data-abbr="ECDH">elliptic curve
+          Diffie-Hellman</dfn> public key associated with the <a>push subscription</a>. Passing a
+          value of `auth` returns an authentication secret that an application server uses in
+          authentication of its messages. These keys are used by the <a>application server</a> to
+          encrypt and authenticate messages for the <a>push subscription</a>, as described in
+          [[RFC8291]].
+          </li>
+        </ul>
+      </section>
+    </section>
+    <section data-dfn-for="ServiceWorkerRegistration">
+      <h2 id="extensions-to-the-serviceworkerregistration-interface">
+        `PushManagerAttribute` mixin
+      </h2>
+      <p>
+        This specifications extends the {{Window}} and {{ServiceWorkerRegistration}} objects
+        through the {{PushManagerAttribute}} mixin. [[HTML]] [[SERVICE-WORKERS]]
+      </p>
+      <pre class="idl" data-cite="HTML SERVICE-WORKERS">
+        [SecureContext]
+        interface mixin PushManagerAttribute {
+          readonly attribute PushManager pushManager;
+        };
+        Window includes PushManagerAttribute;
+        ServiceWorkerRegistration includes PushManagerAttribute;
+      </pre>
+      <p>
+        {{Window}} and {{ServiceWorkerRegistration}} objects have an associated {{PushManager}}
+        object.
+      </p>
+      <p>
+        The <dfn>pushManager</dfn> getter steps are to return [=this=]'s associated {{PushManager}}
+        object.
+      </p>
+      <p>
+        On a {{Window}} object the {{PushManager}}'s [=PushManager/service worker registration=] is
+        null.
+      </p>
+      <p>
+        On a {{ServiceWorkerRegistration}} object the {{PushManager}}'s [=PushManager/service
+        worker registration=] is the <a>service worker registration</a> represented by the
+        {{ServiceWorkerRegistration}} object.
+      </p>
+    </section>
+    <section data-dfn-for="PushManager">
+      <h2>
+        <dfn>PushManager</dfn> interface
+      </h2>
+      <p>
+        The {{PushManager}} interface defines the operations to access <a>push services</a>.
+      </p>
+      <pre class="idl">
+        [Exposed=(Window,Worker), SecureContext]
+        interface PushManager {
+          [SameObject] static readonly attribute FrozenArray&lt;DOMString&gt; supportedContentEncodings;
+
+          Promise&lt;PushSubscription&gt; subscribe(optional PushSubscriptionOptionsInit options = {});
+          Promise&lt;PushSubscription?&gt; getSubscription();
+          Promise&lt;PermissionState&gt; permissionState(optional PushSubscriptionOptionsInit options = {});
+        };
+      </pre>
+      <p>
+        A {{PushManager}} has an associated <dfn data-dfn-for="PushManager">service worker
+        registration</dfn> which is null or a <a>service worker registration</a>.
+      </p>
+      <p>
+        The <dfn>supportedContentEncodings</dfn> attribute exposes the sequence of supported
+        content codings that can be used to encrypt the payload of a <a>push message</a>. A content
+        coding is indicated using the <a>Content-Encoding</a> header field when requesting the
+        sending of a <a>push message</a> from the <a>push service</a>.
+      </p>
+      <p>
+        <a>User agents</a> MUST support the `aes128gcm` content coding defined in [[RFC8291]], and
+        MAY support content codings defined in previous versions of the draft for compatibility
+        reasons.
+      </p>
+      <h3>
+        `subscribe()` method
+      </h3>
+      <p>
+        The <dfn>subscribe()</dfn> method steps are:
+      </p>
+      <ol class="algorithm">
+        <li>Let |promise| be [=a new promise=].
+        </li>
+        <li>Let |global| be [=this=]'s [=relevant global object=].
+        </li>
+        <li>Let |scope| be null.
+        </li>
+        <li>Let |registration| be null.
+        </li>
+        <li>If [=this=]'s [=PushManager/service worker registration=] is null:
+          <ol>
+            <li>Set |scope| to the result of running the [=basic URL parser=] given "`/`" and
+            |global|'s <a>associated <code>Document</code></a>'s [=Document/URL=].
+            </li>
+          </ol>
+        </li>
+        <li>Otherwise:
+          <ol>
+            <li>[=/Assert=]: [=this=]'s [=PushManager/service worker registration=] is a [=service
+            worker registration=].
+            </li>
+            <li>Set |registration| to [=this=]'s [=PushManager/service worker registration=].
+            </li>
+          </ol>
+        </li>
+        <li>If |scope| is failure or is a [=/URL=] whose [=url/scheme=] is not "`https`", then
+        [=queue a global task=] on the [=networking task source=] using |global| to [=reject=]
+        |promise| with a {{"NotAllowedError"}} {{DOMException}} and terminate these steps.
+        </li>
+        <li>If |options|["{{PushSubscriptionOptionsInit/userVisibleOnly}}"] is false and the user
+        agent requires it to be true, then [=queue a global task=] on the [=networking task
+        source=] using |global| to [=reject=] |promise| with a {{"NotAllowedError"}}
+        {{DOMException}} and terminate these steps.
+        </li>
+        <li>If |options|["{{PushSubscriptionOptionsInit/applicationServerKey}}"] is null and the
+        <a>push service</a> requires it to be non-null, then [=queue a global task=] on the
+        [=networking task source=] using |global| to [=reject=] |promise| with a
+        {{"NotSupportedError"}} {{DOMException}} and terminate these steps.
+        </li>
+        <li>If |options|["{{PushSubscriptionOptions/applicationServerKey}}"] is non-null:
+          <ol>
+            <li>If |options|["{{PushSubscriptionOptions/applicationServerKey}}"] is a string, then
+            set its value to an {{ArrayBuffer}} containing the sequence of octets that result from
+            decoding |options|["{{PushSubscriptionOptions/applicationServerKey}}"] using the
+            base64url encoding [[RFC7515]].
+            </li>
+            <li>If decoding fails, then [=queue a global task=] on the [=networking task source=]
+            using |global| to [=reject=] |promise| with an {{"InvalidCharacterError"}}
+            {{DOMException}} and terminate these steps.
+            </li>
+            <li>Ensure that |options|["{{PushSubscriptionOptions/applicationServerKey}}"] describes
+            a valid point on the P-256 curve. If its value is invalid, then [=queue a global task=]
+            on the [=networking task source=] using |global| to [=reject=] |promise| with an
+            {{"InvalidAccessError"}} {{DOMException}} and terminate these steps.
+            </li>
+          </ol>
+        </li>
+        <li>Run these steps [=in parallel=]:
+          <ol>
+            <li>Let |subscription| be null.
+            </li>
+            <li>If |scope| is non-null:
+              <ol>
+                <li>If there is a [=push subscription=] with a [=push
+                subscription/window-accessible scope=] whose [=push subscription/scope=]
+                [=URL/equals=] |scope|, then set |subscription| to that [=push subscription=].
+                </li>
+              </ol>
+            </li>
+            <li>Otherwise:
+              <ol>
+                <li>[=/Assert=]: |registration| is non-null.
+                </li>
+                <li>If |registration|'s [=service worker registration/active worker=] is null, then
+                [=queue a global task=] on the [=networking task source=] using |global| to
+                [=reject=] |promise| with an {{"InvalidStateError"}} {{DOMException}} and terminate
+                these steps.
+                </li>
+                <li>If |registration|'s [=associated push subscription=] is non-null, then set
+                |subscription| to |registration|'s [=associated push subscription=].
+                </li>
+                <li>Set |scope| to |registration|'s [=service worker registration/scope URL=].
+                </li>
+              </ol>
+            </li>
+            <li>Let |permission| be [=request permission to use=] "push".
+            </li>
+            <li>If |permission| is {{PermissionState/"denied"}}, [=queue a global task=] on the
+            [=user interaction task source=] using |global| to [=reject=] |promise| with a
+            {{"NotAllowedError"}} {{DOMException}} and terminate these steps.
+            </li>
+            <li>If |subscription| is non-null:
+              <ol>
+                <li>If there is an error with |subscription|, then [=queue a global task=] on the
+                [=networking task source=] using |global| to [=reject=] |promise| with an
+                {{"AbortError"}} {{DOMException}} and terminate these steps.
+                </li>
+                <li>Compare the |options| argument with the `options` attribute of |subscription|.
+                The contents of {{BufferSource}} values are compared for equality rather than
+                [=ECMAScript/reference record|reference=].
+                </li>
+                <li>If any attribute on |options| contains a different value to that stored for
+                |subscription|, then [=queue a global task=] on the [=networking task source=]
+                using |global| to [=reject=] |promise| with an {{"InvalidStateError"}}
+                {{DOMException}} and terminate these steps.
+                </li>
+                <li>[=Queue a global task=] on the [=networking task source=] using |global| to
+                [=resolve=] |promise| with |subscription| and terminate these steps.
+                </li>
+              </ol>
+            </li>
+            <li>[=/Assert=]: |subscription| is null and |scope| is a [=/URL=].
+            </li>
+            <li>Set |subscription| to the result of trying to [=create a push subscription=] with
+            |options|. If creating the subscription [=exception/throws=] an [=exception=], [=queue
+            a global task=] on the [=networking task source=] using |global| to [=reject=]
+            |promise| with a that [=exception=] and terminate these steps.
+            </li>
+            <li>Set |subscription|'s [=push subscription/scope=] to |scope|.
+            </li>
+            <li>[=Queue a global task=] on the [=networking task source=] using |global| to
+            [=resolve=] |promise| with a {{PushSubscription}} corresponding to |subscription|.
+            </li>
+          </ol>
+        </li>
+        <li>Return |promise|.
+        </li>
+      </ol>
+      <p>
+        The <dfn data-dfn-for="PushManager">getSubscription()</dfn> method steps are:
+      </p>
+      <ol>
+        <li>Let |promise| be <a>a new promise</a>.
+        </li>
+        <li>Let |global| be [=this=]'s [=relevant global object=].
+        </li>
+        <li>Let |windowScope| be null.
+        </li>
+        <li>Let |registration| be null.
+        </li>
+        <li>If [=this=]'s [=PushManager/service worker registration=] is null, then set
+        |windowScope| to the result of running the [=basic URL parser=] given "`/`" and |global|'s
+        <a>associated <code>Document</code></a>'s [=Document/URL=].
+        </li>
+        <li>Otherwise:
+          <ol>
+            <li>[=/Assert=]: [=this=]'s [=PushManager/service worker registration=] is a [=service
+            worker registration=].
+            </li>
+            <li>Set |registration| to [=this=]'s [=PushManager/service worker registration=].
+            </li>
+          </ol>
+        </li>
+        <li>Run these steps [=/in parallel=]:
+          <ol>
+            <li>Let |subscription| be null.
+            </li>
+            <li>If |windowScope| is non-null:
+              <ol>
+                <li>If there is a [=push subscription=] whose [=push subscription/scope=] is
+                |windowScope|, then set |subscription| to that [=push subscription=].
+                </li>
+              </ol>
+            </li>
+            <li>Otherwise:
+              <ol>
+                <li>[=/Assert=]: |registration| is non-null.
+                </li>
+                <li>If |registration|'s [=associated push subscription=] is non-null, then set
+                |subscription| to |registration|'s [=associated push subscription=].
+                </li>
+              </ol>
+            </li>
+            <li>If |subscription| is null, then resolve |promise| with null.
+            </li>
+            <li>If there is an error with |subscription|, reject |promise| with a {{DOMException}}
+            whose name is {{"AbortError"}} and terminate these steps.
+            </li>
+            <li>Resolve |promise| with a {{PushSubscription}} corresponding to |subscription|.
+            </li>
+          </ol>
+        </li>
+        <li>Return |promise|.
+        </li>
+      </ol>
+      <p>
+        The <dfn data-dfn-for="PushManager">permissionState()</dfn> method steps are:
+      </p>
+      <ol>
+        <li>
+          <p>
+            Let |promise| be [=a new promise=].
+          </p>
+        </li>
+        <li>
+          <p>
+            Let |global| be [=this=]'s [=relevant global object=].
+          </p>
+        </li>
+        <li>
+          <p>
+            [=In parallel=]:
+          </p>
+          <ol>
+            <li>
+              <p>
+                Let |state| be "`push`"'s [=permission state=].
+              </p>
+            </li>
+            <li>
+              <p>
+                [=Queue a global task=] on the [=networking task source=] with |global| to resolve
+                |promise| with |state|.
+              </p>
+            </li>
+          </ol>
+        </li>
+        <li>
+          <p>
+            Return |promise|.
+          </p>
+        </li>
+      </ol>
+      <p>
+        Permission to use the push service can be persistent, that is, it does not need to be
+        reconfirmed for subsequent subscriptions if a valid permission exists.
+      </p>
+      <p>
+        If there is a need to ask for permission, it needs to be done by invoking the
+        {{PushManager/subscribe()}} method.
+      </p>
+      <section data-dfn-for="PushSubscriptionOptions">
+        <h2>
+          <dfn>PushSubscriptionOptions</dfn> Interface
+        </h2>
+        <pre class="idl">
+          [Exposed=(Window,Worker), SecureContext]
+          interface PushSubscriptionOptions {
+            readonly attribute boolean userVisibleOnly;
+            [SameObject] readonly attribute ArrayBuffer? applicationServerKey;
+          };
+        </pre>
+        <p>
+          The <dfn>userVisibleOnly</dfn> attribute, when getting, returns the value it was
+          initialized with.
+        </p>
+        <p>
+          The <dfn>applicationServerKey</dfn> attribute, when getting, returns the value it was
+          initialized with.
+        </p>
+        <p>
+          If present, the value of {{PushSubscriptionOptions/applicationServerKey}} MUST include a
+          point on the P-256 elliptic curve [[DSS]], encoded in the uncompressed form described in
+          [[ANSI-X9-62]] Annex A (that is, 65 octets, starting with an 0x04 octet). When provided
+          as a {{DOMString}}, the value MUST be encoded using the base64url encoding [[RFC7515]].
+        </p>
+        <p>
+          User agents MAY reject a subscription attempt when
+          {{PushSubscriptionOptions/applicationServerKey}} is not present and the <a>push
+          service</a> requires one for operational reasons.
+        </p>
+        <p>
+          The {{PushSubscriptionOptions/applicationServerKey}} MUST be a different value to the one
+          used for message encryption [[RFC8291]].
+        </p>
+      </section>
+      <section data-dfn-for="PushSubscriptionOptionsInit">
+        <h3>
+          <dfn>PushSubscriptionOptionsInit</dfn> dictionary
+        </h3>
+        <pre class="idl">
+          dictionary PushSubscriptionOptionsInit {
+            boolean userVisibleOnly = false;
+            (BufferSource or DOMString)? applicationServerKey = null;
+          };
+        </pre>
+        <p>
+          The <dfn>userVisibleOnly</dfn> member, when set to `true`, indicates that the <a>push
+          subscription</a> will only be used for <a>push messages</a> whose effect is made visible
+          to the user, for example by displaying a Web Notification. [[NOTIFICATIONS]]
+        </p>
+        <p>
+          A <a>PushSubscriptionOptionsInit</a> represents additional options associated with a
+          <a>push subscription</a>. The <a>user agent</a> MAY consider these options when
+          requesting <a>express permission</a> from the user. When an option is considered, the
+          <a>user agent</a> SHOULD enforce it on incoming <a>push messages</a>.
+        </p>
+        <p>
+          These options are optional, and <a>user agents</a> MAY choose to support only a subset of
+          them. A <a>user agent</a> MUST NOT expose options that it does not support.
+        </p>
+        <p>
+          Once set, options for a <a>push subscription</a> cannot change. A pre-existing <a>push
+          subscription</a> can be unsubscribed, via {{PushSubscription/unsubscribe}}, to create a
+          <a>push subscription</a> with new options.
+        </p>
+        <p>
+          The <dfn>applicationServerKey</dfn> member is used by the <a>user agent</a> when
+          establishing a <a>push subscription</a> with a <a>push service</a>. The
+          {{PushSubscriptionOptions/applicationServerKey}} option includes an elliptic curve public
+          key for an <a>application server</a>. This is the key that the <a>application server</a>
+          will use to authenticate itself when sending <a>push messages</a> to this <a>push
+          subscription</a> as defined in [[RFC8292]]; the <a>push service</a> will reject any
+          <a>push message</a> unless the corresponding private key is used to generate an
+          authentication token.
+        </p>
+      </section>
+    </section>
+    <section data-dfn-for="PushSubscription">
+      <h2>
+        <dfn>PushSubscription</dfn> interface
+      </h2>
+      <p>
+        A {{PushSubscription}} object represents a <a>push subscription</a>.
+      </p>
+      <pre class="idl">
+        [Exposed=(Window,Worker), SecureContext]
+        interface PushSubscription {
+          readonly attribute USVString endpoint;
+          readonly attribute EpochTimeStamp? expirationTime;
+          [SameObject] readonly attribute PushSubscriptionOptions options;
+          ArrayBuffer? getKey(PushEncryptionKeyName name);
+          Promise&lt;boolean&gt; unsubscribe();
+
+          PushSubscriptionJSON toJSON();
+        };
+
+        dictionary PushSubscriptionJSON {
+          USVString endpoint;
+          EpochTimeStamp? expirationTime = null;
+          record&lt;DOMString, USVString&gt; keys;
+        };
+      </pre>
+      <p>
+        When <dfn>getting the `endpoint` attribute</dfn>, the <a>user agent</a> MUST return the
+        <a>push endpoint</a> associated with the <a>push subscription</a>. The <a>user agent</a>
+        MUST use a serialization method that does not contain input-dependent branches (that is,
+        one that is constant time).
+      </p>
+      <p>
+        When <dfn>getting the `expirationTime` attribute</dfn>, the <a>user agent</a> MUST return
+        the <a>subscription expiration time</a> associated with the <a>push subscription</a> if
+        there is one, or `null` otherwise.
+      </p>
+      <p>
+        When getting the <dfn>options</dfn> attribute, the <a>user agent</a> MUST return a
+        <a>PushSubscriptionOptions</a> object representing the options associated with the <a>push
+        subscription</a>.
+      </p>
+      <p>
+        The <dfn>getKey()</dfn> method retrieves keying material that can be used for encrypting
+        and authenticating messages. When {{PushSubscription/getKey()}} is invoked the following
+        process is followed:
+      </p>
+      <ol>
+        <li>Find the internal slot corresponding to the key named by the `name` argument.
+        </li>
+        <li>If a slot was not found, return `null`.
+        </li>
+        <li>Initialize a variable |key| with a newly instantiated {{ArrayBuffer}} instance.
+        </li>
+        <li>If the internal slot contains an asymmetric key pair, set the contents of |key| to the
+        serialized value of the public key from the key pair. This uses the serialization format
+        described in the specification that defines the name. For example, [[RFC8291]] specifies
+        that the {{PushEncryptionKeyName/"p256dh"}} public key is encoded using the uncompressed
+        format defined in [[ANSI-X9-62]] Annex A (that is, a 65 octet sequence that starts with a
+        0x04 octet).
+        </li>
+        <li>Otherwise, if the internal slot contains a symmetric key, set the contents of |key| to
+        a copy of the value from the internal slot. For example, the `auth` parameter contains an
+        octet sequence used by the <a>user agent</a> to authenticate messages sent by an
+        <a>application server</a>.
+        </li>
+        <li>Return |key|.
+        </li>
+      </ol>
+      <p data-link-for="">
+        Keys named {{PushEncryptionKeyName/"p256dh"}} and {{PushEncryptionKeyName/"auth"}} MUST be
+        supported, and their values MUST correspond to those necessary for the user agent to
+        decrypt received push messages in accordance with [[RFC8291]].
+      </p>
+      <p>
+        The <dfn data-lt="unsubscribed">unsubscribe()</dfn> method when invoked MUST run the
+        following steps:
+      </p>
+      <ol>
+        <li>Let |promise| be <a>a new promise</a>.
+        </li>
+        <li>Return |promise| and continue the following steps asynchronously.
+        </li>
+        <li>If the <a>push subscription</a> has already been <a>deactivated</a>, resolve |promise|
+        with `false` and terminate these steps.
+        </li>
+        <li>Run the following step in parallel:
+          <ol>
+            <li>
+              <a>Deactivate</a> the <a>push subscription</a>. The <a>user agent</a> MUST NOT
+              deliver any further <a>push messages</a> for the <a>push subscription</a>.
+              <p>
+                If the <a>user agent</a> failed to request the <a>push service</a> to
+                <a>deactivate</a> the <a>push subscription</a>, for example because of network
+                failures, it SHOULD retry the request to the <a>push service</a> for a reasonable
+                amount of time.
+              </p>
+            </li>
+          </ol>
+        </li>
+        <li>Resolve |promise| with `true`.
+        </li>
+      </ol>
+      <p>
+        The <dfn>toJSON()</dfn> method when invoked MUST run the following steps:
+      </p>
+      <ol>
+        <li>Let |json:PushSubscriptionJSON| be a new {{PushSubscriptionJSON}} dictionary.
+        </li>
+        <li>Set |json|["endpoint"] to the result of [=getting the `endpoint` attribute=] of
+        [=this=].
+        </li>
+        <li>Set |json|["expirationTime"] to the result of [=getting the `expirationTime`
+        attribute=] of [=this=].
+        </li>
+        <li>Let |keys| be a new empty instance of `record&lt;DOMString, USVString&gt;` .
+        </li>
+        <li>For each identifier |i| corresponding to keys in internal slots on the
+        {{PushSubscription}}, ordered by the name of the key:
+          <ol>
+            <li>If the internal slot corresponds to an asymmetric key pair, let |b| be the encoded
+            value of the public key corresponding to the key name |i|, using the encoding defined
+            for the key name (see {{PushSubscription/getKey()}}).
+            </li>
+            <li>Otherwise, let |b| be the value as returned by {{PushSubscription/getKey}}.
+            </li>
+            <li>Let |s| be the URL-safe base64 encoding without padding [[RFC4648]] of |b| as a
+            {{USVString}}. The <a>user agent</a> MUST use a serialization method that does not
+            branch based on the value of |b|.
+            </li>
+            <li>Set |keys|[|i|] to |s|.
+            </li>
+          </ol>
+        </li>
+        <li>Set |json|["keys"] to |keys|.
+        </li>
+        <li>Return |json|.
+        </li>
+      </ol>
+      <p>
+        A <dfn>PushSubscriptionJSON</dfn> dictionary represents the <a>JSON type</a> of a
+        {{PushSubscription}}. In ECMAScript this can be converted into a JSON string through the
+        `JSON`.{{JSON/stringify()}} function.
+      </p>
+      <p>
+        The <dfn data-dfn-for="PushSubscriptionJSON">keys</dfn> record contains an entry for each
+        of the supported {{PushEncryptionKeyName}} entries to the URL-safe base64 encoded
+        representation [[RFC4648]] of its value.
+      </p>
+      <p>
+        Note that the options to a {{PushSubscription}} are not serialized.
+      </p>
+      <section data-dfn-for="PushEncryptionKeyName">
+        <h2>
+          <dfn>PushEncryptionKeyName</dfn> enumeration
+        </h2>
+        <p>
+          Encryption keys used for <a>push message</a> encryption are provided to a web application
+          through the {{PushSubscription/getKey()}} method or the serializer of
+          {{PushSubscription}}. Each key is named using a value from the {{PushEncryptionKeyName}}
+          enumeration.
+        </p>
+        <pre class="idl">
+          enum PushEncryptionKeyName {
+            "p256dh",
+            "auth"
+          };
+        </pre>
+        <p>
+          The <dfn>p256dh</dfn> value is used to retrieve the P-256 ECDH Diffie-Hellman public key
+          described in [[RFC8291]].
+        </p>
+        <p>
+          The <dfn>auth</dfn> value is used to retrieve the authentication secret described in
+          [[RFC8291]].
+        </p>
+      </section>
+    </section>
+    <section data-dfn-for="PushMessageData">
+      <h2>
+        <dfn>PushMessageData</dfn> interface
+      </h2>
+      <pre class="idl" data-cite="FILEAPI">
+        [Exposed=ServiceWorker, SecureContext]
+        interface PushMessageData {
+          ArrayBuffer arrayBuffer();
+          Blob blob();
+          Uint8Array bytes();
+          any json();
+          USVString text();
+        };
+      </pre>
+      <p>
+        {{PushMessageData}} objects have an associated <dfn data-dfn-for=
+        "PushMessageData">bytes</dfn> (a [=byte sequence=]), which is set on creation.
+      </p>
+      <p>
+        The <dfn>arrayBuffer()</dfn> method steps are to return an {{ArrayBuffer}} whose contents
+        are [=this=]'s [=bytes=]. Exceptions thrown during the creation of the {{ArrayBuffer}}
+        object are re-thrown.
+      </p>
+      <p>
+        The <dfn>blob()</dfn> method steps are to return a new {{Blob}} object whose contents are
+        [=this=]'s [=bytes=].
+      </p>
+      <p>
+        The <dfn>bytes()</dfn> method steps are to return a new {{Uint8Array}} backed by a
+        {{ArrayBuffer}} whose contents are [=this=]'s [=bytes=]. Exceptions thrown during the
+        creation of the {{ArrayBuffer}} object are re-thrown.
+      </p>
+      <p data-cite="ENCODING">
+        The <dfn>json()</dfn> method steps are to return the result of [=parse JSON bytes to a
+        JavaScript value|parsing JSON bytes to a JavaScript value=] given [=this=]'s [=bytes=].
+      </p>
+      <p data-cite="ENCODING">
+        The <dfn>text()</dfn> method steps are to return the result of running <a>UTF-8 decode</a>
+        on [=this=]'s [=bytes=].
+      </p>
+      <p>
+        To <dfn>extract a byte sequence</dfn> from |object|, run these steps:
+      </p>
+      <ol>
+        <li>Let |bytes| be an empty byte sequence.
+        </li>
+        <li>Switch on |object|'s type:
+          <dl data-cite="WEBIDL">
+            <dt>
+              {{BufferSource}}
+            </dt>
+            <dd>
+              Set |bytes| to a copy of |object|'s contents.
+            </dd>
+            <dt>
+              {{USVString}}
+            </dt>
+            <dd data-cite="ENCODING">
+              Set |bytes| to the result of running <a>utf-8 encode</a> on |object|.
+            </dd>
+          </dl>
+        </li>
+        <li>Return |bytes|.
+        </li>
+      </ol>
+    </section>
+    <section>
+      <h2>
+        Events
+      </h2>
+      <section data-dfn-for="ServiceWorkerGlobalScope">
+        <h2>
+          Extensions to the `ServiceWorkerGlobalScope` interface
+        </h2>
+        <p>
+          The Service Worker specification defines a {{ServiceWorkerGlobalScope}} interface
+          [[SERVICE-WORKERS]], which this specification extends.
+        </p>
+        <pre class="idl" data-cite="HTML">
+          [Exposed=ServiceWorker, SecureContext]
+          partial interface ServiceWorkerGlobalScope {
+            attribute EventHandler onpush;
+            attribute EventHandler onpushsubscriptionchange;
+          };
+        </pre>
+        <p>
+          The <dfn>onpush</dfn> attribute is an <a>event handler IDL attribute</a> whose
+          corresponding <a>event handler event type</a> is "`push`". The "`push`" event indicates
+          that a <a>push message</a> has been received for a <a>push subscription</a>.
+        </p>
+        <p>
+          The <dfn>onpushsubscriptionchange</dfn> attribute is an <a>event handler IDL
+          attribute</a> whose corresponding <a>event handler event type</a> is
+          "`pushsubscriptionchange`".
+        </p>
+      </section>
+      <section data-dfn-for="PushEvent">
+        <h2>
+          <dfn>PushEvent</dfn> Interface
+        </h2>
+        <pre class="idl" data-cite="SERVICE-WORKERS NOTIFICATIONS">
+            [Exposed=ServiceWorker, SecureContext]
+            interface PushEvent : ExtendableEvent {
+              constructor(DOMString type, optional PushEventInit eventInitDict = {});
+              readonly attribute PushMessageData? data;
+              readonly attribute Notification? notification;
+            };
+
+            dictionary PushEventInit : ExtendableEventInit {
+              PushMessageDataInit? data = null;
+              Notification? notification = null;
+            };
+
+            typedef (BufferSource or USVString) PushMessageDataInit;
+          </pre>
+        <p>
+          When a <dfn>constructor</dfn> of the <a>PushEvent</a> interface, or of an interface that
+          inherits from the <a>PushEvent</a> interface, is invoked, the usual <a>event constructing
+          steps</a> are extended to include the following steps:
+        </p>
+        <ol>
+          <li>If |eventInitDict|'s `data` member is not present, set the `data` attribute of the
+          event to `null` and terminate these steps.
+          </li>
+          <li>Set |b| to the result of <a data-lt="extract a byte sequence">extracting a byte
+          sequence</a> from the "`data`" member of |eventInitDict|.
+          </li>
+          <li>Set the `data` attribute of the event to a new {{PushMessageData}} instance whose
+          [=PushMessageData/bytes=] is |b|.
+          </li>
+        </ol>
+        <p>
+          The <dfn>data</dfn> attribute must return the value it was initialized with.
+        </p>
+        <p>
+          The <dfn>notification</dfn> attribute must return the value it was initialized with.
+        </p>
+      </section>
+      <section>
+        <h2>
+          Receiving a <a>Push Message</a>
+        </h2>
+        <p>
+          When the <a>user agent</a> receives a <a>push message</a> from the <a>push service</a>,
+          it MUST run the following steps.
+        </p>
+        <ol>
+          <li>
+            <p>
+              Let |subscription| be the active <a>push subscription</a> corresponding to the
+              <a>push message</a>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Let |registration| be |subscription|'s [=push subscription/associated service worker
+              registration=].
+            </p>
+          </li>
+          <li>
+            <p>
+              Let |bytes| be null.
+            </p>
+          </li>
+          <li>
+            <p>
+              If the <a>push message</a> contains a payload:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  Decrypt the <a>push message</a>'s payload using the private key from the key pair
+                  associated with |subscription| and the process described in [[RFC8291]]. Set
+                  |bytes| to the resulting [=/byte sequence=].
+                </p>
+              </li>
+              <li>
+                <p>
+                  If the <a>push message</a> payload could not be decrypted for any reason, then
+                  [=acknowledge a push message|acknowledge=] the <a>push message</a> and abort
+                  these steps.
+                </p>
+                <p class="note">
+                  A `push` event is not fired for a <a>push message</a> that was not successfully
+                  decrypted using the key pair associated with the <a>push subscription</a>.
+                </p>
+              </li>
+            </ol>
+          </li>
+          <li>
+            <p>
+              If |bytes| is non-null:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  Let |baseURL| be |subscription|'s [=push subscription/scope=].
+                </p>
+              </li>
+              <li>
+                <p>
+                  Let |origin| be |baseURL|'s [=url/origin=].
+                </p>
+              </li>
+              <li>
+                <p>
+                  Let |fallbackTimestamp| be [=current coarsened wall time=].
+                </p>
+              </li>
+              <li>
+                <p>
+                  Let |declarativeResult| be the result of running the [=/declarative push message
+                  parser=] given |bytes|, |origin|, |baseURL|, and |fallbackTimestamp|.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If |declarativeResult| is not failure:
+                </p>
+                <ol>
+                  <li>
+                    <p>
+                      Let |notification| be |declarativeResult|'s [=declarative push message parser
+                      result/notification=].
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Set |notification|'s [=notification/service worker registration=] to
+                      |registration|.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Let |notificationShown| be false.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      If |declarativeResult|'s [=declarative push message parser result/mutable=]
+                      is true and |registration| is non-null:
+                    </p>
+                    <ol>
+                      <li>
+                        <p>
+                          Let |result| be the result of [=fire a push event|firing a push event=]
+                          given |registration|, null, and a new {{Notification}} object
+                          representing |notification|.
+                        </p>
+                      </li>
+                      <li>
+                        <p>
+                          If |result| is not failure, then set |notificationShown| to |result|'s
+                          [=push event result/notification shown=].
+                        </p>
+                      </li>
+                    </ol>
+                  </li>
+                  <li>
+                    <p>
+                      If |notificationShown| is false, then run the [=notification show steps=]
+                      given |notification|.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      [=acknowledge a push message|Acknowledge=] the <a>push message</a> and abort
+                      these steps.
+                    </p>
+                  </li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+          <li>
+            <p>
+              If |registration| is null, then abort these steps.
+            </p>
+          </li>
+          <li>
+            <p>
+              Let |data| be a new {{PushMessageData}} object whose [=PushMessageData/bytes=] is
+              |bytes| if |bytes| is non-null; otherwise null.
+            </p>
+          </li>
+          <li>
+            <p>
+              Let |result| be the result of [=fire a push event|firing a push event=] given
+              |registration|, |data|, and null.
+            </p>
+          </li>
+          <li>
+            <p>
+              If <var>result</var> is failure and the same <a>push message</a> has been delivered
+              to a <a>service worker registration</a> multiple times unsuccessfully, then
+              [=acknowledge a push message|acknowledge=] the <a>push message</a>.
+            </p>
+          </li>
+          <li>
+            <p>
+              If <var>result</var> is not failure, then [=acknowledge a push message|acknowledge=]
+              the <a>push message</a>.
+            </p>
+          </li>
+        </ol>
+        <p>
+          A <dfn>push event result</dfn> is a [=/tuple=] consisting of a <dfn data-dfn-for=
+          "push event result">notification shown</dfn> (a [=/boolean=]).
+        </p>
+        <p>
+          To <dfn>fire a push event</dfn> given a [=/service worker registration=] |registration|,
+          {{PushMessageData}} object or null |data|, and a [=/notification=] or null
+          |notification|, run these steps. They return failure or a [=/push event result=].
+        </p>
+        <ol>
+          <li>
+            <p>
+              Let |notificationResult| be null.
+            </p>
+          </li>
+          <li>
+            <p>
+              Set |registration|'s [=service worker registration/has shownotification() been
+              successfully invoked|has `showNotification()` been successfully invoked=] to false.
+            </p>
+          </li>
+          <li>
+            <p>
+              <a>Fire a functional event</a> named "`push`" using <a>PushEvent</a> on
+              |registration| with the following properties:
+            </p>
+            <dl>
+              <dt>
+                {{PushEvent/data}}
+              </dt>
+              <dd>
+                |data|
+              </dd>
+              <dt>
+                {{PushEvent/notification}}
+              </dt>
+              <dd>
+                |notification|
+              </dd>
+            </dl>
+            <p>
+              Then run the following steps in parallel, with |dispatchedEvent|:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  Wait for all of the promises in the [=ExtendableEvent/extend lifetime promises=]
+                  of |dispatchedEvent| to resolve.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If they do not resolve successfully, then set |notificationResult| to failure.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Otherwise, set |notificationResult| to |registration|'s [=service worker
+                  registration/has shownotification() been successfully invoked|has
+                  `showNotification()` been successfully invoked=].
+                </p>
+              </li>
+            </ol>
+          </li>
+          <li>
+            <p>
+              Wait for |notificationResult| to be non-null.
+            </p>
+          </li>
+          <li>
+            <p>
+              If |notificationResult| is failure, then return failure.
+            </p>
+          </li>
+          <li>
+            <p>
+              [=/Assert=]: |notificationResult| is a [=/boolean=].
+            </p>
+          </li>
+          <li>
+            <p>
+              Return (|notificationResult|).
+            </p>
+          </li>
+        </ol>
+        <p>
+          To <dfn>acknowledge a push message</dfn> given a <a>push message</a>
+          <var>pushMessage</var> means to acknowledge the receipt of <var>pushMessage</var>
+          according to [[RFC8030]].
+        </p>
+        <p>
+          Acknowledging the <a>push message</a> causes the <a>push service</a> to stop delivering
+          the message and to report success to the <a>application server</a>. This prevents the
+          same <a>push message</a> from being retried by the <a>push service</a> indefinitely.
+        </p>
+        <p>
+          Acknowledging also means that an <a>application server</a> could incorrectly receive a
+          delivery receipt indicating successful delivery of the <a>push message</a>. Therefore,
+          multiple rejections SHOULD be permitted before acknowledging; allowing at least three
+          attempts is recommended.
+        </p>
+      </section>
+      <section>
+        <h2>
+          The <dfn>pushsubscriptionchange</dfn> Event
+        </h2>
+        <p>
+          The <a>pushsubscriptionchange</a> event indicates a change in a <a>push subscription</a>
+          that was triggered outside of the application's control, for example because it has been
+          refreshed, revoked or lost.
+        </p>
+        <p>
+          To <dfn>fire the "`pushsubscriptionchange`" event</dfn> given a <a>service worker
+          registration</a> of |registration|, |newSubscription| and |oldSubscription|, the <a>user
+          agent</a> must <a>fire a functional event</a> named "`pushsubscriptionchange`" using
+          <a>PushSubscriptionChangeEvent</a> on |registration| with the following properties:
+        </p>
+        <dl>
+          <dt>
+            `newSubscription`
+          </dt>
+          <dd>
+            |newSubscription|
+          </dd>
+          <dt>
+            `oldSubscription`
+          </dt>
+          <dd>
+            |oldSubscription|
+          </dd>
+        </dl>
+        <p class="note">
+          Consider using a more reliable synchronization mechanism such as [[WEB-BACKGROUND-SYNC]]
+          when sending the details of the new <a>push subscription</a> to your <a>application
+          server</a>. The user might be subject to unreliable network conditions that could cause a
+          fetch to fail.
+        </p>
+        <section data-dfn-for="PushSubscriptionChangeEvent">
+          <h2>
+            <dfn>PushSubscriptionChangeEvent</dfn> Interface
+          </h2>
+          <pre class="idl" data-cite="SERVICE-WORKERS">
+            [Exposed=ServiceWorker, SecureContext]
+            interface PushSubscriptionChangeEvent : ExtendableEvent {
+              constructor(DOMString type, optional PushSubscriptionChangeEventInit eventInitDict = {});
+              readonly attribute PushSubscription? newSubscription;
+              readonly attribute PushSubscription? oldSubscription;
+            };
+          </pre>
+          <p>
+            The <dfn>newSubscription</dfn> attribute, when getting, returns the value it was
+            initialized to.
+          </p>
+          <p>
+            The <dfn>oldSubscription</dfn> attribute, when getting, returns the value it was
+            initialized to.
+          </p>
+        </section>
+        <section data-dfn-for="PushSubscriptionChangeEventInit">
+          <h2>
+            <dfn>PushSubscriptionChangeEventInit</dfn> Interface
+          </h2>
+          <pre class="idl" data-cite="SERVICE-WORKERS">
+              dictionary PushSubscriptionChangeEventInit : ExtendableEventInit {
+                PushSubscription newSubscription = null;
+                PushSubscription oldSubscription = null;
+              };
+            </pre>
+          <p>
+            The <dfn>newSubscription</dfn> member details the <a>push subscription</a> that is
+            valid per invocation of the <a>pushsubscriptionchange</a> event. The value will be
+            `null` when no new <a>push subscription</a> could be established, for example because
+            the web application has lost <a>express permission</a>.
+          </p>
+          <p>
+            The <dfn>oldSubscription</dfn> member details the <a>push subscription</a> that SHOULD
+            NOT be used anymore. The value will be `null` when the <a>user agent</a> is not able to
+            provide the full set of details, for example because of partial database corruption.
+          </p>
+        </section>
+      </section>
+    </section>
+    <section>
+      <h2>
+        Accessibility
+      </h2>
+      <p>
+        The <cite>Push API</cite> does not provide any means itself to present data it receives
+        from a [=push service=]. Instead, the <cite>Push API</cite> relies on other APIs –
+        primarily the [[[NOTIFICATIONS]]] – to present received information to an end user. As
+        such, there are no accessibility requirements for the <cite>Push API</cite> itself.
+        However, specifications such as [[NOTIFICATIONS]] provide guidance how to present
+        notifications in an accessible manner.
+      </p>
+      <p>
+        Further, presenting an accessible interface might depend on transferring more information
+        than a push message can convey. Push messages are best suited to carrying small amounts of
+        content or identifiers. Any larger resources need to be fetched from servers.
+      </p>
+    </section>
+    <section id="conformance">
+      <p>
+        This specification defines conformance criteria that apply to a single product: the
+        <dfn>user agent</dfn> that implements the interfaces that it contains.
+      </p>
+    </section>
+    <section class="appendix" id="idl-index"></section>
+    <section class="appendix">
+      <h2>
+        Acknowledgements
+      </h2>
+      <p>
+        The editors would like to express their gratitude to the Mozilla and Telefónica Digital
+        teams implementing the Firefox OS Push message solution, as well as to the following people
+        who provided significant technical input to this document: Antonio Amaya, Miguel García
+        Arribas, Ben Bangert, Kit Cambridge, José Manuel Cantera, JR Conlin, Albert Crespell, Matt
+        Gaunt, Phil Jenvey, Guillermo López, Nikhil Marathe, John Mellor, Pınar Özlen, Fernando R.
+        Sela, Shijun Sun and Doug Turner.
+      </p>
+    </section>
+  </body>
+</html>

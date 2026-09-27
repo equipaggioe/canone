@@ -39,13 +39,23 @@ herramienta la haga cumplir.
   proyectos de muestra, ni lo que hace la comunidad. Una regla que sale de ahí es propia.
 - El comportamiento por defecto de una herramienta no es una recomendación. Si la página no dice
   nada, rige; cambiarlo es oficial solo si la documentación lo pide.
-- Cada sección nombra el estándar del que sale.
+- Cada sección nombra los estándares que sigue y enlaza su texto en [estandares/](../estandares/).
+  Lo que el estándar dice no se escribe.
+- Sobre el estándar, la página escribe solo tres cosas:
+  - La opción que elige donde el estándar deja varias.
+  - Lo que contradice o endurece del estándar. Endurecer es volver obligatorio lo que el estándar
+    recomienda «cuando sea posible» o deja como preferencia.
+  - Lo que ningún estándar cubre.
+- La tabla «Cómo se hace cumplir» nombra en su primera columna el estándar o su sección, o una
+  regla que la página ya escribió. Nunca redacta una regla nueva para llenar la fila.
+- Nombra los archivos de `plantilla/` que salen de ella.
 - Ni el código de los repositorios ni lo que la página ya dice son fuente. Lo que un repositorio
   hace distinto va a [homologacion.md](../homologacion.md), que es el documento de trabajo y se
   borra cuando la homologación termine.
-- Sin comentarios ni explicaciones, salvo dos, cada una en una frase corta: por qué una regla se
-  aparta de la recomendación oficial, y cómo ayuda una elección que no es trivial. Una elección
-  trivial, como un color, no lleva frase. Vale también para los comentarios de `plantilla/`.
+- Sin comentarios ni explicaciones, salvo dos, cada una en una frase corta: por qué la página
+  contradice o endurece el estándar, y cómo ayuda una elección que no es trivial. Una regla trivial,
+  como un color o el largo de línea, no lleva frase: su razón es una preferencia. Vale también para
+  los comentarios de `plantilla/`.
 - Hereda de su página madre y no repite nada de ella: `fastapi.md`, `flet.md` y `qt.md` heredan de
   `python.md`.
 - No dice qué repositorio la usa ni cuándo elegir una plataforma sobre otra.

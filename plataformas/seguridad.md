@@ -84,7 +84,6 @@ Estándares: [RFC 6585](../estandares/rfc/rfc6585.txt) y
 - Los contadores viven en Redis, compartidos por todos los procesos.
 - Todo 429 lleva `Retry-After`. Endurece RFC 6585, que lo deja opcional: el cliente sabe cuándo
   reintentar.
-- El login admite 10 intentos por minuto por IP.
 
 ## Permisos
 

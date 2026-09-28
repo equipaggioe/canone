@@ -8,7 +8,8 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 ## Idioma
 
 - **El código se escribe en inglés**: variables, funciones, clases, tablas, columnas, endpoints,
-  enums, comentarios y mensajes de commit.
+  enums y comentarios.
+- **Los mensajes de commit se escriben en español.**
 - **La UI y la documentación se escriben en español**, salvo que el proyecto sea explícitamente
   multilingüe.
 - **Español neutro.** Ni rioplatense ni de España. Nada de voseo (`vos`, `tenés`, `mirá`), nada de

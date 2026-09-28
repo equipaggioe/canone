@@ -30,8 +30,8 @@ Estándar: [*Data Definition*](../estandares/postgresql/ddl.sgml) de PostgreSQL.
 
 Estándar: [*SQL Syntax*](../estandares/postgresql/syntax.sgml) de PostgreSQL.
 
-- Los nombres van en snake_case y sin comillas, las tablas en plural y las claves foráneas como
-  `<singular>_id`.
+- Los nombres van en snake_case y sin comillas, las tablas en singular y las claves foráneas como
+  `<tabla>_id`.
 
 ## Índices
 

@@ -20,7 +20,7 @@ Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de 
 
 Estándar: [`systemd.exec`](../estandares/systemd/systemd.exec.xml).
 
-- Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_files`, con
+- Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`, con
   `ON DELETE CASCADE`. La fila guarda el tipo, el tamaño y el nombre original.
 - El archivo en disco se llama con el ID de su fila y vive en el `StateDirectory=` del servicio,
   `/var/lib/<app>/files/`. Está en la misma máquina y el respaldo de
@@ -33,7 +33,7 @@ Estándar: [`systemd.exec`](../estandares/systemd/systemd.exec.xml).
 Estándar: [`systemd.timer`](../estandares/systemd/systemd.timer.xml).
 
 - Un timer de systemd borra cada día los archivos con más de una hora en disco y sin fila en
-  ninguna tabla `_files`. El borrado en cascada y una subida cuyo commit falló dejan archivos sin
+  ninguna tabla `_file`. El borrado en cascada y una subida cuyo commit falló dejan archivos sin
   fila, y un solo barrido cubre los dos caminos.
 
 ## Cómo se hace cumplir

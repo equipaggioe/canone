@@ -26,4 +26,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0016](0016-una-pagina-es-un-catalogo-de-convenciones-que-sale-de-la-recomendacion-oficial.md) | Una página de plataforma es un catálogo de convenciones que sale de la recomendación oficial | `plataformas/` | Reemplazada por ADR-0018 |
 | [0017](0017-la-marca-vive-en-brand.md) | El logo y los colores del producto viven en `brand/` | Todos | Aceptada |
 | [0018](0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md) | Una página se revisa contra la copia de sus estándares y solo dice lo que elige, endurece o no cubren | `plataformas/` | Aceptada |
-| [0019](0019-el-ci-corre-cada-semana-aunque-no-haya-commits.md) | El CI corre cada semana aunque no haya commits | Todos | Propuesta |
+| [0019](0019-el-ci-corre-cada-semana-aunque-no-haya-commits.md) | El CI corre cada semana aunque no haya commits | Todos | Aceptada |

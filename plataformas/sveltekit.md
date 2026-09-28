@@ -11,7 +11,24 @@ Estándar: [*Project structure*](../estandares/sveltekit/project-structure.md) d
 - TypeScript va en modo strict, y `svelte-check` lo revisa.
 - Prettier formatea, con `prettier-plugin-svelte` y líneas de 99, y ESLint revisa con
   `eslint-plugin-svelte`.
-- En `src/lib/` van `api/` con el cliente, `components/` y `state/`.
+
+```text
+<pieza>/
+  package.json
+  pnpm-lock.yaml
+  svelte.config.js
+  tsconfig.json
+  uno.config.ts
+  vite.config.ts
+  src/
+    app.html
+    lib/
+      api/            el cliente generado por Hey API
+      components/
+      state/          las clases con $state, en módulos .svelte.ts
+    routes/
+  static/
+```
 
 ## Carga de datos
 

@@ -47,6 +47,8 @@ herramienta la haga cumplir.
   nada, rige; cambiarlo es oficial solo si la documentación lo pide.
 - Cada sección nombra los estándares que sigue y enlaza su texto en [estandares/](../estandares/).
   Lo que el estándar dice no se escribe.
+- La excepción es el layout: se dibuja completo, como árbol, aunque repita partes del estándar. El
+  árbol es la convención misma, y a pedazos no se lee.
 - Sobre el estándar, la página escribe solo tres cosas:
   - La opción que elige donde el estándar deja varias.
   - Lo que contradice o endurece del estándar. Endurecer es volver obligatorio lo que el estándar

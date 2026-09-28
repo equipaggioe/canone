@@ -28,9 +28,31 @@ Estándares: [*Common architecture concepts*](../estandares/flutter/app-architec
 [*Architecture recommendations and resources*](../estandares/flutter/app-architecture-recommendations.md)
 de Flutter, con sus [recomendaciones](../estandares/flutter/architecture-recommendations.yml).
 
-- `lib/` tiene `config/`, `routing/`, `data/repositories/`, `data/services/`, `domain/models/`,
-  `ui/core/` y una carpeta `ui/<función>/` con `view_models/` y `widgets/`. Las carpetas llevan el
-  nombre del componente de arquitectura, como pide la recomendación de nombres.
+```text
+<pieza>/
+  pubspec.yaml
+  pubspec.lock
+  analysis_options.yaml
+  lib/
+    main.dart
+    config/
+    routing/
+    data/
+      repositories/
+      services/       el cliente de la API
+    domain/
+      models/         los modelos con freezed
+    ui/
+      core/
+        themes/       el tema claro y el oscuro
+      <función>/
+        view_models/
+        widgets/
+  test/
+```
+
+- Las carpetas llevan el nombre del componente de arquitectura, como pide la recomendación de
+  nombres.
 - Los modelos se generan con freezed y json_serializable. freezed da igualdad, `copyWith` y JSON
   con menos código que built_value.
 - HTTP va por `package:http`, dentro de un solo servicio del cliente de la API.

@@ -4,10 +4,25 @@ Una aplicación en Flet. Se suma a [python.md](python.md).
 
 ## Proyecto
 
-Estándar: [*Creating a new Flet app*](../estandares/flet/create-flet-app.md).
+Estándares: [*Creating a new Flet app*](../estandares/flet/create-flet-app.md) y la
+[estructura del proyecto](../estandares/flet/publish.md) que supone `flet build`.
 
-- En `src/`, al lado de `main.py` y `assets/`, van `api/` con el cliente y sus modelos, `views/`
-  con una vista por ruta, y `theme.py`.
+```text
+<pieza>/
+  pyproject.toml
+  uv.lock
+  src/
+    main.py
+    theme.py
+    assets/
+      icon.png
+    api/              el cliente y sus modelos
+    views/            una vista por ruta
+  tests/
+```
+
+- El código va directo en `src/`. Contradice el `src/<paquete>/` de [python.md](python.md): es la
+  estructura que supone `flet build`.
 
 ## Tema
 

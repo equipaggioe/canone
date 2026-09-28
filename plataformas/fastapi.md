@@ -4,11 +4,33 @@ Un servidor en FastAPI. Se suma a [python.md](python.md).
 
 ## Estructura
 
-Estándar: [*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md) de FastAPI.
+Estándares: [*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md)
+de FastAPI y el [tutorial](../estandares/alembic/tutorial.rst) de Alembic.
 
-- El layout del estándar va en `src/<paquete>/`. Al lado de `routers/` van `models/`, con las
-  tablas de SQLAlchemy, y `schemas/`, con los esquemas de Pydantic, con un archivo por recurso en
-  cada una.
+```text
+server/
+  pyproject.toml
+  uv.lock
+  alembic.ini
+  alembic/
+    env.py            el de la plantilla async
+    script.py.mako
+    versions/
+  src/<paquete>/
+    __init__.py
+    main.py           crea la app, monta los routers y registra el handler de errores
+    config.py         Settings
+    database.py       el engine y la fábrica de sesiones
+    dependencies.py   las dependencias compartidas, como la sesión y el usuario actual
+    errors.py         la excepción de la app y su handler
+    models/           las tablas de SQLAlchemy, un archivo por recurso
+    schemas/          los esquemas de Pydantic, un archivo por recurso
+    routers/          un archivo por recurso
+  tests/
+```
+
+- `database.py` y `errors.py` le dan un lugar fijo a lo que el estándar no ubica. `config.py` es
+  el módulo que propone la guía de configuración.
 
 ## Dependencias
 

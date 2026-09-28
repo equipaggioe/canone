@@ -17,6 +17,16 @@ Estándares: [*pyproject.toml specification*](../estandares/pypa/pyproject-toml.
   estándar `pylock.toml`: `uv.lock` es el que uv lee, y el otro sería una copia exportada.
 - El backend de construcción es `uv_build`.
 
+Estándar del layout: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
+
+```text
+pyproject.toml
+uv.lock
+src/<paquete>/
+  __init__.py
+tests/
+```
+
 ## Estilo
 
 Estándares: [PEP 8](../estandares/python/pep-0008.rst) y

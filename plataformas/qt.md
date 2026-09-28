@@ -4,8 +4,21 @@ Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](py
 
 ## Layout
 
-- El código va en `src/<paquete>/`: `main.py`, `api/` con el cliente y sus modelos, `windows/`,
-  `dialogs/`, `models/` con los modelos de Qt, y `theme.py`.
+```text
+desktop/
+  pyproject.toml
+  uv.lock
+  pysidedeploy.spec
+  src/<paquete>/
+    __init__.py
+    main.py
+    theme.py          la hoja de estilo global
+    api/              el cliente y sus modelos
+    windows/
+    dialogs/
+    models/           los modelos de Qt
+  tests/
+```
 
 ## PySide6
 

@@ -25,8 +25,31 @@ Estándares: la [guía de arquitectura](../estandares/android/architecture.md), 
 las [buenas prácticas de corrutinas](../estandares/android/coroutines-best-practices.md) y
 [Hilt](../estandares/android/hilt.md).
 
-- El código va en un solo módulo `app` con los paquetes `data/` (`repository/`, `network/`,
-  `local/`), `ui/<función>/`, `ui/theme/` y `di/`.
+```text
+mobile/
+  settings.gradle.kts
+  build.gradle.kts
+  gradle/
+    libs.versions.toml
+  app/
+    build.gradle.kts
+    src/
+      main/java/<paquete>/
+        App.kt              la Application con @HiltAndroidApp
+        MainActivity.kt
+        data/
+          repository/
+          network/          Retrofit y OkHttp
+          local/            DataStore
+        di/                 los módulos de Hilt
+        ui/
+          theme/
+          <función>/        la pantalla y su ViewModel
+      test/java/<paquete>/
+      androidTest/java/<paquete>/
+```
+
+- Todo va en un solo módulo `app`.
 - HTTP va por Retrofit con OkHttp. El `Authenticator` de OkHttp hace el único reintento tras
   refrescar la sesión que pide [plataformas/README.md](README.md).
 - El JSON se lee con kotlinx.serialization. Las propiedades de Kotlin ya están en camelCase, como el

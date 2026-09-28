@@ -1,98 +1,64 @@
-# Autenticación y defensa
+# Seguridad
 
-Cómo se autentica y qué protege cada capa. Aplica al servidor y a lo que cada cliente guarda.
+Autenticación, sesión y defensa. Aplica al servidor y a cada cliente.
 
 ## Contraseñas
 
-**argon2id** vía `argon2-cffi`, con los parámetros por defecto de la biblioteca. No se bajan sin
-medir: el coste **es** la defensa.
+Estándares: [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt),
+[*Password Storage Cheat Sheet*](../estandares/owasp/Password_Storage.md) de OWASP,
+[RFC 9106](../estandares/rfc/rfc9106.txt) y
+[*OAuth2 with Password (and hashing), Bearer with JWT tokens*](../estandares/fastapi/oauth2-jwt.md)
+de FastAPI.
+
+## Autenticación
+
+Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md),
+[*Credential Stuffing Prevention Cheat Sheet*](../estandares/owasp/Credential_Stuffing_Prevention.md)
+y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
 
 ## Tokens
 
-JWT firmados, con el tipo dentro del token. **Un tipo por superficie y por etapa**, no un token
-único que sirva para todo:
+Estándares: [RFC 7519](../estandares/rfc/rfc7519.txt), [RFC 8725](../estandares/rfc/rfc8725.txt)
+y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP.
 
-| Tipo | Para qué |
-|---|---|
-| `access` | La API pública |
-| `refresh` | Renovar; se guarda hasheado, nunca en claro |
-| `backoffice` | La sesión de operación interna |
-| `backoffice_preauth` | Solo entre la contraseña y el código TOTP. Minutos, no la sesión completa |
+## Sesión
 
-El tipo separa radios de daño: una cookie de backoffice robada no sirve contra la API pública, y un
-pre-auth interceptado a medio login no es una sesión.
-
-El refresh token se guarda hasheado en la base: un volcado de la tabla no da sesiones.
-
-## El login
-
-Cómo se comporta el endpoint, no solo qué guarda (ADR-0009):
-
-- **Se verifica siempre una contraseña**, exista la cuenta o no, contra un hash señuelo calculado
-  al arrancar. argon2 cuesta ~100 ms a propósito: responder de inmediato cuando el identificador no
-  existe mide la diferencia desde fuera y vuelve inútil el mensaje de error uniforme.
-- **Un solo `type`** de error para identificador desconocido, contraseña mala y cuenta inactiva. El
-  motivo real va al registro de eventos.
-- **El bloqueo por fuerza bruta se calcula sobre la tabla `login_attempt`**, con umbral por
-  identificador y por IP sobre una ventana de minutos. **Nunca en memoria del proceso**: se pierde
-  al reiniciar y con N workers el límite real es N veces el declarado.
-- **Cambiar o restablecer la contraseña cierra todas las sesiones.**
-- **El reuso de un refresh ya rotado revoca todo lo del usuario.** Sin detección, rotar solo cambia
-  el token que hay que copiar.
-
-Que el alta y la recuperación también respondan igual exista o no la cuenta **no es universal**:
-aplica donde la pertenencia al producto es dato sensible, y el repositorio que lo necesita lo
-declara en un ADR propio.
+Estándares: [*Session Management Cheat Sheet*](../estandares/owasp/Session_Management.md) y
+[*Cross-Site Request Forgery Prevention Cheat Sheet*](../estandares/owasp/Cross-Site_Request_Forgery_Prevention.md)
+de OWASP, y [RFC 6265](../estandares/rfc/rfc6265.txt).
 
 ## Segundo factor
 
-TOTP en las superficies de operación. El secreto se guarda cifrado, no en claro. El paso 1
-(contraseña) entrega un `backoffice_preauth` de vida corta y el paso 2 (código) lo cambia por la
-sesión real.
-
-## La fila de sesión
-
-**Una fila por sesión, con el digesto vigente y el anterior** (ADR-0010). Rotar mueve el vigente al
-anterior; presentar el anterior es reuso y revoca. Ni una fila por rotación ni una por token
-emitido: el conteo no depende de cuántas veces se renovó.
-
-Cerrar sesión **borra la fila**, no la marca. La tabla es estado vivo —qué sesiones existen ahora—
-y lo que pasó con ellas es un evento de categoría `auth` en `event_log` (ADR-0008), que le
-sobrevive. La purga son las vencidas pasada una gracia.
+Estándares: [RFC 6238](../estandares/rfc/rfc6238.txt), [RFC 4226](../estandares/rfc/rfc4226.txt)
+y [*Multifactor Authentication Cheat Sheet*](../estandares/owasp/Multifactor_Authentication.md) de
+OWASP.
 
 ## Qué guarda cada cliente
 
-| Cliente | Dónde |
-|---|---|
-| Flutter | `flutter_secure_storage`; lo demás en base cifrada |
-| Flet y Qt | Almacenamiento seguro de la plataforma |
-| Web | La sesión, y nada más, en el almacenamiento del navegador |
-
-Ningún cliente guarda la contraseña. Un «recordar sesión» guarda el refresh token, que es opaco,
-rota en cada uso y el servidor puede revocar.
+Estándares: [*HTML5 Security Cheat Sheet*](../estandares/owasp/HTML5_Security.md) de OWASP,
+[flutter_secure_storage](../estandares/pub/flutter_secure_storage/README.md) y
+[`SecureStorage`](../estandares/flet/securestorage.md) de Flet.
 
 ## Límite de tasa
 
-Los endpoints de autenticación y los que cuestan caro llevan límite por IP.
-
-**Un limitador en memoria de proceso solo sirve con un proceso.** Con varias instancias cada una
-lleva su propio conteo y el límite real es N veces el declarado: o el almacén es compartido (Redis),
-o arrancar con varias instancias sin él tiene que fallar al arranque. Un límite que se multiplica en
-silencio es peor que no tenerlo, porque se cree que está.
+Estándares: [RFC 6585](../estandares/rfc/rfc6585.txt) y
+[*Denial of Service Cheat Sheet*](../estandares/owasp/Denial_of_Service.md) de OWASP.
 
 ## Permisos
 
-RBAC: roles con permisos, y el permiso se comprueba en una dependencia de FastAPI, no dentro de cada
-endpoint a mano.
+Estándar: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP.
 
-## Cabeceras y CSP
+## Cabeceras
 
-**Cada regla de la CSP lleva su host**: una CSP sin host es la de todos los sitios. Quién las emite
-—el proxy, no la aplicación— está en [despliegue.md](despliegue.md).
+Estándares: [*HTTP Security Response Headers Cheat Sheet*](../estandares/owasp/HTTP_Headers.md),
+[*Content Security Policy Cheat Sheet*](../estandares/owasp/Content_Security_Policy.md) y
+[*REST Security Cheat Sheet*](../estandares/owasp/REST_Security.md) de OWASP, y
+[CSP Level 3](../estandares/w3c/csp3.bs) de W3C.
 
-## Lo que depende de la topología de dominios
+## Secretos
 
-Los atributos de la cookie (`Domain`, `SameSite`, `Secure`, `Path`), la política de CORS y el
-aislamiento de sesión del backoffice **no** viven en `core/security.py`: dependen de qué dominios y
-subdominios tenga el producto, y elegirlos mal en silencio produce o una sesión que no viaja o una
-que viaja de más. Van en un ADR del repositorio, decididos a la vista.
+Estándar: [*Secrets Management Cheat Sheet*](../estandares/owasp/Secrets_Management.md) de OWASP.
+
+## Registro de eventos
+
+Estándar: [*Logging Cheat Sheet*](../estandares/owasp/Logging.md) de OWASP.

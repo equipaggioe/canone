@@ -53,3 +53,10 @@ Estándares: de PostgreSQL, [*Backup and Restore*](../estandares/postgresql/back
 [`pg_restore`](../estandares/postgresql/pg_restore.sgml);
 [`systemd.timer`](../estandares/systemd/systemd.timer.xml), y el
 [ciclo de vida de objetos](../estandares/aws-s3/object-lifecycle-mgmt.md) de Amazon S3.
+
+- Un timer de systemd respalda cada día la base con `pg_dump` en formato `custom` y el directorio de
+  [archivos.md](archivos.md) con `tar`.
+- El mismo servicio restaura el volcado con `pg_restore` en una base temporal y la borra. Si la
+  restauración falla, falla el servicio: un respaldo que no se restaura no es un respaldo.
+- Cada respaldo sube a un bucket de S3, y una regla de ciclo de vida lo borra a los 30 días. Un
+  respaldo en el mismo disco se pierde con la máquina.

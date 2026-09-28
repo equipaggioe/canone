@@ -20,25 +20,22 @@ CANONE = Path(__file__).resolve().parent.parent
 PLANTILLA = CANONE / "plantilla"
 
 CANONICOS = [
-    Path("server/app/models/base.py"),
-    Path("server/app/schemas/base.py"),
-    Path("server/app/core/tracing.py"),
-    Path("server/app/models/ruff.toml"),
-    Path("server/app/schemas/ruff.toml"),
-    Path("server/app/services/ruff.toml"),
+    Path("server/src/app/database.py"),
+    Path("server/src/app/errors.py"),
+    Path("server/src/app/models/base.py"),
+    Path("server/src/app/schemas/base.py"),
     Path("server/tests/test_conventions.py"),
 ]
 
-# plataformas/fastapi.md, tabla de dependencias. pytest-asyncio no se importa: se descarta por la
-# dependencia declarada, y el resto también, así un paquete se ve aunque nadie lo importe todavía.
-DESCARTADAS = {"python-jose", "passlib", "psycopg", "psycopg2", "psycopg2-binary", "pytest-asyncio"}
+# plataformas/fastapi.md: el driver es asyncpg y las pruebas async corren con AnyIO. Se revisa la
+# dependencia declarada, así un paquete se ve aunque nadie lo importe todavía.
+DESCARTADAS = {"psycopg", "psycopg2", "psycopg2-binary", "pytest-asyncio"}
 
-# Relativos a cada pieza Qt, que es la que declara pyside6 en sus dependencias.
-CANONICOS_QT = [
-    Path("ui/ruff.toml"),
-    Path("tests/test_theme.py"),
-    Path("tests/test_conventions.py"),
-]
+# Relativos a la pieza; la clave es la dependencia que la identifica en su pyproject.toml.
+CANONICOS_PIEZA = {
+    "pyside6": ("qt", [Path("tests/test_theme.py")]),
+    "flet": ("flet", [Path("tests/test_theme.py")]),
+}
 
 # Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del
 # dominio. `panel` y `landing` son las dos excepciones, con el nombre que ya usa la industria.
@@ -68,7 +65,7 @@ ESCRITURA = ("@router.post", "@router.patch", "@router.put", "@router.delete")
 
 def bitacoras_solo_lectura(servidor: Path) -> list[str]:
     fallas = []
-    for carpeta in ("app/routers", "app/api/routers"):
+    for carpeta in ("src/app/routers",):
         for router in (servidor / carpeta).glob("*.py"):
             if not any(nombre in router.stem for nombre in BITACORAS):
                 continue
@@ -92,31 +89,31 @@ def dependencias(pyproject: Path) -> set[str]:
     return nombres
 
 
+def comparar(copia: Path, canonico: Path, nombre: str) -> list[str]:
+    if not copia.exists():
+        return [f"ADR-0002: falta {nombre}"]
+    if normalizar(copia.read_text(encoding="utf-8")) != normalizar(
+        canonico.read_text(encoding="utf-8")
+    ):
+        return [f"ADR-0002: {nombre} no coincide con el canónico de canone"]
+    return []
+
+
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
-    tiene_servidor = (repo / "server").is_dir()
 
-    for rel in CANONICOS:
-        canonico = PLANTILLA / rel
-        copia = repo / rel
-        if not copia.exists():
-            # Un repositorio sin server/ no tiene por qué tener los archivos canónicos.
-            if tiene_servidor:
-                fallas.append(f"ADR-0002: falta {rel}")
-            continue
-        if normalizar(copia.read_text(encoding="utf-8")) != normalizar(
-            canonico.read_text(encoding="utf-8")
-        ):
-            fallas.append(f"ADR-0002: {rel} no coincide con el canónico de canone")
+    # Un repositorio sin server/ no tiene por qué tener sus archivos canónicos.
+    if (repo / "server").is_dir():
+        for rel in CANONICOS:
+            fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
+
+    fallas.extend(comparar(repo / ".gitattributes", PLANTILLA / ".gitattributes", ".gitattributes"))
 
     for carpeta in sorted(p for p in repo.iterdir() if p.is_dir()):
         if carpeta.name.startswith("."):
             continue
         if not nombre_valido(carpeta.name):
             fallas.append(f"repositorio.md: {carpeta.name}/ no es un nombre de pieza")
-
-    if not (repo / ".gitattributes").exists():
-        fallas.append("repositorio.md: falta .gitattributes")
 
     if not (repo / ".gitignore").exists():
         fallas.append("repositorio.md: falta .gitignore en el raíz")
@@ -141,8 +138,8 @@ def revisar(repo: Path) -> list[str]:
                 fallas.append(f"plataformas/fastapi.md: server/ declara {nombre}, que está descartada")
         if (servidor / "pytest.ini").exists():
             fallas.append("ADR-0006: pytest.ini suelto; la configuración va en pyproject.toml")
-        if (servidor / "app/api").is_dir() and (servidor / "app/routers").is_dir():
-            fallas.append("plataformas/fastapi.md: hay app/api/ y app/routers/ a la vez")
+        if (servidor / "app").is_dir():
+            fallas.append("plataformas/fastapi.md: el paquete va en server/src/app/, no en server/app/")
         if not (servidor / ".gitignore").exists():
             fallas.append("repositorio.md: server/ no tiene su propio .gitignore")
         fallas.extend(bitacoras_solo_lectura(servidor))
@@ -163,37 +160,47 @@ def revisar(repo: Path) -> list[str]:
         deps = {**datos.get("dependencies", {}), **datos.get("devDependencies", {})}
         if "@sveltejs/kit" not in deps:
             continue
-        if "@sveltejs/adapter-auto" in deps:
-            fallas.append(f"ADR-0007: {superficie.name}/ usa adapter-auto")
+        if "@sveltejs/adapter-static" not in deps:
+            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no usa adapter-static")
         if not (superficie / "uno.config.ts").exists():
-            fallas.append(
-                f"plataformas/sveltekit.md: {superficie.name}/ no tiene uno.config.ts"
-                " (la config de UnoCSS no va dentro de vite.config.ts)"
+            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no tiene uno.config.ts")
+        fallas.extend(
+            comparar(
+                superficie / ".prettierrc",
+                PLANTILLA / "sveltekit/.prettierrc",
+                f"{superficie.name}/.prettierrc",
             )
+        )
 
-    # Qt: solo para las piezas que dependan de PySide6.
-    for pieza in sorted(p for p in repo.iterdir() if p.is_dir() and not p.name.startswith(".")):
-        declaraciones = [pieza / "pyproject.toml", pieza / "requirements.txt"]
-        if not any(
-            d.exists() and "pyside6" in d.read_text(encoding="utf-8").lower() for d in declaraciones
-        ):
-            continue
-        for rel in CANONICOS_QT:
-            copia = pieza / rel
-            if not copia.exists():
-                fallas.append(f"ADR-0002: falta {pieza.name}/{rel.as_posix()}")
-            elif normalizar(copia.read_text(encoding="utf-8")) != normalizar(
-                (PLANTILLA / "qt" / rel).read_text(encoding="utf-8")
-            ):
-                fallas.append(
-                    f"ADR-0002: {pieza.name}/{rel.as_posix()} no coincide con el canónico de canone"
+    # Qt y Flet: cada pieza Python que declare la dependencia que la identifica.
+    for pyproject in repo.glob("*/pyproject.toml"):
+        pieza = pyproject.parent
+        declaradas = dependencias(pyproject)
+        for dependencia, (plantilla, canonicos) in CANONICOS_PIEZA.items():
+            if dependencia not in declaradas:
+                continue
+            for rel in canonicos:
+                fallas.extend(
+                    comparar(pieza / rel, PLANTILLA / plantilla / rel, f"{pieza.name}/{rel.as_posix()}")
                 )
 
     # Flutter: solo para las apps que existan.
     for pubspec in repo.glob("*/pubspec.yaml"):
         app = pubspec.parent
-        if not (app / "analysis_options.yaml").exists():
-            fallas.append(f"plataformas/flutter.md: {app.name}/ no tiene analysis_options.yaml")
+        fallas.extend(
+            comparar(
+                app / "analysis_options.yaml",
+                PLANTILLA / "flutter/analysis_options.yaml",
+                f"{app.name}/analysis_options.yaml",
+            )
+        )
+
+    # Android: solo para las apps que existan.
+    for settings in repo.glob("*/settings.gradle.kts"):
+        app = settings.parent
+        fallas.extend(
+            comparar(app / ".editorconfig", PLANTILLA / "android/.editorconfig", f"{app.name}/.editorconfig")
+        )
 
     docs = repo / "docs"
     if docs.is_dir():

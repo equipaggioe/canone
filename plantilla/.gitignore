@@ -1,6 +1,7 @@
 .vscode/
 .idea/
 .claude/
+.consola/
 CLAUDE.md
 *.swp
 *.swo

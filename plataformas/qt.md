@@ -18,7 +18,12 @@ desktop/
     dialogs/
     models/           los modelos de Qt
   tests/
+    __init__.py
+    test_theme.py
 ```
+
+Plantilla: [`plantilla/qt/`](../plantilla/qt/). `tests/test_theme.py` es canónico y se copia sin
+editar; `theme.py` es un punto de partida y va en `src/<paquete>/`.
 
 ## PySide6
 
@@ -98,3 +103,8 @@ Estándar: [`pyside6-deploy`](../estandares/pyside6/deployment-pyside6-deploy.rs
 | Qué | Con qué |
 |---|---|
 | `@override` | mypy `explicit-override` |
+| Los nombres originales de Qt | ruff `TID251` sobre `__feature__` |
+| La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools` |
+| HTTP por `QNetworkAccessManager` | ruff `TID251` sobre httpx, requests y `urllib.request` |
+| Fusion y una sola hoja de estilo en `theme.py` | `tests/test_theme.py` |
+| Pruebas sin pantalla | `QT_QPA_PLATFORM=offscreen` en el job de CI |

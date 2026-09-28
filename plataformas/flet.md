@@ -19,10 +19,17 @@ Estándares: [*Creating a new Flet app*](../estandares/flet/create-flet-app.md) 
     api/              el cliente y sus modelos
     views/            una vista por ruta
   tests/
+    __init__.py
+    test_theme.py
 ```
 
-- El código va directo en `src/`. Contradice el `src/<paquete>/` de [python.md](python.md): es la
-  estructura que supone `flet build`.
+- El código va directo en `src/`, y el proyecto no lleva `[build-system]`. Contradice el
+  `src/<paquete>/` y el `uv_build` de [python.md](python.md): es la estructura que supone
+  `flet build`, que empaqueta `src/` por su cuenta.
+- `[tool.flet.app]` lleva `path = "src"`.
+
+Plantilla: [`plantilla/flet/`](../plantilla/flet/). `tests/test_theme.py` es canónico y se copia
+sin editar; `theme.py` es un punto de partida.
 
 ## Tema
 
@@ -50,3 +57,9 @@ Estándares: [*Client Storage*](../estandares/flet/client-storage.md),
 ## Publicación
 
 Estándar: [*Publishing a Flet app*](../estandares/flet/publish.md).
+
+## Cómo se hace cumplir
+
+| Qué | Con qué |
+|---|---|
+| Los colores, solo en `theme.py` | `tests/test_theme.py` |

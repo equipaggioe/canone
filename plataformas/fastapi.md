@@ -16,21 +16,33 @@ server/
     env.py            el de la plantilla async
     script.py.mako
     versions/
-  src/<paquete>/
+  src/app/
     __init__.py
-    main.py           crea la app, monta los routers y registra el handler de errores
+    main.py           crea la app, monta los routers y registra los handlers de errores
     config.py         Settings
     database.py       el engine y la fábrica de sesiones
     dependencies.py   las dependencias compartidas, como la sesión y el usuario actual
-    errors.py         la excepción de la app y su handler
-    models/           las tablas de SQLAlchemy, un archivo por recurso
-    schemas/          los esquemas de Pydantic, un archivo por recurso
-    routers/          un archivo por recurso
+    errors.py         la excepción de la app y los handlers que responden problem+json
+    models/
+      base.py         la base declarativa, los tipos de PostgreSQL y los nombres
+      <recurso>.py
+    schemas/
+      base.py         el modelo base en camelCase, la página y el problema
+      <recurso>.py
+    routers/
+      <recurso>.py
   tests/
+    conftest.py
+    test_conventions.py
 ```
 
+- El paquete se llama `app` en todo servidor. Los archivos canónicos lo importan por nombre y se
+  copian sin editar.
 - `database.py` y `errors.py` le dan un lugar fijo a lo que el estándar no ubica. `config.py` es
   el módulo que propone la guía de configuración.
+
+Plantilla: [`plantilla/server/`](../plantilla/server/). Son canónicos, y se copian sin editar,
+`database.py`, `errors.py`, `models/base.py`, `schemas/base.py` y `tests/test_conventions.py`.
 
 ## Dependencias
 
@@ -75,7 +87,11 @@ Estándares: [*SQL (Relational) Databases*](../estandares/fastapi/sql-databases.
 
 Estándares: el [tutorial](../estandares/alembic/tutorial.rst), la
 [autogeneración](../estandares/alembic/autogenerate.rst) y la
-[plantilla async](../estandares/alembic/async/env.py) de Alembic.
+[plantilla async](../estandares/alembic/async/env.py) de Alembic, y
+[*The Importance of Naming Constraints*](../estandares/alembic/naming.rst).
+
+- La `MetaData` lleva la convención de nombres que da la documentación de Alembic. Una migración
+  borra o cambia una restricción por su nombre, y así el nombre no lo elige la base.
 
 ## Errores
 
@@ -85,8 +101,9 @@ Estándares: [*Handling Errors*](../estandares/fastapi/handling-errors.md) de Fa
 - `type` es una URI `tag:<dominio>,<año>:<nombre>`, o `about:blank` cuando basta el status.
   Cumple la URI absoluta que recomienda RFC 9457 sin obligar a servir una página por cada tipo.
 - Los errores propios se lanzan con una excepción de la app que lleva `type`, `title` y `status`.
-  Un solo handler la convierte en problem+json, y convierte también los `HTTPException` de
-  Starlette. Toda respuesta de error sale por un solo punto.
+  Los handlers de `errors.py` la convierten en problem+json, igual que a los `HTTPException` de
+  Starlette, a los errores de validación y a toda excepción sin atrapar. Toda respuesta de error
+  sale por un solo punto.
 - Un error de validación es un 422 en problem+json con la extensión `errors`, una lista de
   `{detail, pointer}` como en el ejemplo de RFC 9457. En query, path y header, `parameter` toma el
   lugar de `pointer`. Contradice el `{"detail": [...]}` de FastAPI: el sobre es uno solo, y el
@@ -141,3 +158,8 @@ Estándares: [*Testing*](../estandares/fastapi/testing.md) y
 |---|---|
 | *Dependencies*: `Annotated` | ruff `FAST002` |
 | mypy strict, de [python.md](python.md), sobre los modelos de Pydantic | plugin `pydantic.mypy` |
+| Los esquemas heredan del modelo base | `test_schemas_inherit_schema` |
+| `lazy="raise"` | `test_relationships_raise` |
+| Toda respuesta de error en problem+json | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field` |
+| El operation ID `<tag>-<función>` | `test_operation_ids` |
+| Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

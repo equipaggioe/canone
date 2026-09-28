@@ -18,7 +18,7 @@ convención de `docs/` y lo mínimo del repositorio.
 | [estandares/](estandares/) | Al escribir o revisar una página. Los textos oficiales de los que sale |
 | [homologacion.md](homologacion.md) | Qué divergencias hay hoy, agrupadas por plataforma |
 | [adr/](adr/) | Por qué cada regla es como es |
-| [plantilla/](plantilla/) | Los archivos que se copian tal cual, por plataforma |
+| [plantilla/](plantilla/) | Los archivos que se copian a un repositorio, por plataforma: canónicos o puntos de partida |
 | [scripts/verificar.py](scripts/verificar.py) | Comprueba lo que aplica a cada repositorio, y falla si no se cumple |
 
 ## Plataformas documentadas

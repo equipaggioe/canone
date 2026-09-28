@@ -14,11 +14,13 @@ Estándar: [*Project structure*](../estandares/sveltekit/project-structure.md) d
 
 ```text
 <pieza>/
+  .prettierrc
+  eslint.config.js
   package.json
   pnpm-lock.yaml
-  svelte.config.js
+  svelte.config.js    el adaptador y la CSP
   tsconfig.json
-  uno.config.ts
+  uno.config.ts       el preset y los tokens
   vite.config.ts
   src/
     app.html
@@ -29,6 +31,9 @@ Estándar: [*Project structure*](../estandares/sveltekit/project-structure.md) d
     routes/
   static/
 ```
+
+Plantilla: [`plantilla/sveltekit/`](../plantilla/sveltekit/): `.prettierrc`, que se copia sin
+editar, y `svelte.config.js`, `uno.config.ts` y `.gitignore`, puntos de partida.
 
 ## Carga de datos
 

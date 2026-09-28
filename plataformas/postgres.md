@@ -46,3 +46,16 @@ Estándar: [*Data Management*](../estandares/postgis/using_postgis_dataman.xml) 
 - Las columnas espaciales son `geography(<tipo>, 4326)`. El área de cada producto no se conoce de
   antemano, y `geography` mide en metros sin elegir proyección.
 - El ORM las declara con GeoAlchemy2.
+
+## Cómo se hace cumplir
+
+Con las pruebas de `tests/test_conventions.py` de [fastapi.md](fastapi.md):
+
+| Qué | Prueba |
+|---|---|
+| Clave `uuid` con `uuidv7()` | `test_primary_key_is_uuidv7` |
+| Cadenas `text` | `test_strings_are_text` |
+| `timestamptz` | `test_datetimes_are_aware` |
+| Enumerados como `text` con `CHECK` | `test_enums_are_checked_text` |
+| `ON DELETE` en toda clave foránea | `test_foreign_keys_declare_on_delete` |
+| Índice en toda clave foránea | `test_foreign_keys_are_indexed` |

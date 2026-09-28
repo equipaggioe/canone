@@ -1,7 +1,0 @@
-extend = "../../pyproject.toml"
-
-# extend-banned-api se suma a la lista de pyproject.toml; banned-api la reemplazaría.
-[lint.flake8-tidy-imports.extend-banned-api]
-"app.models".msg = "Un schema no importa modelos"
-"app.services".msg = "Un schema no importa servicios"
-"app.routers".msg = "Un schema no importa routers"

@@ -21,6 +21,9 @@ Estándar: [flutter_lints](../estandares/pub/flutter_lints/README.md) y su
   `flutter analyze --fatal-infos`. Endurece flutter_lints: los tipos se revisan como con mypy
   strict.
 
+Plantilla: [`plantilla/flutter/`](../plantilla/flutter/): `analysis_options.yaml`, con el
+analizador y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.
+
 ## Arquitectura
 
 Estándares: [*Common architecture concepts*](../estandares/flutter/app-architecture-concepts.md),

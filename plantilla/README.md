@@ -1,38 +1,33 @@
 # plantilla
 
-Los archivos que se copian tal cual. No es un proyecto que corra, y **no es una lista de lo que un
-repositorio debe tener**: se copia solo lo de las plataformas que el producto use.
+Los archivos que se copian a un repositorio. No es un proyecto que corra, y **no es una lista de lo
+que un repositorio debe tener**: se copia solo lo de las plataformas que el producto use.
 
-| Archivo | Regla |
-|---|---|
-| `server/app/models/base.py` | Canónico. Se copia sin editar — [ADR-0002](../adr/0002-los-archivos-base-se-copian-y-se-verifican.md) |
-| `server/app/schemas/base.py` | Canónico. Se copia sin editar |
-| `server/app/core/tracing.py` | Canónico. Se copia sin editar |
-| `server/app/models/ruff.toml` | Canónico. Se copia sin editar |
-| `server/app/schemas/ruff.toml` | Canónico. Se copia sin editar |
-| `server/app/services/ruff.toml` | Canónico. Se copia sin editar |
-| `server/tests/test_conventions.py` | Canónico. Se copia sin editar |
-| `server/app/core/database.py` | Punto de partida. `settings` es de cada repositorio |
-| `server/app/core/exceptions.py` | Punto de partida. Los tipos de `PROBLEMS` son de cada repositorio |
-| `server/app/routers/problems.py` | Punto de partida |
-| `server/pyproject.toml` | Dependencias, ruff, mypy y pytest — [ADR-0006](../adr/0006-dependencias-con-pyproject-y-uv.md) |
-| `server/tests/conftest.py` | Punto de partida. Los fixtures son de cada repositorio |
-| `qt/ui/ruff.toml` | Canónico. Se copia sin editar a `desktop/ui/` |
-| `qt/tests/test_theme.py` | Canónico. Se copia sin editar a `desktop/tests/` |
-| `qt/tests/test_conventions.py` | Canónico. Se copia sin editar a `desktop/tests/` |
-| `qt/tests/conftest.py` | Punto de partida. Los fixtures son de cada repositorio |
-| `qt/ui/theme.py` | Punto de partida. Los colores son de cada producto |
-| `python/pyproject.toml` | Base de toda pieza Python: ruff, mypy, pytest y uv — [ADR-0006](../adr/0006-dependencias-con-pyproject-y-uv.md) |
-| `qt/pyproject.toml` | Dependencias, ruff, mypy y pytest de una pieza Qt |
-| `.gitattributes` | Se copia sin editar |
-| `.gitignore` | El del raíz |
-| `python/.gitignore` | A cada pieza Python: `server/`, Flet, Qt |
-| `sveltekit/.gitignore` | A cada superficie SvelteKit |
-| `flutter/.gitignore` | A cada app Flutter |
-| `.github/workflows/ci.yml` | Un job por pieza; se quitan los que el repositorio no tenga |
+Cada archivo sale de una regla de [plataformas/](../plataformas/), y la página lo nombra. Un
+archivo **canónico** se copia sin editar y `scripts/verificar.py` comprueba que la copia no se haya
+separado ([ADR-0002](../adr/0002-los-archivos-base-se-copian-y-se-verifican.md)). Un **punto de
+partida** se copia y después es del repositorio.
 
-Todavía no hay plantilla de código de Flutter ni de Flet, solo su `.gitignore`. Cuando la haya,
-sale de la documentación oficial, no de un repositorio — ver
-[ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md).
-
-`canone/scripts/verificar.py` comprueba que las copias no se hayan separado.
+| Archivo | Destino | Tipo | Página |
+|---|---|---|---|
+| `.gitattributes` | Raíz | Canónico | [repositorio.md](../repositorio.md) |
+| `.gitignore` | Raíz | Punto de partida | [repositorio.md](../repositorio.md) |
+| `.github/workflows/ci.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [repositorio.md](../repositorio.md) |
+| `python/.gitignore` | Cada pieza Python | Punto de partida | [python.md](../plataformas/python.md) |
+| `server/pyproject.toml` | `server/` | Punto de partida | [python.md](../plataformas/python.md), [fastapi.md](../plataformas/fastapi.md) |
+| `server/src/app/database.py`, `errors.py`, `models/base.py`, `schemas/base.py` | `server/src/app/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
+| `server/src/app/` (el resto) | `server/src/app/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
+| `server/tests/test_conventions.py` | `server/tests/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
+| `server/tests/conftest.py`, `__init__.py` | `server/tests/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
+| `qt/pyproject.toml` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
+| `qt/theme.py` | `desktop/src/<paquete>/` | Punto de partida | [qt.md](../plataformas/qt.md) |
+| `qt/tests/test_theme.py` | `desktop/tests/` | Canónico | [qt.md](../plataformas/qt.md) |
+| `flet/pyproject.toml` | La pieza Flet | Punto de partida | [python.md](../plataformas/python.md), [flet.md](../plataformas/flet.md) |
+| `flet/theme.py` | `src/` de la pieza | Punto de partida | [flet.md](../plataformas/flet.md) |
+| `flet/tests/test_theme.py` | `tests/` de la pieza | Canónico | [flet.md](../plataformas/flet.md) |
+| `sveltekit/.prettierrc` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
+| `sveltekit/.gitignore`, `svelte.config.js`, `uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md), [seguridad.md](../plataformas/seguridad.md) |
+| `flutter/analysis_options.yaml` | Cada app Flutter | Canónico | [flutter.md](../plataformas/flutter.md) |
+| `flutter/.gitignore` | Cada app Flutter | Punto de partida | [repositorio.md](../repositorio.md) |
+| `android/.editorconfig` | `mobile/` | Canónico | [android.md](../plataformas/android.md) |
+| `android/.gitignore` | `mobile/` | Punto de partida | [repositorio.md](../repositorio.md) |

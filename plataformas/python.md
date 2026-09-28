@@ -25,7 +25,13 @@ uv.lock
 src/<paquete>/
   __init__.py
 tests/
+  __init__.py
 ```
+
+Plantilla: el `pyproject.toml` de cada pieza, en [`plantilla/server/`](../plantilla/server/),
+[`plantilla/qt/`](../plantilla/qt/) y [`plantilla/flet/`](../plantilla/flet/), y
+[`plantilla/python/.gitignore`](../plantilla/python/.gitignore). Cada uno lleva la configuración
+de esta página más la de su plataforma.
 
 ## Estilo
 
@@ -102,8 +108,11 @@ Estándar: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.
 
 | Qué | Con qué |
 |---|---|
+| Python 3.13 de Debian 13 | `requires-python` y uv con `python-preference = "only-system"` |
 | El bloqueo | `uv sync --locked` en CI |
+| ruff revisa el código | ruff `F`, que ruff activa por defecto |
 | PEP 8 | `ruff format` y ruff `E`, `W` y `N` |
+| PEP 8: grupos de imports | ruff `I` |
 | PEP 8: docstrings y comentarios a 72 | ruff `W505` con `max-doc-length = 72` |
 | PEP 8: `except` sin tipo | ruff `E722` y `BLE` |
 | PEP 257 | ruff `D` con `convention = "pep257"` |

@@ -44,6 +44,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [sqlalchemy/pooling.rst](sqlalchemy/pooling.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/core/pooling.rst> |  |
 | [alembic/tutorial.rst](alembic/tutorial.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/tutorial.rst> |  |
 | [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/autogenerate.rst> |  |
+| [alembic/naming.rst](alembic/naming.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/naming.rst> |  |
 | [alembic/async/env.py](alembic/async/env.py) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/alembic/templates/async/env.py> |  |
 | [anyio/testing.rst](anyio/testing.rst) | <https://raw.githubusercontent.com/agronholm/anyio/master/docs/testing.rst> |  |
 | [postgresql/datatype.sgml](postgresql/datatype.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_18_STABLE/doc/src/sgml/datatype.sgml> |  |

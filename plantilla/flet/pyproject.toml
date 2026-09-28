@@ -1,0 +1,62 @@
+[project]
+name = "PRODUCTO-PIEZA"
+version = "0.1.0"
+requires-python = "==3.13.*"
+dependencies = [
+  "flet>=1.0",
+  "httpx>=0.28",
+  "pydantic>=2.13",
+]
+
+[dependency-groups]
+dev = [
+  "deptry>=0.25",
+  "mypy>=2.3",
+  "pip-audit>=2.10",
+  "pytest>=9.1",
+  "ruff>=0.16",
+]
+
+[tool.flet.app]
+path = "src"
+
+[tool.uv]
+python-preference = "only-system"
+
+[tool.ruff]
+line-length = 99
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+  "ASYNC", "BLE", "D", "DTZ", "E", "E722", "F", "G", "I", "INP", "N", "PGH004", "RUF006",
+  "T20", "TID252", "UP", "W", "W505",
+]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 72
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.per-file-ignores]
+# flet build packages src/ itself, so its top-level modules have no package.
+"src/*.py" = ["INP001"]
+
+[tool.mypy]
+strict = true
+enable_error_code = ["ignore-without-code"]
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+files = ["src", "tests"]
+
+[tool.deptry]
+known_first_party = ["api", "theme", "views"]
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
+pythonpath = ["src"]
+testpaths = ["tests"]

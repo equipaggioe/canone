@@ -4,124 +4,145 @@ on:
   push:
     branches: [main]
   pull_request:
-  # ADR-0019: una vulnerabilidad publicada después del último commit también se ve.
+  # ADR-0019: a vulnerability published after the last commit shows up too.
   schedule:
     - cron: "0 13 * * 1"
 
 jobs:
   canone:
-    name: canone (archivos canónicos)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
         with:
           repository: OWNER/canone
           path: .canone
-      - run: python .canone/scripts/verificar.py --repo .
+      - run: python3 .canone/scripts/verificar.py --repo .
 
   server:
-    name: server (lint, tipos, tests)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: server
+    services:
+      postgres:
+        image: postgis/postgis:18-3.6
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-
-      - name: Instalar dependencias
-        run: uv sync --locked
-
-      - name: Formato (ruff)
-        run: uv run ruff format --check .
-
-      - name: Lint (ruff)
-        run: uv run ruff check .
-
-      - name: Tipos (mypy)
-        run: uv run mypy app
-
-      - name: Dependencias sin usar (deptry)
-        run: uv run deptry .
-
-      - name: Vulnerabilidades (pip-audit)
-        run: |
-          uv export --format requirements-txt --locked -o "$RUNNER_TEMP/audit.txt"
-          uv run pip-audit -r "$RUNNER_TEMP/audit.txt" --require-hashes --disable-pip
-
-      # Contra el schema de prueba del Postgres remoto, nunca contra el real.
-      - name: Tests (pytest)
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
-        run: uv run pytest
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run ruff format --check
+      - run: uv run ruff check
+      - run: uv run mypy
+      - run: uv run deptry .
+      - run: |
+          uv export --locked --no-emit-project --format requirements.txt -o "$RUNNER_TEMP/req.txt"
+          uv run pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/req.txt"
+      - run: uv run alembic upgrade head
+      - run: uv run pytest
 
   desktop:
-    name: desktop (lint, tipos, tests)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: desktop
+    env:
+      QT_QPA_PLATFORM: offscreen
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run ruff format --check
+      - run: uv run ruff check
+      - run: uv run mypy
+      - run: uv run deptry .
+      - run: |
+          uv export --locked --no-emit-project --format requirements.txt -o "$RUNNER_TEMP/req.txt"
+          uv run pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/req.txt"
+      - run: uv run pytest
 
-      - name: Instalar dependencias
-        run: uv sync --locked
-
-      - name: Formularios generados (pyside6-uic)
-        run: |
-          for ui in ui/forms/*.ui; do
-            [ -e "$ui" ] || continue
-            uv run pyside6-uic "$ui" -o "ui/forms/ui_$(basename "$ui" .ui).py"
-          done
-          test -z "$(git status --porcelain -- ui/forms)"
-
-      - name: Formato (ruff)
-        run: uv run ruff format --check .
-
-      - name: Lint (ruff)
-        run: uv run ruff check .
-
-      - name: Tipos (mypy)
-        run: uv run mypy .
-
-      - name: Dependencias sin usar (deptry)
-        run: uv run deptry .
-
-      - name: Vulnerabilidades (pip-audit)
-        run: |
-          uv export --format requirements-txt --locked -o "$RUNNER_TEMP/audit.txt"
-          uv run pip-audit -r "$RUNNER_TEMP/audit.txt" --require-hashes --disable-pip
-
-      - name: Tests (pytest)
-        run: uv run pytest
-
-  # Un job igual a este por superficie web: panel, backoffice, landing, pwa.
-  panel:
-    name: panel (tipos, tests, build)
+  flet:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: panel
+        working-directory: PIEZA
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: panel/package-lock.json
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run ruff format --check
+      - run: uv run ruff check
+      - run: uv run mypy
+      - run: uv run deptry .
+      - run: |
+          uv export --locked --no-emit-project --format requirements.txt -o "$RUNNER_TEMP/req.txt"
+          uv run pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/req.txt"
+      - run: uv run pytest
 
-      - run: npm ci
-      - name: Tipos (svelte-check)
-        run: npm run check
-      - name: Tests (vitest)
-        run: npm run test:unit
-      - name: Build
-        run: npm run build
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: PIEZA
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+          cache: pnpm
+          cache-dependency-path: PIEZA/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier --check .
+      - run: pnpm exec eslint .
+      - run: pnpm exec svelte-kit sync
+      - run: pnpm exec svelte-check --fail-on-warnings
+      - run: pnpm exec vitest run
+      - run: pnpm build
+
+  flutter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: PIEZA
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: dart format --output=none --set-exit-if-changed lib test
+      - run: flutter analyze --fatal-infos
+      - run: flutter test
+
+  android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew ktlintCheck lint testDebugUnitTest

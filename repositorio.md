@@ -63,6 +63,7 @@ Uno por plataforma, en la carpeta de la pieza:
 | Cada pieza Python — `server/`, Flet, Qt | [`plantilla/python/.gitignore`](plantilla/python/.gitignore) |
 | Cada superficie SvelteKit | [`plantilla/sveltekit/.gitignore`](plantilla/sveltekit/.gitignore) |
 | Cada app Flutter | [`plantilla/flutter/.gitignore`](plantilla/flutter/.gitignore) |
+| Cada app Android | [`plantilla/android/.gitignore`](plantilla/android/.gitignore) |
 
 Lo propio del repositorio se agrega al archivo de su pieza, con un comentario que diga por qué. El
 raíz no cubre a las piezas: `verificar.py` falla si una carpeta con `package.json` no ignora
@@ -78,8 +79,9 @@ raíz no cubre a las piezas: `verificar.py` falla si una carpeta con `package.js
 
 ## CI
 
-Un job por pieza, y solo por las piezas que existen. Lo que corre cada job está en la página de su
-plataforma.
+Un job por pieza, y solo por las piezas que existen. Lo que corre cada job está solo en la
+plantilla del workflow; la página de cada plataforma nombra las comprobaciones en su tabla «Cómo
+se hace cumplir».
 
 El workflow corre con cada push a `main`, con cada pull request y una vez por semana, aunque no
 haya commits, para que una vulnerabilidad publicada después del último commit no pase sin verse

@@ -1,1 +1,1 @@
-"""The tables, one module per resource."""
+"""The tables, one module per model in a package per domain."""

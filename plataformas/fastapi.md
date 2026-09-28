@@ -26,7 +26,10 @@ server/
     tracing.py        el trace-id de cada petición, en el log y en los errores
     models/
       base.py         la base declarativa, los tipos de PostgreSQL y los nombres
-      <recurso>.py
+      ruff.toml       el largo de línea que deja cada columna en un renglón
+      <dominio>/
+        __init__.py
+        <modelo>.py   una tabla
     schemas/
       base.py         el modelo base en camelCase, la página y el problema
       <recurso>.py
@@ -43,13 +46,15 @@ server/
   copian sin editar.
 - `database.py`, `errors.py` y `tracing.py` le dan un lugar fijo a lo que el estándar no ubica.
   `config.py` es el módulo que propone la guía de configuración.
+- Cada modelo va en su propio archivo, dentro de la carpeta de su dominio. Cada tabla tiene un
+  solo lugar posible.
 - Un router recibe la petición, llama a su servicio y responde. El servicio hace las consultas y
   aplica las reglas del negocio: la misma operación se llama desde una ruta, un WebSocket o una
   tarea sin repetirla.
 
 Plantilla: [`plantilla/server/`](../plantilla/server/). Son canónicos, y se copian sin editar,
-`database.py`, `errors.py`, `tracing.py`, `models/base.py`, `schemas/base.py` y
-`tests/test_conventions.py`.
+`database.py`, `errors.py`, `tracing.py`, `models/base.py`, `models/ruff.toml`,
+`schemas/base.py` y `tests/test_conventions.py`.
 
 ## Dependencias
 
@@ -89,6 +94,8 @@ Estándares: [*SQL (Relational) Databases*](../estandares/fastapi/sql-databases.
   WebSocket y Redis ya son async, y con un solo modelo no se bloquea el loop por error.
 - Toda relación lleva `lazy="raise"`. Endurece la carga anticipada que pide SQLAlchemy: una carga
   implícita falla con un error claro en vez de `MissingGreenlet`.
+- Cada columna se declara en una sola línea. Contradice las 99 de [python.md](python.md): la tabla
+  se lee de arriba abajo, una columna por renglón.
 
 ## Migraciones
 
@@ -177,6 +184,7 @@ Estándares: [*Testing*](../estandares/fastapi/testing.md) y
 | mypy strict, de [python.md](python.md), sobre los modelos de Pydantic | plugin `pydantic.mypy` |
 | Los esquemas heredan del modelo base | `test_schemas_inherit_schema` |
 | `lazy="raise"` | `test_relationships_raise` |
+| Una columna por línea | `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | Toda respuesta de error en problem+json, con `traceId` | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field` |
 | El operation ID `<tag>-<función>` | `test_operation_ids` |
 | Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

@@ -1,0 +1,3 @@
+# fastapi.md: every column on one line.
+extend = "../../../pyproject.toml"
+line-length = 320

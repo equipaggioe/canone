@@ -38,7 +38,9 @@ class Base(DeclarativeBase):
     }
 
 
-UuidPk = Annotated[UUID, mapped_column(primary_key=True, server_default=sa.text("uuidv7()"))]
+UuidPk = Annotated[
+    UUID, mapped_column(primary_key=True, server_default=sa.text("gen_random_uuid()"))
+]
 
 
 @compiles(sa.Enum, "postgresql")

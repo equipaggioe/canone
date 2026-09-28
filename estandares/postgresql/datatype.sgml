@@ -2537,10 +2537,6 @@ TIMESTAMP WITH TIME ZONE '2004-10-19 10:23:54+02'
      abbreviation if one is in common use in the current zone.  Otherwise
      it appears as a signed numeric offset in ISO 8601 basic format
      (<replaceable>hh</replaceable> or <replaceable>hhmm</replaceable>).
-     The alphabetic abbreviations shown in these styles are taken from the
-     IANA time zone database entry currently selected by the
-     <xref linkend="guc-timezone"/> run-time parameter; they are not
-     affected by the <xref linkend="guc-timezone-abbreviations"/> setting.
     </para>
 
     <para>
@@ -2681,14 +2677,6 @@ TIMESTAMP WITH TIME ZONE '2004-10-19 10:23:54+02'
      noon Eastern Standard Time (UTC-5), regardless of whether daylight
      savings was nominally in effect on that date.
     </para>
-
-    <note>
-     <para>
-      The sign in POSIX-style time zone specifications has the opposite meaning
-      of the sign in ISO-8601 datetime values.  For example, the POSIX time zone
-      for <literal>2014-06-04 12:00+04</literal> would be UTC-4.
-     </para>
-    </note>
 
     <para>
      To complicate matters, some jurisdictions have used the same timezone
@@ -4395,7 +4383,7 @@ SELECT to_tsvector( 'postgraduate' ), to_tsquery( 'postgres:*' );
 
    <para>
     The data type <type>uuid</type> stores Universally Unique Identifiers
-    (UUID) as defined by <ulink url="https://datatracker.ietf.org/doc/html/rfc9562">RFC 9562</ulink>,
+    (UUID) as defined by <ulink url="https://datatracker.ietf.org/doc/html/rfc4122">RFC 4122</ulink>,
     ISO/IEC 9834-8:2005, and related standards.
     (Some systems refer to this data type as a globally unique identifier, or
     GUID,<indexterm><primary>GUID</primary></indexterm> instead.)  This
@@ -4405,15 +4393,6 @@ SELECT to_tsvector( 'postgraduate' ), to_tsquery( 'postgres:*' );
     for distributed systems, these identifiers provide a better uniqueness
     guarantee than sequence generators, which
     are only unique within a single database.
-   </para>
-
-   <para>
-    RFC 9562 defines 8 different UUID versions.  Each version has specific requirements
-    for generating new UUID values, and each version provides distinct benefits and drawbacks.
-    <productname>PostgreSQL</productname> provides native support for generating UUIDs
-    using the UUIDv4 and UUIDv7 algorithms.  Alternatively, UUID values can be generated
-    outside of the database using any algorithm.  The data type <type>uuid</type> can be used
-    to store any UUID, regardless of the origin and the UUID version.
    </para>
 
    <para>

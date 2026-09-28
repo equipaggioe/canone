@@ -38,9 +38,7 @@ Estándares: [`systemd.unit`](../estandares/systemd/systemd.unit.xml),
 
 ## Datos
 
-- PostgreSQL 18 y PostGIS vienen del repositorio apt del proyecto PostgreSQL. Debian 13 trae la
-  17, y `uuidv7()`, que pide [postgres.md](postgres.md), llega en la 18.
-- Redis es el de Debian 13. PostgreSQL y Redis corren en la misma máquina.
+- PostgreSQL, PostGIS y Redis son los de Debian 13, en la misma máquina.
 - La app entra a PostgreSQL por el socket Unix con autenticación `peer`: no hay contraseña que
   guardar y la base no escucha en la red.
 

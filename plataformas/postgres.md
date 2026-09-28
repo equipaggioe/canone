@@ -4,11 +4,12 @@ La base de datos.
 
 ## Tipos
 
-Estándar: [*Data Types*](../estandares/postgresql/datatype.sgml) de PostgreSQL.
+Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml) y las
+[funciones](../estandares/postgresql/func.sgml) de PostgreSQL 17, la versión de Debian 13.
 
-- La clave primaria es un `uuid` generado con `uuidv7()`. Los IDs viajan en URLs y clientes, y un
-  entero secuencial revela cuántos hay y se adivina; la versión 7 va ordenada por tiempo, así que
-  el índice crece al final.
+- La clave primaria es un `uuid` generado con `gen_random_uuid()`, la versión 4 que la
+  documentación da por apropiada para la mayoría de las aplicaciones. Los IDs viajan en URLs y
+  clientes, y un entero secuencial revela cuántos hay y se adivina.
 - Las cadenas son `text`. Un largo máximo que pida el dominio va en un `CHECK`.
 - Las fechas con hora son `timestamptz`. Endurece la recomendación de la documentación: es el par
   de las `datetime` aware de [python.md](python.md), y `timestamp` descartaría la zona sin avisar.
@@ -53,7 +54,7 @@ Con las pruebas de `tests/test_conventions.py` de [fastapi.md](fastapi.md):
 
 | Qué | Prueba |
 |---|---|
-| Clave `uuid` con `uuidv7()` | `test_primary_key_is_uuidv7` |
+| Clave `uuid` con `gen_random_uuid()` | `test_primary_key_is_random_uuid` |
 | Cadenas `text` | `test_strings_are_text` |
 | `timestamptz` | `test_datetimes_are_aware` |
 | Enumerados como `text` con `CHECK` | `test_enums_are_checked_text` |

@@ -81,5 +81,10 @@ raíz no cubre a las piezas: `verificar.py` falla si una carpeta con `package.js
 Un job por pieza, y solo por las piezas que existen. Lo que corre cada job está en la página de su
 plataforma.
 
+El workflow corre con cada push a `main`, con cada pull request y una vez por semana, aunque no
+haya commits, para que una vulnerabilidad publicada después del último commit no pase sin verse
+([ADR-0019](adr/0019-el-ci-corre-cada-semana-aunque-no-haya-commits.md)). La plantilla es
+[`plantilla/.github/workflows/ci.yml`](plantilla/.github/workflows/ci.yml).
+
 **Una regla de `canone` que no rompe CI no es una regla, es una sugerencia.** Una convención nueva
 se agrega junto con lo que la verifica.

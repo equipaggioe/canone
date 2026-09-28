@@ -124,8 +124,11 @@ def revisar(repo: Path) -> list[str]:
     if not (repo / "README.md").exists():
         fallas.append("repositorio.md: falta README.md en el raíz")
 
-    if not (repo / ".github/workflows/ci.yml").exists():
+    ci = repo / ".github/workflows/ci.yml"
+    if not ci.exists():
         fallas.append("repositorio.md: falta .github/workflows/ci.yml")
+    elif not re.search(r"^\s+schedule:\s*\n\s+- cron:", ci.read_text(encoding="utf-8"), re.M):
+        fallas.append("ADR-0019: .github/workflows/ci.yml no corre cada semana (falta schedule)")
 
     servidor = repo / "server"
     if servidor.is_dir():

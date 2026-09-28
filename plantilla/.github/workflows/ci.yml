@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # ADR-0019: una vulnerabilidad publicada después del último commit también se ve.
+  schedule:
+    - cron: "0 13 * * 1"
 
 jobs:
   canone:

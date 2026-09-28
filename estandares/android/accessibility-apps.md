@@ -1,0 +1,113 @@
+# Make apps more accessibleStay organized with collectionsSave and categorize content based on your preferences.
+
+**Note:** Documentation across [developer.android.com](/) is being refactored to show how to accomplish tasks with Compose. We recommend using Compose for your app, but you can still access the Views-specific information for the concepts on this page at [Make apps more accessible (Views)](/guide/topics/ui/accessibility/views/apps-views).
+
+Try to make your Android app usable for everyone, including people with accessibility needs.
+
+People with impaired vision, color blindness, impaired hearing, impaired dexterity, cognitive disabilities, and many other disabilities use Android devices. When you develop apps with accessibility in mind, you make the user experience better for people with accessibility needs.
+
+This page presents guidelines for implementing key elements of accessibility so that everyone can use your app more easily. For more in-depth guidance on how to make your app more accessible, see [Principles for improving app accessibility](/guide/topics/ui/accessibility/principles).
+
+## Increase text visibility
+
+For each set of text within your app, we recommend the _color contrast_ —or difference in perceived brightness between the color of the text and the color of the background behind the text—to be above a specific threshold. The exact threshold depends on the text's font size and whether the text appears in bold:
+
+  * If the text is smaller than 18sp, or if the text is bold and smaller than 14sp, use foreground and background colors that result in a [color contrast ratio](https://m3.material.io/foundations/designing/color-contrast) of at least 4.5:1.
+  * For all other text, set the color contrast ratio to at least 3:1.
+
+
+
+The following image shows two examples of text-to-background color contrast:
+
+**Figure 1.** Lower than recommended (left) and sufficient (right) color contrast. 
+
+To check the text-to-background color contrast in your app, use an online color contrast checker or the [Accessibility Scanner](https://play.google.com/store/apps/details?id=com.google.android.apps.accessibility.auditor) app.
+
+## Use large, simple controls
+
+Your app's UI is easier to use if its controls are easier to see and tap. For touch interfaces, we recommend that each interactive UI element have a focusable area, or _touch target size_ , of at least 48dpx48dp. Larger is even better.
+
+**Note:** For precise input (mouses and trackpads), the touch target can be smaller. See [Pointer interactions](/design/ui/desktop/guides/interaction/pointer-interactions) for more information.
+
+In Jetpack Compose, many built-in Material components like `Button`, `IconButton`, and `ListItem` already enforce this minimum size. However, when creating custom interactive elements, you need to set the size yourself.
+
+In the following snippet, a small UI element is made accessible by giving it a larger touch target:
+    
+    
+    @Composable
+    private fun LargeBox() {
+        var clicked by remember { mutableStateOf(false) }
+        Box(
+            Modifier
+                .size(100.dp)
+                .background(if (clicked) Color.DarkGray else Color.LightGray)
+        ) {
+            Box(
+                Modifier
+                    .align(Alignment.Center)
+                    .clickable { clicked = !clicked }
+                    .background(Color.Black)
+                    .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+            )
+        }
+    }
+    
+    [AccessibilitySnippets.kt](https://github.com/android/snippets/blob/85c642c354df9d3d244b6261a54fe12cfa9d9a79/compose/snippets/src/main/java/com/example/compose/snippets/accessibility/AccessibilitySnippets.kt#L156-L172)
+
+For more information about touch target sizes, see [Minimum touch target sizes](/develop/ui/compose/accessibility/api-defaults#minimum-target-sizes).
+
+## Describe each UI element
+
+For each UI element in your app, include a description that describes the element's purpose. In most cases, you include this description in the element's `contentDescription` attribute, as shown in the following code snippet:
+    
+    
+    @Composable
+    private fun ShareButton(onClick: () -> Unit) {
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = Icons.Filled.Share,
+                contentDescription = stringResource(R.string.label_share)
+            )
+        }
+    }
+    
+    [AccessibilitySnippets.kt](https://github.com/android/snippets/blob/85c642c354df9d3d244b6261a54fe12cfa9d9a79/compose/snippets/src/main/java/com/example/compose/snippets/accessibility/AccessibilitySnippets.kt#L206-L214)
+
+Note that you do not need to provide a `contentDescription` for `Text` composables. Android accessibility services (like TalkBack) automatically announce the text itself.
+
+When adding descriptions to your app's UI elements, keep the following best practices in mind:
+
+  * Use descriptions to convey the purpose and result of the interaction, not the visual details. Use the [`Role` semantics property](/guide/topics/ui/accessibility/composables#describe) (like `Role.Button` or `Role.Switch`) to expose a UI element's type. This way, screen readers can announce the element correctly.
+
+  * Avoid redundancies in descriptions. For example, if selecting a button causes a "submit" action to occur in your app, make the button's description `"Submit"`, not `"Submit button"`.
+
+  * Each description should be unique. That way, when screen reader users encounter a repeated element description, they correctly recognize that the focus is on an element that already had focus earlier. In particular, each item within a list such as `LazyColumn` should have a different description, each reflecting the content that's unique to a given item, such as the name of a city in a list of locations.
+
+  * Use the `hideFromAccessibility` API to mark purely decorative elements so that accessibility services can ignore them. If a UI element has a `contentDescription` parameter but is purely decorative (such as an `Icon` that is part of another UI element), pass `null` to avoid redundant labeling. For more elaborate use cases, see [Merging and clearing](/develop/ui/compose/accessibility/merging-clearing).
+
+  * Test your code to make sure the content description is delivered as expected. Android Lint, Compose testing, and [manual and automated test tools](/develop/ui/compose/accessibility/testing) can flag common issues and expose problems in your implementation.
+
+
+
+
+## Additional resources
+
+To learn more about making your app more accessible, see the following additional resources:
+
+### Codelabs
+
+  * [Accessibility in Jetpack Compose](/codelabs/jetpack-compose-accessibility#0)
+
+
+
+### Videos
+
+  * [Build more accessible UIs with Jetpack Compose](https://www.youtube.com/watch?v=80qkStdDWXQ)
+
+
+
+### Views content
+
+  * [Make apps more accessible (Views)](/guide/topics/ui/accessibility/views/apps-views)
+
+

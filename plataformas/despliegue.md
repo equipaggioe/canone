@@ -45,3 +45,11 @@ Estándares: [`systemd.unit`](../estandares/systemd/systemd.unit.xml),
 ## Registros
 
 - Los registros salen por stderr y los guarda journald. journald les pone la hora y los rota.
+
+## Respaldos
+
+Estándares: de PostgreSQL, [*Backup and Restore*](../estandares/postgresql/backup.sgml),
+[`pg_dump`](../estandares/postgresql/pg_dump.sgml) y
+[`pg_restore`](../estandares/postgresql/pg_restore.sgml);
+[`systemd.timer`](../estandares/systemd/systemd.timer.xml), y el
+[ciclo de vida de objetos](../estandares/aws-s3/object-lifecycle-mgmt.md) de Amazon S3.

@@ -56,7 +56,3 @@ Estándares: [shared_preferences](../estandares/pub/shared_preferences/README.md
 [flutter_secure_storage](../estandares/pub/flutter_secure_storage/README.md).
 
 - Las preferencias usan `SharedPreferencesAsync`. Sin caché, cada lectura trae el valor actual.
-
-## Mapas
-
-Estándar: [flutter_map](../estandares/pub/flutter_map/README.md).

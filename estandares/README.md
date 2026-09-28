@@ -37,6 +37,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [fastapi/generate-clients.md](fastapi/generate-clients.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/generate-clients.md> |  |
 | [fastapi/async-tests.md](fastapi/async-tests.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/async-tests.md> |  |
 | [fastapi/websockets.md](fastapi/websockets.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/websockets.md> |  |
+| [fastapi/request-files.md](fastapi/request-files.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/request-files.md> |  |
 | [pydantic/config.md](pydantic/config.md) | <https://raw.githubusercontent.com/pydantic/pydantic/main/docs/concepts/config.md> |  |
 | [pydantic-settings/index.md](pydantic-settings/index.md) | <https://raw.githubusercontent.com/pydantic/pydantic-settings/main/docs/index.md> |  |
 | [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/orm/extensions/asyncio.rst> |  |
@@ -49,6 +50,9 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [postgresql/ddl.sgml](postgresql/ddl.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_18_STABLE/doc/src/sgml/ddl.sgml> |  |
 | [postgresql/syntax.sgml](postgresql/syntax.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_18_STABLE/doc/src/sgml/syntax.sgml> |  |
 | [postgresql/indices.sgml](postgresql/indices.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_18_STABLE/doc/src/sgml/indices.sgml> |  |
+| [postgresql/backup.sgml](postgresql/backup.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_18_STABLE/doc/src/sgml/backup.sgml> |  |
+| [postgresql/pg_dump.sgml](postgresql/pg_dump.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_18_STABLE/doc/src/sgml/ref/pg_dump.sgml> |  |
+| [postgresql/pg_restore.sgml](postgresql/pg_restore.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_18_STABLE/doc/src/sgml/ref/pg_restore.sgml> |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.6/doc/using_postgis_dataman.xml> |  |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |
 | [rfc/rfc4226.txt](rfc/rfc4226.txt) | <https://www.rfc-editor.org/rfc/rfc4226.txt> |  |
@@ -76,6 +80,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |
 | [w3c/webrtc.html](w3c/webrtc.html) | <https://raw.githubusercontent.com/w3c/webrtc-pc/main/webrtc.html> |  |
 | [w3c/push-api.html](w3c/push-api.html) | <https://raw.githubusercontent.com/w3c/push-api/gh-pages/index.html> |  |
+| [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | Texto extraído del PDF |
 | [owasp/Authentication.md](owasp/Authentication.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authentication_Cheat_Sheet.md> |  |
 | [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authorization_Cheat_Sheet.md> |  |
@@ -94,6 +99,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [owasp/Secrets_Management.md](owasp/Secrets_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Secrets_Management_Cheat_Sheet.md> |  |
 | [owasp/Session_Management.md](owasp/Session_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Session_Management_Cheat_Sheet.md> |  |
 | [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> |  |
+| [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/File_Upload_Cheat_Sheet.md> |  |
 | [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/WebSocket_Security_Cheat_Sheet.md> |  |
 | [redis/pubsub.md](redis/pubsub.md) | <https://raw.githubusercontent.com/redis/docs/main/content/develop/pubsub/_index.md> |  |
 | [coturn/README.turnserver](coturn/README.turnserver) | <https://raw.githubusercontent.com/coturn/coturn/master/README.turnserver> |  |
@@ -107,6 +113,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [aws-ses/dmarc.md](aws-ses/dmarc.md) | <https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html> | Página web convertida a Markdown |
 | [aws-ses/suppression-list.md](aws-ses/suppression-list.md) | <https://docs.aws.amazon.com/ses/latest/dg/sending-email-suppression-list.html> | Página web convertida a Markdown |
 | [aws-ses/monitor-using-event-publishing.md](aws-ses/monitor-using-event-publishing.md) | <https://docs.aws.amazon.com/ses/latest/dg/monitor-using-event-publishing.html> | Página web convertida a Markdown |
+| [aws-s3/object-lifecycle-mgmt.md](aws-s3/object-lifecycle-mgmt.md) | <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html> | Página web convertida a Markdown |
 | [stripe/idempotent-requests.md](stripe/idempotent-requests.md) | <https://docs.stripe.com/api/idempotent_requests.md> |  |
 | [stripe/webhooks.md](stripe/webhooks.md) | <https://docs.stripe.com/webhooks.md> |  |
 | [sveltekit/project-structure.md](sveltekit/project-structure.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/10-getting-started/30-project-structure.md> |  |
@@ -122,6 +129,8 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [svelte/bindable.md](svelte/bindable.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/06-$bindable.md> |  |
 | [svelte/inspect.md](svelte/inspect.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/07-$inspect.md> |  |
 | [svelte/host.md](svelte/host.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/08-$host.md> |  |
+| [svelte/compile-warnings.md](svelte/compile-warnings.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/98-reference/.generated/compile-warnings.md> |  |
+| [svelte/sv-check.md](svelte/sv-check.md) | <https://raw.githubusercontent.com/sveltejs/cli/main/documentation/docs/20-commands/30-sv-check.md> |  |
 | [unocss/guide-index.md](unocss/guide-index.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/guide/index.md> |  |
 | [unocss/guide-config-file.md](unocss/guide-config-file.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/guide/config-file.md> |  |
 | [unocss/config-index.md](unocss/config-index.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/config/index.md> |  |
@@ -151,12 +160,21 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [flutter/themes.md](flutter/themes.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/cookbook/design/themes.md> |  |
 | [flutter/state-mgmt-simple.md](flutter/state-mgmt-simple.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/data-and-backend/state-mgmt/simple.md> |  |
 | [flutter/internationalization.md](flutter/internationalization.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/internationalization/index.md> |  |
+| [flutter/accessibility.md](flutter/accessibility.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/index.md> |  |
+| [flutter/accessibility-ui-design.md](flutter/accessibility-ui-design.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/ui-design-and-styling.md> |  |
+| [flutter/accessibility-assistive.md](flutter/accessibility-assistive.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/assistive-technologies.md> |  |
+| [flutter/accessibility-testing.md](flutter/accessibility-testing.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/accessibility-testing.md> |  |
 | [pub/flutter_lints/README.md](pub/flutter_lints/README.md) | <https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/README.md> |  |
 | [pub/flutter_lints/flutter.yaml](pub/flutter_lints/flutter.yaml) | <https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/lib/flutter.yaml> |  |
 | [pub/shared_preferences/README.md](pub/shared_preferences/README.md) | <https://raw.githubusercontent.com/flutter/packages/main/packages/shared_preferences/shared_preferences/README.md> |  |
 | [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | <https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/develop/flutter_secure_storage/README.md> |  |
 | [pub/provider/README.md](pub/provider/README.md) | <https://raw.githubusercontent.com/rrousselGit/provider/master/packages/provider/README.md> |  |
 | [pub/flutter_map/README.md](pub/flutter_map/README.md) | <https://raw.githubusercontent.com/fleaflet/flutter_map/master/README.md> |  |
+| [osm/tile-usage-policy.md](osm/tile-usage-policy.md) | <https://operations.osmfoundation.org/policies/tiles/> | Página web convertida a Markdown |
+| [osm/nominatim-usage-policy.md](osm/nominatim-usage-policy.md) | <https://operations.osmfoundation.org/policies/nominatim/> | Página web convertida a Markdown |
+| [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | <https://osmfoundation.org/wiki/Licence/Attribution_Guidelines> | Página web convertida a Markdown |
+| [leaflet/quick-start.md](leaflet/quick-start.md) | <https://raw.githubusercontent.com/Leaflet/Leaflet/main/docs/examples/quick-start/index.md> |  |
+| [maplibre/android-getting-started.md](maplibre/android-getting-started.md) | <https://raw.githubusercontent.com/maplibre/maplibre-native/main/platform/android/docs/getting-started.md> |  |
 | [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | <https://raw.githubusercontent.com/JetBrains/kotlin-web-site/master/docs/topics/coding-conventions.md> |  |
 | [android/architecture.md](android/architecture.md) | <https://developer.android.com/topic/architecture> | Página web convertida a Markdown |
 | [android/architecture-recommendations.md](android/architecture-recommendations.md) | <https://developer.android.com/topic/architecture/recommendations> | Página web convertida a Markdown |
@@ -171,10 +189,13 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [android/testing-fundamentals.md](android/testing-fundamentals.md) | <https://developer.android.com/training/testing/fundamentals> | Página web convertida a Markdown |
 | [android/localization.md](android/localization.md) | <https://developer.android.com/guide/topics/resources/localization> | Página web convertida a Markdown |
 | [android/navigation-3.md](android/navigation-3.md) | <https://developer.android.com/guide/navigation/navigation-3> | Página web convertida a Markdown |
+| [android/accessibility-apps.md](android/accessibility-apps.md) | <https://developer.android.com/guide/topics/ui/accessibility/apps> | Página web convertida a Markdown |
+| [android/accessibility-principles.md](android/accessibility-principles.md) | <https://developer.android.com/guide/topics/ui/accessibility/principles> | Página web convertida a Markdown |
 | [compose/state.md](compose/state.md) | <https://developer.android.com/develop/ui/compose/state> | Página web convertida a Markdown |
 | [compose/architecture.md](compose/architecture.md) | <https://developer.android.com/develop/ui/compose/architecture> | Página web convertida a Markdown |
 | [compose/material3.md](compose/material3.md) | <https://developer.android.com/develop/ui/compose/designsystems/material3> | Página web convertida a Markdown |
 | [compose/testing.md](compose/testing.md) | <https://developer.android.com/develop/ui/compose/testing> | Página web convertida a Markdown |
+| [compose/accessibility-testing.md](compose/accessibility-testing.md) | <https://developer.android.com/develop/ui/compose/accessibility/testing> | Página web convertida a Markdown |
 | [flet/create-flet-app.md](flet/create-flet-app.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/getting-started/create-flet-app.md> |  |
 | [flet/theming.md](flet/theming.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/theming.md> |  |
 | [flet/client-storage.md](flet/client-storage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/client-storage.md> |  |
@@ -182,6 +203,8 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [flet/encrypting-sensitive-data.md](flet/encrypting-sensitive-data.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/encrypting-sensitive-data.md> |  |
 | [flet/securestorage.md](flet/securestorage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/services/securestorage/index.md> |  |
 | [flet/publish.md](flet/publish.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/publish/index.md> |  |
+| [flet/accessibility.md](flet/accessibility.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/accessibility.md> |  |
+| [flet/map.md](flet/map.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/controls/map/index.md> |  |
 | [pyside6/considerations.rst](pyside6/considerations.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/considerations.rst> |  |
 | [pyside6/porting_from2.rst](pyside6/porting_from2.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/faq/porting_from2.rst> |  |
 | [pyside6/signals_and_slots.rst](pyside6/signals_and_slots.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/tutorials/basictutorial/signals_and_slots.rst> |  |
@@ -199,6 +222,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [qt/qdialog.qdoc](qt/qdialog.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/dialogs/qdialog.cpp> | Comentarios `/*! */` del código fuente |
 | [qt/qsettings.qdoc](qt/qsettings.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/corelib/io/qsettings.cpp> | Comentarios `/*! */` del código fuente |
 | [qt/qnetworkaccessmanager.qdoc](qt/qnetworkaccessmanager.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/network/access/qnetworkaccessmanager.cpp> | Comentarios `/*! */` del código fuente |
+| [qt/accessible.qdoc](qt/accessible.qdoc) | <https://raw.githubusercontent.com/qt/qtdoc/dev/doc/src/frameworks-technologies/accessible.qdoc> |  |
 | [pytest-qt/intro.rst](pytest-qt/intro.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/intro.rst> |  |
 | [pytest-qt/tutorial.rst](pytest-qt/tutorial.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/tutorial.rst> |  |
 | [pytest-qt/qapplication.rst](pytest-qt/qapplication.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/qapplication.rst> |  |
@@ -213,6 +237,8 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [caddy/file_server.md](caddy/file_server.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/file_server.md> |  |
 | [caddy/encode.md](caddy/encode.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/encode.md> |  |
 | [caddy/try_files.md](caddy/try_files.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/try_files.md> |  |
+| [caddy/request_body.md](caddy/request_body.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/request_body.md> |  |
 | [systemd/systemd.unit.xml](systemd/systemd.unit.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.unit.xml> |  |
 | [systemd/systemd.service.xml](systemd/systemd.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.service.xml> |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.exec.xml> |  |
+| [systemd/systemd.timer.xml](systemd/systemd.timer.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.timer.xml> |  |

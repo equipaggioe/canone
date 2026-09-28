@@ -23,6 +23,7 @@ server/
     database.py       el engine y la fábrica de sesiones
     dependencies.py   las dependencias compartidas, como la sesión y el usuario actual
     errors.py         la excepción de la app y los handlers que responden problem+json
+    tracing.py        el trace-id de cada petición, en el log y en los errores
     models/
       base.py         la base declarativa, los tipos de PostgreSQL y los nombres
       <recurso>.py
@@ -31,6 +32,8 @@ server/
       <recurso>.py
     routers/
       <recurso>.py
+    services/
+      <recurso>.py
   tests/
     conftest.py
     test_conventions.py
@@ -38,11 +41,15 @@ server/
 
 - El paquete se llama `app` en todo servidor. Los archivos canónicos lo importan por nombre y se
   copian sin editar.
-- `database.py` y `errors.py` le dan un lugar fijo a lo que el estándar no ubica. `config.py` es
-  el módulo que propone la guía de configuración.
+- `database.py`, `errors.py` y `tracing.py` le dan un lugar fijo a lo que el estándar no ubica.
+  `config.py` es el módulo que propone la guía de configuración.
+- Un router recibe la petición, llama a su servicio y responde. El servicio hace las consultas y
+  aplica las reglas del negocio: la misma operación se llama desde una ruta, un WebSocket o una
+  tarea sin repetirla.
 
 Plantilla: [`plantilla/server/`](../plantilla/server/). Son canónicos, y se copian sin editar,
-`database.py`, `errors.py`, `models/base.py`, `schemas/base.py` y `tests/test_conventions.py`.
+`database.py`, `errors.py`, `tracing.py`, `models/base.py`, `schemas/base.py` y
+`tests/test_conventions.py`.
 
 ## Dependencias
 
@@ -109,6 +116,16 @@ Estándares: [*Handling Errors*](../estandares/fastapi/handling-errors.md) de Fa
   lugar de `pointer`. Contradice el `{"detail": [...]}` de FastAPI: el sobre es uno solo, y el
   cliente marca el campo exacto.
 
+## Trazas
+
+Estándar: [Trace Context](../estandares/w3c/trace-context-1.md) de W3C.
+
+- Cada petición y cada WebSocket empiezan una traza nueva, aunque lleguen con `traceparent`. Es el
+  reinicio que el estándar prevé para la puerta de entrada de un sistema: el cliente no elige el
+  id con el que se buscan sus registros.
+- Cada línea de log lleva el trace-id de su petición, y cada problem+json lo devuelve en la
+  extensión `traceId`. Con el id que ve el usuario se llega a la línea exacta del registro.
+
 ## Fechas
 
 Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
@@ -160,6 +177,6 @@ Estándares: [*Testing*](../estandares/fastapi/testing.md) y
 | mypy strict, de [python.md](python.md), sobre los modelos de Pydantic | plugin `pydantic.mypy` |
 | Los esquemas heredan del modelo base | `test_schemas_inherit_schema` |
 | `lazy="raise"` | `test_relationships_raise` |
-| Toda respuesta de error en problem+json | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field` |
+| Toda respuesta de error en problem+json, con `traceId` | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field` |
 | El operation ID `<tag>-<función>` | `test_operation_ids` |
 | Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

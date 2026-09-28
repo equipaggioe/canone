@@ -50,3 +50,4 @@ class Problem(Schema):
     status: int
     detail: str | None = None
     errors: list[FieldError] | None = None
+    trace_id: str

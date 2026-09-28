@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 
 from app.schemas.base import FieldError, Problem
+from app.tracing import trace_id
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +44,9 @@ def respond(problem: Problem, headers: Mapping[str, str] | None = None) -> JSONR
 def blank(status: int, detail: str | None = None) -> Problem:
     """Build an about:blank problem, whose status says it all."""
     title = HTTPStatus(status).phrase
-    return Problem(type="about:blank", title=title, status=status, detail=detail)
+    return Problem(
+        type="about:blank", title=title, status=status, detail=detail, traceId=trace_id.get()
+    )
 
 
 def pointer(path: tuple[int | str, ...]) -> str:
@@ -64,7 +67,15 @@ def field_error(error: Mapping[str, Any]) -> FieldError:
 async def app_error(_: Request, exc: Exception) -> JSONResponse:
     """Answer an AppError."""
     assert isinstance(exc, AppError)
-    return respond(Problem(type=exc.type, title=exc.title, status=exc.status, detail=exc.detail))
+    return respond(
+        Problem(
+            type=exc.type,
+            title=exc.title,
+            status=exc.status,
+            detail=exc.detail,
+            traceId=trace_id.get(),
+        )
+    )
 
 
 async def http_error(_: Request, exc: Exception) -> JSONResponse:

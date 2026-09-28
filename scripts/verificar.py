@@ -10,8 +10,10 @@ regla que no rompe CI es una sugerencia, no una regla.
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
+import subprocess
 import sys
 import tomllib
 from pathlib import Path
@@ -22,6 +24,7 @@ PLANTILLA = CANONE / "plantilla"
 CANONICOS = [
     Path("server/src/app/database.py"),
     Path("server/src/app/errors.py"),
+    Path("server/src/app/tracing.py"),
     Path("server/src/app/models/base.py"),
     Path("server/src/app/schemas/base.py"),
     Path("server/tests/test_conventions.py"),
@@ -73,6 +76,112 @@ def bitacoras_solo_lectura(servidor: Path) -> list[str]:
             verbos = sorted({v.split(".")[1] for v in ESCRITURA if v in texto})
             if verbos:
                 fallas.append(f"ADR-0008: {carpeta}/{router.name} expone {', '.join(verbos)} sobre una bitácora")
+    return fallas
+
+
+# principios.md, «Nombres»: a lo sumo cuatro palabras. Se revisan las funciones, los métodos y las
+# clases; las variables y los atributos se revisan leyendo, porque ahí caen los campos de una API
+# externa. Las excepciones que se detectan solas: las pruebas, lo marcado como override, el código
+# generado (lo que git ignora, o lo que lo dice en su cabecera) y el sufijo de las clases de
+# schemas/.
+MAXIMO_PALABRAS = 4
+PRUEBAS = {"tests", "test", "androidTest", "integration_test"}
+PALABRA = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z0-9]+|[A-Z]+")
+DECLARACION = {
+    ".dart": re.compile(
+        r"^\s*(?:(?:static|external|abstract)\s+)*(?:class\s+(\w+)"
+        r"|(?:void|bool|int|double|num|dynamic|[A-Z]\w*)(?:<[^()=;]*>)?\??\s+(\w+)\s*(?:<[^()]*>)?\()",
+        re.M,
+    ),
+    ".kt": re.compile(r"^\s*(?:[a-z]+\s+)*(?:class|interface|object|fun)\s+(?:<[^>]*>\s*)?(?:\w+\.)?(\w+)", re.M),
+    ".ts": re.compile(
+        r"^\s*(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:function\*?\s+(\w+)|class\s+(\w+)"
+        r"|(?:const|let)\s+(\w+)\s*=\s*(?:async\s*)?(?:\([^)]*\)|\w+)\s*(?::[^=]*)?=>)",
+        re.M,
+    ),
+}
+DECLARACION[".svelte"] = DECLARACION[".ts"]
+OVERRIDE = {".dart": re.compile(r"@override\s*$"), ".kt": re.compile(r"\boverride\b"), ".ts": re.compile(r"\boverride\b")}
+OVERRIDE[".svelte"] = OVERRIDE[".ts"]
+
+
+def palabras(nombre: str) -> int:
+    return len(PALABRA.findall(nombre.strip("_$")))
+
+
+def generado(texto: str) -> bool:
+    cabecera = texto[:500].lower()
+    return "generated" in cabecera or "do not edit" in cabecera
+
+
+def es_prueba(archivo: Path) -> bool:
+    nombre = archivo.name
+    return (
+        bool(PRUEBAS & set(archivo.parts))
+        or nombre.startswith("test_")
+        or nombre == "conftest.py"
+        or re.search(r"[._-](test|spec)\.\w+$", nombre) is not None
+        or nombre.endswith(("_test.dart", "Test.kt"))
+    )
+
+
+def nombres_python(texto: str, en_schemas: bool) -> list[tuple[int, str, int]]:
+    largos = []
+    for nodo in ast.walk(ast.parse(texto)):
+        if not isinstance(nodo, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            continue
+        decoradores = {getattr(d, "id", getattr(d, "attr", "")) for d in nodo.decorator_list}
+        if "override" in decoradores or nodo.name.startswith("test"):
+            continue
+        cuenta = palabras(nodo.name) - (1 if en_schemas and isinstance(nodo, ast.ClassDef) else 0)
+        if cuenta > MAXIMO_PALABRAS:
+            largos.append((nodo.lineno, nodo.name, cuenta))
+    return largos
+
+
+def nombres_otros(texto: str, sufijo: str) -> list[tuple[int, str, int]]:
+    largos = []
+    lineas = texto.splitlines()
+    for coincidencia in DECLARACION[sufijo].finditer(texto):
+        grupo = next(i for i, g in enumerate(coincidencia.groups(), 1) if g)
+        nombre = coincidencia.group(grupo)
+        linea = texto.count("\n", 0, coincidencia.start(grupo)) + 1
+        anterior = lineas[linea - 2] if linea > 1 else ""
+        if OVERRIDE[sufijo].search(lineas[linea - 1]) or OVERRIDE[sufijo].search(anterior):
+            continue
+        if nombre.startswith("test"):
+            continue
+        cuenta = palabras(nombre)
+        if cuenta > MAXIMO_PALABRAS:
+            largos.append((linea, nombre, cuenta))
+    return largos
+
+
+def nombres_largos(repo: Path) -> list[str]:
+    fallas = []
+    listado = subprocess.run(
+        ["git", "-C", str(repo), "ls-files", "--cached", "--others", "--exclude-standard"],
+        capture_output=True, text=True, encoding="utf-8", check=True,
+    ).stdout.splitlines()
+    for ruta in sorted(listado):
+        relativo = Path(ruta)
+        sufijo = relativo.suffix
+        archivo = repo / relativo
+        if sufijo not in (".py", *DECLARACION) or es_prueba(relativo) or not archivo.is_file():
+            continue
+        texto = archivo.read_text(encoding="utf-8", errors="replace")
+        if generado(texto):
+            continue
+        if sufijo == ".py":
+            try:
+                largos = nombres_python(texto, "schemas" in relativo.parts)
+            except SyntaxError:
+                fallas.append(f"principios.md: {relativo.as_posix()} no se pudo leer como Python")
+                continue
+        else:
+            largos = nombres_otros(texto, sufijo)
+        for linea, nombre, cuenta in largos:
+            fallas.append(f"principios.md: {relativo.as_posix()}:{linea} {nombre} tiene {cuenta} palabras")
     return fallas
 
 
@@ -211,6 +320,8 @@ def revisar(repo: Path) -> list[str]:
                 "documentacion.md: docs/ tiene archivos fuera de la convención: "
                 + ", ".join(sueltos)
             )
+
+    fallas.extend(nombres_largos(repo))
 
     return fallas
 

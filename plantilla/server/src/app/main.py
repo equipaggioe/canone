@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 
-from app import errors
+from app import errors, tracing
 
 
 def operation_id(route: APIRoute) -> str:
@@ -13,3 +13,4 @@ def operation_id(route: APIRoute) -> str:
 
 app = FastAPI(generate_unique_id_function=operation_id)
 errors.install(app)
+tracing.install(app)

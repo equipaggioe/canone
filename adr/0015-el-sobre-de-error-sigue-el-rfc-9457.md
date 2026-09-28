@@ -2,15 +2,14 @@
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-09-25
-- **Alcance:** `server/app/schemas/base.py`, `server/app/core/`, y todo cliente que lea errores de la
-  API
+- **Alcance:** [`plataformas/fastapi.md`](../plataformas/fastapi.md), `plantilla/server/src/app/errors.py`,
+  `tracing.py` y `schemas/base.py`, y todo cliente que lea errores de la API
 
 ## Contexto
 
 El sobre de error era propio: `status`, `detail`, `errorCode`, `errors` como diccionario de campo a
-mensajes, y `requestId`. FastAPI no recomienda un formato más allá de `{"detail": ...}`, así que
-por el [ADR-0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md) vale la práctica
-establecida: el RFC 9457, *Problem Details for HTTP APIs*.
+mensajes, y `requestId`. FastAPI no recomienda un formato más allá de `{"detail": ...}`, y el
+estándar que cubre el caso es el RFC 9457, *Problem Details for HTTP APIs*.
 
 El sobre propio ya coincidía en `status` y `detail`. El RFC dice que el consumidor usa `type` como
 identificador principal del problema, así que `errorCode` y `type` a la vez serían el mismo dato en
@@ -20,33 +19,32 @@ dos sitios.
 
 1. El error se responde como *problem details* del RFC 9457, con
    `Content-Type: application/problem+json`.
-2. `type` reemplaza a `errorCode` y es lo único sobre lo que ramifica un cliente. El enum
-   `ProblemType` reemplaza a `ErrorCode`.
-3. `title` es un resumen fijo por tipo. `requestId` pasa a `traceId`, miembro de extensión con el
-   trace-id del W3C Trace Context: el header `traceparent` es el estándar para correlacionar un
-   request, y `X-Request-ID` no está definido en ninguno.
-4. *(propuesta)* `type` es una ruta completa bajo `/problems/`, estable entre versiones de la API.
-5. *(propuesta)* `errors` es una lista de `{detail, pointer}`, con un JSON Pointer al campo, como el
-   ejemplo de validación del RFC.
-6. *(propuesta)* La validación de Pydantic sale con `type` `/problems/validation-error`.
-7. Un error sin semántica propia va con `about:blank` y la frase de su código HTTP como `title`,
-   como pide el RFC.
-8. `GET /problems/{slug}` responde la documentación legible de cada tipo, como pide el RFC. El
-   `title`, el `status` y la descripción de cada `ProblemType` están en un solo lugar, `PROBLEMS`,
-   del que leen esa ruta y `AppError`.
-9. Toda operación declara en OpenAPI sus errores 4XX, 5XX y 422 como `ProblemDetails` con
-   `application/problem+json`.
+2. `type` reemplaza a `errorCode` y es lo único sobre lo que ramifica un cliente.
+3. `type` es un URI `tag:<dominio>,<año>:<nombre>`. Un error sin semántica propia va con
+   `about:blank` y la frase de su código HTTP como `title`, como pide el RFC.
+4. Toda respuesta de error sale por un solo punto: los handlers de `errors.py` convierten en
+   problem+json la excepción de la app, los `HTTPException` de Starlette, los errores de validación
+   y toda excepción sin atrapar.
+5. Un error de validación es un 422 con la extensión `errors`, una lista de `{detail, pointer}` como
+   el ejemplo de validación del RFC. En query, path y header, `parameter` toma el lugar de
+   `pointer`.
+6. `requestId` pasa a `traceId`, miembro de extensión con el trace-id del W3C Trace Context, que
+   también va en cada línea de log. `traceparent` es el estándar para correlacionar una petición, y
+   `X-Request-ID` no está definido en ninguno.
+7. El servidor empieza una traza nueva en cada petición y no adopta el `traceparent`
+   que llega. El estándar prevé ese reinicio en la puerta de entrada de un sistema, y ningún
+   cliente lleva hoy una traza propia que valga la pena continuar.
 
 ## Consecuencias
 
-- `ErrorResponse` pasa a `ProblemDetails` en `app/schemas/base.py`, que es canónico.
 - Cada cliente cambia `errorCode` por `type`, y `requestId` por `traceId`, en su error tipado.
-- `app/core/tracing.py`, canónico, toma el trace-id del `traceparent` o empieza una traza, y lo
-  pone en el log y en el error.
-- Un campo anidado o de una lista se señala sin inventar una convención: `#/items/0/name`.
-- FastAPI documenta el `model` de una respuesta bajo el tipo de medio de la ruta, `application/json`,
-  así que `PROBLEM_RESPONSES` apunta también `application/problem+json` al mismo esquema, y en
-  `openapi.json` el error figura con los dos.
+- El handler de las excepciones sin atrapar corre fuera de todo middleware, así que el middleware
+  de `tracing.py` no restaura el trace-id al salir: cada petición corre en su propia tarea y su
+  contexto muere con ella.
+- Un campo anidado o de una lista se señala con el JSON Pointer del RFC 6901, sin inventar una
+  convención: `/items/0/name`.
+- Un `type` con `tag:` no se resuelve. Si algún día se quiere documentación legible por tipo, pasar
+  a un URI resoluble cambia la identidad de cada tipo, y todo cliente que lo compara cambia con él.
 
 ## Descartado
 
@@ -55,3 +53,6 @@ dos sitios.
 - **Un URN propio como `urn:problem:...`:** el espacio `problem` no está registrado.
 - **Un URI absoluto, como `https://api.producto.com/problems/...`:** el RFC lo prefiere "cuando sea
   posible", pero el dominio cambia entre entornos y el cliente compara el `type` para decidir.
+- **Una ruta relativa bajo `/problems/`, con `GET /problems/{slug}` para documentar cada tipo:**
+  el RFC advierte que un URI relativo se resuelve contra la URI base del documento y puede
+  confundir, y obliga a servir una página por cada tipo. El `tag:` cumple la URI absoluta sin eso.

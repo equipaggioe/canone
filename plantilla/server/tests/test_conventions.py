@@ -14,7 +14,7 @@ from pydantic import BaseModel
 import app.models
 import app.routers
 import app.schemas
-from app import errors
+from app import errors, tracing
 from app.main import app as main_app
 from app.models.base import Base
 from app.schemas.base import InputSchema, Schema
@@ -143,7 +143,9 @@ async def test_unknown_route_is_a_problem() -> None:
         response = await client.get("/no-such-route")
     assert response.status_code == 404
     assert response.headers["content-type"] == errors.PROBLEM_JSON
-    assert response.json() == {"type": "about:blank", "title": "Not Found", "status": 404}
+    body = response.json()
+    assert len(body.pop("traceId")) == 32
+    assert body == {"type": "about:blank", "title": "Not Found", "status": 404}
 
 
 class Item(InputSchema):
@@ -156,6 +158,7 @@ async def test_validation_error_points_to_the_field() -> None:
     """A 422 points to the body field and the query parameter."""
     probe = FastAPI()
     errors.install(probe)
+    tracing.install(probe)
 
     @probe.post("/items")
     async def create_item(item: Item, limit: Annotated[int, Query()]) -> None:

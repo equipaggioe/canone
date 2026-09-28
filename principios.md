@@ -14,6 +14,21 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 - **Español neutro.** Ni rioplatense ni de España. Nada de voseo (`vos`, `tenés`, `mirá`), nada de
   `vosotros` ni `vale`, nada de `acá`, `plata`, `laburo`, `che`.
 
+## Nombres
+
+- Un nombre lleva las menos palabras posibles, y nunca más de cuatro. No repite lo que ya dicen su
+  carpeta, su módulo o su clase: en `routers/stop_requests.py` es `list_mine`, no
+  `list_my_stop_requests`.
+- Sin abreviaturas, salvo las que son más comunes que la palabra entera, como `id`, `url` o `http`.
+- Quedan fuera del límite:
+  - Las pruebas: su nombre describe el caso.
+  - Los nombres que no se eligen: los métodos que se sobrescriben del framework, como
+    `didChangeDependencies`; los campos de una API externa, y los que genera una convención, como
+    las restricciones que nombra Alembic.
+  - El sufijo que distingue los esquemas de un mismo recurso, como `Create` o `Update`: no cuenta
+    como palabra.
+- [`scripts/verificar.py`](scripts/verificar.py) revisa las funciones, los métodos y las clases.
+
 ## Ningún repositorio está en producción
 
 No hay usuarios reales, ni datos que salvar, ni clientes con versiones viejas: todas las piezas se

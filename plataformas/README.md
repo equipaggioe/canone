@@ -6,7 +6,7 @@ real. **Se lee la de lo que el repositorio use**; las demás no aplican.
 | Página | Cubre |
 |---|---|
 | [python.md](python.md) | Versión, uv, estilo, tipos, paquetes, logging, fechas, async, pruebas, auditoría de dependencias |
-| [fastapi.md](fastapi.md) | Layout, configuración, SQLAlchemy async, migraciones, errores RFC 9457, fechas, paginación, OpenAPI, pruebas |
+| [fastapi.md](fastapi.md) | Layout, configuración, SQLAlchemy async, migraciones, errores RFC 9457, trazas, fechas, paginación, OpenAPI, pruebas |
 | [postgres.md](postgres.md) | Clave primaria, tipos, borrado, nombres, índices, geografía |
 | [seguridad.md](seguridad.md) | Contraseñas, restablecimiento, tokens y sesión, segundo factor, qué guarda cada cliente, límite de tasa, permisos, cabeceras |
 | [tiempo-real.md](tiempo-real.md) | WebSocket, varios procesos con Redis, llamadas con WebRTC y coturn |

@@ -8,17 +8,17 @@ real. **Se lee la de lo que el repositorio use**; las demás no aplican.
 | [python.md](python.md) | Versión, uv, estilo, tipos, paquetes, logging, fechas, async, pruebas, auditoría de dependencias |
 | [fastapi.md](fastapi.md) | Layout, configuración, SQLAlchemy async, migraciones, errores RFC 9457, fechas, paginación, OpenAPI, pruebas |
 | [postgres.md](postgres.md) | Clave primaria, tipos, borrado, nombres, índices, geografía |
-| [seguridad.md](seguridad.md) | Contraseñas, tipos de token, TOTP, qué guarda cada cliente, límite de tasa, permisos |
-| [tiempo-real.md](tiempo-real.md) | WebSocket, varios procesos y Redis, WebRTC, STUN y TURN |
-| [notificaciones.md](notificaciones.md) | Push (FCM y Web Push) y correo transaccional |
-| [pagos.md](pagos.md) | Aislamiento del proveedor, capacidades, idempotencia de webhooks |
-| [i18n.md](i18n.md) | Catálogos por plataforma y qué no se guarda traducido |
+| [seguridad.md](seguridad.md) | Contraseñas, restablecimiento, tokens y sesión, segundo factor, qué guarda cada cliente, límite de tasa, permisos, cabeceras |
+| [tiempo-real.md](tiempo-real.md) | WebSocket, varios procesos con Redis, llamadas con WebRTC y coturn |
+| [notificaciones.md](notificaciones.md) | Push por FCM y Web Push, correo por SES |
+| [pagos.md](pagos.md) | Stripe Checkout, webhooks, montos |
+| [i18n.md](i18n.md) | Idioma base, códigos en la base y catálogos por cliente |
 | [sveltekit.md](sveltekit.md) | Proyecto, carga de datos, cliente generado, adaptador estático, estado, UnoCSS, pruebas |
 | [flutter.md](flutter.md) | Estilo, analizador, arquitectura, modelos, estado, tema, almacenamiento, mapas |
 | [android.md](android.md) | Gradle, estilo, arquitectura, red, Compose, tema, almacenamiento, pruebas |
 | [flet.md](flet.md) | Layout, tema, red, almacenamiento, publicación |
 | [qt.md](qt.md) | Layout, API de PySide6, `@override`, interfaz en código, `QSettings`, Fusion y hoja de estilo, red, pruebas, empaquetado |
-| [despliegue.md](despliegue.md) | Cómo tiene que quedar el servidor: qué se expone, los procesos, los datos, la configuración |
+| [despliegue.md](despliegue.md) | Caddy, servicios de systemd, configuración, datos, registros |
 
 ## Qué es una página
 

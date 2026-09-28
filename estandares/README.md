@@ -102,7 +102,10 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [firebase/admin-sdk.md](firebase/admin-sdk.md) | <https://firebase.google.com/docs/cloud-messaging/send/admin-sdk> | Página web convertida a Markdown |
 | [firebase/error-codes.md](firebase/error-codes.md) | <https://firebase.google.com/docs/cloud-messaging/error-codes> | Página web convertida a Markdown |
 | [aws-ses/send-email-concepts-deliverability.md](aws-ses/send-email-concepts-deliverability.md) | <https://docs.aws.amazon.com/ses/latest/dg/send-email-concepts-deliverability.html> | Página web convertida a Markdown |
-| [aws-ses/email-authentication-methods.md](aws-ses/email-authentication-methods.md) | <https://docs.aws.amazon.com/ses/latest/dg/email-authentication-methods.html> | Página web convertida a Markdown |
+| [aws-ses/dkim.md](aws-ses/dkim.md) | <https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dkim.html> | Página web convertida a Markdown |
+| [aws-ses/mail-from.md](aws-ses/mail-from.md) | <https://docs.aws.amazon.com/ses/latest/dg/mail-from.html> | Página web convertida a Markdown |
+| [aws-ses/dmarc.md](aws-ses/dmarc.md) | <https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html> | Página web convertida a Markdown |
+| [aws-ses/suppression-list.md](aws-ses/suppression-list.md) | <https://docs.aws.amazon.com/ses/latest/dg/sending-email-suppression-list.html> | Página web convertida a Markdown |
 | [aws-ses/monitor-using-event-publishing.md](aws-ses/monitor-using-event-publishing.md) | <https://docs.aws.amazon.com/ses/latest/dg/monitor-using-event-publishing.html> | Página web convertida a Markdown |
 | [stripe/idempotent-requests.md](stripe/idempotent-requests.md) | <https://docs.stripe.com/api/idempotent_requests.md> |  |
 | [stripe/webhooks.md](stripe/webhooks.md) | <https://docs.stripe.com/webhooks.md> |  |

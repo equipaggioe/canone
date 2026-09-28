@@ -1,11 +1,12 @@
 # Plataformas
 
-Una página por tecnología. **Se lee la de lo que el repositorio use**; las demás no aplican.
+Una página por tecnología, o por contrato que cruza varias piezas, como la seguridad o el tiempo
+real. **Se lee la de lo que el repositorio use**; las demás no aplican.
 
 | Página | Cubre |
 |---|---|
-| [python.md](python.md) | Versión, dependencias, PEP 8 con `ruff format`, PEP 257, imports absolutos, `__init__.py`, tipos, lint base |
-| [fastapi.md](fastapi.md) | Layout de `server/`, capas, settings, sesión de base, el sobre de error, paginación, OpenAPI, tests, lint |
+| [python.md](python.md) | Versión, uv, estilo, tipos, paquetes, logging, fechas, async, pruebas, auditoría de dependencias |
+| [fastapi.md](fastapi.md) | Layout, configuración, SQLAlchemy async, migraciones, errores RFC 9457, fechas, paginación, OpenAPI, pruebas |
 | [postgres.md](postgres.md) | Tipos, alias de columna, enums, geografía, nombres, idempotencia, migraciones, borrado |
 | [seguridad.md](seguridad.md) | Contraseñas, tipos de token, TOTP, qué guarda cada cliente, límite de tasa, permisos |
 | [tiempo-real.md](tiempo-real.md) | WebSocket, varios procesos y Redis, WebRTC, STUN y TURN |
@@ -14,13 +15,13 @@ Una página por tecnología. **Se lee la de lo que el repositorio use**; las dem
 | [i18n.md](i18n.md) | Catálogos por plataforma y qué no se guarda traducido |
 | [sveltekit.md](sveltekit.md) | Adaptador, layout de `src/lib`, UnoCSS, runes, cliente de la API, tests |
 | [flutter.md](flutter.md) | Layout de `lib/`, tokens, estado, red, almacenamiento, analizador, mapas |
-| [flet.md](flet.md) | Layout de `src/`, `core/`, cliente de la API, tema, sesión y almacenamiento |
-| [qt.md](qt.md) | Layout, API de PySide6, archivos `.ui`, padres, layouts, model/view, `QSettings`, Fusion y hoja de estilos global, red e hilos, tests con `pytest-qt`, empaquetado con `pyside6-deploy` |
+| [flet.md](flet.md) | Layout, tema, red, almacenamiento, publicación |
+| [qt.md](qt.md) | Layout, API de PySide6, `@override`, interfaz en código, `QSettings`, Fusion y hoja de estilo, red, pruebas, empaquetado |
 | [despliegue.md](despliegue.md) | Cómo tiene que quedar el servidor: qué se expone, los procesos, los datos, la configuración |
 
 ## Qué es una página
 
-Un catálogo de convenciones de una tecnología. Una convención sirve para una de tres cosas:
+Un catálogo de convenciones de una tecnología o de un contrato entre piezas. Una convención sirve para una de tres cosas:
 
 - **Que todos los repositorios se lean igual:** el mismo layout y los mismos nombres.
 - **Que cada elección se tome una sola vez:** la tecnología, la biblioteca, la versión y la
@@ -62,7 +63,7 @@ herramienta la haga cumplir.
   `python.md`.
 - No dice qué repositorio la usa ni cuándo elegir una plataforma sobre otra.
 
-Se agrega una página cuando la tecnología se estrena en algún repositorio.
+Se agrega una página cuando la tecnología o el contrato se estrena en algún repositorio.
 
 El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md).
 

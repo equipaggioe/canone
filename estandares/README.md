@@ -12,12 +12,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [python/pep-0257.rst](python/pep-0257.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0257.rst> |  |
 | [python/pep-0420.rst](python/pep-0420.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0420.rst> |  |
 | [python/pep-0484.rst](python/pep-0484.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0484.rst> |  |
-| [python/pep-0498.rst](python/pep-0498.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0498.rst> |  |
-| [python/pep-0585.rst](python/pep-0585.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0585.rst> |  |
-| [python/pep-0604.rst](python/pep-0604.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0604.rst> |  |
-| [python/pep-0695.rst](python/pep-0695.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0695.rst> |  |
 | [python/pep-0698.rst](python/pep-0698.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0698.rst> |  |
-| [python/enum.rst](python/enum.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/enum.rst> |  |
 | [python/logging-howto.rst](python/logging-howto.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/howto/logging.rst> |  |
 | [python/asyncio-dev.rst](python/asyncio-dev.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/asyncio-dev.rst> |  |
 | [python/asyncio-task.rst](python/asyncio-task.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/asyncio-task.rst> |  |
@@ -48,7 +43,6 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [sqlalchemy/pooling.rst](sqlalchemy/pooling.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/core/pooling.rst> |  |
 | [alembic/tutorial.rst](alembic/tutorial.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/tutorial.rst> |  |
 | [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/autogenerate.rst> |  |
-| [alembic/async/README](alembic/async/README) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/alembic/templates/async/README> |  |
 | [alembic/async/env.py](alembic/async/env.py) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/alembic/templates/async/env.py> |  |
 | [anyio/testing.rst](anyio/testing.rst) | <https://raw.githubusercontent.com/agronholm/anyio/master/docs/testing.rst> |  |
 | [postgresql/datatype.sgml](postgresql/datatype.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_18_STABLE/doc/src/sgml/datatype.sgml> |  |
@@ -79,7 +73,6 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [rfc/rfc8725.txt](rfc/rfc8725.txt) | <https://www.rfc-editor.org/rfc/rfc8725.txt> |  |
 | [rfc/rfc9106.txt](rfc/rfc9106.txt) | <https://www.rfc-editor.org/rfc/rfc9106.txt> |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> |  |
-| [w3c/trace-context-1.md](w3c/trace-context-1.md) | <https://www.w3.org/TR/trace-context-1/> | Página web convertida a Markdown |
 | [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |
 | [w3c/webrtc.html](w3c/webrtc.html) | <https://raw.githubusercontent.com/w3c/webrtc-pc/main/webrtc.html> |  |
 | [w3c/push-api.html](w3c/push-api.html) | <https://raw.githubusercontent.com/w3c/push-api/gh-pages/index.html> |  |

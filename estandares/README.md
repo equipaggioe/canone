@@ -154,6 +154,24 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | <https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/develop/flutter_secure_storage/README.md> |  |
 | [pub/provider/README.md](pub/provider/README.md) | <https://raw.githubusercontent.com/rrousselGit/provider/master/packages/provider/README.md> |  |
 | [pub/flutter_map/README.md](pub/flutter_map/README.md) | <https://raw.githubusercontent.com/fleaflet/flutter_map/master/README.md> |  |
+| [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | <https://raw.githubusercontent.com/JetBrains/kotlin-web-site/master/docs/topics/coding-conventions.md> |  |
+| [android/architecture.md](android/architecture.md) | <https://developer.android.com/topic/architecture> | Página web convertida a Markdown |
+| [android/architecture-recommendations.md](android/architecture-recommendations.md) | <https://developer.android.com/topic/architecture/recommendations> | Página web convertida a Markdown |
+| [android/ui-layer.md](android/ui-layer.md) | <https://developer.android.com/topic/architecture/ui-layer> | Página web convertida a Markdown |
+| [android/data-layer.md](android/data-layer.md) | <https://developer.android.com/topic/architecture/data-layer> | Página web convertida a Markdown |
+| [android/kotlin-style-guide.md](android/kotlin-style-guide.md) | <https://developer.android.com/kotlin/style-guide> | Página web convertida a Markdown |
+| [android/coroutines-best-practices.md](android/coroutines-best-practices.md) | <https://developer.android.com/kotlin/coroutines/coroutines-best-practices> | Página web convertida a Markdown |
+| [android/hilt.md](android/hilt.md) | <https://developer.android.com/training/dependency-injection/hilt-android> | Página web convertida a Markdown |
+| [android/datastore.md](android/datastore.md) | <https://developer.android.com/topic/libraries/architecture/datastore> | Página web convertida a Markdown |
+| [android/keystore.md](android/keystore.md) | <https://developer.android.com/privacy-and-security/keystore> | Página web convertida a Markdown |
+| [android/version-catalogs.md](android/version-catalogs.md) | <https://developer.android.com/build/migrate-to-catalogs> | Página web convertida a Markdown |
+| [android/testing-fundamentals.md](android/testing-fundamentals.md) | <https://developer.android.com/training/testing/fundamentals> | Página web convertida a Markdown |
+| [android/localization.md](android/localization.md) | <https://developer.android.com/guide/topics/resources/localization> | Página web convertida a Markdown |
+| [android/navigation-3.md](android/navigation-3.md) | <https://developer.android.com/guide/navigation/navigation-3> | Página web convertida a Markdown |
+| [compose/state.md](compose/state.md) | <https://developer.android.com/develop/ui/compose/state> | Página web convertida a Markdown |
+| [compose/architecture.md](compose/architecture.md) | <https://developer.android.com/develop/ui/compose/architecture> | Página web convertida a Markdown |
+| [compose/material3.md](compose/material3.md) | <https://developer.android.com/develop/ui/compose/designsystems/material3> | Página web convertida a Markdown |
+| [compose/testing.md](compose/testing.md) | <https://developer.android.com/develop/ui/compose/testing> | Página web convertida a Markdown |
 | [flet/create-flet-app.md](flet/create-flet-app.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/getting-started/create-flet-app.md> |  |
 | [flet/theming.md](flet/theming.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/theming.md> |  |
 | [flet/client-storage.md](flet/client-storage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/client-storage.md> |  |

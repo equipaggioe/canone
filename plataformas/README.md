@@ -15,6 +15,7 @@ real. **Se lee la de lo que el repositorio use**; las demás no aplican.
 | [i18n.md](i18n.md) | Catálogos por plataforma y qué no se guarda traducido |
 | [sveltekit.md](sveltekit.md) | Proyecto, carga de datos, cliente generado, adaptador estático, estado, UnoCSS, pruebas |
 | [flutter.md](flutter.md) | Estilo, analizador, arquitectura, modelos, estado, tema, almacenamiento, mapas |
+| [android.md](android.md) | Gradle, estilo, arquitectura, red, Compose, tema, almacenamiento, pruebas |
 | [flet.md](flet.md) | Layout, tema, red, almacenamiento, publicación |
 | [qt.md](qt.md) | Layout, API de PySide6, `@override`, interfaz en código, `QSettings`, Fusion y hoja de estilo, red, pruebas, empaquetado |
 | [despliegue.md](despliegue.md) | Cómo tiene que quedar el servidor: qué se expone, los procesos, los datos, la configuración |

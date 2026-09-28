@@ -14,8 +14,8 @@ Una página por tecnología. **Se lee la de lo que el repositorio use**; las dem
 | [i18n.md](i18n.md) | Catálogos por plataforma y qué no se guarda traducido |
 | [sveltekit.md](sveltekit.md) | Adaptador, layout de `src/lib`, UnoCSS, runes, cliente de la API, tests |
 | [flutter.md](flutter.md) | Layout de `lib/`, tokens, estado, red, almacenamiento, analizador, mapas |
-| [flet.md](flet.md) | Layout de `src/`, `core/`, tokens, cliente de la API, sesión, empaquetado |
-| [qt.md](qt.md) | Layout, API de PySide6, archivos `.ui`, padres, layouts, diálogos, model/view, `QSettings`, Fusion y hoja de estilos global, red e hilos, tests con `pytest-qt`, empaquetado con `pyside6-deploy` |
+| [flet.md](flet.md) | Layout de `src/`, `core/`, cliente de la API, tema, sesión y almacenamiento |
+| [qt.md](qt.md) | Layout, API de PySide6, archivos `.ui`, padres, layouts, model/view, `QSettings`, Fusion y hoja de estilos global, red e hilos, tests con `pytest-qt`, empaquetado con `pyside6-deploy` |
 | [despliegue.md](despliegue.md) | Cómo tiene que quedar el servidor: qué se expone, los procesos, los datos, la configuración |
 
 ## Qué es una página
@@ -50,10 +50,10 @@ herramienta la haga cumplir.
 - La tabla «Cómo se hace cumplir» nombra en su primera columna el estándar o su sección, o una
   regla que la página ya escribió. Nunca redacta una regla nueva para llenar la fila.
 - Nombra los archivos de `plantilla/` que salen de ella.
-- Ni el código de los repositorios ni lo que la página ya dice son fuente. Una página se escribe de
-  cero desde sus estándares, nunca corrigiendo la versión anterior. Lo que un repositorio hace
-  distinto va a [homologacion.md](../homologacion.md), que es el documento de trabajo y se borra
-  cuando la homologación termine.
+- Ni el código de los repositorios, ni lo que la página ya dice, ni los ADR son fuente. Una página
+  se escribe de cero desde sus estándares, nunca corrigiendo la versión anterior. Lo que un
+  repositorio hace distinto va a [homologacion.md](../homologacion.md), que es el documento de
+  trabajo y se borra cuando la homologación termine.
 - Sin comentarios ni explicaciones, salvo dos, cada una en una frase corta: por qué la página
   contradice o endurece el estándar, y cómo ayuda una elección que no es trivial. Una regla trivial,
   como un color o el largo de línea, no lleva frase: su razón es una preferencia. Vale también para

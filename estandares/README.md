@@ -25,9 +25,14 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pyproject-toml.rst> |  |
 | [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/dependency-groups.rst> |  |
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |
+| [pypa/tool-recommendations.rst](pypa/tool-recommendations.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/guides/tool-recommendations.rst> |  |
+| [pypa/pylock-toml.rst](pypa/pylock-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pylock-toml.rst> |  |
+| [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> |  |
+| [typing/modernizing.rst](typing/modernizing.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/guides/modernizing.rst> |  |
 | [fastapi/dependencies.md](fastapi/dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/dependencies/index.md> |  |
 | [fastapi/bigger-applications.md](fastapi/bigger-applications.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/bigger-applications.md> |  |
 | [fastapi/handling-errors.md](fastapi/handling-errors.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/handling-errors.md> |  |
+| [fastapi/oauth2-jwt.md](fastapi/oauth2-jwt.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/security/oauth2-jwt.md> |  |
 | [fastapi/background-tasks.md](fastapi/background-tasks.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/background-tasks.md> |  |
 | [fastapi/sql-databases.md](fastapi/sql-databases.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/sql-databases.md> |  |
 | [fastapi/testing.md](fastapi/testing.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/testing.md> |  |
@@ -160,6 +165,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [flet/client-storage.md](flet/client-storage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/client-storage.md> |  |
 | [flet/session-storage.md](flet/session-storage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/session-storage.md> |  |
 | [flet/encrypting-sensitive-data.md](flet/encrypting-sensitive-data.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/encrypting-sensitive-data.md> |  |
+| [flet/securestorage.md](flet/securestorage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/services/securestorage/index.md> |  |
 | [flet/publish.md](flet/publish.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/publish/index.md> |  |
 | [pyside6/considerations.rst](pyside6/considerations.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/considerations.rst> |  |
 | [pyside6/porting_from2.rst](pyside6/porting_from2.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/faq/porting_from2.rst> |  |

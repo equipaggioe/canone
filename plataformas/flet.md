@@ -1,75 +1,57 @@
 # Flet
 
-Cómo se construye un cliente en Flet.
+Cliente en Flet. Se suma a [python.md](python.md).
 
 ## Layout
 
+Estándar: [*Creating a new Flet app*](../estandares/flet/create-flet-app.md) de Flet.
+
 ```
 app/
-  pyproject.toml        dependencias con uv
-  run_app.py            arranque; no un comando que haya que recordar
+  pyproject.toml
   src/
     main.py
+    assets/
     core/
-      api_client.py     httpx async, sobre de error tipado
-      session.py        tokens y estado de sesión
-      constants.py      URL del servidor, timeouts
-      theme.py          tokens de diseño
-      device.py         identidad del dispositivo
-      native.py         lo que toca el sistema
-      offline_queue.py  lo que no se pudo enviar
+      api_client.py
+      session.py
+      constants.py
+      theme.py
+      device.py
+      native.py
+      offline_queue.py
       i18n.py
     views/
-      components/       widgets compartidos
-      <dominio>/        una carpeta por área
+      components/
+      <dominio>/
     locales/
-    assets/
+  tests/
 ```
 
-`core/` y `views/` separados: ninguna vista habla con la red ni con el sistema directamente.
-
-El código compartido entre dos apps del mismo producto va en un paquete local instalable
-(`api.py`, `session.py`, `secure_store.py`, `models.py`, `i18n.py`), no copiado.
-
-`src/.flet/storage/` es estado local del SDK: va al `.gitignore`.
+- La red, el almacenamiento y el sistema se tocan desde `core/`. `views/` solo arma y muestra.
+- Una vista por área, en `views/<dominio>/`. Lo que usan varias áreas va en `views/components/`.
+- El código que comparten dos apps del mismo producto es un paquete de `packages/`.
+- `src/.flet/storage/`, el estado local del SDK, va en el `.gitignore`.
 
 ## Cliente de la API
 
-`httpx.AsyncClient` con `base_url` y timeout de `constants.py`. Adjunta el access token en cada
-llamada autenticada y, ante un 401, **refresca la sesión una sola vez** antes de reintentar — igual
-de una vez, sin bucles de reintento silenciosos.
-
-El sobre de error se traduce a una excepción tipada, no a un `dict`:
-
-```python
-@dataclass(frozen=True)
-class ApiError(Exception):
-    path: str
-    status_code: int | None
-    detail: str
-    type: str | None
-    trace_id: str | None
-```
-
-La interfaz ramifica sobre `type` y muestra `detail` — ver [fastapi.md](fastapi.md).
+- HTTP con `httpx.AsyncClient`, en `core/api_client.py`, con la `base_url` y el timeout de
+  `core/constants.py`.
+- El sobre de error se traduce a `ApiError`, con `path`, `status_code`, `detail`, `type` y
+  `trace_id`.
 
 ## Tema
 
-Un módulo de constantes y **ningún color literal fuera de él**. Si el producto tiene superficie web,
-la paleta es la misma y el archivo declara de cuál es espejo.
+Estándar: [*Theming*](../estandares/flet/theming.md) de Flet.
+
+- Un solo tema para toda la app: `page.theme` y `page.dark_theme`, armados en `core/theme.py`.
 
 ## Sesión y almacenamiento
 
-- Los tokens van al almacenamiento seguro de la plataforma, nunca a un JSON al lado del código.
-- El estado de sesión vive en un solo módulo, y el cliente de la API lo recibe inyectado, no lo
-  importa global.
-- Lo que no se pudo enviar va a una cola explícita, no se pierde en silencio.
+Estándares: [*Client Storage*](../estandares/flet/client-storage.md) y
+[`SecureStorage`](../estandares/flet/securestorage.md) de Flet.
 
-## Textos
-
-Un módulo `i18n.py` y un catálogo por idioma en `locales/`. Ningún texto visible se escribe dentro
-de un widget — ver [i18n.md](i18n.md).
-
-## Dependencias, lint y tipos
-
-Los de [python.md](python.md), sin agregados.
+- Los tokens van en `SecureStorage`: usa el almacén seguro de cada plataforma.
+- Las preferencias van en `SharedPreferences`.
+- El estado de sesión vive en `core/session.py`, y el cliente de la API lo recibe al crearse.
+- Lo que no se pudo enviar va a la cola de `core/offline_queue.py`.

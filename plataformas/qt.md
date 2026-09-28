@@ -29,84 +29,65 @@ desktop/
     test_theme.py
 ```
 
-- La red, la base y el sistema solo se tocan desde `core/`.
+- La red, la base y el sistema se tocan desde `core/`. `ui/` solo arma y muestra.
 
 ## PySide6
 
-Estándares: *Considerations* y *Porting from PySide2 to PySide6* de Qt for Python, y su tutorial
-*Signals and Slots*.
+Estándares: [*Considerations*](../estandares/pyside6/considerations.rst) y
+[*Porting from PySide2 to PySide6*](../estandares/pyside6/porting_from2.rst) de Qt for Python, y su
+tutorial [*Signals and Slots*](../estandares/pyside6/signals_and_slots.rst).
 
-Sobre *Considerations* y *Porting*:
-
-- Enums con su nombre completo.
-- `exec()`, nunca `exec_()`.
-- Nada de API que PySide6 marque como obsoleta, como `QMouseEvent.pos()` o los atributos de alta
-  resolución.
-
-Sobre *Signals and Slots*:
-
-- Conexiones con `signal.connect(slot)`, nunca con `SIGNAL()` ni `SLOT()`.
-- Todo método conectado a una señal lleva `@Slot`.
-
-Donde la documentación admite dos caminos:
-
-- La API de Qt se usa en `camelCase`, como en su documentación. Nada de
-  `from __feature__ import snake_case`.
-- Un `.ui` se compila con `pyside6-uic` a `ui/forms/ui_<nombre>.py`, nunca se carga con
-  `QUiLoader`: así mypy ve cada widget con su tipo.
-- El `ui_<nombre>.py` generado se commitea junto a su `.ui` y nunca se edita a mano.
+- La API de Qt se usa en camelCase, como en su documentación.
+- Una conexión se hace con `signal.connect(slot)`.
+- Un `.ui` se compila con `pyside6-uic` a `ui/forms/ui_<nombre>.py`: así mypy ve cada widget con su
+  tipo.
+- El `ui_<nombre>.py` se commitea junto a su `.ui` y cambia solo al regenerarse.
 
 ## Widgets
 
-Estándares: *Object Trees & Ownership*, *Layout Management* y *Model/View Programming* de Qt, y
-la documentación de `QDialog` y `QSettings`.
+Estándares: [*Object Trees & Ownership*](../estandares/qt/objecttrees.qdoc),
+[*Layout Management*](../estandares/qt/layout.qdoc) y
+[*Model/View Programming*](../estandares/qt/model-view-programming.qdoc) de Qt, y la documentación
+de [`QSettings`](../estandares/qt/qsettings.qdoc).
 
-- Todo widget que no es una ventana tiene padre: se crea con `parent` o lo adopta un layout. Sin
-  padre ni referencia en Python, PySide6 lo destruye.
-- Los widgets hijos se ubican con layouts, nunca con `setGeometry` ni `move`.
-- Un diálogo se abre con `open()` y su resultado llega por `finished`. Nada de `QDialog.exec()`:
-  levanta un segundo bucle de eventos.
-- Datos en tabla, lista o árbol: un modelo con `QTableView`, `QListView` o `QTreeView`. Nada de
-  `QTableWidget`, `QListWidget` ni `QTreeWidget`.
+- Todo widget que no es una ventana tiene padre: lo recibe al crearse o al entrar en un layout.
+- Los widgets hijos se ubican con layouts.
+- Datos en tabla, lista o árbol: un modelo con `QTableView`, `QListView` o `QTreeView`, siempre: las
+  clases de ítems no aceptan otro modelo.
 - Las preferencias del usuario, como el tamaño de la ventana, se guardan con `QSettings`.
 
 ## Tema
 
-Estándar: Qt Style Sheets.
+Estándar: [Qt Style Sheets](../estandares/qt/stylesheet.qdoc).
 
 - Estilo `Fusion`.
-- Colores solo en `ui/theme.py`.
-- Los colores van en una sola hoja de estilos, aplicada a la `QApplication`. Ningún widget llama a
-  `setStyleSheet`.
-- Nada de `setPalette`: la documentación de Qt desaconseja combinarlo con una hoja de estilos.
-- Una variante es una propiedad dinámica con su selector en la hoja global. Al cambiarla, `unpolish`
-  y `polish` del widget.
+- Los colores y la hoja de estilos viven en `ui/theme.py`, que aplica una sola hoja a la
+  `QApplication`: un color se cambia en un solo lugar.
+- Una variante de un widget es una propiedad dinámica con su selector en esa hoja, y se cambia con
+  `set_variant` de `ui/theme.py`.
 
 ## Red e hilos
 
-Estándar: hilos de Qt y `QNetworkAccessManager`.
+Estándares: [*Multithreading Technologies in Qt*](../estandares/qt/threads.qdoc) y la documentación
+de [`QNetworkAccessManager`](../estandares/qt/qnetworkaccessmanager.qdoc).
 
-- Los widgets solo se usan desde el hilo principal.
-- Nada que tarde corre en el hilo principal.
-- HTTP solo por `QNetworkAccessManager`: una instancia para toda la aplicación, usada desde el hilo
-  que la creó.
-- La instancia se crea con `setAutoDeleteReplies(True)`: cada `QNetworkReply` se libera sola al
-  terminar.
-- Nada de `asyncio` ni `QtAsyncio`.
-- Un trabajo con comandos es un `QObject` movido con `moveToThread`. Una tarea suelta, un
-  `QRunnable` en el `QThreadPool`. Un bucle permanente sin eventos, un `QThread` con `run()`.
-- El resultado vuelve por una señal. Un worker no toca widgets.
-- La conexión a la base se abre en el hilo que la usa.
+- Todo corre sobre el lazo de eventos de Qt.
+- HTTP con `QNetworkAccessManager`: su API es asíncrona sobre ese lazo.
+- Una sola instancia de `QNetworkAccessManager` para toda la aplicación, creada con
+  `setAutoDeleteReplies(True)`.
+- Lo que tarda corre fuera del hilo principal.
 
 ## Tests
 
-- `pytest-qt`.
-- Una advertencia de Qt hace fallar el test.
-- Plataforma `offscreen` y la categoría `qt.pyside.libpyside` activa.
+Estándar: [pytest-qt](../estandares/pytest-qt/intro.rst).
+
+- Plataforma `offscreen`: los tests corren sin pantalla, también en CI.
+- Una advertencia de Qt hace fallar el test, con la categoría `qt.pyside.libpyside` activa: así se
+  ve cada método conectado sin `@Slot`.
 
 ## Empaquetado
 
-Estándar: *pyside6-deploy* de Qt for Python.
+Estándar: [*pyside6-deploy*](../estandares/pyside6/deployment-pyside6-deploy.rst) de Qt for Python.
 
 - La aplicación se empaqueta con `pyside6-deploy`.
 - El `pysidedeploy.spec` se commitea.
@@ -115,22 +96,29 @@ Estándar: *pyside6-deploy* de Qt for Python.
 
 | Convención | Con qué |
 |---|---|
-| Enums con nombre completo | mypy `strict` |
-| `exec()`, no `exec_()` | `tests/test_conventions.py` |
-| Sin API obsoleta | `filterwarnings` de pytest vuelve error el `DeprecationWarning` de PySide6, en lo que recorren los tests |
-| Estilo `Fusion` | `tests/test_conventions.py` |
-| `@Slot` | `qt.pyside.libpyside` y `qt_log_level_fail`, en lo que recorren los tests |
-| Sin `SIGNAL()` ni `SLOT()` | `TID251` en `pyproject.toml` |
-| Solo `QNetworkAccessManager`, sin `asyncio` | `TID251` en `pyproject.toml` |
-| Una sola instancia de `QNetworkAccessManager`, con `setAutoDeleteReplies(True)` | `tests/test_conventions.py` |
-| Sin `snake_case` ni `QUiLoader` | `TID251` en `pyproject.toml` |
-| Sin `QTableWidget`, `QListWidget` ni `QTreeWidget` | `TID251` en `pyproject.toml` |
+| [Qt for Python, enums de Python](../estandares/pyside6/considerations.rst) | mypy `strict` |
+| [Porting, `exec_` obsoleto](../estandares/pyside6/porting_from2.rst) | `tests/test_conventions.py` |
+| [Porting, API obsoleta](../estandares/pyside6/porting_from2.rst) | `filterwarnings` de pytest vuelve error el `DeprecationWarning` de PySide6, en lo que recorren los tests |
+| [*Signals and Slots*, `@Slot`](../estandares/pyside6/signals_and_slots.rst) | `qt.pyside.libpyside` y `qt_log_level_fail`, en lo que recorren los tests |
+| camelCase | `TID251` sobre `__feature__.snake_case` |
+| `signal.connect(slot)` | `TID251` sobre `SIGNAL` y `SLOT` |
+| `pyside6-uic` | `TID251` sobre `QtUiTools` |
 | `ui_*.py` generados | Fuera de ruff con `extend-exclude`; en mypy, `ignore_errors` y `untyped_calls_exclude` para `ui.forms` |
-| `ui_*.py` commiteado y sin editar | CI lo regenera con `pyside6-uic` y falla si `ui/forms/` cambia |
-| Sin `setPalette` | `tests/test_conventions.py` |
-| Red, base y sistema solo en `core/` | `TID251` en `ui/ruff.toml` |
-| Colores y `setStyleSheet` solo en `theme.py` | `tests/test_theme.py` |
+| `ui_*.py` al día | CI lo regenera con `pyside6-uic` y falla si `ui/forms/` cambia |
+| Modelo y vista | `TID251` sobre `QTableWidget`, `QListWidget` y `QTreeWidget` |
+| Red, base y sistema en `core/` | `TID251` en `ui/ruff.toml` |
+| Estilo `Fusion` | `tests/test_conventions.py` |
+| Colores y hoja de estilos en `theme.py` | `tests/test_theme.py` |
+| [`QWidget::setPalette` con hojas de estilo](../estandares/qt/qwidget.qdoc) | `tests/test_conventions.py` |
+| Lazo de eventos de Qt y HTTP con `QNetworkAccessManager` | `TID251` sobre `asyncio`, `QtAsyncio`, `requests`, `httpx` y `urllib.request` |
+| Una sola instancia de `QNetworkAccessManager`, con `setAutoDeleteReplies(True)` | `tests/test_conventions.py` |
 | `ui/ruff.toml`, `tests/test_theme.py` y `tests/test_conventions.py` iguales a los de canone | `scripts/verificar.py` |
+
+### Configuración
+
+La base está en [`plantilla/qt/pyproject.toml`](../plantilla/qt/pyproject.toml). Sobre la de
+[python.md](python.md) suma `pytest-qt`, el `banned-api` de la tabla, `qt_log_level_fail` y
+`filterwarnings`. `tests/conftest.py` fija la plataforma y la categoría de log.
 
 ### CI
 

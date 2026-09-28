@@ -144,6 +144,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [flutter/app-architecture-concepts.md](flutter/app-architecture-concepts.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/app-architecture/concepts.md> |  |
 | [flutter/app-architecture-guide.md](flutter/app-architecture-guide.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/app-architecture/guide.md> |  |
 | [flutter/app-architecture-recommendations.md](flutter/app-architecture-recommendations.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/app-architecture/recommendations.md> |  |
+| [flutter/architecture-recommendations.yml](flutter/architecture-recommendations.yml) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/data/architectureRecommendations.yml> | Las recomendaciones que la página anterior muestra desde este archivo |
 | [flutter/themes.md](flutter/themes.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/cookbook/design/themes.md> |  |
 | [flutter/state-mgmt-simple.md](flutter/state-mgmt-simple.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/data-and-backend/state-mgmt/simple.md> |  |
 | [flutter/internationalization.md](flutter/internationalization.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/internationalization/index.md> |  |

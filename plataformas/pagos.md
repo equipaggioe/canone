@@ -12,9 +12,15 @@ de OWASP.
 - El cobro se hace en Stripe Checkout, la página alojada por Stripe. Los datos de la tarjeta nunca
   pasan por nuestras páginas.
 - Un pago cuenta como hecho solo cuando llega su webhook. El regreso del navegador no prueba nada.
-- Los montos se guardan en `bigint`, en la unidad menor de la moneda, junto al código ISO 4217 en
-  `text`. Contradice el `numeric` que [postgres.md](postgres.md) cita para montos: es la unidad de
-  Stripe, y no hay conversión que redondear.
+
+## Montos
+
+Estándares: el `numeric` de [*Data Types*](../estandares/postgresql/datatype.sgml) de PostgreSQL y
+la [lista de monedas](../estandares/iso/iso-4217-list-one.xml) de ISO 4217.
+
+- Un monto es `numeric` sin precisión ni escala, junto al código de su moneda en `text`. Con escala
+  declarada, `numeric` redondea sin avisar lo que la excede.
+- El servidor rechaza un monto con más decimales que la unidad menor de su moneda.
 
 ## Idempotencia
 

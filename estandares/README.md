@@ -48,6 +48,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [alembic/async/env.py](alembic/async/env.py) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/alembic/templates/async/env.py> |  |
 | [anyio/testing.rst](anyio/testing.rst) | <https://raw.githubusercontent.com/agronholm/anyio/master/docs/testing.rst> |  |
 | [postgresql/datatype.sgml](postgresql/datatype.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/datatype.sgml> |  |
+| [postgresql/json.sgml](postgresql/json.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/json.sgml> |  |
 | [postgresql/func.sgml](postgresql/func.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/func.sgml> |  |
 | [postgresql/ddl.sgml](postgresql/ddl.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ddl.sgml> |  |
 | [postgresql/syntax.sgml](postgresql/syntax.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/syntax.sgml> |  |
@@ -56,6 +57,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [postgresql/pg_dump.sgml](postgresql/pg_dump.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ref/pg_dump.sgml> |  |
 | [postgresql/pg_restore.sgml](postgresql/pg_restore.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ref/pg_restore.sgml> |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> |  |
+| [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217 |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |
 | [rfc/rfc4226.txt](rfc/rfc4226.txt) | <https://www.rfc-editor.org/rfc/rfc4226.txt> |  |
 | [rfc/rfc4647.txt](rfc/rfc4647.txt) | <https://www.rfc-editor.org/rfc/rfc4647.txt> |  |

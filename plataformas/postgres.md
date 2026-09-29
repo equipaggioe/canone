@@ -4,18 +4,20 @@ La base de datos.
 
 ## Tipos
 
-Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml) y las
+Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml),
+[*JSON Types*](../estandares/postgresql/json.sgml) y las
 [funciones](../estandares/postgresql/func.sgml) de PostgreSQL 17, la versión de Debian 13.
 
 - La clave primaria es un `uuid` generado con `gen_random_uuid()`, la versión 4 que la
-  documentación da por apropiada para la mayoría de las aplicaciones. Los IDs viajan en URLs y
-  clientes, y un entero secuencial revela cuántos hay y se adivina.
-- Las cadenas son `text`. Un largo máximo que pida el dominio va en un `CHECK`.
-- Las fechas con hora son `timestamptz`. Endurece la recomendación de la documentación: es el par
-  de las `datetime` aware de [python.md](python.md), y `timestamp` descartaría la zona sin avisar.
+  documentación da por apropiada para la mayoría de las aplicaciones. El cliente genera el ID para
+  crear por `PUT`, como fija [fastapi.md](fastapi.md), y un entero secuencial solo lo genera la base,
+  revela cuántos hay y se adivina en una URL.
+- Las cadenas son `text`. Un largo máximo que pida el dominio va en un `CHECK`: la restricción
+  tiene nombre, admite también un mínimo y nunca recorta, como `varchar(n)` al convertir.
+- Las fechas con hora son `timestamptz`, y no `timestamp`: es el par de las `datetime` aware de
+  [python.md](python.md), y `timestamp` descartaría la zona sin avisar.
 - Un valor enumerado es `text` con un `CHECK` que lista los valores. Quitar un valor de un `enum`
   obliga a recrear el tipo; un `CHECK` se reemplaza en una migración.
-- El JSON es `jsonb`. Se indexa y se consulta por clave.
 
 ## Definición de datos
 
@@ -39,10 +41,11 @@ Estándar: [*SQL Syntax*](../estandares/postgresql/syntax.sgml) de PostgreSQL.
 
 ## Índices
 
-Estándar: [*Indexes*](../estandares/postgresql/indices.sgml) de PostgreSQL.
+Estándares: [*Indexes*](../estandares/postgresql/indices.sgml) y
+[*Data Definition*](../estandares/postgresql/ddl.sgml) de PostgreSQL.
 
-- Toda clave foránea lleva índice. Endurece la documentación, que solo avisa que PostgreSQL no lo
-  crea: sin él, borrar el padre o unir las tablas recorre la tabla hija entera.
+- Toda clave foránea lleva índice. Endurece *Data Definition*, que lo da por buena idea y no lo crea:
+  sin él, borrar el padre o unir las tablas recorre la tabla hija entera.
 
 ## Geografía
 

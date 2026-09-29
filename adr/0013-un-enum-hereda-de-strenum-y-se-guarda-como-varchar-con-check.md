@@ -1,4 +1,4 @@
-# ADR-0013 · Un enum hereda de `StrEnum` y se guarda como VARCHAR con CHECK
+# ADR-0013 · Un enum hereda de `StrEnum` y se guarda como `text` con CHECK
 
 - **Estado:** Propuesta
 - **Fecha:** 2026-09-23

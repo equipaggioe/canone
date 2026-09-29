@@ -20,7 +20,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0010](0010-la-sesion-es-estado-vivo-y-la-historia-esta-en-los-eventos.md) | La tabla de sesiones es estado vivo, no historia | Con autenticación | Propuesta |
 | [0011](0011-la-pasada-es-una-funcion-y-el-disparador-va-aparte.md) | La pasada periódica es una función, y el disparador va aparte | Con `server/` | Propuesta |
 | [0012](0012-el-prefijo-api-v1-se-aplica-al-montar.md) | El prefijo `/api/v1` se aplica al montar | Con FastAPI | Propuesta |
-| [0013](0013-un-enum-hereda-de-strenum-y-se-guarda-como-varchar-con-check.md) | Un enum hereda de `StrEnum` y se guarda como VARCHAR con CHECK | Con base de datos | Propuesta |
+| [0013](0013-un-enum-hereda-de-strenum-y-se-guarda-como-varchar-con-check.md) | Un enum hereda de `StrEnum` y se guarda como `text` con CHECK | Con base de datos | Propuesta |
 | [0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md) | Una página de plataforma se escribe desde la recomendación oficial, no desde el código | `plataformas/` | Reemplazada por ADR-0016 |
 | [0015](0015-el-sobre-de-error-sigue-el-rfc-9457.md) | El sobre de error sigue el RFC 9457 | Con `server/` y sus clientes | Aceptada |
 | [0016](0016-una-pagina-es-un-catalogo-de-convenciones-que-sale-de-la-recomendacion-oficial.md) | Una página de plataforma es un catálogo de convenciones que sale de la recomendación oficial | `plataformas/` | Reemplazada por ADR-0018 |

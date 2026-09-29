@@ -15,6 +15,7 @@ import app.models
 import app.routers
 import app.schemas
 from app import errors, tracing
+from app.database import engine
 from app.main import app as main_app
 from app.models.base import Base
 from app.schemas.base import InputSchema, Schema
@@ -71,11 +72,12 @@ def test_foreign_keys_are_indexed() -> None:
 
 
 def test_strings_are_text() -> None:
-    """No string column has a maximum length."""
+    """Every string column is created as TEXT."""
     offenders = [
         f"{column.table.name}.{column.name}"
         for column in COLUMNS
-        if isinstance(column.type, sa.String) and column.type.length is not None
+        if isinstance(column.type, sa.String)
+        and column.type.compile(dialect=engine.dialect) != "TEXT"
     ]
     assert not offenders
 

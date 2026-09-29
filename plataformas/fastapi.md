@@ -142,6 +142,14 @@ Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
 
 - Las fechas viajan en UTC, con `Z`.
 
+## Montos
+
+Estándar: [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493.
+
+- Un monto viaja como un objeto `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena
+  decimal, como recomienda I-JSON para un número que debe llegar exacto, y el código ISO 4217 de su
+  moneda. Un monto no se formatea sin su moneda, y en un solo objeto no viajan por separado.
+
 ## Paginación
 
 - Las listas se paginan por cursor: la petición lleva `limit` y `cursor`, y la respuesta `items` y

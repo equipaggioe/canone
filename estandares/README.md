@@ -71,6 +71,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [rfc/rfc6901.txt](rfc/rfc6901.txt) | <https://www.rfc-editor.org/rfc/rfc6901.txt> |  |
 | [rfc/rfc7208.txt](rfc/rfc7208.txt) | <https://www.rfc-editor.org/rfc/rfc7208.txt> |  |
 | [rfc/rfc7489.txt](rfc/rfc7489.txt) | <https://www.rfc-editor.org/rfc/rfc7489.txt> |  |
+| [rfc/rfc7493.txt](rfc/rfc7493.txt) | <https://www.rfc-editor.org/rfc/rfc7493.txt> |  |
 | [rfc/rfc7519.txt](rfc/rfc7519.txt) | <https://www.rfc-editor.org/rfc/rfc7519.txt> |  |
 | [rfc/rfc8030.txt](rfc/rfc8030.txt) | <https://www.rfc-editor.org/rfc/rfc8030.txt> |  |
 | [rfc/rfc8058.txt](rfc/rfc8058.txt) | <https://www.rfc-editor.org/rfc/rfc8058.txt> |  |

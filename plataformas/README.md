@@ -6,7 +6,7 @@ real. **Se lee la de lo que el repositorio use**; las demás no aplican.
 | Página | Cubre |
 |---|---|
 | [python.md](python.md) | Versión, uv, estilo, tipos, paquetes, logging, fechas, async, pruebas, auditoría de dependencias |
-| [fastapi.md](fastapi.md) | Layout, configuración, SQLAlchemy async, migraciones, errores RFC 9457, trazas, fechas, paginación, OpenAPI, pruebas |
+| [fastapi.md](fastapi.md) | Layout, configuración, SQLAlchemy async, migraciones, errores RFC 9457, trazas, fechas, montos, paginación, OpenAPI, pruebas |
 | [postgres.md](postgres.md) | Clave primaria, tipos, borrado, nombres, índices, geografía |
 | [seguridad.md](seguridad.md) | Contraseñas, restablecimiento, tokens y sesión, segundo factor, qué guarda cada cliente, límite de tasa, permisos, cabeceras |
 | [tiempo-real.md](tiempo-real.md) | WebSocket, varios procesos con Redis, llamadas con WebRTC y coturn |
@@ -80,5 +80,6 @@ El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de
 | **El sobre de error** | RFC 9457, definido en [fastapi.md](fastapi.md). Cada cliente lo traduce a un error tipado con los mismos campos. `type` es el contrato; `detail` es texto para mostrar |
 | **Nombres en el cable** | La API habla en camelCase, como fija [fastapi.md](fastapi.md). Cada cliente usa la convención de su lenguaje (`snake_case` en Python, camelCase en Dart y TypeScript) y convierte en un solo punto: su cliente de la API |
 | **Los tokens de diseño** | Un solo módulo por cliente, sin colores ni tamaños literales fuera de él. Si el producto tiene superficie web, es la misma paleta y el archivo dice de cuál es espejo |
+| **Montos** | Viajan como `{amount, currency}`, con el monto en cadena, como fija [fastapi.md](fastapi.md). Cada cliente lo conserva como cadena o como el decimal de su lenguaje, nunca como `double`, y no calcula con él: los totales, impuestos y descuentos llegan calculados del servidor. Así ningún cliente necesita una biblioteca decimal |
 | **Refrescar la sesión** | Ante un 401, una sola vez y un solo reintento. Nunca un bucle silencioso |
 | **Entrega al exterior** | Primero la evidencia en la base, después el envío best-effort. Un fallo de entrega no tumba la operación |

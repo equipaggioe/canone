@@ -1,6 +1,6 @@
 # ADR-0022 · Dónde vive el tipo `Money` que valida los decimales de un monto
 
-- **Estado:** En evaluación
+- **Estado:** Reemplazada por [ADR-0023](0023-un-monto-se-guarda-como-numeric-sin-escala-y-sus-decimales-los-decide-cada-repositorio.md)
 - **Fecha:** 2026-09-29
 - **Alcance:** `plantilla/server/src/app/schemas/base.py`; los servidores que manejan montos
 

@@ -20,7 +20,6 @@ la [lista de monedas](../estandares/iso/iso-4217-list-one.xml) de ISO 4217.
 
 - Un monto es `numeric` sin precisión ni escala, junto al código de su moneda en `text`. Con escala
   declarada, `numeric` redondea sin avisar lo que la excede.
-- El servidor rechaza un monto con más decimales que la unidad menor de su moneda.
 
 ## Idempotencia
 

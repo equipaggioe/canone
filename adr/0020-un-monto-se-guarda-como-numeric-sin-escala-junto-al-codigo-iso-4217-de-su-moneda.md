@@ -1,6 +1,6 @@
 # ADR-0020 · Un monto se guarda como `numeric` sin escala, junto al código ISO 4217 de su moneda
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0023](0023-un-monto-se-guarda-como-numeric-sin-escala-y-sus-decimales-los-decide-cada-repositorio.md)
 - **Fecha:** 2026-09-29
 - **Alcance:** [plataformas/pagos.md](../plataformas/pagos.md); los repositorios que guardan montos
 

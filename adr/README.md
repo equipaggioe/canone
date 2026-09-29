@@ -27,6 +27,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0017](0017-la-marca-vive-en-brand.md) | El logo y los colores del producto viven en `brand/` | Todos | Aceptada |
 | [0018](0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md) | Una página se revisa contra la copia de sus estándares y solo dice lo que elige, endurece o no cubren | `plataformas/` | Aceptada |
 | [0019](0019-el-ci-corre-cada-semana-aunque-no-haya-commits.md) | El CI corre cada semana aunque no haya commits | Todos | Aceptada |
-| [0020](0020-un-monto-se-guarda-como-numeric-sin-escala-junto-al-codigo-iso-4217-de-su-moneda.md) | Un monto se guarda como `numeric` sin escala, junto al código ISO 4217 de su moneda | Con montos | Aceptada |
+| [0020](0020-un-monto-se-guarda-como-numeric-sin-escala-junto-al-codigo-iso-4217-de-su-moneda.md) | Un monto se guarda como `numeric` sin escala, junto al código ISO 4217 de su moneda | Con montos | Reemplazada por ADR-0023 |
 | [0021](0021-un-monto-viaja-como-objeto-con-el-monto-en-cadena-y-los-clientes-no-calculan-con-el.md) | Un monto viaja como objeto con el monto en cadena, y los clientes no calculan con él | Con montos, en el servidor y sus clientes | Aceptada |
-| [0022](0022-donde-vive-el-tipo-money-que-valida-los-decimales-de-un-monto.md) | Dónde vive el tipo `Money` que valida los decimales de un monto | Con montos | En evaluación |
+| [0022](0022-donde-vive-el-tipo-money-que-valida-los-decimales-de-un-monto.md) | Dónde vive el tipo `Money` que valida los decimales de un monto | Con montos | Reemplazada por ADR-0023 |
+| [0023](0023-un-monto-se-guarda-como-numeric-sin-escala-y-sus-decimales-los-decide-cada-repositorio.md) | Un monto se guarda como `numeric` sin escala, y los decimales que admite los decide cada repositorio | Con montos | Aceptada |

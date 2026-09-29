@@ -24,6 +24,7 @@ server/
     dependencies.py   las dependencias compartidas, como la sesión y el usuario actual
     errors.py         la excepción de la app y los handlers que responden problem+json
     tracing.py        el trace-id de cada petición, en el log y en los errores
+    enums.py          los enums de la app
     models/
       base.py         la base declarativa, los tipos de PostgreSQL y los nombres
       ruff.toml       el largo de línea que deja cada columna en un renglón
@@ -44,8 +45,10 @@ server/
 
 - El paquete se llama `app` en todo servidor. Los archivos canónicos lo importan por nombre y se
   copian sin editar.
-- `database.py`, `errors.py` y `tracing.py` le dan un lugar fijo a lo que el estándar no ubica.
-  `config.py` es el módulo que propone la guía de configuración.
+- `database.py`, `errors.py`, `tracing.py` y `enums.py` le dan un lugar fijo a lo que el estándar
+  no ubica. `config.py` es el módulo que propone la guía de configuración. Todos van directo en
+  `app/`, junto a `main.py` y `dependencies.py`: son módulos únicos de toda la app, como los que
+  ubica el estándar.
 - Cada modelo va en su propio archivo, dentro de la carpeta de su dominio. Cada tabla tiene un
   solo lugar posible.
 - Un router recibe la petición, llama a su servicio y responde. El servicio hace las consultas y
@@ -143,6 +146,30 @@ Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
 
 - Las listas se paginan por cursor: la petición lleva `limit` y `cursor`, y la respuesta `items` y
   `nextCursor`. Un offset salta o repite filas si la lista cambia entre páginas.
+
+## Salud
+
+- `GET /api/health` consulta la base con `SELECT 1` y responde 200 con `{"status": "ok"}`, o 503
+  si la base no contesta. Un monitor que solo ve que el proceso responde da por vivo un servidor
+  con la base caída.
+
+## Reintentos
+
+Estándar: [RFC 9110](../estandares/rfc/rfc9110.txt).
+
+- Una creación que el cliente puede reintentar va por `PUT /<recurso>/{id}`, con un uuid v4 que
+  genera el cliente, y no por `POST`. El estándar admite los dos para crear, pero solo `PUT` es
+  idempotente: si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez de
+  crear otra.
+
+## Versión mínima de cliente
+
+- Cada cliente instalable manda su versión en toda petición, en la cabecera `Client-Version` con
+  la forma `<pieza>/<versión>`, como `mobile/1.4.0`. La configuración guarda la versión mínima de
+  cada pieza, y una versión menor recibe un 400 en problem+json de nombre `client-outdated`, que
+  el cliente muestra como «actualiza la app».
+- La comprobación va desde la primera versión que se publica: a una app instalada sin ella nunca
+  se le puede obligar a actualizar.
 
 ## Ciclo de vida
 

@@ -32,6 +32,10 @@ Estándar: [*SQL Syntax*](../estandares/postgresql/syntax.sgml) de PostgreSQL.
 
 - Los nombres van en snake_case y sin comillas, las tablas en singular y las claves foráneas como
   `<tabla>_id`.
+- Una columna que guarda una magnitud lleva de sufijo el símbolo del SI de su unidad:
+  `distance_m`, `weight_g`. El nombre dice en qué unidad está el valor.
+- Las duraciones son segundos enteros, `_s`, y no `interval`. Todos los clientes leen un entero, y
+  Dart no trae con qué leer la duración ISO 8601 en que Pydantic serializa un `timedelta`.
 
 ## Índices
 

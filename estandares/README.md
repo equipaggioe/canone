@@ -78,6 +78,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [rfc/rfc8656.txt](rfc/rfc8656.txt) | <https://www.rfc-editor.org/rfc/rfc8656.txt> |  |
 | [rfc/rfc8725.txt](rfc/rfc8725.txt) | <https://www.rfc-editor.org/rfc/rfc8725.txt> |  |
 | [rfc/rfc9106.txt](rfc/rfc9106.txt) | <https://www.rfc-editor.org/rfc/rfc9106.txt> |  |
+| [rfc/rfc9110.txt](rfc/rfc9110.txt) | <https://www.rfc-editor.org/rfc/rfc9110.txt> |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> |  |
 | [w3c/trace-context-1.md](w3c/trace-context-1.md) | <https://www.w3.org/TR/trace-context-1/> | Página web convertida a Markdown |
 | [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |

@@ -32,8 +32,7 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 
 ## Ningún repositorio está en producción
 
-No hay usuarios reales, ni datos que salvar, ni clientes con versiones viejas: todas las piezas se
-despliegan juntas. El repositorio que sí llegue a producción lo dirá en su
+No hay usuarios reales ni datos que salvar. El repositorio que sí llegue a producción lo dirá en su
 `docs/arquitectura/00_sistema.md`; mientras no lo diga, no lo está.
 
 Consecuencia directa: **nunca se propone migrar datos ni conservar un formato "por lo que haya en
@@ -51,8 +50,10 @@ no se sabe de cuál vino. **Que falle ruidosamente y en el momento.**
   guardados cuenta como sostener el formato viejo.
 - Las migraciones normales de esquema sí van: no son un fallback, son la única forma de abrir una
   base existente.
-- No se justifica una decisión con "despliegue escalonado" ni "cliente viejo". Si una operación es
-  distinta de otra, se explica por qué lo es en sí misma.
+- **Ninguna pieza sostiene la versión anterior de otra.** El servidor no conserva rutas, campos ni
+  formatos viejos para que un cliente sin actualizar siga funcionando, y un cliente no conserva
+  código para un servidor viejo. Tampoco se justifica una decisión con "despliegue escalonado" ni
+  "cliente viejo": si una operación es distinta de otra, se explica por qué lo es en sí misma.
 
 ## Reestructurar, no parchar
 

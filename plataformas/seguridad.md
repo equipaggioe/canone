@@ -87,10 +87,15 @@ Estándares: [RFC 6585](../estandares/rfc/rfc6585.txt) y
 
 ## Permisos
 
-Estándar: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP.
+Estándares: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP y
+[RFC 9110](../estandares/rfc/rfc9110.txt).
 
 - Cada ruta declara con una dependencia de FastAPI el permiso que exige. El permiso queda a la
   vista en la ruta.
+- Un recurso que no pertenece al usuario responde 404, como si no existiera; uno que el usuario ve
+  pero sobre el que no puede hacer esa acción responde 403. Es la opción que RFC 9110 da para
+  ocultar un recurso: una sola consulta, filtrada por el usuario, resuelve las dos cosas y no
+  confirma que el recurso existe.
 
 ## Cabeceras
 

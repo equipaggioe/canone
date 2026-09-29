@@ -21,7 +21,6 @@ plataforma.
 
 1. Un monto es `numeric` sin precisión ni escala.
 2. Va junto al código de su moneda de ISO 4217, en `text`.
-3. La conversión a la unidad menor que pida un proveedor de pagos se hace en `payments/`.
 
 ## Consecuencias
 

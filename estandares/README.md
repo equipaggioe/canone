@@ -22,6 +22,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |
 | [pypa/tool-recommendations.rst](pypa/tool-recommendations.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/guides/tool-recommendations.rst> |  |
 | [pypa/pylock-toml.rst](pypa/pylock-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pylock-toml.rst> |  |
+| [uv/sync.md](uv/sync.md) | <https://raw.githubusercontent.com/astral-sh/uv/main/docs/concepts/projects/sync.md> |  |
 | [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> |  |
 | [typing/modernizing.rst](typing/modernizing.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/guides/modernizing.rst> |  |
 | [fastapi/dependencies.md](fastapi/dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/dependencies/index.md> |  |
@@ -38,6 +39,8 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [fastapi/async-tests.md](fastapi/async-tests.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/async-tests.md> |  |
 | [fastapi/websockets.md](fastapi/websockets.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/websockets.md> |  |
 | [fastapi/request-files.md](fastapi/request-files.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/request-files.md> |  |
+| [fastapi/deployment-concepts.md](fastapi/deployment-concepts.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/deployment/concepts.md> |  |
+| [fastapi/deployment-manually.md](fastapi/deployment-manually.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/deployment/manually.md> |  |
 | [pydantic/config.md](pydantic/config.md) | <https://raw.githubusercontent.com/pydantic/pydantic/main/docs/concepts/config.md> |  |
 | [pydantic-settings/index.md](pydantic-settings/index.md) | <https://raw.githubusercontent.com/pydantic/pydantic-settings/main/docs/index.md> |  |
 | [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/orm/extensions/asyncio.rst> |  |
@@ -56,6 +59,7 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [postgresql/backup.sgml](postgresql/backup.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml> |  |
 | [postgresql/pg_dump.sgml](postgresql/pg_dump.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ref/pg_dump.sgml> |  |
 | [postgresql/pg_restore.sgml](postgresql/pg_restore.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ref/pg_restore.sgml> |  |
+| [postgresql/client-auth.sgml](postgresql/client-auth.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/client-auth.sgml> |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> |  |
 | [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217 |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |
@@ -249,3 +253,4 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [systemd/systemd.service.xml](systemd/systemd.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.service.xml> |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.exec.xml> |  |
 | [systemd/systemd.timer.xml](systemd/systemd.timer.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.timer.xml> |  |
+| [fhs/fhs-3.0.txt](fhs/fhs-3.0.txt) | <https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.txt> | La jerarquía de archivos que sigue Debian |

@@ -3,7 +3,7 @@
 import importlib
 import pkgutil
 from types import ModuleType
-from typing import Annotated
+from typing import Annotated, Any
 
 import sqlalchemy as sa
 from fastapi import FastAPI, Query
@@ -36,15 +36,23 @@ TABLES = list(Base.metadata.tables.values())
 COLUMNS = [column for table in TABLES for column in table.columns]
 
 
-def test_primary_key_is_random_uuid() -> None:
-    """Every table has one uuid key from gen_random_uuid()."""
+def is_allowed_key(column: sa.Column[Any]) -> bool:
+    """Tell whether a key follows one of the rules of postgres.md."""
+    if isinstance(column.type, sa.Text):
+        return column.server_default is None and column.identity is None
+    if isinstance(column.type, (sa.SmallInteger, sa.BigInteger)):
+        return column.identity is not None and bool(column.identity.always)
+    if isinstance(column.type, sa.Uuid):
+        return str(getattr(column.server_default, "arg", "")) == "gen_random_uuid()"
+    return False
+
+
+def test_primary_key_is_allowed() -> None:
+    """Every table has one key of the four rules of postgres.md."""
     offenders = [
         table.name
         for table in TABLES
-        if len(table.primary_key.columns) != 1
-        or not isinstance(table.primary_key.columns[0].type, sa.Uuid)
-        or str(getattr(table.primary_key.columns[0].server_default, "arg", ""))
-        != "gen_random_uuid()"
+        if len(table.primary_key.columns) != 1 or not is_allowed_key(table.primary_key.columns[0])
     ]
     assert not offenders
 

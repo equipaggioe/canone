@@ -2,16 +2,29 @@
 
 La base de datos.
 
-## Tipos
+## Clave primaria
 
 Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml),
-[*JSON Types*](../estandares/postgresql/json.sgml) y las
-[funciones](../estandares/postgresql/func.sgml) de PostgreSQL 17, la versión de Debian 13.
+[*Identity Columns*](../estandares/postgresql/ddl.sgml) y las
+[funciones de UUID](../estandares/postgresql/func.sgml) de PostgreSQL 17, la versión de Debian 13.
 
-- La clave primaria es un `uuid` generado con `gen_random_uuid()`, la versión 4 que la
-  documentación da por apropiada para la mayoría de las aplicaciones. El cliente genera el ID para
-  crear por `PUT`, como fija [fastapi.md](fastapi.md), y un entero secuencial solo lo genera la base,
-  revela cuántos hay y se adivina en una URL.
+- `text` con un `CHECK` de su formato: en una tabla de valores que codifica un estándar, como los
+  países de ISO 3166-1, con su código como clave. Es el mismo en todos los entornos y se lee sin
+  unir tablas.
+- `smallint` identity: en una lista propia del equipo, igual para todos los usuarios, cuyo tope
+  cabe en `smallint`.
+- `bigint` identity: en una lista propia del equipo cuyo tope no cabe en `smallint`.
+- `uuid` con `gen_random_uuid()`: en una tabla cuyas filas crea el cliente, que genera el id para
+  crear por `PUT`, como fija [fastapi.md](fastapi.md), o cuyas filas pertenecen a un usuario y no
+  deben poder enumerarse.
+- Una identity es `GENERATED ALWAYS`, que rechaza un id escrito a mano.
+- Una clave foránea tiene el tipo de la clave que apunta.
+
+## Tipos
+
+Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml) y
+[*JSON Types*](../estandares/postgresql/json.sgml) de PostgreSQL.
+
 - Las cadenas son `text`. Un largo máximo que pida el dominio va en un `CHECK`: la restricción
   tiene nombre, admite también un mínimo y nunca recorta, como `varchar(n)` al convertir.
 - Las fechas con hora son `timestamptz`, y no `timestamp`: es el par de las `datetime` aware de
@@ -61,7 +74,7 @@ Con las pruebas de `tests/test_conventions.py` de [fastapi.md](fastapi.md):
 
 | Qué | Prueba |
 |---|---|
-| Clave `uuid` con `gen_random_uuid()` | `test_primary_key_is_random_uuid` |
+| Clave `text`, identity `ALWAYS` o `uuid` con `gen_random_uuid()` | `test_primary_key_is_allowed` |
 | Cadenas `text` | `test_strings_are_text` |
 | `timestamptz` | `test_datetimes_are_aware` |
 | Enumerados como `text` con `CHECK` | `test_enums_are_checked_text` |

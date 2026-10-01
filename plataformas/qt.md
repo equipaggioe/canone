@@ -9,7 +9,7 @@ desktop/
   pyproject.toml
   uv.lock
   pysidedeploy.spec
-  src/<paquete>/
+  src/app/
     __init__.py
     main.py
     theme.py          la hoja de estilo global
@@ -23,7 +23,7 @@ desktop/
 ```
 
 Plantilla: [`plantilla/qt/`](../plantilla/qt/). `tests/test_theme.py` es canónico y se copia sin
-editar; `theme.py` es un punto de partida y va en `src/<paquete>/`.
+editar; `theme.py` es un punto de partida y va en `src/app/`.
 
 ## PySide6
 
@@ -46,7 +46,7 @@ Estándar: [*Object Trees & Ownership*](../estandares/qt/objecttrees.qdoc) de Qt
 Estándares: [`QWidget`](../estandares/qt/qwidget.qdoc) y [`QDialog`](../estandares/qt/qdialog.qdoc)
 de Qt.
 
-- La interfaz se construye en código. mypy revisa los widgets y los diffs se leen.
+- La interfaz se construye en código. Pyrefly revisa los widgets y los diffs se leen.
 
 ## Layouts
 
@@ -102,7 +102,7 @@ Estándar: [`pyside6-deploy`](../estandares/pyside6/deployment-pyside6-deploy.rs
 
 | Qué | Con qué |
 |---|---|
-| `@override` | mypy `explicit-override` |
+| `@override` | Pyrefly `missing-override-decorator` |
 | Los nombres originales de Qt | ruff `TID251` sobre `__feature__` |
 | La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools` |
 | HTTP por `QNetworkAccessManager` | ruff `TID251` sobre httpx, requests y `urllib.request` |

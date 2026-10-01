@@ -18,8 +18,8 @@ Estándar: [flutter_lints](../estandares/pub/flutter_lints/README.md) y su
 [configuración](../estandares/pub/flutter_lints/flutter.yaml).
 
 - El analizador activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre
-  `flutter analyze --fatal-infos`. Endurece flutter_lints: los tipos se revisan como con mypy
-  strict.
+  `flutter analyze --fatal-infos`. Endurece flutter_lints: los tipos se revisan como con Pyrefly
+  en modo strict.
 
 Plantilla: [`plantilla/flutter/`](../plantilla/flutter/): `analysis_options.yaml`, con el
 analizador y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.

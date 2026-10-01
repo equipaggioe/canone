@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 
 SRC = Path(__file__).parents[1] / "src"
-PACKAGE = next(path for path in SRC.iterdir() if (path / "__init__.py").exists())
+PACKAGE = SRC / "app"
 THEME = PACKAGE / "theme.py"
 COLOR = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bQColor\(")
 

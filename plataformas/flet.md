@@ -24,7 +24,7 @@ Estándares: [*Creating a new Flet app*](../estandares/flet/create-flet-app.md) 
 ```
 
 - El código va directo en `src/`, y el proyecto no lleva `[build-system]`. Contradice el
-  `src/<paquete>/` y el `uv_build` de [python.md](python.md): es la estructura que supone
+  `src/app/` y el `uv_build` de [python.md](python.md): es la estructura que supone
   `flet build`, que empaqueta `src/` por su cuenta.
 - `[tool.flet.app]` lleva `path = "src"`.
 

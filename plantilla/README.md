@@ -12,7 +12,7 @@ partida** se copia y después es del repositorio.
 |---|---|---|---|
 | `.gitattributes` | Raíz | Canónico | [repositorio.md](../repositorio.md) |
 | `.gitignore` | Raíz | Punto de partida | [repositorio.md](../repositorio.md) |
-| `.github/workflows/ci.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [repositorio.md](../repositorio.md) |
+| `.github/workflows/ci.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [repositorio.md](../repositorio.md), [python.md](../plataformas/python.md) |
 | `python/.gitignore` | Cada pieza Python | Punto de partida | [python.md](../plataformas/python.md) |
 | `server/pyproject.toml` | `server/` | Punto de partida | [python.md](../plataformas/python.md), [fastapi.md](../plataformas/fastapi.md) |
 | `server/src/app/database.py`, `errors.py`, `tracing.py`, `models/base.py`, `schemas/base.py` | `server/src/app/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
@@ -20,7 +20,7 @@ partida** se copia y después es del repositorio.
 | `server/tests/test_conventions.py` | `server/tests/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
 | `server/tests/conftest.py`, `__init__.py` | `server/tests/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
 | `qt/pyproject.toml` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
-| `qt/theme.py` | `desktop/src/<paquete>/` | Punto de partida | [qt.md](../plataformas/qt.md) |
+| `qt/theme.py` | `desktop/src/app/` | Punto de partida | [qt.md](../plataformas/qt.md) |
 | `qt/tests/test_theme.py` | `desktop/tests/` | Canónico | [qt.md](../plataformas/qt.md) |
 | `flet/pyproject.toml` | La pieza Flet | Punto de partida | [python.md](../plataformas/python.md), [flet.md](../plataformas/flet.md) |
 | `flet/theme.py` | `src/` de la pieza | Punto de partida | [flet.md](../plataformas/flet.md) |

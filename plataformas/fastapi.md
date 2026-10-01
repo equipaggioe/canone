@@ -43,8 +43,6 @@ server/
     test_conventions.py
 ```
 
-- El paquete se llama `app` en todo servidor. Los archivos canónicos lo importan por nombre y se
-  copian sin editar.
 - `database.py`, `errors.py`, `tracing.py` y `enums.py` le dan un lugar fijo a lo que el estándar
   no ubica. `config.py` es el módulo que propone la guía de configuración. Todos van directo en
   `app/`, junto a `main.py` y `dependencies.py`: son módulos únicos de toda la app, como los que
@@ -216,7 +214,6 @@ Estándares: [*Testing*](../estandares/fastapi/testing.md) y
 | Qué | Con qué |
 |---|---|
 | *Dependencies*: `Annotated` | ruff `FAST002` |
-| mypy strict, de [python.md](python.md), sobre los modelos de Pydantic | plugin `pydantic.mypy` |
 | Los esquemas heredan del modelo base | `test_schemas_inherit_schema` |
 | `lazy="raise"` | `test_relationships_raise` |
 | Una columna por línea | `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |

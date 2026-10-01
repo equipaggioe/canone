@@ -32,3 +32,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0022](0022-donde-vive-el-tipo-money-que-valida-los-decimales-de-un-monto.md) | Dónde vive el tipo `Money` que valida los decimales de un monto | Con montos | Reemplazada por ADR-0023 |
 | [0023](0023-un-monto-se-guarda-como-numeric-sin-escala-y-sus-decimales-los-decide-cada-repositorio.md) | Un monto se guarda como `numeric` sin escala, y los decimales que admite los decide cada repositorio | Con montos | Aceptada |
 | [0024](0024-la-clave-primaria-se-elige-por-lo-que-guarda-la-tabla.md) | La clave primaria se elige por lo que guarda la tabla: un código estándar, una identity o un uuid | Con base de datos | Aceptada |
+| [0025](0025-los-tipos-los-revisa-pyrefly-en-modo-strict.md) | Los tipos los revisa Pyrefly en modo strict | Con Python | Aceptada |

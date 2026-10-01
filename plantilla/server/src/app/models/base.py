@@ -20,6 +20,11 @@ NAMING_CONVENTION = {
 }
 
 
+def enum_values(members: type[StrEnum]) -> list[str]:
+    """Store each member of a StrEnum by its value."""
+    return [member.value for member in members]
+
+
 class Base(DeclarativeBase):
     """Every table inherits from this one."""
 
@@ -33,7 +38,7 @@ class Base(DeclarativeBase):
             native_enum=False,
             create_constraint=True,
             length=None,
-            values_callable=lambda members: [member.value for member in members],
+            values_callable=enum_values,
         ),
     }
 

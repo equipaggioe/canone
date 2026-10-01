@@ -22,16 +22,20 @@ Estándar del layout: las [buenas prácticas de pytest](../estandares/pytest/goo
 ```text
 pyproject.toml
 uv.lock
-src/<paquete>/
+src/app/
   __init__.py
 tests/
   __init__.py
 ```
 
+- El paquete se llama `app` en toda pieza. Los archivos canónicos lo nombran y se copian sin
+  editar.
+
 Plantilla: el `pyproject.toml` de cada pieza, en [`plantilla/server/`](../plantilla/server/),
-[`plantilla/qt/`](../plantilla/qt/) y [`plantilla/flet/`](../plantilla/flet/), y
-[`plantilla/python/.gitignore`](../plantilla/python/.gitignore). Cada uno lleva la configuración
-de esta página más la de su plataforma.
+[`plantilla/qt/`](../plantilla/qt/) y [`plantilla/flet/`](../plantilla/flet/),
+[`plantilla/python/.gitignore`](../plantilla/python/.gitignore) y los jobs de Python de
+[`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Cada uno lleva la
+configuración de esta página más la de su plataforma.
 
 ## Estilo
 
@@ -41,7 +45,9 @@ Estándares: [PEP 8](../estandares/python/pep-0008.rst) y
 - Líneas de 99 caracteres.
 - Comillas dobles.
 - ruff formatea y revisa el código.
-- Los docstrings describen los argumentos en prosa, porque los tipos ya van en las anotaciones.
+- Los docstrings son prosa y nombran un argumento solo cuando la firma no basta. Contradice
+  PEP 257, que prefiere una línea por argumento: la firma ya da el nombre, el tipo y el valor por
+  defecto.
 
 ## Tipos
 
@@ -49,11 +55,13 @@ Estándares: [PEP 484](../estandares/python/pep-0484.rst),
 [*Typing Best Practices*](../estandares/typing/best_practices.rst) y
 [*Modernizing Superseded Typing Features*](../estandares/typing/modernizing.rst).
 
-- mypy en modo strict. Es el verificador de referencia de la documentación de typing, y Pydantic
-  trae un plugin para él.
+- Pyrefly en modo strict. Entiende sin plugin los alias que genera `to_camel` y los campos que
+  pydantic-settings lee del entorno.
 - Toda función va anotada. Endurece PEP 484: el verificador no revisa una función sin anotar.
-- Todo `# type: ignore` y todo `# noqa` llevan el código del error. Uno sin código también tapa
-  los errores futuros de esa línea.
+- Un error de tipos se ignora con `# pyrefly: ignore[<código>]`. Contradice el `# type: ignore` de
+  PEP 484: Pyrefly lo aplica a toda la línea sin mirar el código.
+- Todo ignore y todo `# noqa` llevan el código del error. Uno sin código también tapa los errores
+  futuros de esa línea.
 
 ## Paquetes
 
@@ -87,10 +95,10 @@ Estándar: [`datetime`](../estandares/python/datetime.rst).
 Estándares: la [guía de desarrollo con asyncio](../estandares/python/asyncio-dev.rst) y la de
 [tareas](../estandares/python/asyncio-task.rst).
 
-- Las tareas concurrentes se lanzan con `TaskGroup`. Guarda la referencia de cada tarea y las
-  espera y cancela juntas.
-- En desarrollo, Python corre con `-X dev`. Avisa de corrutinas sin `await`, llamadas que
-  bloquean más de 100 ms y recursos sin cerrar.
+- Las tareas concurrentes se lanzan con `TaskGroup`. Endurece la guía de tareas, que lo ofrece
+  como alternativa: no pierde tareas ni excepciones.
+- Las pruebas de CI corren en el modo de desarrollo de Python. De las cuatro formas de activar el
+  modo debug, es la única que además muestra los `ResourceWarning`.
 
 ## Pruebas
 
@@ -117,8 +125,9 @@ Estándar: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.
 | PEP 8: `except` sin tipo | ruff `E722` y `BLE` |
 | PEP 257 | ruff `D` con `convention = "pep257"` |
 | *Modernizing Superseded Typing Features* | ruff `UP` con `target-version = "py313"` |
-| Toda función anotada | `mypy --strict` |
-| Ignores con código | ruff `PGH004` y mypy `ignore-without-code` |
+| Toda función anotada | Pyrefly con `preset = "strict"` |
+| `# pyrefly: ignore` | Pyrefly con `enabled-ignores = ["pyrefly"]` |
+| `# noqa` con código | ruff `PGH004` |
 | `__init__.py` | ruff `INP` |
 | Imports absolutos | ruff `TID252` con `ban-relative-imports = "all"` |
 | Toda salida por logging | ruff `T20` |
@@ -126,6 +135,7 @@ Estándar: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.
 | Fechas aware | ruff `DTZ` |
 | Guía de asyncio: código que bloquea | ruff `ASYNC` |
 | Guía de tareas: guardar la referencia | ruff `RUF006` |
+| Pruebas en modo de desarrollo | `PYTHONDEVMODE=1` en el paso de pytest de CI |
 | Buenas prácticas de pytest | `--import-mode=importlib` en `addopts` |
 | Vulnerabilidades | pip-audit |
 | Imports declarados | deptry |

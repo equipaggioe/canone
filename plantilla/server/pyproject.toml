@@ -45,6 +45,10 @@ select = [
   "RUF006", "T20", "TID252", "UP", "W", "W505",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+# An __init__.py would make alembic/ shadow the alembic package.
+"alembic/env.py" = ["INP001"]
+
 [tool.ruff.lint.pycodestyle]
 max-doc-length = 72
 

@@ -13,7 +13,7 @@ server/
   uv.lock
   alembic.ini
   alembic/
-    env.py            el de la plantilla async, con target_metadata = Base.metadata
+    env.py            el de la plantilla async, con la URL de Settings y Base.metadata
     README
     script.py.mako
     versions/
@@ -64,9 +64,12 @@ server/
   aplica las reglas del negocio: la misma operación se llama desde una ruta, un WebSocket o una
   tarea sin repetirla.
 
-Plantilla: [`plantilla/server/`](../plantilla/server/). Son canónicos, y se copian sin editar,
-`database.py`, `errors.py`, `tracing.py`, `models/__init__.py`, `models/base.py`,
-`models/ruff.toml`, `schemas/base.py` y `tests/test_conventions.py`.
+Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
+[`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Se copian sin editar
+`alembic.ini`, `alembic/`, `database.py`, `errors.py`, `tracing.py`, `models/__init__.py`,
+`models/base.py`, `models/ruff.toml`, `schemas/base.py`, los `health.py` de `routers/`, `schemas/`
+y `services/`, y `tests/test_conventions.py`. Se copian y se completan `config.py`,
+`dependencies.py`, `main.py`, `problems.py` y `tests/conftest.py`.
 
 ## Dependencias
 

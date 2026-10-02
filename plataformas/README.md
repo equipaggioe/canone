@@ -43,6 +43,8 @@ herramienta la haga cumplir.
 - Es oficial el texto normativo de un estándar (MUST, SHOULD o RECOMMENDED) y la recomendación
   escrita en la documentación de la tecnología. Nada más: ni el código de sus ejemplos, ni sus
   proyectos de muestra, ni lo que hace la comunidad. Una regla que sale de ahí es propia.
+- Citar un estándar adopta sus recomendaciones: lo que recomienda se hace como si fuera
+  obligatorio, y no se escribe.
 - El comportamiento por defecto de una herramienta no es una recomendación. Si la página no dice
   nada, rige; cambiarlo es oficial solo si la documentación lo pide.
 - Cada sección nombra los estándares que sigue y enlaza su texto en [estandares/](../estandares/).
@@ -81,5 +83,6 @@ El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de
 | **Nombres en el cable** | La API habla en camelCase, como fija [fastapi.md](fastapi.md). Cada cliente usa la convención de su lenguaje (`snake_case` en Python, camelCase en Dart y TypeScript) y convierte en un solo punto: su cliente de la API |
 | **Los tokens de diseño** | Un solo módulo por cliente, sin colores ni tamaños literales fuera de él. Si el producto tiene superficie web, es la misma paleta y el archivo dice de cuál es espejo |
 | **Montos** | Viajan como `{amount, currency}`, con el monto en cadena, como fija [fastapi.md](fastapi.md). Cada cliente lo conserva como cadena o como el decimal de su lenguaje, nunca como `double`, y no calcula con él: los totales, impuestos y descuentos llegan calculados del servidor. Así ningún cliente necesita una biblioteca decimal |
+| **Versión mínima de cliente** | Cada cliente instalable manda `User-Agent: <pieza>/<versión>` desde su primera versión publicada, como fija [fastapi.md](fastapi.md). Ante `client-outdated`, pide actualizar la app |
 | **Refrescar la sesión** | Ante un 401, una sola vez y un solo reintento. Nunca un bucle silencioso |
 | **Entrega al exterior** | Primero la evidencia en la base, después el envío best-effort. Un fallo de entrega no tumba la operación |

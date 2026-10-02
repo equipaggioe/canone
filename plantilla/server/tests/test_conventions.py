@@ -2,19 +2,21 @@
 
 import importlib
 import pkgutil
+from datetime import datetime
 from types import ModuleType
-from typing import Annotated, Any
+from typing import Annotated, Any, get_args
 
+import pytest
 import sqlalchemy as sa
 from fastapi import FastAPI, Query
-from fastapi.routing import APIRoute
 from httpx import ASGITransport, AsyncClient
 from pydantic import BaseModel
 
 import app.models
 import app.routers
 import app.schemas
-from app import errors, tracing
+from app import errors, problems, tracing
+from app.config import settings
 from app.database import engine
 from app.main import app as main_app
 from app.models.base import Base
@@ -29,7 +31,6 @@ def import_all(package: ModuleType) -> list[ModuleType]:
     ]
 
 
-import_all(app.models)
 import_all(app.routers)
 SCHEMA_MODULES = import_all(app.schemas)
 TABLES = list(Base.metadata.tables.values())
@@ -135,13 +136,34 @@ def test_schemas_inherit_schema() -> None:
     assert not offenders
 
 
-def test_operation_ids() -> None:
-    """Every route has one tag and the ID <tag>-<function>."""
+def mentions_datetime(annotation: Any) -> bool:
+    """Tell whether a type is or contains a plain datetime."""
+    return annotation is datetime or any(mentions_datetime(arg) for arg in get_args(annotation))
+
+
+def test_schema_datetimes_are_aware() -> None:
+    """Every date and time of a schema is AwareDatetime."""
     offenders = [
-        route.path
-        for route in main_app.routes
-        if isinstance(route, APIRoute)
-        and (len(route.tags) != 1 or route.unique_id != f"{route.tags[0]}-{route.name}")
+        f"{module.__name__}.{name}.{field_name}"
+        for module in SCHEMA_MODULES
+        for name, value in vars(module).items()
+        if isinstance(value, type)
+        and issubclass(value, BaseModel)
+        and value.__module__ == module.__name__
+        for field_name, field in value.model_fields.items()
+        if mentions_datetime(field.annotation)
+    ]
+    assert not offenders
+
+
+def test_operation_ids() -> None:
+    """Every operation has one tag and the ID <tag>-<function>."""
+    offenders = [
+        f"{method.upper()} {path}"
+        for path, operations in main_app.openapi()["paths"].items()
+        for method, operation in operations.items()
+        if len(operation.get("tags", [])) != 1
+        or not operation["operationId"].startswith(f"{operation['tags'][0]}-")
     ]
     assert not offenders
 
@@ -180,7 +202,19 @@ async def test_validation_error_points_to_the_field() -> None:
     assert response.status_code == 422
     assert response.headers["content-type"] == errors.PROBLEM_JSON
     body = response.json()
+    assert body["type"] == problems.VALIDATION
     assert {error.get("pointer") or error.get("parameter") for error in body["errors"]} == {
         "/itemName",
         "limit",
     }
+
+
+async def test_outdated_client_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A client below its minimum version gets client-outdated."""
+    monkeypatch.setattr(settings, "min_client_versions", {"mobile": "1.4.0"})
+    transport = ASGITransport(app=main_app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.get("/api/health", headers={"User-Agent": "mobile/1.3.9"})
+    assert response.status_code == 400
+    assert response.headers["content-type"] == errors.PROBLEM_JSON
+    assert response.json()["type"] == problems.CLIENT_OUTDATED

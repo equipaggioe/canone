@@ -26,6 +26,8 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> |  |
 | [typing/modernizing.rst](typing/modernizing.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/guides/modernizing.rst> |  |
 | [fastapi/dependencies.md](fastapi/dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/dependencies/index.md> |  |
+| [fastapi/dependencies-with-yield.md](fastapi/dependencies-with-yield.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/dependencies/dependencies-with-yield.md> |  |
+| [fastapi/advanced-dependencies.md](fastapi/advanced-dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/advanced-dependencies.md> |  |
 | [fastapi/bigger-applications.md](fastapi/bigger-applications.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/bigger-applications.md> |  |
 | [fastapi/handling-errors.md](fastapi/handling-errors.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/handling-errors.md> |  |
 | [fastapi/oauth2-jwt.md](fastapi/oauth2-jwt.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/security/oauth2-jwt.md> |  |
@@ -45,6 +47,8 @@ Copia de los textos oficiales de los que salen las páginas de [plataformas/](..
 | [pydantic-settings/index.md](pydantic-settings/index.md) | <https://raw.githubusercontent.com/pydantic/pydantic-settings/main/docs/index.md> |  |
 | [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/orm/extensions/asyncio.rst> |  |
 | [sqlalchemy/pooling.rst](sqlalchemy/pooling.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/core/pooling.rst> |  |
+| [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/orm/session_basics.rst> |  |
+| [sqlalchemy/session_transaction.rst](sqlalchemy/session_transaction.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/orm/session_transaction.rst> |  |
 | [alembic/tutorial.rst](alembic/tutorial.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/tutorial.rst> |  |
 | [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/autogenerate.rst> |  |
 | [alembic/naming.rst](alembic/naming.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/naming.rst> |  |

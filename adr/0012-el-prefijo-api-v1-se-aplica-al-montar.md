@@ -1,6 +1,6 @@
 # ADR-0012 · El prefijo `/api/v1` se aplica al montar
 
-- **Estado:** Propuesta
+- **Estado:** Rechazada por [ADR-0027](0027-el-prefijo-api-va-sin-version-en-un-apirouter-de-main.md)
 - **Fecha:** 2026-09-23
 - **Alcance:** `server/app/main.py`, `server/app/routers/`, y todo cliente que llame a la API
 

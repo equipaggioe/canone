@@ -10,6 +10,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 
+from app import problems
 from app.schemas.base import FieldError, Problem
 from app.tracing import trace_id
 
@@ -88,9 +89,15 @@ async def http_error(_: Request, exc: Exception) -> JSONResponse:
 async def validation_error(_: Request, exc: Exception) -> JSONResponse:
     """Answer a validation error with one entry per field."""
     assert isinstance(exc, RequestValidationError)
-    problem = blank(HTTPStatus.UNPROCESSABLE_CONTENT)
-    problem.errors = [field_error(error) for error in exc.errors()]
-    return respond(problem)
+    return respond(
+        Problem(
+            type=problems.VALIDATION,
+            title="Invalid request",
+            status=HTTPStatus.UNPROCESSABLE_CONTENT,
+            errors=[field_error(error) for error in exc.errors()],
+            traceId=trace_id.get(),
+        )
+    )
 
 
 async def server_error(_: Request, exc: Exception) -> JSONResponse:

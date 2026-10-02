@@ -27,7 +27,8 @@ era elegir o repetir.
    origen de cada archivo en su `README.md`. Una página web se guarda convertida a Markdown. Una
    página se escribe y se revisa contra ese texto.
 4. Cada sección nombra los estándares que sigue y enlaza su copia. Lo que el estándar dice no se
-   escribe.
+   escribe. Citarlo adopta sus recomendaciones: lo que recomienda se hace como si fuera
+   obligatorio, sin escribirlo.
 5. Sobre el estándar, la página escribe solo tres cosas: la opción que elige donde el estándar deja
    varias, lo que contradice o endurece, y lo que ningún estándar cubre. Endurecer es volver
    obligatorio lo que el estándar recomienda «cuando sea posible» o deja como preferencia.
@@ -62,3 +63,5 @@ era elegir o repetir.
 - **Enlazar la fuente sin copiarla:** el texto no queda a mano y la revisión se sigue haciendo de
   memoria.
 - **Sumar un ADR al 0016 en vez de reemplazarlo:** serían dos ADR para decidir qué es una página.
+- **Escribir cada recomendación que se sigue:** el estándar y su resumen serían dos fuentes de
+  verdad, y una recomendación sin copiar quedaría en duda.

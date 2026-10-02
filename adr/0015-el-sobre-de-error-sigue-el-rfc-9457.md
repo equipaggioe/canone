@@ -1,6 +1,6 @@
 # ADR-0015 · El sobre de error sigue el RFC 9457
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 3 lo reemplaza el [ADR-0026](0026-el-type-de-un-problema-es-un-uri-https-fijo.md)
 - **Fecha:** 2026-09-25
 - **Alcance:** [`plataformas/fastapi.md`](../plataformas/fastapi.md), `plantilla/server/src/app/errors.py`,
   `tracing.py` y `schemas/base.py`, y todo cliente que lea errores de la API

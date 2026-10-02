@@ -1,6 +1,6 @@
 # ADR-0005 · El prefijo `/api` se aplica al montar, y la ruta no lleva versión
 
-- **Estado:** Reemplazada por [ADR-0012](0012-el-prefijo-api-v1-se-aplica-al-montar.md)
+- **Estado:** Reemplazada por [ADR-0027](0027-el-prefijo-api-va-sin-version-en-un-apirouter-de-main.md)
 - **Fecha:** 2026-09-22
 - **Alcance:** `server/app/main.py`, `server/app/routers/`
 

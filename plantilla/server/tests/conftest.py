@@ -1,4 +1,4 @@
-"""Fixtures: a client and a session rolled back after each test."""
+"""Fixtures: every session of a test joins one transaction."""
 
 from collections.abc import AsyncIterator
 
@@ -6,8 +6,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import engine
-from app.dependencies import get_session
+from app.database import SessionFactory, engine
 from app.main import app
 
 
@@ -18,14 +17,13 @@ def anyio_backend() -> str:
 
 
 @pytest.fixture
-async def session() -> AsyncIterator[AsyncSession]:
-    """Open a session inside a transaction that is rolled back."""
+async def database(monkeypatch: pytest.MonkeyPatch) -> AsyncIterator[None]:
+    """Bind the session factory to a transaction that is rolled back."""
     async with engine.connect() as connection:
         transaction = await connection.begin()
-        async with AsyncSession(
-            bind=connection, join_transaction_mode="create_savepoint", expire_on_commit=False
-        ) as session:
-            yield session
+        monkeypatch.setitem(SessionFactory.kw, "bind", connection)
+        monkeypatch.setitem(SessionFactory.kw, "join_transaction_mode", "create_savepoint")
+        yield
         await transaction.rollback()
     # Each test runs in its own event loop, and a pooled
     # connection belongs to the old one.
@@ -33,9 +31,14 @@ async def session() -> AsyncIterator[AsyncSession]:
 
 
 @pytest.fixture
-async def client(session: AsyncSession) -> AsyncIterator[AsyncClient]:
-    """Call the app in process, sharing the test session."""
-    app.dependency_overrides[get_session] = lambda: session
+async def session(database: None) -> AsyncIterator[AsyncSession]:
+    """Open a session of the test, inside its transaction."""
+    async with SessionFactory() as session:
+        yield session
+
+
+@pytest.fixture
+async def client(database: None) -> AsyncIterator[AsyncClient]:
+    """Call the app in process, inside the transaction of the test."""
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client
-    app.dependency_overrides.clear()

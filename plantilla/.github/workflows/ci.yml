@@ -35,6 +35,7 @@ jobs:
           --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
+      MIN_CLIENT_VERSIONS: "{}"
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6

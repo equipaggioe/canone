@@ -12,6 +12,8 @@ dist/
 *.egg-info/
 .eggs/
 wheels/
+*.qm
+rc_resources.py
 
 .pytest_cache/
 .ruff_cache/

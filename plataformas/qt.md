@@ -4,6 +4,9 @@ Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](py
 
 ## Layout
 
+Estándares: [`pyside6-deploy`](../estandares/pyside6/deployment-pyside6-deploy.rst) y las
+[traducciones](../estandares/pyside6/translations.rst) de PySide6.
+
 ```text
 desktop/
   pyproject.toml
@@ -11,12 +14,30 @@ desktop/
   pysidedeploy.spec
   src/app/
     __init__.py
-    main.py
-    theme.py          la hoja de estilo global
-    api/              el cliente y sus modelos
-    windows/
-    dialogs/
-    models/           los modelos de Qt
+    main.py             crea la QApplication y abre la ventana principal
+    theme.py            los tokens de diseño y la hoja de estilo global
+    icon.png
+    resources.qrc       el icono y las traducciones compiladas
+    translations/
+      <locale>.ts
+    api/
+      __init__.py
+      client.py         el cliente de la API
+      base.py           el modelo base
+      problem.py        el sobre de error RFC 9457
+      <recurso>.py      los modelos de un recurso
+    windows/            las ventanas
+      __init__.py
+      main_window.py
+    dialogs/            los QDialog
+      __init__.py
+      <clase>.py
+    widgets/            los demás widgets y los delegates
+      __init__.py
+      <clase>.py
+    models/             los QAbstractItemModel
+      __init__.py
+      <clase>.py
   tests/
     __init__.py
     test_theme.py
@@ -80,10 +101,6 @@ Estándares: [`QNetworkAccessManager`](../estandares/qt/qnetworkaccessmanager.qd
 - HTTP va por `QNetworkAccessManager`, y las respuestas se leen con modelos de Pydantic en `api/`.
   Es asíncrono sin hilos, y las respuestas llegan como señales al hilo de la interfaz.
 
-## Traducciones
-
-Estándar: las [traducciones](../estandares/pyside6/translations.rst) de PySide6.
-
 ## Pruebas
 
 Estándares: la [introducción](../estandares/pytest-qt/intro.rst), el
@@ -97,6 +114,15 @@ de pytest-qt.
 ## Empaquetado
 
 Estándar: [`pyside6-deploy`](../estandares/pyside6/deployment-pyside6-deploy.rst).
+
+- `pysidedeploy.spec` va en git, con rutas relativas a `desktop/`, y la app se empaqueta solo en
+  CI. Cada corrida reescribe en el archivo las rutas absolutas de la máquina.
+- `icon.png` mide 1024 × 1024 px, el mayor tamaño que usa macOS, y es el único icono: Nuitka lo
+  convierte al formato de cada sistema. Contradice `pyside6-deploy`, que pide `.ico` en Windows y
+  `.icns` en macOS: un archivo sirve a todos.
+- Nuitka con el extra `onefile`, imageio y, en Linux, patchelf van en el grupo `deploy`, y el
+  `packages` del `.spec` queda vacío. `pyside6-deploy` instala sus paquetes con pip, que un venv de
+  uv no trae.
 
 ## Cómo se hace cumplir
 

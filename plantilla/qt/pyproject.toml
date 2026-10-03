@@ -16,6 +16,11 @@ dev = [
   "pytest-qt>=4.5",
   "ruff>=0.16",
 ]
+deploy = [
+  "imageio>=2.38",
+  "nuitka[onefile]>=4.1",
+  "patchelf>=0.19; sys_platform == 'linux'",
+]
 
 [build-system]
 requires = ["uv_build>=0.12,<0.13"]

@@ -12,7 +12,7 @@ real. **Se lee la de lo que el repositorio use**; las demás no aplican.
 | [tiempo-real.md](tiempo-real.md) | WebSocket, varios procesos con Redis, llamadas con WebRTC y coturn |
 | [notificaciones.md](notificaciones.md) | Push por FCM y Web Push, correo por SES |
 | [pagos.md](pagos.md) | Stripe Checkout, webhooks, montos |
-| [i18n.md](i18n.md) | Idioma base, códigos en la base y catálogos por cliente |
+| [i18n.md](i18n.md) | Todo producto multilingüe, idioma base, códigos en la base y catálogos por cliente |
 | [accesibilidad.md](accesibilidad.md) | WCAG 2.2 y cómo lo cumple cada cliente |
 | [archivos.md](archivos.md) | Subida, almacenamiento y borrado de los archivos de los usuarios |
 | [mapas.md](mapas.md) | Teselas, búsqueda de direcciones, atribución y biblioteca por cliente |

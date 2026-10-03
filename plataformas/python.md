@@ -21,12 +21,15 @@ Estándares: [*pyproject.toml specification*](../estandares/pypa/pyproject-toml.
 Estándar del layout: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
 
 ```text
-pyproject.toml
-uv.lock
-src/app/
-  __init__.py
-tests/
-  __init__.py
+<pieza>/
+  .gitignore
+  pyproject.toml
+  uv.lock
+  src/app/
+    __init__.py
+  tests/
+    __init__.py
+    test_<módulo>.py
 ```
 
 - El paquete se llama `app` en toda pieza. Los archivos canónicos lo nombran y se copian sin
@@ -46,6 +49,11 @@ Estándares: [PEP 8](../estandares/python/pep-0008.rst) y
 - Líneas de 99 caracteres.
 - Comillas dobles.
 - El código se formatea con `ruff format`.
+- En cada grupo de imports, los `import` van antes que los `from`, y unos y otros en orden
+  alfabético del módulo.
+- Los nombres de un `from` van en orden alfabético: primero las constantes, después las clases
+  y al final lo demás.
+- Los nombres de un mismo módulo se importan en un solo `from`.
 - Los docstrings son prosa y nombran un argumento solo cuando la firma no basta. Contradice
   PEP 257, que prefiere una línea por argumento: la firma ya da el nombre, el tipo y el valor por
   defecto.
@@ -122,9 +130,10 @@ biblioteca estándar.
 
 ## Dependencias
 
-- pip-audit revisa en CI las vulnerabilidades conocidas de lo bloqueado.
-- deptry revisa que cada import esté declarado. Un import que funciona porque otro paquete lo
-  trajo se rompe cuando ese paquete cambia.
+- Ninguna dependencia bloqueada tiene una vulnerabilidad conocida.
+- Todo paquete que el código importa está declarado en `pyproject.toml`, aunque otro paquete ya
+  lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete
+  cambia.
 
 ## Cómo se hace cumplir
 
@@ -133,6 +142,7 @@ biblioteca estándar.
 | Python 3.13 de Debian 13 | `requires-python` y uv con `python-preference = "only-system"` |
 | El bloqueo | `uv sync --locked` en CI |
 | PEP 8 | `ruff format` y ruff `E`, `W`, `N`, `F`, `I`, `BLE` y `UP009`, con `max-doc-length = 72` |
+| Orden de los imports | ruff `I` |
 | PEP 257 | ruff `D` con `convention = "pep257"` |
 | *Modernizing Superseded Typing Features* | ruff `UP006`, `UP007`, `UP013`, `UP019`, `UP035`, `UP040`, `UP045` y `UP046` con `target-version = "py313"`, y `PYI050` y `PYI057` |
 | Toda función anotada | Pyrefly con `preset = "strict"` |

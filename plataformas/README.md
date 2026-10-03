@@ -29,44 +29,61 @@ Un catálogo de convenciones de una tecnología. Una convención sirve para una 
 Una regla que no sirve para ninguna de las tres no va. Una convención vale aunque ninguna
 herramienta la haga cumplir.
 
-- Dice qué se usa y cómo queda. No es un procedimiento ni un tutorial.
-- Cada regla dice lo que se hace. Lo que la página no dice lo decide el estándar.
-- Sale de la recomendación oficial más reciente. Una regla propia va solo donde lo oficial tiene
-  una deficiencia, no existe o deja la elección abierta.
-- Es oficial el texto normativo de un estándar (MUST, SHOULD o RECOMMENDED) y la recomendación
-  escrita en la documentación de la tecnología. Nada más: ni el código de sus ejemplos, ni sus
-  proyectos de muestra, ni lo que hace la comunidad. Una regla que sale de ahí es propia.
-- Citar un estándar adopta sus recomendaciones: lo que recomienda se hace como si fuera
+### Los estándares son las convenciones
+
+- Cada sección nombra los estándares que sigue y enlaza su texto en [estandares/](../estandares/).
+  Esos estándares son las convenciones de la sección: lo que recomiendan se hace como si fuera
   obligatorio, y no se escribe.
+- Es oficial el texto normativo de un estándar (MUST, SHOULD o RECOMMENDED) y la recomendación
+  escrita en la documentación de la tecnología, en su versión más reciente. Nada más: ni el código
+  de sus ejemplos, ni sus proyectos de muestra, ni lo que hace la comunidad. Una regla que sale de
+  ahí es propia.
 - El comportamiento por defecto de una herramienta no es una recomendación. Si la página no dice
   nada, rige; cambiarlo es oficial solo si la documentación lo pide.
-- Cada sección nombra los estándares que sigue y enlaza su texto en [estandares/](../estandares/).
-  Lo que el estándar dice no se escribe.
-- La excepción es el layout: se dibuja completo, como árbol, aunque repita partes del estándar. El
-  árbol es la convención misma, y a pedazos no se lee.
-- Sobre el estándar, la página escribe solo tres cosas:
-  - La opción que elige donde el estándar deja varias.
-  - Lo que contradice o endurece del estándar. Endurecer es volver obligatorio lo que el estándar
-    recomienda «cuando sea posible» o deja como preferencia.
-  - Lo que ningún estándar cubre.
-- La tabla «Cómo se hace cumplir» nombra en su primera columna el estándar o su sección, o una
-  regla que la página ya escribió. Nunca redacta una regla nueva para llenar la fila.
-- Nombra los archivos de `plantilla/` que salen de ella.
-- Ni el código de los repositorios, ni lo que la página ya dice, ni los ADR son fuente. Una página
-  se escribe de cero desde sus estándares, nunca corrigiendo la versión anterior. Lo que un
-  repositorio hace distinto va a [homologacion.md](../homologacion.md), que es el documento de
-  trabajo y se borra cuando la homologación termine.
+- Contradecir una parte de un estándar no lo quita: el resto sigue rigiendo.
+- Una página está completa cuando sus estándares cubren todo lo que la tecnología obliga a decidir.
+
+### Qué escribe la página
+
+Sobre sus estándares, solo tres cosas. Una sección sin puntos sigue su estándar entero.
+
+- La opción que elige donde el estándar deja varias.
+- Lo que contradice o endurece del estándar. Endurecer es volver obligatorio lo que el estándar
+  recomienda «cuando sea posible» o deja como preferencia.
+- Lo que ningún estándar cubre.
+
+Cómo se escribe:
+
+- Cada regla dice qué se usa y cómo queda. No es un procedimiento ni un tutorial.
 - Sin comentarios ni explicaciones, salvo dos, cada una en una frase corta: por qué la página
   contradice o endurece el estándar, y cómo ayuda una elección que no es trivial. Una regla trivial,
   como un color o el largo de línea, no lleva frase: su razón es una preferencia. Vale también para
   los comentarios de `plantilla/`.
+- El layout se dibuja completo, como árbol, aunque repita partes del estándar. El árbol es la
+  convención misma, y a pedazos no se lee.
+
+### Cómo se hace cumplir
+
+- La tabla «Cómo se hace cumplir» nombra en su primera columna el estándar o su sección, o una
+  regla que la página ya escribió. Nunca redacta una regla nueva para llenar la fila.
+- Una herramienta que marca más de lo que la regla dice impone una regla no escrita, y no va.
+
+### Alcance
+
 - Hereda de su página madre y no repite nada de ella: `fastapi.md`, `flet.md` y `qt.md` heredan de
   `python.md`.
 - Dice solo lo que hace su pieza. Lo que tienen que cumplir juntas varias piezas va en
   [transversal.md](transversal.md), y la sección de cada pieza que lo implementa enlaza ahí: quien
   trabaja en una pieza encuentra sus reglas en su página.
+- Nombra los archivos de `plantilla/` que salen de ella.
 - No dice qué repositorio la usa ni cuándo elegir una plataforma sobre otra.
+
+### Fuentes
+
+Ni el código de los repositorios, ni lo que la página ya dice, ni los ADR son fuente. Una página se
+escribe de cero desde sus estándares, nunca corrigiendo la versión anterior.
 
 Se agrega una página cuando la tecnología se estrena en algún repositorio.
 
-El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md).
+El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md)
+y el [ADR-0028](../adr/0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md).

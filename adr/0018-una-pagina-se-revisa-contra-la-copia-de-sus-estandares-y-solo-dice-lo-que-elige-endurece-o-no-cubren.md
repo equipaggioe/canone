@@ -21,8 +21,7 @@ era elegir o repetir.
    elección se tome una sola vez o para que las piezas de un sistema se entiendan. Una regla que no
    sirve para ninguna de las tres no va.
 2. La fuente es la recomendación oficial más reciente de la tecnología. Ni el código de los
-   repositorios ni lo que la página ya dice son fuente. Lo que un repositorio hace distinto va a
-   [homologacion.md](../homologacion.md).
+   repositorios ni lo que la página ya dice son fuente.
 3. `estandares/` guarda el texto de cada estándar que siguen las páginas, sin editar, con la URL de
    origen de cada archivo en su `README.md`. Una página web se guarda convertida a Markdown. Una
    página se escribe y se revisa contra ese texto.

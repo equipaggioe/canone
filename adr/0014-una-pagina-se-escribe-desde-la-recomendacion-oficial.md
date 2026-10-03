@@ -19,8 +19,7 @@ cada widget, que el tutorial de estilos de Qt for Python desaconseja frente a un
 1. Una página de plataforma se escribe desde la documentación oficial más reciente de la
    tecnología.
 2. Donde no hay recomendación oficial, se escribe desde la mejor práctica establecida.
-3. El código de los repositorios no es fuente. Si un repositorio hace algo distinto, la diferencia
-   va a [homologacion.md](../homologacion.md), no a la página.
+3. El código de los repositorios no es fuente.
 4. *(propuesta)* Cada sección de una página nombra el estándar del que sale, como `python.md` con
    sus PEP.
 

@@ -21,8 +21,7 @@ de sus ejemplos y sus proyectos de muestra.
    sirve para ninguna de las tres no va.
 2. La fuente es la recomendación oficial más reciente de la tecnología. Una regla propia va solo
    donde lo oficial tiene una deficiencia, no existe o deja la elección abierta.
-3. Ni el código de los repositorios ni lo que la página ya dice son fuente. Lo que un repositorio
-   hace distinto va a [homologacion.md](../homologacion.md).
+3. Ni el código de los repositorios ni lo que la página ya dice son fuente.
 4. Sin comentarios ni explicaciones, salvo dos, cada una en una frase corta: por qué una regla se
    aparta de la recomendación oficial, y cómo ayuda una elección que no es trivial. Una elección
    trivial, como un color, no lleva frase. Vale también para los comentarios de los archivos de

@@ -36,3 +36,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0026](0026-el-type-de-un-problema-es-un-uri-https-fijo.md) | El `type` de un problema es un URI `https` fijo, y la validación tiene su propio tipo | Con `server/` y sus clientes | Aceptada |
 | [0027](0027-el-prefijo-api-va-sin-version-en-un-apirouter-de-main.md) | El prefijo `/api` va sin versión, en un `APIRouter` de `main.py` | Con FastAPI | Aceptada |
 | [0028](0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md) | Una página está completa cuando sus estándares cubren lo que hay que decidir | `plataformas/` | Aceptada |
+| [0029](0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md) | Las secciones de una página van en bloques fijos, y los temas en orden alfabético | `plataformas/` | Aceptada |

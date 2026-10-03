@@ -45,7 +45,7 @@ Estándares: [PEP 8](../estandares/python/pep-0008.rst) y
 
 - Líneas de 99 caracteres.
 - Comillas dobles.
-- ruff formatea y revisa el código.
+- El código se formatea con `ruff format`.
 - Los docstrings son prosa y nombran un argumento solo cuando la firma no basta. Contradice
   PEP 257, que prefiere una línea por argumento: la firma ya da el nombre, el tipo y el valor por
   defecto.
@@ -97,7 +97,7 @@ Estándar: [`datetime`](../estandares/python/datetime.rst).
 
 Estándar: la sección *Text Encoding* de [`io`](../estandares/python/io.rst).
 
-- Los archivos de texto son UTF-8.
+- Los archivos de texto se abren con `encoding="utf-8"`.
 
 ## Async
 
@@ -132,8 +132,7 @@ biblioteca estándar.
 |---|---|
 | Python 3.13 de Debian 13 | `requires-python` y uv con `python-preference = "only-system"` |
 | El bloqueo | `uv sync --locked` en CI |
-| ruff revisa el código | ruff `F`, que ruff activa por defecto |
-| PEP 8 | `ruff format` y ruff `E`, `W`, `N` y `UP009` |
+| PEP 8 | `ruff format` y ruff `E`, `W`, `N`, `F` y `UP009` |
 | PEP 8: grupos de imports | ruff `I` |
 | PEP 8: docstrings y comentarios a 72 | ruff `W505` con `max-doc-length = 72` |
 | PEP 8: `except` sin tipo | ruff `E722` y `BLE` |
@@ -150,7 +149,7 @@ biblioteca estándar.
 | Guía de asyncio: código que bloquea | ruff `ASYNC` |
 | Guía de tareas: guardar la referencia | ruff `RUF006` |
 | Pruebas en modo de desarrollo | `PYTHONDEVMODE=1` en el paso de pytest de CI |
-| Archivos de texto UTF-8 | `PYTHONWARNDEFAULTENCODING=1` en el paso de pytest de CI y `error::EncodingWarning` en `filterwarnings` |
+| *Text Encoding*: codificación explícita | `PYTHONWARNDEFAULTENCODING=1` en el paso de pytest de CI y `error::EncodingWarning` en `filterwarnings` |
 | Buenas prácticas de pytest | `--import-mode=importlib` en `addopts` |
 | *Security Considerations*: `hashlib` | ruff `S324` |
 | *Security Considerations*: `logging` | ruff `S612` |

@@ -1,8 +1,10 @@
 # ADR-0013 · Un enum hereda de `StrEnum` y se guarda como `text` con CHECK
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-09-23
-- **Alcance:** `server/app/core/enums.py`, `server/app/models/`, todos los repositorios
+- **Alcance:** [`plataformas/fastapi.md`](../plataformas/fastapi.md),
+  [`plataformas/postgres.md`](../plataformas/postgres.md), `src/app/enums.py` y `models/base.py` de
+  la plantilla del servidor
 
 ## Contexto
 
@@ -14,14 +16,20 @@ ahí se copió a los demás. Era la forma de escribir un enum de texto, no una e
 `StrEnum`: en ningún repositorio hay rastro de que se comparara. concordia agregó después
 `ignore = ["UP042"]` para callar a `ruff`.
 
-Comprobado en Python 3.13: `StringEnumType`, Pydantic, `json.dumps` y la comparación con una cadena
-se comportan igual con las dos clases. Difieren solo en `str()` y en los f-strings: con
-`(str, Enum)`, `f"{Status.ACTIVE}"` da `"Status.ACTIVE"`; con `StrEnum`, `"active"`.
+Comprobado en Python 3.13: Pydantic, `json.dumps` y la comparación con una cadena se comportan
+igual con las dos clases. Difieren en `str()` y en los f-strings: con `(str, Enum)`,
+`f"{Status.ACTIVE}"` da `"Status.ACTIVE"`; con `StrEnum`, `"active"`.
+
+Difieren también en la base. El `type_annotation_map` de `models/base.py` asocia `StrEnum` a un
+`Enum` de SQLAlchemy no nativo, con CHECK y guardado por valor. Una clase `(str, Enum)` no lo toma:
+SQLAlchemy la mapea a un `ENUM` nativo de PostgreSQL que guarda el nombre del miembro, no su valor
+(comprobado el 2026-10-03).
 
 ## Decisión
 
-1. Los enums se declaran como `class X(StrEnum)` en `core/enums.py`. `ruff` aplica `UP042`.
-2. `StringEnumType()` incluye `create_constraint=True`, y está en el archivo canónico.
+1. Los enums se declaran como `class X(StrEnum)` en `enums.py`. `ruff` aplica `UP042`.
+2. La base declarativa guarda un `StrEnum` como `text`, por su valor, con un CHECK que lista los
+   valores (`native_enum=False` y `create_constraint=True`).
 3. No se usa el tipo `ENUM` nativo de PostgreSQL.
 
 ## Consecuencias

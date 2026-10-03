@@ -1,6 +1,6 @@
 # ADR-0003 · Un enum se guarda como VARCHAR con CHECK
 
-- **Estado:** Reemplazada por [ADR-0013](0013-un-enum-hereda-de-strenum-y-se-guarda-como-varchar-con-check.md)
+- **Estado:** Reemplazada por [ADR-0013](0013-un-enum-hereda-de-strenum-y-se-guarda-como-text-con-check.md)
 - **Fecha:** 2026-09-22
 - **Alcance:** `server/app/models/`, todos los repositorios
 

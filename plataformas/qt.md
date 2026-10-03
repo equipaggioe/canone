@@ -43,8 +43,7 @@ desktop/
     test_theme.py
 ```
 
-Plantilla: [`plantilla/qt/`](../plantilla/qt/). `tests/test_theme.py` es canónico y se copia sin
-editar; `theme.py` es un punto de partida y va en `src/app/`.
+Plantilla: [`plantilla/qt/`](../plantilla/qt/).
 
 ## PySide6
 
@@ -92,6 +91,9 @@ Estándares: [*Qt Style Sheets*](../estandares/qt/stylesheet.qdoc), su
 
 - La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada
   desde `theme.py`. Lo que la hoja no define lo dibuja el estilo de cada sistema; Fusion lo iguala.
+
+Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico y se copia sin
+editar.
 
 ## Red e hilos
 

@@ -69,7 +69,7 @@ Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 `alembic.ini`, `alembic/`, `database.py`, `errors.py`, `tracing.py`, `models/__init__.py`,
 `models/base.py`, `models/ruff.toml`, `schemas/base.py`, los `health.py` de `routers/`, `schemas/`
 y `services/`, y `tests/test_conventions.py`. Se copian y se completan `config.py`,
-`dependencies.py`, `main.py`, `problems.py` y `tests/conftest.py`.
+`dependencies.py`, `enums.py`, `main.py`, `problems.py` y `tests/conftest.py`.
 
 ## Dependencias
 

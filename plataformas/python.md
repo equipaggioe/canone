@@ -133,12 +133,12 @@ biblioteca estándar.
 | Python 3.13 de Debian 13 | `requires-python` y uv con `python-preference = "only-system"` |
 | El bloqueo | `uv sync --locked` en CI |
 | ruff revisa el código | ruff `F`, que ruff activa por defecto |
-| PEP 8 | `ruff format` y ruff `E`, `W` y `N` |
+| PEP 8 | `ruff format` y ruff `E`, `W`, `N` y `UP009` |
 | PEP 8: grupos de imports | ruff `I` |
 | PEP 8: docstrings y comentarios a 72 | ruff `W505` con `max-doc-length = 72` |
 | PEP 8: `except` sin tipo | ruff `E722` y `BLE` |
 | PEP 257 | ruff `D` con `convention = "pep257"` |
-| *Modernizing Superseded Typing Features* | ruff `UP` con `target-version = "py313"` |
+| *Modernizing Superseded Typing Features* | ruff `UP006`, `UP007`, `UP013`, `UP019`, `UP035`, `UP040`, `UP045` y `UP046` con `target-version = "py313"`, y `PYI050` y `PYI057` |
 | Toda función anotada | Pyrefly con `preset = "strict"` |
 | `# pyrefly: ignore` | Pyrefly con `enabled-ignores = ["pyrefly"]` |
 | `# noqa` con código | ruff `PGH004` |

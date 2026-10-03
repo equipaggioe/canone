@@ -29,8 +29,9 @@ target-version = "py313"
 
 [tool.ruff.lint]
 select = [
-  "ASYNC", "BLE", "D", "DTZ", "E", "E722", "F", "G", "I", "INP", "N", "PGH004", "RUF006", "S306",
-  "S323", "S324", "S502", "S503", "S504", "S612", "T20", "TID252", "UP", "W", "W505",
+  "ASYNC", "BLE", "D", "DTZ", "E", "E722", "F", "G", "I", "INP", "N", "PGH004", "PYI050", "PYI057",
+  "RUF006", "S306", "S323", "S324", "S502", "S503", "S504", "S612", "T20", "TID252", "UP006",
+  "UP007", "UP009", "UP013", "UP019", "UP035", "UP040", "UP045", "UP046", "W", "W505",
 ]
 
 [tool.ruff.lint.pycodestyle]

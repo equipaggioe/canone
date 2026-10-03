@@ -112,6 +112,8 @@ Estándares: [*SQL (Relational) Databases*](../estandares/fastapi/sql-databases.
 - La sesión es una dependencia con `scope="function"`. El commit corre antes de enviar la
   respuesta: si falla, el cliente recibe el error y no un 200.
 - Cada columna se declara en una sola línea.
+- Un enum hereda de `StrEnum`. La `Base` guarda solo esos como `text` con `CHECK`; un `str, Enum`
+  se vuelve un enum nativo de Postgres que guarda el nombre y no el valor.
 
 ## Migraciones
 
@@ -386,6 +388,7 @@ de SQLAlchemy.
 | Los nombres en camelCase: todo esquema hereda del modelo base | `test_schemas_inherit_schema` |
 | `lazy="raise"` | `test_relationships_raise` |
 | `AwareDatetime` en los esquemas | `test_schema_datetimes_are_aware` |
+| Un enum hereda de `StrEnum` | ruff `UP042` |
 | Una columna por línea | `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | Toda respuesta de error en problem+json, con `traceId` | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field` |
 | Un solo tag por router y el operation ID `<tag>-<función>` | `test_operation_ids` |

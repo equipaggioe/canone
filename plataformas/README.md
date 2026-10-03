@@ -13,14 +13,14 @@ real. **Se lee la de lo que el repositorio use**; las demás no aplican.
 | [notificaciones.md](notificaciones.md) | Push por FCM y Web Push, correo por SES |
 | [pagos.md](pagos.md) | Stripe Checkout, webhooks, montos |
 | [i18n.md](i18n.md) | Todo producto multilingüe, idioma base, códigos en la base y catálogos por cliente |
-| [accesibilidad.md](accesibilidad.md) | WCAG 2.2 y cómo lo cumple cada cliente |
+| [accesibilidad.md](accesibilidad.md) | WCAG 2.2 AA, objetivos táctiles y contraste de los tokens |
 | [archivos.md](archivos.md) | Subida, almacenamiento y borrado de los archivos de los usuarios |
-| [mapas.md](mapas.md) | Teselas, búsqueda de direcciones, atribución y biblioteca por cliente |
-| [sveltekit.md](sveltekit.md) | Proyecto, carga de datos, cliente generado, adaptador estático, estado, UnoCSS, pruebas |
-| [flutter.md](flutter.md) | Estilo, analizador, arquitectura, modelos, estado, tema, almacenamiento |
-| [android.md](android.md) | Gradle, estilo, arquitectura, red, Compose, tema, almacenamiento, pruebas |
-| [flet.md](flet.md) | Layout, tema, red, almacenamiento, publicación |
-| [qt.md](qt.md) | Layout, API de PySide6, `@override`, interfaz en código, `QSettings`, Fusion y hoja de estilo, red, pruebas, empaquetado |
+| [mapas.md](mapas.md) | Teselas desde el servidor, búsqueda de direcciones y atribución |
+| [sveltekit.md](sveltekit.md) | Proyecto, carga de datos, cliente generado, adaptador estático, estado, UnoCSS, idiomas, accesibilidad, mapas, pruebas |
+| [flutter.md](flutter.md) | Estilo, analizador, arquitectura, modelos, estado, tema, almacenamiento, idiomas, accesibilidad, mapas |
+| [android.md](android.md) | Gradle, estilo, arquitectura, red, Compose, tema, almacenamiento, idiomas, accesibilidad, mapas, pruebas |
+| [flet.md](flet.md) | Layout, tema, red, almacenamiento, idiomas, accesibilidad, mapas, publicación |
+| [qt.md](qt.md) | Layout, API de PySide6, `@override`, interfaz en código, `QSettings`, Fusion y hoja de estilo, idiomas, accesibilidad, red, pruebas, empaquetado |
 | [despliegue.md](despliegue.md) | Caddy, servicios de systemd, configuración, datos, registros, respaldos |
 
 ## Qué es una página
@@ -69,6 +69,9 @@ herramienta la haga cumplir.
   los comentarios de `plantilla/`.
 - Hereda de su página madre y no repite nada de ella: `fastapi.md`, `flet.md` y `qt.md` heredan de
   `python.md`.
+- Una página de contrato no tiene secciones por cliente. Lo que hace cada cliente para cumplirlo va
+  en la página del cliente, en una sección que enlaza al contrato: quien trabaja en un cliente lee
+  solo su página.
 - No dice qué repositorio la usa ni cuándo elegir una plataforma sobre otra.
 
 Se agrega una página cuando la tecnología o el contrato se estrena en algún repositorio.

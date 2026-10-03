@@ -61,20 +61,12 @@ OWASP.
 
 ## Qué guarda cada cliente
 
-Estándares: [*HTML5 Security Cheat Sheet*](../estandares/owasp/HTML5_Security.md) de OWASP,
-[flutter_secure_storage](../estandares/pub/flutter_secure_storage/README.md),
-[`SecureStorage`](../estandares/flet/securestorage.md) de Flet y el
-[Keystore de Android](../estandares/android/keystore.md).
+Estándar: [*HTML5 Security Cheat Sheet*](../estandares/owasp/HTML5_Security.md) de OWASP.
 
-- El token de acceso vive solo en memoria. El de refresco se guarda así:
-
-| Cliente | Token de refresco |
-|---|---|
-| Web | Cookie `HttpOnly`, `Secure`, `SameSite=Strict`, con el `Path` del endpoint de refresco |
-| Flutter | flutter_secure_storage |
-| Android | DataStore cifrado con el Keystore, como fija [android.md](android.md) |
-| Flet | `SecureStorage` |
-| Qt | keyring de Python, que usa el almacén de credenciales del sistema |
+- El token de acceso vive solo en memoria, y el de refresco, en el almacenamiento seguro del
+  cliente.
+- En la web, el token de refresco va en una cookie `HttpOnly`, `Secure`, `SameSite=Strict`, con el
+  `Path` del endpoint de refresco.
 
 ## Límite de tasa
 

@@ -6,7 +6,8 @@ Teselas, búsqueda de direcciones y atribución.
 
 Estándar: la [política de uso de teselas](../estandares/osm/tile-usage-policy.md) de OpenStreetMap.
 
-- Las teselas son raster, con URL `{z}/{x}/{y}`. Todas las bibliotecas de abajo las dibujan.
+- Las teselas son raster, con URL `{z}/{x}/{y}`. Las dibujan las bibliotecas de mapa de todos los
+  clientes.
 - Mientras el uso quepa en la política, las teselas son las de `tile.openstreetmap.org`.
 - La URL de las teselas y su atribución las entrega el servidor en su configuración pública.
   Ningún cliente las escribe en su código. Endurece la recomendación de la política: cambiar de
@@ -24,24 +25,3 @@ Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-
 ## Atribución
 
 Estándar: la [guía de atribución](../estandares/osm/attribution-guidelines.md) de OpenStreetMap.
-
-## Web
-
-Estándar: [*Quick Start Guide*](../estandares/leaflet/quick-start.md) de Leaflet.
-
-- El mapa usa Leaflet.
-
-## Flutter
-
-Estándar: [flutter_map](../estandares/pub/flutter_map/README.md).
-
-## Android
-
-Estándar: [*Quickstart*](../estandares/maplibre/android-getting-started.md) de MapLibre Android.
-
-- El mapa usa MapLibre Android, con un estilo de una sola capa raster que arma la app con la
-  configuración del servidor. Va dentro de Compose con `AndroidView`.
-
-## Flet
-
-Estándar: [flet-map](../estandares/flet/map.md).

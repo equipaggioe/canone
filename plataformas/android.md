@@ -79,8 +79,34 @@ Estándares: [DataStore](../estandares/android/datastore.md) y el
 [Keystore de Android](../estandares/android/keystore.md).
 
 - Las preferencias van en Preferences DataStore.
-- Lo sensible va en DataStore, cifrado con una clave AES-GCM del Keystore. La clave no sale del
-  dispositivo, así que lo cifrado no sirve fuera de él.
+- Lo sensible, como el token de refresco que pide [seguridad.md](seguridad.md), va en DataStore,
+  cifrado con una clave AES-GCM del Keystore. La clave no sale del dispositivo, así que lo cifrado
+  no sirve fuera de él.
+
+## Idiomas
+
+Estándar: la [localización](../estandares/android/localization.md) de Android.
+
+Contrato: [i18n.md](i18n.md).
+
+## Accesibilidad
+
+Estándares: de Android, [*Make apps more accessible*](../estandares/android/accessibility-apps.md)
+y [*Principles for improving app accessibility*](../estandares/android/accessibility-principles.md),
+y de Compose, [*Accessibility testing*](../estandares/compose/accessibility-testing.md).
+
+Contrato: [accesibilidad.md](accesibilidad.md).
+
+- Las pruebas de UI de Compose llaman a `enableAccessibilityChecks()`.
+
+## Mapas
+
+Estándar: [*Quickstart*](../estandares/maplibre/android-getting-started.md) de MapLibre Android.
+
+Contrato: [mapas.md](mapas.md).
+
+- El mapa usa MapLibre Android, con un estilo de una sola capa raster que arma la app con la
+  configuración del servidor. Va dentro de Compose con `AndroidView`.
 
 ## Pruebas
 
@@ -88,3 +114,9 @@ Estándares: los [fundamentos de pruebas](../estandares/android/testing-fundamen
 [pruebas de Compose](../estandares/compose/testing.md).
 
 - Las llamadas HTTP se prueban contra MockWebServer.
+
+## Cómo se hace cumplir
+
+| Qué | Con qué |
+|---|---|
+| Objetivos, etiquetas y contraste | `enableAccessibilityChecks()` en las pruebas de UI |

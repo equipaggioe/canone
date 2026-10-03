@@ -50,9 +50,28 @@ Estándares: [*Client Storage*](../estandares/flet/client-storage.md),
 [`SecureStorage`](../estandares/flet/securestorage.md) y
 [*Encrypting sensitive data*](../estandares/flet/encrypting-sensitive-data.md) de Flet.
 
-- Lo sensible va en `SecureStorage`, y `SharedPreferences` guarda solo preferencias.
-  `SecureStorage` usa el almacén cifrado del sistema; cifrar a mano obliga a guardar la clave en
-  algún lado.
+- Lo sensible, como el token de refresco que pide [seguridad.md](seguridad.md), va en
+  `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén
+  cifrado del sistema; cifrar a mano obliga a guardar la clave en algún lado.
+
+## Idiomas
+
+Contrato: [i18n.md](i18n.md).
+
+- Los textos usan `gettext` de la biblioteca estándar de Python, con catálogos `.po`. Flet no trae
+  un sistema de traducción.
+
+## Accesibilidad
+
+Estándar: [*Accessibility*](../estandares/flet/accessibility.md) de Flet.
+
+Contrato: [accesibilidad.md](accesibilidad.md).
+
+## Mapas
+
+Estándar: [flet-map](../estandares/flet/map.md).
+
+Contrato: [mapas.md](mapas.md).
 
 ## Publicación
 

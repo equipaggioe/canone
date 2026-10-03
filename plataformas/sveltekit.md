@@ -82,7 +82,43 @@ el [preset Wind4](../estandares/unocss/presets-wind4.md) y el
 - Los tokens van en el `theme` de `uno.config.ts`.
 - Las clases de utilidad se escriben en archivos `.svelte`. UnoCSS no lee `.ts` por defecto.
 
+## Idiomas
+
+Estándares: de Paraglide, [*Basics*](../estandares/paraglide/basics.md),
+[*Architecture*](../estandares/paraglide/architecture.md),
+[*Compiling Messages*](../estandares/paraglide/compiling-messages.md),
+[*Configuration File*](../estandares/paraglide/configuration.md),
+[*Translation File Formats*](../estandares/paraglide/file-formats.md),
+[*Locale Detection*](../estandares/paraglide/strategy.md) y
+[*SvelteKit i18n*](../estandares/paraglide/sveltekit.md).
+
+Contrato: [i18n.md](i18n.md).
+
+## Accesibilidad
+
+Estándares: las [advertencias del compilador](../estandares/svelte/compile-warnings.md) de Svelte y
+[`sv check`](../estandares/svelte/sv-check.md).
+
+Contrato: [accesibilidad.md](accesibilidad.md).
+
+- `svelte-check` corre con `--fail-on-warnings`. Las advertencias `a11y_*` del compilador rompen
+  CI.
+
+## Mapas
+
+Estándar: [*Quick Start Guide*](../estandares/leaflet/quick-start.md) de Leaflet.
+
+Contrato: [mapas.md](mapas.md).
+
+- El mapa usa Leaflet.
+
 ## Pruebas
 
 Estándares: [*Getting Started*](../estandares/vitest/guide.md) y
 [*Features*](../estandares/vitest/features.md) de Vitest.
+
+## Cómo se hace cumplir
+
+| Qué | Con qué |
+|---|---|
+| Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |

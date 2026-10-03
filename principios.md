@@ -108,6 +108,6 @@ código que la sufre:
 
 | Plataforma | Trampas |
 |---|---|
-| [mapas.md](plataformas/mapas.md) | `flutter_map`: la rueda del mouse, el arrastre de una capa encima, las teselas que relanzan fallos de red |
+| [flutter.md](plataformas/flutter.md) | `flutter_map`: la rueda del mouse, el arrastre de una capa encima, las teselas que relanzan fallos de red |
 | [sveltekit.md](plataformas/sveltekit.md) | UnoCSS: los atajos con prefijo de variante y los archivos `.ts` sin escanear |
 | [postgres.md](plataformas/postgres.md) | `Geography` compartido en un `Annotated`; `native_enum=False` sin `create_constraint` |

@@ -81,3 +81,34 @@ Estándares: [shared_preferences](../estandares/pub/shared_preferences/README.md
 [flutter_secure_storage](../estandares/pub/flutter_secure_storage/README.md).
 
 - Las preferencias usan `SharedPreferencesAsync`. Sin caché, cada lectura trae el valor actual.
+- El token de refresco que pide [seguridad.md](seguridad.md) va en flutter_secure_storage.
+
+## Idiomas
+
+Estándar: [*Internationalizing Flutter apps*](../estandares/flutter/internationalization.md).
+
+Contrato: [i18n.md](i18n.md).
+
+## Accesibilidad
+
+Estándares: de Flutter, [*Accessibility*](../estandares/flutter/accessibility.md),
+[*UI design and styling*](../estandares/flutter/accessibility-ui-design.md),
+[*Assistive technologies*](../estandares/flutter/accessibility-assistive.md) y
+[*Accessibility testing*](../estandares/flutter/accessibility-testing.md).
+
+Contrato: [accesibilidad.md](accesibilidad.md).
+
+- Cada pantalla tiene una prueba de widget con las cuatro guías: `androidTapTargetGuideline`,
+  `iOSTapTargetGuideline`, `labeledTapTargetGuideline` y `textContrastGuideline`.
+
+## Mapas
+
+Estándar: [flutter_map](../estandares/pub/flutter_map/README.md).
+
+Contrato: [mapas.md](mapas.md).
+
+## Cómo se hace cumplir
+
+| Qué | Con qué |
+|---|---|
+| Objetivos, etiquetas y contraste | Las guías de `flutter_test` en cada pantalla |

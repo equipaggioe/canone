@@ -81,6 +81,8 @@ Estándar: [*Model/View Programming*](../estandares/qt/model-view-programming.qd
 Estándar: [`QSettings`](../estandares/qt/qsettings.qdoc) de Qt.
 
 - `QSettings` usa `IniFormat`: el mismo archivo legible en todos los sistemas.
+- El token de refresco que pide [seguridad.md](seguridad.md) va en keyring, que usa el almacén de
+  credenciales del sistema.
 
 ## Estilo
 
@@ -94,6 +96,26 @@ Estándares: [*Qt Style Sheets*](../estandares/qt/stylesheet.qdoc), su
 
 Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico y se copia sin
 editar.
+
+## Idiomas
+
+Estándar: las [traducciones](../estandares/pyside6/translations.rst) de PySide6.
+
+Contrato: [i18n.md](i18n.md).
+
+- Los textos usan Qt Linguist. Un solo mecanismo traduce la app y los diálogos propios de Qt.
+- Los textos se extraen con `pyside6-lupdate -extensions py src/app`, que recorre todo el paquete.
+  `pyside6-project lupdate` solo lee los archivos que se listan a mano, y uno que falte se queda
+  sin traducir.
+- Los `.qm` y `rc_resources.py` se generan y no van en git. Salen de los `.ts` y del `.qrc`; en git
+  quedarían desfasados.
+
+## Accesibilidad
+
+Estándares: [*Accessibility*](../estandares/qt/accessible.qdoc) de Qt y la propiedad
+`accessibleName` de [`QWidget`](../estandares/qt/qwidget.qdoc).
+
+Contrato: [accesibilidad.md](accesibilidad.md).
 
 ## Red e hilos
 

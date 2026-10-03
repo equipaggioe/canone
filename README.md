@@ -27,10 +27,10 @@ Qué es una página y de dónde sale: [plataformas/README.md](plataformas/README
 
 | Servidor y datos | Cliente | Transversal |
 |---|---|---|
-| [fastapi.md](plataformas/fastapi.md) | [sveltekit.md](plataformas/sveltekit.md) | [seguridad.md](plataformas/seguridad.md) |
-| [postgres.md](plataformas/postgres.md) | [flutter.md](plataformas/flutter.md) | [tiempo-real.md](plataformas/tiempo-real.md) |
-| [despliegue.md](plataformas/despliegue.md) | [flet.md](plataformas/flet.md) | [notificaciones.md](plataformas/notificaciones.md) |
-| | [qt.md](plataformas/qt.md) | [pagos.md](plataformas/pagos.md) · [i18n.md](plataformas/i18n.md) |
+| [fastapi.md](plataformas/fastapi.md) | [sveltekit.md](plataformas/sveltekit.md) | [transversal.md](plataformas/transversal.md) |
+| [postgres.md](plataformas/postgres.md) | [flutter.md](plataformas/flutter.md) | |
+| [despliegue.md](plataformas/despliegue.md) | [flet.md](plataformas/flet.md) | |
+| | [qt.md](plataformas/qt.md) | |
 
 ## Las dos reglas que sostienen esto
 

@@ -23,7 +23,8 @@ Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml),
 ## Tipos
 
 Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml) y
-[*JSON Types*](../estandares/postgresql/json.sgml) de PostgreSQL.
+[*JSON Types*](../estandares/postgresql/json.sgml) de PostgreSQL, y la
+[lista de monedas](../estandares/iso/iso-4217-list-one.xml) de ISO 4217.
 
 - Las cadenas son `text`. Un largo máximo que pida el dominio va en un `CHECK`: la restricción
   tiene nombre, admite también un mínimo y nunca recorta, como `varchar(n)` al convertir.
@@ -31,6 +32,8 @@ Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml) y
   [python.md](python.md), y `timestamp` descartaría la zona sin avisar.
 - Un valor enumerado es `text` con un `CHECK` que lista los valores. Quitar un valor de un `enum`
   obliga a recrear el tipo; un `CHECK` se reemplaza en una migración.
+- Un monto es `numeric` sin precisión ni escala, junto al código de su moneda en `text`. Con escala
+  declarada, `numeric` redondea sin avisar lo que la excede.
 
 ## Definición de datos
 

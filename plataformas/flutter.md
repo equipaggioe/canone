@@ -81,13 +81,14 @@ Estándares: [shared_preferences](../estandares/pub/shared_preferences/README.md
 [flutter_secure_storage](../estandares/pub/flutter_secure_storage/README.md).
 
 - Las preferencias usan `SharedPreferencesAsync`. Sin caché, cada lectura trae el valor actual.
-- El token de refresco que pide [seguridad.md](seguridad.md) va en flutter_secure_storage.
+- El token de refresco que pide [transversal.md](transversal.md#sesión) va en
+  flutter_secure_storage.
 
 ## Idiomas
 
 Estándar: [*Internationalizing Flutter apps*](../estandares/flutter/internationalization.md).
 
-Contrato: [i18n.md](i18n.md).
+Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Accesibilidad
 
@@ -96,7 +97,7 @@ Estándares: de Flutter, [*Accessibility*](../estandares/flutter/accessibility.m
 [*Assistive technologies*](../estandares/flutter/accessibility-assistive.md) y
 [*Accessibility testing*](../estandares/flutter/accessibility-testing.md).
 
-Contrato: [accesibilidad.md](accesibilidad.md).
+Contrato: [transversal.md](transversal.md#accesibilidad).
 
 - Cada pantalla tiene una prueba de widget con las cuatro guías: `androidTapTargetGuideline`,
   `iOSTapTargetGuideline`, `labeledTapTargetGuideline` y `textContrastGuideline`.
@@ -105,7 +106,7 @@ Contrato: [accesibilidad.md](accesibilidad.md).
 
 Estándar: [flutter_map](../estandares/pub/flutter_map/README.md).
 
-Contrato: [mapas.md](mapas.md).
+Contrato: [transversal.md](transversal.md#mapas).
 
 ## Cómo se hace cumplir
 

@@ -57,6 +57,15 @@ Estándar: [*Static site generation*](../estandares/sveltekit/adapter-static.md)
   recomienda el `fallback` solo en casos puntuales: esas páginas no necesitan SEO, dependen de los
   datos del usuario, y el servidor es FastAPI, sin Node para renderizarlas.
 
+## CSP
+
+Estándares: [*Content Security Policy Cheat Sheet*](../estandares/owasp/Content_Security_Policy.md)
+de OWASP y [CSP Level 3](../estandares/w3c/csp3.bs) de W3C.
+
+- La CSP la genera SvelteKit con `kit.csp` en modo `hash`, sobre `default-src 'self'`. El script de
+  arranque de SvelteKit va en línea y necesita su hash.
+- La CSP lleva el host de las teselas en `img-src`.
+
 ## Estado
 
 Estándares: [*State management*](../estandares/sveltekit/state-management.md) de SvelteKit y, de
@@ -92,14 +101,14 @@ Estándares: de Paraglide, [*Basics*](../estandares/paraglide/basics.md),
 [*Locale Detection*](../estandares/paraglide/strategy.md) y
 [*SvelteKit i18n*](../estandares/paraglide/sveltekit.md).
 
-Contrato: [i18n.md](i18n.md).
+Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Accesibilidad
 
 Estándares: las [advertencias del compilador](../estandares/svelte/compile-warnings.md) de Svelte y
 [`sv check`](../estandares/svelte/sv-check.md).
 
-Contrato: [accesibilidad.md](accesibilidad.md).
+Contrato: [transversal.md](transversal.md#accesibilidad).
 
 - `svelte-check` corre con `--fail-on-warnings`. Las advertencias `a11y_*` del compilador rompen
   CI.
@@ -108,7 +117,7 @@ Contrato: [accesibilidad.md](accesibilidad.md).
 
 Estándar: [*Quick Start Guide*](../estandares/leaflet/quick-start.md) de Leaflet.
 
-Contrato: [mapas.md](mapas.md).
+Contrato: [transversal.md](transversal.md#mapas).
 
 - El mapa usa Leaflet.
 

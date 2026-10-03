@@ -55,7 +55,7 @@ mobile/
 
 - Todo va en un solo módulo `app`.
 - HTTP va por Retrofit con OkHttp. El `Authenticator` de OkHttp hace el único reintento tras
-  refrescar la sesión que pide [plataformas/README.md](README.md).
+  refrescar la sesión que pide [transversal.md](transversal.md#sesión).
 - El JSON se lee con kotlinx.serialization. Las propiedades de Kotlin ya están en camelCase, como el
   cable.
 
@@ -79,15 +79,15 @@ Estándares: [DataStore](../estandares/android/datastore.md) y el
 [Keystore de Android](../estandares/android/keystore.md).
 
 - Las preferencias van en Preferences DataStore.
-- Lo sensible, como el token de refresco que pide [seguridad.md](seguridad.md), va en DataStore,
-  cifrado con una clave AES-GCM del Keystore. La clave no sale del dispositivo, así que lo cifrado
-  no sirve fuera de él.
+- Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en
+  DataStore, cifrado con una clave AES-GCM del Keystore. La clave no sale del dispositivo, así que
+  lo cifrado no sirve fuera de él.
 
 ## Idiomas
 
 Estándar: la [localización](../estandares/android/localization.md) de Android.
 
-Contrato: [i18n.md](i18n.md).
+Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Accesibilidad
 
@@ -95,7 +95,7 @@ Estándares: de Android, [*Make apps more accessible*](../estandares/android/acc
 y [*Principles for improving app accessibility*](../estandares/android/accessibility-principles.md),
 y de Compose, [*Accessibility testing*](../estandares/compose/accessibility-testing.md).
 
-Contrato: [accesibilidad.md](accesibilidad.md).
+Contrato: [transversal.md](transversal.md#accesibilidad).
 
 - Las pruebas de UI de Compose llaman a `enableAccessibilityChecks()`.
 
@@ -103,7 +103,7 @@ Contrato: [accesibilidad.md](accesibilidad.md).
 
 Estándar: [*Quickstart*](../estandares/maplibre/android-getting-started.md) de MapLibre Android.
 
-Contrato: [mapas.md](mapas.md).
+Contrato: [transversal.md](transversal.md#mapas).
 
 - El mapa usa MapLibre Android, con un estilo de una sola capa raster que arma la app con la
   configuración del servidor. Va dentro de Compose con `AndroidView`.

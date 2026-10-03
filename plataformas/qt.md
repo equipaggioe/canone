@@ -81,8 +81,8 @@ Estándar: [*Model/View Programming*](../estandares/qt/model-view-programming.qd
 Estándar: [`QSettings`](../estandares/qt/qsettings.qdoc) de Qt.
 
 - `QSettings` usa `IniFormat`: el mismo archivo legible en todos los sistemas.
-- El token de refresco que pide [seguridad.md](seguridad.md) va en keyring, que usa el almacén de
-  credenciales del sistema.
+- El token de refresco que pide [transversal.md](transversal.md#sesión) va en keyring, que usa el
+  almacén de credenciales del sistema.
 
 ## Estilo
 
@@ -101,7 +101,7 @@ editar.
 
 Estándar: las [traducciones](../estandares/pyside6/translations.rst) de PySide6.
 
-Contrato: [i18n.md](i18n.md).
+Contrato: [transversal.md](transversal.md#idiomas).
 
 - Los textos usan Qt Linguist. Un solo mecanismo traduce la app y los diálogos propios de Qt.
 - Los textos se extraen con `pyside6-lupdate -extensions py src/app`, que recorre todo el paquete.
@@ -115,7 +115,7 @@ Contrato: [i18n.md](i18n.md).
 Estándares: [*Accessibility*](../estandares/qt/accessible.qdoc) de Qt y la propiedad
 `accessibleName` de [`QWidget`](../estandares/qt/qwidget.qdoc).
 
-Contrato: [accesibilidad.md](accesibilidad.md).
+Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Red e hilos
 

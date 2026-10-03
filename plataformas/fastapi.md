@@ -194,6 +194,152 @@ Estándar: [RFC 9110](../estandares/rfc/rfc9110.txt).
 - La comprobación va desde la primera versión que se publica: a una app instalada sin ella nunca
   se le puede obligar a actualizar.
 
+## Contraseñas
+
+Estándares: [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt),
+[*Password Storage Cheat Sheet*](../estandares/owasp/Password_Storage.md) de OWASP,
+[RFC 9106](../estandares/rfc/rfc9106.txt) y
+[*OAuth2 with Password (and hashing), Bearer with JWT tokens*](../estandares/fastapi/oauth2-jwt.md)
+de FastAPI.
+
+- Toda contraseña tiene al menos 15 caracteres, con o sin segundo factor. Endurece NIST, que admite
+  8 con segundo factor: una sola regla, y el segundo factor se puede desactivar.
+- La lista de bloqueo que pide NIST es una lista de contraseñas comunes guardada en el servidor. La
+  contraseña no sale a otro servicio para compararla.
+
+## Autenticación
+
+Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md),
+[*Credential Stuffing Prevention Cheat Sheet*](../estandares/owasp/Credential_Stuffing_Prevention.md)
+y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
+
+- El enlace para restablecer la contraseña lleva un token aleatorio de un solo uso que vence en 30
+  minutos, y la base guarda su SHA-256.
+
+## Tokens
+
+Estándares: [RFC 7519](../estandares/rfc/rfc7519.txt), [RFC 8725](../estandares/rfc/rfc8725.txt)
+y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP.
+
+- El token de acceso es un JWT firmado con HS256 que vence en 15 minutos. Solo el servidor lo firma
+  y lo verifica, así que basta una clave simétrica.
+- El token de refresco es un valor aleatorio de 256 bits, y la base guarda su SHA-256 en la fila de
+  sesión. Rota en cada uso, y usar uno ya rotado borra la sesión entera: un token robado se
+  descubre cuando el dueño vuelve a refrescar.
+- Cada dispositivo tiene una fila de sesión, con su creación y su último uso. La sesión vence tras
+  30 días sin uso, y cerrar sesión borra la fila.
+
+## Segundo factor
+
+Estándares: [RFC 6238](../estandares/rfc/rfc6238.txt), [RFC 4226](../estandares/rfc/rfc4226.txt)
+y [*Multifactor Authentication Cheat Sheet*](../estandares/owasp/Multifactor_Authentication.md) de
+OWASP.
+
+- El segundo factor es TOTP con SHA-1, 6 dígitos y pasos de 30 segundos. Son los valores que
+  aceptan todas las apps de autenticación.
+- El secreto TOTP se guarda cifrado con una clave de la configuración. Una copia de la base no basta
+  para generar códigos.
+- Al activarlo se entregan diez códigos de recuperación de un solo uso, guardados como hash. Perder
+  el teléfono no deja la cuenta sin acceso.
+
+## Límite de tasa
+
+Estándares: [RFC 6585](../estandares/rfc/rfc6585.txt) y
+[*Denial of Service Cheat Sheet*](../estandares/owasp/Denial_of_Service.md) de OWASP.
+
+- Los contadores viven en Redis, compartidos por todos los procesos.
+- Todo 429 lleva `Retry-After`. Endurece RFC 6585, que lo deja opcional: el cliente sabe cuándo
+  reintentar.
+
+## Permisos
+
+Estándares: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP y
+[RFC 9110](../estandares/rfc/rfc9110.txt).
+
+- Cada ruta declara con una dependencia de FastAPI el permiso que exige. El permiso queda a la
+  vista en la ruta.
+- Un recurso que no pertenece al usuario responde 404, como si no existiera; uno que el usuario ve
+  pero sobre el que no puede hacer esa acción responde 403. Es la opción que RFC 9110 da para
+  ocultar un recurso: una sola consulta, filtrada por el usuario, resuelve las dos cosas y no
+  confirma que el recurso existe.
+
+## Registro de eventos
+
+Estándar: [*Logging Cheat Sheet*](../estandares/owasp/Logging.md) de OWASP.
+
+## WebSocket
+
+Estándares: [*WebSockets*](../estandares/fastapi/websockets.md) de FastAPI y
+[*Redis Pub/sub*](../estandares/redis/pubsub.md).
+
+- Cerrar sesión cierra sus conexiones en todos los procesos.
+- Cada proceso se suscribe a Redis y reenvía a sus conexiones, con un canal por usuario. Pub/sub
+  entrega a lo sumo una vez; por eso el cliente pide el estado por REST al reconectar.
+
+## Push
+
+Estándares: [*Send a message using Firebase Admin SDK*](../estandares/firebase/admin-sdk.md),
+[*FCM Error Codes*](../estandares/firebase/error-codes.md),
+[RFC 8030](../estandares/rfc/rfc8030.txt) y [RFC 8291](../estandares/rfc/rfc8291.txt).
+
+- El servidor envía a FCM con el Admin SDK de Python desde `asyncio.to_thread`. El SDK es síncrono.
+- El servidor envía Web Push con pywebpush.
+
+## Correo
+
+Estándares: [RFC 5322](../estandares/rfc/rfc5322.txt), [RFC 7208](../estandares/rfc/rfc7208.txt)
+(SPF), [RFC 6376](../estandares/rfc/rfc6376.txt) (DKIM), [RFC 7489](../estandares/rfc/rfc7489.txt)
+(DMARC), [RFC 8058](../estandares/rfc/rfc8058.txt) y, de Amazon SES,
+[*Understanding email deliverability*](../estandares/aws-ses/send-email-concepts-deliverability.md),
+[DKIM](../estandares/aws-ses/dkim.md), [*Using a custom MAIL FROM domain*](../estandares/aws-ses/mail-from.md),
+[DMARC](../estandares/aws-ses/dmarc.md),
+[la lista de supresión](../estandares/aws-ses/suppression-list.md) y
+[*Monitor email sending using event publishing*](../estandares/aws-ses/monitor-using-event-publishing.md).
+
+- El correo sale por SES con la API v2, desde `asyncio.to_thread`.
+- Cada correo lleva una parte en texto y otra en HTML.
+- Un correo que no responde a una acción del usuario lleva `List-Unsubscribe` y
+  `List-Unsubscribe-Post`.
+- Los rebotes y las quejas llegan por event publishing a un endpoint del servidor, que marca la
+  dirección como inválida. La app sabe que el correo no llega y se lo dice al usuario.
+
+## Pagos
+
+Estándares: [*Idempotent requests*](../estandares/stripe/idempotent-requests.md) y los
+[webhooks](../estandares/stripe/webhooks.md) de Stripe.
+
+- El ID de cada evento procesado se guarda con una restricción única. Un evento repetido choca con
+  ella y no se procesa dos veces.
+
+## Archivos
+
+Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de OWASP y
+[*Request Files*](../estandares/fastapi/request-files.md) de FastAPI.
+
+- El servidor recibe un archivo como `UploadFile`.
+- Cada ruta de subida declara su lista de tipos permitidos.
+- Toda imagen se vuelve a codificar con Pillow antes de guardarse. Endurece la recomendación de
+  OWASP: destruye contenido inyectado y borra los metadatos, como la ubicación de la foto.
+- Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`, con
+  `ON DELETE CASCADE`. La fila guarda el tipo, el tamaño y el nombre original.
+- El archivo en disco se llama con el ID de su fila.
+- El servidor entrega un archivo después de comprobar el permiso sobre su recurso.
+- Un barrido borra los archivos con más de una hora en disco y sin fila en ninguna tabla `_file`.
+  El borrado en cascada y una subida cuyo commit falló dejan archivos sin fila, y un solo barrido
+  cubre los dos caminos.
+
+## Direcciones
+
+Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
+
+- El servidor guarda en Redis cada respuesta de Nominatim y no pasa de una consulta por segundo en
+  total.
+
+## Envíos al exterior
+
+- Primero la evidencia en la base, después el envío best-effort. Un fallo de entrega no tumba la
+  operación.
+
 ## Ciclo de vida
 
 Estándar: [*Lifespan Events*](../estandares/fastapi/events.md) de FastAPI.

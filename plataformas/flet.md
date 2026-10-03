@@ -31,17 +31,11 @@ Estándares: [*Creating a new Flet app*](../estandares/flet/create-flet-app.md) 
 Plantilla: [`plantilla/flet/`](../plantilla/flet/). `tests/test_theme.py` es canónico y se copia
 sin editar; `theme.py` es un punto de partida.
 
-## Tema
+## Accesibilidad
 
-Estándar: [*Theming*](../estandares/flet/theming.md) de Flet.
+Estándar: [*Accessibility*](../estandares/flet/accessibility.md) de Flet.
 
-- `page.theme` y `page.dark_theme` salen de `theme.py`, y `page.theme_mode` es
-  `ThemeMode.SYSTEM`. La app sigue el modo oscuro del sistema, con los colores en un solo módulo.
-
-## Red
-
-- HTTP va por un solo `httpx.AsyncClient` desde handlers async, y las respuestas se leen con modelos
-  de Pydantic en `api/`. No bloquea la interfaz y reutiliza las conexiones.
+Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
@@ -61,17 +55,23 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - Los textos usan `gettext` de la biblioteca estándar de Python, con catálogos `.po`. Flet no trae
   un sistema de traducción.
 
-## Accesibilidad
-
-Estándar: [*Accessibility*](../estandares/flet/accessibility.md) de Flet.
-
-Contrato: [transversal.md](transversal.md#accesibilidad).
-
 ## Mapas
 
 Estándar: [flet-map](../estandares/flet/map.md).
 
 Contrato: [transversal.md](transversal.md#mapas).
+
+## Red
+
+- HTTP va por un solo `httpx.AsyncClient` desde handlers async, y las respuestas se leen con modelos
+  de Pydantic en `api/`. No bloquea la interfaz y reutiliza las conexiones.
+
+## Tema
+
+Estándar: [*Theming*](../estandares/flet/theming.md) de Flet.
+
+- `page.theme` y `page.dark_theme` salen de `theme.py`, y `page.theme_mode` es
+  `ThemeMode.SYSTEM`. La app sigue el modo oscuro del sistema, con los colores en un solo módulo.
 
 ## Publicación
 

@@ -65,13 +65,15 @@ Estándares: el [estado](../estandares/compose/state.md) y la
 [arquitectura](../estandares/compose/architecture.md) de Compose, y
 [Navigation 3](../estandares/android/navigation-3.md).
 
-## Tema
+## Accesibilidad
 
-Estándar: [Material 3 en Compose](../estandares/compose/material3.md).
+Estándares: de Android, [*Make apps more accessible*](../estandares/android/accessibility-apps.md)
+y [*Principles for improving app accessibility*](../estandares/android/accessibility-principles.md),
+y de Compose, [*Accessibility testing*](../estandares/compose/accessibility-testing.md).
 
-- El `ColorScheme` claro y el oscuro salen de los tokens de `ui/theme/`, sin color dinámico, y el
-  modo sigue al sistema. El color dinámico reemplazaría la paleta del producto, que es la misma en
-  todas las superficies.
+Contrato: [transversal.md](transversal.md#accesibilidad).
+
+- Las pruebas de UI de Compose llaman a `enableAccessibilityChecks()`.
 
 ## Almacenamiento
 
@@ -89,16 +91,6 @@ Estándar: la [localización](../estandares/android/localization.md) de Android.
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
-## Accesibilidad
-
-Estándares: de Android, [*Make apps more accessible*](../estandares/android/accessibility-apps.md)
-y [*Principles for improving app accessibility*](../estandares/android/accessibility-principles.md),
-y de Compose, [*Accessibility testing*](../estandares/compose/accessibility-testing.md).
-
-Contrato: [transversal.md](transversal.md#accesibilidad).
-
-- Las pruebas de UI de Compose llaman a `enableAccessibilityChecks()`.
-
 ## Mapas
 
 Estándar: [*Quickstart*](../estandares/maplibre/android-getting-started.md) de MapLibre Android.
@@ -107,6 +99,14 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 - El mapa usa MapLibre Android, con un estilo de una sola capa raster que arma la app con la
   configuración del servidor. Va dentro de Compose con `AndroidView`.
+
+## Tema
+
+Estándar: [Material 3 en Compose](../estandares/compose/material3.md).
+
+- El `ColorScheme` claro y el oscuro salen de los tokens de `ui/theme/`, sin color dinámico, y el
+  modo sigue al sistema. El color dinámico reemplazaría la paleta del producto, que es la misma en
+  todas las superficies.
 
 ## Pruebas
 

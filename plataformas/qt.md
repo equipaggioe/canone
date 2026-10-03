@@ -2,7 +2,7 @@
 
 Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](python.md).
 
-## Layout
+## Proyecto
 
 Estándares: [`pyside6-deploy`](../estandares/pyside6/deployment-pyside6-deploy.rst) y las
 [traducciones](../estandares/pyside6/translations.rst) de PySide6.
@@ -76,26 +76,20 @@ Estándar: [*Layout Management*](../estandares/qt/layout.qdoc) de Qt.
 
 Estándar: [*Model/View Programming*](../estandares/qt/model-view-programming.qdoc) de Qt.
 
-## Configuración
+## Accesibilidad
+
+Estándares: [*Accessibility*](../estandares/qt/accessible.qdoc) de Qt y la propiedad
+`accessibleName` de [`QWidget`](../estandares/qt/qwidget.qdoc).
+
+Contrato: [transversal.md](transversal.md#accesibilidad).
+
+## Almacenamiento
 
 Estándar: [`QSettings`](../estandares/qt/qsettings.qdoc) de Qt.
 
 - `QSettings` usa `IniFormat`: el mismo archivo legible en todos los sistemas.
 - El token de refresco que pide [transversal.md](transversal.md#sesión) va en keyring, que usa el
   almacén de credenciales del sistema.
-
-## Estilo
-
-Estándares: [*Qt Style Sheets*](../estandares/qt/stylesheet.qdoc), su
-[sintaxis](../estandares/qt/stylesheet-syntax.qdoc), la
-[personalización](../estandares/qt/stylesheet-customizing.qdoc) y la
-[referencia](../estandares/qt/stylesheet-reference.qdoc).
-
-- La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada
-  desde `theme.py`. Lo que la hoja no define lo dibuja el estilo de cada sistema; Fusion lo iguala.
-
-Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico y se copia sin
-editar.
 
 ## Idiomas
 
@@ -110,20 +104,26 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - Los `.qm` y `rc_resources.py` se generan y no van en git. Salen de los `.ts` y del `.qrc`; en git
   quedarían desfasados.
 
-## Accesibilidad
-
-Estándares: [*Accessibility*](../estandares/qt/accessible.qdoc) de Qt y la propiedad
-`accessibleName` de [`QWidget`](../estandares/qt/qwidget.qdoc).
-
-Contrato: [transversal.md](transversal.md#accesibilidad).
-
-## Red e hilos
+## Red
 
 Estándares: [`QNetworkAccessManager`](../estandares/qt/qnetworkaccessmanager.qdoc) y
 [*Threading Classes*](../estandares/qt/threads.qdoc) de Qt.
 
 - HTTP va por `QNetworkAccessManager`, y las respuestas se leen con modelos de Pydantic en `api/`.
   Es asíncrono sin hilos, y las respuestas llegan como señales al hilo de la interfaz.
+
+## Tema
+
+Estándares: [*Qt Style Sheets*](../estandares/qt/stylesheet.qdoc), su
+[sintaxis](../estandares/qt/stylesheet-syntax.qdoc), la
+[personalización](../estandares/qt/stylesheet-customizing.qdoc) y la
+[referencia](../estandares/qt/stylesheet-reference.qdoc).
+
+- La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada
+  desde `theme.py`. Lo que la hoja no define lo dibuja el estilo de cada sistema; Fusion lo iguala.
+
+Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico y se copia sin
+editar.
 
 ## Pruebas
 

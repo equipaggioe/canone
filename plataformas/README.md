@@ -5,16 +5,16 @@ piezas. **Se lee la de lo que el repositorio use**, junto con transversal.md; la
 
 | Página | Cubre |
 |---|---|
-| [transversal.md](transversal.md) | Errores, nombres en el cable, montos, versión mínima, sesión, tema, idiomas, accesibilidad, WebSocket, llamadas, push, pagos, archivos, mapas |
-| [python.md](python.md) | Versión, uv, estilo, tipos, paquetes, logging, fechas, archivos de texto, async, pruebas, seguridad, auditoría de dependencias |
-| [fastapi.md](fastapi.md) | Layout, configuración, SQLAlchemy async, migraciones, errores RFC 9457, trazas, fechas, montos, paginación, contraseñas, tokens, segundo factor, límite de tasa, permisos, WebSocket, push, correo, pagos, archivos, direcciones, OpenAPI, pruebas |
-| [postgres.md](postgres.md) | Clave primaria, tipos, montos, borrado, nombres, índices, geografía |
-| [sveltekit.md](sveltekit.md) | Proyecto, carga de datos, cliente generado, adaptador estático, CSP, estado, UnoCSS, idiomas, accesibilidad, mapas, pruebas |
-| [flutter.md](flutter.md) | Estilo, analizador, arquitectura, modelos, estado, tema, almacenamiento, idiomas, accesibilidad, mapas |
-| [android.md](android.md) | Gradle, estilo, arquitectura, red, Compose, tema, almacenamiento, idiomas, accesibilidad, mapas, pruebas |
-| [flet.md](flet.md) | Layout, tema, red, almacenamiento, idiomas, accesibilidad, mapas, publicación |
-| [qt.md](qt.md) | Layout, API de PySide6, `@override`, interfaz en código, `QSettings`, Fusion y hoja de estilo, idiomas, accesibilidad, red, pruebas, empaquetado |
-| [despliegue.md](despliegue.md) | Caddy, cabeceras, límite del cuerpo, servicios de systemd, configuración, datos, registros, respaldos, coturn |
+| [transversal.md](transversal.md) | Lo que tienen que cumplir juntas varias piezas |
+| [python.md](python.md) | Lo común a toda pieza en Python |
+| [fastapi.md](fastapi.md) | Un servidor en FastAPI |
+| [postgres.md](postgres.md) | La base de datos |
+| [sveltekit.md](sveltekit.md) | Una superficie web con SvelteKit y UnoCSS |
+| [flutter.md](flutter.md) | Una app en Flutter |
+| [android.md](android.md) | Una app de Android en Kotlin y Jetpack Compose |
+| [flet.md](flet.md) | Una aplicación en Flet |
+| [qt.md](qt.md) | Una aplicación de escritorio con Qt Widgets y PySide6 |
+| [despliegue.md](despliegue.md) | Cómo queda el servidor |
 
 ## Qué es una página
 
@@ -61,6 +61,25 @@ Cómo se escribe:
   los comentarios de `plantilla/`.
 - El layout se dibuja completo, como árbol, aunque repita partes del estándar. El árbol es la
   convención misma, y a pedazos no se lee.
+
+### Orden de las secciones
+
+Las secciones van en siete bloques, en este orden. Una página escribe solo los bloques que tiene.
+
+| Bloque | Qué va |
+|---|---|
+| Proyecto | La sección `Proyecto`, con la versión, el build, el árbol y la plantilla, y después las dependencias |
+| Código | El formato, el analizador, los tipos, los paquetes y los nombres |
+| Arquitectura | Cómo se organiza la pieza por dentro con su framework |
+| Temas | Una sección por asunto, en orden alfabético del título |
+| Pruebas | La sección `Pruebas` |
+| Entrega | Cómo se construye y se sirve la pieza |
+| Cómo se hace cumplir | La tabla |
+
+- En Código y Arquitectura, una sección va después de las que necesita para leerse.
+- Los temas van en orden alfabético: un tema que aparece en varias páginas queda en el mismo
+  orden en todas.
+- Un título nombra lo mismo en todas las páginas.
 
 ### Cómo se hace cumplir
 

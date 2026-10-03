@@ -20,6 +20,30 @@ Estándares: de Caddy, [*Automatic HTTPS*](../estandares/caddy/automatic-https.m
   límite actúa antes de que el cuerpo llegue a Python.
 - Caddy nunca sirve el directorio de los archivos de los usuarios.
 
+## Configuración
+
+Estándares: [`systemd.exec`](../estandares/systemd/systemd.exec.xml), en *Environment* y
+*Credentials*, y [*Secrets Management Cheat Sheet*](../estandares/owasp/Secrets_Management.md) de
+OWASP.
+
+- Los secretos viven solo en el `EnvironmentFile`.
+
+## coturn
+
+Estándares: [RFC 8656](../estandares/rfc/rfc8656.txt) y la
+[documentación de coturn](../estandares/coturn/README.turnserver).
+
+- coturn escucha en 3478 (UDP y TCP) y en 5349 (TLS), y niega relevar hacia direcciones privadas con
+  `denied-peer-ip`. TURN no sirve de puente a la red interna.
+
+## Datos
+
+Estándares: de PostgreSQL, [*Client Authentication*](../estandares/postgresql/client-auth.sgml), y
+[`systemd.exec`](../estandares/systemd/systemd.exec.xml).
+
+- Los archivos de los usuarios viven en el `StateDirectory=` del servicio, `/var/lib/<app>/files/`.
+  Están en la misma máquina y el respaldo los cubre junto con la base.
+
 ## Procesos
 
 Estándares: de FastAPI, [*Deployments Concepts*](../estandares/fastapi/deployment-concepts.md) y
@@ -33,22 +57,6 @@ Estándares: de FastAPI, [*Deployments Concepts*](../estandares/fastapi/deployme
 
 - Un timer de systemd corre cada día el barrido de archivos de [fastapi.md](fastapi.md).
 
-## Configuración
-
-Estándares: [`systemd.exec`](../estandares/systemd/systemd.exec.xml), en *Environment* y
-*Credentials*, y [*Secrets Management Cheat Sheet*](../estandares/owasp/Secrets_Management.md) de
-OWASP.
-
-- Los secretos viven solo en el `EnvironmentFile`.
-
-## Datos
-
-Estándares: de PostgreSQL, [*Client Authentication*](../estandares/postgresql/client-auth.sgml), y
-[`systemd.exec`](../estandares/systemd/systemd.exec.xml).
-
-- Los archivos de los usuarios viven en el `StateDirectory=` del servicio, `/var/lib/<app>/files/`.
-  Están en la misma máquina y el respaldo los cubre junto con la base.
-
 ## Registros
 
 Estándares: [`systemd.exec`](../estandares/systemd/systemd.exec.xml), en *Logging and Standard
@@ -61,14 +69,6 @@ Estándares: de PostgreSQL, [*Backup and Restore*](../estandares/postgresql/back
 [`pg_restore`](../estandares/postgresql/pg_restore.sgml);
 [`systemd.timer`](../estandares/systemd/systemd.timer.xml), y el
 [ciclo de vida de objetos](../estandares/aws-s3/object-lifecycle-mgmt.md) de Amazon S3.
-
-## coturn
-
-Estándares: [RFC 8656](../estandares/rfc/rfc8656.txt) y la
-[documentación de coturn](../estandares/coturn/README.turnserver).
-
-- coturn escucha en 3478 (UDP y TCP) y en 5349 (TLS), y niega relevar hacia direcciones privadas con
-  `denied-peer-ip`. TURN no sirve de puente a la red interna.
 
 ## Cómo se hace cumplir
 

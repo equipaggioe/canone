@@ -2,7 +2,7 @@
 
 Un servidor en FastAPI. Se suma a [python.md](python.md).
 
-## Estructura
+## Proyecto
 
 Estándares: [*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md)
 de FastAPI y el [tutorial](../estandares/alembic/tutorial.rst) de Alembic.
@@ -71,7 +71,7 @@ Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 y `services/`, y `tests/test_conventions.py`. Se copian y se completan `config.py`,
 `dependencies.py`, `enums.py`, `main.py`, `problems.py` y `tests/conftest.py`.
 
-## Dependencias
+## Inyección de dependencias
 
 Estándares: [*Dependencies*](../estandares/fastapi/dependencies.md) y
 [*Dependencies with yield*](../estandares/fastapi/dependencies-with-yield.md) de FastAPI.
@@ -125,76 +125,40 @@ Estándares: el [tutorial](../estandares/alembic/tutorial.rst), la
 - La `MetaData` lleva la convención de nombres que da la documentación de Alembic. Una migración
   borra o cambia una restricción por su nombre, y así el nombre no lo elige la base.
 
-## Errores
+## Ciclo de vida
 
-Estándares: [*Handling Errors*](../estandares/fastapi/handling-errors.md) de FastAPI,
-[RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandares/rfc/rfc6901.txt).
+Estándar: [*Lifespan Events*](../estandares/fastapi/events.md) de FastAPI.
 
-- `type` es una URI `https://<dominio>/problems/<nombre>`. Contradice RFC 9457, que pide servir en
-  ella la documentación del tipo: la URI queda fija desde el primer error, y la página puede llegar
-  después sin cambiarla.
-- Los errores propios se lanzan con `AppError`, que lleva `type`, `title` y `status`.
-- Toda respuesta de error es problem+json, también la de un `HTTPException`, la de un error de
-  validación y la de una excepción sin atrapar. El cliente lee un solo sobre.
-- Un error de validación es un 422 de tipo `https://<dominio>/problems/validation`, con la
-  extensión `errors`: una lista de `{detail, pointer}`, o de `{detail, parameter}` en query, path y
-  header.
+## Tareas en segundo plano
 
-## Trazas
+Estándares: [*Background Tasks*](../estandares/fastapi/background-tasks.md) y
+[*Advanced Dependencies*](../estandares/fastapi/advanced-dependencies.md) de FastAPI.
 
-Estándar: [Trace Context](../estandares/w3c/trace-context-1.md) de W3C.
+## Archivos
 
-- Cada petición y cada WebSocket empiezan una traza nueva, aunque lleguen con `traceparent`. El
-  cliente no elige el id con el que se buscan sus registros.
-- El trace-id va en cada línea de log y en la extensión `traceId` de cada problem+json. Con el id
-  que ve el usuario se llega a la línea exacta del registro.
+Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de OWASP y
+[*Request Files*](../estandares/fastapi/request-files.md) de FastAPI.
 
-## Fechas
+- El servidor recibe un archivo como `UploadFile`.
+- Cada ruta de subida declara su lista de tipos permitidos.
+- Toda imagen se vuelve a codificar con Pillow antes de guardarse. Endurece la recomendación de
+  OWASP: destruye contenido inyectado y borra los metadatos, como la ubicación de la foto.
+- Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`, con
+  `ON DELETE CASCADE`. La fila guarda el tipo, el tamaño y el nombre original.
+- El archivo en disco se llama con el ID de su fila.
+- El servidor entrega un archivo después de comprobar el permiso sobre su recurso.
+- Un barrido borra los archivos con más de una hora en disco y sin fila en ninguna tabla `_file`.
+  El borrado en cascada y una subida cuyo commit falló dejan archivos sin fila, y un solo barrido
+  cubre los dos caminos.
 
-Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
+## Autenticación
 
-- Un instante viaja en UTC, con `Z`.
-- Los campos de fecha y hora de los esquemas son `AwareDatetime`. Un `datetime` acepta una hora sin
-  zona, que RFC 3339 no admite.
+Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md),
+[*Credential Stuffing Prevention Cheat Sheet*](../estandares/owasp/Credential_Stuffing_Prevention.md)
+y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
 
-## Montos
-
-Estándares: [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493, y la
-[lista de monedas](../estandares/iso/iso-4217-list-one.xml) de ISO 4217.
-
-- Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal y la
-  moneda en su código ISO 4217. Un monto no se formatea sin su moneda.
-
-## Paginación
-
-- Las listas se paginan por cursor: la petición lleva `limit` y `cursor`, y la respuesta `items` y
-  `nextCursor`. Un offset salta o repite filas si la lista cambia entre páginas.
-- El cursor es una cadena opaca. El servidor puede cambiar cómo la arma sin romper a ningún
-  cliente.
-
-## Salud
-
-- `GET /api/health` consulta la base con `SELECT 1` y responde 200 con `{"status": "ok"}`, o 503
-  si la base no contesta. Un monitor que solo ve que el proceso responde da por vivo un servidor
-  con la base caída.
-
-## Reintentos
-
-Estándar: [RFC 9110](../estandares/rfc/rfc9110.txt).
-
-- Una creación que el cliente puede reintentar va por `PUT /<recurso>/{id}`, con un uuid v4 que
-  genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez
-  de crear otra.
-
-## Versión mínima de cliente
-
-Estándar: [RFC 9110](../estandares/rfc/rfc9110.txt).
-
-- Cada cliente instalable manda `User-Agent: <pieza>/<versión>`, como `mobile/1.4.0`.
-- La configuración guarda la versión mínima de cada pieza. Una versión menor recibe un 400 de tipo
-  `https://<dominio>/problems/client-outdated`, y el cliente pide actualizar la app.
-- La comprobación va desde la primera versión que se publica: a una app instalada sin ella nunca
-  se le puede obligar a actualizar.
+- El enlace para restablecer la contraseña lleva un token aleatorio de un solo uso que vence en 30
+  minutos, y la base guarda su SHA-256.
 
 ## Contraseñas
 
@@ -208,84 +172,6 @@ de FastAPI.
   8 con segundo factor: una sola regla, y el segundo factor se puede desactivar.
 - La lista de bloqueo que pide NIST es una lista de contraseñas comunes guardada en el servidor. La
   contraseña no sale a otro servicio para compararla.
-
-## Autenticación
-
-Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md),
-[*Credential Stuffing Prevention Cheat Sheet*](../estandares/owasp/Credential_Stuffing_Prevention.md)
-y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
-
-- El enlace para restablecer la contraseña lleva un token aleatorio de un solo uso que vence en 30
-  minutos, y la base guarda su SHA-256.
-
-## Tokens
-
-Estándares: [RFC 7519](../estandares/rfc/rfc7519.txt), [RFC 8725](../estandares/rfc/rfc8725.txt)
-y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP.
-
-- El token de acceso es un JWT firmado con HS256 que vence en 15 minutos. Solo el servidor lo firma
-  y lo verifica, así que basta una clave simétrica.
-- El token de refresco es un valor aleatorio de 256 bits, y la base guarda su SHA-256 en la fila de
-  sesión. Rota en cada uso, y usar uno ya rotado borra la sesión entera: un token robado se
-  descubre cuando el dueño vuelve a refrescar.
-- Cada dispositivo tiene una fila de sesión, con su creación y su último uso. La sesión vence tras
-  30 días sin uso, y cerrar sesión borra la fila.
-
-## Segundo factor
-
-Estándares: [RFC 6238](../estandares/rfc/rfc6238.txt), [RFC 4226](../estandares/rfc/rfc4226.txt)
-y [*Multifactor Authentication Cheat Sheet*](../estandares/owasp/Multifactor_Authentication.md) de
-OWASP.
-
-- El segundo factor es TOTP con SHA-1, 6 dígitos y pasos de 30 segundos. Son los valores que
-  aceptan todas las apps de autenticación.
-- El secreto TOTP se guarda cifrado con una clave de la configuración. Una copia de la base no basta
-  para generar códigos.
-- Al activarlo se entregan diez códigos de recuperación de un solo uso, guardados como hash. Perder
-  el teléfono no deja la cuenta sin acceso.
-
-## Límite de tasa
-
-Estándares: [RFC 6585](../estandares/rfc/rfc6585.txt) y
-[*Denial of Service Cheat Sheet*](../estandares/owasp/Denial_of_Service.md) de OWASP.
-
-- Los contadores viven en Redis, compartidos por todos los procesos.
-- Todo 429 lleva `Retry-After`. Endurece RFC 6585, que lo deja opcional: el cliente sabe cuándo
-  reintentar.
-
-## Permisos
-
-Estándares: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP y
-[RFC 9110](../estandares/rfc/rfc9110.txt).
-
-- Cada ruta declara con una dependencia de FastAPI el permiso que exige. El permiso queda a la
-  vista en la ruta.
-- Un recurso que no pertenece al usuario responde 404, como si no existiera; uno que el usuario ve
-  pero sobre el que no puede hacer esa acción responde 403. Es la opción que RFC 9110 da para
-  ocultar un recurso: una sola consulta, filtrada por el usuario, resuelve las dos cosas y no
-  confirma que el recurso existe.
-
-## Registro de eventos
-
-Estándar: [*Logging Cheat Sheet*](../estandares/owasp/Logging.md) de OWASP.
-
-## WebSocket
-
-Estándares: [*WebSockets*](../estandares/fastapi/websockets.md) de FastAPI y
-[*Redis Pub/sub*](../estandares/redis/pubsub.md).
-
-- Cerrar sesión cierra sus conexiones en todos los procesos.
-- Cada proceso se suscribe a Redis y reenvía a sus conexiones, con un canal por usuario. Pub/sub
-  entrega a lo sumo una vez; por eso el cliente pide el estado por REST al reconectar.
-
-## Push
-
-Estándares: [*Send a message using Firebase Admin SDK*](../estandares/firebase/admin-sdk.md),
-[*FCM Error Codes*](../estandares/firebase/error-codes.md),
-[RFC 8030](../estandares/rfc/rfc8030.txt) y [RFC 8291](../estandares/rfc/rfc8291.txt).
-
-- El servidor envía a FCM con el Admin SDK de Python desde `asyncio.to_thread`. El SDK es síncrono.
-- El servidor envía Web Push con pywebpush.
 
 ## Correo
 
@@ -305,31 +191,6 @@ Estándares: [RFC 5322](../estandares/rfc/rfc5322.txt), [RFC 7208](../estandares
 - Los rebotes y las quejas llegan por event publishing a un endpoint del servidor, que marca la
   dirección como inválida. La app sabe que el correo no llega y se lo dice al usuario.
 
-## Pagos
-
-Estándares: [*Idempotent requests*](../estandares/stripe/idempotent-requests.md) y los
-[webhooks](../estandares/stripe/webhooks.md) de Stripe.
-
-- El ID de cada evento procesado se guarda con una restricción única. Un evento repetido choca con
-  ella y no se procesa dos veces.
-
-## Archivos
-
-Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de OWASP y
-[*Request Files*](../estandares/fastapi/request-files.md) de FastAPI.
-
-- El servidor recibe un archivo como `UploadFile`.
-- Cada ruta de subida declara su lista de tipos permitidos.
-- Toda imagen se vuelve a codificar con Pillow antes de guardarse. Endurece la recomendación de
-  OWASP: destruye contenido inyectado y borra los metadatos, como la ubicación de la foto.
-- Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`, con
-  `ON DELETE CASCADE`. La fila guarda el tipo, el tamaño y el nombre original.
-- El archivo en disco se llama con el ID de su fila.
-- El servidor entrega un archivo después de comprobar el permiso sobre su recurso.
-- Un barrido borra los archivos con más de una hora en disco y sin fila en ninguna tabla `_file`.
-  El borrado en cascada y una subida cuyo commit falló dejan archivos sin fila, y un solo barrido
-  cubre los dos caminos.
-
 ## Direcciones
 
 Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
@@ -342,18 +203,45 @@ Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-
 - Primero la evidencia en la base, después el envío best-effort. Un fallo de entrega no tumba la
   operación.
 
-## Ciclo de vida
+## Errores
 
-Estándar: [*Lifespan Events*](../estandares/fastapi/events.md) de FastAPI.
+Estándares: [*Handling Errors*](../estandares/fastapi/handling-errors.md) de FastAPI,
+[RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandares/rfc/rfc6901.txt).
 
-## Tareas en segundo plano
+- `type` es una URI `https://<dominio>/problems/<nombre>`. Contradice RFC 9457, que pide servir en
+  ella la documentación del tipo: la URI queda fija desde el primer error, y la página puede llegar
+  después sin cambiarla.
+- Los errores propios se lanzan con `AppError`, que lleva `type`, `title` y `status`.
+- Toda respuesta de error es problem+json, también la de un `HTTPException`, la de un error de
+  validación y la de una excepción sin atrapar. El cliente lee un solo sobre.
+- Un error de validación es un 422 de tipo `https://<dominio>/problems/validation`, con la
+  extensión `errors`: una lista de `{detail, pointer}`, o de `{detail, parameter}` en query, path y
+  header.
 
-Estándares: [*Background Tasks*](../estandares/fastapi/background-tasks.md) y
-[*Advanced Dependencies*](../estandares/fastapi/advanced-dependencies.md) de FastAPI.
+## Fechas
 
-## Detrás de un proxy
+Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
 
-Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAPI.
+- Un instante viaja en UTC, con `Z`.
+- Los campos de fecha y hora de los esquemas son `AwareDatetime`. Un `datetime` acepta una hora sin
+  zona, que RFC 3339 no admite.
+
+## Límite de tasa
+
+Estándares: [RFC 6585](../estandares/rfc/rfc6585.txt) y
+[*Denial of Service Cheat Sheet*](../estandares/owasp/Denial_of_Service.md) de OWASP.
+
+- Los contadores viven en Redis, compartidos por todos los procesos.
+- Todo 429 lleva `Retry-After`. Endurece RFC 6585, que lo deja opcional: el cliente sabe cuándo
+  reintentar.
+
+## Montos
+
+Estándares: [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493, y la
+[lista de monedas](../estandares/iso/iso-4217-list-one.xml) de ISO 4217.
+
+- Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal y la
+  moneda en su código ISO 4217. Un monto no se formatea sin su moneda.
 
 ## OpenAPI y clientes
 
@@ -361,6 +249,114 @@ Estándar: [*Generating SDKs*](../estandares/fastapi/generate-clients.md) de Fas
 
 - Cada router lleva un solo tag, y el operation ID es `<tag>-<función>`. Los métodos de los
   clientes generados quedan legibles.
+
+## Paginación
+
+- Las listas se paginan por cursor: la petición lleva `limit` y `cursor`, y la respuesta `items` y
+  `nextCursor`. Un offset salta o repite filas si la lista cambia entre páginas.
+- El cursor es una cadena opaca. El servidor puede cambiar cómo la arma sin romper a ningún
+  cliente.
+
+## Pagos
+
+Estándares: [*Idempotent requests*](../estandares/stripe/idempotent-requests.md) y los
+[webhooks](../estandares/stripe/webhooks.md) de Stripe.
+
+- El ID de cada evento procesado se guarda con una restricción única. Un evento repetido choca con
+  ella y no se procesa dos veces.
+
+## Permisos
+
+Estándares: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP y
+[RFC 9110](../estandares/rfc/rfc9110.txt).
+
+- Cada ruta declara con una dependencia de FastAPI el permiso que exige. El permiso queda a la
+  vista en la ruta.
+- Un recurso que no pertenece al usuario responde 404, como si no existiera; uno que el usuario ve
+  pero sobre el que no puede hacer esa acción responde 403. Es la opción que RFC 9110 da para
+  ocultar un recurso: una sola consulta, filtrada por el usuario, resuelve las dos cosas y no
+  confirma que el recurso existe.
+
+## Push
+
+Estándares: [*Send a message using Firebase Admin SDK*](../estandares/firebase/admin-sdk.md),
+[*FCM Error Codes*](../estandares/firebase/error-codes.md),
+[RFC 8030](../estandares/rfc/rfc8030.txt) y [RFC 8291](../estandares/rfc/rfc8291.txt).
+
+- El servidor envía a FCM con el Admin SDK de Python desde `asyncio.to_thread`. El SDK es síncrono.
+- El servidor envía Web Push con pywebpush.
+
+## Registro de eventos
+
+Estándar: [*Logging Cheat Sheet*](../estandares/owasp/Logging.md) de OWASP.
+
+## Reintentos
+
+Estándar: [RFC 9110](../estandares/rfc/rfc9110.txt).
+
+- Una creación que el cliente puede reintentar va por `PUT /<recurso>/{id}`, con un uuid v4 que
+  genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez
+  de crear otra.
+
+## Salud
+
+- `GET /api/health` consulta la base con `SELECT 1` y responde 200 con `{"status": "ok"}`, o 503
+  si la base no contesta. Un monitor que solo ve que el proceso responde da por vivo un servidor
+  con la base caída.
+
+## Segundo factor
+
+Estándares: [RFC 6238](../estandares/rfc/rfc6238.txt), [RFC 4226](../estandares/rfc/rfc4226.txt)
+y [*Multifactor Authentication Cheat Sheet*](../estandares/owasp/Multifactor_Authentication.md) de
+OWASP.
+
+- El segundo factor es TOTP con SHA-1, 6 dígitos y pasos de 30 segundos. Son los valores que
+  aceptan todas las apps de autenticación.
+- El secreto TOTP se guarda cifrado con una clave de la configuración. Una copia de la base no basta
+  para generar códigos.
+- Al activarlo se entregan diez códigos de recuperación de un solo uso, guardados como hash. Perder
+  el teléfono no deja la cuenta sin acceso.
+
+## Tokens
+
+Estándares: [RFC 7519](../estandares/rfc/rfc7519.txt), [RFC 8725](../estandares/rfc/rfc8725.txt)
+y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP.
+
+- El token de acceso es un JWT firmado con HS256 que vence en 15 minutos. Solo el servidor lo firma
+  y lo verifica, así que basta una clave simétrica.
+- El token de refresco es un valor aleatorio de 256 bits, y la base guarda su SHA-256 en la fila de
+  sesión. Rota en cada uso, y usar uno ya rotado borra la sesión entera: un token robado se
+  descubre cuando el dueño vuelve a refrescar.
+- Cada dispositivo tiene una fila de sesión, con su creación y su último uso. La sesión vence tras
+  30 días sin uso, y cerrar sesión borra la fila.
+
+## Trazas
+
+Estándar: [Trace Context](../estandares/w3c/trace-context-1.md) de W3C.
+
+- Cada petición y cada WebSocket empiezan una traza nueva, aunque lleguen con `traceparent`. El
+  cliente no elige el id con el que se buscan sus registros.
+- El trace-id va en cada línea de log y en la extensión `traceId` de cada problem+json. Con el id
+  que ve el usuario se llega a la línea exacta del registro.
+
+## Versión mínima de cliente
+
+Estándar: [RFC 9110](../estandares/rfc/rfc9110.txt).
+
+- Cada cliente instalable manda `User-Agent: <pieza>/<versión>`, como `mobile/1.4.0`.
+- La configuración guarda la versión mínima de cada pieza. Una versión menor recibe un 400 de tipo
+  `https://<dominio>/problems/client-outdated`, y el cliente pide actualizar la app.
+- La comprobación va desde la primera versión que se publica: a una app instalada sin ella nunca
+  se le puede obligar a actualizar.
+
+## WebSocket
+
+Estándares: [*WebSockets*](../estandares/fastapi/websockets.md) de FastAPI y
+[*Redis Pub/sub*](../estandares/redis/pubsub.md).
+
+- Cerrar sesión cierra sus conexiones en todos los procesos.
+- Cada proceso se suscribe a Redis y reenvía a sus conexiones, con un canal por usuario. Pub/sub
+  entrega a lo sumo una vez; por eso el cliente pide el estado por REST al reconectar.
 
 ## Pruebas
 
@@ -379,6 +375,10 @@ de SQLAlchemy.
   `join_transaction_mode="create_savepoint"`. La app, sus tareas y la prueba comparten la
   transacción: un commit que falla en producción también falla en la prueba, y nada queda en la
   base.
+
+## Detrás de un proxy
+
+Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAPI.
 
 ## Cómo se hace cumplir
 

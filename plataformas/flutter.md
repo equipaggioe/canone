@@ -68,12 +68,17 @@ y [provider](../estandares/pub/provider/README.md).
 - Los ViewModels son `ChangeNotifier`. Vienen con el SDK, y provider ya es la inyección de
   dependencias.
 
-## Tema
+## Accesibilidad
 
-Estándar: [*Use themes to share colors and font styles*](../estandares/flutter/themes.md) de
-Flutter.
+Estándares: de Flutter, [*Accessibility*](../estandares/flutter/accessibility.md),
+[*UI design and styling*](../estandares/flutter/accessibility-ui-design.md),
+[*Assistive technologies*](../estandares/flutter/accessibility-assistive.md) y
+[*Accessibility testing*](../estandares/flutter/accessibility-testing.md).
 
-- El tema claro y el oscuro salen de `ui/core/themes/`, y `themeMode` es `ThemeMode.system`.
+Contrato: [transversal.md](transversal.md#accesibilidad).
+
+- Cada pantalla tiene una prueba de widget con las cuatro guías: `androidTapTargetGuideline`,
+  `iOSTapTargetGuideline`, `labeledTapTargetGuideline` y `textContrastGuideline`.
 
 ## Almacenamiento
 
@@ -90,23 +95,18 @@ Estándar: [*Internationalizing Flutter apps*](../estandares/flutter/internation
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
-## Accesibilidad
-
-Estándares: de Flutter, [*Accessibility*](../estandares/flutter/accessibility.md),
-[*UI design and styling*](../estandares/flutter/accessibility-ui-design.md),
-[*Assistive technologies*](../estandares/flutter/accessibility-assistive.md) y
-[*Accessibility testing*](../estandares/flutter/accessibility-testing.md).
-
-Contrato: [transversal.md](transversal.md#accesibilidad).
-
-- Cada pantalla tiene una prueba de widget con las cuatro guías: `androidTapTargetGuideline`,
-  `iOSTapTargetGuideline`, `labeledTapTargetGuideline` y `textContrastGuideline`.
-
 ## Mapas
 
 Estándar: [flutter_map](../estandares/pub/flutter_map/README.md).
 
 Contrato: [transversal.md](transversal.md#mapas).
+
+## Tema
+
+Estándar: [*Use themes to share colors and font styles*](../estandares/flutter/themes.md) de
+Flutter.
+
+- El tema claro y el oscuro salen de `ui/core/themes/`, y `themeMode` es `ThemeMode.system`.
 
 ## Cómo se hace cumplir
 

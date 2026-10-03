@@ -2,6 +2,17 @@
 
 La base de datos.
 
+## Nombres
+
+Estándar: [*SQL Syntax*](../estandares/postgresql/syntax.sgml) de PostgreSQL.
+
+- Los nombres van en snake_case y sin comillas, las tablas en singular y las claves foráneas como
+  `<tabla>_id`.
+- Una columna que guarda una magnitud lleva de sufijo el símbolo del SI de su unidad:
+  `distance_m`, `weight_g`. El nombre dice en qué unidad está el valor.
+- Las duraciones son segundos enteros, `_s`, y no `interval`. Todos los clientes leen un entero, y
+  Dart no trae con qué leer la duración ISO 8601 en que Pydantic serializa un `timedelta`.
+
 ## Clave primaria
 
 Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml),
@@ -20,6 +31,31 @@ Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml),
 - Una identity es `GENERATED ALWAYS`, que rechaza un id escrito a mano.
 - Una clave foránea tiene el tipo de la clave que apunta.
 
+## Definición de datos
+
+Estándar: [*Data Definition*](../estandares/postgresql/ddl.sgml) de PostgreSQL.
+
+- Toda clave foránea declara `ON DELETE`: `CASCADE` si el hijo pertenece al padre, `RESTRICT` si
+  no. Qué pasa al borrar queda escrito en el modelo.
+- Las filas se borran de verdad, sin columna de borrado lógico. Un borrado lógico obliga a filtrar
+  cada consulta y cada índice único.
+
+## Geografía
+
+Estándar: [*Data Management*](../estandares/postgis/using_postgis_dataman.xml) de PostGIS.
+
+- Las columnas espaciales son `geography(<tipo>, 4326)`. El área de cada producto no se conoce de
+  antemano, y `geography` mide en metros sin elegir proyección.
+- El ORM las declara con GeoAlchemy2.
+
+## Índices
+
+Estándares: [*Indexes*](../estandares/postgresql/indices.sgml) y
+[*Data Definition*](../estandares/postgresql/ddl.sgml) de PostgreSQL.
+
+- Toda clave foránea lleva índice. Endurece *Data Definition*, que lo da por buena idea y no lo crea:
+  sin él, borrar el padre o unir las tablas recorre la tabla hija entera.
+
 ## Tipos
 
 Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml) y
@@ -34,42 +70,6 @@ Estándares: [*Data Types*](../estandares/postgresql/datatype.sgml) y
   obliga a recrear el tipo; un `CHECK` se reemplaza en una migración.
 - Un monto es `numeric` sin precisión ni escala, junto al código de su moneda en `text`. Con escala
   declarada, `numeric` redondea sin avisar lo que la excede.
-
-## Definición de datos
-
-Estándar: [*Data Definition*](../estandares/postgresql/ddl.sgml) de PostgreSQL.
-
-- Toda clave foránea declara `ON DELETE`: `CASCADE` si el hijo pertenece al padre, `RESTRICT` si
-  no. Qué pasa al borrar queda escrito en el modelo.
-- Las filas se borran de verdad, sin columna de borrado lógico. Un borrado lógico obliga a filtrar
-  cada consulta y cada índice único.
-
-## Nombres
-
-Estándar: [*SQL Syntax*](../estandares/postgresql/syntax.sgml) de PostgreSQL.
-
-- Los nombres van en snake_case y sin comillas, las tablas en singular y las claves foráneas como
-  `<tabla>_id`.
-- Una columna que guarda una magnitud lleva de sufijo el símbolo del SI de su unidad:
-  `distance_m`, `weight_g`. El nombre dice en qué unidad está el valor.
-- Las duraciones son segundos enteros, `_s`, y no `interval`. Todos los clientes leen un entero, y
-  Dart no trae con qué leer la duración ISO 8601 en que Pydantic serializa un `timedelta`.
-
-## Índices
-
-Estándares: [*Indexes*](../estandares/postgresql/indices.sgml) y
-[*Data Definition*](../estandares/postgresql/ddl.sgml) de PostgreSQL.
-
-- Toda clave foránea lleva índice. Endurece *Data Definition*, que lo da por buena idea y no lo crea:
-  sin él, borrar el padre o unir las tablas recorre la tabla hija entera.
-
-## Geografía
-
-Estándar: [*Data Management*](../estandares/postgis/using_postgis_dataman.xml) de PostGIS.
-
-- Las columnas espaciales son `geography(<tipo>, 4326)`. El área de cada producto no se conoce de
-  antemano, y `geography` mide en metros sin elegir proyección.
-- El ORM las declara con GeoAlchemy2.
 
 ## Cómo se hace cumplir
 

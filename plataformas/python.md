@@ -41,6 +41,13 @@ Plantilla: el `pyproject.toml` de cada pieza, en [`plantilla/server/`](../planti
 [`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Cada uno lleva la
 configuración de esta página más la de su plataforma.
 
+## Dependencias
+
+- Ninguna dependencia bloqueada tiene una vulnerabilidad conocida.
+- Todo paquete que el código importa está declarado en `pyproject.toml`, aunque otro paquete ya
+  lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete
+  cambia.
+
 ## Estilo
 
 Estándares: [PEP 8](../estandares/python/pep-0008.rst) y
@@ -84,23 +91,6 @@ Estándares: [PEP 420](../estandares/python/pep-0420.rst) y
 - Los imports son absolutos. Endurece PEP 8, que también acepta los relativos explícitos: una
   sola forma, y la que da mejores errores.
 
-## Logging
-
-Estándar: la [guía de logging](../estandares/python/logging-howto.rst).
-
-- Toda salida pasa por logging. Contradice la guía, que reserva `print` para la salida normal de
-  un programa de consola: ni un servidor ni una GUI la tienen.
-- Los mensajes pasan sus valores como argumentos `%s`. Endurece la guía: el mensaje se arma solo
-  si el nivel está activo.
-
-## Fechas
-
-Estándar: [`datetime`](../estandares/python/datetime.rst).
-
-- Toda `datetime` es aware y en UTC; la hora local aparece solo al mostrarla. Endurece la
-  preferencia de la documentación: comparar una naive con una aware lanza `TypeError`, y una
-  naive se toma como hora local.
-
 ## Archivos de texto
 
 Estándar: la sección *Text Encoding* de [`io`](../estandares/python/io.rst).
@@ -117,23 +107,33 @@ Estándares: la [guía de desarrollo con asyncio](../estandares/python/asyncio-d
 - Las pruebas de CI corren en el modo de desarrollo de Python. De las cuatro formas de activar el
   modo debug, es la única que además muestra los `ResourceWarning`.
 
-## Pruebas
+## Fechas
 
-Estándar: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
+Estándar: [`datetime`](../estandares/python/datetime.rst).
 
-- Las pruebas se escriben con pytest.
+- Toda `datetime` es aware y en UTC; la hora local aparece solo al mostrarla. Endurece la
+  preferencia de la documentación: comparar una naive con una aware lanza `TypeError`, y una
+  naive se toma como hora local.
+
+## Logging
+
+Estándar: la [guía de logging](../estandares/python/logging-howto.rst).
+
+- Toda salida pasa por logging. Contradice la guía, que reserva `print` para la salida normal de
+  un programa de consola: ni un servidor ni una GUI la tienen.
+- Los mensajes pasan sus valores como argumentos `%s`. Endurece la guía: el mensaje se arma solo
+  si el nivel está activo.
 
 ## Seguridad
 
 Estándar: las [*Security Considerations*](../estandares/python/security_warnings.rst) de la
 biblioteca estándar.
 
-## Dependencias
+## Pruebas
 
-- Ninguna dependencia bloqueada tiene una vulnerabilidad conocida.
-- Todo paquete que el código importa está declarado en `pyproject.toml`, aunque otro paquete ya
-  lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete
-  cambia.
+Estándar: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
+
+- Las pruebas se escriben con pytest.
 
 ## Cómo se hace cumplir
 

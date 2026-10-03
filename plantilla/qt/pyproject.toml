@@ -38,8 +38,8 @@ target-version = "py313"
 
 [tool.ruff.lint]
 select = [
-  "ASYNC", "BLE", "D", "DTZ", "E", "E722", "F", "G", "I", "INP", "N", "PGH004", "RUF006",
-  "T20", "TID251", "TID252", "UP", "W", "W505",
+  "ASYNC", "BLE", "D", "DTZ", "E", "E722", "F", "G", "I", "INP", "N", "PGH004", "RUF006", "S306",
+  "S323", "S324", "S502", "S503", "S504", "S612", "T20", "TID251", "TID252", "UP", "W", "W505",
 ]
 
 [tool.ruff.lint.pycodestyle]
@@ -65,4 +65,5 @@ enabled-ignores = ["pyrefly"]
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
+filterwarnings = ["error::EncodingWarning"]
 testpaths = ["tests"]

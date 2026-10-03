@@ -11,7 +11,8 @@ Estándares: [*pyproject.toml specification*](../estandares/pypa/pyproject-toml.
 
 - Python 3.13, el de Debian 13: `requires-python = "==3.13.*"`. Toda herramienta que elige la
   versión más alta permitida, como `flet build`, toma 3.13.
-- uv maneja el entorno, las dependencias y la ejecución. Un solo programa crea el venv, instala,
+- uv maneja el entorno, las dependencias y la ejecución. Contradice *Tool recommendations*, que
+  nombra a pip como la herramienta estándar para instalar: un solo programa crea el venv, instala,
   bloquea y ejecuta.
 - El bloqueo es `uv.lock`, en git, y se instala con `uv sync --locked`. Contradice el formato
   estándar `pylock.toml`: `uv.lock` es el que uv lee, y el otro sería una copia exportada.
@@ -51,15 +52,17 @@ Estándares: [PEP 8](../estandares/python/pep-0008.rst) y
 
 ## Tipos
 
-Estándares: [PEP 484](../estandares/python/pep-0484.rst),
-[*Typing Best Practices*](../estandares/typing/best_practices.rst) y
+Estándares: los capítulos [*Type annotations*](../estandares/typing/spec/annotations.rst) y
+[*Type checker directives*](../estandares/typing/spec/directives.rst) de la especificación de
+tipos, [*Typing Best Practices*](../estandares/typing/best_practices.rst) y
 [*Modernizing Superseded Typing Features*](../estandares/typing/modernizing.rst).
 
 - Pyrefly en modo strict. Entiende sin plugin los alias que genera `to_camel` y los campos que
   pydantic-settings lee del entorno.
-- Toda función va anotada. Endurece PEP 484: el verificador no revisa una función sin anotar.
+- Toda función va anotada. Endurece la especificación: el verificador puede no revisar el cuerpo
+  de una función sin anotar.
 - Un error de tipos se ignora con `# pyrefly: ignore[<código>]`. Contradice el `# type: ignore` de
-  PEP 484: Pyrefly lo aplica a toda la línea sin mirar el código.
+  la especificación: Pyrefly lo aplica a toda la línea sin mirar el código.
 - Todo ignore y todo `# noqa` llevan el código del error. Uno sin código también tapa los errores
   futuros de esa línea.
 
@@ -90,6 +93,12 @@ Estándar: [`datetime`](../estandares/python/datetime.rst).
   preferencia de la documentación: comparar una naive con una aware lanza `TypeError`, y una
   naive se toma como hora local.
 
+## Archivos de texto
+
+Estándar: la sección *Text Encoding* de [`io`](../estandares/python/io.rst).
+
+- Los archivos de texto son UTF-8.
+
 ## Async
 
 Estándares: la [guía de desarrollo con asyncio](../estandares/python/asyncio-dev.rst) y la de
@@ -105,6 +114,11 @@ Estándares: la [guía de desarrollo con asyncio](../estandares/python/asyncio-d
 Estándar: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
 
 - Las pruebas se escriben con pytest.
+
+## Seguridad
+
+Estándar: las [*Security Considerations*](../estandares/python/security_warnings.rst) de la
+biblioteca estándar.
 
 ## Dependencias
 
@@ -136,6 +150,11 @@ Estándar: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.
 | Guía de asyncio: código que bloquea | ruff `ASYNC` |
 | Guía de tareas: guardar la referencia | ruff `RUF006` |
 | Pruebas en modo de desarrollo | `PYTHONDEVMODE=1` en el paso de pytest de CI |
+| Archivos de texto UTF-8 | `PYTHONWARNDEFAULTENCODING=1` en el paso de pytest de CI y `error::EncodingWarning` en `filterwarnings` |
 | Buenas prácticas de pytest | `--import-mode=importlib` en `addopts` |
+| *Security Considerations*: `hashlib` | ruff `S324` |
+| *Security Considerations*: `logging` | ruff `S612` |
+| *Security Considerations*: `ssl` | ruff `S323`, `S502`, `S503` y `S504` |
+| *Security Considerations*: `tempfile` | ruff `S306` |
 | Vulnerabilidades | pip-audit |
 | Imports declarados | deptry |

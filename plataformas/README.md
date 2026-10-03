@@ -6,7 +6,7 @@ piezas. **Se lee la de lo que el repositorio use**, junto con transversal.md; la
 | Página | Cubre |
 |---|---|
 | [transversal.md](transversal.md) | Errores, nombres en el cable, montos, versión mínima, sesión, tema, idiomas, accesibilidad, WebSocket, llamadas, push, pagos, archivos, mapas |
-| [python.md](python.md) | Versión, uv, estilo, tipos, paquetes, logging, fechas, async, pruebas, auditoría de dependencias |
+| [python.md](python.md) | Versión, uv, estilo, tipos, paquetes, logging, fechas, archivos de texto, async, pruebas, seguridad, auditoría de dependencias |
 | [fastapi.md](fastapi.md) | Layout, configuración, SQLAlchemy async, migraciones, errores RFC 9457, trazas, fechas, montos, paginación, contraseñas, tokens, segundo factor, límite de tasa, permisos, WebSocket, push, correo, pagos, archivos, direcciones, OpenAPI, pruebas |
 | [postgres.md](postgres.md) | Clave primaria, tipos, montos, borrado, nombres, índices, geografía |
 | [sveltekit.md](sveltekit.md) | Proyecto, carga de datos, cliente generado, adaptador estático, CSP, estado, UnoCSS, idiomas, accesibilidad, mapas, pruebas |

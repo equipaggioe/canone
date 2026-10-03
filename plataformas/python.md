@@ -132,10 +132,7 @@ biblioteca estándar.
 |---|---|
 | Python 3.13 de Debian 13 | `requires-python` y uv con `python-preference = "only-system"` |
 | El bloqueo | `uv sync --locked` en CI |
-| PEP 8 | `ruff format` y ruff `E`, `W`, `N`, `F` y `UP009` |
-| PEP 8: grupos de imports | ruff `I` |
-| PEP 8: docstrings y comentarios a 72 | ruff `W505` con `max-doc-length = 72` |
-| PEP 8: `except` sin tipo | ruff `E722` y `BLE` |
+| PEP 8 | `ruff format` y ruff `E`, `W`, `N`, `F`, `I`, `BLE` y `UP009`, con `max-doc-length = 72` |
 | PEP 257 | ruff `D` con `convention = "pep257"` |
 | *Modernizing Superseded Typing Features* | ruff `UP006`, `UP007`, `UP013`, `UP019`, `UP035`, `UP040`, `UP045` y `UP046` con `target-version = "py313"`, y `PYI050` y `PYI057` |
 | Toda función anotada | Pyrefly con `preset = "strict"` |
@@ -151,9 +148,6 @@ biblioteca estándar.
 | Pruebas en modo de desarrollo | `PYTHONDEVMODE=1` en el paso de pytest de CI |
 | *Text Encoding*: codificación explícita | `PYTHONWARNDEFAULTENCODING=1` en el paso de pytest de CI y `error::EncodingWarning` en `filterwarnings` |
 | Buenas prácticas de pytest | `--import-mode=importlib` en `addopts` |
-| *Security Considerations*: `hashlib` | ruff `S324` |
-| *Security Considerations*: `logging` | ruff `S612` |
-| *Security Considerations*: `ssl` | ruff `S323`, `S502`, `S503` y `S504` |
-| *Security Considerations*: `tempfile` | ruff `S306` |
+| *Security Considerations* | ruff `S306`, `S323`, `S324`, `S502`, `S503`, `S504` y `S612` |
 | Vulnerabilidades | pip-audit |
 | Imports declarados | deptry |

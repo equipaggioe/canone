@@ -1,6 +1,6 @@
 # ADR-0018 · Una página se revisa contra la copia de sus estándares y solo dice lo que elige, endurece o no cubren
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. Los puntos 2, 3, 4, 5 y 9 los reemplaza el [ADR-0030](0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md)
 - **Fecha:** 2026-09-27
 - **Alcance:** `plataformas/`, `estandares/` y los archivos de `plantilla/` que rige cada página
 

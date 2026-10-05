@@ -29,37 +29,55 @@ Un catálogo de convenciones de una tecnología. Una convención sirve para una 
 Una regla que no sirve para ninguna de las tres no va. Una convención vale aunque ninguna
 herramienta la haga cumplir.
 
-### Los estándares son las convenciones
+### Las fuentes son las convenciones
 
-- Cada sección nombra los estándares que sigue y enlaza su texto en [estandares/](../estandares/).
-  Esos estándares son las convenciones de la sección: lo que recomiendan se hace como si fuera
-  obligatorio, y no se escribe.
-- Es oficial el texto normativo de un estándar (MUST, SHOULD o RECOMMENDED) y la recomendación
-  escrita en la documentación de la tecnología, en su versión más reciente. Nada más: ni el código
-  de sus ejemplos, ni sus proyectos de muestra, ni lo que hace la comunidad. Una regla que sale de
-  ahí es propia.
-- El comportamiento por defecto de una herramienta no es una recomendación. Si la página no dice
-  nada, rige; cambiarlo es oficial solo si la documentación lo pide.
-- Contradecir una parte de un estándar no lo quita: el resto sigue rigiendo.
-- Una página está completa cuando sus estándares cubren todo lo que la tecnología obliga a decidir.
+- Se cita lo que se adopta en su mayoría. Todo lo demás, venga de donde venga, es una regla propia.
+- Citar una fuente, o una parte de ella, adopta todas sus convenciones: se cumplen como si fueran
+  obligatorias y no se escriben. La página anota solo las que contradice, deja sin efecto o
+  endurece; el resto sigue rigiendo.
+- Para cada asunto se busca una fuente en este orden, y se prefiere la de menor número:
+
+  | Orden | Fuente |
+  |---|---|
+  | 1 | El texto normativo de un estándar de la tecnología (MUST, SHOULD o RECOMMENDED) y la recomendación escrita en su documentación, en su versión más reciente |
+  | 2 | Un estándar de un campo, como OWASP, NIST o ISO |
+  | 3 | Una especificación de facto, como SemVer, Conventional Commits o The Twelve-Factor App |
+  | 4 | Una guía publicada por una organización de referencia, como Google AIP o las guías de API de Zalando o de Microsoft |
+
+- Elegir una fuente de mayor número en un asunto que otra de menor número ya cubre es contradecir
+  a esa otra, y se anota con su razón.
+- Se cita una fuente entera o solo la parte que se adopta: una sección, un capítulo, una AIP o un
+  nivel de ASVS.
+- Una parte se cita si se adopta en su mayoría. Si de ella solo se toman algunas reglas, no se
+  cita: esas reglas se escriben como propias, sin nombrar de dónde salen.
+- Dos partes citadas nunca regulan lo mismo. Si dos fuentes chocan en un asunto, se cita solo la
+  que mejor se adapta, o se dice qué secciones se aplican de cada una.
+- Cada sección nombra las fuentes que cita y enlaza su texto en [estandares/](../estandares/). Ahí
+  se guarda solo lo que se cita.
+- Nunca se citan el código de los ejemplos, los proyectos de muestra, lo que hace la comunidad, la
+  popularidad, los blogs, los cursos ni los foros. Una convención que sale de ahí entra como
+  propia.
+- Lo que una herramienta hace por defecto no viene de ninguna fuente, pero rige mientras la página
+  no diga otra cosa. Cambiarlo es una regla propia, salvo que una fuente citada pida el cambio.
+- Una página está completa cuando sus fuentes cubren todo lo que la tecnología obliga a decidir.
 
 ### Qué escribe la página
 
-Sobre sus estándares, solo tres cosas. Una sección sin puntos sigue su estándar entero.
+Sobre sus fuentes, solo tres cosas. Una sección sin puntos sigue enteras las partes que cita.
 
-- La opción que elige donde el estándar deja varias.
-- Lo que contradice o endurece del estándar. Endurecer es volver obligatorio lo que el estándar
+- La opción que elige donde una fuente deja varias.
+- Lo que contradice o endurece de una fuente. Endurecer es volver obligatorio lo que la fuente
   recomienda «cuando sea posible» o deja como preferencia.
-- Lo que ningún estándar cubre.
+- Sus reglas propias.
 
 Cómo se escribe:
 
 - Cada regla dice qué se usa y cómo queda. No es un procedimiento ni un tutorial.
 - Sin comentarios ni explicaciones, salvo dos, cada una en una frase corta: por qué la página
-  contradice o endurece el estándar, y cómo ayuda una elección que no es trivial. Una regla trivial,
+  contradice o endurece una fuente, y cómo ayuda una elección que no es trivial. Una regla trivial,
   como un color o el largo de línea, no lleva frase: su razón es una preferencia. Vale también para
   los comentarios de `plantilla/`.
-- El layout se dibuja completo, como árbol, aunque repita partes del estándar. El árbol es la
+- El layout se dibuja completo, como árbol, aunque repita partes de sus fuentes. El árbol es la
   convención misma, y a pedazos no se lee.
 
 ### Orden de las secciones
@@ -83,8 +101,8 @@ Las secciones van en siete bloques, en este orden. Una página escribe solo los 
 
 ### Cómo se hace cumplir
 
-- La tabla «Cómo se hace cumplir» nombra en su primera columna el estándar o su sección, o una
-  regla que la página ya escribió. Nunca redacta una regla nueva para llenar la fila.
+- La tabla «Cómo se hace cumplir» nombra en su primera columna la fuente o la parte citada, o
+  una regla que la página ya escribió. Nunca redacta una regla nueva para llenar la fila.
 - Una herramienta que marca más de lo que la regla dice impone una regla no escrita, y no va.
 
 ### Alcance
@@ -100,10 +118,11 @@ Las secciones van en siete bloques, en este orden. Una página escribe solo los 
 ### Fuentes
 
 Ni el código de los repositorios, ni lo que la página ya dice, ni los ADR son fuente. Una página se
-escribe de cero desde sus estándares, nunca corrigiendo la versión anterior.
+escribe de cero desde sus fuentes, nunca corrigiendo la versión anterior.
 
 Se agrega una página cuando la tecnología se estrena en algún repositorio.
 
 El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md),
-el [ADR-0028](../adr/0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md)
-y el [ADR-0029](../adr/0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md).
+el [ADR-0028](../adr/0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md),
+el [ADR-0029](../adr/0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md)
+y el [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md).

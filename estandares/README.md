@@ -1,10 +1,10 @@
 # Estándares
 
-Copia de los textos oficiales de los que salen las páginas de [plataformas/](../plataformas/). Una página se revisa contra el texto de aquí, no de memoria.
+Copia de los textos de las fuentes que citan las páginas de [plataformas/](../plataformas/). Una página se revisa contra el texto de aquí, no de memoria.
 
 - Cada archivo es el texto de su fuente, sin editar. Cuando la fuente es una página web, es su contenido convertido a Markdown.
 - Para actualizar un archivo se vuelve a descargar de su fuente; `git diff` muestra qué cambió.
-- Un estándar que ninguna página cita se borra.
+- Una fuente que ninguna página cita se borra.
 
 | Archivo | Fuente | Nota |
 |---|---|---|

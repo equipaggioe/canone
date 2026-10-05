@@ -23,11 +23,11 @@ PLANTILLA = CANONE / "plantilla"
 
 CANONICOS = [
     Path("server/src/app/database.py"),
-    Path("server/src/app/errors.py"),
     Path("server/src/app/tracing.py"),
     Path("server/src/app/models/base.py"),
     Path("server/src/app/models/ruff.toml"),
     Path("server/src/app/schemas/base.py"),
+    Path("server/src/app/schemas/page.py"),
     Path("server/tests/test_conventions.py"),
 ]
 

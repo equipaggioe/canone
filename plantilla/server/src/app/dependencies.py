@@ -8,10 +8,9 @@ from fastapi import Depends, Header
 from packaging.version import Version
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import problems
 from app.config import settings
 from app.database import SessionFactory
-from app.errors import AppError
+from app.errors import CLIENT_OUTDATED, AppError
 
 
 async def get_session() -> AsyncIterator[AsyncSession]:
@@ -29,4 +28,4 @@ async def check_client_version(user_agent: Annotated[str, Header()] = "") -> Non
     piece, _, version = user_agent.split(" ", 1)[0].partition("/")
     minimum = settings.min_client_versions.get(piece)
     if minimum is not None and Version(version) < Version(minimum):
-        raise AppError(problems.CLIENT_OUTDATED, "Client outdated", HTTPStatus.BAD_REQUEST)
+        raise AppError(CLIENT_OUTDATED, "Client outdated", HTTPStatus.BAD_REQUEST)

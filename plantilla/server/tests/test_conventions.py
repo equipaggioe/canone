@@ -15,7 +15,7 @@ from pydantic import BaseModel
 import app.models
 import app.routers
 import app.schemas
-from app import errors, problems, tracing
+from app import errors, tracing
 from app.config import settings
 from app.database import engine
 from app.main import app as main_app
@@ -202,7 +202,7 @@ async def test_validation_error_points_to_the_field() -> None:
     assert response.status_code == 422
     assert response.headers["content-type"] == errors.PROBLEM_JSON
     body = response.json()
-    assert body["type"] == problems.VALIDATION
+    assert body["type"] == errors.VALIDATION
     assert {error.get("pointer") or error.get("parameter") for error in body["errors"]} == {
         "/itemName",
         "limit",
@@ -217,4 +217,4 @@ async def test_outdated_client_is_rejected(monkeypatch: pytest.MonkeyPatch) -> N
         response = await client.get("/api/health", headers={"User-Agent": "mobile/1.3.9"})
     assert response.status_code == 400
     assert response.headers["content-type"] == errors.PROBLEM_JSON
-    assert response.json()["type"] == problems.CLIENT_OUTDATED
+    assert response.json()["type"] == errors.CLIENT_OUTDATED

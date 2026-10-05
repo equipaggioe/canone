@@ -33,9 +33,12 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0023](0023-un-monto-se-guarda-como-numeric-sin-escala-y-sus-decimales-los-decide-cada-repositorio.md) | Un monto se guarda como `numeric` sin escala, y los decimales que admite los decide cada repositorio | Con montos | Aceptada |
 | [0024](0024-la-clave-primaria-se-elige-por-lo-que-guarda-la-tabla.md) | La clave primaria se elige por lo que guarda la tabla: un código estándar, una identity o un uuid | Con base de datos | Aceptada |
 | [0025](0025-los-tipos-los-revisa-pyrefly-en-modo-strict.md) | Los tipos los revisa Pyrefly en modo strict | Con Python | Aceptada |
-| [0026](0026-el-type-de-un-problema-es-un-uri-https-fijo.md) | El `type` de un problema es un URI `https` fijo, y la validación tiene su propio tipo | Con `server/` y sus clientes | Aceptada |
+| [0026](0026-el-type-de-un-problema-es-un-uri-https-fijo.md) | El `type` de un problema es un URI `https` fijo, y la validación tiene su propio tipo | Con `server/` y sus clientes | Aceptada; el punto 2 lo reemplaza ADR-0033 |
 | [0027](0027-el-prefijo-api-va-sin-version-en-un-apirouter-de-main.md) | El prefijo `/api` va sin versión, en un `APIRouter` de `main.py` | Con FastAPI | Aceptada |
 | [0028](0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md) | Una página está completa cuando sus estándares cubren lo que hay que decidir | `plataformas/` | Aceptada; el punto 1 lo reemplaza ADR-0031 |
 | [0029](0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md) | Las secciones de una página van en bloques fijos, y los temas en orden alfabético | `plataformas/` | Aceptada |
 | [0030](0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md) | Una página cita lo que adopta en su mayoría, y lo demás es regla propia | `plataformas/` | Aceptada |
 | [0031](0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md) | Una revisión empieza por lo que la tecnología obliga a decidir | `plataformas/` | Aceptada |
+| [0032](0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md) | Una guía de una organización se cita si se escribió para que otros la adopten | `plataformas/` y `estandares/` | Aceptada |
+| [0033](0033-un-modulo-propio-para-lo-que-se-usa-en-varias-partes-de-la-app.md) | Un módulo propio para lo que se usa en varias partes de la app | Con FastAPI | Aceptada |
+| [0034](0034-la-paginacion-es-por-cursor-con-reglas-propias.md) | La paginación es por cursor, con reglas propias | Con `server/` y sus clientes | Aceptada |

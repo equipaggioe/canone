@@ -23,22 +23,22 @@ server/
     __init__.py
     main.py
     config.py
-    database.py       el engine y la fábrica de sesiones
+    database.py
     dependencies.py
-    errors.py         la excepción de la app y los handlers que responden problem+json
-    problems.py       la URI de cada tipo de problema
+    errors.py
     tracing.py
     enums.py
     models/
       __init__.py
-      base.py         la base declarativa, los tipos de PostgreSQL y los nombres
+      base.py
       ruff.toml
       <dominio>/
         __init__.py
         <modelo>.py
     schemas/
       __init__.py
-      base.py         el modelo base en camelCase, la página y el problema
+      base.py
+      page.py
       <recurso>.py
     routers/
       __init__.py
@@ -53,10 +53,20 @@ server/
     test_<recurso>.py
 ```
 
-- `database.py`, `errors.py`, `problems.py`, `tracing.py` y `enums.py` le dan un lugar fijo a lo
-  que el estándar no ubica. `config.py` es el módulo que propone la guía de configuración. Todos van directo en
-  `app/`, junto a `main.py` y `dependencies.py`: son módulos únicos de toda la app, como los que
-  ubica el estándar.
+- `config.py` tiene `Settings` y su instancia, como en *Settings in another module*.
+- `database.py` tiene el engine y el `sessionmaker`. SQLAlchemy los crea una sola vez, en el ámbito
+  global, y los usan la dependencia de sesión y las tareas en segundo plano.
+- `dependencies.py` tiene la sesión, el usuario actual y los permisos.
+- `errors.py` tiene la excepción de la app, las URI de los tipos de problema, el esquema `Problem`
+  y los handlers. Todo el sobre problem+json queda en un solo módulo.
+- `tracing.py` tiene la variable de contexto del trace-id, el middleware y el filtro de logs.
+- `enums.py` tiene los enums. Si un esquema importa un enum desde un modelo, la API queda atada a
+  las tablas.
+- `schemas/base.py` tiene la clase padre de todos los esquemas, como en *Change behaviour
+  globally* de la configuración de Pydantic.
+- `schemas/page.py` tiene `Page[T]`, la respuesta de toda lista paginada.
+- Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`. Su router,
+  su servicio y su esquema se encuentran sin buscar.
 - Cada modelo va en su propio archivo, dentro de la carpeta de su dominio. Cada tabla tiene un
   solo lugar posible.
 - `models/__init__.py` importa todos los modelos. Importar cualquiera los registra todos en
@@ -69,10 +79,10 @@ server/
 
 Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 [`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Se copian sin editar
-`alembic.ini`, `alembic/`, `database.py`, `errors.py`, `tracing.py`, `models/__init__.py`,
-`models/base.py`, `models/ruff.toml`, `schemas/base.py`, los `health.py` de `routers/`, `schemas/`
+`alembic.ini`, `alembic/`, `database.py`, `tracing.py`, `models/__init__.py`, `models/base.py`,
+`models/ruff.toml`, `schemas/base.py`, `schemas/page.py`, los `health.py` de `routers/`, `schemas/`
 y `services/`, y `tests/test_conventions.py`. Se copian y se completan `config.py`,
-`dependencies.py`, `enums.py`, `main.py`, `problems.py` y `tests/conftest.py`.
+`dependencies.py`, `enums.py`, `errors.py`, `main.py` y `tests/conftest.py`.
 
 ## Inyección de dependencias
 
@@ -257,10 +267,21 @@ Estándar: [*Generating SDKs*](../estandares/fastapi/generate-clients.md) de Fas
 
 ## Paginación
 
-- Las listas se paginan por cursor: la petición lleva `limit` y `cursor`, y la respuesta `items` y
-  `nextCursor`. Un offset salta o repite filas si la lista cambia entre páginas.
-- El cursor es una cadena opaca. El servidor puede cambiar cómo la arma sin romper a ningún
-  cliente.
+- Toda lista que puede crecer se pagina desde que se crea su ruta. Una lista sin límite crece hasta
+  que la respuesta tarda o se corta.
+- Las listas se paginan por cursor. Un offset salta o repite filas si la lista cambia entre
+  páginas.
+- La petición lleva `limit` y `cursor` en la query. Sin `cursor`, devuelve la primera página.
+- La respuesta es `{"items": [...], "nextCursor": "..."}`, y la última página lleva
+  `"nextCursor": null`. El campo siempre está, y el cliente tipado no pregunta si existe.
+- Toda lista paginada se ordena por una columna y el `id` como desempate, y el cursor guarda esos
+  dos valores del último elemento. Dos filas con el mismo valor no se saltan ni se repiten.
+- El cursor es la posición y los filtros en base64url. El cliente no lo arma ni lo lee: el
+  servidor puede cambiar su contenido sin tocar a ningún cliente.
+- `limit` vale 20 por defecto y 100 como máximo. Fuera de rango responde 422.
+- Un cursor ilegible o con filtros distintos de los de la petición responde 422 de tipo
+  `validation`, con `parameter: "cursor"`.
+- La respuesta no lleva el total. Contarlo recorre toda la tabla, y el scroll infinito no lo usa.
 
 ## Pagos
 

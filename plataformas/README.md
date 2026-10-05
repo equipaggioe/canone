@@ -44,6 +44,11 @@ herramienta la haga cumplir.
   | 3 | Una especificación de facto, como SemVer, Conventional Commits o The Twelve-Factor App |
   | 4 | Una guía publicada por una organización de referencia, como Google AIP o las guías de API de Zalando o de Microsoft |
 
+- Una guía de orden 4 se cita solo si se escribió para que otros la adopten:
+  - Es pública y su licencia permite usarla.
+  - Es normativa: reglas numeradas con MUST o SHOULD, no consejos sueltos.
+  - Está versionada, con historial de cambios. La copia de `estandares/` fija la versión adoptada.
+  - La parte citada no depende de la infraestructura de quien la publica.
 - Elegir una fuente de mayor número en un asunto que otra de menor número ya cubre es contradecir
   a esa otra, y se anota con su razón.
 - Se cita una fuente entera o solo la parte que se adopta: una sección, un capítulo, una AIP o un
@@ -130,5 +135,6 @@ Se agrega una página cuando la tecnología se estrena en algún repositorio.
 El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md),
 el [ADR-0028](../adr/0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md),
 el [ADR-0029](../adr/0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md),
-el [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md)
-y el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md).
+el [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md),
+el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md)
+y el [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md).

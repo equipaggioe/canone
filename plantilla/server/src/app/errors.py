@@ -1,4 +1,4 @@
-"""Every error response leaves as application/problem+json."""
+"""The app error, its problem types and their problem+json handlers."""
 
 import logging
 from collections.abc import Mapping
@@ -10,14 +10,36 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 
-from app import problems
-from app.schemas.base import FieldError, Problem
+from app.schemas.base import Schema
 from app.tracing import trace_id
 
 logger = logging.getLogger(__name__)
 
 PROBLEM_JSON = "application/problem+json"
 LOCATIONS = ("query", "path", "header", "cookie")
+
+PROBLEMS = "https://DOMINIO/problems/"
+VALIDATION = f"{PROBLEMS}validation"
+CLIENT_OUTDATED = f"{PROBLEMS}client-outdated"
+
+
+class FieldError(Schema):
+    """One invalid field or parameter."""
+
+    detail: str
+    pointer: str | None = None
+    parameter: str | None = None
+
+
+class Problem(Schema):
+    """An RFC 9457 problem details object."""
+
+    type: str
+    title: str
+    status: int
+    detail: str | None = None
+    errors: list[FieldError] | None = None
+    trace_id: str
 
 
 class AppError(Exception):
@@ -91,7 +113,7 @@ async def validation_error(_: Request, exc: Exception) -> JSONResponse:
     assert isinstance(exc, RequestValidationError)
     return respond(
         Problem(
-            type=problems.VALIDATION,
+            type=VALIDATION,
             title="Invalid request",
             status=HTTPStatus.UNPROCESSABLE_CONTENT,
             errors=[field_error(error) for error in exc.errors()],

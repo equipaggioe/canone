@@ -17,8 +17,8 @@ las apps se recorren casi siempre con scroll infinito.
 
 ## Descartado
 
-- **El capítulo de paginación de Zalando:** la guía es de una empresa que no se dedica a hacer
-  estándares, y le faltan el `limit` por defecto y máximo y el error ante un cursor inválido.
+- **El capítulo de paginación de Zalando:** le faltan el `limit` por defecto y máximo y el error
+  ante un cursor inválido, y su regla #161 pide enlaces donde la página usa cursores.
 - **AIP-158:** está pensada para gRPC.
 - **RFC 8288 con reglas propias:** cubre una sola de las decisiones, y un cliente generado desde
   OpenAPI no lee la cabecera `Link`.

@@ -9,31 +9,32 @@ de FastAPI y el [tutorial](../estandares/alembic/tutorial.rst) de Alembic.
 
 ```text
 server/
+  .gitignore
   pyproject.toml
   uv.lock
   alembic.ini
   alembic/
-    env.py            el de la plantilla async, con la URL de Settings y Base.metadata
+    env.py
     README
     script.py.mako
     versions/
   src/app/
     __init__.py
-    main.py           crea la app, monta los routers y registra los handlers de errores
-    config.py         Settings
+    main.py
+    config.py
     database.py       el engine y la fábrica de sesiones
-    dependencies.py   las dependencias compartidas, como la sesión y el usuario actual
+    dependencies.py
     errors.py         la excepción de la app y los handlers que responden problem+json
     problems.py       la URI de cada tipo de problema
-    tracing.py        el trace-id de cada petición, en el log y en los errores
-    enums.py          los enums de la app
+    tracing.py
+    enums.py
     models/
-      __init__.py     importa todos los modelos
+      __init__.py
       base.py         la base declarativa, los tipos de PostgreSQL y los nombres
-      ruff.toml       el largo de línea que deja cada columna en un renglón
+      ruff.toml
       <dominio>/
         __init__.py
-        <modelo>.py   una tabla
+        <modelo>.py
     schemas/
       __init__.py
       base.py         el modelo base en camelCase, la página y el problema
@@ -48,6 +49,7 @@ server/
     __init__.py
     conftest.py
     test_conventions.py
+    test_<recurso>.py
 ```
 
 - `database.py`, `errors.py`, `problems.py`, `tracing.py` y `enums.py` le dan un lugar fijo a lo

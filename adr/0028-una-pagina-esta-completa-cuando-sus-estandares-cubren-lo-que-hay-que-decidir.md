@@ -1,6 +1,6 @@
 # ADR-0028 · Una página está completa cuando sus estándares cubren lo que hay que decidir
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0031](0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md)
 - **Fecha:** 2026-10-03
 - **Alcance:** `plataformas/` y la configuración de herramientas de `plantilla/` que hace cumplir
   cada página

@@ -50,8 +50,12 @@ herramienta la haga cumplir.
   nivel de ASVS.
 - Una parte se cita si se adopta en su mayoría. Si de ella solo se toman algunas reglas, no se
   cita: esas reglas se escriben como propias, sin nombrar de dónde salen.
+- Una regla propia no nombra una fuente que la página no cita, tampoco para contradecirla: lleva
+  solo su razón.
 - Dos partes citadas nunca regulan lo mismo. Si dos fuentes chocan en un asunto, se cita solo la
   que mejor se adapta, o se dice qué secciones se aplican de cada una.
+- Una fuente que rige varias secciones de la página se cita en cada una solo con la parte que la
+  rige, y ninguna parte se cita en dos secciones.
 - Cada sección nombra las fuentes que cita y enlaza su texto en [estandares/](../estandares/). Ahí
   se guarda solo lo que se cita.
 - Nunca se citan el código de los ejemplos, los proyectos de muestra, lo que hace la comunidad, la
@@ -59,7 +63,8 @@ herramienta la haga cumplir.
   propia.
 - Lo que una herramienta hace por defecto no viene de ninguna fuente, pero rige mientras la página
   no diga otra cosa. Cambiarlo es una regla propia, salvo que una fuente citada pida el cambio.
-- Una página está completa cuando sus fuentes cubren todo lo que la tecnología obliga a decidir.
+- Una revisión empieza por la lista de lo que la tecnología obliga a decidir. Cada punto se
+  responde con una fuente citada o, si ninguna lo cubre, con una regla propia.
 
 ### Qué escribe la página
 
@@ -124,5 +129,6 @@ Se agrega una página cuando la tecnología se estrena en algún repositorio.
 
 El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md),
 el [ADR-0028](../adr/0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md),
-el [ADR-0029](../adr/0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md)
-y el [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md).
+el [ADR-0029](../adr/0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md),
+el [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md)
+y el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md).

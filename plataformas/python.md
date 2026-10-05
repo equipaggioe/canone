@@ -4,21 +4,18 @@ Lo común a toda pieza en Python. Lo propio de cada una va en su página y se su
 
 ## Proyecto
 
-Estándares: [*pyproject.toml specification*](../estandares/pypa/pyproject-toml.rst),
-[*Dependency Groups*](../estandares/pypa/dependency-groups.rst),
-[*Tool recommendations*](../estandares/pypa/tool-recommendations.rst) y
-[*pylock.toml specification*](../estandares/pypa/pylock-toml.rst) de PyPA.
+Estándares: [*pyproject.toml specification*](../estandares/pypa/pyproject-toml.rst) y
+[*Dependency Groups*](../estandares/pypa/dependency-groups.rst) de PyPA.
 
 - Python 3.13, el de Debian 13: `requires-python = "==3.13.*"`. Toda herramienta que elige la
   versión más alta permitida, como `flet build`, toma 3.13.
-- uv maneja el entorno, las dependencias y la ejecución. Contradice *Tool recommendations*, que
-  nombra a pip como la herramienta estándar para instalar: un solo programa crea el venv, instala,
+- uv maneja el entorno, las dependencias y la ejecución: un solo programa crea el venv, instala,
   bloquea y ejecuta.
-- El bloqueo es `uv.lock`, en git, y se instala con `uv sync --locked`. Contradice el formato
-  estándar `pylock.toml`: `uv.lock` es el que uv lee, y el otro sería una copia exportada.
+- El bloqueo es `uv.lock`, en git, y se instala con `uv sync --locked`.
 - El backend de construcción es `uv_build`.
 
-Estándar del layout: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
+Estándar del layout: la sección *Choosing a test layout* de las
+[buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
 
 ```text
 <pieza>/
@@ -44,23 +41,20 @@ configuración de esta página más la de su plataforma.
 ## Dependencias
 
 - Ninguna dependencia bloqueada tiene una vulnerabilidad conocida.
+- Una vulnerabilidad se ignora solo por su identificador, con `--ignore-vuln`. Sacar el paquete
+  del análisis también tapa sus vulnerabilidades futuras.
 - Todo paquete que el código importa está declarado en `pyproject.toml`, aunque otro paquete ya
   lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete
   cambia.
 
 ## Estilo
 
-Estándares: [PEP 8](../estandares/python/pep-0008.rst) y
+Estándares: [PEP 8](../estandares/python/pep-0008.rst), salvo la sección *Imports*, y
 [PEP 257](../estandares/python/pep-0257.rst).
 
 - Líneas de 99 caracteres.
 - Comillas dobles.
 - El código se formatea con `ruff format`.
-- En cada grupo de imports, los `import` van antes que los `from`, y unos y otros en orden
-  alfabético del módulo.
-- Los nombres de un `from` van en orden alfabético: primero las constantes, después las clases
-  y al final lo demás.
-- Los nombres de un mismo módulo se importan en un solo `from`.
 - Los docstrings son prosa y nombran un argumento solo cuando la firma no basta. Contradice
   PEP 257, que prefiere una línea por argumento: la firma ya da el nombre, el tipo y el valor por
   defecto.
@@ -83,13 +77,17 @@ tipos, [*Typing Best Practices*](../estandares/typing/best_practices.rst) y
 
 ## Paquetes
 
-Estándares: [PEP 420](../estandares/python/pep-0420.rst) y
-[PEP 8](../estandares/python/pep-0008.rst).
+Estándar: la sección *Imports* de [PEP 8](../estandares/python/pep-0008.rst).
 
-- Todo directorio de código lleva `__init__.py`. Los paquetes de espacio de nombres sirven para
-  repartir un paquete entre distribuciones; en una app, una carpeta sin él es un olvido.
+- Todo directorio de código lleva `__init__.py`: sin él, la carpeta se vuelve en silencio un
+  paquete de espacio de nombres.
 - Los imports son absolutos. Endurece PEP 8, que también acepta los relativos explícitos: una
   sola forma, y la que da mejores errores.
+- En cada grupo de imports, los `import` van antes que los `from`, y unos y otros en orden
+  alfabético del módulo.
+- Los nombres de un `from` van en orden alfabético: primero las constantes, después las clases
+  y al final lo demás.
+- Los nombres de un mismo módulo se importan en un solo `from`.
 
 ## Archivos de texto
 
@@ -131,9 +129,12 @@ biblioteca estándar.
 
 ## Pruebas
 
-Estándar: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
+Estándares: las secciones *Conventions for Python test discovery*, *Checking with
+flake8-pytest-style* y *Using pytest's strict mode* de las
+[buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
 
-- Las pruebas se escriben con pytest.
+- Las pruebas se escriben con pytest: un `assert` simple muestra los valores que fallaron, y los
+  fixtures reemplazan a `setUp`.
 
 ## Cómo se hace cumplir
 
@@ -157,7 +158,9 @@ Estándar: las [buenas prácticas de pytest](../estandares/pytest/goodpractices.
 | Guía de tareas: guardar la referencia | ruff `RUF006` |
 | Pruebas en modo de desarrollo | `PYTHONDEVMODE=1` en el paso de pytest de CI |
 | *Text Encoding*: codificación explícita | `PYTHONWARNDEFAULTENCODING=1` en el paso de pytest de CI y `error::EncodingWarning` en `filterwarnings` |
-| Buenas prácticas de pytest | `--import-mode=importlib` en `addopts` |
+| *Choosing a test layout* | `--import-mode=importlib` en `addopts` |
+| *Checking with flake8-pytest-style* | ruff `PT` |
+| *Using pytest's strict mode* | `strict = true` |
 | *Security Considerations* | ruff `S306`, `S323`, `S324`, `S502`, `S503`, `S504` y `S612` |
 | Vulnerabilidades | pip-audit |
 | Imports declarados | deptry |

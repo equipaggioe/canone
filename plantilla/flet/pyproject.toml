@@ -29,7 +29,7 @@ target-version = "py313"
 
 [tool.ruff.lint]
 select = [
-  "ASYNC", "BLE", "D", "DTZ", "E", "F", "G", "I", "INP", "N", "PGH004", "PYI050", "PYI057",
+  "ASYNC", "BLE", "D", "DTZ", "E", "F", "G", "I", "INP", "N", "PGH004", "PT", "PYI050", "PYI057",
   "RUF006", "S306", "S323", "S324", "S502", "S503", "S504", "S612", "T20", "TID252", "UP006",
   "UP007", "UP009", "UP013", "UP019", "UP035", "UP040", "UP045", "UP046", "W",
 ]
@@ -61,6 +61,7 @@ known_first_party = ["api", "theme", "views"]
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
+strict = true
 filterwarnings = ["error::EncodingWarning"]
 pythonpath = ["src"]
 testpaths = ["tests"]

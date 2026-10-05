@@ -10,7 +10,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 |---|---|---|
 | [python/pep-0008.rst](python/pep-0008.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0008.rst> |  |
 | [python/pep-0257.rst](python/pep-0257.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0257.rst> |  |
-| [python/pep-0420.rst](python/pep-0420.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0420.rst> |  |
 | [python/pep-0698.rst](python/pep-0698.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0698.rst> |  |
 | [python/logging-howto.rst](python/logging-howto.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/howto/logging.rst> |  |
 | [python/asyncio-dev.rst](python/asyncio-dev.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/asyncio-dev.rst> |  |
@@ -21,8 +20,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pyproject-toml.rst> |  |
 | [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/dependency-groups.rst> |  |
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |
-| [pypa/tool-recommendations.rst](pypa/tool-recommendations.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/guides/tool-recommendations.rst> |  |
-| [pypa/pylock-toml.rst](pypa/pylock-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pylock-toml.rst> |  |
 | [uv/sync.md](uv/sync.md) | <https://raw.githubusercontent.com/astral-sh/uv/main/docs/concepts/projects/sync.md> |  |
 | [typing/spec/annotations.rst](typing/spec/annotations.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/spec/annotations.rst> |  |
 | [typing/spec/directives.rst](typing/spec/directives.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/spec/directives.rst> |  |

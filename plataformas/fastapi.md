@@ -64,7 +64,8 @@ server/
   las tablas.
 - `schemas/base.py` tiene la clase padre de todos los esquemas, como en *Change behaviour
   globally* de la configuración de Pydantic.
-- `schemas/page.py` tiene `Page[T]`, la respuesta de toda lista paginada.
+- `schemas/page.py` tiene los parámetros y la respuesta de los dos modos de paginación, y el
+  cursor.
 - Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`. Su router,
   su servicio y su esquema se encuentran sin buscar.
 - Cada modelo va en su propio archivo, dentro de la carpeta de su dominio. Cada tabla tiene un
@@ -269,19 +270,31 @@ Estándar: [*Generating SDKs*](../estandares/fastapi/generate-clients.md) de Fas
 
 - Toda lista que puede crecer se pagina desde que se crea su ruta. Una lista sin límite crece hasta
   que la respuesta tarda o se corta.
-- Las listas se paginan por cursor. Un offset salta o repite filas si la lista cambia entre
-  páginas.
-- La petición lleva `limit` y `cursor` en la query. Sin `cursor`, devuelve la primera página.
-- La respuesta es `{"items": [...], "nextCursor": "..."}`, y la última página lleva
-  `"nextCursor": null`. El campo siempre está, y el cliente tipado no pregunta si existe.
-- Toda lista paginada se ordena por una columna y el `id` como desempate, y el cursor guarda esos
-  dos valores del último elemento. Dos filas con el mismo valor no se saltan ni se repiten.
-- El cursor es la posición y los filtros en base64url. El cliente no lo arma ni lo lee: el
-  servidor puede cambiar su contenido sin tocar a ningún cliente.
-- `limit` vale 20 por defecto y 100 como máximo. Fuera de rango responde 422.
+- Una lista se pagina por cursor, salvo que muestre números de página. Un offset salta o repite
+  filas si la lista cambia entre páginas.
+- Una ruta tiene un solo modo.
+- `limit` vale 50 por defecto y 100 como máximo en los dos modos. Fuera de rango responde 422.
+- Toda lista paginada se ordena por una columna y el `id` como desempate. Dos filas con el mismo
+  valor no se saltan ni se repiten.
+
+Por cursor:
+
+- La petición es `CursorParams`: `limit` y `cursor` en la query. Sin `cursor`, devuelve la primera
+  página.
+- La respuesta es `CursorPage[T]`: `{"items": [...], "nextCursor": "..."}`, y la última página
+  lleva `"nextCursor": null`. El campo siempre está, y el cliente tipado no pregunta si existe.
+- El cursor guarda en base64url la columna y el `id` del último elemento, y los filtros. El
+  cliente no lo arma ni lo lee: el servidor puede cambiar su contenido sin tocar a ningún cliente.
 - Un cursor ilegible o con filtros distintos de los de la petición responde 422 de tipo
   `validation`, con `parameter: "cursor"`.
-- La respuesta no lleva el total. Contarlo recorre toda la tabla, y el scroll infinito no lo usa.
+- La respuesta no lleva el total. Contarlo recorre toda la tabla en cada petición.
+
+Numerada:
+
+- La petición es `NumberedParams`: `limit` y `page`, que empieza en 1. `?page=3` es la dirección
+  que se comparte.
+- La respuesta es `NumberedPage[T]`: `{"items": [...], "total": 123}`.
+- Un `page` después de la última página devuelve `items` vacío con su `total`.
 
 ## Pagos
 
@@ -424,4 +437,5 @@ Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAP
 | Toda respuesta de error en problem+json, con `traceId` | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field` |
 | Un solo tag por router y el operation ID `<tag>-<función>` | `test_operation_ids` |
 | La versión mínima de cliente | `test_outdated_client_is_rejected` |
+| Un cursor ilegible o con otros filtros responde 422 | `test_invalid_cursor_points_to_the_parameter` |
 | Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

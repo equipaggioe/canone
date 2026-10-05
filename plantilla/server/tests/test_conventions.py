@@ -2,7 +2,7 @@
 
 import importlib
 import pkgutil
-from datetime import datetime
+from datetime import UTC, datetime
 from types import ModuleType
 from typing import Annotated, Any, get_args
 
@@ -21,6 +21,7 @@ from app.database import engine
 from app.main import app as main_app
 from app.models.base import Base
 from app.schemas.base import InputSchema, Schema
+from app.schemas.page import decode_cursor, encode_cursor
 
 
 def import_all(package: ModuleType) -> list[ModuleType]:
@@ -218,3 +219,27 @@ async def test_outdated_client_is_rejected(monkeypatch: pytest.MonkeyPatch) -> N
     assert response.status_code == 400
     assert response.headers["content-type"] == errors.PROBLEM_JSON
     assert response.json()["type"] == errors.CLIENT_OUTDATED
+
+
+async def test_invalid_cursor_points_to_the_parameter() -> None:
+    """A bad cursor, or one with other filters, is a 422."""
+    probe = FastAPI()
+    errors.install(probe)
+    tracing.install(probe)
+    position = (datetime(2026, 1, 1, tzinfo=UTC), 7)
+    cursor = encode_cursor(position, {"status": "open"})
+    assert decode_cursor(cursor, {"status": "open"}, tuple[datetime, int]) == position
+
+    @probe.get("/items")
+    async def list_items(cursor: str, status: str) -> None:
+        """Read the cursor with the filters of the request."""
+        decode_cursor(cursor, {"status": status}, tuple[datetime, int])
+
+    transport = ASGITransport(app=probe)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        for params in ({"cursor": cursor, "status": "closed"}, {"cursor": "x!", "status": "open"}):
+            response = await client.get("/items", params=params)
+            assert response.status_code == 422
+            assert response.json()["errors"] == [
+                {"detail": "Invalid cursor", "parameter": "cursor"}
+            ]

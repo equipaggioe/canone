@@ -1,6 +1,6 @@
 # ADR-0034 · La paginación es por cursor, con reglas propias
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0035](0035-una-lista-con-numeros-de-pagina-se-pagina-por-page-y-devuelve-el-total.md)
 - **Fecha:** 2026-10-05
 - **Alcance:** [`plataformas/fastapi.md`](../plataformas/fastapi.md) y sus clientes
 

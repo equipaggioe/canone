@@ -32,8 +32,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [fastapi/handling-errors.md](fastapi/handling-errors.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/handling-errors.md> |  |
 | [fastapi/oauth2-jwt.md](fastapi/oauth2-jwt.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/security/oauth2-jwt.md> |  |
 | [fastapi/background-tasks.md](fastapi/background-tasks.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/background-tasks.md> |  |
-| [fastapi/sql-databases.md](fastapi/sql-databases.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/sql-databases.md> |  |
-| [fastapi/testing.md](fastapi/testing.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/testing.md> |  |
 | [fastapi/events.md](fastapi/events.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/events.md> |  |
 | [fastapi/behind-a-proxy.md](fastapi/behind-a-proxy.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/behind-a-proxy.md> |  |
 | [fastapi/settings.md](fastapi/settings.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/settings.md> |  |
@@ -100,9 +98,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/Authentication.md](owasp/Authentication.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authentication_Cheat_Sheet.md> |  |
 | [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authorization_Cheat_Sheet.md> |  |
 | [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Content_Security_Policy_Cheat_Sheet.md> |  |
-| [owasp/Credential_Stuffing_Prevention.md](owasp/Credential_Stuffing_Prevention.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Credential_Stuffing_Prevention_Cheat_Sheet.md> |  |
 | [owasp/Cross-Site_Request_Forgery_Prevention.md](owasp/Cross-Site_Request_Forgery_Prevention.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.md> |  |
-| [owasp/Denial_of_Service.md](owasp/Denial_of_Service.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Denial_of_Service_Cheat_Sheet.md> |  |
 | [owasp/Forgot_Password.md](owasp/Forgot_Password.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Forgot_Password_Cheat_Sheet.md> |  |
 | [owasp/HTML5_Security.md](owasp/HTML5_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/HTML5_Security_Cheat_Sheet.md> |  |
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/HTTP_Headers_Cheat_Sheet.md> |  |

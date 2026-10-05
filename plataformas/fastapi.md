@@ -5,7 +5,8 @@ Un servidor en FastAPI. Se suma a [python.md](python.md).
 ## Proyecto
 
 Estándares: [*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md)
-de FastAPI y el [tutorial](../estandares/alembic/tutorial.rst) de Alembic.
+de FastAPI y la sección *Creating an Environment* del [tutorial](../estandares/alembic/tutorial.rst)
+de Alembic.
 
 ```text
 server/
@@ -80,7 +81,8 @@ Estándares: [*Dependencies*](../estandares/fastapi/dependencies.md) y
 
 ## Configuración
 
-Estándares: [*Settings and Environment Variables*](../estandares/fastapi/settings.md) de FastAPI y
+Estándares: las secciones *Pydantic `Settings`* y *Settings in another module* de
+[*Settings and Environment Variables*](../estandares/fastapi/settings.md) de FastAPI, y
 [pydantic-settings](../estandares/pydantic-settings/index.md).
 
 - La configuración se lee solo de variables de entorno: `Settings` no declara `env_file`, y todo
@@ -100,8 +102,7 @@ Estándar: la [configuración de modelos](../estandares/pydantic/config.md) de P
 
 ## Base de datos
 
-Estándares: [*SQL (Relational) Databases*](../estandares/fastapi/sql-databases.md) de FastAPI, y
-[*Session Basics*](../estandares/sqlalchemy/session_basics.rst), la
+Estándares: [*Session Basics*](../estandares/sqlalchemy/session_basics.rst), la
 [extensión asyncio](../estandares/sqlalchemy/asyncio.rst) y el
 [pool de conexiones](../estandares/sqlalchemy/pooling.rst) de SQLAlchemy.
 
@@ -119,7 +120,7 @@ Estándares: [*SQL (Relational) Databases*](../estandares/fastapi/sql-databases.
 
 ## Migraciones
 
-Estándares: el [tutorial](../estandares/alembic/tutorial.rst), la
+Estándares: el [tutorial](../estandares/alembic/tutorial.rst), salvo *Creating an Environment*, la
 [autogeneración](../estandares/alembic/autogenerate.rst) y la
 [plantilla async](../estandares/alembic/async/env.py) de Alembic, y
 [*The Importance of Naming Constraints*](../estandares/alembic/naming.rst).
@@ -133,7 +134,8 @@ Estándar: [*Lifespan Events*](../estandares/fastapi/events.md) de FastAPI.
 
 ## Tareas en segundo plano
 
-Estándares: [*Background Tasks*](../estandares/fastapi/background-tasks.md) y
+Estándares: [*Background Tasks*](../estandares/fastapi/background-tasks.md) y la sección
+*Background Tasks and Dependencies with `yield`, Technical Details* de
 [*Advanced Dependencies*](../estandares/fastapi/advanced-dependencies.md) de FastAPI.
 
 ## Archivos
@@ -155,21 +157,23 @@ Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de 
 
 ## Autenticación
 
-Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md),
-[*Credential Stuffing Prevention Cheat Sheet*](../estandares/owasp/Credential_Stuffing_Prevention.md)
-y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
+Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md) y
+[*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
 
 - El enlace para restablecer la contraseña lleva un token aleatorio de un solo uso que vence en 30
   minutos, y la base guarda su SHA-256.
 
 ## Contraseñas
 
-Estándares: [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt),
+Estándares: la sección 3.1.1 *Passwords* de [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt),
 [*Password Storage Cheat Sheet*](../estandares/owasp/Password_Storage.md) de OWASP,
-[RFC 9106](../estandares/rfc/rfc9106.txt) y
+[RFC 9106](../estandares/rfc/rfc9106.txt) y las secciones *Password hashing*, *Install `pwdlib`*
+y *Hash and verify the passwords* de
 [*OAuth2 with Password (and hashing), Bearer with JWT tokens*](../estandares/fastapi/oauth2-jwt.md)
 de FastAPI.
 
+- Las contraseñas se guardan con la segunda opción de RFC 9106: Argon2id con t=3, p=4, 64 MiB,
+  sal de 128 bits y tag de 256 bits. La primera pide 2 GiB de memoria por cada inicio de sesión.
 - Toda contraseña tiene al menos 15 caracteres, con o sin segundo factor. Endurece NIST, que admite
   8 con segundo factor: una sola regla, y el segundo factor se puede desactivar.
 - La lista de bloqueo que pide NIST es una lista de contraseñas comunes guardada en el servidor. La
@@ -230,8 +234,7 @@ Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
 
 ## Límite de tasa
 
-Estándares: [RFC 6585](../estandares/rfc/rfc6585.txt) y
-[*Denial of Service Cheat Sheet*](../estandares/owasp/Denial_of_Service.md) de OWASP.
+Estándar: la sección 4 de [RFC 6585](../estandares/rfc/rfc6585.txt), *429 Too Many Requests*.
 
 - Los contadores viven en Redis, compartidos por todos los procesos.
 - Todo 429 lleva `Retry-After`. Endurece RFC 6585, que lo deja opcional: el cliente sabe cuándo
@@ -269,7 +272,8 @@ Estándares: [*Idempotent requests*](../estandares/stripe/idempotent-requests.md
 
 ## Permisos
 
-Estándares: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP y
+Estándares: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP y las
+secciones 15.5.4 *403 Forbidden* y 15.5.5 *404 Not Found* de
 [RFC 9110](../estandares/rfc/rfc9110.txt).
 
 - Cada ruta declara con una dependencia de FastAPI el permiso que exige. El permiso queda a la
@@ -294,7 +298,8 @@ Estándar: [*Logging Cheat Sheet*](../estandares/owasp/Logging.md) de OWASP.
 
 ## Reintentos
 
-Estándar: [RFC 9110](../estandares/rfc/rfc9110.txt).
+Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
+[RFC 9110](../estandares/rfc/rfc9110.txt).
 
 - Una creación que el cliente puede reintentar va por `PUT /<recurso>/{id}`, con un uuid v4 que
   genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez
@@ -312,6 +317,8 @@ Estándares: [RFC 6238](../estandares/rfc/rfc6238.txt), [RFC 4226](../estandares
 y [*Multifactor Authentication Cheat Sheet*](../estandares/owasp/Multifactor_Authentication.md) de
 OWASP.
 
+- El segundo factor es opcional para cada usuario. Contradice el cheat sheet de MFA, que lo pide
+  a todos: la contraseña de 15 caracteres protege la cuenta que no lo activa.
 - El segundo factor es TOTP con SHA-1, 6 dígitos y pasos de 30 segundos. Son los valores que
   aceptan todas las apps de autenticación.
 - El secreto TOTP se guarda cifrado con una clave de la configuración. Una copia de la base no basta
@@ -334,7 +341,8 @@ y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP
 
 ## Trazas
 
-Estándar: [Trace Context](../estandares/w3c/trace-context-1.md) de W3C.
+Estándar: las secciones 3.2.2.3 *trace-id* y 8, *Considerations for trace-id field generation*,
+de [Trace Context](../estandares/w3c/trace-context-1.md) de W3C.
 
 - Cada petición y cada WebSocket empiezan una traza nueva, aunque lleguen con `traceparent`. El
   cliente no elige el id con el que se buscan sus registros.
@@ -343,7 +351,8 @@ Estándar: [Trace Context](../estandares/w3c/trace-context-1.md) de W3C.
 
 ## Versión mínima de cliente
 
-Estándar: [RFC 9110](../estandares/rfc/rfc9110.txt).
+Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
+[RFC 9110](../estandares/rfc/rfc9110.txt).
 
 - Cada cliente instalable manda `User-Agent: <pieza>/<versión>`, como `mobile/1.4.0`.
 - La configuración guarda la versión mínima de cada pieza. Una versión menor recibe un 400 de tipo
@@ -362,8 +371,7 @@ Estándares: [*WebSockets*](../estandares/fastapi/websockets.md) de FastAPI y
 
 ## Pruebas
 
-Estándares: [*Testing*](../estandares/fastapi/testing.md) y
-[*Async Tests*](../estandares/fastapi/async-tests.md) de FastAPI, las
+Estándares: [*Async Tests*](../estandares/fastapi/async-tests.md) de FastAPI, las
 [pruebas con AnyIO](../estandares/anyio/testing.rst) y
 [*Joining a Session into an External Transaction*](../estandares/sqlalchemy/session_transaction.rst)
 de SQLAlchemy.

@@ -53,30 +53,10 @@ server/
     test_<recurso>.py
 ```
 
-- `config.py` tiene `Settings` y su instancia, como en *Settings in another module*.
-- `database.py` tiene el engine y el `sessionmaker`. SQLAlchemy los crea una sola vez, en el ámbito
-  global, y los usan la dependencia de sesión y las tareas en segundo plano.
-- `dependencies.py` tiene la sesión, el usuario actual y los permisos.
-- `errors.py` tiene la excepción de la app, las URI de los tipos de problema, el esquema `Problem`
-  y los handlers. Todo el sobre problem+json queda en un solo módulo.
-- `tracing.py` tiene la variable de contexto del trace-id, el middleware y el filtro de logs.
-- `enums.py` tiene los enums. Si un esquema importa un enum desde un modelo, la API queda atada a
-  las tablas.
-- `schemas/base.py` tiene la clase padre de todos los esquemas, como en *Change behaviour
-  globally* de la configuración de Pydantic.
-- `schemas/page.py` tiene los parámetros y la respuesta de los dos modos de paginación, y el
-  cursor.
-- Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`. Su router,
-  su servicio y su esquema se encuentran sin buscar.
-- Cada modelo va en su propio archivo, dentro de la carpeta de su dominio. Cada tabla tiene un
-  solo lugar posible.
-- `models/__init__.py` importa todos los modelos. Importar cualquiera los registra todos en
-  `Base.metadata`, y así la app, Alembic y las pruebas ven las mismas tablas.
-- Los routers se montan bajo `/api` en un `APIRouter` de `main.py`, y cada uno declara solo su
-  recurso. Las rutas de las pruebas, los logs y el OpenAPI son las que ve el cliente.
-- Un router recibe la petición, llama a su servicio y responde. El servicio hace las consultas y
-  aplica las reglas del negocio: la misma operación se llama desde una ruta, un WebSocket o una
-  tarea sin repetirla.
+- Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`.
+- Cada modelo va en su propio archivo, dentro de la carpeta de su dominio.
+- `models/__init__.py` importa todos los modelos.
+- Los routers se incluyen en `main.py` bajo el prefijo `/api`.
 
 Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 [`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Se copian sin editar
@@ -96,10 +76,8 @@ Estándares: las secciones *Pydantic `Settings`* y *Settings in another module* 
 [*Settings and Environment Variables*](../estandares/fastapi/settings.md) de FastAPI, y
 [pydantic-settings](../estandares/pydantic-settings/index.md).
 
-- La configuración se lee solo de variables de entorno: `Settings` no declara `env_file`, y todo
-  campo es obligatorio y sin valor por defecto. En desarrollo, las variables salen de
-  `uv run --env-file .env`. Así cada valor tiene un solo origen, y si falta uno el servidor no
-  arranca.
+- Todo campo de `Settings` es obligatorio y sin valor por defecto.
+- En desarrollo, las variables salen de `uv run --env-file .env`.
 
 ## Modelos
 
@@ -107,9 +85,8 @@ Estándar: la [configuración de modelos](../estandares/pydantic/config.md) de P
 
 - `alias_generator=to_camel` y `serialize_by_alias=True` en el modelo base: los nombres viajan en
   camelCase.
-- Un `Query()` de dos palabras declara su `alias` en camelCase.
-- `extra="forbid"` en los esquemas de entrada. Un campo mal escrito da 422 en vez de perderse en
-  silencio.
+- Los parámetros de query se declaran en un modelo.
+- `extra="forbid"` en los esquemas de entrada.
 
 ## Base de datos
 
@@ -136,9 +113,6 @@ Estándares: el [tutorial](../estandares/alembic/tutorial.rst), salvo *Creating 
 [plantilla async](../estandares/alembic/async/env.py) de Alembic, y
 [*The Importance of Naming Constraints*](../estandares/alembic/naming.rst).
 
-- La `MetaData` lleva la convención de nombres que da la documentación de Alembic. Una migración
-  borra o cambia una restricción por su nombre, y así el nombre no lo elige la base.
-
 ## Ciclo de vida
 
 Estándar: [*Lifespan Events*](../estandares/fastapi/events.md) de FastAPI.
@@ -155,7 +129,6 @@ Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de 
 [*Request Files*](../estandares/fastapi/request-files.md) de FastAPI.
 
 - El servidor recibe un archivo como `UploadFile`.
-- Cada ruta de subida declara su lista de tipos permitidos.
 - Toda imagen se vuelve a codificar con Pillow antes de guardarse. Endurece la recomendación de
   OWASP: destruye contenido inyectado y borra los metadatos, como la ubicación de la foto.
 - Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`, con
@@ -171,8 +144,8 @@ Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de 
 Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md) y
 [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
 
-- El enlace para restablecer la contraseña lleva un token aleatorio de un solo uso que vence en 30
-  minutos, y la base guarda su SHA-256.
+- El token del enlace para restablecer la contraseña vence en 30 minutos, y la base guarda su
+  SHA-256.
 
 ## Contraseñas
 
@@ -212,8 +185,7 @@ Estándares: [RFC 5322](../estandares/rfc/rfc5322.txt), [RFC 7208](../estandares
 
 Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
 
-- El servidor guarda en Redis cada respuesta de Nominatim y no pasa de una consulta por segundo en
-  total.
+- Las respuestas de Nominatim se guardan en Redis.
 
 ## Envíos al exterior
 
@@ -263,8 +235,7 @@ Estándares: [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493, y la
 
 Estándar: [*Generating SDKs*](../estandares/fastapi/generate-clients.md) de FastAPI.
 
-- Cada router lleva un solo tag, y el operation ID es `<tag>-<función>`. Los métodos de los
-  clientes generados quedan legibles.
+- Cada router lleva un solo tag, y el operation ID es `<tag>-<función>`.
 
 ## Paginación
 
@@ -353,10 +324,7 @@ OWASP.
 
 - El segundo factor es opcional para cada usuario. Contradice el cheat sheet de MFA, que lo pide
   a todos: la contraseña de 15 caracteres protege la cuenta que no lo activa.
-- El segundo factor es TOTP con SHA-1, 6 dígitos y pasos de 30 segundos. Son los valores que
-  aceptan todas las apps de autenticación.
-- El secreto TOTP se guarda cifrado con una clave de la configuración. Una copia de la base no basta
-  para generar códigos.
+- El secreto TOTP se guarda cifrado con una clave de la configuración.
 - Al activarlo se entregan diez códigos de recuperación de un solo uso, guardados como hash. Perder
   el teléfono no deja la cuenta sin acceso.
 
@@ -365,8 +333,7 @@ OWASP.
 Estándares: [RFC 7519](../estandares/rfc/rfc7519.txt), [RFC 8725](../estandares/rfc/rfc8725.txt)
 y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP.
 
-- El token de acceso es un JWT firmado con HS256 que vence en 15 minutos. Solo el servidor lo firma
-  y lo verifica, así que basta una clave simétrica.
+- El token de acceso es un JWT firmado con HS256 que vence en 15 minutos.
 - El token de refresco es un valor aleatorio de 256 bits, y la base guarda su SHA-256 en la fila de
   sesión. Rota en cada uso, y usar uno ya rotado borra la sesión entera: un token robado se
   descubre cuando el dueño vuelve a refrescar.
@@ -410,15 +377,8 @@ Estándares: [*Async Tests*](../estandares/fastapi/async-tests.md) de FastAPI, l
 [*Joining a Session into an External Transaction*](../estandares/sqlalchemy/session_transaction.rst)
 de SQLAlchemy.
 
-- Las pruebas son `async def` y llaman a la app con `httpx.AsyncClient` y `ASGITransport`. El
-  `TestClient` corre la app en otro loop, y una conexión del engine async no sirve fuera del loop
-  que la abrió.
 - `anyio_backend` es `asyncio`. asyncpg y la app solo corren en asyncio.
 - Las pruebas corren contra PostgreSQL. Ven los mismos tipos y restricciones que producción.
-- Cada prueba abre una transacción que se revierte al terminar, y `SessionFactory` se une a ella con
-  `join_transaction_mode="create_savepoint"`. La app, sus tareas y la prueba comparten la
-  transacción: un commit que falla en producción también falla en la prueba, y nada queda en la
-  base.
 
 ## Detrás de un proxy
 

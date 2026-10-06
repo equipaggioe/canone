@@ -89,6 +89,8 @@ Cómo se escribe:
   los comentarios de `plantilla/`.
 - El layout se dibuja completo, como árbol, aunque repita partes de sus fuentes. El árbol es la
   convención misma, y a pedazos no se lee.
+- Debajo del árbol va solo dónde va algo que podría ir en otro archivo. Lo que un archivo tiene por
+  su nombre, por su fuente o por otra sección de la página no se escribe.
 
 ### Orden de las secciones
 

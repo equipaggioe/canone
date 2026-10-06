@@ -94,17 +94,12 @@ Estándares: [*Session Basics*](../estandares/sqlalchemy/session_basics.rst), la
 [extensión asyncio](../estandares/sqlalchemy/asyncio.rst) y el
 [pool de conexiones](../estandares/sqlalchemy/pooling.rst) de SQLAlchemy.
 
-- SQLAlchemy 2.0 como ORM, con las tablas separadas de los esquemas de Pydantic. La tabla y el
-  contrato de la API cambian por separado.
-- `AsyncSession` con asyncpg, y rutas y dependencias con `async def`. Una ruta, un WebSocket y una
-  tarea llaman al mismo servicio.
-- `lazy="raise"` en toda relación. Una carga implícita falla con un error claro en vez de
-  `MissingGreenlet`.
-- La sesión es una dependencia con `scope="function"`. El commit corre antes de enviar la
-  respuesta: si falla, el cliente recibe el error y no un 200.
+- `AsyncSession` con asyncpg.
+- `lazy="raise"` en toda relación.
+- Una relación bidireccional declara `back_populates` en los dos lados.
+- La dependencia de la sesión lleva `scope="function"`.
 - Cada columna se declara en una sola línea.
-- Un enum hereda de `StrEnum`. La `Base` guarda solo esos como `text` con `CHECK`; un `str, Enum`
-  se vuelve un enum nativo de Postgres que guarda el nombre y no el valor.
+- Un enum hereda de `StrEnum`.
 
 ## Migraciones
 
@@ -129,39 +124,40 @@ Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de 
 [*Request Files*](../estandares/fastapi/request-files.md) de FastAPI.
 
 - El servidor recibe un archivo como `UploadFile`.
-- Toda imagen se vuelve a codificar con Pillow antes de guardarse. Endurece la recomendación de
-  OWASP: destruye contenido inyectado y borra los metadatos, como la ubicación de la foto.
+- Toda imagen se vuelve a codificar con Pillow antes de guardarse. Endurece OWASP, que lo da como
+  técnica: también borra los metadatos de la foto.
 - Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`, con
   `ON DELETE CASCADE`. La fila guarda el tipo, el tamaño y el nombre original.
 - El archivo en disco se llama con el ID de su fila.
-- El servidor entrega un archivo después de comprobar el permiso sobre su recurso.
+- Un archivo tiene los permisos de su recurso.
 - Un barrido borra los archivos con más de una hora en disco y sin fila en ninguna tabla `_file`.
-  El borrado en cascada y una subida cuyo commit falló dejan archivos sin fila, y un solo barrido
-  cubre los dos caminos.
 
 ## Autenticación
 
-Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md) y
+Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md) de OWASP, salvo
+*Implement Proper Password Strength Controls*, *Implement Secure Password Recovery Mechanism*,
+*Store Passwords in a Secure Fashion*, *Compare Password Hashes Using Safe Functions*,
+*Multi-Factor Authentication* y *Use of authentication protocols that require no password*, y
 [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
 
+- Una pieza inicia sesión con passkeys. Usa contraseña solo si uno de sus clientes no puede usar
+  passkeys, y entonces la contraseña es su único método.
+- El registro verifica un correo o un teléfono, que es también a donde se envía el código para
+  recuperar la cuenta.
 - El token del enlace para restablecer la contraseña vence en 30 minutos, y la base guarda su
   SHA-256.
 
 ## Contraseñas
 
 Estándares: la sección 3.1.1 *Passwords* de [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt),
-[*Password Storage Cheat Sheet*](../estandares/owasp/Password_Storage.md) de OWASP,
-[RFC 9106](../estandares/rfc/rfc9106.txt) y las secciones *Password hashing*, *Install `pwdlib`*
-y *Hash and verify the passwords* de
+salvo cómo se guarda la contraseña, y las secciones *Password hashing*, *Install `pwdlib`* y
+*Hash and verify the passwords* de
 [*OAuth2 with Password (and hashing), Bearer with JWT tokens*](../estandares/fastapi/oauth2-jwt.md)
 de FastAPI.
 
-- Las contraseñas se guardan con la segunda opción de RFC 9106: Argon2id con t=3, p=4, 64 MiB,
-  sal de 128 bits y tag de 256 bits. La primera pide 2 GiB de memoria por cada inicio de sesión.
-- Toda contraseña tiene al menos 15 caracteres, con o sin segundo factor. Endurece NIST, que admite
-  8 con segundo factor: una sola regla, y el segundo factor se puede desactivar.
-- La lista de bloqueo que pide NIST es una lista de contraseñas comunes guardada en el servidor. La
-  contraseña no sale a otro servicio para compararla.
+- Toda contraseña tiene al menos 8 caracteres. Contradice NIST, que pide 15 cuando es el único
+  factor: una contraseña de 15 caracteres aleja al usuario.
+- La lista de bloqueo es un archivo del servidor.
 
 ## Correo
 
@@ -275,6 +271,22 @@ Estándares: [*Idempotent requests*](../estandares/stripe/idempotent-requests.md
 - El ID de cada evento procesado se guarda con una restricción única. Un evento repetido choca con
   ella y no se procesa dos veces.
 
+## Passkeys
+
+Estándares: [*Web Authentication Level 3*](../estandares/w3c/webauthn-3.bs) de W3C, las secciones
+3.1.7 *Multi-Factor Cryptographic Authentication*, 4.2 *Account Recovery* y el apéndice B
+*Syncable Authenticators* de [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt), la sección
+4.1 *Authorization Code Grant* de [RFC 6749](../estandares/rfc/rfc6749.txt),
+[RFC 7636](../estandares/rfc/rfc7636.txt) y [RFC 8252](../estandares/rfc/rfc8252.txt).
+
+- Las passkeys se validan con `webauthn`.
+- Toda passkey es descubrible (`residentKey="required"`): el usuario entra sin escribir su correo.
+- Una cuenta se recupera con un código guardado y un código enviado a su correo o a su teléfono.
+- Una cuenta de administración rechaza la passkey que no verificó al usuario: sin esa verificación
+  la passkey es un solo factor.
+- Una cuenta de administración la recupera otro administrador, nunca un código: quien roba el
+  correo y el código guardado no se lleva la administración.
+
 ## Permisos
 
 Estándares: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP y las
@@ -315,18 +327,6 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
 - `GET /api/health` consulta la base con `SELECT 1` y responde 200 con `{"status": "ok"}`, o 503
   si la base no contesta. Un monitor que solo ve que el proceso responde da por vivo un servidor
   con la base caída.
-
-## Segundo factor
-
-Estándares: [RFC 6238](../estandares/rfc/rfc6238.txt), [RFC 4226](../estandares/rfc/rfc4226.txt)
-y [*Multifactor Authentication Cheat Sheet*](../estandares/owasp/Multifactor_Authentication.md) de
-OWASP.
-
-- El segundo factor es opcional para cada usuario. Contradice el cheat sheet de MFA, que lo pide
-  a todos: la contraseña de 15 caracteres protege la cuenta que no lo activa.
-- El secreto TOTP se guarda cifrado con una clave de la configuración.
-- Al activarlo se entregan diez códigos de recuperación de un solo uso, guardados como hash. Perder
-  el teléfono no deja la cuenta sin acceso.
 
 ## Tokens
 

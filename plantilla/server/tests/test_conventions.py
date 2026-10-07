@@ -1,8 +1,10 @@
 """The conventions of fastapi.md and postgres.md in canone."""
 
+import ast
 import importlib
 import pkgutil
 from datetime import UTC, datetime
+from pathlib import Path
 from types import ModuleType
 from typing import Annotated, Any, get_args
 
@@ -36,6 +38,7 @@ import_all(app.routers)
 SCHEMA_MODULES = import_all(app.schemas)
 TABLES = list(Base.metadata.tables.values())
 COLUMNS = [column for table in TABLES for column in table.columns]
+MODEL_FILES = sorted(Path(app.models.__path__[0]).glob("*/*.py"))
 
 
 def is_allowed_key(column: sa.Column[Any]) -> bool:
@@ -119,6 +122,26 @@ def test_relationships_raise() -> None:
         for mapper in Base.registry.mappers
         for relationship in mapper.relationships
         if relationship.lazy != "raise"
+    ]
+    assert not offenders
+
+
+def is_mapped(node: ast.AST) -> bool:
+    """Tell whether a statement declares a column or a relationship."""
+    return (
+        isinstance(node, ast.AnnAssign)
+        and isinstance(node.annotation, ast.Subscript)
+        and getattr(node.annotation.value, "id", None) == "Mapped"
+    )
+
+
+def test_mapped_attributes_fit_one_line() -> None:
+    """Every column and relationship is declared on one line."""
+    offenders = [
+        f"{path.parent.name}/{path.name}:{node.lineno}"
+        for path in MODEL_FILES
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8")))
+        if is_mapped(node) and node.lineno != node.end_lineno
     ]
     assert not offenders
 

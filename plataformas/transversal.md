@@ -71,9 +71,8 @@ Estándares: la [política de uso de teselas](../estandares/osm/tile-usage-polic
 
 ## Nombres en el cable
 
-- La API habla en camelCase, como fija [fastapi.md](fastapi.md). Cada cliente usa la convención de
-  su lenguaje (`snake_case` en Python, camelCase en Dart y TypeScript) y convierte en un solo punto:
-  su cliente de la API.
+- La API habla en camelCase. Cada cliente usa la convención de su lenguaje (`snake_case` en
+  Python, camelCase en Dart y TypeScript) y convierte en un solo punto: su cliente de la API.
 
 ## Pagos
 

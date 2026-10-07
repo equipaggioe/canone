@@ -4,9 +4,9 @@ Un servidor en FastAPI. Se suma a [python.md](python.md).
 
 ## Proyecto
 
-Estándares: [*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md)
-de FastAPI y la sección *Creating an Environment* del [tutorial](../estandares/alembic/tutorial.rst)
-de Alembic.
+Estándares: la sección *An example file structure* de
+[*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md) de FastAPI y
+la sección *Creating an Environment* del [tutorial](../estandares/alembic/tutorial.rst) de Alembic.
 
 ```text
 server/
@@ -53,22 +53,12 @@ server/
     test_<recurso>.py
 ```
 
-- Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`.
-- Cada modelo va en su propio archivo, dentro de la carpeta de su dominio.
-- `models/__init__.py` importa todos los modelos.
-- Los routers se incluyen en `main.py` bajo el prefijo `/api`.
-
 Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 [`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Se copian sin editar
 `alembic.ini`, `alembic/`, `database.py`, `tracing.py`, `models/__init__.py`, `models/base.py`,
 `models/ruff.toml`, `schemas/base.py`, `schemas/page.py`, los `health.py` de `routers/`, `schemas/`
 y `services/`, y `tests/test_conventions.py`. Se copian y se completan `config.py`,
 `dependencies.py`, `enums.py`, `errors.py`, `main.py` y `tests/conftest.py`.
-
-## Inyección de dependencias
-
-Estándares: [*Dependencies*](../estandares/fastapi/dependencies.md) y
-[*Dependencies with yield*](../estandares/fastapi/dependencies-with-yield.md) de FastAPI.
 
 ## Configuración
 
@@ -79,14 +69,16 @@ Estándares: las secciones *Pydantic `Settings`* y *Settings in another module* 
 - Todo campo de `Settings` es obligatorio y sin valor por defecto.
 - En desarrollo, las variables salen de `uv run --env-file .env`.
 
-## Modelos
+## Esquemas
 
 Estándar: la [configuración de modelos](../estandares/pydantic/config.md) de Pydantic.
 
-- `alias_generator=to_camel` y `serialize_by_alias=True` en el modelo base: los nombres viajan en
-  camelCase.
-- Los parámetros de query se declaran en un modelo.
+Contrato: [transversal.md](transversal.md#nombres-en-el-cable).
+
+- `alias_generator=to_camel` y `serialize_by_alias=True` en el esquema base.
 - `extra="forbid"` en los esquemas de entrada.
+- Los parámetros de query se declaran en un esquema de entrada. Un parámetro desconocido responde
+  422 en vez de ignorarse.
 
 ## Base de datos
 
@@ -96,10 +88,13 @@ Estándares: [*Session Basics*](../estandares/sqlalchemy/session_basics.rst), la
 
 - `AsyncSession` con asyncpg.
 - `lazy="raise"` en toda relación.
-- Una relación bidireccional declara `back_populates` en los dos lados.
-- La dependencia de la sesión lleva `scope="function"`.
-- Cada columna se declara en una sola línea.
-- Un enum hereda de `StrEnum`.
+- Una relación bidireccional declara `back_populates` en los dos lados. Con `backref`, el atributo
+  del otro lado no aparece en su clase ni en sus tipos.
+- Cada modelo va en su propio archivo, dentro de la carpeta de su dominio.
+- Cada columna y cada relación se declaran en una sola línea. Contradice las 99 de
+  [python.md](python.md): el modelo se lee de arriba abajo, una declaración por renglón.
+- Un enum hereda de `StrEnum`. La `Base` guarda solo esos como `text` con `CHECK`; un `str, Enum`
+  se vuelve un enum nativo de Postgres que guarda el nombre y no el valor.
 
 ## Migraciones
 
@@ -107,6 +102,25 @@ Estándares: el [tutorial](../estandares/alembic/tutorial.rst), salvo *Creating 
 [autogeneración](../estandares/alembic/autogenerate.rst) y la
 [plantilla async](../estandares/alembic/async/env.py) de Alembic, y
 [*The Importance of Naming Constraints*](../estandares/alembic/naming.rst).
+
+## Inyección de dependencias
+
+Estándares: [*Dependencies*](../estandares/fastapi/dependencies.md) y
+[*Dependencies with yield*](../estandares/fastapi/dependencies-with-yield.md) de FastAPI.
+
+- La dependencia de la `AsyncSession` lleva `scope="function"`. El commit corre antes de enviar la
+  respuesta: si falla, el cliente recibe el error y no un 200.
+
+## Routers
+
+Estándar: las secciones *`APIRouter`*, *Another module with `APIRouter`*, *The main `FastAPI`* e
+*Include an `APIRouter` in another* de
+[*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md) de FastAPI.
+
+Contrato: [transversal.md](transversal.md#sesión).
+
+- Los routers se incluyen en un `APIRouter(prefix="/api")` de `main.py`.
+- Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`.
 
 ## Ciclo de vida
 
@@ -389,11 +403,11 @@ Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAP
 | Qué | Con qué |
 |---|---|
 | *Dependencies*: `Annotated` | ruff `FAST002` |
-| Los nombres en camelCase: todo esquema hereda del modelo base | `test_schemas_inherit_schema` |
+| Los nombres en camelCase: todo esquema hereda del esquema base | `test_schemas_inherit_schema` |
 | `lazy="raise"` | `test_relationships_raise` |
 | `AwareDatetime` en los esquemas | `test_schema_datetimes_are_aware` |
-| Un enum hereda de `StrEnum` | ruff `UP042` |
-| Una columna por línea | `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
+| Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
+| Una columna o relación por línea | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | Toda respuesta de error en problem+json, con `traceId` | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field` |
 | Un solo tag por router y el operation ID `<tag>-<función>` | `test_operation_ids` |
 | La versión mínima de cliente | `test_outdated_client_is_rejected` |

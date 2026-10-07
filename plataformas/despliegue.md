@@ -70,6 +70,13 @@ Estándares: de PostgreSQL, [*Backup and Restore*](../estandares/postgresql/back
 [`systemd.timer`](../estandares/systemd/systemd.timer.xml), y el
 [ciclo de vida de objetos](../estandares/aws-s3/object-lifecycle-mgmt.md) de Amazon S3.
 
+## Valkey
+
+Estándares: de Valkey, [*Administration*](../estandares/valkey/admin.md) y
+[*Security*](../estandares/valkey/security.md).
+
+- El almacén en memoria de todas las piezas es Valkey.
+
 ## Cómo se hace cumplir
 
 | Qué | Con qué |

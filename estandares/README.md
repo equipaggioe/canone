@@ -66,21 +66,16 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217 |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |
 | [rfc/rfc4647.txt](rfc/rfc4647.txt) | <https://www.rfc-editor.org/rfc/rfc4647.txt> |  |
-| [rfc/rfc5322.txt](rfc/rfc5322.txt) | <https://www.rfc-editor.org/rfc/rfc5322.txt> |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | <https://www.rfc-editor.org/rfc/rfc5646.txt> |  |
 | [rfc/rfc6265.txt](rfc/rfc6265.txt) | <https://www.rfc-editor.org/rfc/rfc6265.txt> |  |
-| [rfc/rfc6376.txt](rfc/rfc6376.txt) | <https://www.rfc-editor.org/rfc/rfc6376.txt> |  |
 | [rfc/rfc6455.txt](rfc/rfc6455.txt) | <https://www.rfc-editor.org/rfc/rfc6455.txt> |  |
 | [rfc/rfc6749.txt](rfc/rfc6749.txt) | <https://www.rfc-editor.org/rfc/rfc6749.txt> |  |
 | [rfc/rfc6585.txt](rfc/rfc6585.txt) | <https://www.rfc-editor.org/rfc/rfc6585.txt> |  |
 | [rfc/rfc6901.txt](rfc/rfc6901.txt) | <https://www.rfc-editor.org/rfc/rfc6901.txt> |  |
-| [rfc/rfc7208.txt](rfc/rfc7208.txt) | <https://www.rfc-editor.org/rfc/rfc7208.txt> |  |
-| [rfc/rfc7489.txt](rfc/rfc7489.txt) | <https://www.rfc-editor.org/rfc/rfc7489.txt> |  |
 | [rfc/rfc7493.txt](rfc/rfc7493.txt) | <https://www.rfc-editor.org/rfc/rfc7493.txt> |  |
 | [rfc/rfc7519.txt](rfc/rfc7519.txt) | <https://www.rfc-editor.org/rfc/rfc7519.txt> |  |
 | [rfc/rfc7636.txt](rfc/rfc7636.txt) | <https://www.rfc-editor.org/rfc/rfc7636.txt> |  |
 | [rfc/rfc8030.txt](rfc/rfc8030.txt) | <https://www.rfc-editor.org/rfc/rfc8030.txt> |  |
-| [rfc/rfc8058.txt](rfc/rfc8058.txt) | <https://www.rfc-editor.org/rfc/rfc8058.txt> |  |
 | [rfc/rfc8252.txt](rfc/rfc8252.txt) | <https://www.rfc-editor.org/rfc/rfc8252.txt> |  |
 | [rfc/rfc8291.txt](rfc/rfc8291.txt) | <https://www.rfc-editor.org/rfc/rfc8291.txt> |  |
 | [rfc/rfc8292.txt](rfc/rfc8292.txt) | <https://www.rfc-editor.org/rfc/rfc8292.txt> |  |
@@ -111,21 +106,18 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> |  |
 | [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/File_Upload_Cheat_Sheet.md> |  |
 | [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/WebSocket_Security_Cheat_Sheet.md> |  |
-| [redis/pubsub.md](redis/pubsub.md) | <https://raw.githubusercontent.com/redis/docs/main/content/develop/pubsub/_index.md> |  |
+| [valkey/pubsub.md](valkey/pubsub.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/main/topics/pubsub.md> |  |
+| [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/main/topics/admin.md> |  |
+| [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/main/topics/security.md> |  |
 | [coturn/README.turnserver](coturn/README.turnserver) | <https://raw.githubusercontent.com/coturn/coturn/master/README.turnserver> |  |
 | [firebase/manage-tokens.md](firebase/manage-tokens.md) | <https://firebase.google.com/docs/cloud-messaging/manage-tokens> | Página web convertida a Markdown |
 | [firebase/set-message-type.md](firebase/set-message-type.md) | <https://firebase.google.com/docs/cloud-messaging/customize-messages/set-message-type> | Página web convertida a Markdown |
 | [firebase/admin-sdk.md](firebase/admin-sdk.md) | <https://firebase.google.com/docs/cloud-messaging/send/admin-sdk> | Página web convertida a Markdown |
 | [firebase/error-codes.md](firebase/error-codes.md) | <https://firebase.google.com/docs/cloud-messaging/error-codes> | Página web convertida a Markdown |
-| [aws-ses/send-email-concepts-deliverability.md](aws-ses/send-email-concepts-deliverability.md) | <https://docs.aws.amazon.com/ses/latest/dg/send-email-concepts-deliverability.html> | Página web convertida a Markdown |
-| [aws-ses/dkim.md](aws-ses/dkim.md) | <https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dkim.html> | Página web convertida a Markdown |
-| [aws-ses/mail-from.md](aws-ses/mail-from.md) | <https://docs.aws.amazon.com/ses/latest/dg/mail-from.html> | Página web convertida a Markdown |
-| [aws-ses/dmarc.md](aws-ses/dmarc.md) | <https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dmarc.html> | Página web convertida a Markdown |
-| [aws-ses/suppression-list.md](aws-ses/suppression-list.md) | <https://docs.aws.amazon.com/ses/latest/dg/sending-email-suppression-list.html> | Página web convertida a Markdown |
-| [aws-ses/monitor-using-event-publishing.md](aws-ses/monitor-using-event-publishing.md) | <https://docs.aws.amazon.com/ses/latest/dg/monitor-using-event-publishing.html> | Página web convertida a Markdown |
 | [aws-s3/object-lifecycle-mgmt.md](aws-s3/object-lifecycle-mgmt.md) | <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html> | Página web convertida a Markdown |
 | [stripe/idempotent-requests.md](stripe/idempotent-requests.md) | <https://docs.stripe.com/api/idempotent_requests.md> |  |
 | [stripe/webhooks.md](stripe/webhooks.md) | <https://docs.stripe.com/webhooks.md> |  |
+| [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/main/spec/standard-webhooks.md> |  |
 | [sveltekit/project-structure.md](sveltekit/project-structure.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/10-getting-started/30-project-structure.md> |  |
 | [sveltekit/load.md](sveltekit/load.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/20-load.md> |  |
 | [sveltekit/page-options.md](sveltekit/page-options.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/40-page-options.md> |  |

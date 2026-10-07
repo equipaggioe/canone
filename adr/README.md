@@ -43,3 +43,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0033](0033-un-modulo-propio-para-lo-que-se-usa-en-varias-partes-de-la-app.md) | Un módulo propio para lo que se usa en varias partes de la app | Con FastAPI | Aceptada |
 | [0034](0034-la-paginacion-es-por-cursor-con-reglas-propias.md) | La paginación es por cursor, con reglas propias | Con `server/` y sus clientes | Aceptada; el punto 1 lo reemplaza ADR-0035 |
 | [0035](0035-una-lista-con-numeros-de-pagina-se-pagina-por-page-y-devuelve-el-total.md) | Una lista con números de página se pagina por `page` y devuelve el total | Con `server/` y sus clientes | Aceptada |
+| [0036](0036-el-almacen-en-memoria-es-valkey.md) | El almacén en memoria de todas las piezas es Valkey | Con un almacén en memoria | Aceptada |

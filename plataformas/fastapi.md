@@ -154,12 +154,18 @@ Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.m
 *Multi-Factor Authentication* y *Use of authentication protocols that require no password*, y
 [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
 
-- Una pieza inicia sesión con passkeys. Usa contraseña solo si uno de sus clientes no puede usar
-  passkeys, y entonces la contraseña es su único método.
+- Una pieza inicia sesión con passkeys. Si uno de sus clientes no puede usarlas, la pieza inicia
+  sesión solo con contraseña.
 - El registro verifica un correo o un teléfono, que es también a donde se envía el código para
   recuperar la cuenta.
 - El token del enlace para restablecer la contraseña vence en 30 minutos, y la base guarda su
   SHA-256.
+
+## Búsqueda de direcciones
+
+Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
+
+- Las respuestas de Nominatim se guardan en Valkey.
 
 ## Contraseñas
 
@@ -175,27 +181,13 @@ de FastAPI.
 
 ## Correo
 
-Estándares: [RFC 5322](../estandares/rfc/rfc5322.txt), [RFC 7208](../estandares/rfc/rfc7208.txt)
-(SPF), [RFC 6376](../estandares/rfc/rfc6376.txt) (DKIM), [RFC 7489](../estandares/rfc/rfc7489.txt)
-(DMARC), [RFC 8058](../estandares/rfc/rfc8058.txt) y, de Amazon SES,
-[*Understanding email deliverability*](../estandares/aws-ses/send-email-concepts-deliverability.md),
-[DKIM](../estandares/aws-ses/dkim.md), [*Using a custom MAIL FROM domain*](../estandares/aws-ses/mail-from.md),
-[DMARC](../estandares/aws-ses/dmarc.md),
-[la lista de supresión](../estandares/aws-ses/suppression-list.md) y
-[*Monitor email sending using event publishing*](../estandares/aws-ses/monitor-using-event-publishing.md).
+Estándar: [Standard Webhooks](../estandares/standard-webhooks/standard-webhooks.md).
 
-- El correo sale por SES con la API v2, desde `asyncio.to_thread`.
+- El correo sale por la API de correo de Equipaggio, `PUT /email/{id}`, y el SMS, por su pasarela,
+  `PUT /sms/{id}`.
 - Cada correo lleva una parte en texto y otra en HTML.
-- Un correo que no responde a una acción del usuario lleva `List-Unsubscribe` y
-  `List-Unsubscribe-Post`.
-- Los rebotes y las quejas llegan por event publishing a un endpoint del servidor, que marca la
-  dirección como inválida. La app sabe que el correo no llega y se lo dice al usuario.
-
-## Direcciones
-
-Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
-
-- Las respuestas de Nominatim se guardan en Redis.
+- Un correo rebotado llega por el webhook de Equipaggio. El servidor marca la dirección como
+  inválida, y la app le dice al usuario que su correo no llega.
 
 ## Envíos al exterior
 
@@ -229,7 +221,7 @@ Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
 
 Estándar: la sección 4 de [RFC 6585](../estandares/rfc/rfc6585.txt), *429 Too Many Requests*.
 
-- Los contadores viven en Redis, compartidos por todos los procesos.
+- Los contadores viven en Valkey, compartidos por todos los procesos.
 - Todo 429 lleva `Retry-After`. Endurece RFC 6585, que lo deja opcional: el cliente sabe cuándo
   reintentar.
 
@@ -378,10 +370,10 @@ Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
 ## WebSocket
 
 Estándares: [*WebSockets*](../estandares/fastapi/websockets.md) de FastAPI y
-[*Redis Pub/sub*](../estandares/redis/pubsub.md).
+[*Pub/Sub*](../estandares/valkey/pubsub.md) de Valkey.
 
 - Cerrar sesión cierra sus conexiones en todos los procesos.
-- Cada proceso se suscribe a Redis y reenvía a sus conexiones, con un canal por usuario. Pub/sub
+- Cada proceso se suscribe a Valkey y reenvía a sus conexiones, con un canal por usuario. Pub/sub
   entrega a lo sumo una vez; por eso el cliente pide el estado por REST al reconectar.
 
 ## Pruebas

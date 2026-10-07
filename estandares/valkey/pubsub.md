@@ -1,71 +1,55 @@
 ---
-categories:
-- docs
-- develop
-- stack
-- oss
-- rs
-- rc
-- oss
-- kubernetes
-- clients
-description: How to use pub/sub channels in Redis
-linkTitle: Pub/sub
-title: Redis Pub/sub
-aliases:
-- /develop/interact/pubsub
-- /develop/interact/pubsub/
-- /interact/pubsub/
-- /manual/pubsub/
-hideListLinks: true
-weight: 60
+title: Pub/Sub
+description: How to use pub/sub channels in Valkey
 ---
 
-[`SUBSCRIBE`](/content/commands/subscribe.md), [`UNSUBSCRIBE`](/content/commands/unsubscribe.md) and [`PUBLISH`](/content/commands/publish.md) implement the [Publish/Subscribe messaging paradigm](http://en.wikipedia.org/wiki/Publish/subscribe) where (citing Wikipedia) senders (publishers) are not programmed to send their messages to specific receivers (subscribers).
-Rather, published messages are categorized into channels, without knowledge of what (if any) subscribers there may be.
+`SUBSCRIBE`, `UNSUBSCRIBE` and `PUBLISH` implement the [Publish/Subscribe messaging paradigm](https://en.wikipedia.org/wiki/Publish/subscribe) where publishers send their messages to channels, without knowledge of what receivers (subscribers) there may be.
 Subscribers express interest in one or more channels and only receive messages that are of interest, without knowledge of what (if any) publishers there are.
 This decoupling of publishers and subscribers allows for greater scalability and a more dynamic network topology.
 
-For instance, to subscribe to channels "channel11" and "ch:00" the client issues a [`SUBSCRIBE`](/content/commands/subscribe.md) providing the names of the channels:
+Pubsub channels are not persisted. If there are no subscribes to a channel when a message is published, the message is lost.
+If you're looking for persisted messages queues, you may want to look into [Streams](streams-intro.md) instead.
+
+To subscribe to channels "channel11" and "ch:00" the client issues a `SUBSCRIBE` providing the names of the channels:
 
 ```bash
 SUBSCRIBE channel11 ch:00
 ```
 
-Messages sent by other clients to these channels will be pushed by Redis to all the subscribed clients.
+Messages sent by other clients to these channels will be pushed by Valkey to all the subscribed clients.
 Subscribers receive the messages in the order that the messages are published.
 
-A client subscribed to one or more channels shouldn't issue commands, although it can [`SUBSCRIBE`](/content/commands/subscribe.md) and [`UNSUBSCRIBE`](/content/commands/unsubscribe.md) to and from other channels.
+A client subscribed to one or more channels shouldn't issue commands, although it can `SUBSCRIBE` and `UNSUBSCRIBE` to and from other channels.
 The replies to subscription and unsubscribing operations are sent in the form of messages so that the client can just read a coherent stream of messages where the first element indicates the type of message.
 The commands that are allowed in the context of a subscribed RESP2 client are:
 
-* [`PING`](/content/commands/ping.md)
-* [`PSUBSCRIBE`](/content/commands/psubscribe.md)
-* [`PUNSUBSCRIBE`](/content/commands/punsubscribe.md)
-* [`QUIT`](/content/commands/quit.md)
-* [`RESET`](/content/commands/reset.md)
-* [`SSUBSCRIBE`](/content/commands/ssubscribe.md)
-* [`SUBSCRIBE`](/content/commands/subscribe.md)
-* [`SUNSUBSCRIBE`](/content/commands/sunsubscribe.md)
-* [`UNSUBSCRIBE`](/content/commands/unsubscribe.md)
+* `PING`
+* `PSUBSCRIBE`
+* `PUNSUBSCRIBE`
+* `QUIT`
+* `RESET`
+* `SSUBSCRIBE`
+* `SUBSCRIBE`
+* `SUNSUBSCRIBE`
+* `UNSUBSCRIBE`
 
-However, if RESP3 is used (see [`HELLO`](/content/commands/hello.md)), a client can issue any commands while in the subscribed state.
+However, if RESP3 is used (see `HELLO`), a client can issue any commands while in the subscribed state.
 
-Please note that when using `redis-cli`, in subscribed mode commands such as [`UNSUBSCRIBE`](/content/commands/unsubscribe.md) and [`PUNSUBSCRIBE`](/content/commands/punsubscribe.md) cannot be used because `redis-cli` will not accept any commands and can only quit the mode with `Ctrl-C`.
+Please note that when using `valkey-cli`, in subscribed mode commands such as `UNSUBSCRIBE` and `PUNSUBSCRIBE` cannot be used because `valkey-cli` will not accept any commands and can only quit the mode with `Ctrl-C`.
 
 ## Delivery semantics
 
-Redis' Pub/Sub exhibits _at-most-once_ message delivery semantics.
+Valkey' Pub/Sub exhibits _at-most-once_ message delivery semantics.
 As the name suggests, it means that a message will be delivered once if at all.
-Once the message is sent by the Redis server, there's no chance of it being sent again.
+Once the message is sent by the Valkey server, there's no chance of it being sent again.
 If the subscriber is unable to handle the message (for example, due to an error or a network disconnect) the message is forever lost.
 
-If your application requires stronger delivery guarantees, you may want to learn about [Redis Streams](/content/develop/data-types/streams/_index.md).
+If your application requires stronger delivery guarantees, you may want to learn about [Streams](streams-intro.md).
 Messages in streams are persisted, and support both _at-most-once_ as well as _at-least-once_ delivery semantics.
 
 ## Format of pushed messages
 
-A message is an [array-reply](/content/develop/reference/protocol-spec.md#array-reply) with three elements.
+A message is an [array-reply](protocol.md#arrays) with three elements.
 
 The first element is the kind of message:
 
@@ -74,9 +58,9 @@ The first element is the kind of message:
 
 * `unsubscribe`: means that we successfully unsubscribed from the channel given as second element in the reply.
   The third argument represents the number of channels we are currently subscribed to.
-  When the last argument is zero, we are no longer subscribed to any channel, and the client can issue any kind of Redis command as we are outside the Pub/Sub state.
+  When the last argument is zero, we are no longer subscribed to any channel, and the client can issue any kind of Valkey command as we are outside the Pub/Sub state.
 
-* `message`: it is a message received as a result of a [`PUBLISH`](/content/commands/publish.md) command issued by another client.
+* `message`: it is a message received as a result of a `PUBLISH` command issued by another client.
   The second element is the name of the originating channel, and the third argument is the actual message payload.
 
 ## Database & Scoping
@@ -106,7 +90,7 @@ second
 :2
 ```
 
-At this point, from another client we issue a [`PUBLISH`](/content/commands/publish.md) operation against the channel named `second`:
+At this point, from another client we issue a `PUBLISH` operation against the channel named `second`:
 
 ```
 > PUBLISH second Hello
@@ -124,7 +108,7 @@ $5
 Hello
 ```
 
-Now the client unsubscribes itself from all the channels using the [`UNSUBSCRIBE`](/content/commands/unsubscribe.md) command without additional arguments:
+Now the client unsubscribes itself from all the channels using the `UNSUBSCRIBE` command without additional arguments:
 
 ```
 UNSUBSCRIBE
@@ -144,7 +128,7 @@ first
 
 ## Pattern-matching subscriptions
 
-The Redis Pub/Sub implementation supports pattern matching.
+The Valkey Pub/Sub implementation supports pattern matching.
 Clients may subscribe to glob-style patterns to receive all the messages sent to channel names matching a given pattern.
 
 For instance:
@@ -165,10 +149,10 @@ No other subscriptions will be affected by this call.
 
 Messages received as a result of pattern matching are sent in a different format:
 
-* The type of the message is `pmessage`: it is a message received as a result from a [`PUBLISH`](/content/commands/publish.md) command issued by another client, matching a pattern-matching subscription. 
+* The type of the message is `pmessage`: it is a message received as a result from a `PUBLISH` command issued by another client, matching a pattern-matching subscription. 
   The second element is the original pattern matched, the third element is the name of the originating channel, and the last element is the actual message payload.
 
-Similarly to [`SUBSCRIBE`](/content/commands/subscribe.md) and [`UNSUBSCRIBE`](/content/commands/unsubscribe.md), [`PSUBSCRIBE`](/content/commands/psubscribe.md) and [`PUNSUBSCRIBE`](/content/commands/punsubscribe.md) commands are acknowledged by the system sending a message of type `psubscribe` and `punsubscribe` using the same format as the `subscribe` and `unsubscribe` message format.
+Similarly to `SUBSCRIBE` and `UNSUBSCRIBE`, `PSUBSCRIBE` and `PUNSUBSCRIBE` commands are acknowledged by the system sending a message of type `psubscribe` and `punsubscribe` using the same format as the `subscribe` and `unsubscribe` message format.
 
 ## Messages matching both a pattern and a channel subscription
 
@@ -190,20 +174,16 @@ So the client will exit the Pub/Sub state only when this count drops to zero as 
 
 ## Sharded Pub/Sub
 
-From Redis 7.0, sharded Pub/Sub is introduced in which shard channels are assigned to slots by the same algorithm used to assign keys to slots. 
+From Redis OSS 7.0, sharded Pub/Sub is introduced in which shard channels are assigned to slots by the same algorithm used to assign keys to slots. 
 A shard message must be sent to a node that owns the slot the shard channel is hashed to. 
-The cluster makes sure the published shard messages are forwarded to all nodes in the shard, so clients can subscribe to a shard channel by connecting to either the master responsible for the slot, or to any of its replicas.
-[`SSUBSCRIBE`](/content/commands/ssubscribe.md), [`SUNSUBSCRIBE`](/content/commands/sunsubscribe.md) and [`SPUBLISH`](/content/commands/spublish.md) are used to implement sharded Pub/Sub.
+The cluster makes sure the published shard messages are forwarded to all nodes in the shard, so clients can subscribe to a shard channel by connecting to either the primary responsible for the slot, or to any of its replicas.
+`SSUBSCRIBE`, `SUNSUBSCRIBE` and `SPUBLISH` are used to implement sharded Pub/Sub.
 
 Sharded Pub/Sub helps to scale the usage of Pub/Sub in cluster mode. 
 It restricts the propagation of messages to be within the shard of a cluster. 
 Hence, the amount of data passing through the cluster bus is limited in comparison to global Pub/Sub where each message propagates to each node in the cluster.
 This allows users to horizontally scale the Pub/Sub usage by adding more shards.
  
-## Programming example
-
-Pieter Noordhuis provided a great example using EventMachine and Redis to create [a multi user high performance web chat](https://gist.github.com/pietern/348262).
-
 ## Client library implementation hints
 
 Because all the messages received contain the original subscription causing the message delivery (the channel in the case of message type, and the original pattern in the case of pmessage type) client libraries may bind the original subscription to callbacks (that can be anonymous functions, blocks, function pointers), using a hash table.

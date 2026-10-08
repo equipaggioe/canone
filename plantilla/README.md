@@ -15,7 +15,8 @@ partida** se copia y después es del repositorio.
 | `.github/workflows/ci.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [repositorio.md](../repositorio.md), [python.md](../plataformas/python.md) |
 | `python/.gitignore` | Cada pieza Python | Punto de partida | [python.md](../plataformas/python.md) |
 | `server/pyproject.toml` | `server/` | Punto de partida | [python.md](../plataformas/python.md), [fastapi.md](../plataformas/fastapi.md) |
-| `server/src/app/database.py`, `errors.py`, `tracing.py`, `models/base.py`, `schemas/base.py` | `server/src/app/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
+| `server/alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako` | `server/` | Canónico | [fastapi.md](../plataformas/fastapi.md) |
+| `server/src/app/database.py`, `tracing.py`, `models/__init__.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py` | `server/src/app/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
 | `server/src/app/` (el resto) | `server/src/app/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
 | `server/tests/test_conventions.py` | `server/tests/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
 | `server/tests/conftest.py`, `__init__.py` | `server/tests/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |

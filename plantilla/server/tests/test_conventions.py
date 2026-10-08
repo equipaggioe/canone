@@ -19,8 +19,9 @@ import app.models
 import app.routers
 import app.schemas
 from app import errors, tracing
-from app.config import settings
+from app.config import Settings, settings
 from app.database import engine
+from app.dependencies import SessionDep
 from app.main import app as main_app
 from app.models.base import Base
 from app.schemas.base import InputSchema, Schema
@@ -181,6 +182,12 @@ def test_schema_datetimes_are_aware() -> None:
     assert not offenders
 
 
+def test_settings_are_required() -> None:
+    """Every field of Settings is required and has no default."""
+    offenders = [name for name, field in Settings.model_fields.items() if not field.is_required()]
+    assert not offenders
+
+
 def test_operation_ids() -> None:
     """Every operation has one tag and the ID <tag>-<function>."""
     offenders = [
@@ -278,3 +285,30 @@ async def test_invalid_cursor_points_to_the_parameter() -> None:
             assert response.json()["errors"] == [
                 {"detail": "Invalid cursor", "parameter": "cursor"}
             ]
+
+
+async def test_failed_commit_is_a_server_error() -> None:
+    """A commit that fails answers 500, before any response."""
+    probe = FastAPI()
+    errors.install(probe)
+    tracing.install(probe)
+
+    @probe.post("/items")
+    async def create_item(session: SessionDep) -> None:
+        """Insert a duplicate that only the commit rejects."""
+        await session.execute(
+            sa.text(
+                "CREATE TEMP TABLE item (id int UNIQUE DEFERRABLE INITIALLY DEFERRED)"
+                " ON COMMIT DROP"
+            )
+        )
+        await session.execute(sa.text("INSERT INTO item VALUES (1), (1)"))
+
+    transport = ASGITransport(app=probe, raise_app_exceptions=False)
+    try:
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            response = await client.post("/items")
+    finally:
+        await engine.dispose()
+    assert response.status_code == 500
+    assert response.headers["content-type"] == errors.PROBLEM_JSON

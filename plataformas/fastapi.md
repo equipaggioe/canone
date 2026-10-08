@@ -55,10 +55,11 @@ server/
 
 Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 [`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Se copian sin editar
-`alembic.ini`, `alembic/`, `database.py`, `tracing.py`, `models/__init__.py`, `models/base.py`,
-`models/ruff.toml`, `schemas/base.py`, `schemas/page.py`, los `health.py` de `routers/`, `schemas/`
-y `services/`, `routers/problems.py` y `tests/test_conventions.py`. Se copian y se completan `config.py`,
-`dependencies.py`, `enums.py`, `errors.py`, `main.py` y `tests/conftest.py`.
+`alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako`, `database.py`,
+`tracing.py`, `models/__init__.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`,
+`schemas/base.py`, `schemas/page.py` y `tests/test_conventions.py`. Se copian y se completan
+`config.py`, `dependencies.py`, `enums.py`, `errors.py`, `main.py`, los `health.py` de `routers/`,
+`schemas/` y `services/`, y `tests/conftest.py`.
 
 ## Configuración
 
@@ -388,7 +389,9 @@ Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAP
 
 | Qué | Con qué |
 |---|---|
+| Todo campo de `Settings` es obligatorio | `test_settings_are_required` |
 | *Dependencies*: `Annotated` | ruff `FAST002` |
+| El commit corre antes de enviar la respuesta | `test_failed_commit_is_a_server_error` |
 | Los nombres en camelCase: todo esquema hereda del esquema base | `test_schemas_inherit_schema` |
 | `lazy="raise"` | `test_relationships_raise` |
 | `AwareDatetime` en los esquemas | `test_schema_datetimes_are_aware` |

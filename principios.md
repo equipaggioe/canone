@@ -10,10 +10,16 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 - **El código se escribe en inglés**: variables, funciones, clases, tablas, columnas, endpoints,
   enums y comentarios.
 - **Los mensajes de commit se escriben en español.**
-- **La UI y la documentación se escriben en español**, salvo que el proyecto sea explícitamente
-  multilingüe.
-- **Español neutro.** Ni rioplatense ni de España. Nada de voseo (`vos`, `tenés`, `mirá`), nada de
-  `vosotros` ni `vale`, nada de `acá`, `plata`, `laburo`, `che`.
+- **La documentación se escribe en español.** La UI se diseña multilingüe, con el español como
+  idioma base ([transversal.md](plataformas/transversal.md#idiomas)).
+- **Español neutro.** Ni rioplatense ni de España.
+  - Sin voseo: `vos`, `sos`, `tenés`, `podés`, `querés`, `sabés`, `hacés`. Se usa `tú tienes`,
+    `eres`, `puedes`, `quieres`, `sabes`, `haces`.
+  - Sin imperativos voseantes: `mirá`, `probá`, `fijate`, `elegí`, `ingresá`, `revisá`, `dale`. Se
+    usa `mira`, `prueba`, `fíjate`, `elige`, `ingresa`, `revisa`.
+  - Sin `che`, `boludo`, `laburo`, `quilombo`, `plata` por dinero, `acá` (se usa `aquí`),
+    `bárbaro`, `joya` ni `celu`.
+  - Sin `vosotros` ni `vale`.
 
 ## Nombres
 
@@ -87,27 +93,15 @@ todavía. Optimizar una escala que no existe es sobre-ingeniería aunque el cód
 
 ## Antes de cerrar un paso
 
-1. **¿Se entregó en todos los clientes?** Si el proyecto tiene varios (app, panel, backoffice),
-   se porta a todos.
+1. **Un cambio va en todas las apps**, y se pasa a las demás cuando el usuario lo indica.
 2. **Si el trabajo dice «aplico el patrón X», ¿está el patrón completo?** Se lee X entero y se
    enumeran sus piezas. Un campo declarado «por adelantado para la fase X» no está entregado hasta
    que tiene consumidores.
-3. **¿El tipo de fila o entidad nueva se comporta como su hermana ante el borrado?** Se prueban
-   los caminos de purgado y borrado.
-4. **¿Quedó código que no llama nadie?** Nada «por simetría».
-5. **¿Se recorrieron todas las puertas de entrada?** Se prueban todos los caminos que llegan a la
+3. **¿Quedó código que no llama nadie?** Nada «por simetría».
+4. **¿Se recorrieron todas las puertas de entrada?** Se prueban todos los caminos que llegan a la
    pantalla o la función, no solo el que se tocó.
+5. **¿La prueba que falla ya fallaba antes?** Se corre sobre el commit anterior (`git worktree`)
+   antes de culpar al cambio.
 
 Si alguna falla, se arregla o se dice explícitamente que quedó fuera y por qué. **Nunca se reporta
 «terminado» con parte del alcance faltante.**
-
-## Trampas verificadas
-
-Comprobadas contra el código o reproducidas. Cada una vive en la página de su plataforma, junto al
-código que la sufre:
-
-| Plataforma | Trampas |
-|---|---|
-| [flutter.md](plataformas/flutter.md) | `flutter_map`: la rueda del mouse, el arrastre de una capa encima, las teselas que relanzan fallos de red |
-| [sveltekit.md](plataformas/sveltekit.md) | UnoCSS: los atajos con prefijo de variante y los archivos `.ts` sin escanear |
-| [postgres.md](plataformas/postgres.md) | `Geography` compartido en un `Annotated`; `native_enum=False` sin `create_constraint` |

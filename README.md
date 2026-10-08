@@ -26,7 +26,7 @@ especificación de facto o una guía de una organización de referencia.
 
 **Se cita lo que se adopta en su mayoría. Todo lo demás, venga de donde venga, es una regla
 propia.** Citar una fuente es seguir todas sus convenciones. Las que una página contradice, deja
-sin efecto o endurece se anotan con su razón: la fuente es la base, no el techo.
+sin efecto o endurece se escriben como reglas, con su razón: la fuente es la base, no el techo.
 
 El criterio completo está en [plataformas/README.md](plataformas/README.md).
 

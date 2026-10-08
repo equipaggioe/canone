@@ -33,8 +33,8 @@ herramienta la haga cumplir.
 
 - Se cita lo que se adopta en su mayoría. Todo lo demás, venga de donde venga, es una regla propia.
 - Citar una fuente, o una parte de ella, adopta todas sus convenciones: se cumplen como si fueran
-  obligatorias y no se escriben. La página anota solo las que contradice, deja sin efecto o
-  endurece; el resto sigue rigiendo.
+  obligatorias y no se escriben. La página escribe una regla solo para las que contradice, deja sin
+  efecto o endurece; el resto sigue rigiendo.
 - Para cada asunto se busca una fuente en este orden, y se prefiere la de menor número:
 
   | Orden | Fuente |
@@ -50,7 +50,7 @@ herramienta la haga cumplir.
   - Está versionada, con historial de cambios. La copia de `estandares/` fija la versión adoptada.
   - La parte citada no depende de la infraestructura de quien la publica.
 - Elegir una fuente de mayor número en un asunto que otra de menor número ya cubre es contradecir
-  a esa otra, y se anota con su razón.
+  a esa otra, y se escribe como regla, con su razón.
 - Se cita una fuente entera o solo la parte que se adopta: una sección, un capítulo, una AIP o un
   nivel de ASVS.
 - Una parte se cita si se adopta en su mayoría. Si de ella solo se toman algunas reglas, no se
@@ -73,7 +73,8 @@ herramienta la haga cumplir.
 
 ### Qué escribe la página
 
-Sobre sus fuentes, solo tres cosas. Una sección sin puntos sigue enteras las partes que cita.
+Sobre sus fuentes, solo tres clases de reglas. Una sección sin reglas sigue enteras las partes que
+cita.
 
 - La opción que elige donde una fuente deja varias.
 - Lo que contradice o endurece de una fuente. Endurecer es volver obligatorio lo que la fuente
@@ -83,10 +84,10 @@ Sobre sus fuentes, solo tres cosas. Una sección sin puntos sigue enteras las pa
 Cómo se escribe:
 
 - Cada regla dice qué se usa y cómo queda. No es un procedimiento ni un tutorial.
-- Sin comentarios ni explicaciones, salvo dos, cada una en una frase corta: por qué la página
-  contradice o endurece una fuente, y cómo ayuda una elección que no es trivial. Una regla trivial,
-  como un color o el largo de línea, no lleva frase: su razón es una preferencia. Vale también para
-  los comentarios de `plantilla/`.
+- Una regla lleva razón, en una frase corta, solo en dos casos: por qué contradice o endurece una
+  fuente, y cómo ayuda una elección que no es trivial. Una regla trivial, como un color o el largo
+  de línea, no lleva razón: es una preferencia. Fuera de la razón, sin comentarios ni
+  explicaciones. Vale también para los comentarios de `plantilla/`.
 - El layout se dibuja completo, como árbol, aunque repita partes de sus fuentes. El árbol es la
   convención misma, y a pedazos no se lee.
 - Debajo del árbol va solo dónde va algo que podría ir en otro archivo. Lo que un archivo tiene por

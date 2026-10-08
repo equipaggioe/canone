@@ -57,7 +57,7 @@ Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 [`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Se copian sin editar
 `alembic.ini`, `alembic/`, `database.py`, `tracing.py`, `models/__init__.py`, `models/base.py`,
 `models/ruff.toml`, `schemas/base.py`, `schemas/page.py`, los `health.py` de `routers/`, `schemas/`
-y `services/`, y `tests/test_conventions.py`. Se copian y se completan `config.py`,
+y `services/`, `routers/problems.py` y `tests/test_conventions.py`. Se copian y se completan `config.py`,
 `dependencies.py`, `enums.py`, `errors.py`, `main.py` y `tests/conftest.py`.
 
 ## Configuración
@@ -196,18 +196,12 @@ Estándar: [Standard Webhooks](../estandares/standard-webhooks/standard-webhooks
 
 ## Errores
 
-Estándares: [*Handling Errors*](../estandares/fastapi/handling-errors.md) de FastAPI,
-[RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandares/rfc/rfc6901.txt).
+Estándar: [*Handling Errors*](../estandares/fastapi/handling-errors.md) de FastAPI.
 
-- `type` es una URI `https://<dominio>/problems/<nombre>`. Contradice RFC 9457, que pide servir en
-  ella la documentación del tipo: la URI queda fija desde el primer error, y la página puede llegar
-  después sin cambiarla.
-- Los errores propios se lanzan con `AppError`, que lleva `type`, `title` y `status`.
-- Toda respuesta de error es problem+json, también la de un `HTTPException`, la de un error de
-  validación y la de una excepción sin atrapar. El cliente lee un solo sobre.
-- Un error de validación es un 422 de tipo `https://<dominio>/problems/validation`, con la
-  extensión `errors`: una lista de `{detail, pointer}`, o de `{detail, parameter}` en query, path y
-  header.
+Contrato: [transversal.md](transversal.md#errores).
+
+- Un error con tipo propio se lanza con `AppError`; uno que su código de estado ya explica, con
+  `HTTPException`, y sale como `about:blank`.
 
 ## Fechas
 
@@ -363,7 +357,7 @@ Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
 
 - Cada cliente instalable manda `User-Agent: <pieza>/<versión>`, como `mobile/1.4.0`.
 - La configuración guarda la versión mínima de cada pieza. Una versión menor recibe un 400 de tipo
-  `https://<dominio>/problems/client-outdated`, y el cliente pide actualizar la app.
+  `https://<dominio>/api/problems/client-outdated`, y el cliente pide actualizar la app.
 - La comprobación va desde la primera versión que se publica: a una app instalada sin ella nunca
   se le puede obligar a actualizar.
 
@@ -400,7 +394,7 @@ Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAP
 | `AwareDatetime` en los esquemas | `test_schema_datetimes_are_aware` |
 | Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
-| Toda respuesta de error en problem+json, con `traceId` | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field` |
+| El `traceId` en cada problem+json | `test_unknown_route_is_a_problem` |
 | Un solo tag por router y el operation ID `<tag>-<función>` | `test_operation_ids` |
 | La versión mínima de cliente | `test_outdated_client_is_rejected` |
 | Un cursor ilegible o con otros filtros responde 422 | `test_invalid_cursor_points_to_the_parameter` |

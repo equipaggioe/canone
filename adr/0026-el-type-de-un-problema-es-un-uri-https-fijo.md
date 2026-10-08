@@ -1,6 +1,6 @@
 # ADR-0026 · El `type` de un problema es un URI `https` fijo, y la validación tiene su propio tipo
 
-- **Estado:** Aceptada. El punto 2 lo reemplaza el [ADR-0033](0033-un-modulo-propio-para-lo-que-se-usa-en-varias-partes-de-la-app.md)
+- **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0037](0037-la-uri-de-cada-tipo-de-problema-sirve-su-documentacion-bajo-api.md), y el punto 2, el [ADR-0033](0033-un-modulo-propio-para-lo-que-se-usa-en-varias-partes-de-la-app.md)
 - **Fecha:** 2026-10-01
 - **Alcance:** [`plataformas/fastapi.md`](../plataformas/fastapi.md),
   `plantilla/server/src/app/problems.py` y `errors.py`, y todo cliente que lea errores de la API

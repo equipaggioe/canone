@@ -2,6 +2,7 @@
 
 import logging
 from collections.abc import Mapping
+from dataclasses import dataclass
 from http import HTTPStatus
 from typing import Any
 
@@ -18,9 +19,37 @@ logger = logging.getLogger(__name__)
 PROBLEM_JSON = "application/problem+json"
 LOCATIONS = ("query", "path", "header", "cookie")
 
-PROBLEMS = "https://DOMINIO/problems/"
-VALIDATION = f"{PROBLEMS}validation"
-CLIENT_OUTDATED = f"{PROBLEMS}client-outdated"
+PROBLEMS = "https://DOMINIO/api/problems/"
+
+
+@dataclass(frozen=True)
+class ProblemType:
+    """An RFC 9457 problem type and the page its URI serves."""
+
+    name: str
+    title: str
+    status: HTTPStatus
+    resolution: str
+
+    @property
+    def uri(self) -> str:
+        """Identify the type."""
+        return f"{PROBLEMS}{self.name}"
+
+
+VALIDATION = ProblemType(
+    "validation",
+    "Invalid request",
+    HTTPStatus.UNPROCESSABLE_CONTENT,
+    "Fix each field or parameter listed in errors and send the request again.",
+)
+CLIENT_OUTDATED = ProblemType(
+    "client-outdated",
+    "Client outdated",
+    HTTPStatus.BAD_REQUEST,
+    "Install the latest version of the app.",
+)
+TYPES = {problem.name: problem for problem in (VALIDATION, CLIENT_OUTDATED)}
 
 
 class FieldError(Schema):
@@ -45,12 +74,10 @@ class Problem(Schema):
 class AppError(Exception):
     """An error of the application, with its problem type."""
 
-    def __init__(self, type_: str, title: str, status: int, detail: str | None = None) -> None:
-        """Keep the RFC 9457 members of the problem."""
-        super().__init__(detail or title)
-        self.type = type_
-        self.title = title
-        self.status = status
+    def __init__(self, problem: ProblemType, detail: str | None = None) -> None:
+        """Keep the problem type and the detail of this occurrence."""
+        super().__init__(detail or problem.title)
+        self.problem = problem
         self.detail = detail
 
 
@@ -92,9 +119,9 @@ async def app_error(_: Request, exc: Exception) -> JSONResponse:
     assert isinstance(exc, AppError)
     return respond(
         Problem(
-            type=exc.type,
-            title=exc.title,
-            status=exc.status,
+            type=exc.problem.uri,
+            title=exc.problem.title,
+            status=exc.problem.status,
             detail=exc.detail,
             traceId=trace_id.get(),
         )
@@ -113,9 +140,9 @@ async def validation_error(_: Request, exc: Exception) -> JSONResponse:
     assert isinstance(exc, RequestValidationError)
     return respond(
         Problem(
-            type=VALIDATION,
-            title="Invalid request",
-            status=HTTPStatus.UNPROCESSABLE_CONTENT,
+            type=VALIDATION.uri,
+            title=VALIDATION.title,
+            status=VALIDATION.status,
             errors=[field_error(error) for error in exc.errors()],
             traceId=trace_id.get(),
         )

@@ -7,6 +7,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from types import ModuleType
 from typing import Annotated, Any, get_args
+from urllib.parse import urlsplit
 
 import pytest
 import sqlalchemy as sa
@@ -226,7 +227,7 @@ async def test_validation_error_points_to_the_field() -> None:
     assert response.status_code == 422
     assert response.headers["content-type"] == errors.PROBLEM_JSON
     body = response.json()
-    assert body["type"] == errors.VALIDATION
+    assert body["type"] == errors.VALIDATION.uri
     assert {error.get("pointer") or error.get("parameter") for error in body["errors"]} == {
         "/itemName",
         "limit",
@@ -241,7 +242,18 @@ async def test_outdated_client_is_rejected(monkeypatch: pytest.MonkeyPatch) -> N
         response = await client.get("/api/health", headers={"User-Agent": "mobile/1.3.9"})
     assert response.status_code == 400
     assert response.headers["content-type"] == errors.PROBLEM_JSON
-    assert response.json()["type"] == errors.CLIENT_OUTDATED
+    assert response.json()["type"] == errors.CLIENT_OUTDATED.uri
+
+
+async def test_problem_types_are_documented() -> None:
+    """The URI of each problem type serves its documentation."""
+    transport = ASGITransport(app=main_app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        for problem in errors.TYPES.values():
+            response = await client.get(urlsplit(problem.uri).path)
+            assert response.status_code == 200
+            assert response.headers["content-type"].startswith("text/html")
+            assert problem.title in response.text
 
 
 async def test_invalid_cursor_points_to_the_parameter() -> None:

@@ -1,7 +1,6 @@
 """Dependencies shared by the routers."""
 
 from collections.abc import AsyncIterator
-from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import Depends, Header
@@ -28,4 +27,4 @@ async def check_client_version(user_agent: Annotated[str, Header()] = "") -> Non
     piece, _, version = user_agent.split(" ", 1)[0].partition("/")
     minimum = settings.min_client_versions.get(piece)
     if minimum is not None and Version(version) < Version(minimum):
-        raise AppError(CLIENT_OUTDATED, "Client outdated", HTTPStatus.BAD_REQUEST)
+        raise AppError(CLIENT_OUTDATED)

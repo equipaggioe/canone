@@ -23,8 +23,16 @@ Estándar: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de OW
 
 ## Errores
 
-- El sobre de error es RFC 9457, definido en [fastapi.md](fastapi.md). Cada cliente lo traduce a un
-  error tipado con los mismos campos. `type` es el contrato; `detail` es texto para mostrar.
+Estándares: [RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandares/rfc/rfc6901.txt).
+
+- `type` es una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio en todos los
+  entornos. El cliente compara el `type`, y la página de cada tipo la sirve el servidor, bajo `/api`.
+- Toda respuesta de error es problem+json. El cliente lee un solo sobre.
+- Un error de validación es de tipo `https://<dominio>/api/problems/validation`, con la extensión
+  `errors`: una lista de `{detail, pointer}`, o de `{detail, parameter}` para un parámetro que no
+  viene en el cuerpo.
+- `pointer` usa la representación de cadena de RFC 6901. La de fragmento suma la codificación de URI.
+- Cada cliente traduce el sobre a un error tipado con los mismos campos.
 
 ## Idiomas
 
@@ -141,3 +149,5 @@ Estándares: [RFC 6455](../estandares/rfc/rfc6455.txt) y
 | Qué | Con qué |
 |---|---|
 | Contraste de los tokens | Una prueba por cliente sobre el módulo de tokens |
+| Toda respuesta de error en problem+json | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
+| RFC 9457: la URI de cada tipo sirve su documentación | `test_problem_types_are_documented`, del servidor |

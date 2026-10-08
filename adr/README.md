@@ -33,7 +33,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0023](0023-un-monto-se-guarda-como-numeric-sin-escala-y-sus-decimales-los-decide-cada-repositorio.md) | Un monto se guarda como `numeric` sin escala, y los decimales que admite los decide cada repositorio | Con montos | Aceptada |
 | [0024](0024-la-clave-primaria-se-elige-por-lo-que-guarda-la-tabla.md) | La clave primaria se elige por lo que guarda la tabla: un código estándar, una identity o un uuid | Con base de datos | Aceptada |
 | [0025](0025-los-tipos-los-revisa-pyrefly-en-modo-strict.md) | Los tipos los revisa Pyrefly en modo strict | Con Python | Aceptada |
-| [0026](0026-el-type-de-un-problema-es-un-uri-https-fijo.md) | El `type` de un problema es un URI `https` fijo, y la validación tiene su propio tipo | Con `server/` y sus clientes | Aceptada; el punto 2 lo reemplaza ADR-0033 |
+| [0026](0026-el-type-de-un-problema-es-un-uri-https-fijo.md) | El `type` de un problema es un URI `https` fijo, y la validación tiene su propio tipo | Con `server/` y sus clientes | Aceptada; el punto 1 lo reemplaza ADR-0037, y el 2, ADR-0033 |
 | [0027](0027-el-prefijo-api-va-sin-version-en-un-apirouter-de-main.md) | El prefijo `/api` va sin versión, en un `APIRouter` de `main.py` | Con FastAPI | Aceptada |
 | [0028](0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md) | Una página está completa cuando sus estándares cubren lo que hay que decidir | `plataformas/` | Aceptada; el punto 1 lo reemplaza ADR-0031 |
 | [0029](0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md) | Las secciones de una página van en bloques fijos, y los temas en orden alfabético | `plataformas/` | Aceptada |
@@ -44,3 +44,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0034](0034-la-paginacion-es-por-cursor-con-reglas-propias.md) | La paginación es por cursor, con reglas propias | Con `server/` y sus clientes | Aceptada; el punto 1 lo reemplaza ADR-0035 |
 | [0035](0035-una-lista-con-numeros-de-pagina-se-pagina-por-page-y-devuelve-el-total.md) | Una lista con números de página se pagina por `page` y devuelve el total | Con `server/` y sus clientes | Aceptada |
 | [0036](0036-el-almacen-en-memoria-es-valkey.md) | El almacén en memoria de todas las piezas es Valkey | Con un almacén en memoria | Aceptada |
+| [0037](0037-la-uri-de-cada-tipo-de-problema-sirve-su-documentacion-bajo-api.md) | La URI de cada tipo de problema sirve su documentación, bajo `/api` | Con `server/` y sus clientes | Aceptada |

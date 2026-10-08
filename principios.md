@@ -36,30 +36,40 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
     como palabra.
 - [`scripts/verificar.py`](scripts/verificar.py) revisa las funciones, los métodos y las clases.
 
-## Ningún repositorio está en producción
+## Sin fallbacks
 
-No hay usuarios reales ni datos que salvar. El repositorio que sí llegue a producción lo dirá en su
-`docs/arquitectura/00_sistema.md`; mientras no lo diga, no lo está.
+Nada de valores por defecto silenciosos, handlers vacíos ni degradados silenciosos, en ningún
+repositorio. Ocultan errores: si un valor puede venir de dos sitios, no se sabe de cuál vino. **Que
+falle ruidosamente y en el momento.**
 
-Consecuencia directa: **nunca se propone migrar datos ni conservar un formato "por lo que haya en
+## Compatibilidad
+
+Depende del estado que el repositorio declara en su `README.md`
+([repositorio.md](repositorio.md#archivos-del-raíz)). Si no lo declara, no se supone ninguno: se
+pregunta.
+
+Las migraciones normales de esquema van en los dos estados: no son compatibilidad, son la única
+forma de abrir una base existente.
+
+### En desarrollo
+
+No hay usuarios reales ni datos que salvar. Nada de retrocompatibilidad, alias ni ramas
+`if version <`, y **nunca se propone migrar datos ni conservar un formato "por lo que haya en
 camino"**.
-
-## Sin fallbacks ni capas de compatibilidad
-
-Nada de retrocompatibilidad, valores por defecto silenciosos, alias, handlers vacíos, ramas
-`if version <` ni degradados silenciosos. Ocultan errores: si un valor puede venir de dos sitios,
-no se sabe de cuál vino. **Que falle ruidosamente y en el momento.**
 
 - Al mover, renombrar o cambiar de formato: cambio limpio, borrando la fuente vieja en vez de
   leerla. Si se pierden datos, se dice y se arreglan a mano una vez.
 - **Cambio de formato = borrar los datos viejos.** Una pasada para reconvertir archivos ya
   guardados cuenta como sostener el formato viejo.
-- Las migraciones normales de esquema sí van: no son un fallback, son la única forma de abrir una
-  base existente.
 - **Ninguna pieza sostiene la versión anterior de otra.** El servidor no conserva rutas, campos ni
   formatos viejos para que un cliente sin actualizar siga funcionando, y un cliente no conserva
   código para un servidor viejo. Tampoco se justifica una decisión con "despliegue escalonado" ni
   "cliente viejo": si una operación es distinta de otra, se explica por qué lo es en sí misma.
+
+### En producción
+
+La compatibilidad y la migración de datos no se agregan por cuenta propia ni sin avisar: se
+proponen con su costo, y decide el desarrollador.
 
 ## Reestructurar, no parchar
 

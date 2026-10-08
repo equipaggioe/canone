@@ -234,8 +234,13 @@ def revisar(repo: Path) -> list[str]:
     if not (repo / ".gitignore").exists():
         fallas.append("repositorio.md: falta .gitignore en el raíz")
 
-    if not (repo / "README.md").exists():
+    readme = repo / "README.md"
+    if not readme.exists():
         fallas.append("repositorio.md: falta README.md en el raíz")
+    elif not re.search(
+        r"^Estado: en (desarrollo|producción)$", readme.read_text(encoding="utf-8"), re.M
+    ):
+        fallas.append("repositorio.md: README.md no declara si está en desarrollo o en producción")
 
     ci = repo / ".github/workflows/ci.yml"
     if not ci.exists():

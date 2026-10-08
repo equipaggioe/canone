@@ -48,10 +48,14 @@ El repositorio no trae scripts de despliegue propios. Cómo tiene que quedar el 
 
 | Archivo | Contenido |
 |---|---|
-| `README.md` | Qué es el producto, qué piezas tiene, cómo se levanta cada una, enlace a `docs/` y a `canone` |
+| `README.md` | Qué es el producto, si está en desarrollo o en producción, qué piezas tiene, cómo se levanta cada una, enlace a `docs/` y a `canone` |
 | `.gitignore` | Solo lo que no es de ninguna plataforma. Cada pieza tiene el suyo |
 | `.gitattributes` | Se copia sin editar |
 | `.github/workflows/ci.yml` | Un job por pieza que el repositorio tenga |
+
+El estado va en una línea sola, `Estado: en desarrollo` o `Estado: en producción`, y es el único
+lugar donde se declara. De él depende qué compatibilidad se permite
+([principios.md](principios.md#compatibilidad)).
 
 ### `.gitignore`
 

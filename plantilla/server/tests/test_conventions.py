@@ -6,7 +6,7 @@ import pkgutil
 from datetime import UTC, datetime
 from pathlib import Path
 from types import ModuleType
-from typing import Annotated, Any, get_args
+from typing import Annotated, Any, TypeIs, get_args
 from urllib.parse import urlsplit
 
 import pytest
@@ -128,7 +128,7 @@ def test_relationships_raise() -> None:
     assert not offenders
 
 
-def is_mapped(node: ast.AST) -> bool:
+def is_mapped(node: ast.AST) -> TypeIs[ast.AnnAssign]:
     """Tell whether a statement declares a column or a relationship."""
     return (
         isinstance(node, ast.AnnAssign)

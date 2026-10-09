@@ -62,7 +62,7 @@ Es el único lugar donde vive lo que falta. Secciones, en este orden:
 3. **Pendientes abiertos**, en subgrupos:
    - Reportados en uso (fallos vistos por el usuario, con fecha).
    - Pedidos concretos sin hacer.
-   - Decididos y sin construir: tabla con enlace al ADR y, si existe, al plan.
+   - Decididos y sin construir: tabla con lo que se decidió construir, el enlace al ADR y, si existe, al plan.
    - Sin decidir.
    - Sin verificar (construido pero nunca probado en condiciones reales).
 4. **Deuda estructural declarada.**
@@ -73,6 +73,7 @@ Un pendiente se **borra** de aquí en el commit que lo resuelve. No se tacha ni 
 ### Reglas
 
 - Describe **solo lo implementado**. Lo que falta va en el 30; lo que se piensa construir, en `planes/`.
+- Recoge todo lo que decidieron los ADR y ya está construido. Para saber cómo es el sistema no se abre un ADR: el ADR guarda solo el porqué, y el documento que aplica la decisión lo enlaza.
 - **Se escribe leyendo el código, nunca a partir de otro documento.** Una guía o una especificación dice lo que alguien quiere; el código dice lo que hay.
 - **Si el documento y el código no coinciden, manda el código.** Se corrige el documento.
 - Antes de afirmar que algo está hecho o pendiente, se verifica contra el código.

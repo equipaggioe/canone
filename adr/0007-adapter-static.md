@@ -1,6 +1,6 @@
 # ADR-0007 · Toda superficie web usa `adapter-static`
 
-- **Estado:** Propuesta. El punto 1 lo reemplaza el [ADR-0039](0039-las-paginas-publicas-se-prerenderizan-y-las-que-piden-sesion-salen-del-fallback.md)
+- **Estado:** Reemplazada. El punto 1 lo reemplaza el [ADR-0039](0039-las-paginas-publicas-se-prerenderizan-y-las-que-piden-sesion-salen-del-fallback.md), y los puntos 2 y 3 se descartan: el 2 es como funciona SvelteKit, y el 3 ya lo dice el [README](../README.md) para cualquier repositorio que se aparte de una página
 - **Fecha:** 2026-09-22
 - **Alcance:** `landing/`, `panel/`, `backoffice/`, `pwa/`
 

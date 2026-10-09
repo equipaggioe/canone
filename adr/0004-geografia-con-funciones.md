@@ -1,6 +1,6 @@
 # ADR-0004 · Una columna geográfica se declara con una función, no con un Annotated
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-09-22
 - **Alcance:** `server/app/models/`, repositorios con PostGIS
 

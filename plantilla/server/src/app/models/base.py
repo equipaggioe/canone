@@ -2,13 +2,14 @@
 
 from datetime import datetime
 from enum import StrEnum
+from importlib.util import find_spec
 from typing import Annotated, Any
 from uuid import UUID
 
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import JSONB, TEXT, TIMESTAMP
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.orm import DeclarativeBase, mapped_column
+from sqlalchemy.orm import DeclarativeBase, MappedColumn, mapped_column
 
 # The convention of the Alembic documentation.
 NAMING_CONVENTION = {
@@ -46,6 +47,31 @@ class Base(DeclarativeBase):
 UuidPk = Annotated[UUID, mapped_column(primary_key=True, server_default=sa.text("gen_random_uuid()"))]
 SmallIntPk = Annotated[int, mapped_column(sa.SmallInteger, sa.Identity(always=True), primary_key=True)]
 BigIntPk = Annotated[int, mapped_column(sa.BigInteger, sa.Identity(always=True), primary_key=True)]
+
+# Only the servers that declare geoalchemy2 store geography; the
+# others keep this file unedited.
+if find_spec("geoalchemy2") is not None:
+    from geoalchemy2 import Geography, WKBElement
+
+    GeoPoint = WKBElement
+    GeoLine = WKBElement
+
+    # ADR-0004: a Geography shared through an Annotated takes the
+    # nullable of the last column that uses it, so each column builds
+    # its own.
+    def geo_point(*, nullable: bool) -> MappedColumn[Any]:
+        """Declare a point in WGS 84.
+
+        Its GiST index goes in the migration.
+        """
+        return mapped_column(Geography("POINT", srid=4326, spatial_index=False), nullable=nullable)
+
+    def geo_line(*, nullable: bool) -> MappedColumn[Any]:
+        """Declare a line in WGS 84.
+
+        Its GiST index goes in the migration.
+        """
+        return mapped_column(Geography("LINESTRING", srid=4326, spatial_index=False), nullable=nullable)
 
 
 @compiles(sa.Enum, "postgresql")

@@ -21,6 +21,15 @@ Estándar: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de OW
 
 - Un archivo se sube solo, como `multipart/form-data`. No pasa por base64 dentro de un JSON.
 
+## Código por SMS
+
+Estándares: [*Origin-bound one-time codes delivered via SMS*](../estandares/wicg/sms-one-time-codes.bs)
+de WICG y la sección *Construct a verification message* de
+[*Perform SMS Verification on a Server*](../estandares/android/sms-retriever-verify.md) de Google.
+
+- Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el formato de
+  WICG reserva el final de la última para sintaxis futura.
+
 ## Errores
 
 Estándares: [RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandares/rfc/rfc6901.txt).

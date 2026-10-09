@@ -28,6 +28,7 @@ server/
     errors.py
     tracing.py
     enums.py
+    tasks.py
     models/
       __init__.py
       base.py
@@ -133,6 +134,17 @@ Estándares: [*Background Tasks*](../estandares/fastapi/background-tasks.md) y l
 *Background Tasks and Dependencies with `yield`, Technical Details* de
 [*Advanced Dependencies*](../estandares/fastapi/advanced-dependencies.md) de FastAPI.
 
+## Tareas periódicas
+
+- Una tarea periódica es una función idempotente en `services/`, que devuelve cuántas filas tocó:
+  perder una vuelta no pierde nada.
+- La dispara el lazo del `lifespan`, `python -m app.tasks` desde un timer de systemd, o los dos.
+- El lazo toma `pg_try_advisory_lock` si la tarea es global, o reparte filas con
+  `FOR UPDATE SKIP LOCKED`: sin candado, cada worker repite la tarea.
+- Una excepción de la tarea se registra y el lazo sigue: si no, el lazo muere y el proceso sigue
+  vivo sin hacer nada.
+- Cada tarea tiene en `Settings` un interruptor y un intervalo.
+
 ## Archivos
 
 Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de OWASP y
@@ -183,17 +195,14 @@ Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-
 
 ## Código por SMS
 
-Estándares: las secciones 3.1.3.1 *Out-of-Band Authenticators* y 3.1.3.2 *Out-of-Band Verifiers*
-de [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt),
-[*Origin-bound one-time codes delivered via SMS*](../estandares/wicg/sms-one-time-codes.bs) de
-WICG y la sección *Construct a verification message* de
-[*Perform SMS Verification on a Server*](../estandares/android/sms-retriever-verify.md) de Google.
+Estándar: las secciones 3.1.3.1 *Out-of-Band Authenticators* y 3.1.3.2 *Out-of-Band Verifiers*
+de [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt).
+
+Contrato: [transversal.md](transversal.md#código-por-sms).
 
 - El primer código que se envía a un número sin cuenta la crea.
 - El código vive en Valkey, con un TTL de 10 minutos.
 - El envío tiene un límite por número y por IP: cada SMS cuesta y atrae el fraude de bombeo de SMS.
-- Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el formato de
-  WICG reserva el final de la última para sintaxis futura.
 - Una cuenta de administración inicia sesión con passkeys: el código por SMS es un solo factor, y
   quien se queda con el número no se lleva la administración.
 - El número se cambia desde una sesión abierta, con un código enviado al número nuevo.
@@ -345,6 +354,32 @@ Estándares: [*Send a message using Firebase Admin SDK*](../estandares/firebase/
 
 Estándar: [*Logging Cheat Sheet*](../estandares/owasp/Logging.md) de OWASP.
 
+- Los eventos van en una sola tabla, `event_log`, con su categoría (`auth`, `security`, `admin` o
+  `business`) y su acción, un enum de cada repositorio: lo que pasó alrededor de una hora se lee en
+  una consulta.
+- Las demás columnas de `event_log`:
+
+  | Columna | Regla |
+  |---|---|
+  | `occurred_at`, `created_at` | Cuándo pasó y cuándo se escribió |
+  | `actor_id` | Nulo si no hay cuenta detrás |
+  | `actor_label` | El identificador tal como llegó |
+  | `target_type`, `target_id` | Nulos si el evento no es sobre un recurso |
+  | `outcome` | `success` o `failure` |
+  | `severity` | `low`, `medium`, `high` o `critical` |
+  | `ip_address`, `user_agent` | De dónde vino |
+  | `trace_id` | El trace-id de la petición, el mismo del log y del `traceId` del error |
+  | `details` | `jsonb` |
+  | `tenant_id` | En todo evento, si el repositorio es multi-tenant |
+
+- Los cambios de fila van en `audit_log`, con `table_name`, `record_id`, `old_values` y
+  `new_values`. Un hecho que no cambia una fila va en `event_log`: no tiene valores anteriores.
+- Un valor entra al registro solo si su tabla y su campo están en una lista blanca: una columna
+  nueva no se registra sola. Un campo fuera de la lista se registra como cambiado, sin su valor.
+- `event_log` y `audit_log` tienen cada uno su retención en días en `Settings`, y `0` la deja
+  indefinida.
+- Renovar un token no escribe en el registro: sería una fila por cada renovación.
+
 ## Reintentos
 
 Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
@@ -366,13 +401,16 @@ Estándares: [RFC 7519](../estandares/rfc/rfc7519.txt), [RFC 8725](../estandares
 y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP.
 
 - El token de acceso es un JWT firmado con HS256 que vence en 15 minutos.
-- El token de refresco es un valor aleatorio de 256 bits que rota en cada uso, y la base guarda su
-  SHA-256 en la fila de sesión.
-- Usar un token de refresco ya rotado borra la sesión de ese dispositivo, avisa al titular por los
-  medios que registró y cuenta como un intento fallido de la cuenta: un token robado se descubre
-  cuando el dueño vuelve a refrescar.
+- El token de refresco es un valor aleatorio de 256 bits que rota en cada uso.
+- La fila de sesión guarda el SHA-256 del token de refresco vigente y el del anterior: si un ladrón
+  rota, el token que presenta después el dueño es el anterior.
+- Presentar el anterior borra la sesión de ese dispositivo, avisa al titular por los medios que
+  registró y cuenta como un intento fallido de la cuenta: un token robado se descubre cuando el
+  dueño vuelve a refrescar.
+- Un token de refresco que no es el vigente ni el anterior responde 401, sin aviso.
 - Cada dispositivo tiene una fila de sesión, con su creación y su último uso. La sesión vence tras
   30 días sin uso, y cerrar sesión borra la fila.
+- Una tarea periódica borra las sesiones vencidas.
 
 ## Trazas
 

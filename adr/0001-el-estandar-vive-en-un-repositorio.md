@@ -1,7 +1,8 @@
 # ADR-0001 · El estándar vive en un repositorio y los demás lo enlazan
 
-- **Estado:** Propuesta. La última frase del punto 2 está reemplazada por
-  [ADR-0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md)
+- **Estado:** Aceptada. La última frase del punto 2 la reemplaza el
+  [ADR-0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md), y el punto 4, el
+  [ADR-0040](0040-el-claude-md-global-guarda-solo-lo-que-es-para-claude.md)
 - **Fecha:** 2026-09-22
 - **Alcance:** todos los repositorios
 

@@ -1,6 +1,6 @@
 # Estándares
 
-Copia de los textos de las fuentes que citan las páginas de [plataformas/](../plataformas/). Una página se revisa contra el texto de aquí, no de memoria.
+Copia de los textos de las fuentes que citan las páginas de [plataformas/](../plataformas/). Una página se revisa contra el texto de aquí, no de memoria. Una fuente que solo cita un ADR no se copia: el ADR la usa como argumento de su decisión, y ninguna página toma reglas de ella.
 
 - Cada archivo es el texto de su fuente, sin editar. Cuando la fuente es una página web, es su contenido convertido a Markdown.
 - Para actualizar un archivo se vuelve a descargar de su fuente; `git diff` muestra qué cambió.

@@ -63,6 +63,8 @@ ban-relative-imports = "all"
 preset = "strict"
 project-includes = ["src", "tests"]
 enabled-ignores = ["pyrefly"]
+# models/base.py imports geoalchemy2 only where it is installed.
+ignore-missing-imports = ["geoalchemy2", "geoalchemy2.*"]
 
 [tool.pyrefly.errors]
 missing-override-decorator = false
@@ -80,3 +82,5 @@ known_first_party = ["app"]
 [tool.deptry.per_rule_ignores]
 # SQLAlchemy loads asyncpg from the database URL.
 DEP002 = ["asyncpg"]
+# models/base.py imports geoalchemy2 only where it is installed.
+DEP001 = ["geoalchemy2"]

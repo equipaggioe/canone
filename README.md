@@ -74,3 +74,6 @@ python scripts/verificar.py --todos ..
 
 Solo comprueba las plataformas que el repositorio realmente tiene: si no hay `server/`, no exige
 nada de FastAPI.
+
+Una mejora a un archivo canónico se hace primero en `plantilla/`, y desde ahí se copia a cada
+repositorio.

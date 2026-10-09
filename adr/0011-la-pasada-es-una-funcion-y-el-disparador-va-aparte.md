@@ -1,6 +1,6 @@
 # ADR-0011 · La pasada periódica es una función, y el disparador va aparte
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada. El script del punto 2, la espera del punto 4, el «apagado por defecto» del punto 6 y el punto 7 los reemplaza el [ADR-0041](0041-una-tarea-periodica-se-dispara-desde-la-pieza-y-su-interruptor-es-obligatorio.md)
 - **Fecha:** 2026-09-23
 - **Alcance:** `server/`, todos los repositorios
 

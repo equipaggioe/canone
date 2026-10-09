@@ -1,6 +1,6 @@
 # ADR-0010 · La tabla de sesiones es estado vivo, no historia
 
-- **Estado:** Propuesta. El punto 3, en lo que revoca, lo reemplaza el [ADR-0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md)
+- **Estado:** Aceptada. El punto 3, en lo que revoca, lo reemplaza el [ADR-0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md), y la gracia del punto 6, el [ADR-0042](0042-una-sesion-vencida-se-borra-sin-gracia.md)
 - **Fecha:** 2026-09-23
 - **Alcance:** `server/app/models/`, todos los repositorios con autenticación
 

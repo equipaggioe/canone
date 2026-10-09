@@ -1,6 +1,6 @@
 # ADR-0002 · Los archivos base se copian y un script verifica la copia
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-09-22
 - **Alcance:** `server/app/models/base.py`, `server/app/schemas/base.py`
 

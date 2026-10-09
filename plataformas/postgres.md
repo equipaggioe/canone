@@ -47,6 +47,11 @@ Estándar: [*Data Management*](../estandares/postgis/using_postgis_dataman.xml) 
 - Las columnas espaciales son `geography(<tipo>, 4326)`. El área de cada producto no se conoce de
   antemano, y `geography` mide en metros sin elegir proyección.
 - El ORM las declara con GeoAlchemy2.
+- La columna se declara con `geo_point()` o `geo_line()`, que crean un `Geography` por columna: un
+  `Geography` compartido en un `Annotated` le impone su `nullable` a todas las columnas que lo usan.
+- `GeoPoint` y `GeoLine` son alias de `WKBElement`, solo para `Mapped[...]`.
+- La columna lleva `spatial_index=False`, y su índice GiST lo crea la migración, como los demás
+  índices.
 
 ## Índices
 

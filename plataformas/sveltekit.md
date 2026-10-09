@@ -73,6 +73,8 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 Estándar: [*WebOTP API*](../estandares/wicg/webotp.bs) de WICG.
 
+Contrato: [transversal.md](transversal.md#código-por-sms).
+
 - El campo del código lleva `autocomplete="one-time-code"`: Safari no implementa WebOTP y llena el
   código por ese atributo.
 

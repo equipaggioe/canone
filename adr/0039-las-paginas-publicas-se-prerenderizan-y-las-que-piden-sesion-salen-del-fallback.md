@@ -1,6 +1,6 @@
 # ADR-0039 · Las páginas públicas se prerenderizan, y las que piden sesión salen del `fallback`
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-10-08
 - **Alcance:** la sección «Adaptador» de [`plataformas/sveltekit.md`](../plataformas/sveltekit.md)
 

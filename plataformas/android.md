@@ -92,6 +92,8 @@ one-time code from the verification message to your server* de
 [*Request SMS Verification in an Android App*](../estandares/android/sms-retriever-request.md) de
 Google.
 
+Contrato: [transversal.md](transversal.md#código-por-sms).
+
 - El `BroadcastReceiver` se registra en tiempo de ejecución, mientras la pantalla del código está
   abierta: solo esa pantalla espera el SMS.
 

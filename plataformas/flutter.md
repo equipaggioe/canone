@@ -93,6 +93,8 @@ Estándares: [shared_preferences](../estandares/pub/shared_preferences/README.md
 
 Estándar: la sección *Usage* de [sms_autofill](../estandares/pub/sms_autofill/README.md).
 
+Contrato: [transversal.md](transversal.md#código-por-sms).
+
 - El campo del código es `TextFieldPinAutoFill`: lleva una `InputDecoration`, y se ve como los
   demás campos del tema.
 

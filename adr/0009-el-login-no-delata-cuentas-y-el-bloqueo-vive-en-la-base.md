@@ -1,6 +1,6 @@
 # ADR-0009 · El login no delata cuentas por tiempo y el bloqueo vive en una tabla
 
-- **Estado:** Propuesta
+- **Estado:** Reemplazada por [ADR-0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md)
 - **Fecha:** 2026-09-23
 - **Alcance:** `server/app/services/`, todos los repositorios con autenticación
 

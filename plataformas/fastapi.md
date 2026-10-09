@@ -161,8 +161,19 @@ Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.m
   método le suma pasos al usuario.
 - El registro verifica un correo o un teléfono, que es también a donde se envía el código para
   recuperar la cuenta.
+- El registro responde 409 si la cuenta ya existe: quien se registra se entera de que ya tiene
+  cuenta.
+- Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos: quien
+  prueba correos o teléfonos en serie busca cuentas existentes.
 - El token del enlace para restablecer la contraseña vence en 30 minutos, y la base guarda su
   SHA-256.
+- Cambiar la contraseña cierra las demás sesiones y renueva los tokens de la sesión que hizo el
+  cambio; restablecerla cierra todas: quien lo hace puede sospechar de un acceso ajeno.
+- El conteo de intentos fallidos vive en Valkey.
+- El bloqueo llega con 10 intentos fallidos seguidos y dura 30 minutos, y el tercero es permanente.
+- El conteo de intentos fallidos no vence con el tiempo: con una ventana, quien prueba despacio
+  nunca llega al bloqueo.
+- Cada bloqueo avisa al titular por los medios que registró.
 
 ## Búsqueda de direcciones
 
@@ -355,9 +366,11 @@ Estándares: [RFC 7519](../estandares/rfc/rfc7519.txt), [RFC 8725](../estandares
 y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP.
 
 - El token de acceso es un JWT firmado con HS256 que vence en 15 minutos.
-- El token de refresco es un valor aleatorio de 256 bits, y la base guarda su SHA-256 en la fila de
-  sesión. Rota en cada uso, y usar uno ya rotado borra la sesión entera: un token robado se
-  descubre cuando el dueño vuelve a refrescar.
+- El token de refresco es un valor aleatorio de 256 bits que rota en cada uso, y la base guarda su
+  SHA-256 en la fila de sesión.
+- Usar un token de refresco ya rotado borra la sesión de ese dispositivo, avisa al titular por los
+  medios que registró y cuenta como un intento fallido de la cuenta: un token robado se descubre
+  cuando el dueño vuelve a refrescar.
 - Cada dispositivo tiene una fila de sesión, con su creación y su último uso. La sesión vence tras
   30 días sin uso, y cerrar sesión borra la fila.
 

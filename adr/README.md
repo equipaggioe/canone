@@ -15,8 +15,8 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0005](0005-prefijo-api-al-montar.md) | El prefijo `/api` se aplica al montar, y la ruta no lleva versión | Con FastAPI | Reemplazada por ADR-0027 |
 | [0006](0006-dependencias-con-pyproject-y-uv.md) | Las dependencias de Python se declaran en `pyproject.toml` con `uv` | Con Python | Propuesta |
 | [0007](0007-adapter-static.md) | Toda superficie web usa `adapter-static` | Con SvelteKit | Propuesta |
-| [0008](0008-un-sobre-unico-de-evento-y-el-catalogo-es-del-repositorio.md) | Lo que pasa se registra en un sobre único, y el catálogo es de cada repositorio | Con `server/` | Propuesta |
-| [0009](0009-el-login-no-delata-cuentas-y-el-bloqueo-vive-en-la-base.md) | El login no delata cuentas por tiempo y el bloqueo vive en una tabla | Con autenticación | Propuesta |
+| [0008](0008-un-sobre-unico-de-evento-y-el-catalogo-es-del-repositorio.md) | Lo que pasa se registra en un sobre único, y el catálogo es de cada repositorio | Con `server/` | Propuesta; el punto 3 lo reemplaza ADR-0038 |
+| [0009](0009-el-login-no-delata-cuentas-y-el-bloqueo-vive-en-la-base.md) | El login no delata cuentas por tiempo y el bloqueo vive en una tabla | Con autenticación | Reemplazada por ADR-0038 |
 | [0010](0010-la-sesion-es-estado-vivo-y-la-historia-esta-en-los-eventos.md) | La tabla de sesiones es estado vivo, no historia | Con autenticación | Propuesta |
 | [0011](0011-la-pasada-es-una-funcion-y-el-disparador-va-aparte.md) | La pasada periódica es una función, y el disparador va aparte | Con `server/` | Propuesta |
 | [0012](0012-el-prefijo-api-v1-se-aplica-al-montar.md) | El prefijo `/api/v1` se aplica al montar | Con FastAPI | Rechazada por ADR-0027 |
@@ -45,3 +45,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0035](0035-una-lista-con-numeros-de-pagina-se-pagina-por-page-y-devuelve-el-total.md) | Una lista con números de página se pagina por `page` y devuelve el total | Con `server/` y sus clientes | Aceptada |
 | [0036](0036-el-almacen-en-memoria-es-valkey.md) | El almacén en memoria de todas las piezas es Valkey | Con un almacén en memoria | Aceptada |
 | [0037](0037-la-uri-de-cada-tipo-de-problema-sirve-su-documentacion-bajo-api.md) | La URI de cada tipo de problema sirve su documentación, bajo `/api` | Con `server/` y sus clientes | Aceptada |
+| [0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md) | El login sigue a OWASP, y el conteo de intentos fallidos vive en Valkey | Con autenticación | Aceptada |

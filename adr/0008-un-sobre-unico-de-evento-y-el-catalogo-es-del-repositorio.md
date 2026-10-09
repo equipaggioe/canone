@@ -1,6 +1,6 @@
 # ADR-0008 · Lo que pasa se registra en un sobre único, y el catálogo es de cada repositorio
 
-- **Estado:** Propuesta
+- **Estado:** Propuesta. El punto 3 lo reemplaza el [ADR-0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md)
 - **Fecha:** 2026-09-23
 - **Alcance:** `server/`, todos los repositorios
 

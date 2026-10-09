@@ -1,6 +1,6 @@
 # ADR-0007 · Toda superficie web usa `adapter-static`
 
-- **Estado:** Propuesta
+- **Estado:** Propuesta. El punto 1 lo reemplaza el [ADR-0039](0039-las-paginas-publicas-se-prerenderizan-y-las-que-piden-sesion-salen-del-fallback.md)
 - **Fecha:** 2026-09-22
 - **Alcance:** `landing/`, `panel/`, `backoffice/`, `pwa/`
 

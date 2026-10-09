@@ -2,14 +2,14 @@
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-09-29
-- **Alcance:** [plataformas/fastapi.md](../plataformas/fastapi.md) y la tabla de lo que cruza
-  plataformas en [plataformas/README.md](../plataformas/README.md); el servidor y todos sus clientes
+- **Alcance:** [plataformas/fastapi.md](../plataformas/fastapi.md) y la sección «Montos» de
+  [plataformas/transversal.md](../plataformas/transversal.md#montos); el servidor y todos sus clientes
 
 ## Contexto
 
 Un monto se guarda como `numeric` ([ADR-0020](0020-un-monto-se-guarda-como-numeric-sin-escala-junto-al-codigo-iso-4217-de-su-moneda.md)),
-y en Python es un `Decimal`. Pydantic lo serializa como cadena JSON (`"10.50"`) y lo declara en el
-OpenAPI como `type: string`. TypeScript y Dart leen un número JSON como `double`, y ninguno de los dos
+y en Python es un `Decimal`. Pydantic lo serializa como cadena JSON (`"10.50"`): en el OpenAPI, una
+respuesta lo declara `type: string`, y una petición acepta número o cadena. TypeScript y Dart leen un número JSON como `double`, y ninguno de los dos
 trae un tipo decimal.
 
 ## Decisión

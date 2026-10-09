@@ -1,6 +1,6 @@
 # ADR-0006 · Las dependencias de Python se declaran en `pyproject.toml` con `uv`
 
-- **Estado:** Propuesta
+- **Estado:** Propuesta. El punto 3, en lo que toca a `mypy`, lo reemplaza el [ADR-0025](0025-los-tipos-los-revisa-pyrefly-en-modo-strict.md)
 - **Fecha:** 2026-09-22
 - **Alcance:** `server/`, y toda pieza en Python
 

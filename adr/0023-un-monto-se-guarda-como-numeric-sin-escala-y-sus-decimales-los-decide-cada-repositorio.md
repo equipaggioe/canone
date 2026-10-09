@@ -2,7 +2,7 @@
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-09-29
-- **Alcance:** [plataformas/pagos.md](../plataformas/pagos.md); los repositorios que guardan montos
+- **Alcance:** [plataformas/postgres.md](../plataformas/postgres.md); los repositorios que guardan montos
 
 ## Contexto
 

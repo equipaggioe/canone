@@ -56,8 +56,9 @@ decisión que bloquee la implementación**.
 
 ## Descartado
 
-- **Un planificador de verdad** (APScheduler, Celery). Es infraestructura extra para una tarea cuyo
-  estado ya vive en Postgres, y arrastra Redis o un broker.
+- **Un planificador de verdad** (APScheduler, Celery). Celery necesita un broker. APScheduler no,
+  pero no coordina varios procesos: su documentación advierte que compartir un almacén de tareas
+  entre procesos ejecuta tareas dos veces o las pierde, que es el problema del punto 3.
 - **Un lazo dentro de otro proceso de fondo que ya exista** —el enviador de avisos, por ejemplo—.
   Ata la limpieza a que ese proceso tenga sus credenciales: un despliegue sin avisos se quedaría
   también sin limpieza.

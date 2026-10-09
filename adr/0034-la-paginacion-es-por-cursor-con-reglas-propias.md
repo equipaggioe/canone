@@ -19,6 +19,6 @@ las apps se recorren casi siempre con scroll infinito.
 
 - **El capítulo de paginación de Zalando:** le faltan el `limit` por defecto y máximo y el error
   ante un cursor inválido, y su regla #161 pide enlaces donde la página usa cursores.
-- **AIP-158:** está pensada para gRPC.
+- **AIP-158:** está escrita para APIs definidas en proto, que llegan a HTTP/JSON por transcodificación.
 - **RFC 8288 con reglas propias:** cubre una sola de las decisiones, y un cliente generado desde
   OpenAPI no lee la cabecera `Link`.

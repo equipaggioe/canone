@@ -89,6 +89,13 @@ Estándares: [shared_preferences](../estandares/pub/shared_preferences/README.md
 - El token de refresco que pide [transversal.md](transversal.md#sesión) va en
   flutter_secure_storage.
 
+## Código por SMS
+
+Estándar: la sección *Usage* de [sms_autofill](../estandares/pub/sms_autofill/README.md).
+
+- El campo del código es `TextFieldPinAutoFill`: lleva una `InputDecoration`, y se ve como los
+  demás campos del tema.
+
 ## Idiomas
 
 Estándar: [*Internationalizing Flutter apps*](../estandares/flutter/internationalization.md).

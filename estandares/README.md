@@ -90,6 +90,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [w3c/webrtc.html](w3c/webrtc.html) | <https://raw.githubusercontent.com/w3c/webrtc-pc/main/webrtc.html> |  |
 | [w3c/push-api.html](w3c/push-api.html) | <https://raw.githubusercontent.com/w3c/push-api/gh-pages/index.html> |  |
 | [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> |  |
+| [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/main/index.bs> |  |
+| [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | Texto extraído del PDF |
 | [owasp/Authentication.md](owasp/Authentication.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authentication_Cheat_Sheet.md> |  |
 | [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authorization_Cheat_Sheet.md> |  |
@@ -172,6 +174,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | <https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/develop/flutter_secure_storage/README.md> |  |
 | [pub/provider/README.md](pub/provider/README.md) | <https://raw.githubusercontent.com/rrousselGit/provider/master/packages/provider/README.md> |  |
 | [pub/flutter_map/README.md](pub/flutter_map/README.md) | <https://raw.githubusercontent.com/fleaflet/flutter_map/master/README.md> |  |
+| [pub/sms_autofill/README.md](pub/sms_autofill/README.md) | <https://raw.githubusercontent.com/jaumard/sms_autofill/master/README.md> |  |
 | [osm/tile-usage-policy.md](osm/tile-usage-policy.md) | <https://operations.osmfoundation.org/policies/tiles/> | Página web convertida a Markdown |
 | [osm/nominatim-usage-policy.md](osm/nominatim-usage-policy.md) | <https://operations.osmfoundation.org/policies/nominatim/> | Página web convertida a Markdown |
 | [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | <https://osmfoundation.org/wiki/Licence/Attribution_Guidelines> | Página web convertida a Markdown |
@@ -193,6 +196,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [android/navigation-3.md](android/navigation-3.md) | <https://developer.android.com/guide/navigation/navigation-3> | Página web convertida a Markdown |
 | [android/accessibility-apps.md](android/accessibility-apps.md) | <https://developer.android.com/guide/topics/ui/accessibility/apps> | Página web convertida a Markdown |
 | [android/accessibility-principles.md](android/accessibility-principles.md) | <https://developer.android.com/guide/topics/ui/accessibility/principles> | Página web convertida a Markdown |
+| [android/sms-retriever-verify.md](android/sms-retriever-verify.md) | <https://developers.google.com/identity/sms-retriever/verify> | Página web convertida a Markdown |
+| [android/sms-retriever-request.md](android/sms-retriever-request.md) | <https://developers.google.com/identity/sms-retriever/request> | Página web convertida a Markdown |
 | [compose/state.md](compose/state.md) | <https://developer.android.com/develop/ui/compose/state> | Página web convertida a Markdown |
 | [compose/architecture.md](compose/architecture.md) | <https://developer.android.com/develop/ui/compose/architecture> | Página web convertida a Markdown |
 | [compose/material3.md](compose/material3.md) | <https://developer.android.com/develop/ui/compose/designsystems/material3> | Página web convertida a Markdown |

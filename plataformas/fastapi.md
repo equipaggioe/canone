@@ -157,6 +157,8 @@ Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.m
 
 - Una pieza inicia sesión con passkeys. Si uno de sus clientes no puede usarlas, la pieza inicia
   sesión solo con contraseña.
+- Una pieza cuyos datos no son sensibles inicia sesión solo con un código por SMS: un segundo
+  método le suma pasos al usuario.
 - El registro verifica un correo o un teléfono, que es también a donde se envía el código para
   recuperar la cuenta.
 - El token del enlace para restablecer la contraseña vence en 30 minutos, y la base guarda su
@@ -167,6 +169,24 @@ Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.m
 Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
 
 - Las respuestas de Nominatim se guardan en Valkey.
+
+## Código por SMS
+
+Estándares: las secciones 3.1.3.1 *Out-of-Band Authenticators* y 3.1.3.2 *Out-of-Band Verifiers*
+de [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt),
+[*Origin-bound one-time codes delivered via SMS*](../estandares/wicg/sms-one-time-codes.bs) de
+WICG y la sección *Construct a verification message* de
+[*Perform SMS Verification on a Server*](../estandares/android/sms-retriever-verify.md) de Google.
+
+- El primer código que se envía a un número sin cuenta la crea.
+- El código vive en Valkey, con un TTL de 10 minutos.
+- El envío tiene un límite por número y por IP: cada SMS cuesta y atrae el fraude de bombeo de SMS.
+- Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el formato de
+  WICG reserva el final de la última para sintaxis futura.
+- Una cuenta de administración inicia sesión con passkeys: el código por SMS es un solo factor, y
+  quien se queda con el número no se lleva la administración.
+- El número se cambia desde una sesión abierta, con un código enviado al número nuevo.
+- Quien perdió su número recupera la cuenta con un administrador.
 
 ## Contraseñas
 

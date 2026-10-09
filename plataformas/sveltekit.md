@@ -69,6 +69,13 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 - `svelte-check` corre con `--fail-on-warnings`. Las advertencias `a11y_*` del compilador rompen
   CI.
 
+## Código por SMS
+
+Estándar: [*WebOTP API*](../estandares/wicg/webotp.bs) de WICG.
+
+- El campo del código lleva `autocomplete="one-time-code"`: Safari no implementa WebOTP y llena el
+  código por ese atributo.
+
 ## CSP
 
 Estándares: [*Content Security Policy Cheat Sheet*](../estandares/owasp/Content_Security_Policy.md)

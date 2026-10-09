@@ -85,6 +85,16 @@ Estándares: [DataStore](../estandares/android/datastore.md) y el
   DataStore, cifrado con una clave AES-GCM del Keystore. La clave no sale del dispositivo, así que
   lo cifrado no sirve fuera de él.
 
+## Código por SMS
+
+Estándar: las secciones *Start the SMS retriever*, *Receive verification messages* y *Send the
+one-time code from the verification message to your server* de
+[*Request SMS Verification in an Android App*](../estandares/android/sms-retriever-request.md) de
+Google.
+
+- El `BroadcastReceiver` se registra en tiempo de ejecución, mientras la pantalla del código está
+  abierta: solo esa pantalla espera el SMS.
+
 ## Idiomas
 
 Estándar: la [localización](../estandares/android/localization.md) de Android.

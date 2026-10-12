@@ -1,6 +1,6 @@
 # ADR-0038 · El login sigue a OWASP, y el conteo de intentos fallidos vive en Valkey
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0044](0044-el-bloqueo-cuenta-en-una-ventana-y-el-titular-lo-ve-en-la-app.md)
 - **Fecha:** 2026-10-08
 - **Alcance:** las secciones «Autenticación» y «Tokens» de
   [`plataformas/fastapi.md`](../plataformas/fastapi.md)

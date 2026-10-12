@@ -18,7 +18,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0008](0008-un-sobre-unico-de-evento-y-el-catalogo-es-del-repositorio.md) | Lo que pasa se registra en un sobre único, y el catálogo es de cada repositorio | Con `server/` | Aceptada, salvo el punto 6, que sigue en propuesta; el punto 3 lo reemplaza ADR-0038 |
 | [0009](0009-el-login-no-delata-cuentas-y-el-bloqueo-vive-en-la-base.md) | El login no delata cuentas por tiempo y el bloqueo vive en una tabla | Con autenticación | Reemplazada por ADR-0038 |
 | [0010](0010-la-sesion-es-estado-vivo-y-la-historia-esta-en-los-eventos.md) | La tabla de sesiones es estado vivo, no historia | Con autenticación | Aceptada; el punto 3, en lo que revoca, lo reemplaza ADR-0038, y la gracia del punto 6, ADR-0042 |
-| [0011](0011-la-pasada-es-una-funcion-y-el-disparador-va-aparte.md) | La pasada periódica es una función, y el disparador va aparte | Con `server/` | Aceptada; el script del punto 2, la espera del punto 4, el «apagado por defecto» del punto 6 y el punto 7 los reemplaza ADR-0041 |
+| [0011](0011-la-pasada-es-una-funcion-y-el-disparador-va-aparte.md) | La pasada periódica es una función, y el disparador va aparte | Con `server/` | Reemplazada por ADR-0043 |
 | [0012](0012-el-prefijo-api-v1-se-aplica-al-montar.md) | El prefijo `/api/v1` se aplica al montar | Con FastAPI | Rechazada por ADR-0027 |
 | [0013](0013-un-enum-hereda-de-strenum-y-se-guarda-como-text-con-check.md) | Un enum hereda de `StrEnum` y se guarda como `text` con CHECK | Con base de datos | Aceptada |
 | [0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md) | Una página de plataforma se escribe desde la recomendación oficial, no desde el código | `plataformas/` | Reemplazada por ADR-0016 |
@@ -45,8 +45,10 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0035](0035-una-lista-con-numeros-de-pagina-se-pagina-por-page-y-devuelve-el-total.md) | Una lista con números de página se pagina por `page` y devuelve el total | Con `server/` y sus clientes | Aceptada |
 | [0036](0036-el-almacen-en-memoria-es-valkey.md) | El almacén en memoria de todas las piezas es Valkey | Con un almacén en memoria | Aceptada |
 | [0037](0037-la-uri-de-cada-tipo-de-problema-sirve-su-documentacion-bajo-api.md) | La URI de cada tipo de problema sirve su documentación, bajo `/api` | Con `server/` y sus clientes | Aceptada |
-| [0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md) | El login sigue a OWASP, y el conteo de intentos fallidos vive en Valkey | Con autenticación | Aceptada |
+| [0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md) | El login sigue a OWASP, y el conteo de intentos fallidos vive en Valkey | Con autenticación | Reemplazada por ADR-0044 |
 | [0039](0039-las-paginas-publicas-se-prerenderizan-y-las-que-piden-sesion-salen-del-fallback.md) | Las páginas públicas se prerenderizan, y las que piden sesión salen del `fallback` | Con SvelteKit | Aceptada |
 | [0040](0040-el-claude-md-global-guarda-solo-lo-que-es-para-claude.md) | `~/.claude/CLAUDE.md` guarda solo lo que es para Claude, y enlaza canone para el método | Todos | Aceptada |
-| [0041](0041-una-tarea-periodica-se-dispara-desde-la-pieza-y-su-interruptor-es-obligatorio.md) | Una tarea periódica se dispara desde la pieza, y su interruptor es un campo obligatorio | Con `server/` | Aceptada |
+| [0041](0041-una-tarea-periodica-se-dispara-desde-la-pieza-y-su-interruptor-es-obligatorio.md) | Una tarea periódica se dispara desde la pieza, y su interruptor es un campo obligatorio | Con `server/` | Reemplazada por ADR-0043 |
 | [0042](0042-una-sesion-vencida-se-borra-sin-gracia.md) | Una sesión vencida se borra sin gracia | Con autenticación | Aceptada |
+| [0043](0043-una-tarea-periodica-la-dispara-un-timer-de-systemd.md) | Una tarea periódica la dispara un timer de systemd | Con `server/` | Aceptada |
+| [0044](0044-el-bloqueo-cuenta-en-una-ventana-y-el-titular-lo-ve-en-la-app.md) | El bloqueo cuenta los intentos en una ventana, y el titular lo ve en la app | Con autenticación | Aceptada |

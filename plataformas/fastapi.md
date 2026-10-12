@@ -62,6 +62,13 @@ Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 `config.py`, `dependencies.py`, `enums.py`, `errors.py`, `main.py`, los `health.py` de `routers/`,
 `schemas/` y `services/`, y `tests/conftest.py`.
 
+<br>
+
+---
+---
+
+<br>
+
 ## Configuración
 
 Estándares: las secciones *Pydantic `Settings`* y *Settings in another module* de
@@ -90,8 +97,7 @@ Estándares: [*Session Basics*](../estandares/sqlalchemy/session_basics.rst), la
 
 - `AsyncSession` con asyncpg.
 - `lazy="raise"` en toda relación.
-- Una relación bidireccional declara `back_populates` en los dos lados. Con `backref`, el atributo
-  del otro lado no aparece en su clase ni en sus tipos.
+- Una relación bidireccional declara `back_populates` en los dos lados.
 - Cada modelo va en su propio archivo, dentro de la carpeta de su dominio.
 - Cada columna y cada relación se declaran en una sola línea. Contradice las 99 de
   [python.md](python.md): el modelo se lee de arriba abajo, una declaración por renglón.
@@ -119,8 +125,6 @@ Estándar: las secciones *`APIRouter`*, *Another module with `APIRouter`*, *The 
 *Include an `APIRouter` in another* de
 [*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md) de FastAPI.
 
-Contrato: [transversal.md](transversal.md#sesión).
-
 - Los routers se incluyen en un `APIRouter(prefix="/api")` de `main.py`.
 - Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`.
 
@@ -136,62 +140,58 @@ Estándares: [*Background Tasks*](../estandares/fastapi/background-tasks.md) y l
 
 ## Tareas periódicas
 
-- Una tarea periódica es una función idempotente en `services/`, que devuelve cuántas filas tocó:
-  perder una vuelta no pierde nada.
-- La dispara el lazo del `lifespan`, `python -m app.tasks` desde un timer de systemd, o los dos.
-- El lazo toma `pg_try_advisory_lock` si la tarea es global, o reparte filas con
-  `FOR UPDATE SKIP LOCKED`: sin candado, cada worker repite la tarea.
-- Una excepción de la tarea se registra y el lazo sigue: si no, el lazo muere y el proceso sigue
-  vivo sin hacer nada.
-- Cada tarea tiene en `Settings` un interruptor y un intervalo.
+- Una tarea periódica es una función en `services/`.
+- La tarea trabaja sobre lo que encuentra en la base, no sobre lo que pasó desde la vuelta
+  anterior: una vuelta perdida la recupera la siguiente.
+- La dispara un timer de systemd con `python -m app.tasks <tarea>`: systemd no arranca una vuelta
+  si la anterior sigue corriendo.
+
+<br>
+
+---
+---
+
+<br>
 
 ## Archivos
 
 Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de OWASP y
 [*Request Files*](../estandares/fastapi/request-files.md) de FastAPI.
 
+Contrato: [transversal.md](transversal.md#archivos).
+
 - El servidor recibe un archivo como `UploadFile`.
 - Toda imagen se vuelve a codificar con Pillow antes de guardarse. Endurece OWASP, que lo da como
   técnica: también borra los metadatos de la foto.
 - Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`, con
-  `ON DELETE CASCADE`. La fila guarda el tipo, el tamaño y el nombre original.
+  `ON DELETE CASCADE`.
+- La fila de un archivo guarda su tipo, su tamaño y su nombre original.
 - El archivo en disco se llama con el ID de su fila.
 - Un archivo tiene los permisos de su recurso.
 - Un barrido borra los archivos con más de una hora en disco y sin fila en ninguna tabla `_file`.
+  El margen deja terminar la subida que todavía no confirmó su fila.
 
 ## Autenticación
 
-Estándares: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md) de OWASP, salvo
+Estándar: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md) de OWASP, salvo
 *Implement Proper Password Strength Controls*, *Implement Secure Password Recovery Mechanism*,
 *Store Passwords in a Secure Fashion*, *Compare Password Hashes Using Safe Functions*,
-*Multi-Factor Authentication* y *Use of authentication protocols that require no password*, y
-[*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
+*Multi-Factor Authentication* y *Use of authentication protocols that require no password*.
 
-- Una pieza inicia sesión con passkeys. Si uno de sus clientes no puede usarlas, la pieza inicia
-  sesión solo con contraseña.
-- Una pieza cuyos datos no son sensibles inicia sesión solo con un código por SMS: un segundo
-  método le suma pasos al usuario.
-- El registro verifica un correo o un teléfono, que es también a donde se envía el código para
-  recuperar la cuenta.
-- El registro responde 409 si la cuenta ya existe: quien se registra se entera de que ya tiene
-  cuenta.
+- El registro verifica un correo o un teléfono.
+- Una cuenta no tiene nombre de usuario. Contradice OWASP, que pide poder elegir uno: es un dato
+  más que recordar.
+- El registro responde 409 si la cuenta ya existe. Contradice OWASP, que pide la misma respuesta
+  exista o no la cuenta.
 - Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos: quien
   prueba correos o teléfonos en serie busca cuentas existentes.
-- El token del enlace para restablecer la contraseña vence en 30 minutos, y la base guarda su
-  SHA-256.
-- Cambiar la contraseña cierra las demás sesiones y renueva los tokens de la sesión que hizo el
-  cambio; restablecerla cierra todas: quien lo hace puede sospechar de un acceso ajeno.
+- Una cuenta de administración inicia sesión solo con passkeys.
 - El conteo de intentos fallidos vive en Valkey.
-- El bloqueo llega con 10 intentos fallidos seguidos y dura 30 minutos, y el tercero es permanente.
-- El conteo de intentos fallidos no vence con el tiempo: con una ventana, quien prueba despacio
-  nunca llega al bloqueo.
-- Cada bloqueo avisa al titular por los medios que registró.
-
-## Búsqueda de direcciones
-
-Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
-
-- Las respuestas de Nominatim se guardan en Valkey.
+- Una cuenta con 10 intentos fallidos en 15 minutos queda bloqueada 30 minutos, y con el segundo
+  bloqueo queda bloqueada para siempre.
+- El bloqueo permanente es un estado de la cuenta en la base: si Valkey pierde sus datos, el bloqueo
+  sigue.
+- El titular ve en la app cada intento fallido y cada bloqueo de su cuenta.
 
 ## Código por SMS
 
@@ -203,8 +203,6 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 - El primer código que se envía a un número sin cuenta la crea.
 - El código vive en Valkey, con un TTL de 10 minutos.
 - El envío tiene un límite por número y por IP: cada SMS cuesta y atrae el fraude de bombeo de SMS.
-- Una cuenta de administración inicia sesión con passkeys: el código por SMS es un solo factor, y
-  quien se queda con el número no se lleva la administración.
 - El número se cambia desde una sesión abierta, con un código enviado al número nuevo.
 - Quien perdió su número recupera la cuenta con un administrador.
 
@@ -214,13 +212,17 @@ Estándares: la sección 3.1.1 *Passwords* de [NIST SP 800-63B-4](../estandares/
 salvo cómo se guarda la contraseña, y las secciones *Password hashing*, *Install `pwdlib`* y
 *Hash and verify the passwords* de
 [*OAuth2 with Password (and hashing), Bearer with JWT tokens*](../estandares/fastapi/oauth2-jwt.md)
-de FastAPI.
+de FastAPI, y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
 
 - Toda contraseña tiene al menos 8 caracteres. Contradice NIST, que pide 15 cuando es el único
   factor: una contraseña de 15 caracteres aleja al usuario.
 - La lista de bloqueo es un archivo del servidor.
+- El token del enlace para restablecer la contraseña vence en 30 minutos, y la base guarda su
+  SHA-256.
+- Cambiar la contraseña cierra las demás sesiones y renueva los tokens de la sesión que hizo el
+  cambio; restablecerla cierra todas: quien lo hace puede sospechar de un acceso ajeno.
 
-## Correo
+## Correo y SMS
 
 Estándar: [Standard Webhooks](../estandares/standard-webhooks/standard-webhooks.md).
 
@@ -252,6 +254,10 @@ Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
 - Los campos de fecha y hora de los esquemas son `AwareDatetime`. Un `datetime` acepta una hora sin
   zona, que RFC 3339 no admite.
 
+## Idiomas
+
+Contrato: [transversal.md](transversal.md#idiomas).
+
 ## Límite de tasa
 
 Estándar: la sección 4 de [RFC 6585](../estandares/rfc/rfc6585.txt), *429 Too Many Requests*.
@@ -260,10 +266,24 @@ Estándar: la sección 4 de [RFC 6585](../estandares/rfc/rfc6585.txt), *429 Too 
 - Todo 429 lleva `Retry-After`. Endurece RFC 6585, que lo deja opcional: el cliente sabe cuándo
   reintentar.
 
+## Llamadas de voz y video
+
+Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
+
+## Mapas
+
+Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
+
+Contrato: [transversal.md](transversal.md#mapas).
+
+- Las respuestas de Nominatim se guardan en Valkey.
+
 ## Montos
 
 Estándares: [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493, y la
 [lista de monedas](../estandares/iso/iso-4217-list-one.xml) de ISO 4217.
+
+Contrato: [transversal.md](transversal.md#montos).
 
 - Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal y la
   moneda en su código ISO 4217. Un monto no se formatea sin su moneda.
@@ -309,6 +329,8 @@ Numerada:
 Estándares: [*Idempotent requests*](../estandares/stripe/idempotent-requests.md) y los
 [webhooks](../estandares/stripe/webhooks.md) de Stripe.
 
+Contrato: [transversal.md](transversal.md#pagos).
+
 - El ID de cada evento procesado se guarda con una restricción única. Un evento repetido choca con
   ella y no se procesa dos veces.
 
@@ -346,6 +368,8 @@ secciones 15.5.4 *403 Forbidden* y 15.5.5 *404 Not Found* de
 Estándares: [*Send a message using Firebase Admin SDK*](../estandares/firebase/admin-sdk.md),
 [*FCM Error Codes*](../estandares/firebase/error-codes.md),
 [RFC 8030](../estandares/rfc/rfc8030.txt) y [RFC 8291](../estandares/rfc/rfc8291.txt).
+
+Contrato: [transversal.md](transversal.md#push).
 
 - El servidor envía a FCM con el Admin SDK de Python desde `asyncio.to_thread`. El SDK es síncrono.
 - El servidor envía Web Push con pywebpush.
@@ -395,10 +419,12 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
   si la base no contesta. Un monitor que solo ve que el proceso responde da por vivo un servidor
   con la base caída.
 
-## Tokens
+## Sesión
 
 Estándares: [RFC 7519](../estandares/rfc/rfc7519.txt), [RFC 8725](../estandares/rfc/rfc8725.txt)
 y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP.
+
+Contrato: [transversal.md](transversal.md#sesión).
 
 - El token de acceso es un JWT firmado con HS256 que vence en 15 minutos.
 - El token de refresco es un valor aleatorio de 256 bits que rota en cada uso.
@@ -427,6 +453,8 @@ de [Trace Context](../estandares/w3c/trace-context-1.md) de W3C.
 Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
 [RFC 9110](../estandares/rfc/rfc9110.txt).
 
+Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
+
 - Cada cliente instalable manda `User-Agent: <pieza>/<versión>`, como `mobile/1.4.0`.
 - La configuración guarda la versión mínima de cada pieza. Una versión menor recibe un 400 de tipo
   `https://<dominio>/api/problems/client-outdated`, y el cliente pide actualizar la app.
@@ -438,9 +466,18 @@ Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
 Estándares: [*WebSockets*](../estandares/fastapi/websockets.md) de FastAPI y
 [*Pub/Sub*](../estandares/valkey/pubsub.md) de Valkey.
 
+Contrato: [transversal.md](transversal.md#websocket).
+
 - Cerrar sesión cierra sus conexiones en todos los procesos.
 - Cada proceso se suscribe a Valkey y reenvía a sus conexiones, con un canal por usuario. Pub/sub
   entrega a lo sumo una vez; por eso el cliente pide el estado por REST al reconectar.
+
+<br>
+
+---
+---
+
+<br>
 
 ## Pruebas
 
@@ -452,9 +489,23 @@ de SQLAlchemy.
 - `anyio_backend` es `asyncio`. asyncpg y la app solo corren en asyncio.
 - Las pruebas corren contra PostgreSQL. Ven los mismos tipos y restricciones que producción.
 
+<br>
+
+---
+---
+
+<br>
+
 ## Detrás de un proxy
 
 Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAPI.
+
+<br>
+
+---
+---
+
+<br>
 
 ## Cómo se hace cumplir
 

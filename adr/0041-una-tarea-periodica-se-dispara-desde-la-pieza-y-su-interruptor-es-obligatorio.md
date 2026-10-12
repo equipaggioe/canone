@@ -1,6 +1,6 @@
 # ADR-0041 · Una tarea periódica se dispara desde la pieza, y su interruptor es un campo obligatorio
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0043](0043-una-tarea-periodica-la-dispara-un-timer-de-systemd.md)
 - **Fecha:** 2026-10-08
 - **Alcance:** la sección «Tareas periódicas» de [`plataformas/fastapi.md`](../plataformas/fastapi.md)
 

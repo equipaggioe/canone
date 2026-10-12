@@ -1,6 +1,8 @@
 # ADR-0044 · El bloqueo cuenta los intentos en una ventana, y el titular lo ve en la app
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1 lo reemplaza el
+  [ADR-0045](0045-el-login-y-las-contrasenas-siguen-el-nivel-1-de-asvs.md), y el punto 3, en lo
+  permanente, el [ADR-0047](0047-el-titular-levanta-el-bloqueo-desde-una-sesion-abierta.md)
 - **Fecha:** 2026-10-11
 - **Alcance:** las secciones «Autenticación» y «Sesión» de
   [`plataformas/fastapi.md`](../plataformas/fastapi.md)

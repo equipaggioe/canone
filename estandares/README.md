@@ -93,7 +93,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/main/index.bs> |  |
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | Texto extraído del PDF |
-| [owasp/Authentication.md](owasp/Authentication.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authentication_Cheat_Sheet.md> |  |
+| [owasp/ASVS_V6_Authentication.md](owasp/ASVS_V6_Authentication.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x15-V6-Authentication.md> | Versión 5.0.0 |
 | [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authorization_Cheat_Sheet.md> |  |
 | [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Content_Security_Policy_Cheat_Sheet.md> |  |
 | [owasp/Cross-Site_Request_Forgery_Prevention.md](owasp/Cross-Site_Request_Forgery_Prevention.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.md> |  |

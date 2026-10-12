@@ -173,52 +173,70 @@ Contrato: [transversal.md](transversal.md#archivos).
 
 ## Autenticación
 
-Estándar: [*Authentication Cheat Sheet*](../estandares/owasp/Authentication.md) de OWASP, salvo
-*Implement Proper Password Strength Controls*, *Implement Secure Password Recovery Mechanism*,
-*Store Passwords in a Secure Fashion*, *Compare Password Hashes Using Safe Functions*,
-*Multi-Factor Authentication* y *Use of authentication protocols that require no password*.
+Estándar: las secciones V6.1 *Authentication Documentation* y V6.3 *General Authentication
+Security*, en el nivel 1, de [ASVS 5.0](../estandares/owasp/ASVS_V6_Authentication.md) de OWASP.
 
-- El registro verifica un correo o un teléfono.
-- Una cuenta no tiene nombre de usuario. Contradice OWASP, que pide poder elegir uno: es un dato
-  más que recordar.
-- El registro responde 409 si la cuenta ya existe. Contradice OWASP, que pide la misma respuesta
-  exista o no la cuenta.
+- El registro verifica un correo o un teléfono, y el que falte se agrega desde una sesión abierta,
+  verificado con un código.
+- Una cuenta no tiene nombre de usuario: es un dato más que recordar.
+- El registro responde 409 si la cuenta ya existe.
 - Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos: quien
   prueba correos o teléfonos en serie busca cuentas existentes.
 - Una cuenta de administración inicia sesión solo con passkeys.
+- Cambiar el correo, el teléfono o una passkey pide volver a autenticarse en ese momento: una
+  sesión robada no se queda con la cuenta.
+- El correo se cambia desde una sesión abierta, con un código enviado al correo nuevo, y el correo
+  viejo recibe un aviso.
 - El conteo de intentos fallidos vive en Valkey.
 - Una cuenta con 10 intentos fallidos en 15 minutos queda bloqueada 30 minutos, y con el segundo
-  bloqueo queda bloqueada para siempre.
-- El bloqueo permanente es un estado de la cuenta en la base: si Valkey pierde sus datos, el bloqueo
+  bloqueo queda bloqueada hasta que el titular lo levanta.
+- El segundo bloqueo es un estado de la cuenta en la base: si Valkey pierde sus datos, el bloqueo
   sigue.
 - El titular ve en la app cada intento fallido y cada bloqueo de su cuenta.
+- El bloqueo cierra solo el login: las sesiones abiertas siguen, y el titular lo levanta desde una
+  de ellas.
+- El login con contraseña responde el mismo error exista o no la cuenta.
 
 ## Código por SMS
 
-Estándar: las secciones 3.1.3.1 *Out-of-Band Authenticators* y 3.1.3.2 *Out-of-Band Verifiers*
-de [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt).
+Estándar: la sección 3.1.3.2 *Out-of-Band Verifiers* de
+[NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt).
 
 Contrato: [transversal.md](transversal.md#código-por-sms).
 
-- El primer código que se envía a un número sin cuenta la crea.
+- El servidor valida el número con `phonenumbers`.
+- Verificar el primer código de un número sin cuenta crea la cuenta.
 - El código vive en Valkey, con un TTL de 10 minutos.
-- El envío tiene un límite por número y por IP: cada SMS cuesta y atrae el fraude de bombeo de SMS.
-- El número se cambia desde una sesión abierta, con un código enviado al número nuevo.
+- Un código nuevo reemplaza al anterior: solo vale el último.
+- Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta
+  10 por hora.
+- Un código se invalida al tercer intento fallido, y un código mal escrito no bloquea la cuenta.
+  Contradice NIST, que pide no reiniciar el conteo de fallos con un código nuevo: el límite diario
+  ya acota los intentos.
+- El número se cambia desde una sesión abierta, con un código enviado al número nuevo, y el número
+  viejo recibe un aviso.
 - Quien perdió su número recupera la cuenta con un administrador.
 
 ## Contraseñas
 
-Estándares: la sección 3.1.1 *Passwords* de [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt),
-salvo cómo se guarda la contraseña, y las secciones *Password hashing*, *Install `pwdlib`* y
-*Hash and verify the passwords* de
+Estándares: las secciones V6.2 *Password Security* y V6.4 *Authentication Factor Lifecycle and
+Recovery*, en el nivel 1, de [ASVS 5.0](../estandares/owasp/ASVS_V6_Authentication.md) de OWASP;
+las secciones *Password hashing*, *Install `pwdlib`* y *Hash and verify the passwords* de
 [*OAuth2 with Password (and hashing), Bearer with JWT tokens*](../estandares/fastapi/oauth2-jwt.md)
-de FastAPI, y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP.
+de FastAPI, y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP,
+salvo *Security Questions*.
 
-- Toda contraseña tiene al menos 8 caracteres. Contradice NIST, que pide 15 cuando es el único
-  factor: una contraseña de 15 caracteres aleja al usuario.
+- Toda contraseña tiene al menos 8 caracteres: una de 15 aleja al usuario.
 - La lista de bloqueo es un archivo del servidor.
-- El token del enlace para restablecer la contraseña vence en 30 minutos, y la base guarda su
-  SHA-256.
+- Una cuenta restablece su contraseña con un código que recibe, a su elección, en el correo o en el
+  teléfono que registró.
+- La solicitud para restablecer responde 404 si la cuenta no existe, y una IP que recibe 10 en 15
+  minutos queda bloqueada 30 minutos. Contradice OWASP, que pide la misma respuesta exista o no la
+  cuenta: el registro ya lo revela.
+- El código para restablecer tiene 6 dígitos, vive en Valkey con un TTL de 10 minutos, y uno nuevo
+  reemplaza al anterior.
+- Un código para restablecer se invalida al tercer intento fallido.
+- Cada correo y cada número reciben un código para restablecer por minuto, y hasta 5 por hora.
 - Cambiar la contraseña cierra las demás sesiones y renueva los tokens de la sesión que hizo el
   cambio; restablecerla cierra todas: quien lo hace puede sospechar de un acceso ajeno.
 
@@ -344,7 +362,8 @@ Estándares: [*Web Authentication Level 3*](../estandares/w3c/webauthn-3.bs) de 
 
 - Las passkeys se validan con `webauthn`.
 - Toda passkey es descubrible (`residentKey="required"`): el usuario entra sin escribir su correo.
-- Una cuenta se recupera con un código guardado y un código enviado a su correo o a su teléfono.
+- Una cuenta con passkey se recupera con un código guardado y un código enviado a su correo o a su
+  teléfono.
 - Una cuenta de administración rechaza la passkey que no verificó al usuario: sin esa verificación
   la passkey es un solo factor.
 - Una cuenta de administración la recupera otro administrador, nunca un código: quien roba el

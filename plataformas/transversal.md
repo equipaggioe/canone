@@ -27,6 +27,8 @@ Estándares: [*Origin-bound one-time codes delivered via SMS*](../estandares/wic
 de WICG y la sección *Construct a verification message* de
 [*Perform SMS Verification on a Server*](../estandares/android/sms-retriever-verify.md) de Google.
 
+- El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el
+  mismo número crearía otra cuenta.
 - Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el formato de
   WICG reserva el final de la última para sintaxis futura.
 

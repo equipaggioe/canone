@@ -266,11 +266,10 @@ Contrato: [transversal.md](transversal.md#errores).
 
 ## Fechas
 
-Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
+Contrato: [transversal.md](transversal.md#fechas).
 
-- Un instante viaja en UTC, con `Z`.
 - Los campos de fecha y hora de los esquemas son `AwareDatetime`. Un `datetime` acepta una hora sin
-  zona, que RFC 3339 no admite.
+  zona, que el contrato no admite.
 
 ## Idiomas
 
@@ -286,6 +285,9 @@ Estándar: la sección 4 de [RFC 6585](../estandares/rfc/rfc6585.txt), *429 Too 
 
 ## Llamadas de voz y video
 
+Estándar: la sección *TURN REST API* de la
+[documentación de coturn](../estandares/coturn/README.turnserver).
+
 Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
 
 ## Mapas
@@ -298,13 +300,10 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 ## Montos
 
-Estándares: [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493, y la
-[lista de monedas](../estandares/iso/iso-4217-list-one.xml) de ISO 4217.
-
 Contrato: [transversal.md](transversal.md#montos).
 
-- Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal y la
-  moneda en su código ISO 4217. Un monto no se formatea sin su moneda.
+- Un monto es `Decimal` en los esquemas y se serializa sin exponente. Pydantic lo escribe como
+  `str`, que puede dar `1E+1`.
 
 ## OpenAPI y clientes
 

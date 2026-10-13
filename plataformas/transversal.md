@@ -45,6 +45,11 @@ Estándares: [RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandare
 - `pointer` usa la representación de cadena de RFC 6901. La de fragmento suma la codificación de URI.
 - Cada cliente traduce el sobre a un error tipado con los mismos campos.
 
+## Fechas
+
+Estándares: la sección 4.3 de [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493, *Time and Date
+Handling*, y [RFC 3339](../estandares/rfc/rfc3339.txt), al que esa sección remite.
+
 ## Idiomas
 
 Estándares: [RFC 5646](../estandares/rfc/rfc5646.txt) y [RFC 4647](../estandares/rfc/rfc4647.txt).
@@ -83,10 +88,14 @@ Estándares: la [política de uso de teselas](../estandares/osm/tile-usage-polic
 
 ## Montos
 
-- Un monto viaja como `{amount, currency}`, con el monto en cadena, como fija
-  [fastapi.md](fastapi.md). Cada cliente lo conserva como cadena o como el decimal de su lenguaje,
-  nunca como `double`, y no calcula con él: los totales, impuestos y descuentos llegan calculados del
-  servidor. Así ningún cliente necesita una biblioteca decimal.
+Estándares: la sección 2.2 de [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493, *Numbers*, y la
+[lista de monedas](../estandares/iso/iso-4217-list-one.xml) de ISO 4217.
+
+- Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal, sin
+  exponente, y la moneda en su código ISO 4217. Un monto no se formatea sin su moneda.
+- Cada cliente lo conserva como cadena o como el decimal de su lenguaje, nunca como `double`, y no
+  calcula con él: los totales, impuestos y descuentos llegan calculados del servidor. Así ningún
+  cliente necesita una biblioteca decimal.
 
 ## Nombres en el cable
 

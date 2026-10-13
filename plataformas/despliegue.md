@@ -30,8 +30,8 @@ OWASP.
 
 ## coturn
 
-Estándares: [RFC 8656](../estandares/rfc/rfc8656.txt) y la
-[documentación de coturn](../estandares/coturn/README.turnserver).
+Estándares: [RFC 8656](../estandares/rfc/rfc8656.txt) y la referencia de opciones de `turnserver`
+de la [documentación de coturn](../estandares/coturn/README.turnserver).
 
 - coturn escucha en 3478 (UDP y TCP) y en 5349 (TLS), y niega relevar hacia direcciones privadas con
   `denied-peer-ip`. TURN no sirve de puente a la red interna.

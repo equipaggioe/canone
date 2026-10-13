@@ -55,3 +55,5 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0045](0045-el-login-y-las-contrasenas-siguen-el-nivel-1-de-asvs.md) | El login y las contraseñas siguen el nivel 1 de ASVS | Con autenticación | Aceptada |
 | [0046](0046-la-contrasena-se-restablece-con-un-codigo-por-correo-o-por-sms.md) | La contraseña se restablece con un código por correo o por SMS | Con autenticación | Aceptada |
 | [0047](0047-el-titular-levanta-el-bloqueo-desde-una-sesion-abierta.md) | El titular levanta el bloqueo desde una sesión abierta | Con autenticación | Aceptada |
+| [0048](0048-una-app-flutter-usa-riverpod-go-router-dio-y-freezed.md) | Una app Flutter usa Riverpod, go_router, Dio y Freezed | Con Flutter | Propuesta |
+| [0049](0049-la-ubicacion-en-segundo-plano-de-una-app-flutter-usa-geolocator-y-native-geofence.md) | La ubicación en segundo plano de una app Flutter usa geolocator con servicio en primer plano y native_geofence | Con Flutter | Propuesta |

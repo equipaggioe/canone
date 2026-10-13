@@ -57,3 +57,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0047](0047-el-titular-levanta-el-bloqueo-desde-una-sesion-abierta.md) | El titular levanta el bloqueo desde una sesión abierta | Con autenticación | Aceptada |
 | [0048](0048-una-app-flutter-usa-riverpod-go-router-dio-y-freezed.md) | Una app Flutter usa Riverpod, go_router, Dio y Freezed | Con Flutter | Propuesta |
 | [0049](0049-la-ubicacion-en-segundo-plano-de-una-app-flutter-usa-geolocator-y-native-geofence.md) | La ubicación en segundo plano de una app Flutter usa geolocator con servicio en primer plano y native_geofence | Con Flutter | Propuesta |
+| [0050](0050-un-monto-entra-solo-como-cadena-y-sale-sin-exponente.md) | Un monto entra solo como cadena y sale sin exponente | Con montos, en el servidor | Aceptada |

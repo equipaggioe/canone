@@ -70,6 +70,7 @@ Estándares: [WebRTC](../estandares/w3c/webrtc.html) de W3C,
 - La señalización va por el WebSocket de la app.
 - coturn usa credenciales temporales (`use-auth-secret`), que el servidor entrega por la API. Los
   clientes no guardan una contraseña fija de TURN.
+- El cliente pide una credencial al iniciar o al atender cada llamada.
 
 ## Mapas
 

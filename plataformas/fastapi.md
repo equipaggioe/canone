@@ -176,16 +176,14 @@ Contrato: [transversal.md](transversal.md#archivos).
 Estándar: las secciones V6.1 *Authentication Documentation* y V6.3 *General Authentication
 Security*, en el nivel 1, de [ASVS 5.0](../estandares/owasp/ASVS_V6_Authentication.md) de OWASP.
 
-- El registro verifica un correo o un teléfono, y el que falte se agrega desde una sesión abierta,
-  verificado con un código.
-- Una cuenta no tiene nombre de usuario: es un dato más que recordar.
+- Una cuenta se registra con un correo o con un teléfono, verificado con un código.
+- Una cuenta no tiene nombre de usuario.
 - El registro responde 409 si la cuenta ya existe.
 - Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos: quien
   prueba correos o teléfonos en serie busca cuentas existentes.
 - Una cuenta de administración inicia sesión solo con passkeys.
-- Cambiar el correo, el teléfono o una passkey pide volver a autenticarse en ese momento: una
-  sesión robada no se queda con la cuenta.
-- El correo se cambia desde una sesión abierta, con un código enviado al correo nuevo, y el correo
+- Cambiar el correo, el teléfono o una passkey pide volver a autenticarse en ese momento.
+- El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el
   viejo recibe un aviso.
 - El conteo de intentos fallidos vive en Valkey.
 - Una cuenta con 10 intentos fallidos en 15 minutos queda bloqueada 30 minutos, y con el segundo
@@ -193,8 +191,8 @@ Security*, en el nivel 1, de [ASVS 5.0](../estandares/owasp/ASVS_V6_Authenticati
 - El segundo bloqueo es un estado de la cuenta en la base: si Valkey pierde sus datos, el bloqueo
   sigue.
 - El titular ve en la app cada intento fallido y cada bloqueo de su cuenta.
-- El bloqueo cierra solo el login: las sesiones abiertas siguen, y el titular lo levanta desde una
-  de ellas.
+- El bloqueo cierra solo el login: las sesiones abiertas siguen.
+- El bloqueo se levanta desde una sesión abierta o, en una cuenta con contraseña, restableciéndola.
 - El login con contraseña responde el mismo error exista o no la cuenta.
 
 ## Código por SMS
@@ -210,12 +208,9 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 - Un código nuevo reemplaza al anterior: solo vale el último.
 - Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta
   10 por hora.
-- Un código se invalida al tercer intento fallido, y un código mal escrito no bloquea la cuenta.
-  Contradice NIST, que pide no reiniciar el conteo de fallos con un código nuevo: el límite diario
-  ya acota los intentos.
-- El número se cambia desde una sesión abierta, con un código enviado al número nuevo, y el número
-  viejo recibe un aviso.
-- Quien perdió su número recupera la cuenta con un administrador.
+- Un código se invalida al tercer intento fallido, y cada intento fallido cuenta para el bloqueo de
+  la cuenta.
+- Quien perdió su número y no tiene otra forma de entrar recupera la cuenta con un administrador.
 
 ## Contraseñas
 
@@ -226,7 +221,8 @@ las secciones *Password hashing*, *Install `pwdlib`* y *Hash and verify the pass
 de FastAPI, y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP,
 salvo *Security Questions*.
 
-- Toda contraseña tiene al menos 8 caracteres: una de 15 aleja al usuario.
+- Toda contraseña tiene al menos 8 caracteres. Contradice ASVS, que recomienda con fuerza 15: una
+  de 15 aleja al usuario.
 - La lista de bloqueo es un archivo del servidor.
 - Una cuenta restablece su contraseña con un código que recibe, a su elección, en el correo o en el
   teléfono que registró.
@@ -238,7 +234,7 @@ salvo *Security Questions*.
 - Un código para restablecer se invalida al tercer intento fallido.
 - Cada correo y cada número reciben un código para restablecer por minuto, y hasta 5 por hora.
 - Cambiar la contraseña cierra las demás sesiones y renueva los tokens de la sesión que hizo el
-  cambio; restablecerla cierra todas: quien lo hace puede sospechar de un acceso ajeno.
+  cambio; restablecerla cierra todas.
 
 ## Correo y SMS
 
@@ -290,6 +286,9 @@ Estándar: la sección *TURN REST API* de la
 
 Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
 
+- Una credencial de TURN dura 1 hora. coturn la revisa solo al abrir el relay, así que vencer no
+  corta una llamada en curso.
+
 ## Mapas
 
 Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
@@ -302,8 +301,10 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 Contrato: [transversal.md](transversal.md#montos).
 
-- Un monto es `Decimal` en los esquemas y se serializa sin exponente. Pydantic lo escribe como
-  `str`, que puede dar `1E+1`.
+- Un monto es `Decimal` en los esquemas y entra solo como cadena. Pydantic acepta también un número
+  JSON, lo declara así en el OpenAPI de las peticiones y lo recorta si excede un `double`.
+- Un monto se serializa sin exponente. Pydantic lo escribe con `str`, que puede dar `1E-7`, y su
+  OpenAPI declara la cadena sin exponente.
 
 ## OpenAPI y clientes
 

@@ -237,14 +237,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pytest-qt/signals.rst](pytest-qt/signals.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/signals.rst> |  |
 | [caddy/automatic-https.md](caddy/automatic-https.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/automatic-https.md> |  |
 | [caddy/running.md](caddy/running.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/running.md> |  |
-| [caddy/caddyfile-concepts.md](caddy/caddyfile-concepts.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/concepts.md> |  |
-| [caddy/caddyfile-options.md](caddy/caddyfile-options.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/options.md> |  |
-| [caddy/reverse_proxy.md](caddy/reverse_proxy.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/reverse_proxy.md> |  |
-| [caddy/header.md](caddy/header.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/header.md> |  |
-| [caddy/file_server.md](caddy/file_server.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/file_server.md> |  |
-| [caddy/encode.md](caddy/encode.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/encode.md> |  |
-| [caddy/try_files.md](caddy/try_files.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/try_files.md> |  |
-| [caddy/request_body.md](caddy/request_body.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/request_body.md> |  |
 | [systemd/systemd.unit.xml](systemd/systemd.unit.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.unit.xml> |  |
 | [systemd/systemd.service.xml](systemd/systemd.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.service.xml> |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.exec.xml> |  |

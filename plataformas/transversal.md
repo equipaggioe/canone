@@ -38,7 +38,10 @@ Estándares: [RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandare
 
 - `type` es una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio en todos los
   entornos. El cliente compara el `type`, y la página de cada tipo la sirve el servidor, bajo `/api`.
-- Toda respuesta de error es problem+json. El cliente lee un solo sobre.
+- Todo error que genera el servidor es problem+json.
+- El cliente toma una respuesta de error sin problem+json como de tipo `about:blank`, con su
+  `status`, y su catálogo tiene un texto por `status` para ese tipo. Caddy y la red también
+  responden errores, como un 413 o un 502, y no traen el sobre.
 - Un error de validación es de tipo `https://<dominio>/api/problems/validation`, con la extensión
   `errors`: una lista de `{detail, pointer}`, o de `{detail, parameter}` para un parámetro que no
   viene en el cuerpo.
@@ -170,5 +173,5 @@ Estándares: [RFC 6455](../estandares/rfc/rfc6455.txt) y
 | Qué | Con qué |
 |---|---|
 | Contraste de los tokens | Una prueba por cliente sobre el módulo de tokens |
-| Toda respuesta de error en problem+json | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
+| Todo error del servidor en problem+json | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
 | RFC 9457: la URI de cada tipo sirve su documentación | `test_problem_types_are_documented`, del servidor |

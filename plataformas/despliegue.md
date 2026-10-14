@@ -4,14 +4,8 @@ Cómo queda el servidor.
 
 ## Caddy
 
-Estándares: de Caddy, [*Automatic HTTPS*](../estandares/caddy/automatic-https.md),
-[*Keep Caddy Running*](../estandares/caddy/running.md),
-[*Caddyfile Concepts*](../estandares/caddy/caddyfile-concepts.md), las
-[opciones globales](../estandares/caddy/caddyfile-options.md) y las directivas
-[`reverse_proxy`](../estandares/caddy/reverse_proxy.md),
-[`file_server`](../estandares/caddy/file_server.md), [`encode`](../estandares/caddy/encode.md),
-[`try_files`](../estandares/caddy/try_files.md), [`header`](../estandares/caddy/header.md) y
-[`request_body`](../estandares/caddy/request_body.md); de OWASP,
+Estándares: de Caddy, [*Automatic HTTPS*](../estandares/caddy/automatic-https.md)
+y [*Keep Caddy Running*](../estandares/caddy/running.md); de OWASP,
 [*HTTP Security Response Headers Cheat Sheet*](../estandares/owasp/HTTP_Headers.md) y
 [*REST Security Cheat Sheet*](../estandares/owasp/REST_Security.md).
 

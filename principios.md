@@ -23,9 +23,8 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 
 ## Nombres
 
-- Un nombre lleva las menos palabras posibles, y nunca más de cuatro. No repite lo que ya dicen su
-  carpeta, su módulo o su clase: en `routers/stop_requests.py` es `list_mine`, no
-  `list_my_stop_requests`.
+- Un identificador lleva las menos palabras posibles, y nunca más de cuatro. No repite lo que ya
+  dice su contexto: el repositorio, la carpeta, el módulo o la clase.
 - Sin abreviaturas, salvo las que son más comunes que la palabra entera, como `id`, `url` o `http`.
 - Quedan fuera del límite:
   - Las pruebas: su nombre describe el caso.
@@ -34,7 +33,8 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
     las restricciones que nombra Alembic.
   - El sufijo que distingue los esquemas de un mismo recurso, como `Create` o `Update`: no cuenta
     como palabra.
-- [`scripts/verificar.py`](scripts/verificar.py) revisa las funciones, los métodos y las clases.
+- [`scripts/verificar.py`](scripts/verificar.py) revisa el largo de las funciones, los métodos y las
+  clases, y que la configuración no repita el nombre del repositorio.
 
 ## Sin fallbacks
 

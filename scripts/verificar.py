@@ -164,13 +164,17 @@ def nombres_otros(texto: str, sufijo: str) -> list[tuple[int, str, int]]:
     return largos
 
 
-def nombres_largos(repo: Path) -> list[str]:
-    fallas = []
-    listado = subprocess.run(
+def listar(repo: Path) -> list[str]:
+    """Lo que git sigue o seguiría: lo ignorado no es del repositorio."""
+    return subprocess.run(
         ["git", "-C", str(repo), "ls-files", "--cached", "--others", "--exclude-standard"],
         capture_output=True, text=True, encoding="utf-8", check=True,
     ).stdout.splitlines()
-    for ruta in sorted(listado):
+
+
+def nombres_largos(repo: Path) -> list[str]:
+    fallas = []
+    for ruta in sorted(listar(repo)):
         relativo = Path(ruta)
         sufijo = relativo.suffix
         archivo = repo / relativo
@@ -189,6 +193,41 @@ def nombres_largos(repo: Path) -> list[str]:
             largos = nombres_otros(texto, sufijo)
         for linea, nombre, cuenta in largos:
             fallas.append(f"principios.md: {relativo.as_posix()}:{linea} {nombre} tiene {cuenta} palabras")
+    return fallas
+
+
+# principios.md, «Nombres»: un identificador no repite el nombre del repositorio. Se revisa la
+# configuración, donde el prefijo del proyecto es costumbre: las claves de los `.env.example`, los
+# `String.fromEnvironment` de Dart y el `env_prefix` de pydantic-settings.
+CONFIGURACION = {
+    ".dart": re.compile(r"String\.fromEnvironment\(\s*['\"](\w+)['\"]"),
+    ".py": re.compile(r"env_prefix\s*=\s*['\"](\w+)['\"]"),
+}
+CLAVE_ENV = re.compile(r"^\s*(?:export\s+)?([A-Za-z_]\w*)\s*=", re.M)
+
+
+def configuracion_con_repositorio(repo: Path) -> list[str]:
+    proyecto = re.sub(r"\W", "_", repo.resolve().name).upper()
+    fallas = []
+    for ruta in sorted(listar(repo)):
+        relativo = Path(ruta)
+        archivo = repo / relativo
+        if relativo.name.endswith(".env.example"):
+            patron = CLAVE_ENV
+        elif relativo.suffix in CONFIGURACION:
+            patron = CONFIGURACION[relativo.suffix]
+        else:
+            continue
+        if not archivo.is_file():
+            continue
+        texto = archivo.read_text(encoding="utf-8", errors="replace")
+        for coincidencia in patron.finditer(texto):
+            nombre = coincidencia.group(1)
+            if proyecto in nombre.upper().strip("_").split("_"):
+                linea = texto.count("\n", 0, coincidencia.start(1)) + 1
+                fallas.append(
+                    f"principios.md: {relativo.as_posix()}:{linea} {nombre} repite el nombre del repositorio"
+                )
     return fallas
 
 
@@ -334,6 +373,7 @@ def revisar(repo: Path) -> list[str]:
             )
 
     fallas.extend(nombres_largos(repo))
+    fallas.extend(configuracion_con_repositorio(repo))
 
     return fallas
 

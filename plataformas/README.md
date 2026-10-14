@@ -86,8 +86,8 @@ Cómo se escribe:
 - Cada regla dice qué se usa y cómo queda. No es un procedimiento ni un tutorial.
 - Una regla lleva razón, en una frase corta, solo en dos casos: por qué contradice o endurece una
   fuente, y cómo ayuda una elección que no es trivial. Una regla trivial, como un color o el largo
-  de línea, no lleva razón: es una preferencia. Fuera de la razón, sin comentarios ni
-  explicaciones. Vale también para los comentarios de `plantilla/`.
+  de línea, no lleva razón: es una preferencia. Fuera de la razón, sin comentarios, explicaciones
+  ni ejemplos innecesarios. Vale también para los comentarios de `plantilla/`.
 - El layout se dibuja completo, como árbol, aunque repita partes de sus fuentes. El árbol es la
   convención misma, y a pedazos no se lee.
 - Debajo del árbol va solo dónde va algo que podría ir en otro archivo. Lo que un archivo tiene por

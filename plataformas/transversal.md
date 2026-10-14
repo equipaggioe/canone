@@ -17,16 +17,19 @@ Estándar: [WCAG 2.2](../estandares/w3c/wcag22.html) de W3C.
 
 ## Archivos
 
-Estándar: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de OWASP.
+Estándar: [RFC 7578](../estandares/rfc/rfc7578.txt).
 
-- Un archivo se sube solo, como `multipart/form-data`. No pasa por base64 dentro de un JSON.
+- Un archivo se sube en su propia petición, nunca en base64 dentro de un JSON: base64 agranda el
+  archivo un tercio y el servidor lee el JSON entero en memoria.
 
 ## Código por SMS
 
-Estándares: [*Origin-bound one-time codes delivered via SMS*](../estandares/wicg/sms-one-time-codes.bs)
-de WICG y la sección *Construct a verification message* de
+Estándares: la sección *Message format* de
+[*Origin-bound one-time codes delivered via SMS*](../estandares/wicg/sms-one-time-codes.bs) de WICG
+y la sección *Construct a verification message* de
 [*Perform SMS Verification on a Server*](../estandares/android/sms-retriever-verify.md) de Google.
 
+- El código tiene 6 dígitos.
 - El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el
   mismo número crearía otra cuenta.
 - Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el formato de
@@ -37,11 +40,12 @@ de WICG y la sección *Construct a verification message* de
 Estándares: [RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandares/rfc/rfc6901.txt).
 
 - `type` es una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio en todos los
-  entornos. El cliente compara el `type`, y la página de cada tipo la sirve el servidor, bajo `/api`.
+  entornos: un mismo error tiene un solo `type`.
 - Todo error que genera el servidor es problem+json.
 - El cliente toma una respuesta de error sin problem+json como de tipo `about:blank`, con su
-  `status`, y su catálogo tiene un texto por `status` para ese tipo. Caddy y la red también
-  responden errores, como un 413 o un 502, y no traen el sobre.
+  `status`, y su catálogo tiene un texto por `status` para ese tipo.
+- Todo problem+json lleva `status`, y ninguno lleva `instance`: `traceId` ya identifica la
+  ocurrencia.
 - Un error de validación es de tipo `https://<dominio>/api/problems/validation`, con la extensión
   `errors`: una lista de `{detail, pointer}`, o de `{detail, parameter}` para un parámetro que no
   viene en el cuerpo.

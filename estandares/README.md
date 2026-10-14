@@ -74,6 +74,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc6901.txt](rfc/rfc6901.txt) | <https://www.rfc-editor.org/rfc/rfc6901.txt> |  |
 | [rfc/rfc7493.txt](rfc/rfc7493.txt) | <https://www.rfc-editor.org/rfc/rfc7493.txt> |  |
 | [rfc/rfc7519.txt](rfc/rfc7519.txt) | <https://www.rfc-editor.org/rfc/rfc7519.txt> |  |
+| [rfc/rfc7578.txt](rfc/rfc7578.txt) | <https://www.rfc-editor.org/rfc/rfc7578.txt> |  |
 | [rfc/rfc7636.txt](rfc/rfc7636.txt) | <https://www.rfc-editor.org/rfc/rfc7636.txt> |  |
 | [rfc/rfc8030.txt](rfc/rfc8030.txt) | <https://www.rfc-editor.org/rfc/rfc8030.txt> |  |
 | [rfc/rfc8252.txt](rfc/rfc8252.txt) | <https://www.rfc-editor.org/rfc/rfc8252.txt> |  |

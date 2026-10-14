@@ -161,10 +161,10 @@ Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de 
 Contrato: [transversal.md](transversal.md#archivos).
 
 - El servidor recibe un archivo como `UploadFile`.
-- Toda imagen se vuelve a codificar con Pillow antes de guardarse. Endurece OWASP, que lo da como
-  técnica: también borra los metadatos de la foto.
-- Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`, con
-  `ON DELETE CASCADE`.
+- Toda imagen se vuelve a codificar con Pillow antes de guardarse, aplicando antes la orientación
+  EXIF. Endurece OWASP, que lo da como técnica: también borra los metadatos de la foto, y sin
+  aplicar la orientación la foto queda girada.
+- Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`.
 - La fila de un archivo guarda su tipo, su tamaño y su nombre original.
 - El archivo en disco se llama con el ID de su fila.
 - Un archivo tiene los permisos de su recurso.

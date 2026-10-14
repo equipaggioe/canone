@@ -42,7 +42,7 @@ herramienta la haga cumplir.
   | 1 | El texto normativo de un estándar de la tecnología (MUST, SHOULD o RECOMMENDED) y la recomendación escrita en su documentación, en su versión más reciente |
   | 2 | Un estándar de un campo, como OWASP, NIST o ISO |
   | 3 | Una especificación de facto, como SemVer, Conventional Commits o The Twelve-Factor App |
-  | 4 | Una guía publicada por una organización de referencia, como Google AIP o las guías de API de Zalando o de Microsoft |
+  | 4 | Una guía publicada por una organización de referencia, como Google AIP o las guías de API de Microsoft |
 
 - Una guía de orden 4 se cita solo si se escribió para que otros la adopten:
   - Es pública y su licencia permite usarla.

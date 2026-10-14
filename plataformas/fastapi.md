@@ -47,6 +47,10 @@ server/
     services/
       __init__.py
       <recurso>.py
+    locale/
+      <idioma>/
+        LC_MESSAGES/
+          messages.po
   tests/
     __init__.py
     conftest.py
@@ -270,7 +274,14 @@ Contrato: [transversal.md](transversal.md#fechas).
 
 ## Idiomas
 
+Estándares: [*Working with Message Catalogs*](../estandares/babel/messages.rst) y
+[*Command-Line Interface*](../estandares/babel/cmdline.rst) de Babel.
+
 Contrato: [transversal.md](transversal.md#idiomas).
+
+- El servidor traduce con Babel.
+- El `.mo` no se versiona: se compila del `.po` con `pybabel compile -d src/app/locale`. Un `.mo`
+  versionado puede quedar desfasado de su `.po`.
 
 ## Límite de tasa
 
@@ -289,6 +300,8 @@ Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
 
 - Una credencial de TURN dura 1 hora. coturn la revisa solo al abrir el relay, así que vencer no
   corta una llamada en curso.
+- La llamada que suena vive en Valkey, con su oferta y un TTL de 60 segundos. Una llamada sin
+  respuesta en ese plazo queda perdida.
 
 ## Mapas
 

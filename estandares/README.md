@@ -21,6 +21,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/dependency-groups.rst> |  |
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |
 | [uv/sync.md](uv/sync.md) | <https://raw.githubusercontent.com/astral-sh/uv/main/docs/concepts/projects/sync.md> |  |
+| [babel/messages.rst](babel/messages.rst) | <https://raw.githubusercontent.com/python-babel/babel/master/docs/messages.rst> |  |
+| [babel/cmdline.rst](babel/cmdline.rst) | <https://raw.githubusercontent.com/python-babel/babel/master/docs/cmdline.rst> |  |
 | [typing/spec/annotations.rst](typing/spec/annotations.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/spec/annotations.rst> |  |
 | [typing/spec/directives.rst](typing/spec/directives.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/spec/directives.rst> |  |
 | [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> |  |

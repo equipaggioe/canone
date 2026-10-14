@@ -13,6 +13,7 @@ dist/
 .eggs/
 wheels/
 *.qm
+*.mo
 rc_resources.py
 
 .pytest_cache/

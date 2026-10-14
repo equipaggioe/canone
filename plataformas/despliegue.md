@@ -49,6 +49,7 @@ Estándares: de FastAPI, [*Deployments Concepts*](../estandares/fastapi/deployme
 [`systemd.exec`](../estandares/systemd/systemd.exec.xml) y
 [`systemd.timer`](../estandares/systemd/systemd.timer.xml).
 
+- Antes de arrancar, el servidor compila sus catálogos con `pybabel compile -d src/app/locale`.
 - Cada tarea periódica de [fastapi.md](fastapi.md#tareas-periódicas) tiene su timer de systemd.
   El del barrido de archivos corre cada día.
 

@@ -264,8 +264,9 @@ Contrato: [transversal.md](transversal.md#errores).
 
 Contrato: [transversal.md](transversal.md#fechas).
 
-- Los campos de fecha y hora de los esquemas son `AwareDatetime`. Un `datetime` acepta una hora sin
-  zona, que el contrato no admite.
+- Los campos de fecha y hora de los esquemas son `Timestamp`, del esquema base: entra solo como
+  cadena RFC 3339 y queda en UTC. `AwareDatetime` acepta también un número como epoch y una hora sin
+  segundos, y conserva el desfase que recibe; un `datetime`, además, una hora sin zona.
 
 ## Idiomas
 
@@ -291,8 +292,6 @@ Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
 
 ## Mapas
 
-Estándar: la [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md).
-
 Contrato: [transversal.md](transversal.md#mapas).
 
 - Las respuestas de Nominatim se guardan en Valkey.
@@ -303,8 +302,7 @@ Contrato: [transversal.md](transversal.md#montos).
 
 - Un monto es `Decimal` en los esquemas y entra solo como cadena. Pydantic acepta también un número
   JSON, lo declara así en el OpenAPI de las peticiones y lo recorta si excede un `double`.
-- Un monto se serializa sin exponente. Pydantic lo escribe con `str`, que puede dar `1E-7`, y su
-  OpenAPI declara la cadena sin exponente.
+- Un monto se serializa sin exponente. Pydantic lo escribe con `str`, que puede dar `1E-7`.
 
 ## OpenAPI y clientes
 
@@ -535,7 +533,7 @@ Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAP
 | El commit corre antes de enviar la respuesta | `test_failed_commit_is_a_server_error` |
 | Los nombres en camelCase: todo esquema hereda del esquema base | `test_schemas_inherit_schema` |
 | `lazy="raise"` | `test_relationships_raise` |
-| `AwareDatetime` en los esquemas | `test_schema_datetimes_are_aware` |
+| `Timestamp` en los esquemas | `test_schema_datetimes_are_timestamps` |
 | Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | El `traceId` en cada problem+json | `test_unknown_route_is_a_problem` |

@@ -39,11 +39,12 @@ y la sección *Construct a verification message* de
 
 Estándares: [RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandares/rfc/rfc6901.txt).
 
-- `type` es una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio en todos los
-  entornos: un mismo error tiene un solo `type`.
+- `type` es `about:blank` o una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio
+  en todos los entornos: un mismo error tiene un solo `type`.
 - Todo error que genera el servidor es problem+json.
-- El cliente toma una respuesta de error sin problem+json como de tipo `about:blank`, con su
-  `status`, y su catálogo tiene un texto por `status` para ese tipo.
+- El cliente toma una respuesta de error sin problem+json, o con un `type` que su catálogo no
+  conoce, como de tipo `about:blank`, con su `status`, y su catálogo tiene un texto por `status`
+  para ese tipo.
 - Todo problem+json lleva `status`, y ninguno lleva `instance`: `traceId` ya identifica la
   ocurrencia.
 - Un error de validación es de tipo `https://<dominio>/api/problems/validation`, con la extensión
@@ -54,30 +55,33 @@ Estándares: [RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandare
 
 ## Fechas
 
-Estándares: la sección 4.3 de [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493, *Time and Date
-Handling*, y [RFC 3339](../estandares/rfc/rfc3339.txt), al que esa sección remite.
+Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
 
 ## Idiomas
 
-Estándares: [RFC 5646](../estandares/rfc/rfc5646.txt) y [RFC 4647](../estandares/rfc/rfc4647.txt).
+Estándares: [RFC 5646](../estandares/rfc/rfc5646.txt) y la sección 12.5.4 de
+[RFC 9110](../estandares/rfc/rfc9110.txt), *Accept-Language*.
 
 - Todo producto se diseña multilingüe.
 - El idioma base es `es`.
-- La base guarda códigos, nunca textos traducidos, y cada cliente los traduce con su catálogo. Un
-  idioma nuevo no toca la base.
-- El cliente muestra el texto de su catálogo para el `type` de un error, en vez de `detail`, que el
-  servidor escribe solo en el idioma base.
+- La base guarda códigos, nunca textos traducidos, y cada cliente los traduce con su catálogo.
+- El cliente muestra el texto de su catálogo para el `type` de un error, en vez de `detail`.
+- El cliente manda en `Accept-Language` el idioma que eligió el usuario. El servidor lo guarda con
+  el token de push de cada dispositivo, y en el usuario el último elegido, para el correo.
 
 ## Llamadas de voz y video
 
-Estándares: [WebRTC](../estandares/w3c/webrtc.html) de W3C,
-[RFC 8489](../estandares/rfc/rfc8489.txt) (STUN) y [RFC 8656](../estandares/rfc/rfc8656.txt)
-(TURN).
+Estándares: [RFC 9429](../estandares/rfc/rfc9429.txt), JSEP, y la sección *RTCIceServer Dictionary*
+de [WebRTC](../estandares/w3c/webrtc.html) de W3C.
 
 - La señalización va por el WebSocket de la app.
-- coturn usa credenciales temporales (`use-auth-secret`), que el servidor entrega por la API. Los
-  clientes no guardan una contraseña fija de TURN.
-- El cliente pide una credencial al iniciar o al atender cada llamada.
+- coturn usa credenciales temporales (`use-auth-secret`), que el servidor entrega por la API.
+- El cliente pide una credencial al iniciar o al atender cada llamada, y antes de cada reinicio de
+  ICE: con una credencial vencida, coturn no abre un relay nuevo.
+- Mientras suena, el servidor guarda la llamada con su oferta, y quien la recibe la pide por REST al
+  conectarse o al despertar por el push. El resto de la señalización no se guarda.
+- Cualquiera de los dos puede mandar una oferta. Si dos se cruzan, el que atiende descarta la suya
+  con *rollback* y acepta la del que llama.
 
 ## Mapas
 
@@ -85,12 +89,11 @@ Estándares: la [política de uso de teselas](../estandares/osm/tile-usage-polic
 [política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md) y la
 [guía de atribución](../estandares/osm/attribution-guidelines.md) de OpenStreetMap.
 
-- Las teselas son raster, con URL `{z}/{x}/{y}`. Las dibujan las bibliotecas de mapa de todos los
-  clientes.
+- Las teselas son raster, con URL `{z}/{x}/{y}`.
 - Mientras el uso quepa en la política, las teselas son las de `tile.openstreetmap.org`.
 - La URL de las teselas y su atribución las entrega el servidor en su configuración pública.
-  Ningún cliente las escribe en su código. Endurece la recomendación de la política: cambiar de
-  proveedor no exige publicar otra versión de las apps.
+  Endurece la recomendación de la política: cambiar de proveedor no exige publicar otra versión de
+  las apps.
 - Los clientes buscan direcciones en el servidor, que consulta a Nominatim. El límite de la
   política es por aplicación, y solo el servidor ve el total.
 
@@ -129,6 +132,7 @@ Estándares: [*Firebase Cloud Messaging message types*](../estandares/firebase/s
 - Android y Flutter reciben push por FCM.
 - Cada mensaje de FCM lleva `notification`, que el sistema muestra con la app cerrada, y `data` con
   la ruta que abre al tocarlo.
+- Una llamada entrante llega por un mensaje de FCM solo de datos y de prioridad alta.
 - La web recibe push por el estándar, con VAPID. El navegador no carga un SDK de terceros y la CSP
   queda en `'self'`.
 

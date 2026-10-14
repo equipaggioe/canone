@@ -13,7 +13,7 @@ import pytest
 import sqlalchemy as sa
 from fastapi import FastAPI, Query
 from httpx import ASGITransport, AsyncClient
-from pydantic import BaseModel
+from pydantic import AwareDatetime, BaseModel
 
 import app.models
 import app.routers
@@ -24,7 +24,7 @@ from app.database import engine
 from app.dependencies import SessionDep
 from app.main import app as main_app
 from app.models.base import Base
-from app.schemas.base import InputSchema, Schema
+from app.schemas.base import InputSchema, Schema, Timestamp
 from app.schemas.page import decode_cursor, encode_cursor
 
 
@@ -163,12 +163,16 @@ def test_schemas_inherit_schema() -> None:
 
 
 def mentions_datetime(annotation: Any) -> bool:
-    """Tell whether a type is or contains a plain datetime."""
-    return annotation is datetime or any(mentions_datetime(arg) for arg in get_args(annotation))
+    """Tell whether a type holds a datetime that is not Timestamp."""
+    if annotation == Timestamp:
+        return False
+    return annotation in (datetime, AwareDatetime) or any(
+        mentions_datetime(arg) for arg in get_args(annotation)
+    )
 
 
-def test_schema_datetimes_are_aware() -> None:
-    """Every date and time of a schema is AwareDatetime."""
+def test_schema_datetimes_are_timestamps() -> None:
+    """Every date and time of a schema is Timestamp."""
     offenders = [
         f"{module.__name__}.{name}.{field_name}"
         for module in SCHEMA_MODULES
@@ -177,7 +181,9 @@ def test_schema_datetimes_are_aware() -> None:
         and issubclass(value, BaseModel)
         and value.__module__ == module.__name__
         for field_name, field in value.model_fields.items()
-        if mentions_datetime(field.annotation)
+        if mentions_datetime(
+            Annotated[field.annotation, *field.metadata] if field.metadata else field.annotation
+        )
     ]
     assert not offenders
 

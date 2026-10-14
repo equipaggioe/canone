@@ -65,7 +65,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> |  |
 | [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217 |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |
-| [rfc/rfc4647.txt](rfc/rfc4647.txt) | <https://www.rfc-editor.org/rfc/rfc4647.txt> |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | <https://www.rfc-editor.org/rfc/rfc5646.txt> |  |
 | [rfc/rfc6265.txt](rfc/rfc6265.txt) | <https://www.rfc-editor.org/rfc/rfc6265.txt> |  |
 | [rfc/rfc6455.txt](rfc/rfc6455.txt) | <https://www.rfc-editor.org/rfc/rfc6455.txt> |  |
@@ -80,10 +79,10 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc8252.txt](rfc/rfc8252.txt) | <https://www.rfc-editor.org/rfc/rfc8252.txt> |  |
 | [rfc/rfc8291.txt](rfc/rfc8291.txt) | <https://www.rfc-editor.org/rfc/rfc8291.txt> |  |
 | [rfc/rfc8292.txt](rfc/rfc8292.txt) | <https://www.rfc-editor.org/rfc/rfc8292.txt> |  |
-| [rfc/rfc8489.txt](rfc/rfc8489.txt) | <https://www.rfc-editor.org/rfc/rfc8489.txt> |  |
 | [rfc/rfc8656.txt](rfc/rfc8656.txt) | <https://www.rfc-editor.org/rfc/rfc8656.txt> |  |
 | [rfc/rfc8725.txt](rfc/rfc8725.txt) | <https://www.rfc-editor.org/rfc/rfc8725.txt> |  |
 | [rfc/rfc9110.txt](rfc/rfc9110.txt) | <https://www.rfc-editor.org/rfc/rfc9110.txt> |  |
+| [rfc/rfc9429.txt](rfc/rfc9429.txt) | <https://www.rfc-editor.org/rfc/rfc9429.txt> |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> |  |
 | [w3c/trace-context-1.md](w3c/trace-context-1.md) | <https://www.w3.org/TR/trace-context-1/> | Página web convertida a Markdown |
 | [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |

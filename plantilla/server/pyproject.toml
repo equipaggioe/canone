@@ -5,6 +5,7 @@ requires-python = "==3.13.*"
 dependencies = [
   "alembic>=1.20",
   "asyncpg>=0.31",
+  "cryptography>=50.0",
   "fastapi[standard]>=0.141",
   "packaging>=26.3",
   "pydantic>=2.13",

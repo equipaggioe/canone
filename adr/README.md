@@ -41,8 +41,8 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0031](0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md) | Una revisión empieza por lo que la tecnología obliga a decidir | `plataformas/` | Aceptada |
 | [0032](0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md) | Una guía de una organización se cita si se escribió para que otros la adopten | `plataformas/` y `estandares/` | Aceptada |
 | [0033](0033-un-modulo-propio-para-lo-que-se-usa-en-varias-partes-de-la-app.md) | Un módulo propio para lo que se usa en varias partes de la app | Con FastAPI | Aceptada |
-| [0034](0034-la-paginacion-es-por-cursor-con-reglas-propias.md) | La paginación es por cursor, con reglas propias | Con `server/` y sus clientes | Aceptada; el punto 1 lo reemplaza ADR-0035 |
-| [0035](0035-una-lista-con-numeros-de-pagina-se-pagina-por-page-y-devuelve-el-total.md) | Una lista con números de página se pagina por `page` y devuelve el total | Con `server/` y sus clientes | Aceptada |
+| [0034](0034-la-paginacion-es-por-cursor-con-reglas-propias.md) | La paginación es por cursor, con reglas propias | Con `server/` y sus clientes | Reemplazada por ADR-0053 |
+| [0035](0035-una-lista-con-numeros-de-pagina-se-pagina-por-page-y-devuelve-el-total.md) | Una lista con números de página se pagina por `page` y devuelve el total | Con `server/` y sus clientes | Reemplazada por ADR-0053 |
 | [0036](0036-el-almacen-en-memoria-es-valkey.md) | El almacén en memoria de todas las piezas es Valkey | Con un almacén en memoria | Aceptada |
 | [0037](0037-la-uri-de-cada-tipo-de-problema-sirve-su-documentacion-bajo-api.md) | La URI de cada tipo de problema sirve su documentación, bajo `/api` | Con `server/` y sus clientes | Aceptada |
 | [0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md) | El login sigue a OWASP, y el conteo de intentos fallidos vive en Valkey | Con autenticación | Reemplazada por ADR-0044 |
@@ -58,3 +58,6 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0048](0048-una-app-flutter-usa-riverpod-go-router-dio-y-freezed.md) | Una app Flutter usa Riverpod, go_router, Dio y Freezed | Con Flutter | Propuesta |
 | [0049](0049-la-ubicacion-en-segundo-plano-de-una-app-flutter-usa-geolocator-y-native-geofence.md) | La ubicación en segundo plano de una app Flutter usa geolocator con servicio en primer plano y native_geofence | Con Flutter | Propuesta |
 | [0050](0050-un-monto-entra-solo-como-cadena-y-sale-sin-exponente.md) | Un monto entra solo como cadena y sale sin exponente | Con montos, en el servidor | Aceptada |
+| [0051](0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md) | Un tutorial no se cita, y lo que se toma de él es regla propia | `plataformas/` y `estandares/` | Aceptada |
+| [0052](0052-el-openapi-se-versiona-y-de-el-generan-sus-modelos-todos-los-clientes.md) | El OpenAPI se versiona, y de él generan sus modelos todos los clientes | Con `server/` y sus clientes | Aceptada |
+| [0053](0053-la-paginacion-sigue-a-aip-158-y-los-numeros-de-pagina-usan-skip.md) | La paginación sigue a AIP-158, y los números de página usan `skip` | Con `server/` y sus clientes | Aceptada, salvo los puntos 3 y 5, que siguen en propuesta |

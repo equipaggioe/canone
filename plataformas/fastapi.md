@@ -13,6 +13,7 @@ server/
   .gitignore
   pyproject.toml
   uv.lock
+  openapi.json
   alembic.ini
   alembic/
     env.py
@@ -22,6 +23,7 @@ server/
   src/app/
     __init__.py
     main.py
+    openapi.py
     config.py
     database.py
     dependencies.py
@@ -319,39 +321,28 @@ Contrato: [transversal.md](transversal.md#montos).
 
 ## OpenAPI y clientes
 
-Estándar: [*Generating SDKs*](../estandares/fastapi/generate-clients.md) de FastAPI.
+Estándar: la [especificación OpenAPI 3.1](../estandares/openapi/openapi-3.1.2.md).
 
-- Cada router lleva un solo tag, y el operation ID es `<tag>-<función>`.
+Contrato: [transversal.md](transversal.md#openapi-y-clientes).
+
+- Cada router lleva un solo tag, y el `operationId` es el tag seguido del nombre de la función, en
+  camelCase. El tag lo hace único en toda la API.
+- El OpenAPI se exporta a `server/openapi.json`, versionado, y una prueba falla si no coincide con
+  la app. Un cambio de contrato se ve en el diff.
+- Cada operación declara sus errores como `application/problem+json` con el esquema del problema, y
+  el 422 con el del problema `validation`. Endurece OpenAPI, que solo espera que se documenten los
+  errores conocidos: un cliente generado tipa el error que de verdad recibe.
+- En producción no se sirven el OpenAPI ni su documentación. El contrato está en el repositorio, y
+  nadie de afuera necesita el mapa de la API.
 
 ## Paginación
 
-- Toda lista que puede crecer se pagina desde que se crea su ruta. Una lista sin límite crece hasta
-  que la respuesta tarda o se corta.
-- Una lista se pagina por cursor, salvo que muestre números de página. Un offset salta o repite
-  filas si la lista cambia entre páginas.
-- Una ruta tiene un solo modo.
-- `limit` vale 50 por defecto y 100 como máximo en los dos modos. Fuera de rango responde 422.
-- Toda lista paginada se ordena por una columna y el `id` como desempate. Dos filas con el mismo
-  valor no se saltan ni se repiten.
+Contrato: [transversal.md](transversal.md#paginación).
 
-Por cursor:
-
-- La petición es `CursorParams`: `limit` y `cursor` en la query. Sin `cursor`, devuelve la primera
-  página.
-- La respuesta es `CursorPage[T]`: `{"items": [...], "nextCursor": "..."}`, y la última página
-  lleva `"nextCursor": null`. El campo siempre está, y el cliente tipado no pregunta si existe.
-- El cursor guarda en base64url la columna y el `id` del último elemento, y los filtros. El
-  cliente no lo arma ni lo lee: el servidor puede cambiar su contenido sin tocar a ningún cliente.
-- Un cursor ilegible o con filtros distintos de los de la petición responde 422 de tipo
-  `validation`, con `parameter: "cursor"`.
-- La respuesta no lleva el total. Contarlo recorre toda la tabla en cada petición.
-
-Numerada:
-
-- La petición es `NumberedParams`: `limit` y `page`, que empieza en 1. `?page=3` es la dirección
-  que se comparte.
-- La respuesta es `NumberedPage[T]`: `{"items": [...], "total": 123}`.
-- Un `page` después de la última página devuelve `items` vacío con su `total`.
+- La petición es `PageParams`, o `SkipParams` si acepta `skip`. La respuesta es `Page[T]`, o
+  `CountedPage[T]` si devuelve `totalSize`.
+- El token guarda la columna y el `id` del último elemento, y los filtros, cifrados con Fernet y
+  la clave `PAGE_TOKEN_KEY`.
 
 ## Pagos
 
@@ -550,7 +541,8 @@ Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAP
 | Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | El `traceId` en cada problem+json | `test_unknown_route_is_a_problem` |
-| Un solo tag por router y el operation ID `<tag>-<función>` | `test_operation_ids` |
+| Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
+| `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | La versión mínima de cliente | `test_outdated_client_is_rejected` |
-| Un cursor ilegible o con otros filtros responde 422 | `test_invalid_cursor_points_to_the_parameter` |
+| Un `pageToken` ilegible o con otros parámetros responde 422 | `test_invalid_page_token_points_to_the_parameter` |
 | Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

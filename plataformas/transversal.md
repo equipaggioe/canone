@@ -113,6 +113,24 @@ Estándares: la sección 2.2 de [I-JSON](../estandares/rfc/rfc7493.txt), RFC 749
 - La API habla en camelCase. Cada cliente usa la convención de su lenguaje (`snake_case` en
   Python, camelCase en Dart y TypeScript) y convierte en un solo punto: su cliente de la API.
 
+## OpenAPI y clientes
+
+- Cada cliente genera del `openapi.json` del servidor los modelos del cable, y ninguno los escribe a
+  mano. Copiado a mano en varios lenguajes, el contrato diverge sin que nadie lo note.
+
+## Paginación
+
+Estándar: la [AIP-158](../estandares/google-aip/aip-0158.md) de Google, *Pagination*.
+
+- La respuesta es `{"items": [...], "nextPageToken": "..."}`, y la última página lleva
+  `"nextPageToken": ""`. El campo siempre está.
+- `pageSize` vale 50 por defecto y 100 como máximo.
+- Una lista que muestra números de página acepta `skip` y devuelve `totalSize`. Las demás no.
+- Con `skip`, un `pageSize` mayor que 100 responde 422. Contradice AIP-158, que lo recorta: el
+  cliente calcula `skip` con el tamaño que pidió, y un recorte se saltaría filas.
+- Un `pageToken` ilegible o con otros parámetros que los de su petición responde 422 de tipo
+  `validation`, con `parameter: "pageToken"`.
+
 ## Pagos
 
 Estándar: [*Secure Integration of Third-Party Payment Gateways Cheat Sheet*](../estandares/owasp/Third_Party_Payment_Gateway_Integration.md)

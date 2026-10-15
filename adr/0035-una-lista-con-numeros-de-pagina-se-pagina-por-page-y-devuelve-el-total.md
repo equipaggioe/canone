@@ -1,6 +1,6 @@
 # ADR-0035 · Una lista con números de página se pagina por `page` y devuelve el total
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0053](0053-la-paginacion-sigue-a-aip-158-y-los-numeros-de-pagina-usan-skip.md)
 - **Fecha:** 2026-10-05
 - **Alcance:** [`plataformas/fastapi.md`](../plataformas/fastapi.md) y sus clientes
 

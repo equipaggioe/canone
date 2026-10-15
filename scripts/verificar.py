@@ -28,6 +28,7 @@ CANONICOS = [
     Path("server/alembic/script.py.mako"),
     Path("server/src/app/database.py"),
     Path("server/src/app/tracing.py"),
+    Path("server/src/app/openapi.py"),
     Path("server/src/app/models/__init__.py"),
     Path("server/src/app/models/base.py"),
     Path("server/src/app/models/ruff.toml"),

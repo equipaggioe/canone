@@ -36,6 +36,7 @@ jobs:
     env:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
       MIN_CLIENT_VERSIONS: "{}"
+      PAGE_TOKEN_KEY: 0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY=
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6

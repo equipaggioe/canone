@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     database_url: str
     min_client_versions: dict[str, str]
+    page_token_key: str
 
 
 settings = Settings()

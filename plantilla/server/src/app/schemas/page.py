@@ -1,68 +1,67 @@
-"""The two ways to page a list: by cursor and by page number."""
+"""A page of a list, by page token and, to show page numbers, skip."""
 
-import base64
-import binascii
 import json
 from collections.abc import Mapping
 from typing import Any
 
+from cryptography.fernet import Fernet, InvalidToken
 from fastapi.exceptions import RequestValidationError
-from pydantic import Field, TypeAdapter, ValidationError
+from pydantic import Field, TypeAdapter, ValidationError, field_validator
 
+from app.config import settings
 from app.schemas.base import InputSchema, Schema
 
 JSON: TypeAdapter[Any] = TypeAdapter(Any)
 
 
-class CursorParams(InputSchema):
-    """The query parameters of a list paged by cursor."""
+class PageParams(InputSchema):
+    """The query parameters of a paged list."""
 
-    limit: int = Field(50, ge=1, le=100)
-    cursor: str | None = None
+    page_size: int = Field(50, ge=0)
+    page_token: str = ""
 
-
-class CursorPage[T](Schema):
-    """One page of a list; the last one has no next cursor."""
-
-    items: list[T]
-    next_cursor: str | None
-
-
-class NumberedParams(InputSchema):
-    """The query parameters of a list with page numbers."""
-
-    limit: int = Field(50, ge=1, le=100)
-    page: int = Field(1, ge=1)
-
-    @property
-    def offset(self) -> int:
-        """Count the rows before this page."""
-        return (self.page - 1) * self.limit
+    @field_validator("page_size")
+    @classmethod
+    def fit_page_size(cls, size: int) -> int:
+        """Read 0 as the default, and cut a larger size to 100."""
+        return min(size or 50, 100)
 
 
-class NumberedPage[T](Schema):
-    """One numbered page of a list, with the size of the whole list."""
+class SkipParams(PageParams):
+    """The query parameters of a list that shows page numbers."""
+
+    page_size: int = Field(50, ge=0, le=100)
+    skip: int = Field(0, ge=0)
+
+
+class Page[T](Schema):
+    """One page of a list; the last one has an empty next token."""
 
     items: list[T]
-    total: int
+    next_page_token: str
 
 
-def encode_cursor(position: object, filters: Mapping[str, Any]) -> str:
-    """Pack the last position and the filters in base64url."""
+class CountedPage[T](Page[T]):
+    """One page of a list that shows page numbers, with its total."""
+
+    total_size: int
+
+
+def encode_token(position: object, filters: Mapping[str, Any]) -> str:
+    """Encrypt the last position and the filters."""
     content = {"position": position, "filters": filters}
     text = json.dumps(JSON.dump_python(content, mode="json"), separators=(",", ":"))
-    return base64.urlsafe_b64encode(text.encode()).decode().rstrip("=")
+    return Fernet(settings.page_token_key).encrypt(text.encode()).decode()
 
 
-def decode_cursor[T](cursor: str, filters: Mapping[str, Any], position: type[T]) -> T:
-    """Unpack a position, or answer 422 on a bad cursor."""
+def decode_token[T](token: str, filters: Mapping[str, Any], position: type[T]) -> T:
+    """Decrypt a position, or answer 422 on a bad page token."""
     try:
-        padded = cursor + "=" * (-len(cursor) % 4)
-        content = json.loads(base64.urlsafe_b64decode(padded))
+        content = json.loads(Fernet(settings.page_token_key).decrypt(token))
         if content["filters"] != JSON.dump_python(filters, mode="json"):
             raise ValueError
         return TypeAdapter(position).validate_python(content["position"])
-    except (binascii.Error, ValueError, KeyError, TypeError, ValidationError) as error:
+    except (InvalidToken, ValueError, KeyError, TypeError, ValidationError) as error:
         raise RequestValidationError(
-            [{"loc": ("query", "cursor"), "msg": "Invalid cursor", "type": "value_error"}]
+            [{"loc": ("query", "pageToken"), "msg": "Invalid page token", "type": "value_error"}]
         ) from error

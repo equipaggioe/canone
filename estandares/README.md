@@ -37,7 +37,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [fastapi/events.md](fastapi/events.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/events.md> |  |
 | [fastapi/behind-a-proxy.md](fastapi/behind-a-proxy.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/behind-a-proxy.md> |  |
 | [fastapi/settings.md](fastapi/settings.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/settings.md> |  |
-| [fastapi/generate-clients.md](fastapi/generate-clients.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/generate-clients.md> |  |
 | [fastapi/async-tests.md](fastapi/async-tests.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/async-tests.md> |  |
 | [fastapi/websockets.md](fastapi/websockets.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/websockets.md> |  |
 | [fastapi/request-files.md](fastapi/request-files.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/request-files.md> |  |
@@ -86,6 +85,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc9110.txt](rfc/rfc9110.txt) | <https://www.rfc-editor.org/rfc/rfc9110.txt> |  |
 | [rfc/rfc9429.txt](rfc/rfc9429.txt) | <https://www.rfc-editor.org/rfc/rfc9429.txt> |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> |  |
+| [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/versions/3.1.2.md> | Línea 3.1, la versión que genera FastAPI |
+| [google-aip/aip-0158.md](google-aip/aip-0158.md) | <https://raw.githubusercontent.com/aip-dev/google.aip.dev/master/aip/general/0158.md> |  |
 | [w3c/trace-context-1.md](w3c/trace-context-1.md) | <https://www.w3.org/TR/trace-context-1/> | Página web convertida a Markdown |
 | [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |
 | [w3c/webauthn-3.bs](w3c/webauthn-3.bs) | <https://raw.githubusercontent.com/w3c/webauthn/main/index.bs> |  |

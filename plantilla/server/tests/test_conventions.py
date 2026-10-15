@@ -3,6 +3,7 @@
 import ast
 import importlib
 import pkgutil
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 from types import ModuleType
@@ -18,14 +19,14 @@ from pydantic import AwareDatetime, BaseModel
 import app.models
 import app.routers
 import app.schemas
-from app import errors, tracing
+from app import errors, openapi, tracing
 from app.config import Settings, settings
 from app.database import engine
 from app.dependencies import SessionDep
 from app.main import app as main_app
 from app.models.base import Base
 from app.schemas.base import InputSchema, Schema, Timestamp
-from app.schemas.page import decode_cursor, encode_cursor
+from app.schemas.page import decode_token, encode_token
 
 
 def import_all(package: ModuleType) -> list[ModuleType]:
@@ -195,15 +196,20 @@ def test_settings_are_required() -> None:
 
 
 def test_operation_ids() -> None:
-    """Every operation has one tag and the ID <tag>-<function>."""
+    """Every operation has one tag and starts its camelCase ID by it."""
     offenders = [
         f"{method.upper()} {path}"
         for path, operations in main_app.openapi()["paths"].items()
         for method, operation in operations.items()
         if len(operation.get("tags", [])) != 1
-        or not operation["operationId"].startswith(f"{operation['tags'][0]}-")
+        or not re.fullmatch(rf"{operation['tags'][0]}[A-Z][A-Za-z0-9]*", operation["operationId"])
     ]
     assert not offenders
+
+
+def test_openapi_file_is_current() -> None:
+    """openapi.json matches the app: python -m app.openapi."""
+    assert openapi.FILE.read_text(encoding="utf-8") == openapi.render()
 
 
 async def test_unknown_route_is_a_problem() -> None:
@@ -269,27 +275,32 @@ async def test_problem_types_are_documented() -> None:
             assert problem.title in response.text
 
 
-async def test_invalid_cursor_points_to_the_parameter() -> None:
-    """A bad cursor, or one with other filters, is a 422."""
+async def test_invalid_page_token_points_to_the_parameter() -> None:
+    """A bad page token, or one with other filters, is a 422."""
     probe = FastAPI()
     errors.install(probe)
     tracing.install(probe)
     position = (datetime(2026, 1, 1, tzinfo=UTC), 7)
-    cursor = encode_cursor(position, {"status": "open"})
-    assert decode_cursor(cursor, {"status": "open"}, tuple[datetime, int]) == position
+    token = encode_token(position, {"status": "open"})
+    assert decode_token(token, {"status": "open"}, tuple[datetime, int]) == position
 
     @probe.get("/items")
-    async def list_items(cursor: str, status: str) -> None:
-        """Read the cursor with the filters of the request."""
-        decode_cursor(cursor, {"status": status}, tuple[datetime, int])
+    async def list_items(
+        page_token: Annotated[str, Query(alias="pageToken")], status: str
+    ) -> None:
+        """Read the page token with the filters of the request."""
+        decode_token(page_token, {"status": status}, tuple[datetime, int])
 
     transport = ASGITransport(app=probe)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
-        for params in ({"cursor": cursor, "status": "closed"}, {"cursor": "x!", "status": "open"}):
+        for params in (
+            {"pageToken": token, "status": "closed"},
+            {"pageToken": "x!", "status": "open"},
+        ):
             response = await client.get("/items", params=params)
             assert response.status_code == 422
             assert response.json()["errors"] == [
-                {"detail": "Invalid cursor", "parameter": "cursor"}
+                {"detail": "Invalid page token", "parameter": "pageToken"}
             ]
 
 

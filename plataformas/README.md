@@ -63,9 +63,9 @@ herramienta la haga cumplir.
   rige, y ninguna parte se cita en dos secciones.
 - Cada sección nombra las fuentes que cita y enlaza su texto en [estandares/](../estandares/). Ahí
   se guarda solo lo que se cita.
-- Nunca se citan el código de los ejemplos, los proyectos de muestra, lo que hace la comunidad, la
-  popularidad, los blogs, los cursos ni los foros. Una convención que sale de ahí entra como
-  propia.
+- Nunca se citan los tutoriales, el código de los ejemplos, los proyectos de muestra, lo que hace
+  la comunidad, la popularidad, los blogs, los cursos ni los foros. Una convención que sale de ahí
+  entra como propia.
 - Lo que una herramienta hace por defecto no viene de ninguna fuente, pero rige mientras la página
   no diga otra cosa. Cambiarlo es una regla propia, salvo que una fuente citada pida el cambio.
 - Una revisión empieza por la lista de lo que la tecnología obliga a decidir. Cada punto se
@@ -139,5 +139,6 @@ El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de
 el [ADR-0028](../adr/0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md),
 el [ADR-0029](../adr/0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md),
 el [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md),
-el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md)
-y el [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md).
+el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md),
+el [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md)
+y el [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md).

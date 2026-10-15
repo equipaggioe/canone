@@ -13,8 +13,9 @@ from app.routers import health, problems
 
 
 def operation_id(route: APIRoute) -> str:
-    """Name each operation <tag>-<function>."""
-    return f"{route.tags[0]}-{route.name}"
+    """Name each operation by its tag and function, in camelCase."""
+    first, *rest = f"{route.tags[0]}_{route.name}".split("_")
+    return first + "".join(word.capitalize() for word in rest)
 
 
 @asynccontextmanager

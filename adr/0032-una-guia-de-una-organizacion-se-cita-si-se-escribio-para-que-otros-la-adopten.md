@@ -2,7 +2,7 @@
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-10-05
-- **Alcance:** `plataformas/` y `estandares/`
+- **Alcance:** `plataformas/` y `fuentes/`
 
 ## Contexto
 
@@ -22,7 +22,7 @@ sin un proceso abierto de consenso, y las cambian cuando quieren.
 ## Consecuencias
 
 - Lo que importa de una guía es para quién se escribió, no a qué se dedica quien la publica.
-- La copia de `estandares/` fija la versión adoptada: un cambio de la organización no cambia la
+- La copia de `fuentes/` fija la versión adoptada: un cambio de la organización no cambia la
   página hasta que se revisa.
 
 ## Descartado

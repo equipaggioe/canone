@@ -4,18 +4,18 @@ Una app en Flutter.
 
 ## Estilo
 
-Estándares: [*Effective Dart*](../estandares/dart/effective-dart-index.md):
-[*Style*](../estandares/dart/effective-dart-style.md),
-[*Documentation*](../estandares/dart/effective-dart-documentation.md),
-[*Usage*](../estandares/dart/effective-dart-usage.md) y
-[*Design*](../estandares/dart/effective-dart-design.md).
+Estándares: [*Effective Dart*](../fuentes/dart/effective-dart-index.md):
+[*Style*](../fuentes/dart/effective-dart-style.md),
+[*Documentation*](../fuentes/dart/effective-dart-documentation.md),
+[*Usage*](../fuentes/dart/effective-dart-usage.md) y
+[*Design*](../fuentes/dart/effective-dart-design.md).
 
 - `dart format` usa líneas de 99.
 
 ## Analizador
 
-Estándar: [flutter_lints](../estandares/pub/flutter_lints/README.md) y su
-[configuración](../estandares/pub/flutter_lints/flutter.yaml).
+Estándar: [flutter_lints](../fuentes/pub/flutter_lints/README.md) y su
+[configuración](../fuentes/pub/flutter_lints/flutter.yaml).
 
 - El analizador activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre
   `flutter analyze --fatal-infos`. Endurece flutter_lints: los tipos se revisan como con Pyrefly
@@ -26,10 +26,10 @@ analizador y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.
 
 ## Arquitectura
 
-Estándares: [*Common architecture concepts*](../estandares/flutter/app-architecture-concepts.md),
-[*Guide to app architecture*](../estandares/flutter/app-architecture-guide.md) y
-[*Architecture recommendations and resources*](../estandares/flutter/app-architecture-recommendations.md)
-de Flutter, con sus [recomendaciones](../estandares/flutter/architecture-recommendations.yml).
+Estándares: [*Common architecture concepts*](../fuentes/flutter/app-architecture-concepts.md),
+[*Guide to app architecture*](../fuentes/flutter/app-architecture-guide.md) y
+[*Architecture recommendations and resources*](../fuentes/flutter/app-architecture-recommendations.md)
+de Flutter, con sus [recomendaciones](../fuentes/flutter/architecture-recommendations.yml).
 
 ```text
 <pieza>/
@@ -62,18 +62,18 @@ de Flutter, con sus [recomendaciones](../estandares/flutter/architecture-recomme
 
 ## Estado
 
-Estándares: [*Simple app state management*](../estandares/flutter/state-mgmt-simple.md) de Flutter
-y [provider](../estandares/pub/provider/README.md).
+Estándares: [*Simple app state management*](../fuentes/flutter/state-mgmt-simple.md) de Flutter
+y [provider](../fuentes/pub/provider/README.md).
 
 - Los ViewModels son `ChangeNotifier`. Vienen con el SDK, y provider ya es la inyección de
   dependencias.
 
 ## Accesibilidad
 
-Estándares: de Flutter, [*Accessibility*](../estandares/flutter/accessibility.md),
-[*UI design and styling*](../estandares/flutter/accessibility-ui-design.md),
-[*Assistive technologies*](../estandares/flutter/accessibility-assistive.md) y
-[*Accessibility testing*](../estandares/flutter/accessibility-testing.md).
+Estándares: de Flutter, [*Accessibility*](../fuentes/flutter/accessibility.md),
+[*UI design and styling*](../fuentes/flutter/accessibility-ui-design.md),
+[*Assistive technologies*](../fuentes/flutter/accessibility-assistive.md) y
+[*Accessibility testing*](../fuentes/flutter/accessibility-testing.md).
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
@@ -82,8 +82,8 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándares: [shared_preferences](../estandares/pub/shared_preferences/README.md) y
-[flutter_secure_storage](../estandares/pub/flutter_secure_storage/README.md).
+Estándares: [shared_preferences](../fuentes/pub/shared_preferences/README.md) y
+[flutter_secure_storage](../fuentes/pub/flutter_secure_storage/README.md).
 
 - Las preferencias usan `SharedPreferencesAsync`. Sin caché, cada lectura trae el valor actual.
 - El token de refresco que pide [transversal.md](transversal.md#sesión) va en
@@ -91,7 +91,7 @@ Estándares: [shared_preferences](../estandares/pub/shared_preferences/README.md
 
 ## Código por SMS
 
-Estándar: la sección *Usage* de [sms_autofill](../estandares/pub/sms_autofill/README.md).
+Estándar: la sección *Usage* de [sms_autofill](../fuentes/pub/sms_autofill/README.md).
 
 Contrato: [transversal.md](transversal.md#código-por-sms).
 
@@ -100,13 +100,13 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 
 ## Idiomas
 
-Estándar: [*Internationalizing Flutter apps*](../estandares/flutter/internationalization.md).
+Estándar: [*Internationalizing Flutter apps*](../fuentes/flutter/internationalization.md).
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Mapas
 
-Estándar: [flutter_map](../estandares/pub/flutter_map/README.md).
+Estándar: [flutter_map](../fuentes/pub/flutter_map/README.md).
 
 Contrato: [transversal.md](transversal.md#mapas).
 
@@ -118,7 +118,7 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 ## Tema
 
-Estándar: [*Use themes to share colors and font styles*](../estandares/flutter/themes.md) de
+Estándar: [*Use themes to share colors and font styles*](../fuentes/flutter/themes.md) de
 Flutter.
 
 - El tema claro y el oscuro salen de `ui/core/themes/`, y `themeMode` es `ThemeMode.system`.

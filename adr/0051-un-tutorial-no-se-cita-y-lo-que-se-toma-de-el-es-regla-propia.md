@@ -2,7 +2,7 @@
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-10-15
-- **Alcance:** `plataformas/` y `estandares/`
+- **Alcance:** `plataformas/` y `fuentes/`
 
 ## Contexto
 
@@ -20,7 +20,7 @@ y ejemplos, con «you could» en vez de MUST o SHOULD. *Generating SDKs* de Fast
 
 - Una página que cita un tutorial deja de cumplir `plataformas/README.md` hasta que se revisa.
   `fastapi.md` cita todavía *Bigger Applications* y el tutorial de Alembic.
-- *Generating SDKs* deja de citarse, y su copia sale de `estandares/`.
+- *Generating SDKs* deja de citarse, y su copia sale de `fuentes/`.
 
 ## Descartado
 

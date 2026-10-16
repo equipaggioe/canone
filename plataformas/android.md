@@ -4,14 +4,14 @@ Una app de Android en Kotlin y Jetpack Compose.
 
 ## Proyecto
 
-Estándar: [*Migrate your build to version catalogs*](../estandares/android/version-catalogs.md).
+Estándar: [*Migrate your build to version catalogs*](../fuentes/android/version-catalogs.md).
 
 - Gradle usa Kotlin DSL y corre con el JDK 21 de Debian 13.
 
 ## Estilo
 
-Estándares: la [guía de estilo de Kotlin para Android](../estandares/android/kotlin-style-guide.md)
-y las [*Coding conventions*](../estandares/kotlin/coding-conventions.md) de Kotlin.
+Estándares: la [guía de estilo de Kotlin para Android](../fuentes/android/kotlin-style-guide.md)
+y las [*Coding conventions*](../fuentes/kotlin/coding-conventions.md) de Kotlin.
 
 - ktlint formatea y revisa con el estilo `android_studio`, el de la guía de Android. Corre con el
   plugin de Gradle `org.jlleitschuh.gradle.ktlint`, y el estilo va en `.editorconfig`.
@@ -23,11 +23,11 @@ editar, y `.gitignore`.
 
 ## Arquitectura
 
-Estándares: la [guía de arquitectura](../estandares/android/architecture.md), sus
-[recomendaciones](../estandares/android/architecture-recommendations.md), la
-[capa de UI](../estandares/android/ui-layer.md) y la [capa de datos](../estandares/android/data-layer.md),
-las [buenas prácticas de corrutinas](../estandares/android/coroutines-best-practices.md) y
-[Hilt](../estandares/android/hilt.md).
+Estándares: la [guía de arquitectura](../fuentes/android/architecture.md), sus
+[recomendaciones](../fuentes/android/architecture-recommendations.md), la
+[capa de UI](../fuentes/android/ui-layer.md) y la [capa de datos](../fuentes/android/data-layer.md),
+las [buenas prácticas de corrutinas](../fuentes/android/coroutines-best-practices.md) y
+[Hilt](../fuentes/android/hilt.md).
 
 ```text
 mobile/
@@ -61,15 +61,15 @@ mobile/
 
 ## Compose
 
-Estándares: el [estado](../estandares/compose/state.md) y la
-[arquitectura](../estandares/compose/architecture.md) de Compose, y
-[Navigation 3](../estandares/android/navigation-3.md).
+Estándares: el [estado](../fuentes/compose/state.md) y la
+[arquitectura](../fuentes/compose/architecture.md) de Compose, y
+[Navigation 3](../fuentes/android/navigation-3.md).
 
 ## Accesibilidad
 
-Estándares: de Android, [*Make apps more accessible*](../estandares/android/accessibility-apps.md)
-y [*Principles for improving app accessibility*](../estandares/android/accessibility-principles.md),
-y de Compose, [*Accessibility testing*](../estandares/compose/accessibility-testing.md).
+Estándares: de Android, [*Make apps more accessible*](../fuentes/android/accessibility-apps.md)
+y [*Principles for improving app accessibility*](../fuentes/android/accessibility-principles.md),
+y de Compose, [*Accessibility testing*](../fuentes/compose/accessibility-testing.md).
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
@@ -77,8 +77,8 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándares: [DataStore](../estandares/android/datastore.md) y el
-[Keystore de Android](../estandares/android/keystore.md).
+Estándares: [DataStore](../fuentes/android/datastore.md) y el
+[Keystore de Android](../fuentes/android/keystore.md).
 
 - Las preferencias van en Preferences DataStore.
 - Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en
@@ -89,7 +89,7 @@ Estándares: [DataStore](../estandares/android/datastore.md) y el
 
 Estándar: las secciones *Start the SMS retriever*, *Receive verification messages* y *Send the
 one-time code from the verification message to your server* de
-[*Request SMS Verification in an Android App*](../estandares/android/sms-retriever-request.md) de
+[*Request SMS Verification in an Android App*](../fuentes/android/sms-retriever-request.md) de
 Google.
 
 Contrato: [transversal.md](transversal.md#código-por-sms).
@@ -99,13 +99,13 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 
 ## Idiomas
 
-Estándar: la [localización](../estandares/android/localization.md) de Android.
+Estándar: la [localización](../fuentes/android/localization.md) de Android.
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Mapas
 
-Estándar: [*Quickstart*](../estandares/maplibre/android-getting-started.md) de MapLibre Android.
+Estándar: [*Quickstart*](../fuentes/maplibre/android-getting-started.md) de MapLibre Android.
 
 Contrato: [transversal.md](transversal.md#mapas).
 
@@ -120,15 +120,15 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 ## Passkeys
 
-Estándares: los [requisitos de Credential Manager](../estandares/android/credential-manager-prerequisites.md),
-[*Create a passkey*](../estandares/android/create-passkeys.md) y
-[*Sign in with a passkey*](../estandares/android/sign-in-with-passkeys.md) de Android.
+Estándares: los [requisitos de Credential Manager](../fuentes/android/credential-manager-prerequisites.md),
+[*Create a passkey*](../fuentes/android/create-passkeys.md) y
+[*Sign in with a passkey*](../fuentes/android/sign-in-with-passkeys.md) de Android.
 
 Contrato: [transversal.md](transversal.md#passkeys).
 
 ## Tema
 
-Estándar: [Material 3 en Compose](../estandares/compose/material3.md).
+Estándar: [Material 3 en Compose](../fuentes/compose/material3.md).
 
 - El `ColorScheme` claro y el oscuro salen de los tokens de `ui/theme/`, sin color dinámico, y el
   modo sigue al sistema. El color dinámico reemplazaría la paleta del producto, que es la misma en
@@ -136,8 +136,8 @@ Estándar: [Material 3 en Compose](../estandares/compose/material3.md).
 
 ## Pruebas
 
-Estándares: los [fundamentos de pruebas](../estandares/android/testing-fundamentals.md) y las
-[pruebas de Compose](../estandares/compose/testing.md).
+Estándares: los [fundamentos de pruebas](../fuentes/android/testing-fundamentals.md) y las
+[pruebas de Compose](../fuentes/compose/testing.md).
 
 - Las llamadas HTTP se prueban contra MockWebServer.
 

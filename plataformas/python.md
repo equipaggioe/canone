@@ -4,8 +4,8 @@ Lo común a toda pieza en Python. Lo propio de cada una va en su página y se su
 
 ## Proyecto
 
-Estándares: [*pyproject.toml specification*](../estandares/pypa/pyproject-toml.rst) y
-[*Dependency Groups*](../estandares/pypa/dependency-groups.rst) de PyPA.
+Estándares: [*pyproject.toml specification*](../fuentes/pypa/pyproject-toml.rst) y
+[*Dependency Groups*](../fuentes/pypa/dependency-groups.rst) de PyPA.
 
 - Python 3.13, el de Debian 13: `requires-python = "==3.13.*"`. Toda herramienta que elige la
   versión más alta permitida, como `flet build`, toma 3.13.
@@ -15,7 +15,7 @@ Estándares: [*pyproject.toml specification*](../estandares/pypa/pyproject-toml.
 - El backend de construcción es `uv_build`.
 
 Estándar del layout: la sección *Choosing a test layout* de las
-[buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
+[buenas prácticas de pytest](../fuentes/pytest/goodpractices.rst).
 
 ```text
 <pieza>/
@@ -49,8 +49,8 @@ configuración de esta página más la de su plataforma.
 
 ## Estilo
 
-Estándares: [PEP 8](../estandares/python/pep-0008.rst), salvo la sección *Imports*, y
-[PEP 257](../estandares/python/pep-0257.rst).
+Estándares: [PEP 8](../fuentes/python/pep-0008.rst), salvo la sección *Imports*, y
+[PEP 257](../fuentes/python/pep-0257.rst).
 
 - Líneas de 99 caracteres.
 - Comillas dobles.
@@ -61,10 +61,10 @@ Estándares: [PEP 8](../estandares/python/pep-0008.rst), salvo la sección *Impo
 
 ## Tipos
 
-Estándares: los capítulos [*Type annotations*](../estandares/typing/spec/annotations.rst) y
-[*Type checker directives*](../estandares/typing/spec/directives.rst) de la especificación de
-tipos, [*Typing Best Practices*](../estandares/typing/best_practices.rst) y
-[*Modernizing Superseded Typing Features*](../estandares/typing/modernizing.rst).
+Estándares: los capítulos [*Type annotations*](../fuentes/typing/spec/annotations.rst) y
+[*Type checker directives*](../fuentes/typing/spec/directives.rst) de la especificación de
+tipos, [*Typing Best Practices*](../fuentes/typing/best_practices.rst) y
+[*Modernizing Superseded Typing Features*](../fuentes/typing/modernizing.rst).
 
 - Pyrefly en modo strict. Entiende sin plugin los alias que genera `to_camel` y los campos que
   pydantic-settings lee del entorno.
@@ -77,7 +77,7 @@ tipos, [*Typing Best Practices*](../estandares/typing/best_practices.rst) y
 
 ## Paquetes
 
-Estándar: la sección *Imports* de [PEP 8](../estandares/python/pep-0008.rst).
+Estándar: la sección *Imports* de [PEP 8](../fuentes/python/pep-0008.rst).
 
 - Todo directorio de código lleva `__init__.py`: sin él, la carpeta se vuelve en silencio un
   paquete de espacio de nombres.
@@ -91,14 +91,14 @@ Estándar: la sección *Imports* de [PEP 8](../estandares/python/pep-0008.rst).
 
 ## Archivos de texto
 
-Estándar: la sección *Text Encoding* de [`io`](../estandares/python/io.rst).
+Estándar: la sección *Text Encoding* de [`io`](../fuentes/python/io.rst).
 
 - Los archivos de texto se abren con `encoding="utf-8"`.
 
 ## Async
 
-Estándares: la [guía de desarrollo con asyncio](../estandares/python/asyncio-dev.rst) y la de
-[tareas](../estandares/python/asyncio-task.rst).
+Estándares: la [guía de desarrollo con asyncio](../fuentes/python/asyncio-dev.rst) y la de
+[tareas](../fuentes/python/asyncio-task.rst).
 
 - Las tareas concurrentes se lanzan con `TaskGroup`. Endurece la guía de tareas, que lo ofrece
   como alternativa: no pierde tareas ni excepciones.
@@ -107,7 +107,7 @@ Estándares: la [guía de desarrollo con asyncio](../estandares/python/asyncio-d
 
 ## Fechas
 
-Estándar: [`datetime`](../estandares/python/datetime.rst).
+Estándar: [`datetime`](../fuentes/python/datetime.rst).
 
 - Toda `datetime` es aware y en UTC; la hora local aparece solo al mostrarla. Endurece la
   preferencia de la documentación: comparar una naive con una aware lanza `TypeError`, y una
@@ -115,7 +115,7 @@ Estándar: [`datetime`](../estandares/python/datetime.rst).
 
 ## Logging
 
-Estándar: la [guía de logging](../estandares/python/logging-howto.rst).
+Estándar: la [guía de logging](../fuentes/python/logging-howto.rst).
 
 - Toda salida pasa por logging. Contradice la guía, que reserva `print` para la salida normal de
   un programa de consola: ni un servidor ni una GUI la tienen.
@@ -124,14 +124,14 @@ Estándar: la [guía de logging](../estandares/python/logging-howto.rst).
 
 ## Seguridad
 
-Estándar: las [*Security Considerations*](../estandares/python/security_warnings.rst) de la
+Estándar: las [*Security Considerations*](../fuentes/python/security_warnings.rst) de la
 biblioteca estándar.
 
 ## Pruebas
 
 Estándares: las secciones *Conventions for Python test discovery*, *Checking with
 flake8-pytest-style* y *Using pytest's strict mode* de las
-[buenas prácticas de pytest](../estandares/pytest/goodpractices.rst).
+[buenas prácticas de pytest](../fuentes/pytest/goodpractices.rst).
 
 - Las pruebas se escriben con pytest: un `assert` simple muestra los valores que fallaron, y los
   fixtures reemplazan a `setUp`.

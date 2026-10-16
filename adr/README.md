@@ -8,7 +8,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 
 | # | Título | Aplica a | Estado |
 |---|---|---|---|
-| [0001](0001-el-estandar-vive-en-un-repositorio.md) | El estándar vive en un repositorio y los demás lo enlazan | Todos | Aceptada; la última frase del punto 2 la reemplaza ADR-0014, y el punto 4, ADR-0040 |
+| [0001](0001-el-estandar-vive-en-un-repositorio.md) | El estándar vive en un repositorio y los demás lo enlazan | Todos | Aceptada; la última frase del punto 2 la reemplazan ADR-0014 y ADR-0057, y el punto 4, ADR-0040 |
 | [0002](0002-los-archivos-base-se-copian-y-se-verifican.md) | Los archivos base se copian y un script verifica la copia | Con `server/` | Aceptada |
 | [0003](0003-enum-como-varchar-con-check.md) | Un enum se guarda como VARCHAR con CHECK | Con base de datos | Reemplazada por ADR-0013 |
 | [0004](0004-geografia-con-funciones.md) | Una columna geográfica se declara con una función, no con un Annotated | Con PostGIS | Aceptada |
@@ -25,7 +25,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0015](0015-el-sobre-de-error-sigue-el-rfc-9457.md) | El sobre de error sigue el RFC 9457 | Con `server/` y sus clientes | Aceptada; el punto 3 lo reemplaza ADR-0026 |
 | [0016](0016-una-pagina-es-un-catalogo-de-convenciones-que-sale-de-la-recomendacion-oficial.md) | Una página de plataforma es un catálogo de convenciones que sale de la recomendación oficial | `plataformas/` | Reemplazada por ADR-0018 |
 | [0017](0017-la-marca-vive-en-brand.md) | El logo y los colores del producto viven en `brand/` | Todos | Aceptada |
-| [0018](0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md) | Una página se revisa contra la copia de sus estándares y solo dice lo que elige, endurece o no cubren | `plataformas/` | Aceptada; los puntos 2, 3, 4, 5 y 9 los reemplaza ADR-0030 |
+| [0018](0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md) | Una página se revisa contra la copia de sus estándares y solo dice lo que elige, endurece o no cubren | `plataformas/` | Aceptada; los puntos 2, 3, 4, 5 y 9 los reemplaza ADR-0030, y el punto 6, en lo que deja sin efecto, ADR-0056 |
 | [0019](0019-el-ci-corre-cada-semana-aunque-no-haya-commits.md) | El CI corre cada semana aunque no haya commits | Todos | Aceptada |
 | [0020](0020-un-monto-se-guarda-como-numeric-sin-escala-junto-al-codigo-iso-4217-de-su-moneda.md) | Un monto se guarda como `numeric` sin escala, junto al código ISO 4217 de su moneda | Con montos | Reemplazada por ADR-0023 |
 | [0021](0021-un-monto-viaja-como-objeto-con-el-monto-en-cadena-y-los-clientes-no-calculan-con-el.md) | Un monto viaja como objeto con el monto en cadena, y los clientes no calculan con él | Con montos, en el servidor y sus clientes | Aceptada |
@@ -37,9 +37,9 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0027](0027-el-prefijo-api-va-sin-version-en-un-apirouter-de-main.md) | El prefijo `/api` va sin versión, en un `APIRouter` de `main.py` | Con FastAPI | Aceptada |
 | [0028](0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md) | Una página está completa cuando sus estándares cubren lo que hay que decidir | `plataformas/` | Aceptada; el punto 1 lo reemplaza ADR-0031 |
 | [0029](0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md) | Las secciones de una página van en bloques fijos, y los temas en orden alfabético | `plataformas/` | Aceptada |
-| [0030](0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md) | Una página cita lo que adopta en su mayoría, y lo demás es regla propia | `plataformas/` | Aceptada |
+| [0030](0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md) | Una página cita lo que adopta en su mayoría, y lo demás es regla propia | `plataformas/` | Aceptada; el punto 4 lo reemplaza ADR-0056 |
 | [0031](0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md) | Una revisión empieza por lo que la tecnología obliga a decidir | `plataformas/` | Aceptada |
-| [0032](0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md) | Una guía de una organización se cita si se escribió para que otros la adopten | `plataformas/` y `estandares/` | Aceptada |
+| [0032](0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md) | Una guía de una organización se cita si se escribió para que otros la adopten | `plataformas/` y `fuentes/` | Aceptada |
 | [0033](0033-un-modulo-propio-para-lo-que-se-usa-en-varias-partes-de-la-app.md) | Un módulo propio para lo que se usa en varias partes de la app | Con FastAPI | Aceptada |
 | [0034](0034-la-paginacion-es-por-cursor-con-reglas-propias.md) | La paginación es por cursor, con reglas propias | Con `server/` y sus clientes | Reemplazada por ADR-0053 |
 | [0035](0035-una-lista-con-numeros-de-pagina-se-pagina-por-page-y-devuelve-el-total.md) | Una lista con números de página se pagina por `page` y devuelve el total | Con `server/` y sus clientes | Reemplazada por ADR-0053 |
@@ -58,8 +58,10 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0048](0048-una-app-flutter-usa-riverpod-go-router-dio-y-freezed.md) | Una app Flutter usa Riverpod, go_router, Dio y Freezed | Con Flutter | Propuesta |
 | [0049](0049-la-ubicacion-en-segundo-plano-de-una-app-flutter-usa-geolocator-y-native-geofence.md) | La ubicación en segundo plano de una app Flutter usa geolocator con servicio en primer plano y native_geofence | Con Flutter | Propuesta |
 | [0050](0050-un-monto-entra-solo-como-cadena-y-sale-sin-exponente.md) | Un monto entra solo como cadena y sale sin exponente | Con montos, en el servidor | Aceptada |
-| [0051](0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md) | Un tutorial no se cita, y lo que se toma de él es regla propia | `plataformas/` y `estandares/` | Aceptada |
+| [0051](0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md) | Un tutorial no se cita, y lo que se toma de él es regla propia | `plataformas/` y `fuentes/` | Aceptada |
 | [0052](0052-el-openapi-se-versiona-y-de-el-generan-sus-modelos-todos-los-clientes.md) | El OpenAPI se versiona, y de él generan sus modelos todos los clientes | Con `server/` y sus clientes | Aceptada |
 | [0053](0053-la-paginacion-sigue-a-aip-158-y-los-numeros-de-pagina-usan-skip.md) | La paginación sigue a AIP-158, y los números de página usan `skip` | Con `server/` y sus clientes | Aceptada |
 | [0054](0054-las-passkeys-son-un-contrato-de-transversal-y-una-app-usa-la-api-de-su-sistema.md) | Las passkeys son un contrato de transversal, y una app usa la API de su sistema | Con passkeys, en el servidor y sus clientes | Aceptada |
 | [0055](0055-el-cliente-de-una-web-sveltekit-se-genera-con-openapi-typescript-y-llama-con-openapi-fetch.md) | El cliente de una web SvelteKit se genera con openapi-typescript y llama con openapi-fetch | Con SvelteKit | Aceptada |
+| [0056](0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md) | Una regla es lo que escribe la página, y lo que adopta una fuente es una convención | `plataformas/` y `fuentes/` | Aceptada |
+| [0057](0057-una-pagina-no-espera-a-que-un-repositorio-use-la-tecnologia.md) | Una página no espera a que un repositorio use la tecnología | `plataformas/` | Aceptada |

@@ -27,7 +27,7 @@ Una app que sigue al usuario con la app cerrada (cadenza: desde que pide la cita
 - La notificación persistente es obligatoria en Android mientras se envían posiciones.
 - La app pide el permiso de ubicación «siempre», con lo que eso exige en cada tienda.
 - El plugin local del punto 3 es código Kotlin propio que hay que mantener, solo si hace falta arrancar el flujo desde segundo plano.
-- La fuente de `geolocator` y la de `native_geofence` se copian a `estandares/pub/`.
+- La fuente de `geolocator` y la de `native_geofence` se copian a `fuentes/pub/`.
 
 ## Descartado
 

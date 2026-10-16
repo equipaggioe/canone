@@ -5,8 +5,8 @@ Un servidor en FastAPI. Se suma a [python.md](python.md).
 ## Proyecto
 
 Estándares: la sección *An example file structure* de
-[*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md) de FastAPI y
-la sección *Creating an Environment* del [tutorial](../estandares/alembic/tutorial.rst) de Alembic.
+[*Bigger Applications - Multiple Files*](../fuentes/fastapi/bigger-applications.md) de FastAPI y
+la sección *Creating an Environment* del [tutorial](../fuentes/alembic/tutorial.rst) de Alembic.
 
 ```text
 server/
@@ -78,15 +78,15 @@ Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 ## Configuración
 
 Estándares: las secciones *Pydantic `Settings`* y *Settings in another module* de
-[*Settings and Environment Variables*](../estandares/fastapi/settings.md) de FastAPI, y
-[pydantic-settings](../estandares/pydantic-settings/index.md).
+[*Settings and Environment Variables*](../fuentes/fastapi/settings.md) de FastAPI, y
+[pydantic-settings](../fuentes/pydantic-settings/index.md).
 
 - Todo campo de `Settings` es obligatorio y sin valor por defecto.
 - En desarrollo, las variables salen de `uv run --env-file .env`.
 
 ## Esquemas
 
-Estándar: la [configuración de modelos](../estandares/pydantic/config.md) de Pydantic.
+Estándar: la [configuración de modelos](../fuentes/pydantic/config.md) de Pydantic.
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
@@ -97,9 +97,9 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 ## Base de datos
 
-Estándares: [*Session Basics*](../estandares/sqlalchemy/session_basics.rst), la
-[extensión asyncio](../estandares/sqlalchemy/asyncio.rst) y el
-[pool de conexiones](../estandares/sqlalchemy/pooling.rst) de SQLAlchemy.
+Estándares: [*Session Basics*](../fuentes/sqlalchemy/session_basics.rst), la
+[extensión asyncio](../fuentes/sqlalchemy/asyncio.rst) y el
+[pool de conexiones](../fuentes/sqlalchemy/pooling.rst) de SQLAlchemy.
 
 - `AsyncSession` con asyncpg.
 - `lazy="raise"` en toda relación.
@@ -112,15 +112,15 @@ Estándares: [*Session Basics*](../estandares/sqlalchemy/session_basics.rst), la
 
 ## Migraciones
 
-Estándares: el [tutorial](../estandares/alembic/tutorial.rst), salvo *Creating an Environment*, la
-[autogeneración](../estandares/alembic/autogenerate.rst) y la
-[plantilla async](../estandares/alembic/async/env.py) de Alembic, y
-[*The Importance of Naming Constraints*](../estandares/alembic/naming.rst).
+Estándares: el [tutorial](../fuentes/alembic/tutorial.rst), salvo *Creating an Environment*, la
+[autogeneración](../fuentes/alembic/autogenerate.rst) y la
+[plantilla async](../fuentes/alembic/async/env.py) de Alembic, y
+[*The Importance of Naming Constraints*](../fuentes/alembic/naming.rst).
 
 ## Inyección de dependencias
 
-Estándares: [*Dependencies*](../estandares/fastapi/dependencies.md) y
-[*Dependencies with yield*](../estandares/fastapi/dependencies-with-yield.md) de FastAPI.
+Estándares: [*Dependencies*](../fuentes/fastapi/dependencies.md) y
+[*Dependencies with yield*](../fuentes/fastapi/dependencies-with-yield.md) de FastAPI.
 
 - La dependencia de la `AsyncSession` lleva `scope="function"`. El commit corre antes de enviar la
   respuesta: si falla, el cliente recibe el error y no un 200.
@@ -129,20 +129,20 @@ Estándares: [*Dependencies*](../estandares/fastapi/dependencies.md) y
 
 Estándar: las secciones *`APIRouter`*, *Another module with `APIRouter`*, *The main `FastAPI`* e
 *Include an `APIRouter` in another* de
-[*Bigger Applications - Multiple Files*](../estandares/fastapi/bigger-applications.md) de FastAPI.
+[*Bigger Applications - Multiple Files*](../fuentes/fastapi/bigger-applications.md) de FastAPI.
 
 - Los routers se incluyen en un `APIRouter(prefix="/api")` de `main.py`.
 - Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`.
 
 ## Ciclo de vida
 
-Estándar: [*Lifespan Events*](../estandares/fastapi/events.md) de FastAPI.
+Estándar: [*Lifespan Events*](../fuentes/fastapi/events.md) de FastAPI.
 
 ## Tareas en segundo plano
 
-Estándares: [*Background Tasks*](../estandares/fastapi/background-tasks.md) y la sección
+Estándares: [*Background Tasks*](../fuentes/fastapi/background-tasks.md) y la sección
 *Background Tasks and Dependencies with `yield`, Technical Details* de
-[*Advanced Dependencies*](../estandares/fastapi/advanced-dependencies.md) de FastAPI.
+[*Advanced Dependencies*](../fuentes/fastapi/advanced-dependencies.md) de FastAPI.
 
 ## Tareas periódicas
 
@@ -161,8 +161,8 @@ Estándares: [*Background Tasks*](../estandares/fastapi/background-tasks.md) y l
 
 ## Archivos
 
-Estándares: [*File Upload Cheat Sheet*](../estandares/owasp/File_Upload.md) de OWASP y
-[*Request Files*](../estandares/fastapi/request-files.md) de FastAPI.
+Estándares: [*File Upload Cheat Sheet*](../fuentes/owasp/File_Upload.md) de OWASP y
+[*Request Files*](../fuentes/fastapi/request-files.md) de FastAPI.
 
 Contrato: [transversal.md](transversal.md#archivos).
 
@@ -180,7 +180,7 @@ Contrato: [transversal.md](transversal.md#archivos).
 ## Autenticación
 
 Estándar: las secciones V6.1 *Authentication Documentation* y V6.3 *General Authentication
-Security*, en el nivel 1, de [ASVS 5.0](../estandares/owasp/ASVS_V6_Authentication.md) de OWASP.
+Security*, en el nivel 1, de [ASVS 5.0](../fuentes/owasp/ASVS_V6_Authentication.md) de OWASP.
 
 - Una cuenta se registra con un correo o con un teléfono, verificado con un código.
 - Una cuenta no tiene nombre de usuario.
@@ -204,7 +204,7 @@ Security*, en el nivel 1, de [ASVS 5.0](../estandares/owasp/ASVS_V6_Authenticati
 ## Código por SMS
 
 Estándar: la sección 3.1.3.2 *Out-of-Band Verifiers* de
-[NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt).
+[NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
 Contrato: [transversal.md](transversal.md#código-por-sms).
 
@@ -221,10 +221,10 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 ## Contraseñas
 
 Estándares: las secciones V6.2 *Password Security* y V6.4 *Authentication Factor Lifecycle and
-Recovery*, en el nivel 1, de [ASVS 5.0](../estandares/owasp/ASVS_V6_Authentication.md) de OWASP;
+Recovery*, en el nivel 1, de [ASVS 5.0](../fuentes/owasp/ASVS_V6_Authentication.md) de OWASP;
 las secciones *Password hashing*, *Install `pwdlib`* y *Hash and verify the passwords* de
-[*OAuth2 with Password (and hashing), Bearer with JWT tokens*](../estandares/fastapi/oauth2-jwt.md)
-de FastAPI, y [*Forgot Password Cheat Sheet*](../estandares/owasp/Forgot_Password.md) de OWASP,
+[*OAuth2 with Password (and hashing), Bearer with JWT tokens*](../fuentes/fastapi/oauth2-jwt.md)
+de FastAPI, y [*Forgot Password Cheat Sheet*](../fuentes/owasp/Forgot_Password.md) de OWASP,
 salvo *Security Questions*.
 
 - Toda contraseña tiene al menos 8 caracteres. Contradice ASVS, que recomienda con fuerza 15: una
@@ -244,7 +244,7 @@ salvo *Security Questions*.
 
 ## Correo y SMS
 
-Estándar: [Standard Webhooks](../estandares/standard-webhooks/standard-webhooks.md).
+Estándar: [Standard Webhooks](../fuentes/standard-webhooks/standard-webhooks.md).
 
 - El correo sale por la API de correo de Equipaggio, `PUT /email/{id}`, y el SMS, por su pasarela,
   `PUT /sms/{id}`.
@@ -259,7 +259,7 @@ Estándar: [Standard Webhooks](../estandares/standard-webhooks/standard-webhooks
 
 ## Errores
 
-Estándar: [*Handling Errors*](../estandares/fastapi/handling-errors.md) de FastAPI.
+Estándar: [*Handling Errors*](../fuentes/fastapi/handling-errors.md) de FastAPI.
 
 Contrato: [transversal.md](transversal.md#errores).
 
@@ -276,8 +276,8 @@ Contrato: [transversal.md](transversal.md#fechas).
 
 ## Idiomas
 
-Estándares: [*Working with Message Catalogs*](../estandares/babel/messages.rst) y
-[*Command-Line Interface*](../estandares/babel/cmdline.rst) de Babel.
+Estándares: [*Working with Message Catalogs*](../fuentes/babel/messages.rst) y
+[*Command-Line Interface*](../fuentes/babel/cmdline.rst) de Babel.
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
@@ -287,7 +287,7 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Límite de tasa
 
-Estándar: la sección 4 de [RFC 6585](../estandares/rfc/rfc6585.txt), *429 Too Many Requests*.
+Estándar: la sección 4 de [RFC 6585](../fuentes/rfc/rfc6585.txt), *429 Too Many Requests*.
 
 - Los contadores viven en Valkey, compartidos por todos los procesos.
 - Todo 429 lleva `Retry-After`. Endurece RFC 6585, que lo deja opcional: el cliente sabe cuándo
@@ -296,7 +296,7 @@ Estándar: la sección 4 de [RFC 6585](../estandares/rfc/rfc6585.txt), *429 Too 
 ## Llamadas de voz y video
 
 Estándar: la sección *TURN REST API* de la
-[documentación de coturn](../estandares/coturn/README.turnserver).
+[documentación de coturn](../fuentes/coturn/README.turnserver).
 
 Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
 
@@ -321,7 +321,7 @@ Contrato: [transversal.md](transversal.md#montos).
 
 ## OpenAPI y clientes
 
-Estándar: la [especificación OpenAPI 3.1](../estandares/openapi/openapi-3.1.2.md).
+Estándar: la [especificación OpenAPI 3.1](../fuentes/openapi/openapi-3.1.2.md).
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
@@ -346,8 +346,8 @@ Contrato: [transversal.md](transversal.md#paginación).
 
 ## Pagos
 
-Estándares: [*Idempotent requests*](../estandares/stripe/idempotent-requests.md) y los
-[webhooks](../estandares/stripe/webhooks.md) de Stripe.
+Estándares: [*Idempotent requests*](../fuentes/stripe/idempotent-requests.md) y los
+[webhooks](../fuentes/stripe/webhooks.md) de Stripe.
 
 Contrato: [transversal.md](transversal.md#pagos).
 
@@ -373,9 +373,9 @@ Contrato: [transversal.md](transversal.md#passkeys).
 
 ## Permisos
 
-Estándares: [*Authorization Cheat Sheet*](../estandares/owasp/Authorization.md) de OWASP y las
+Estándares: [*Authorization Cheat Sheet*](../fuentes/owasp/Authorization.md) de OWASP y las
 secciones 15.5.4 *403 Forbidden* y 15.5.5 *404 Not Found* de
-[RFC 9110](../estandares/rfc/rfc9110.txt).
+[RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 - Cada ruta declara con una dependencia de FastAPI el permiso que exige. El permiso queda a la
   vista en la ruta.
@@ -386,9 +386,9 @@ secciones 15.5.4 *403 Forbidden* y 15.5.5 *404 Not Found* de
 
 ## Push
 
-Estándares: [*Send a message using Firebase Admin SDK*](../estandares/firebase/admin-sdk.md),
-[*FCM Error Codes*](../estandares/firebase/error-codes.md),
-[RFC 8030](../estandares/rfc/rfc8030.txt) y [RFC 8291](../estandares/rfc/rfc8291.txt).
+Estándares: [*Send a message using Firebase Admin SDK*](../fuentes/firebase/admin-sdk.md),
+[*FCM Error Codes*](../fuentes/firebase/error-codes.md),
+[RFC 8030](../fuentes/rfc/rfc8030.txt) y [RFC 8291](../fuentes/rfc/rfc8291.txt).
 
 Contrato: [transversal.md](transversal.md#push).
 
@@ -397,7 +397,7 @@ Contrato: [transversal.md](transversal.md#push).
 
 ## Registro de eventos
 
-Estándar: [*Logging Cheat Sheet*](../estandares/owasp/Logging.md) de OWASP.
+Estándar: [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) de OWASP.
 
 - Los eventos van en una sola tabla, `event_log`, con su categoría (`auth`, `security`, `admin` o
   `business`) y su acción, un enum de cada repositorio: lo que pasó alrededor de una hora se lee en
@@ -428,7 +428,7 @@ Estándar: [*Logging Cheat Sheet*](../estandares/owasp/Logging.md) de OWASP.
 ## Reintentos
 
 Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
-[RFC 9110](../estandares/rfc/rfc9110.txt).
+[RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 - Una creación que el cliente puede reintentar va por `PUT /<recurso>/{id}`, con un uuid v4 que
   genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez
@@ -442,8 +442,8 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
 
 ## Sesión
 
-Estándares: [RFC 7519](../estandares/rfc/rfc7519.txt), [RFC 8725](../estandares/rfc/rfc8725.txt)
-y [*JSON Web Token Cheat Sheet*](../estandares/owasp/JSON_Web_Token.md) de OWASP.
+Estándares: [RFC 7519](../fuentes/rfc/rfc7519.txt), [RFC 8725](../fuentes/rfc/rfc8725.txt)
+y [*JSON Web Token Cheat Sheet*](../fuentes/owasp/JSON_Web_Token.md) de OWASP.
 
 Contrato: [transversal.md](transversal.md#sesión).
 
@@ -462,7 +462,7 @@ Contrato: [transversal.md](transversal.md#sesión).
 ## Trazas
 
 Estándar: las secciones 3.2.2.3 *trace-id* y 8, *Considerations for trace-id field generation*,
-de [Trace Context](../estandares/w3c/trace-context-1.md) de W3C.
+de [Trace Context](../fuentes/w3c/trace-context-1.md) de W3C.
 
 - Cada petición y cada WebSocket empiezan una traza nueva, aunque lleguen con `traceparent`. El
   cliente no elige el id con el que se buscan sus registros.
@@ -472,7 +472,7 @@ de [Trace Context](../estandares/w3c/trace-context-1.md) de W3C.
 ## Versión mínima de cliente
 
 Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
-[RFC 9110](../estandares/rfc/rfc9110.txt).
+[RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
 
@@ -484,8 +484,8 @@ Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
 
 ## WebSocket
 
-Estándares: [*WebSockets*](../estandares/fastapi/websockets.md) de FastAPI y
-[*Pub/Sub*](../estandares/valkey/pubsub.md) de Valkey.
+Estándares: [*WebSockets*](../fuentes/fastapi/websockets.md) de FastAPI y
+[*Pub/Sub*](../fuentes/valkey/pubsub.md) de Valkey.
 
 Contrato: [transversal.md](transversal.md#websocket).
 
@@ -502,9 +502,9 @@ Contrato: [transversal.md](transversal.md#websocket).
 
 ## Pruebas
 
-Estándares: [*Async Tests*](../estandares/fastapi/async-tests.md) de FastAPI, las
-[pruebas con AnyIO](../estandares/anyio/testing.rst) y
-[*Joining a Session into an External Transaction*](../estandares/sqlalchemy/session_transaction.rst)
+Estándares: [*Async Tests*](../fuentes/fastapi/async-tests.md) de FastAPI, las
+[pruebas con AnyIO](../fuentes/anyio/testing.rst) y
+[*Joining a Session into an External Transaction*](../fuentes/sqlalchemy/session_transaction.rst)
 de SQLAlchemy.
 
 - `anyio_backend` es `asyncio`. asyncpg y la app solo corren en asyncio.
@@ -519,7 +519,7 @@ de SQLAlchemy.
 
 ## Detrás de un proxy
 
-Estándar: [*Behind a Proxy*](../estandares/fastapi/behind-a-proxy.md) de FastAPI.
+Estándar: [*Behind a Proxy*](../fuentes/fastapi/behind-a-proxy.md) de FastAPI.
 
 <br>
 

@@ -1,7 +1,9 @@
 # ADR-0001 · El estándar vive en un repositorio y los demás lo enlazan
 
-- **Estado:** Aceptada. La última frase del punto 2 la reemplaza el
-  [ADR-0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md), y el punto 4, el
+- **Estado:** Aceptada. La última frase del punto 2 la reemplazan el
+  [ADR-0014](0014-una-pagina-se-escribe-desde-la-recomendacion-oficial.md), en «se escribe leyendo
+  ese código», y el [ADR-0057](0057-una-pagina-no-espera-a-que-un-repositorio-use-la-tecnologia.md),
+  en «Una página existe porque la tecnología ya está en uso»; el punto 4, el
   [ADR-0040](0040-el-claude-md-global-guarda-solo-lo-que-es-para-claude.md)
 - **Fecha:** 2026-09-22
 - **Alcance:** todos los repositorios

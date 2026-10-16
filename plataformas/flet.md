@@ -4,8 +4,8 @@ Una aplicación en Flet. Se suma a [python.md](python.md).
 
 ## Proyecto
 
-Estándares: [*Creating a new Flet app*](../estandares/flet/create-flet-app.md) y la
-[estructura del proyecto](../estandares/flet/publish.md) que supone `flet build`.
+Estándares: [*Creating a new Flet app*](../fuentes/flet/create-flet-app.md) y la
+[estructura del proyecto](../fuentes/flet/publish.md) que supone `flet build`.
 
 ```text
 <pieza>/
@@ -33,16 +33,16 @@ sin editar; `theme.py` es un punto de partida.
 
 ## Accesibilidad
 
-Estándar: [*Accessibility*](../estandares/flet/accessibility.md) de Flet.
+Estándar: [*Accessibility*](../fuentes/flet/accessibility.md) de Flet.
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándares: [*Client Storage*](../estandares/flet/client-storage.md),
-[*Session Storage*](../estandares/flet/session-storage.md),
-[`SecureStorage`](../estandares/flet/securestorage.md) y
-[*Encrypting sensitive data*](../estandares/flet/encrypting-sensitive-data.md) de Flet.
+Estándares: [*Client Storage*](../fuentes/flet/client-storage.md),
+[*Session Storage*](../fuentes/flet/session-storage.md),
+[`SecureStorage`](../fuentes/flet/securestorage.md) y
+[*Encrypting sensitive data*](../fuentes/flet/encrypting-sensitive-data.md) de Flet.
 
 - Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en
   `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén
@@ -57,7 +57,7 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Mapas
 
-Estándar: [flet-map](../estandares/flet/map.md).
+Estándar: [flet-map](../fuentes/flet/map.md).
 
 Contrato: [transversal.md](transversal.md#mapas).
 
@@ -68,14 +68,14 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 ## Tema
 
-Estándar: [*Theming*](../estandares/flet/theming.md) de Flet.
+Estándar: [*Theming*](../fuentes/flet/theming.md) de Flet.
 
 - `page.theme` y `page.dark_theme` salen de `theme.py`, y `page.theme_mode` es
   `ThemeMode.SYSTEM`. La app sigue el modo oscuro del sistema, con los colores en un solo módulo.
 
 ## Publicación
 
-Estándar: [*Publishing a Flet app*](../estandares/flet/publish.md).
+Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md).
 
 ## Cómo se hace cumplir
 

@@ -30,7 +30,7 @@ después envía su posición en segundo plano.
 - `build_runner` es obligatorio en toda app Flutter: genera los proveedores, las rutas y los modelos.
 - Se reescriben las secciones «Arquitectura» (el árbol: `providers` junto a cada función en lugar de
   `view_models/`) y «Estado» de `flutter.md`.
-- Las fuentes de Riverpod, go_router_builder y Dio se copian a `estandares/pub/`, y la de `provider`
+- Las fuentes de Riverpod, go_router_builder y Dio se copian a `fuentes/pub/`, y la de `provider`
   se retira.
 
 ## Descartado

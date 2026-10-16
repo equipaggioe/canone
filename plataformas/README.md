@@ -18,7 +18,8 @@ piezas. **Se lee la de lo que el repositorio use**, junto con transversal.md; la
 
 ## Qué es una página
 
-Un catálogo de convenciones de una tecnología. Una convención sirve para una de tres cosas:
+Un catálogo de convenciones de una tecnología. Una convención la adopta una fuente citada o la
+escribe la página como regla, y sirve para una de tres cosas:
 
 - **Que todos los repositorios se lean igual:** el mismo layout y los mismos nombres.
 - **Que cada elección se tome una sola vez:** la tecnología, la biblioteca, la versión y la
@@ -26,15 +27,15 @@ Un catálogo de convenciones de una tecnología. Una convención sirve para una 
 - **Que las piezas de un sistema se entiendan:** el servidor y sus clientes cumplen el mismo
   contrato, como el sobre de error, la paginación o la sesión.
 
-Una regla que no sirve para ninguna de las tres no va. Una convención vale aunque ninguna
+Una convención que no sirve para ninguna de las tres no va, y una que sirve vale aunque ninguna
 herramienta la haga cumplir.
 
 ### Las fuentes son las convenciones
 
-- Se cita lo que se adopta en su mayoría. Todo lo demás, venga de donde venga, es una regla propia.
-- Citar una fuente, o una parte de ella, adopta todas sus convenciones: se cumplen como si fueran
-  obligatorias y no se escriben. La página escribe una regla solo para las que contradice, deja sin
-  efecto o endurece; el resto sigue rigiendo.
+- Una revisión empieza por la lista de lo que la tecnología obliga a decidir. Cada punto se
+  responde con una fuente citada o, si ninguna lo cubre, con una regla propia.
+- Las fuentes se eligen para que cubran casi todas las convenciones de un asunto, y así la página
+  escribe pocas reglas.
 - Para cada asunto se busca una fuente en este orden, y se prefiere la de menor número:
 
   | Orden | Fuente |
@@ -44,50 +45,48 @@ herramienta la haga cumplir.
   | 3 | Una especificación de facto, como SemVer, Conventional Commits o The Twelve-Factor App |
   | 4 | Una guía publicada por una organización de referencia, como Google AIP o las guías de API de Microsoft |
 
+- Elegir una fuente de mayor número en un asunto que otra de menor número ya cubre es una regla
+  propia.
 - Una guía de orden 4 se cita solo si se escribió para que otros la adopten:
   - Es pública y su licencia permite usarla.
-  - Es normativa: reglas numeradas con MUST o SHOULD, no consejos sueltos.
-  - Está versionada, con historial de cambios. La copia de `estandares/` fija la versión adoptada.
+  - Es normativa: convenciones numeradas con MUST o SHOULD, no consejos sueltos.
+  - Está versionada, con historial de cambios. La copia de `fuentes/` fija la versión adoptada.
   - La parte citada no depende de la infraestructura de quien la publica.
-- Elegir una fuente de mayor número en un asunto que otra de menor número ya cubre es contradecir
-  a esa otra, y se escribe como regla, con su razón.
-- Se cita una fuente entera o solo la parte que se adopta: una sección, un capítulo, una AIP o un
-  nivel de ASVS.
-- Una parte se cita si se adopta en su mayoría. Si de ella solo se toman algunas reglas, no se
-  cita: esas reglas se escriben como propias, sin nombrar de dónde salen.
+- Nunca se citan los tutoriales, el código de los ejemplos, los proyectos de muestra, lo que hace
+  la comunidad, la popularidad, los blogs, los cursos ni los foros.
+- Se cita lo que se adopta en su mayoría: una fuente entera o solo una parte, como una sección, un
+  capítulo, una AIP o un nivel de ASVS. Todo lo demás, venga de donde venga, es una regla propia.
+- Citar una fuente, o una parte de ella, adopta todas sus convenciones explícitas: lo que se debe,
+  se debería o no se debe hacer, aunque nada lo haga cumplir. Se cumplen como si fueran obligatorias
+  y no se escriben. Los pasos de un procedimiento y el «cómo se hace» no son convenciones, aunque
+  estén en su documentación oficial.
+- Lo que una herramienta hace por defecto no viene de ninguna fuente, pero rige mientras la página
+  no diga otra cosa. Cambiarlo es una regla propia, salvo que una fuente citada pida el cambio.
 - Una regla propia no nombra una fuente que la página no cita, tampoco para contradecirla: lleva
   solo su razón.
 - Dos partes citadas nunca regulan lo mismo. Si dos fuentes chocan en un asunto, se cita solo la
   que mejor se adapta, o se dice qué secciones se aplican de cada una.
-- Una fuente que rige varias secciones de la página se cita en cada una solo con la parte que la
-  rige, y ninguna parte se cita en dos secciones.
-- Cada sección nombra las fuentes que cita y enlaza su texto en [estandares/](../estandares/). Ahí
-  se guarda solo lo que se cita.
-- Nunca se citan los tutoriales, el código de los ejemplos, los proyectos de muestra, lo que hace
-  la comunidad, la popularidad, los blogs, los cursos ni los foros. Una convención que sale de ahí
-  entra como propia.
-- Lo que una herramienta hace por defecto no viene de ninguna fuente, pero rige mientras la página
-  no diga otra cosa. Cambiarlo es una regla propia, salvo que una fuente citada pida el cambio.
-- Una revisión empieza por la lista de lo que la tecnología obliga a decidir. Cada punto se
-  responde con una fuente citada o, si ninguna lo cubre, con una regla propia.
+- Cada sección nombra las partes que cita y enlaza su texto en [fuentes/](../fuentes/), que
+  guarda solo lo que se cita. Una fuente que rige varias secciones se cita en cada una solo con la
+  parte que la rige, y ninguna parte se cita en dos secciones.
 
 ### Qué escribe la página
 
-Sobre sus fuentes, solo tres clases de reglas. Una sección sin reglas sigue enteras las partes que
-cita.
+La página escribe solo tres clases de reglas:
 
 - La opción que elige donde una fuente deja varias.
-- Lo que contradice o endurece de una fuente. Endurecer es volver obligatorio lo que la fuente
-  recomienda «cuando sea posible» o deja como preferencia.
-- Sus reglas propias.
+- Lo que contradice, deja sin efecto o endurece de una fuente. Endurecer es volver obligatorio lo
+  que la fuente recomienda «cuando sea posible» o deja como preferencia.
+- Sus reglas propias: las que no se apoyan en ninguna fuente citada.
 
 Cómo se escribe:
 
 - Cada regla dice qué se usa y cómo queda. No es un procedimiento ni un tutorial.
-- Una regla lleva razón, en una frase corta, solo en dos casos: por qué contradice o endurece una
-  fuente, y cómo ayuda una elección que no es trivial. Una regla trivial, como un color o el largo
-  de línea, no lleva razón: es una preferencia. Fuera de la razón, sin comentarios, explicaciones
-  ni ejemplos innecesarios. Vale también para los comentarios de `plantilla/`.
+- Una regla lleva razón, en una frase corta, solo en dos casos: por qué contradice, deja sin efecto
+  o endurece una fuente, y cómo ayuda una elección que no es trivial. Una regla trivial, como un
+  color o el largo de línea, no lleva razón: es una preferencia. Fuera de la razón, sin
+  comentarios, explicaciones ni ejemplos innecesarios. Vale también para los comentarios de
+  `plantilla/`.
 - El layout se dibuja completo, como árbol, aunque repita partes de sus fuentes. El árbol es la
   convención misma, y a pedazos no se lee.
 - Debajo del árbol va solo dónde va algo que podría ir en otro archivo. Lo que un archivo tiene por
@@ -116,7 +115,7 @@ Las secciones van en siete bloques, en este orden. Una página escribe solo los 
 
 - La tabla «Cómo se hace cumplir» nombra en su primera columna la fuente o la parte citada, o
   una regla que la página ya escribió. Nunca redacta una regla nueva para llenar la fila.
-- Una herramienta que marca más de lo que la regla dice impone una regla no escrita, y no va.
+- Una herramienta que marca más de lo que dice su fila impone una convención no escrita, y no va.
 
 ### Alcance
 
@@ -128,17 +127,16 @@ Las secciones van en siete bloques, en este orden. Una página escribe solo los 
 - Nombra los archivos de `plantilla/` que salen de ella.
 - No dice qué repositorio la usa ni cuándo elegir una plataforma sobre otra.
 
-### Fuentes
+### De dónde se escribe
 
 Ni el código de los repositorios, ni lo que la página ya dice, ni los ADR son fuente. Una página se
 escribe de cero desde sus fuentes, nunca corrigiendo la versión anterior.
-
-Se agrega una página cuando la tecnología se estrena en algún repositorio.
 
 El porqué, en el [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md),
 el [ADR-0028](../adr/0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md),
 el [ADR-0029](../adr/0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md),
 el [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md),
 el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md),
-el [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md)
-y el [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md).
+el [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md),
+el [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md)
+y el [ADR-0056](../adr/0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md).

@@ -1,8 +1,8 @@
 # ADR-0018 · Una página se revisa contra la copia de sus estándares y solo dice lo que elige, endurece o no cubren
 
-- **Estado:** Aceptada. Los puntos 2, 3, 4, 5 y 9 los reemplaza el [ADR-0030](0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md)
+- **Estado:** Aceptada. Los puntos 2, 3, 4, 5 y 9 los reemplaza el [ADR-0030](0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md), y el punto 6, en lo que deja sin efecto, el [ADR-0056](0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
 - **Fecha:** 2026-09-27
-- **Alcance:** `plataformas/`, `estandares/` y los archivos de `plantilla/` que rige cada página
+- **Alcance:** `plataformas/`, `fuentes/` y los archivos de `plantilla/` que rige cada página
 
 ## Contexto
 
@@ -22,7 +22,7 @@ era elegir o repetir.
    sirve para ninguna de las tres no va.
 2. La fuente es la recomendación oficial más reciente de la tecnología. Ni el código de los
    repositorios ni lo que la página ya dice son fuente.
-3. `estandares/` guarda el texto de cada estándar que siguen las páginas, sin editar, con la URL de
+3. `fuentes/` guarda el texto de cada estándar que siguen las páginas, sin editar, con la URL de
    origen de cada archivo en su `README.md`. Una página web se guarda convertida a Markdown. Una
    página se escribe y se revisa contra ese texto.
 4. Cada sección nombra los estándares que sigue y enlaza su copia. Lo que el estándar dice no se

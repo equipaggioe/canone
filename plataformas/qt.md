@@ -4,8 +4,8 @@ Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](py
 
 ## Proyecto
 
-Estándares: [`pyside6-deploy`](../estandares/pyside6/deployment-pyside6-deploy.rst) y las
-[traducciones](../estandares/pyside6/translations.rst) de PySide6.
+Estándares: [`pyside6-deploy`](../fuentes/pyside6/deployment-pyside6-deploy.rst) y las
+[traducciones](../fuentes/pyside6/translations.rst) de PySide6.
 
 ```text
 desktop/
@@ -47,10 +47,10 @@ Plantilla: [`plantilla/qt/`](../plantilla/qt/).
 
 ## PySide6
 
-Estándares: las [consideraciones](../estandares/pyside6/considerations.rst), la
-[migración desde PySide2](../estandares/pyside6/porting_from2.rst) y
-[señales y slots](../estandares/pyside6/signals_and_slots.rst) de PySide6, y
-[PEP 698](../estandares/python/pep-0698.rst).
+Estándares: las [consideraciones](../fuentes/pyside6/considerations.rst), la
+[migración desde PySide2](../fuentes/pyside6/porting_from2.rst) y
+[señales y slots](../fuentes/pyside6/signals_and_slots.rst) de PySide6, y
+[PEP 698](../fuentes/python/pep-0698.rst).
 
 - La API de Qt se usa con sus nombres originales. Los stubs de PySide6 y la documentación de Qt
   usan esos nombres.
@@ -59,33 +59,33 @@ Estándares: las [consideraciones](../estandares/pyside6/considerations.rst), la
 
 ## Árbol de objetos
 
-Estándar: [*Object Trees & Ownership*](../estandares/qt/objecttrees.qdoc) de Qt.
+Estándar: [*Object Trees & Ownership*](../fuentes/qt/objecttrees.qdoc) de Qt.
 
 ## Widgets y diálogos
 
-Estándares: [`QWidget`](../estandares/qt/qwidget.qdoc) y [`QDialog`](../estandares/qt/qdialog.qdoc)
+Estándares: [`QWidget`](../fuentes/qt/qwidget.qdoc) y [`QDialog`](../fuentes/qt/qdialog.qdoc)
 de Qt.
 
 - La interfaz se construye en código. Pyrefly revisa los widgets y los diffs se leen.
 
 ## Layouts
 
-Estándar: [*Layout Management*](../estandares/qt/layout.qdoc) de Qt.
+Estándar: [*Layout Management*](../fuentes/qt/layout.qdoc) de Qt.
 
 ## Model/View
 
-Estándar: [*Model/View Programming*](../estandares/qt/model-view-programming.qdoc) de Qt.
+Estándar: [*Model/View Programming*](../fuentes/qt/model-view-programming.qdoc) de Qt.
 
 ## Accesibilidad
 
-Estándares: [*Accessibility*](../estandares/qt/accessible.qdoc) de Qt y la propiedad
-`accessibleName` de [`QWidget`](../estandares/qt/qwidget.qdoc).
+Estándares: [*Accessibility*](../fuentes/qt/accessible.qdoc) de Qt y la propiedad
+`accessibleName` de [`QWidget`](../fuentes/qt/qwidget.qdoc).
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándar: [`QSettings`](../estandares/qt/qsettings.qdoc) de Qt.
+Estándar: [`QSettings`](../fuentes/qt/qsettings.qdoc) de Qt.
 
 - `QSettings` usa `IniFormat`: el mismo archivo legible en todos los sistemas.
 - El token de refresco que pide [transversal.md](transversal.md#sesión) va en keyring, que usa el
@@ -93,7 +93,7 @@ Estándar: [`QSettings`](../estandares/qt/qsettings.qdoc) de Qt.
 
 ## Idiomas
 
-Estándar: las [traducciones](../estandares/pyside6/translations.rst) de PySide6.
+Estándar: las [traducciones](../fuentes/pyside6/translations.rst) de PySide6.
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
@@ -106,18 +106,18 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Red
 
-Estándares: [`QNetworkAccessManager`](../estandares/qt/qnetworkaccessmanager.qdoc) y
-[*Threading Classes*](../estandares/qt/threads.qdoc) de Qt.
+Estándares: [`QNetworkAccessManager`](../fuentes/qt/qnetworkaccessmanager.qdoc) y
+[*Threading Classes*](../fuentes/qt/threads.qdoc) de Qt.
 
 - HTTP va por `QNetworkAccessManager`, y las respuestas se leen con modelos de Pydantic en `api/`.
   Es asíncrono sin hilos, y las respuestas llegan como señales al hilo de la interfaz.
 
 ## Tema
 
-Estándares: [*Qt Style Sheets*](../estandares/qt/stylesheet.qdoc), su
-[sintaxis](../estandares/qt/stylesheet-syntax.qdoc), la
-[personalización](../estandares/qt/stylesheet-customizing.qdoc) y la
-[referencia](../estandares/qt/stylesheet-reference.qdoc).
+Estándares: [*Qt Style Sheets*](../fuentes/qt/stylesheet.qdoc), su
+[sintaxis](../fuentes/qt/stylesheet-syntax.qdoc), la
+[personalización](../fuentes/qt/stylesheet-customizing.qdoc) y la
+[referencia](../fuentes/qt/stylesheet-reference.qdoc).
 
 - La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada
   desde `theme.py`. Lo que la hoja no define lo dibuja el estilo de cada sistema; Fusion lo iguala.
@@ -127,17 +127,17 @@ editar.
 
 ## Pruebas
 
-Estándares: la [introducción](../estandares/pytest-qt/intro.rst), el
-[tutorial](../estandares/pytest-qt/tutorial.rst), la
-[`QApplication`](../estandares/pytest-qt/qapplication.rst), el
-[logging](../estandares/pytest-qt/logging.rst) y las [señales](../estandares/pytest-qt/signals.rst)
+Estándares: la [introducción](../fuentes/pytest-qt/intro.rst), el
+[tutorial](../fuentes/pytest-qt/tutorial.rst), la
+[`QApplication`](../fuentes/pytest-qt/qapplication.rst), el
+[logging](../fuentes/pytest-qt/logging.rst) y las [señales](../fuentes/pytest-qt/signals.rst)
 de pytest-qt.
 
 - En CI, las pruebas corren con `QT_QPA_PLATFORM=offscreen`, sin pantalla.
 
 ## Empaquetado
 
-Estándar: [`pyside6-deploy`](../estandares/pyside6/deployment-pyside6-deploy.rst).
+Estándar: [`pyside6-deploy`](../fuentes/pyside6/deployment-pyside6-deploy.rst).
 
 - `pysidedeploy.spec` va en git, con rutas relativas a `desktop/`, y la app se empaqueta solo en
   CI. Cada corrida reescribe en el archivo las rutas absolutas de la máquina.

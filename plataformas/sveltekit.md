@@ -4,7 +4,7 @@ Una superficie web con SvelteKit y UnoCSS.
 
 ## Proyecto
 
-Estándar: [*Project structure*](../estandares/sveltekit/project-structure.md) de SvelteKit.
+Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de SvelteKit.
 
 - Node es el de Debian 13, y solo se usa para construir.
 - pnpm maneja las dependencias. No deja importar un paquete que no esté declarado.
@@ -37,7 +37,7 @@ editar, y `svelte.config.js`, `uno.config.ts` y `.gitignore`, puntos de partida.
 
 ## Carga de datos
 
-Estándar: [*Loading data*](../estandares/sveltekit/load.md) de SvelteKit.
+Estándar: [*Loading data*](../fuentes/sveltekit/load.md) de SvelteKit.
 
 - Los datos de la API se cargan en `load` universales (`+page.ts`, `+layout.ts`). En producción no
   hay servidor de SvelteKit que corra un `load` de servidor.
@@ -47,23 +47,23 @@ Estándar: [*Loading data*](../estandares/sveltekit/load.md) de SvelteKit.
 
 ## Opciones de página
 
-Estándar: [*Page options*](../estandares/sveltekit/page-options.md) de SvelteKit.
+Estándar: [*Page options*](../fuentes/sveltekit/page-options.md) de SvelteKit.
 
 ## Estado
 
-Estándares: [*State management*](../estandares/sveltekit/state-management.md) de SvelteKit y, de
-Svelte, [*What are runes?*](../estandares/svelte/what-are-runes.md),
-[`$state`](../estandares/svelte/state.md), [`$derived`](../estandares/svelte/derived.md),
-[`$effect`](../estandares/svelte/effect.md), [`$props`](../estandares/svelte/props.md),
-[`$bindable`](../estandares/svelte/bindable.md), [`$inspect`](../estandares/svelte/inspect.md) y
-[`$host`](../estandares/svelte/host.md).
+Estándares: [*State management*](../fuentes/sveltekit/state-management.md) de SvelteKit y, de
+Svelte, [*What are runes?*](../fuentes/svelte/what-are-runes.md),
+[`$state`](../fuentes/svelte/state.md), [`$derived`](../fuentes/svelte/derived.md),
+[`$effect`](../fuentes/svelte/effect.md), [`$props`](../fuentes/svelte/props.md),
+[`$bindable`](../fuentes/svelte/bindable.md), [`$inspect`](../fuentes/svelte/inspect.md) y
+[`$host`](../fuentes/svelte/host.md).
 
 - El estado compartido son clases con `$state` en módulos `.svelte.ts` de `src/lib/state/`.
 
 ## Accesibilidad
 
-Estándares: las [advertencias del compilador](../estandares/svelte/compile-warnings.md) de Svelte y
-[`sv check`](../estandares/svelte/sv-check.md).
+Estándares: las [advertencias del compilador](../fuentes/svelte/compile-warnings.md) de Svelte y
+[`sv check`](../fuentes/svelte/sv-check.md).
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
@@ -72,7 +72,7 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Código por SMS
 
-Estándar: [*WebOTP API*](../estandares/wicg/webotp.bs) de WICG.
+Estándar: [*WebOTP API*](../fuentes/wicg/webotp.bs) de WICG.
 
 Contrato: [transversal.md](transversal.md#código-por-sms).
 
@@ -81,8 +81,8 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 
 ## CSP
 
-Estándares: [*Content Security Policy Cheat Sheet*](../estandares/owasp/Content_Security_Policy.md)
-de OWASP y [CSP Level 3](../estandares/w3c/csp3.bs) de W3C.
+Estándares: [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md)
+de OWASP y [CSP Level 3](../fuentes/w3c/csp3.bs) de W3C.
 
 - La CSP la genera SvelteKit con `kit.csp` en modo `hash`, sobre `default-src 'self'`. El script de
   arranque de SvelteKit va en línea y necesita su hash.
@@ -92,13 +92,13 @@ de OWASP y [CSP Level 3](../estandares/w3c/csp3.bs) de W3C.
 
 ## Estilos
 
-Estándares: de UnoCSS, la [guía](../estandares/unocss/guide-index.md), el
-[archivo de configuración](../estandares/unocss/guide-config-file.md), la
-[configuración](../estandares/unocss/config-index.md), las
-[reglas](../estandares/unocss/config-rules.md), los
-[atajos](../estandares/unocss/config-shortcuts.md), el [tema](../estandares/unocss/config-theme.md),
-el [preset Wind4](../estandares/unocss/presets-wind4.md) y el
-[plugin de Vite](../estandares/unocss/integrations-vite.md).
+Estándares: de UnoCSS, la [guía](../fuentes/unocss/guide-index.md), el
+[archivo de configuración](../fuentes/unocss/guide-config-file.md), la
+[configuración](../fuentes/unocss/config-index.md), las
+[reglas](../fuentes/unocss/config-rules.md), los
+[atajos](../fuentes/unocss/config-shortcuts.md), el [tema](../fuentes/unocss/config-theme.md),
+el [preset Wind4](../fuentes/unocss/presets-wind4.md) y el
+[plugin de Vite](../fuentes/unocss/integrations-vite.md).
 
 - El preset es Wind4. Trae el reset y genera las variables CSS del tema.
 - Los tokens van en el `theme` de `uno.config.ts`.
@@ -106,19 +106,19 @@ el [preset Wind4](../estandares/unocss/presets-wind4.md) y el
 
 ## Idiomas
 
-Estándares: de Paraglide, [*Basics*](../estandares/paraglide/basics.md),
-[*Architecture*](../estandares/paraglide/architecture.md),
-[*Compiling Messages*](../estandares/paraglide/compiling-messages.md),
-[*Configuration File*](../estandares/paraglide/configuration.md),
-[*Translation File Formats*](../estandares/paraglide/file-formats.md),
-[*Locale Detection*](../estandares/paraglide/strategy.md) y
-[*SvelteKit i18n*](../estandares/paraglide/sveltekit.md).
+Estándares: de Paraglide, [*Basics*](../fuentes/paraglide/basics.md),
+[*Architecture*](../fuentes/paraglide/architecture.md),
+[*Compiling Messages*](../fuentes/paraglide/compiling-messages.md),
+[*Configuration File*](../fuentes/paraglide/configuration.md),
+[*Translation File Formats*](../fuentes/paraglide/file-formats.md),
+[*Locale Detection*](../fuentes/paraglide/strategy.md) y
+[*SvelteKit i18n*](../fuentes/paraglide/sveltekit.md).
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Mapas
 
-Estándar: [*Quick Start Guide*](../estandares/leaflet/quick-start.md) de Leaflet.
+Estándar: [*Quick Start Guide*](../fuentes/leaflet/quick-start.md) de Leaflet.
 
 Contrato: [transversal.md](transversal.md#mapas).
 
@@ -126,12 +126,12 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 ## Pruebas
 
-Estándares: [*Getting Started*](../estandares/vitest/guide.md) y
-[*Features*](../estandares/vitest/features.md) de Vitest.
+Estándares: [*Getting Started*](../fuentes/vitest/guide.md) y
+[*Features*](../fuentes/vitest/features.md) de Vitest.
 
 ## Adaptador
 
-Estándar: [*Static site generation*](../estandares/sveltekit/adapter-static.md) de SvelteKit.
+Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de SvelteKit.
 
 - El adaptador es `adapter-static`. Las páginas públicas se prerenderizan; las que piden sesión
   llevan `ssr = false` y las sirve el `fallback` `200.html`. Contradice la documentación, que

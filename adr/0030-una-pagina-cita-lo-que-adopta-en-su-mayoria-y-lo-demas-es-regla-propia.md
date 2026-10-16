@@ -1,8 +1,8 @@
 # ADR-0030 · Una página cita lo que adopta en su mayoría, y lo demás es regla propia
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 4 lo reemplaza el [ADR-0056](0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
 - **Fecha:** 2026-10-05
-- **Alcance:** `plataformas/` y `estandares/`
+- **Alcance:** `plataformas/` y `fuentes/`
 
 ## Contexto
 
@@ -31,7 +31,7 @@ Reemplaza los puntos 2, 3, 4, 5 y 9 del ADR-0018.
    reglas que se toman sueltas de una fuente se escriben como propias, sin nombrar de dónde salen.
 6. Dos partes citadas nunca regulan lo mismo. Si dos fuentes chocan, se cita solo la que mejor se
    adapta, o se dice qué secciones se aplican de cada una.
-7. `estandares/` guarda el texto de cada fuente citada, sea del nivel que sea, y nada más.
+7. `fuentes/` guarda el texto de cada fuente citada, sea del nivel que sea, y nada más.
 8. Nunca se citan el código de los ejemplos, los proyectos de muestra, lo que hace la comunidad, la
    popularidad, los blogs, los cursos ni los foros. Una convención que sale de ahí entra como
    propia.
@@ -42,7 +42,7 @@ Reemplaza los puntos 2, 3, 4, 5 y 9 del ADR-0018.
 
 - Una cita dice exactamente lo que se cumple: quien lee la página no tiene que adivinar qué parte
   de una fuente rige.
-- `estandares/` puede guardar guías que no son estándares.
+- `fuentes/` puede guardar guías que no son estándares.
 - Las citas actuales de `plataformas/` se revisan contra este criterio: una fuente que hoy se cita
   y se usa solo en parte pasa a reglas propias.
 

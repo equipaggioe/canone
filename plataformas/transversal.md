@@ -4,7 +4,7 @@ Lo que tienen que cumplir juntas varias piezas. Lo que hace una sola pieza va en
 
 ## Accesibilidad
 
-Estándar: [WCAG 2.2](../estandares/w3c/wcag22.html) de W3C.
+Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 
 - Todos los clientes cumplen el nivel AA, también las apps. Es la vara que nombra la guía de
   Flutter, y una sola para todos los clientes.
@@ -17,7 +17,7 @@ Estándar: [WCAG 2.2](../estandares/w3c/wcag22.html) de W3C.
 
 ## Archivos
 
-Estándar: [RFC 7578](../estandares/rfc/rfc7578.txt).
+Estándar: [RFC 7578](../fuentes/rfc/rfc7578.txt).
 
 - Un archivo se sube en su propia petición, nunca en base64 dentro de un JSON: base64 agranda el
   archivo un tercio y el servidor lee el JSON entero en memoria.
@@ -25,9 +25,9 @@ Estándar: [RFC 7578](../estandares/rfc/rfc7578.txt).
 ## Código por SMS
 
 Estándares: la sección *Message format* de
-[*Origin-bound one-time codes delivered via SMS*](../estandares/wicg/sms-one-time-codes.bs) de WICG
+[*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG
 y la sección *Construct a verification message* de
-[*Perform SMS Verification on a Server*](../estandares/android/sms-retriever-verify.md) de Google.
+[*Perform SMS Verification on a Server*](../fuentes/android/sms-retriever-verify.md) de Google.
 
 - El código tiene 6 dígitos.
 - El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el
@@ -37,7 +37,7 @@ y la sección *Construct a verification message* de
 
 ## Errores
 
-Estándares: [RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandares/rfc/rfc6901.txt).
+Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt) y [RFC 6901](../fuentes/rfc/rfc6901.txt).
 
 - `type` es `about:blank` o una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio
   en todos los entornos: un mismo error tiene un solo `type`.
@@ -55,12 +55,12 @@ Estándares: [RFC 9457](../estandares/rfc/rfc9457.txt) y [RFC 6901](../estandare
 
 ## Fechas
 
-Estándar: [RFC 3339](../estandares/rfc/rfc3339.txt).
+Estándar: [RFC 3339](../fuentes/rfc/rfc3339.txt).
 
 ## Idiomas
 
-Estándares: [RFC 5646](../estandares/rfc/rfc5646.txt) y la sección 12.5.4 de
-[RFC 9110](../estandares/rfc/rfc9110.txt), *Accept-Language*.
+Estándares: [RFC 5646](../fuentes/rfc/rfc5646.txt) y la sección 12.5.4 de
+[RFC 9110](../fuentes/rfc/rfc9110.txt), *Accept-Language*.
 
 - Todo producto se diseña multilingüe.
 - El idioma base es `es`.
@@ -71,8 +71,8 @@ Estándares: [RFC 5646](../estandares/rfc/rfc5646.txt) y la sección 12.5.4 de
 
 ## Llamadas de voz y video
 
-Estándares: [RFC 9429](../estandares/rfc/rfc9429.txt), JSEP, y la sección *RTCIceServer Dictionary*
-de [WebRTC](../estandares/w3c/webrtc.html) de W3C.
+Estándares: [RFC 9429](../fuentes/rfc/rfc9429.txt), JSEP, y la sección *RTCIceServer Dictionary*
+de [WebRTC](../fuentes/w3c/webrtc.html) de W3C.
 
 - La señalización va por el WebSocket de la app.
 - coturn usa credenciales temporales (`use-auth-secret`), que el servidor entrega por la API.
@@ -85,9 +85,9 @@ de [WebRTC](../estandares/w3c/webrtc.html) de W3C.
 
 ## Mapas
 
-Estándares: la [política de uso de teselas](../estandares/osm/tile-usage-policy.md), la
-[política de uso de Nominatim](../estandares/osm/nominatim-usage-policy.md) y la
-[guía de atribución](../estandares/osm/attribution-guidelines.md) de OpenStreetMap.
+Estándares: la [política de uso de teselas](../fuentes/osm/tile-usage-policy.md), la
+[política de uso de Nominatim](../fuentes/osm/nominatim-usage-policy.md) y la
+[guía de atribución](../fuentes/osm/attribution-guidelines.md) de OpenStreetMap.
 
 - Las teselas son raster, con URL `{z}/{x}/{y}`.
 - Mientras el uso quepa en la política, las teselas son las de `tile.openstreetmap.org`.
@@ -99,8 +99,8 @@ Estándares: la [política de uso de teselas](../estandares/osm/tile-usage-polic
 
 ## Montos
 
-Estándares: la sección 2.2 de [I-JSON](../estandares/rfc/rfc7493.txt), RFC 7493, *Numbers*, y la
-[lista de monedas](../estandares/iso/iso-4217-list-one.xml) de ISO 4217.
+Estándares: la sección 2.2 de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493, *Numbers*, y la
+[lista de monedas](../fuentes/iso/iso-4217-list-one.xml) de ISO 4217.
 
 - Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal, sin
   exponente, y la moneda en su código ISO 4217. Un monto no se formatea sin su moneda.
@@ -117,7 +117,7 @@ Estándares: la sección 2.2 de [I-JSON](../estandares/rfc/rfc7493.txt), RFC 749
 
 ## Paginación
 
-Estándar: la [AIP-158](../estandares/google-aip/aip-0158.md) de Google, *Pagination*.
+Estándar: la [AIP-158](../fuentes/google-aip/aip-0158.md) de Google, *Pagination*.
 
 - La respuesta es `{"items": [...], "nextPageToken": "..."}`, y la última página lleva
   `"nextPageToken": ""`. El campo siempre está.
@@ -130,7 +130,7 @@ Estándar: la [AIP-158](../estandares/google-aip/aip-0158.md) de Google, *Pagina
 
 ## Pagos
 
-Estándar: [*Secure Integration of Third-Party Payment Gateways Cheat Sheet*](../estandares/owasp/Third_Party_Payment_Gateway_Integration.md)
+Estándar: [*Secure Integration of Third-Party Payment Gateways Cheat Sheet*](../fuentes/owasp/Third_Party_Payment_Gateway_Integration.md)
 de OWASP.
 
 - El cliente cobra con el componente que la pasarela integra en él: la hoja de pago nativa en las
@@ -139,10 +139,10 @@ de OWASP.
 
 ## Passkeys
 
-Estándares: [*Web Authentication Level 3*](../estandares/w3c/webauthn-3.bs) de W3C, la sección
-4.1 *Authorization Code Grant* de [RFC 6749](../estandares/rfc/rfc6749.txt),
-[RFC 7636](../estandares/rfc/rfc7636.txt), [RFC 8252](../estandares/rfc/rfc8252.txt) y la sección
-2.1 *Protecting Redirect-Based Flows* de [RFC 9700](../estandares/rfc/rfc9700.txt).
+Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.bs) de W3C, la sección
+4.1 *Authorization Code Grant* de [RFC 6749](../fuentes/rfc/rfc6749.txt),
+[RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y la sección
+2.1 *Protecting Redirect-Based Flows* de [RFC 9700](../fuentes/rfc/rfc9700.txt).
 
 - Una app usa la passkey con la API de su sistema operativo cuando su framework la ofrece de forma
   oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización
@@ -150,9 +150,9 @@ Estándares: [*Web Authentication Level 3*](../estandares/w3c/webauthn-3.bs) de 
 
 ## Push
 
-Estándares: [*Firebase Cloud Messaging message types*](../estandares/firebase/set-message-type.md),
-[*Best practices for FCM registration management*](../estandares/firebase/manage-tokens.md), la
-[*Push API*](../estandares/w3c/push-api.html) de W3C y [RFC 8292](../estandares/rfc/rfc8292.txt).
+Estándares: [*Firebase Cloud Messaging message types*](../fuentes/firebase/set-message-type.md),
+[*Best practices for FCM registration management*](../fuentes/firebase/manage-tokens.md), la
+[*Push API*](../fuentes/w3c/push-api.html) de W3C y [RFC 8292](../fuentes/rfc/rfc8292.txt).
 
 - Android y Flutter reciben push por FCM.
 - Cada mensaje de FCM lleva `notification`, que el sistema muestra con la app cerrada, y `data` con
@@ -163,10 +163,10 @@ Estándares: [*Firebase Cloud Messaging message types*](../estandares/firebase/s
 
 ## Sesión
 
-Estándares: [*Session Management Cheat Sheet*](../estandares/owasp/Session_Management.md),
-[*Cross-Site Request Forgery Prevention Cheat Sheet*](../estandares/owasp/Cross-Site_Request_Forgery_Prevention.md)
-y [*HTML5 Security Cheat Sheet*](../estandares/owasp/HTML5_Security.md) de OWASP, y
-[RFC 6265](../estandares/rfc/rfc6265.txt).
+Estándares: [*Session Management Cheat Sheet*](../fuentes/owasp/Session_Management.md),
+[*Cross-Site Request Forgery Prevention Cheat Sheet*](../fuentes/owasp/Cross-Site_Request_Forgery_Prevention.md)
+y [*HTML5 Security Cheat Sheet*](../fuentes/owasp/HTML5_Security.md) de OWASP, y
+[RFC 6265](../fuentes/rfc/rfc6265.txt).
 
 - La API se sirve en el mismo origen que la web, bajo `/api`. No hace falta CORS, y la cookie de
   sesión es de primera parte.
@@ -189,8 +189,8 @@ y [*HTML5 Security Cheat Sheet*](../estandares/owasp/HTML5_Security.md) de OWASP
 
 ## WebSocket
 
-Estándares: [RFC 6455](../estandares/rfc/rfc6455.txt) y
-[*WebSocket Security Cheat Sheet*](../estandares/owasp/WebSocket_Security.md) de OWASP.
+Estándares: [RFC 6455](../fuentes/rfc/rfc6455.txt) y
+[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
 - El cliente se autentica mandando el token de acceso en el primer mensaje. Si no llega en 5
   segundos, el servidor cierra con 1008. De las dos formas que da OWASP, el mensaje no deja el

@@ -9,7 +9,7 @@
 
 El [ADR-0012](0012-el-prefijo-api-v1-se-aplica-al-montar.md) proponía `/api/v1` porque «`/api` sin
 versión no es lo que se recomienda para una API con clientes instalables». Ningún estándar de
-`estandares/` lo recomienda: *Bigger Applications* y *Behind a Proxy* de FastAPI usan `/api/v1`
+`fuentes/` lo recomienda: *Bigger Applications* y *Behind a Proxy* de FastAPI usan `/api/v1`
 solo como ejemplo, y las guías de empresas se contradicen (Google pone la versión en la ruta,
 Microsoft en el query, Zalando pide no versionar).
 

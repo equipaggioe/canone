@@ -394,12 +394,13 @@ Estándares: la sección *Choose a server option* de
 
 Contrato: [transversal.md](transversal.md#push).
 
-- El servidor envía a FCM con `messaging.send_each_async` del Admin SDK.
+- El servidor envía a FCM con `messaging.send_each_async` del Admin SDK, con el FID en `fid`.
 - El servidor envía Web Push con `webpush_async` de pywebpush y una sola `aiohttp.ClientSession`
   para toda la app: sin ella, cada envío abre una sesión nueva.
 - Un Web Push de un aviso que no caduca lleva un TTL de 28 días, el de FCM por defecto: con el TTL 0
   de pywebpush, se pierde si el navegador no está en línea.
-- Una suscripción web que responde 404 o 410 se borra.
+- Una suscripción web que responde 404 o 410 se borra: los servicios de push responden 410, aunque
+  RFC 8030 pide 404.
 
 ## Registro de eventos
 

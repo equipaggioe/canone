@@ -130,7 +130,8 @@ Contrato: [transversal.md](transversal.md#passkeys).
 
 Estándares: [*Notification runtime permission*](../fuentes/android/notification-permission.md) y
 [*Create and manage notification channels*](../fuentes/android/notification-channels.md) de
-Android.
+Android, y [*Receive messages in Android apps*](../fuentes/firebase/android-receive-messages.md)
+de Firebase.
 
 Contrato: [transversal.md](transversal.md#push).
 

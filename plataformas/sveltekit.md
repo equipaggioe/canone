@@ -132,6 +132,9 @@ Estándares: las secciones *Permission*, *PushManager interface*, *PushMessageDa
 
 Contrato: [transversal.md](transversal.md#push).
 
+- El service worker muestra el mensaje declarativo en el evento `push` y abre su `navigate` al
+  tocarlo: Safari lo muestra sin el service worker, pero Chrome y Firefox todavía no.
+
 ## Pruebas
 
 Estándares: [*Getting Started*](../fuentes/vitest/guide.md) y

@@ -67,7 +67,7 @@ Estándares: [RFC 5646](../fuentes/rfc/rfc5646.txt) y la sección 12.5.4 de
 - La base guarda códigos, nunca textos traducidos, y cada cliente los traduce con su catálogo.
 - El cliente muestra el texto de su catálogo para el `type` de un error, en vez de `detail`.
 - El cliente manda en `Accept-Language` el idioma que eligió el usuario. El servidor lo guarda con
-  el token de push de cada dispositivo, y en el usuario el último elegido, para el correo.
+  el FID de cada instalación de la app, y en el usuario el último elegido, para el correo.
 
 ## Llamadas de voz y video
 
@@ -153,18 +153,19 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.bs) de W3C
 Estándares: [*Firebase Cloud Messaging message types*](../fuentes/firebase/set-message-type.md),
 [*Best practices for FCM registration management*](../fuentes/firebase/manage-tokens.md),
 [*Set and manage Android message priority*](../fuentes/firebase/android-message-priority.md), las
-secciones *Push subscription*, *PushSubscriptionOptions Interface*, *PushSubscription interface* y
-*PushEncryptionKeyName enumeration* de la [*Push API*](../fuentes/w3c/push-api.html) de W3C y
-[RFC 8292](../fuentes/rfc/rfc8292.txt).
+secciones *Push subscription*, *Declarative push message*, *PushSubscriptionOptions Interface*,
+*PushSubscription interface* y *PushEncryptionKeyName enumeration* de la
+[*Push API*](../fuentes/w3c/push-api.html) de W3C y [RFC 8292](../fuentes/rfc/rfc8292.txt).
 
 - Android y Flutter reciben push por FCM.
 - Un mensaje de FCM lleva `notification` y, en `data`, la ruta que abre al tocarlo, salvo el de una
   llamada entrante.
+- Un Web Push es un mensaje declarativo, con la ruta que abre en `navigate`.
 - Una llamada entrante llega por un mensaje de FCM solo de datos y de prioridad alta.
 - Un push vence cuando caduca lo que avisa; el de una llamada entrante, cuando deja de sonar. En la
   web, el de una llamada lleva `Urgency: high`.
-- El token de push y la suscripción web pertenecen a la sesión: se borran cuando la sesión se
-  cierra o vence.
+- El FID y la suscripción web pertenecen a la sesión: se borran cuando la sesión se cierra o
+  vence.
 - La web recibe push con la Push API, sin el SDK de FCM: la CSP queda en `'self'`.
 
 ## Sesión

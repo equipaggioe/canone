@@ -123,6 +123,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [firebase/error-codes.md](firebase/error-codes.md) | <https://firebase.google.com/docs/cloud-messaging/error-codes> | Página web convertida a Markdown |
 | [firebase/android-message-priority.md](firebase/android-message-priority.md) | <https://firebase.google.com/docs/cloud-messaging/android-message-priority> | Página web convertida a Markdown |
 | [firebase/flutter-receive-messages.md](firebase/flutter-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/flutter/receive-messages> | Página web convertida a Markdown |
+| [firebase/android-receive-messages.md](firebase/android-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/android/receive-messages> | Página web convertida a Markdown |
 | [aws-s3/object-lifecycle-mgmt.md](aws-s3/object-lifecycle-mgmt.md) | <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html> | Página web convertida a Markdown |
 | [stripe/idempotent-requests.md](stripe/idempotent-requests.md) | <https://docs.stripe.com/api/idempotent_requests.md> |  |
 | [stripe/webhooks.md](stripe/webhooks.md) | <https://docs.stripe.com/webhooks.md> |  |

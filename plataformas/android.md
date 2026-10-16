@@ -126,6 +126,14 @@ Estándares: los [requisitos de Credential Manager](../fuentes/android/credentia
 
 Contrato: [transversal.md](transversal.md#passkeys).
 
+## Push
+
+Estándares: [*Notification runtime permission*](../fuentes/android/notification-permission.md) y
+[*Create and manage notification channels*](../fuentes/android/notification-channels.md) de
+Android.
+
+Contrato: [transversal.md](transversal.md#push).
+
 ## Tema
 
 Estándar: [Material 3 en Compose](../fuentes/compose/material3.md).

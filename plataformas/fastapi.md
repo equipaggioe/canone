@@ -386,14 +386,20 @@ secciones 15.5.4 *403 Forbidden* y 15.5.5 *404 Not Found* de
 
 ## Push
 
-Estándares: [*Send a message using Firebase Admin SDK*](../fuentes/firebase/admin-sdk.md),
-[*FCM Error Codes*](../fuentes/firebase/error-codes.md),
+Estándares: la sección *Choose a server option* de
+[*Your server environment and FCM*](../fuentes/firebase/server-environment.md), la sección
+*Admin SDK error codes* de [*FCM Error Codes*](../fuentes/firebase/error-codes.md), salvo
+`messaging/registration-token-not-registered`, que rige el contrato,
 [RFC 8030](../fuentes/rfc/rfc8030.txt) y [RFC 8291](../fuentes/rfc/rfc8291.txt).
 
 Contrato: [transversal.md](transversal.md#push).
 
-- El servidor envía a FCM con el Admin SDK de Python desde `asyncio.to_thread`. El SDK es síncrono.
-- El servidor envía Web Push con pywebpush.
+- El servidor envía a FCM con `messaging.send_each_async` del Admin SDK.
+- El servidor envía Web Push con `webpush_async` de pywebpush y una sola `aiohttp.ClientSession`
+  para toda la app: sin ella, cada envío abre una sesión nueva.
+- Un Web Push de un aviso que no caduca lleva un TTL de 28 días, el de FCM por defecto: con el TTL 0
+  de pywebpush, se pierde si el navegador no está en línea.
+- Una suscripción web que responde 404 o 410 se borra.
 
 ## Registro de eventos
 

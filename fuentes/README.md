@@ -94,6 +94,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [w3c/webrtc.html](w3c/webrtc.html) | <https://raw.githubusercontent.com/w3c/webrtc-pc/main/webrtc.html> |  |
 | [w3c/push-api.html](w3c/push-api.html) | <https://raw.githubusercontent.com/w3c/push-api/gh-pages/index.html> |  |
 | [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> |  |
+| [whatwg/notifications.bs](whatwg/notifications.bs) | <https://raw.githubusercontent.com/whatwg/notifications/main/notifications.bs> |  |
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/main/index.bs> |  |
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | Texto extraído del PDF |
@@ -118,8 +119,10 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [coturn/README.turnserver](coturn/README.turnserver) | <https://raw.githubusercontent.com/coturn/coturn/master/README.turnserver> |  |
 | [firebase/manage-tokens.md](firebase/manage-tokens.md) | <https://firebase.google.com/docs/cloud-messaging/manage-tokens> | Página web convertida a Markdown |
 | [firebase/set-message-type.md](firebase/set-message-type.md) | <https://firebase.google.com/docs/cloud-messaging/customize-messages/set-message-type> | Página web convertida a Markdown |
-| [firebase/admin-sdk.md](firebase/admin-sdk.md) | <https://firebase.google.com/docs/cloud-messaging/send/admin-sdk> | Página web convertida a Markdown |
+| [firebase/server-environment.md](firebase/server-environment.md) | <https://firebase.google.com/docs/cloud-messaging/server-environment> | Página web convertida a Markdown |
 | [firebase/error-codes.md](firebase/error-codes.md) | <https://firebase.google.com/docs/cloud-messaging/error-codes> | Página web convertida a Markdown |
+| [firebase/android-message-priority.md](firebase/android-message-priority.md) | <https://firebase.google.com/docs/cloud-messaging/android-message-priority> | Página web convertida a Markdown |
+| [firebase/flutter-receive-messages.md](firebase/flutter-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/flutter/receive-messages> | Página web convertida a Markdown |
 | [aws-s3/object-lifecycle-mgmt.md](aws-s3/object-lifecycle-mgmt.md) | <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html> | Página web convertida a Markdown |
 | [stripe/idempotent-requests.md](stripe/idempotent-requests.md) | <https://docs.stripe.com/api/idempotent_requests.md> |  |
 | [stripe/webhooks.md](stripe/webhooks.md) | <https://docs.stripe.com/webhooks.md> |  |
@@ -205,6 +208,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [android/credential-manager-prerequisites.md](android/credential-manager-prerequisites.md) | <https://developer.android.com/identity/credential-manager/prerequisites> | Página web convertida a Markdown |
 | [android/create-passkeys.md](android/create-passkeys.md) | <https://developer.android.com/identity/passkeys/create-passkeys> | Página web convertida a Markdown |
 | [android/sign-in-with-passkeys.md](android/sign-in-with-passkeys.md) | <https://developer.android.com/identity/passkeys/sign-in-with-passkeys> | Página web convertida a Markdown |
+| [android/notification-permission.md](android/notification-permission.md) | <https://developer.android.com/develop/ui/compose/notifications/notification-permission> | Página web convertida a Markdown |
+| [android/notification-channels.md](android/notification-channels.md) | <https://developer.android.com/develop/ui/compose/notifications/channels> | Página web convertida a Markdown |
 | [compose/state.md](compose/state.md) | <https://developer.android.com/develop/ui/compose/state> | Página web convertida a Markdown |
 | [compose/architecture.md](compose/architecture.md) | <https://developer.android.com/develop/ui/compose/architecture> | Página web convertida a Markdown |
 | [compose/material3.md](compose/material3.md) | <https://developer.android.com/develop/ui/compose/designsystems/material3> | Página web convertida a Markdown |

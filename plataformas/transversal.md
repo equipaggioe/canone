@@ -151,15 +151,21 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.bs) de W3C
 ## Push
 
 Estándares: [*Firebase Cloud Messaging message types*](../fuentes/firebase/set-message-type.md),
-[*Best practices for FCM registration management*](../fuentes/firebase/manage-tokens.md), la
-[*Push API*](../fuentes/w3c/push-api.html) de W3C y [RFC 8292](../fuentes/rfc/rfc8292.txt).
+[*Best practices for FCM registration management*](../fuentes/firebase/manage-tokens.md),
+[*Set and manage Android message priority*](../fuentes/firebase/android-message-priority.md), las
+secciones *Push subscription*, *PushSubscriptionOptions Interface*, *PushSubscription interface* y
+*PushEncryptionKeyName enumeration* de la [*Push API*](../fuentes/w3c/push-api.html) de W3C y
+[RFC 8292](../fuentes/rfc/rfc8292.txt).
 
 - Android y Flutter reciben push por FCM.
-- Cada mensaje de FCM lleva `notification`, que el sistema muestra con la app cerrada, y `data` con
-  la ruta que abre al tocarlo.
+- Un mensaje de FCM lleva `notification` y, en `data`, la ruta que abre al tocarlo, salvo el de una
+  llamada entrante.
 - Una llamada entrante llega por un mensaje de FCM solo de datos y de prioridad alta.
-- La web recibe push por el estándar, con VAPID. El navegador no carga un SDK de terceros y la CSP
-  queda en `'self'`.
+- Un push vence cuando caduca lo que avisa; el de una llamada entrante, cuando deja de sonar. En la
+  web, el de una llamada lleva `Urgency: high`.
+- El token de push y la suscripción web pertenecen a la sesión: se borran cuando la sesión se
+  cierra o vence.
+- La web recibe push con la Push API, sin el SDK de FCM: la CSP queda en `'self'`.
 
 ## Sesión
 

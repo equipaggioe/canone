@@ -124,6 +124,14 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 - El mapa usa Leaflet.
 
+## Push
+
+Estándares: las secciones *Permission*, *PushManager interface*, *PushMessageData interface* y
+*Events* de la [*Push API*](../fuentes/w3c/push-api.html) de W3C, y el
+[*Notifications API Standard*](../fuentes/whatwg/notifications.bs) de WHATWG.
+
+Contrato: [transversal.md](transversal.md#push).
+
 ## Pruebas
 
 Estándares: [*Getting Started*](../fuentes/vitest/guide.md) y

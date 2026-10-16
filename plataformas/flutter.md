@@ -116,6 +116,14 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 - Con Stripe, la hoja de pago es `PaymentSheet` de `flutter_stripe`.
 
+## Push
+
+Estándar: las secciones *Request permission to receive messages*, *Message handling* y
+*Handling Interaction* de [*Receive messages in Flutter apps*](../fuentes/firebase/flutter-receive-messages.md)
+de Firebase.
+
+Contrato: [transversal.md](transversal.md#push).
+
 ## Tema
 
 Estándar: [*Use themes to share colors and font styles*](../fuentes/flutter/themes.md) de

@@ -88,7 +88,7 @@ Estándares: las secciones *Pydantic `Settings`* y *Settings in another module* 
 
 Estándar: la [configuración de modelos](../estandares/pydantic/config.md) de Pydantic.
 
-Contrato: [transversal.md](transversal.md#nombres-en-el-cable).
+Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 - `alias_generator=to_camel` y `serialize_by_alias=True` en el esquema base.
 - `extra="forbid"` en los esquemas de entrada.
@@ -351,25 +351,25 @@ Estándares: [*Idempotent requests*](../estandares/stripe/idempotent-requests.md
 
 Contrato: [transversal.md](transversal.md#pagos).
 
-- El ID de cada evento procesado se guarda con una restricción única. Un evento repetido choca con
-  ella y no se procesa dos veces.
+- El ID de cada evento procesado se guarda con una restricción única: dos entregas simultáneas del
+  mismo evento no se procesan las dos.
 
 ## Passkeys
 
-Estándares: [*Web Authentication Level 3*](../estandares/w3c/webauthn-3.bs) de W3C, las secciones
-3.1.7 *Multi-Factor Cryptographic Authentication*, 4.2 *Account Recovery* y el apéndice B
-*Syncable Authenticators* de [NIST SP 800-63B-4](../estandares/nist/sp800-63b-4.txt), la sección
-4.1 *Authorization Code Grant* de [RFC 6749](../estandares/rfc/rfc6749.txt),
-[RFC 7636](../estandares/rfc/rfc7636.txt) y [RFC 8252](../estandares/rfc/rfc8252.txt).
+Contrato: [transversal.md](transversal.md#passkeys).
 
 - Las passkeys se validan con `webauthn`.
 - Toda passkey es descubrible (`residentKey="required"`): el usuario entra sin escribir su correo.
-- Una cuenta con passkey se recupera con un código guardado y un código enviado a su correo o a su
-  teléfono.
-- Una cuenta de administración rechaza la passkey que no verificó al usuario: sin esa verificación
-  la passkey es un solo factor.
+- El challenge vive en Valkey y se borra al usarlo.
+- El titular ve sus passkeys, con su nombre y su último uso, y borra la que quiera: así revoca la
+  de un dispositivo perdido.
+- Una cuenta con passkey se recupera con el código para restablecer de «Contraseñas».
+- La recuperación se aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela
+  desde la app: quien roba el correo no entra antes de que el dueño la vea.
+- Una cuenta de administración pide `userVerification="required"`: sin esa verificación la passkey
+  es un solo factor.
 - Una cuenta de administración la recupera otro administrador, nunca un código: quien roba el
-  correo y el código guardado no se lleva la administración.
+  correo o el teléfono no se lleva la administración.
 
 ## Permisos
 

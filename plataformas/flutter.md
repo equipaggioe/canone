@@ -110,6 +110,12 @@ Estándar: [flutter_map](../estandares/pub/flutter_map/README.md).
 
 Contrato: [transversal.md](transversal.md#mapas).
 
+## Pagos
+
+Contrato: [transversal.md](transversal.md#pagos).
+
+- Con Stripe, la hoja de pago es `PaymentSheet` de `flutter_stripe`.
+
 ## Tema
 
 Estándar: [*Use themes to share colors and font styles*](../estandares/flutter/themes.md) de

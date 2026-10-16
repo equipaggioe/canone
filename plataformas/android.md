@@ -112,6 +112,20 @@ Contrato: [transversal.md](transversal.md#mapas).
 - El mapa usa MapLibre Android, con un estilo de una sola capa raster que arma la app con la
   configuración del servidor. Va dentro de Compose con `AndroidView`.
 
+## Pagos
+
+Contrato: [transversal.md](transversal.md#pagos).
+
+- Con Stripe, la hoja de pago es `PaymentSheet` del SDK de Stripe para Android.
+
+## Passkeys
+
+Estándares: los [requisitos de Credential Manager](../estandares/android/credential-manager-prerequisites.md),
+[*Create a passkey*](../estandares/android/create-passkeys.md) y
+[*Sign in with a passkey*](../estandares/android/sign-in-with-passkeys.md) de Android.
+
+Contrato: [transversal.md](transversal.md#passkeys).
+
 ## Tema
 
 Estándar: [Material 3 en Compose](../estandares/compose/material3.md).

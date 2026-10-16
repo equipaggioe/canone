@@ -24,7 +24,7 @@ Un catálogo de convenciones de una tecnología. Una convención sirve para una 
 - **Que cada elección se tome una sola vez:** la tecnología, la biblioteca, la versión y la
   configuración.
 - **Que las piezas de un sistema se entiendan:** el servidor y sus clientes cumplen el mismo
-  contrato, como el sobre de error, los nombres en el cable o la sesión.
+  contrato, como el sobre de error, la paginación o la sesión.
 
 Una regla que no sirve para ninguna de las tres no va. Una convención vale aunque ninguna
 herramienta la haga cumplir.

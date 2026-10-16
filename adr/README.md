@@ -60,4 +60,6 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0050](0050-un-monto-entra-solo-como-cadena-y-sale-sin-exponente.md) | Un monto entra solo como cadena y sale sin exponente | Con montos, en el servidor | Aceptada |
 | [0051](0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md) | Un tutorial no se cita, y lo que se toma de él es regla propia | `plataformas/` y `estandares/` | Aceptada |
 | [0052](0052-el-openapi-se-versiona-y-de-el-generan-sus-modelos-todos-los-clientes.md) | El OpenAPI se versiona, y de él generan sus modelos todos los clientes | Con `server/` y sus clientes | Aceptada |
-| [0053](0053-la-paginacion-sigue-a-aip-158-y-los-numeros-de-pagina-usan-skip.md) | La paginación sigue a AIP-158, y los números de página usan `skip` | Con `server/` y sus clientes | Aceptada, salvo los puntos 3 y 5, que siguen en propuesta |
+| [0053](0053-la-paginacion-sigue-a-aip-158-y-los-numeros-de-pagina-usan-skip.md) | La paginación sigue a AIP-158, y los números de página usan `skip` | Con `server/` y sus clientes | Aceptada |
+| [0054](0054-las-passkeys-son-un-contrato-de-transversal-y-una-app-usa-la-api-de-su-sistema.md) | Las passkeys son un contrato de transversal, y una app usa la API de su sistema | Con passkeys, en el servidor y sus clientes | Aceptada |
+| [0055](0055-el-cliente-de-una-web-sveltekit-se-genera-con-openapi-typescript-y-llama-con-openapi-fetch.md) | El cliente de una web SvelteKit se genera con openapi-typescript y llama con openapi-fetch | Con SvelteKit | Aceptada |

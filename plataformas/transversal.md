@@ -108,15 +108,12 @@ Estándares: la sección 2.2 de [I-JSON](../estandares/rfc/rfc7493.txt), RFC 749
   calcula con él: los totales, impuestos y descuentos llegan calculados del servidor. Así ningún
   cliente necesita una biblioteca decimal.
 
-## Nombres en el cable
-
-- La API habla en camelCase. Cada cliente usa la convención de su lenguaje (`snake_case` en
-  Python, camelCase en Dart y TypeScript) y convierte en un solo punto: su cliente de la API.
-
 ## OpenAPI y clientes
 
-- Cada cliente genera del `openapi.json` del servidor los modelos del cable, y ninguno los escribe a
-  mano. Copiado a mano en varios lenguajes, el contrato diverge sin que nadie lo note.
+- La API habla en camelCase. Cada cliente genera del `openapi.json` del servidor los modelos del
+  cable, en la convención de su lenguaje, y ninguno los escribe a mano. Copiado a mano en varios
+  lenguajes, el contrato diverge sin que nadie lo note.
+- Los valores de un enum van en snake_case.
 
 ## Paginación
 
@@ -136,10 +133,20 @@ Estándar: la [AIP-158](../estandares/google-aip/aip-0158.md) de Google, *Pagina
 Estándar: [*Secure Integration of Third-Party Payment Gateways Cheat Sheet*](../estandares/owasp/Third_Party_Payment_Gateway_Integration.md)
 de OWASP.
 
-- El proveedor es Stripe.
-- El cobro se hace en Stripe Checkout, la página alojada por Stripe. Los datos de la tarjeta nunca
-  pasan por nuestras páginas.
-- Un pago cuenta como hecho solo cuando llega su webhook. El regreso del navegador no prueba nada.
+- El cliente cobra con el componente que la pasarela integra en él: la hoja de pago nativa en las
+  apps y el formulario incrustado en la web. Si la pasarela no tiene uno para ese cliente, manda a
+  su página. Contradice el paso 3 de OWASP: salir de la app para pagar se ve poco profesional.
+
+## Passkeys
+
+Estándares: [*Web Authentication Level 3*](../estandares/w3c/webauthn-3.bs) de W3C, la sección
+4.1 *Authorization Code Grant* de [RFC 6749](../estandares/rfc/rfc6749.txt),
+[RFC 7636](../estandares/rfc/rfc7636.txt), [RFC 8252](../estandares/rfc/rfc8252.txt) y la sección
+2.1 *Protecting Redirect-Based Flows* de [RFC 9700](../estandares/rfc/rfc9700.txt).
+
+- Una app usa la passkey con la API de su sistema operativo cuando su framework la ofrece de forma
+  oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización
+  según RFC 8252.
 
 ## Push
 
@@ -190,7 +197,7 @@ Estándares: [RFC 6455](../estandares/rfc/rfc6455.txt) y
   token en los registros de acceso.
 - Al refrescar la sesión, el cliente manda el token nuevo por la misma conexión. Cuando vence el
   que tiene, el servidor cierra con 1008.
-- Los mensajes son JSON `{type, data}`, en camelCase como el resto del cable.
+- Los mensajes son JSON `{type, data}`, en camelCase como la API.
 - Al perder la conexión, el cliente reconecta con espera exponencial y jitter, y vuelve a pedir el
   estado por REST. Lo que se envió mientras estaba desconectado no se repite.
 

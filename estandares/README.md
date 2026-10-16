@@ -85,6 +85,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc9110.txt](rfc/rfc9110.txt) | <https://www.rfc-editor.org/rfc/rfc9110.txt> |  |
 | [rfc/rfc9429.txt](rfc/rfc9429.txt) | <https://www.rfc-editor.org/rfc/rfc9429.txt> |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> |  |
+| [rfc/rfc9700.txt](rfc/rfc9700.txt) | <https://www.rfc-editor.org/rfc/rfc9700.txt> |  |
 | [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/versions/3.1.2.md> | Línea 3.1, la versión que genera FastAPI |
 | [google-aip/aip-0158.md](google-aip/aip-0158.md) | <https://raw.githubusercontent.com/aip-dev/google.aip.dev/master/aip/general/0158.md> |  |
 | [w3c/trace-context-1.md](w3c/trace-context-1.md) | <https://www.w3.org/TR/trace-context-1/> | Página web convertida a Markdown |
@@ -201,6 +202,9 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [android/accessibility-principles.md](android/accessibility-principles.md) | <https://developer.android.com/guide/topics/ui/accessibility/principles> | Página web convertida a Markdown |
 | [android/sms-retriever-verify.md](android/sms-retriever-verify.md) | <https://developers.google.com/identity/sms-retriever/verify> | Página web convertida a Markdown |
 | [android/sms-retriever-request.md](android/sms-retriever-request.md) | <https://developers.google.com/identity/sms-retriever/request> | Página web convertida a Markdown |
+| [android/credential-manager-prerequisites.md](android/credential-manager-prerequisites.md) | <https://developer.android.com/identity/credential-manager/prerequisites> | Página web convertida a Markdown |
+| [android/create-passkeys.md](android/create-passkeys.md) | <https://developer.android.com/identity/passkeys/create-passkeys> | Página web convertida a Markdown |
+| [android/sign-in-with-passkeys.md](android/sign-in-with-passkeys.md) | <https://developer.android.com/identity/passkeys/sign-in-with-passkeys> | Página web convertida a Markdown |
 | [compose/state.md](compose/state.md) | <https://developer.android.com/develop/ui/compose/state> | Página web convertida a Markdown |
 | [compose/architecture.md](compose/architecture.md) | <https://developer.android.com/develop/ui/compose/architecture> | Página web convertida a Markdown |
 | [compose/material3.md](compose/material3.md) | <https://developer.android.com/develop/ui/compose/designsystems/material3> | Página web convertida a Markdown |

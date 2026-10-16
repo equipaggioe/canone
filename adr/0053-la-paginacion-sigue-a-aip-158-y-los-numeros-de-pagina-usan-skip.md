@@ -19,9 +19,9 @@ paginación de una API HTTP, y los campos de AIP-158 pasan a JSON sin cambios.
 1. La fuente es AIP-158, y el contrato va en `transversal.md`.
 2. `pageSize` vale 50 por defecto y 100 como máximo.
 3. La respuesta es `{"items", "nextPageToken"}`, con `nextPageToken` siempre presente y `""` en la
-   última página. *(`items`, propuesta)*
+   última página.
 4. Una lista que muestra números de página acepta `skip` y devuelve `totalSize`. Las demás no.
-5. Con `skip`, un `pageSize` mayor que 100 responde 422. *(propuesta)*
+5. Con `skip`, un `pageSize` mayor que 100 responde 422.
 6. El token se cifra con Fernet y la clave `PAGE_TOKEN_KEY`.
 7. Un `pageToken` ilegible o con otros parámetros responde 422 de tipo `validation`, con
    `parameter: "pageToken"`.

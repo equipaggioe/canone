@@ -25,7 +25,7 @@ Estándar: [*Project structure*](../estandares/sveltekit/project-structure.md) d
   src/
     app.html
     lib/
-      api/            el cliente generado por Hey API
+      api/            los tipos de openapi-typescript y el cliente de openapi-fetch
       components/
       state/          las clases con $state, en módulos .svelte.ts
     routes/
@@ -41,8 +41,9 @@ Estándar: [*Loading data*](../estandares/sveltekit/load.md) de SvelteKit.
 
 - Los datos de la API se cargan en `load` universales (`+page.ts`, `+layout.ts`). En producción no
   hay servidor de SvelteKit que corra un `load` de servidor.
-- El cliente de la API se genera del OpenAPI de [fastapi.md](fastapi.md) con Hey API. Los tipos
-  salen del contrato.
+- Los tipos de la API se generan del OpenAPI de [fastapi.md](fastapi.md) con `openapi-typescript`,
+  y las llamadas se hacen con `openapi-fetch`. Ni los tipos ni una función por ruta se escriben a
+  mano.
 
 ## Opciones de página
 
@@ -86,6 +87,8 @@ de OWASP y [CSP Level 3](../estandares/w3c/csp3.bs) de W3C.
 - La CSP la genera SvelteKit con `kit.csp` en modo `hash`, sobre `default-src 'self'`. El script de
   arranque de SvelteKit va en línea y necesita su hash.
 - La CSP lleva el host de las teselas en `img-src`.
+- Con un formulario de pago incrustado, la CSP lleva los dominios que documenta su pasarela en
+  `script-src`, `frame-src` y `connect-src`.
 
 ## Estilos
 

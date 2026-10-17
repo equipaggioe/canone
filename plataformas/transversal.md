@@ -168,6 +168,18 @@ secciones *Push subscription*, *Declarative push message*, *PushSubscriptionOpti
   vence.
 - La web recibe push con la Push API, sin el SDK de FCM: la CSP queda en `'self'`.
 
+## Reintentos
+
+Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
+[RFC 9110](../fuentes/rfc/rfc9110.txt).
+
+- Un recurso que el usuario crea desde un cliente se crea por `PUT /<recurso>/{id}`, con un uuid v4
+  que genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en
+  vez de crear otra.
+- El cliente reintenta solo una petición idempotente ante un fallo de red, un 502, un 503 o un 504,
+  hasta 3 veces, con espera exponencial y jitter: un reinicio del servidor no le muestra un error al
+  usuario.
+
 ## Sesión
 
 Estándares: [*Session Management Cheat Sheet*](../fuentes/owasp/Session_Management.md),

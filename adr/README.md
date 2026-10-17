@@ -66,3 +66,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0056](0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md) | Una regla es lo que escribe la página, y lo que adopta una fuente es una convención | `plataformas/` y `fuentes/` | Aceptada |
 | [0057](0057-una-pagina-no-espera-a-que-un-repositorio-use-la-tecnologia.md) | Una página no espera a que un repositorio use la tecnología | `plataformas/` | Aceptada |
 | [0058](0058-los-eventos-se-nombran-con-el-vocabulario-de-owasp-y-un-cambio-de-fila-es-un-evento.md) | Los eventos se nombran con el vocabulario de OWASP, y un cambio de fila es un evento | Con `server/` | Aceptada |
+| [0059](0059-un-recurso-que-crea-el-usuario-se-crea-por-put-y-es-un-contrato-de-transversal.md) | Un recurso que crea el usuario se crea por `PUT`, y es un contrato de transversal | Con `server/` y sus clientes | Aceptada, salvo el punto 2, que sigue en propuesta |

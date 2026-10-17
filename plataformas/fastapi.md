@@ -433,18 +433,12 @@ Estándares: las secciones *Where to record event data*, *Which events to log*, 
 
 ## Reintentos
 
-Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
-[RFC 9110](../fuentes/rfc/rfc9110.txt).
-
-- Una creación que el cliente puede reintentar va por `PUT /<recurso>/{id}`, con un uuid v4 que
-  genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez
-  de crear otra.
+Contrato: [transversal.md](transversal.md#reintentos).
 
 ## Salud
 
-- `GET /api/health` consulta la base con `SELECT 1` y responde 200 con `{"status": "ok"}`, o 503
-  si la base no contesta. Un monitor que solo ve que el proceso responde da por vivo un servidor
-  con la base caída.
+- `GET /api/health` responde 204, o 503 si la base o Valkey no contestan: un servidor con una
+  dependencia caída no está vivo aunque el proceso responda.
 
 ## Sesión
 

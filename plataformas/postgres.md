@@ -26,7 +26,7 @@ Estándares: [*Data Types*](../fuentes/postgresql/datatype.sgml),
   cabe en `smallint`.
 - `bigint` identity: en una lista propia del equipo cuyo tope no cabe en `smallint`.
 - `uuid` con `gen_random_uuid()`: en una tabla cuyas filas crea el cliente, que genera el id para
-  crear por `PUT`, como fija [fastapi.md](fastapi.md), o cuyas filas pertenecen a un usuario y no
+  crear por `PUT`, como fija [transversal.md](transversal.md#reintentos), o cuyas filas pertenecen a un usuario y no
   deben poder enumerarse.
 - Una identity es `GENERATED ALWAYS`, que rechaza un id escrito a mano.
 - Una clave foránea tiene el tipo de la clave que apunta.

@@ -57,7 +57,7 @@ enabled-ignores = ["pyrefly"]
 missing-override-decorator = false
 
 [tool.deptry]
-known_first_party = ["api", "theme", "views"]
+known_first_party = ["api", "colors", "theme", "views"]
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]

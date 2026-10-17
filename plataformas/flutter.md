@@ -129,7 +129,10 @@ Contrato: [transversal.md](transversal.md#push).
 Estándar: [*Use themes to share colors and font styles*](../fuentes/flutter/themes.md) de
 Flutter.
 
-- El tema claro y el oscuro salen de `ui/core/themes/`, y `themeMode` es `ThemeMode.system`.
+Contrato: [transversal.md](transversal.md#tema).
+
+- El tema claro y el oscuro usan `lightColorScheme` y `darkColorScheme`, generados en
+  `ui/core/themes/colors.dart`, y `themeMode` es `ThemeMode.system`.
 
 ## Cómo se hace cumplir
 

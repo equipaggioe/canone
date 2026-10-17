@@ -94,6 +94,9 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [w3c/webrtc.html](w3c/webrtc.html) | <https://raw.githubusercontent.com/w3c/webrtc-pc/main/webrtc.html> |  |
 | [w3c/push-api.html](w3c/push-api.html) | <https://raw.githubusercontent.com/w3c/push-api/gh-pages/index.html> |  |
 | [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> |  |
+| [dtcg/format.html](dtcg/format.html) | <https://www.designtokens.org/tr/2025.10/format/> |  |
+| [dtcg/color.html](dtcg/color.html) | <https://www.designtokens.org/tr/2025.10/color/> |  |
+| [dtcg/resolver.html](dtcg/resolver.html) | <https://www.designtokens.org/tr/2025.10/resolver/> |  |
 | [whatwg/notifications.bs](whatwg/notifications.bs) | <https://raw.githubusercontent.com/whatwg/notifications/main/notifications.bs> |  |
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/main/index.bs> |  |
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |

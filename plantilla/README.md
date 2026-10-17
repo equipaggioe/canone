@@ -13,6 +13,8 @@ partida** se copia y después es del repositorio.
 | `.gitattributes` | Raíz | Canónico | [repositorio.md](../repositorio.md) |
 | `.gitignore` | Raíz | Punto de partida | [repositorio.md](../repositorio.md) |
 | `.github/workflows/ci.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [repositorio.md](../repositorio.md), [python.md](../plataformas/python.md) |
+| `scripts/tokens.py` | `scripts/` | Canónico | [transversal.md](../plataformas/transversal.md) |
+| `brand/tokens/` | `brand/tokens/` | Punto de partida | [transversal.md](../plataformas/transversal.md) |
 | `python/.gitignore` | Cada pieza Python | Punto de partida | [python.md](../plataformas/python.md) |
 | `server/pyproject.toml` | `server/` | Punto de partida | [python.md](../plataformas/python.md), [fastapi.md](../plataformas/fastapi.md) |
 | `server/alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako` | `server/` | Canónico | [fastapi.md](../plataformas/fastapi.md) |

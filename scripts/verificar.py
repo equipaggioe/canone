@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import importlib.util
 import json
 import re
 import subprocess
@@ -245,6 +246,25 @@ def dependencias(pyproject: Path) -> set[str]:
     return nombres
 
 
+# plataformas/transversal.md, «Tema»: los colores de cada cliente se generan desde brand/tokens/ con
+# scripts/tokens.py, y lo generado está al día. Se usa la copia de canone, así una copia editada no
+# se revisa a sí misma.
+def colores_generados(repo: Path) -> list[str]:
+    especificacion = importlib.util.spec_from_file_location("tokens", PLANTILLA / "scripts/tokens.py")
+    assert especificacion and especificacion.loader
+    tokens = importlib.util.module_from_spec(especificacion)
+    especificacion.loader.exec_module(tokens)
+    try:
+        clientes = tokens.outputs(repo)
+    except tokens.TokenError as error:
+        return [f"plataformas/transversal.md: {error}"]
+    if not clientes:
+        return []
+    fallas = comparar(repo / "scripts/tokens.py", PLANTILLA / "scripts/tokens.py", "scripts/tokens.py")
+    fallas.extend(f"plataformas/transversal.md: {falla}" for falla in tokens.stale(repo))
+    return fallas
+
+
 def comparar(copia: Path, canonico: Path, nombre: str) -> list[str]:
     if not copia.exists():
         return [f"ADR-0002: falta {nombre}"]
@@ -373,6 +393,8 @@ def revisar(repo: Path) -> list[str]:
                 + ", ".join(sueltos)
             )
 
+    # Desactivada mientras «Tema» de transversal.md está por revisar.
+    # fallas.extend(colores_generados(repo))
     fallas.extend(nombres_largos(repo))
     fallas.extend(configuracion_con_repositorio(repo))
 

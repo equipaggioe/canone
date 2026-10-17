@@ -13,6 +13,7 @@ Estándares: [*Creating a new Flet app*](../fuentes/flet/create-flet-app.md) y l
   uv.lock
   src/
     main.py
+    colors.py
     theme.py
     assets/
       icon.png
@@ -70,8 +71,10 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 Estándar: [*Theming*](../fuentes/flet/theming.md) de Flet.
 
-- `page.theme` y `page.dark_theme` salen de `theme.py`, y `page.theme_mode` es
-  `ThemeMode.SYSTEM`. La app sigue el modo oscuro del sistema, con los colores en un solo módulo.
+Contrato: [transversal.md](transversal.md#tema).
+
+- `page.theme` y `page.dark_theme` se arman en `theme.py` con `LIGHT` y `DARK`, generados en
+  `colors.py`, y `page.theme_mode` es `ThemeMode.SYSTEM`.
 
 ## Publicación
 
@@ -81,4 +84,4 @@ Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md).
 
 | Qué | Con qué |
 |---|---|
-| Los colores, solo en `theme.py` | `tests/test_theme.py` |
+| Los colores, solo en `colors.py` | `tests/test_theme.py` |

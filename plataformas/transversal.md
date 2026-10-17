@@ -11,9 +11,11 @@ Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 - Cada objetivo táctil mide al menos 48 × 48: dp en las apps y px de CSS en la web. Endurece los 24
   px del criterio 2.5.8, porque la web también se usa en el teléfono, y es la medida que Android
   recomienda.
-- El módulo de tokens de diseño cumple los criterios 1.4.3 y 1.4.11 en el tema claro y en el
-  oscuro, y una prueba de cada cliente calcula el contraste de cada par de color de texto y de
-  fondo. El contraste no se elige a ojo.
+- Los colores de `brand/tokens/` cumplen los criterios 1.4.3 y 1.4.11 en los dos modos: cada rol
+  de texto contra los fondos en que va, con 4.5:1, y `outline` contra cada superficie, con 3:1. El
+  contraste no se elige a ojo.
+- El texto grande también pide 4.5:1. Endurece el criterio 1.4.3, que le pide 3:1: un rol no sabe
+  el tamaño del texto que lleva.
 
 ## Archivos
 
@@ -198,8 +200,33 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
 
 ## Tema
 
-- Los tokens de diseño van en un solo módulo por cliente, sin colores ni tamaños literales fuera de
-  él. Si el producto tiene superficie web, es la misma paleta y el archivo dice de cuál es espejo.
+> **Por revisar** (anotado el 2026-10-17): no se aplica todavía. Esta sección, el «Tema» de cada
+> cliente, el [ADR-0062](../adr/0062-los-colores-de-un-producto-salen-de-brand-tokens-en-dtcg-y-un-generador-arma-el-esquema-de-cada-cliente.md),
+> `scripts/tokens.py` y `brand/tokens/` de la plantilla están en revisión. La comprobación de
+> `verificar.py` está desactivada.
+
+Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el
+[módulo de color](../fuentes/dtcg/color.html) y el [resolver](../fuentes/dtcg/resolver.html).
+
+- Los colores de un producto van en `brand/tokens/`: `colors.resolver.json` y los `.tokens.json`
+  que cita. Son la única fuente de los colores de todos sus clientes.
+- `colors.resolver.json` tiene un solo modificador, `theme`, con los contextos `light` y `dark`.
+- Los tokens tienen dos niveles: el grupo `palette` guarda los colores, en sRGB y opacos, y el
+  grupo `color` asigna cada rol a un color de `palette` con un alias. Cambiar un color de la marca
+  toca un solo token.
+- Los roles son las 46 propiedades de color no obsoletas del `ColorScheme` de Flutter, y cada modo
+  las asigna todas. Compose, Flutter y Flet arman su esquema con esos roles, y uno sin asignar
+  tomaría en silencio el color por defecto del framework.
+- `scripts/tokens.py` genera en cada cliente su esquema claro y su esquema oscuro, ya armados. Falla
+  ante lo que esté fuera de este subconjunto de DTCG o no cumpla el contraste de
+  [Accesibilidad](#accesibilidad).
+- Lo generado se commitea: un cliente compila sin correr el generador.
+- Cada cliente sigue el modo claro u oscuro del sistema.
+- Los tamaños van en el módulo de tema de cada cliente, sin tamaños literales fuera de él. Las
+  unidades y las guías de cada plataforma son distintas.
+
+Plantilla: `scripts/tokens.py` es canónico y se copia sin editar; `brand/tokens/` es un punto de
+partida.
 
 ## Versión mínima de cliente
 
@@ -224,7 +251,9 @@ Estándares: [RFC 6455](../fuentes/rfc/rfc6455.txt) y
 
 | Qué | Con qué |
 |---|---|
-| Contraste de los tokens | Una prueba por cliente sobre el módulo de tokens |
+| Contraste de `brand/tokens/` | `scripts/tokens.py`, que corre `verificar.py` |
+| DTCG: el subconjunto de `brand/tokens/` | `scripts/tokens.py`, que corre `verificar.py` |
+| Lo generado, al día con `brand/tokens/` | `verificar.py` |
 | Todo error del servidor en problem+json | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
 | RFC 9457: la URI de cada tipo sirve su documentación | `test_problem_types_are_documented`, del servidor |
 | El `traceId` en todo problem+json | `test_unknown_route_is_a_problem`, del servidor |

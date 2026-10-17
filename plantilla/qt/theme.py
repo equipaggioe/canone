@@ -1,23 +1,32 @@
-"""The design tokens and the one style sheet of the app."""
+"""Fusion, the generated palette and the one style sheet of the app."""
 
+from functools import partial
+
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
-BACKGROUND = "#ffffff"
-SURFACE = "#f3f4f6"
-TEXT = "#111827"
-PRIMARY = "#2563eb"
-ON_PRIMARY = "#ffffff"
-DANGER = "#b91c1c"
+from app import colors
 
 
 def apply(app: QApplication) -> None:
-    """Set Fusion and the global style sheet."""
+    """Set Fusion and follow the color scheme of the system."""
     app.setStyle("Fusion")
+    hints = app.styleHints()
+    hints.colorSchemeChanged.connect(partial(paint, app))
+    paint(app, hints.colorScheme())
+
+
+def paint(app: QApplication, scheme: Qt.ColorScheme) -> None:
+    """Set the palette and the style sheet of one mode."""
+    current = colors.DARK if scheme == Qt.ColorScheme.Dark else colors.LIGHT
+    app.setPalette(colors.palette(current))
     app.setStyleSheet(f"""
-        QWidget {{ background-color: {BACKGROUND}; color: {TEXT}; }}
-        QLineEdit, QTextEdit, QPlainTextEdit, QAbstractItemView {{
-            background-color: {SURFACE};
+        QPushButton[variant="primary"] {{
+            background-color: {current["primary"]};
+            color: {current["on_primary"]};
         }}
-        QPushButton {{ background-color: {PRIMARY}; color: {ON_PRIMARY}; }}
-        QPushButton[variant="danger"] {{ background-color: {DANGER}; }}
+        QPushButton[variant="danger"] {{
+            background-color: {current["error"]};
+            color: {current["on_error"]};
+        }}
     """)

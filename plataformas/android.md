@@ -139,9 +139,11 @@ Contrato: [transversal.md](transversal.md#push).
 
 Estándar: [Material 3 en Compose](../fuentes/compose/material3.md).
 
-- El `ColorScheme` claro y el oscuro salen de los tokens de `ui/theme/`, sin color dinámico, y el
-  modo sigue al sistema. El color dinámico reemplazaría la paleta del producto, que es la misma en
-  todas las superficies.
+Contrato: [transversal.md](transversal.md#tema).
+
+- El `ColorScheme` claro y el oscuro son `LightColorScheme` y `DarkColorScheme`, generados en
+  `ui/theme/Colors.kt`, sin color dinámico, y el modo sigue al sistema. El color dinámico
+  reemplazaría la paleta del producto, que es la misma en todas las superficies.
 
 ## Pruebas
 

@@ -15,7 +15,8 @@ desktop/
   src/app/
     __init__.py
     main.py             crea la QApplication y abre la ventana principal
-    theme.py            los tokens de diseño y la hoja de estilo global
+    colors.py
+    theme.py            la paleta y la hoja de estilo global
     icon.png
     resources.qrc       el icono y las traducciones compiladas
     translations/
@@ -119,8 +120,13 @@ Estándares: [*Qt Style Sheets*](../fuentes/qt/stylesheet.qdoc), su
 [personalización](../fuentes/qt/stylesheet-customizing.qdoc) y la
 [referencia](../fuentes/qt/stylesheet-reference.qdoc).
 
+Contrato: [transversal.md](transversal.md#tema).
+
 - La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada
   desde `theme.py`. Lo que la hoja no define lo dibuja el estilo de cada sistema; Fusion lo iguala.
+- La paleta de la `QApplication` sale de `palette()` con `LIGHT` o `DARK`, generados en
+  `colors.py`, según `QStyleHints.colorScheme()`, y se vuelve a aplicar con `colorSchemeChanged`.
+  El evento `ApplicationPaletteChange` no sirve: la app lo provoca al aplicar su paleta.
 
 Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico y se copia sin
 editar.
@@ -157,4 +163,5 @@ Estándar: [`pyside6-deploy`](../fuentes/pyside6/deployment-pyside6-deploy.rst).
 | La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools` |
 | HTTP por `QNetworkAccessManager` | ruff `TID251` sobre httpx, requests y `urllib.request` |
 | Fusion y una sola hoja de estilo en `theme.py` | `tests/test_theme.py` |
+| Los colores, solo en `colors.py` | `tests/test_theme.py` |
 | Pruebas sin pantalla | `QT_QPA_PLATFORM=offscreen` en el job de CI |

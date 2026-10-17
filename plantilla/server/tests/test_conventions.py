@@ -14,7 +14,7 @@ import pytest
 import sqlalchemy as sa
 from fastapi import FastAPI, Query
 from httpx import ASGITransport, AsyncClient
-from pydantic import AwareDatetime, BaseModel
+from pydantic import AwareDatetime, BaseModel, ValidationError
 
 import app.models
 import app.routers
@@ -161,6 +161,31 @@ def test_schemas_inherit_schema() -> None:
         and not issubclass(value, Schema)
     ]
     assert not offenders
+
+
+class Row:
+    """An object with a two-word attribute, like a row."""
+
+    created_at = datetime(2026, 1, 1, tzinfo=UTC)
+
+
+class Created(Schema):
+    """A response with a two-word field."""
+
+    created_at: Timestamp
+
+
+class CreatedInput(InputSchema):
+    """A body with a two-word field."""
+
+    created_at: Timestamp
+
+
+def test_schemas_read_rows_by_name() -> None:
+    """A response reads created_at of a row; a body only createdAt."""
+    assert Created.model_validate(Row()).model_dump() == {"createdAt": Row.created_at}
+    with pytest.raises(ValidationError):
+        CreatedInput.model_validate({"created_at": "2026-01-01T00:00:00Z"})
 
 
 def mentions_datetime(annotation: Any) -> bool:

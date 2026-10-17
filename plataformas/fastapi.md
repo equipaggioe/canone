@@ -91,7 +91,11 @@ Estándar: la [configuración de modelos](../fuentes/pydantic/config.md) de Pyda
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 - `alias_generator=to_camel` y `serialize_by_alias=True` en el esquema base.
-- `extra="forbid"` en los esquemas de entrada.
+- `validate_by_name=True` en el esquema base: el código y las filas usan los nombres de Python, en
+  snake_case. Sin él, `from_attributes` busca en una fila el alias, `createdAt`, y no encuentra
+  `created_at`.
+- `extra="forbid"` y `validate_by_name=False` en los esquemas de entrada: el cliente escribe solo
+  en camelCase, y un campo en snake_case responde 422 en vez de aceptarse con dos nombres.
 - Los parámetros de query se declaran en un esquema de entrada. Un parámetro desconocido responde
   422 en vez de ignorarse.
 
@@ -569,6 +573,7 @@ Estándar: [*Behind a Proxy*](../fuentes/fastapi/behind-a-proxy.md) de FastAPI.
 | Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |
+| El esquema base lee por nombre, y el de entrada solo por alias | `test_schemas_read_rows_by_name` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | La versión mínima de cliente | `test_outdated_client_is_rejected` |

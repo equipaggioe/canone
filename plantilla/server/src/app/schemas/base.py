@@ -27,16 +27,21 @@ Timestamp = Annotated[AwareDatetime, BeforeValidator(check_rfc3339), AfterValida
 
 
 class Schema(BaseModel):
-    """Every schema inherits from this one."""
+    """Every schema inherits from this one.
+
+    It reads a row or the code by field name, created_at, and writes
+    JSON by alias, createdAt.
+    """
 
     model_config = ConfigDict(
         alias_generator=to_camel,
         serialize_by_alias=True,
+        validate_by_name=True,
         from_attributes=True,
     )
 
 
 class InputSchema(Schema):
-    """A request body or a set of query parameters."""
+    """A request body or a set of query parameters, read by alias."""
 
-    model_config = ConfigDict(extra="forbid", from_attributes=False)
+    model_config = ConfigDict(extra="forbid", from_attributes=False, validate_by_name=False)

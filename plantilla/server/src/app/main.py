@@ -31,5 +31,5 @@ api.include_router(problems.router)
 
 app = FastAPI(lifespan=lifespan, generate_unique_id_function=operation_id)
 errors.install(app)
-tracing.install(app)
+tracing.install()
 app.include_router(api)

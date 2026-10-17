@@ -95,7 +95,7 @@ def blank(status: int, detail: str | None = None) -> Problem:
     """Build an about:blank problem, whose status says it all."""
     title = HTTPStatus(status).phrase
     return Problem(
-        type="about:blank", title=title, status=status, detail=detail, traceId=trace_id.get()
+        type="about:blank", title=title, status=status, detail=detail, traceId=trace_id()
     )
 
 
@@ -123,7 +123,7 @@ async def app_error(_: Request, exc: Exception) -> JSONResponse:
             title=exc.problem.title,
             status=exc.problem.status,
             detail=exc.detail,
-            traceId=trace_id.get(),
+            traceId=trace_id(),
         )
     )
 
@@ -144,7 +144,7 @@ async def validation_error(_: Request, exc: Exception) -> JSONResponse:
             title=VALIDATION.title,
             status=VALIDATION.status,
             errors=[field_error(error) for error in exc.errors()],
-            traceId=trace_id.get(),
+            traceId=trace_id(),
         )
     )
 

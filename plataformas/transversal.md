@@ -45,8 +45,11 @@ Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt) y [RFC 6901](../fuentes/rfc/
 - El cliente toma una respuesta de error sin problem+json, o con un `type` que su catálogo no
   conoce, como de tipo `about:blank`, con su `status`, y su catálogo tiene un texto por `status`
   para ese tipo.
+- Todo problem+json lleva `traceId`, el trace-id de la petición.
 - Todo problem+json lleva `status`, y ninguno lleva `instance`: `traceId` ya identifica la
   ocurrencia.
+- Ante un 5xx o un `type` que su catálogo no conoce, el cliente muestra el `traceId` junto al
+  texto, para que el usuario lo copie.
 - Un error de validación es de tipo `https://<dominio>/api/problems/validation`, con la extensión
   `errors`: una lista de `{detail, pointer}`, o de `{detail, parameter}` para un parámetro que no
   viene en el cuerpo.
@@ -224,3 +227,4 @@ Estándares: [RFC 6455](../fuentes/rfc/rfc6455.txt) y
 | Contraste de los tokens | Una prueba por cliente sobre el módulo de tokens |
 | Todo error del servidor en problem+json | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
 | RFC 9457: la URI de cada tipo sirve su documentación | `test_problem_types_are_documented`, del servidor |
+| El `traceId` en todo problem+json | `test_unknown_route_is_a_problem`, del servidor |

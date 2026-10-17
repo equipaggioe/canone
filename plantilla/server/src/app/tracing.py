@@ -1,43 +1,58 @@
 """The W3C trace-id of each request, in the log and in the errors."""
 
 import logging
-import secrets
-from contextvars import ContextVar
 
-from fastapi import FastAPI
-from starlette.types import ASGIApp, Receive, Scope, Send
-
-trace_id: ContextVar[str] = ContextVar("trace_id")
+from opentelemetry import propagate, trace
+from opentelemetry.context import Context
+from opentelemetry.propagators.textmap import CarrierT, Getter, Setter, TextMapPropagator
+from opentelemetry.sdk.trace import TracerProvider
 
 
-class TraceMiddleware:
+class IgnoreTraceparent(TextMapPropagator):
     """Start a trace for every request and every WebSocket."""
 
-    def __init__(self, app: ASGIApp) -> None:
-        """Wrap the app."""
-        self.app = app
+    def extract(
+        self,
+        carrier: CarrierT,
+        context: Context | None = None,
+        getter: Getter[CarrierT] | None = None,
+    ) -> Context:
+        """Drop any traceparent: the client picks no trace-id."""
+        return Context()
 
-    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        """Set a new trace-id, ignoring any traceparent."""
-        if scope["type"] in ("http", "websocket"):
-            # ADR-0015: not reset, the handler of unexpected
-            # exceptions runs outside every middleware.
-            trace_id.set(secrets.token_hex(16))
-        await self.app(scope, receive, send)
+    def inject(
+        self,
+        carrier: CarrierT,
+        context: Context | None = None,
+        setter: Setter[CarrierT] | None = None,
+    ) -> None:
+        """Send no trace context."""
+
+    @property
+    def fields(self) -> set[str]:
+        """Read and write no header."""
+        return set()
+
+
+def trace_id() -> str:
+    """Read the trace-id of the current span, empty outside one."""
+    context = trace.get_current_span().get_span_context()
+    return trace.format_trace_id(context.trace_id) if context.is_valid else ""
 
 
 class TraceFilter(logging.Filter):
     """Put the trace-id on every record."""
 
     def filter(self, record: logging.LogRecord) -> bool:
-        """Leave it empty outside a request."""
-        record.trace_id = trace_id.get("")
+        """Leave it empty outside a trace."""
+        record.trace_id = trace_id()
         return True
 
 
-def install(app: FastAPI) -> None:
-    """Add the middleware and print the trace-id in every log line."""
-    app.add_middleware(TraceMiddleware)
+def install() -> None:
+    """Set the tracer provider and log the trace-id."""
+    propagate.set_global_textmap(IgnoreTraceparent())
+    trace.set_tracer_provider(TracerProvider())
     handler = logging.StreamHandler()
     handler.addFilter(TraceFilter())
     handler.setFormatter(logging.Formatter("%(levelname)s %(name)s %(trace_id)s %(message)s"))

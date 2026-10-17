@@ -19,7 +19,7 @@ from pydantic import AwareDatetime, BaseModel
 import app.models
 import app.routers
 import app.schemas
-from app import errors, openapi, tracing
+from app import errors, openapi
 from app.config import Settings, settings
 from app.database import engine
 from app.dependencies import SessionDep
@@ -224,6 +224,17 @@ async def test_unknown_route_is_a_problem() -> None:
     assert body == {"type": "about:blank", "title": "Not Found", "status": 404}
 
 
+async def test_traceparent_starts_a_new_trace() -> None:
+    """The client does not pick the trace-id."""
+    sent = "4bf92f3577b34da6a3ce929d0e0e4736"
+    transport = ASGITransport(app=main_app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.get(
+            "/no-such-route", headers={"traceparent": f"00-{sent}-00f067aa0ba902b7-01"}
+        )
+    assert response.json()["traceId"] not in (sent, "")
+
+
 class Item(InputSchema):
     """A body with a two-word field."""
 
@@ -234,7 +245,6 @@ async def test_validation_error_points_to_the_field() -> None:
     """A 422 points to the body field and the query parameter."""
     probe = FastAPI()
     errors.install(probe)
-    tracing.install(probe)
 
     @probe.post("/items")
     async def create_item(item: Item, limit: Annotated[int, Query()]) -> None:
@@ -279,7 +289,6 @@ async def test_invalid_page_token_points_to_the_parameter() -> None:
     """A bad page token, or one with other filters, is a 422."""
     probe = FastAPI()
     errors.install(probe)
-    tracing.install(probe)
     position = (datetime(2026, 1, 1, tzinfo=UTC), 7)
     token = encode_token(position, {"status": "open"})
     assert decode_token(token, {"status": "open"}, tuple[datetime, int]) == position
@@ -308,7 +317,6 @@ async def test_failed_commit_is_a_server_error() -> None:
     """A commit that fails answers 500, before any response."""
     probe = FastAPI()
     errors.install(probe)
-    tracing.install(probe)
 
     @probe.post("/items")
     async def create_item(session: SessionDep) -> None:

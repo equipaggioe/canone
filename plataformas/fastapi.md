@@ -420,7 +420,7 @@ Estándares: las secciones *Where to record event data*, *Which events to log*, 
 - `actor_label` guarda el identificador tal como llegó: así queda el intento sobre una cuenta que
   no existe.
 - `level` es `info`, `warn` o `critical`, el nivel que el vocabulario da al evento.
-- `trace_id` es el trace-id de la petición, el mismo del log y del `traceId` del error.
+- `trace_id` es el trace-id del span actual, el mismo del log y del `traceId` del error.
 - Un valor de una fila entra en `details` solo si su tabla y su campo están en una lista blanca:
   una columna nueva no se registra sola. Un campo fuera de la lista se registra como cambiado, sin
   su valor.
@@ -484,13 +484,18 @@ Contrato: [transversal.md](transversal.md#sesión).
 
 ## Trazas
 
-Estándar: las secciones 3.2.2.3 *trace-id* y 8, *Considerations for trace-id field generation*,
-de [Trace Context](../fuentes/w3c/trace-context-1.md) de W3C.
+Estándares: las secciones *Customize telemetry* y *Choose what to record* de
+[*OpenTelemetry*](../fuentes/fastapi/opentelemetry.md) de FastAPI, y la regla `trace-id` de la
+sección 3.2.2.2 *version-format* y la sección 3.2.2.3 *trace-id* de
+[Trace Context](../fuentes/w3c/trace-context-1.md) de W3C.
 
-- Cada petición y cada WebSocket empiezan una traza nueva, aunque lleguen con `traceparent`. El
-  cliente no elige el id con el que se buscan sus registros.
-- El trace-id va en cada línea de log y en la extensión `traceId` de cada problem+json. Con el id
-  que ve el usuario se llega a la línea exacta del registro.
+- La app configura un `TracerProvider` del SDK de OpenTelemetry: sin él, FastAPI no crea spans y no
+  hay trace-id.
+- El propagador global de OpenTelemetry ignora `traceparent`: cada petición y cada WebSocket
+  empiezan una traza nueva. El cliente no elige el id con el que se buscan sus registros. Es un
+  propagador propio: con `OTEL_PROPAGATORS=none`, FastAPI falla en cada petición.
+- Cada vuelta de una tarea periódica empieza su propia traza.
+- Cada línea de log lleva el trace-id del span actual.
 
 ## Versión mínima de cliente
 
@@ -563,7 +568,7 @@ Estándar: [*Behind a Proxy*](../fuentes/fastapi/behind-a-proxy.md) de FastAPI.
 | `Timestamp` en los esquemas | `test_schema_datetimes_are_timestamps` |
 | Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
-| El `traceId` en cada problem+json | `test_unknown_route_is_a_problem` |
+| `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | La versión mínima de cliente | `test_outdated_client_is_rejected` |

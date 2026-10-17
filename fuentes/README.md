@@ -67,7 +67,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217 |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | <https://www.rfc-editor.org/rfc/rfc5646.txt> |  |
-| [rfc/rfc6265.txt](rfc/rfc6265.txt) | <https://www.rfc-editor.org/rfc/rfc6265.txt> |  |
 | [rfc/rfc6455.txt](rfc/rfc6455.txt) | <https://www.rfc-editor.org/rfc/rfc6455.txt> |  |
 | [rfc/rfc6749.txt](rfc/rfc6749.txt) | <https://www.rfc-editor.org/rfc/rfc6749.txt> |  |
 | [rfc/rfc6585.txt](rfc/rfc6585.txt) | <https://www.rfc-editor.org/rfc/rfc6585.txt> |  |
@@ -98,19 +97,17 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/main/index.bs> |  |
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | Texto extraído del PDF |
+| [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md> | Versión 5.0.0 |
 | [owasp/ASVS_V6_Authentication.md](owasp/ASVS_V6_Authentication.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x15-V6-Authentication.md> | Versión 5.0.0 |
+| [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md> | Versión 5.0.0 |
 | [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authorization_Cheat_Sheet.md> |  |
 | [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Content_Security_Policy_Cheat_Sheet.md> |  |
-| [owasp/Cross-Site_Request_Forgery_Prevention.md](owasp/Cross-Site_Request_Forgery_Prevention.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.md> |  |
 | [owasp/Forgot_Password.md](owasp/Forgot_Password.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Forgot_Password_Cheat_Sheet.md> |  |
-| [owasp/HTML5_Security.md](owasp/HTML5_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/HTML5_Security_Cheat_Sheet.md> |  |
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/HTTP_Headers_Cheat_Sheet.md> |  |
-| [owasp/JSON_Web_Token.md](owasp/JSON_Web_Token.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/JSON_Web_Token_Cheat_Sheet.md> |  |
 | [owasp/Logging.md](owasp/Logging.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Logging_Cheat_Sheet.md> |  |
 | [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md> |  |
 | [owasp/REST_Security.md](owasp/REST_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/REST_Security_Cheat_Sheet.md> |  |
 | [owasp/Secrets_Management.md](owasp/Secrets_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Secrets_Management_Cheat_Sheet.md> |  |
-| [owasp/Session_Management.md](owasp/Session_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Session_Management_Cheat_Sheet.md> |  |
 | [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> |  |
 | [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/File_Upload_Cheat_Sheet.md> |  |
 | [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/WebSocket_Security_Cheat_Sheet.md> |  |

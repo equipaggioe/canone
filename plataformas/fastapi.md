@@ -442,22 +442,45 @@ Contrato: [transversal.md](transversal.md#reintentos).
 
 ## Sesión
 
-Estándares: [RFC 7519](../fuentes/rfc/rfc7519.txt), [RFC 8725](../fuentes/rfc/rfc8725.txt)
-y [*JSON Web Token Cheat Sheet*](../fuentes/owasp/JSON_Web_Token.md) de OWASP.
+Estándares: [RFC 7519](../fuentes/rfc/rfc7519.txt), [RFC 8725](../fuentes/rfc/rfc8725.txt), la
+sección 4.14 *Refresh Token Protection* de [RFC 9700](../fuentes/rfc/rfc9700.txt) y, en el nivel 1
+de ASVS 5.0 de OWASP, el capítulo
+[V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) y las secciones V3.3
+*Cookie Setup* y V3.5 *Browser Origin Separation* de
+[V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md).
 
 Contrato: [transversal.md](transversal.md#sesión).
 
-- El token de acceso es un JWT firmado con HS256 que vence en 15 minutos.
-- El token de refresco es un valor aleatorio de 256 bits que rota en cada uso.
-- La fila de sesión guarda el SHA-256 del token de refresco vigente y el del anterior: si un ladrón
-  rota, el token que presenta después el dueño es el anterior.
-- Presentar el anterior borra la sesión de ese dispositivo, avisa al titular por los medios que
-  registró y cuenta como un intento fallido de la cuenta: un token robado se descubre cuando el
-  dueño vuelve a refrescar.
-- Un token de refresco que no es el vigente ni el anterior responde 401, sin aviso.
-- Cada dispositivo tiene una fila de sesión, con su creación y su último uso. La sesión vence tras
-  30 días sin uso, y cerrar sesión borra la fila.
+- La web y las apps comparten la tabla de sesiones: cambia solo el token que presenta cada una.
+- Cada inicio de sesión crea una fila de sesión, con su creación y su último uso. La sesión vence
+  tras 30 días sin uso, y cerrar sesión borra la fila.
+- El último uso se actualiza al refrescar, en una app, y a lo sumo cada 15 minutos, en la web: una
+  escritura por petición cargaría la base sin mover el vencimiento.
 - Una tarea periódica borra las sesiones vencidas.
+- El token de la web es un valor aleatorio de 256 bits, y la fila guarda su SHA-256: quien lee la
+  base no se lleva ninguna sesión.
+- La cookie de la web es `__Host-session`, `HttpOnly` y `SameSite=Strict`, con 30 días de `Max-Age`
+  que se renuevan con el último uso. Endurece V3.3, que pide el prefijo y los dos atributos en el
+  nivel 2: ningún script la lee, ninguna petición de otro sitio la lleva y ningún subdominio la
+  reemplaza.
+- Una petición con la cookie y un método que no es seguro responde 403 si su `Origin` falta o no es
+  el del servidor. De las opciones de V3.5.2, es la que no le pide nada a la web.
+- El token de acceso de una app es un JWT firmado con HS256 que vence en 15 minutos, con el id de su
+  sesión en `sid`.
+- El id de una sesión de una app que se cierra o se borra queda 15 minutos en Valkey, lo que dura su
+  último token de acceso, y el servidor rechaza el JWT de una sesión de esa lista. Es la lista de
+  revocación entre las opciones de V7.4.1.
+- El token de refresco es el id de su sesión y un secreto aleatorio de 256 bits, firmados con HMAC,
+  y el secreto rota en cada uso. La firma es la integridad que RFC 9700 pide al token que lleva su
+  sesión.
+- La fila de una sesión de una app guarda el SHA-256 del secreto vigente y el del anterior. El
+  anterior vale mientras el vigente no se usó. Contradice RFC 9700, que lo invalida en el acto: una
+  respuesta perdida cerraría la sesión del dueño y le avisaría de un robo.
+- Presentar el anterior reemplaza el vigente, y el anterior no cambia. Si el vigente pasara a ser el
+  anterior, un dueño y un ladrón que refrescan por turnos nunca presentarían un reúso.
+- Cualquier otro secreto de la sesión es un reúso: borra la sesión, y el titular lo ve en la app.
+  Un token robado se descubre cuando el dueño vuelve a refrescar.
+- Un token de refresco con la firma inválida o de una sesión que no existe responde 401, sin aviso.
 
 ## Trazas
 

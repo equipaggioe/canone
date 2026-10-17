@@ -51,7 +51,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0041](0041-una-tarea-periodica-se-dispara-desde-la-pieza-y-su-interruptor-es-obligatorio.md) | Una tarea periódica se dispara desde la pieza, y su interruptor es un campo obligatorio | Con `server/` | Reemplazada por ADR-0043 |
 | [0042](0042-una-sesion-vencida-se-borra-sin-gracia.md) | Una sesión vencida se borra sin gracia | Con autenticación | Aceptada |
 | [0043](0043-una-tarea-periodica-la-dispara-un-timer-de-systemd.md) | Una tarea periódica la dispara un timer de systemd | Con `server/` | Aceptada |
-| [0044](0044-el-bloqueo-cuenta-en-una-ventana-y-el-titular-lo-ve-en-la-app.md) | El bloqueo cuenta los intentos en una ventana, y el titular lo ve en la app | Con autenticación | Aceptada; el punto 1 lo reemplaza ADR-0045, y el punto 3, en lo permanente, ADR-0047 |
+| [0044](0044-el-bloqueo-cuenta-en-una-ventana-y-el-titular-lo-ve-en-la-app.md) | El bloqueo cuenta los intentos en una ventana, y el titular lo ve en la app | Con autenticación | Aceptada; el punto 1 lo reemplaza ADR-0045; el punto 3, en lo permanente, ADR-0047, y el punto 6, ADR-0060 |
 | [0045](0045-el-login-y-las-contrasenas-siguen-el-nivel-1-de-asvs.md) | El login y las contraseñas siguen el nivel 1 de ASVS | Con autenticación | Aceptada |
 | [0046](0046-la-contrasena-se-restablece-con-un-codigo-por-correo-o-por-sms.md) | La contraseña se restablece con un código por correo o por SMS | Con autenticación | Aceptada |
 | [0047](0047-el-titular-levanta-el-bloqueo-desde-una-sesion-abierta.md) | El titular levanta el bloqueo desde una sesión abierta | Con autenticación | Aceptada |
@@ -67,3 +67,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0057](0057-una-pagina-no-espera-a-que-un-repositorio-use-la-tecnologia.md) | Una página no espera a que un repositorio use la tecnología | `plataformas/` | Aceptada |
 | [0058](0058-los-eventos-se-nombran-con-el-vocabulario-de-owasp-y-un-cambio-de-fila-es-un-evento.md) | Los eventos se nombran con el vocabulario de OWASP, y un cambio de fila es un evento | Con `server/` | Aceptada |
 | [0059](0059-un-recurso-que-crea-el-usuario-se-crea-por-put-y-es-un-contrato-de-transversal.md) | Un recurso que crea el usuario se crea por `PUT`, y es un contrato de transversal | Con `server/` y sus clientes | Aceptada, salvo el punto 2, que sigue en propuesta |
+| [0060](0060-la-web-presenta-la-sesion-con-una-cookie-opaca-y-una-app-con-un-jwt-y-un-refresco-rotado.md) | La web presenta la sesión con una cookie opaca, y una app con un JWT y un refresco rotado | Con `server/` y sus clientes | Aceptada, salvo los puntos 8, 9 y 10, que siguen en propuesta |

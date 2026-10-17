@@ -182,18 +182,15 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
 
 ## Sesión
 
-Estándares: [*Session Management Cheat Sheet*](../fuentes/owasp/Session_Management.md),
-[*Cross-Site Request Forgery Prevention Cheat Sheet*](../fuentes/owasp/Cross-Site_Request_Forgery_Prevention.md)
-y [*HTML5 Security Cheat Sheet*](../fuentes/owasp/HTML5_Security.md) de OWASP, y
-[RFC 6265](../fuentes/rfc/rfc6265.txt).
-
 - La API se sirve en el mismo origen que la web, bajo `/api`. No hace falta CORS, y la cookie de
   sesión es de primera parte.
-- El token de acceso vive solo en memoria, y el de refresco, en el almacenamiento seguro del
-  cliente.
-- En la web, el token de refresco va en una cookie `HttpOnly`, `Secure`, `SameSite=Strict`, con el
-  `Path` del endpoint de refresco.
-- Ante un 401, el cliente refresca la sesión una sola vez y reintenta una sola vez. Nunca un bucle
+- La web presenta su sesión con una cookie, y una app, con un token de acceso que renueva con un
+  token de refresco. En la web, ningún token queda al alcance de un script.
+- En una app, el token de acceso vive solo en memoria, y el de refresco, en el almacenamiento seguro
+  del sistema: ningún almacenamiento guarda un token que da acceso directo a la API.
+- Una app hace un solo refresco a la vez, y las peticiones que reciben un 401 mientras tanto lo
+  esperan. Con la rotación, dos refrescos simultáneos presentan tokens ya rotados.
+- Ante un 401, una app refresca la sesión una sola vez y reintenta una sola vez. Nunca un bucle
   silencioso.
 
 ## Tema
@@ -211,11 +208,11 @@ y [*HTML5 Security Cheat Sheet*](../fuentes/owasp/HTML5_Security.md) de OWASP, y
 Estándares: [RFC 6455](../fuentes/rfc/rfc6455.txt) y
 [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
-- El cliente se autentica mandando el token de acceso en el primer mensaje. Si no llega en 5
-  segundos, el servidor cierra con 1008. De las dos formas que da OWASP, el mensaje no deja el
-  token en los registros de acceso.
-- Al refrescar la sesión, el cliente manda el token nuevo por la misma conexión. Cuando vence el
-  que tiene, el servidor cierra con 1008.
+- La web se autentica con la cookie de sesión del handshake. Una app, con el token de acceso en el
+  primer mensaje: si no llega en 5 segundos, el servidor cierra con 1008. De las dos formas que da
+  OWASP para un token, el mensaje no lo deja en los registros de acceso.
+- Al refrescar la sesión, una app manda el token nuevo por la misma conexión. Cuando vence el que
+  tiene, el servidor cierra con 1008.
 - Los mensajes son JSON `{type, data}`, en camelCase como la API.
 - Al perder la conexión, el cliente reconecta con espera exponencial y jitter, y vuelve a pedir el
   estado por REST. Lo que se envió mientras estaba desconectado no se repite.

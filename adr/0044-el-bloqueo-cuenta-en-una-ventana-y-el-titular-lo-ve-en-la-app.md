@@ -2,7 +2,8 @@
 
 - **Estado:** Aceptada. El punto 1 lo reemplaza el
   [ADR-0045](0045-el-login-y-las-contrasenas-siguen-el-nivel-1-de-asvs.md), y el punto 3, en lo
-  permanente, el [ADR-0047](0047-el-titular-levanta-el-bloqueo-desde-una-sesion-abierta.md)
+  permanente, el [ADR-0047](0047-el-titular-levanta-el-bloqueo-desde-una-sesion-abierta.md), y el
+  punto 6, el [ADR-0060](0060-la-web-presenta-la-sesion-con-una-cookie-opaca-y-una-app-con-un-jwt-y-un-refresco-rotado.md)
 - **Fecha:** 2026-10-11
 - **Alcance:** las secciones «Autenticación» y «Sesión» de
   [`plataformas/fastapi.md`](../plataformas/fastapi.md)

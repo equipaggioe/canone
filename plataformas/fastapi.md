@@ -404,33 +404,32 @@ Contrato: [transversal.md](transversal.md#push).
 
 ## Registro de eventos
 
-Estándar: [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) de OWASP.
+Estándares: las secciones *Where to record event data*, *Which events to log*, *Event attributes*,
+*Data to exclude*, *Customizable logging*, *Event collection*, *Verification*, *Protection* y
+*Disposal of logs* del [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) de OWASP, y la sección
+*The Vocabulary* del
+[*Application Logging Vocabulary Cheat Sheet*](../fuentes/owasp/Logging_Vocabulary.md) de OWASP.
 
-- Los eventos van en una sola tabla, `event_log`, con su categoría (`auth`, `security`, `admin` o
-  `business`) y su acción, un enum de cada repositorio: lo que pasó alrededor de una hora se lee en
-  una consulta.
-- Las demás columnas de `event_log`:
-
-  | Columna | Regla |
-  |---|---|
-  | `occurred_at`, `created_at` | Cuándo pasó y cuándo se escribió |
-  | `actor_id` | Nulo si no hay cuenta detrás |
-  | `actor_label` | El identificador tal como llegó |
-  | `target_type`, `target_id` | Nulos si el evento no es sobre un recurso |
-  | `outcome` | `success` o `failure` |
-  | `severity` | `low`, `medium`, `high` o `critical` |
-  | `ip_address`, `user_agent` | De dónde vino |
-  | `trace_id` | El trace-id de la petición, el mismo del log y del `traceId` del error |
-  | `details` | `jsonb` |
-  | `tenant_id` | En todo evento, si el repositorio es multi-tenant |
-
-- Los cambios de fila van en `audit_log`, con `table_name`, `record_id`, `old_values` y
-  `new_values`. Un hecho que no cambia una fila va en `event_log`: no tiene valores anteriores.
-- Un valor entra al registro solo si su tabla y su campo están en una lista blanca: una columna
-  nueva no se registra sola. Un campo fuera de la lista se registra como cambiado, sin su valor.
-- `event_log` y `audit_log` tienen cada uno su retención en días en `Settings`, y `0` la deja
-  indefinida.
-- Renovar un token no escribe en el registro: sería una fila por cada renovación.
+- Los eventos van en una sola tabla, `event_log`: lo que pasó alrededor de una hora se lee en una
+  consulta. Un cambio de fila también es un evento, con los campos cambiados en `details`.
+- `action` es el nombre del vocabulario sin sus parámetros, como `authn_login_fail`. Los parámetros
+  van en sus columnas: así se consultan.
+- Las demás columnas son `occurred_at`, `actor_id`, `actor_label`, `target_type`, `target_id`,
+  `level`, `ip_address`, `user_agent`, `trace_id`, `details` en `jsonb` y, si el repositorio es
+  multi-tenant, `tenant_id` en todo evento.
+- `actor_label` guarda el identificador tal como llegó: así queda el intento sobre una cuenta que
+  no existe.
+- `level` es `info`, `warn` o `critical`, el nivel que el vocabulario da al evento.
+- `trace_id` es el trace-id de la petición, el mismo del log y del `traceId` del error.
+- Un valor de una fila entra en `details` solo si su tabla y su campo están en una lista blanca:
+  una columna nueva no se registra sola. Un campo fuera de la lista se registra como cambiado, sin
+  su valor.
+- La retención de `event_log` va en días en `Settings`, y es obligatoria y mayor que cero: la IP y
+  el user agent son datos personales.
+- Un evento se escribe en su propia transacción, salvo el de un cambio de fila, que va en la del
+  cambio: un fallo queda aunque la petición se deshaga, y un cambio deshecho no queda.
+- El rol de la app solo tiene `INSERT` y `SELECT` sobre `event_log`, y la purga de la retención usa
+  otro rol: un error o una inyección en la app no borran el rastro.
 
 ## Reintentos
 

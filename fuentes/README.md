@@ -107,6 +107,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/HTTP_Headers_Cheat_Sheet.md> |  |
 | [owasp/JSON_Web_Token.md](owasp/JSON_Web_Token.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/JSON_Web_Token_Cheat_Sheet.md> |  |
 | [owasp/Logging.md](owasp/Logging.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Logging_Cheat_Sheet.md> |  |
+| [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md> |  |
 | [owasp/REST_Security.md](owasp/REST_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/REST_Security_Cheat_Sheet.md> |  |
 | [owasp/Secrets_Management.md](owasp/Secrets_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Secrets_Management_Cheat_Sheet.md> |  |
 | [owasp/Session_Management.md](owasp/Session_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Session_Management_Cheat_Sheet.md> |  |

@@ -1,6 +1,7 @@
 # ADR-0008 · Lo que pasa se registra en un sobre único, y el catálogo es de cada repositorio
 
-- **Estado:** Aceptada, salvo el punto 6, que sigue en propuesta. El punto 3 lo reemplaza el [ADR-0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md)
+- **Estado:** Aceptada, salvo la mitad del punto 6 sobre la API, que sigue en propuesta. El punto 3 lo reemplaza el [ADR-0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md),
+  y los puntos 1, 2, 4, 7 y 8 y la mitad del punto 6 sobre la transacción, el [ADR-0058](0058-los-eventos-se-nombran-con-el-vocabulario-de-owasp-y-un-cambio-de-fila-es-un-evento.md)
 - **Fecha:** 2026-09-23
 - **Alcance:** `server/`, todos los repositorios
 

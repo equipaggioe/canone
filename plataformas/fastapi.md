@@ -113,6 +113,8 @@ Estándares: [*Session Basics*](../fuentes/sqlalchemy/session_basics.rst), la
   [python.md](python.md): el modelo se lee de arriba abajo, una declaración por renglón.
 - Un enum hereda de `StrEnum`. La `Base` guarda solo esos como `text` con `CHECK`; un `str, Enum`
   se vuelve un enum nativo de Postgres que guarda el nombre y no el valor.
+- Una columna `created_at` es `CreatedAt`, y una `updated_at` es `UpdatedAt`, de la `Base`. Las
+  dos toman `now()`; `updated_at` lo toma en cada `UPDATE` que emite SQLAlchemy.
 
 ## Migraciones
 
@@ -137,6 +139,9 @@ Estándar: las secciones *`APIRouter`*, *Another module with `APIRouter`*, *The 
 
 - Los routers se incluyen en un `APIRouter(prefix="/api")` de `main.py`.
 - Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`.
+- Un `DELETE` borra la fila de verdad. Una columna `deleted_at` se escribe con un `PATCH`, como
+  cualquier otro campo, y nunca reemplaza al borrado: un `DELETE` que solo marca la fila obliga a
+  filtrar cada consulta y cada índice único.
 
 ## Ciclo de vida
 
@@ -568,12 +573,12 @@ Estándar: [*Behind a Proxy*](../fuentes/fastapi/behind-a-proxy.md) de FastAPI.
 | *Dependencies*: `Annotated` | ruff `FAST002` |
 | El commit corre antes de enviar la respuesta | `test_failed_commit_is_a_server_error` |
 | Los nombres en camelCase: todo esquema hereda del esquema base | `test_schemas_inherit_schema` |
+| El esquema base lee por nombre, y el de entrada solo por alias | `test_schemas_read_rows_by_name` |
 | `lazy="raise"` | `test_relationships_raise` |
 | `Timestamp` en los esquemas | `test_schema_datetimes_are_timestamps` |
 | Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |
-| El esquema base lee por nombre, y el de entrada solo por alias | `test_schemas_read_rows_by_name` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | La versión mínima de cliente | `test_outdated_client_is_rejected` |

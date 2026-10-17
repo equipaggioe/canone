@@ -31,14 +31,17 @@ Estándares: [*Data Types*](../fuentes/postgresql/datatype.sgml),
 - Una identity es `GENERATED ALWAYS`, que rechaza un id escrito a mano.
 - Una clave foránea tiene el tipo de la clave que apunta.
 
+> **Por revisar** (anotado desde navetta el 2026-10-17): `test_primary_key_is_allowed` exige una clave
+> de una sola columna, y PostgreSQL exige que la clave de una tabla particionada incluya la columna
+> de partición, como `(id, created_at)`. Tampoco admite una clave natural compuesta, como
+> `(role, permission)`. navetta las exime en su copia de la prueba.
+
 ## Definición de datos
 
 Estándar: [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
 
 - Toda clave foránea declara `ON DELETE`: `CASCADE` si el hijo pertenece al padre, `RESTRICT` si
   no. Qué pasa al borrar queda escrito en el modelo.
-- Las filas se borran de verdad, sin columna de borrado lógico. Un borrado lógico obliga a filtrar
-  cada consulta y cada índice único.
 
 ## Geografía
 

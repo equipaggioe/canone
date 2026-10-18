@@ -230,8 +230,17 @@ partida.
 
 ## Versión mínima de cliente
 
-- Cada cliente instalable manda `User-Agent: <pieza>/<versión>` desde su primera versión publicada,
-  como fija [fastapi.md](fastapi.md). Ante `client-outdated`, pide actualizar la app.
+Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
+[RFC 9110](../fuentes/rfc/rfc9110.txt).
+
+- Cada cliente instalable manda `User-Agent: <pieza>/<versión>`, como `mobile/1.4.0`. La versión
+  son tres enteros, `MAJOR.MINOR.PATCH`, y se compara número por número.
+- Una versión menor que la mínima de su pieza recibe un 400 de tipo
+  `https://<dominio>/api/problems/client-outdated`, y el cliente pide actualizar la app. Lo mismo
+  recibe una petición con un token de app sin un `User-Agent` de pieza: el olvido falla en
+  desarrollo.
+- Las dos cosas van desde la primera versión que se publica: a una app instalada sin ellas nunca
+  se le puede obligar a actualizar.
 
 ## WebSocket
 

@@ -38,6 +38,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [fastapi/behind-a-proxy.md](fastapi/behind-a-proxy.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/behind-a-proxy.md> |  |
 | [fastapi/settings.md](fastapi/settings.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/settings.md> |  |
 | [fastapi/async-tests.md](fastapi/async-tests.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/async-tests.md> |  |
+| [fastapi/testing-dependencies.md](fastapi/testing-dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/testing-dependencies.md> |  |
 | [fastapi/websockets.md](fastapi/websockets.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/websockets.md> |  |
 | [fastapi/opentelemetry.md](fastapi/opentelemetry.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/opentelemetry.md> |  |
 | [fastapi/request-files.md](fastapi/request-files.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/request-files.md> |  |

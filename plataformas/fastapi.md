@@ -508,16 +508,11 @@ sección 3.2.2.2 *version-format* y la sección 3.2.2.3 *trace-id* de
 
 ## Versión mínima de cliente
 
-Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
-[RFC 9110](../fuentes/rfc/rfc9110.txt).
-
 Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
 
-- Cada cliente instalable manda `User-Agent: <pieza>/<versión>`, como `mobile/1.4.0`.
-- La configuración guarda la versión mínima de cada pieza. Una versión menor recibe un 400 de tipo
-  `https://<dominio>/api/problems/client-outdated`, y el cliente pide actualizar la app.
-- La comprobación va desde la primera versión que se publica: a una app instalada sin ella nunca
-  se le puede obligar a actualizar.
+- La configuración guarda la versión mínima de cada pieza.
+- La comprobación es una dependencia del router de `/api`: corre antes que las dependencias de cada
+  ruta y que la validación, y un cliente viejo recibe `client-outdated` antes que un 401 o un 422.
 
 ## WebSocket
 
@@ -539,13 +534,20 @@ Contrato: [transversal.md](transversal.md#websocket).
 
 ## Pruebas
 
-Estándares: [*Async Tests*](../fuentes/fastapi/async-tests.md) de FastAPI, las
+Estándares: [*Async Tests*](../fuentes/fastapi/async-tests.md) y
+[*Testing Dependencies with Overrides*](../fuentes/fastapi/testing-dependencies.md) de FastAPI, las
 [pruebas con AnyIO](../fuentes/anyio/testing.rst) y
 [*Joining a Session into an External Transaction*](../fuentes/sqlalchemy/session_transaction.rst)
 de SQLAlchemy.
 
 - `anyio_backend` es `asyncio`. asyncpg y la app solo corren en asyncio.
 - Las pruebas corren contra PostgreSQL. Ven los mismos tipos y restricciones que producción.
+- La base de prueba se arma con `alembic upgrade head` al empezar la sesión: las pruebas ven el
+  esquema de las migraciones, no el de los modelos.
+- Las pruebas corren contra Valkey, que se vacía en cada prueba: un conteo de intentos no pasa de
+  una prueba a la siguiente.
+- Un WebSocket se prueba con `ASGIWebSocketTransport` de httpx-ws: corre en el loop de la prueba y
+  ve su transacción. `TestClient` corre la app en otro loop.
 
 <br>
 

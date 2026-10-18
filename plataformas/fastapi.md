@@ -542,8 +542,8 @@ de SQLAlchemy.
 
 - `anyio_backend` es `asyncio`. asyncpg y la app solo corren en asyncio.
 - Las pruebas corren contra PostgreSQL. Ven los mismos tipos y restricciones que producción.
-- La base de prueba se arma con `alembic upgrade head` al empezar la sesión: las pruebas ven el
-  esquema de las migraciones, no el de los modelos.
+- La base de prueba se arma con `alembic upgrade head` antes de pytest: las pruebas ven el esquema
+  de las migraciones, no el de los modelos.
 - Las pruebas corren contra Valkey, que se vacía en cada prueba: un conteo de intentos no pasa de
   una prueba a la siguiente.
 - Un WebSocket se prueba con `ASGIWebSocketTransport` de httpx-ws: corre en el loop de la prueba y
@@ -583,6 +583,8 @@ Estándar: [*Behind a Proxy*](../fuentes/fastapi/behind-a-proxy.md) de FastAPI.
 | `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
-| La versión mínima de cliente | `test_outdated_client_is_rejected` |
+| La versión mínima de cliente, en tres enteros | `test_outdated_client_is_rejected` |
+| La base de prueba con las migraciones | `uv run alembic upgrade head` antes de pytest en el job `server` de CI |
+| *Async Tests* y el WebSocket con httpx-ws: sin `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
 | Un `pageToken` ilegible o con otros parámetros responde 422 | `test_invalid_page_token_points_to_the_parameter` |
 | Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

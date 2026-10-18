@@ -288,12 +288,24 @@ async def test_validation_error_points_to_the_field() -> None:
     }
 
 
-async def test_outdated_client_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
-    """A client below its minimum version gets client-outdated."""
-    monkeypatch.setattr(settings, "min_client_versions", {"mobile": "1.4.0"})
+@pytest.mark.parametrize(
+    ("minimum", "user_agent"),
+    [
+        ("1.4.0", "mobile/1.3.9"),
+        ("1.10.0", "mobile/1.9.0"),
+        ("1.4.0", "mobile/1.4"),
+        ("1.4.0", "mobile/abc"),
+        ("1.4.0", "mobile"),
+    ],
+)
+async def test_outdated_client_is_rejected(
+    monkeypatch: pytest.MonkeyPatch, minimum: str, user_agent: str
+) -> None:
+    """A version below the minimum, or malformed, is outdated."""
+    monkeypatch.setattr(settings, "min_client_versions", {"mobile": minimum})
     transport = ASGITransport(app=main_app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
-        response = await client.get("/api/health", headers={"User-Agent": "mobile/1.3.9"})
+        response = await client.get("/api/health", headers={"User-Agent": user_agent})
     assert response.status_code == 400
     assert response.headers["content-type"] == errors.PROBLEM_JSON
     assert response.json()["type"] == errors.CLIENT_OUTDATED.uri

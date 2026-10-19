@@ -4,10 +4,12 @@ Cómo queda el servidor.
 
 ## Caddy
 
-Estándares: de Caddy, [*Automatic HTTPS*](../fuentes/caddy/automatic-https.md)
-y [*Keep Caddy Running*](../fuentes/caddy/running.md); de OWASP,
-[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md) y
-[*REST Security Cheat Sheet*](../fuentes/owasp/REST_Security.md).
+Estándares: de Caddy, [*Automatic HTTPS*](../fuentes/caddy/automatic-https.md),
+[*Keep Caddy Running*](../fuentes/caddy/running.md) y las secciones *Streaming* y *Defaults*, en
+*Headers*, de [`reverse_proxy`](../fuentes/caddy/reverse_proxy.md); de OWASP,
+[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md),
+[*REST Security Cheat Sheet*](../fuentes/owasp/REST_Security.md) y la sección *Infrastructure
+Configuration* del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
 
 - Caddy pone las cabeceras con la directiva `header`, para la web y para la API.
 - Caddy corta el cuerpo con `request_body`: 1 MB en la API y 10 MB en las rutas de subida. El
@@ -40,8 +42,10 @@ Estándares: de PostgreSQL, [*Client Authentication*](../fuentes/postgresql/clie
 
 ## Procesos
 
-Estándares: de FastAPI, [*Deployments Concepts*](../fuentes/fastapi/deployment-concepts.md) y
-[*Run a Server Manually*](../fuentes/fastapi/deployment-manually.md); de uv,
+Estándares: de FastAPI, [*Deployments Concepts*](../fuentes/fastapi/deployment-concepts.md),
+[*Run a Server Manually*](../fuentes/fastapi/deployment-manually.md) y la sección *Proxy
+Forwarded Headers* de [*Behind a Proxy*](../fuentes/fastapi/behind-a-proxy.md); de Uvicorn, la
+sección *Implementation* de [*Settings*](../fuentes/uvicorn/settings.md); de uv,
 [*Locking and syncing*](../fuentes/uv/sync.md); el
 [FHS 3.0](../fuentes/fhs/fhs-3.0.txt), y de systemd,
 [`systemd.unit`](../fuentes/systemd/systemd.unit.xml),
@@ -50,6 +54,11 @@ Estándares: de FastAPI, [*Deployments Concepts*](../fuentes/fastapi/deployment-
 [`systemd.timer`](../fuentes/systemd/systemd.timer.xml).
 
 - Antes de arrancar, el servidor compila sus catálogos con `pybabel compile -d src/app/locale`.
+- El servidor arranca con
+  `uvicorn app.main:app --host 127.0.0.1 --ws-max-size 65536 --ws-per-message-deflate false`:
+  `fastapi run` no le pasa a Uvicorn las opciones de WebSocket.
+- Caddy le llega al servidor por loopback: nadie salta los límites de Caddy, y Uvicorn cree las
+  cabeceras `X-Forwarded-*` solo de loopback, su valor por defecto.
 - Cada tarea periódica de [fastapi.md](fastapi.md#tareas-periódicas) tiene su timer de systemd.
   El del barrido de archivos corre cada día.
 

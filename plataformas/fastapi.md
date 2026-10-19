@@ -516,14 +516,25 @@ Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
 
 ## WebSocket
 
-Estándares: [*WebSockets*](../fuentes/fastapi/websockets.md) de FastAPI y
-[*Pub/Sub*](../fuentes/valkey/pubsub.md) de Valkey.
+Estándares: [*Pub/Sub*](../fuentes/valkey/pubsub.md) de Valkey y, del
+[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP, las
+secciones *Origin Header Validation*, *Message-Level Authorization*, *Input Validation* y
+*Denial-of-Service Protection*.
 
 Contrato: [transversal.md](transversal.md#websocket).
 
-- Cerrar sesión cierra sus conexiones en todos los procesos.
-- Cada proceso se suscribe a Valkey y reenvía a sus conexiones, con un canal por usuario. Pub/sub
-  entrega a lo sumo una vez; por eso el cliente pide el estado por REST al reconectar.
+- Cada proceso se suscribe a Valkey y reenvía a sus conexiones, con un canal por usuario.
+- Un handshake con la cookie exige un `Origin` igual al de la web, y uno con `Authorization` no lo
+  revisa. Contradice OWASP, que lo pide en todo handshake: una app nativa no manda `Origin`, y el
+  secuestro entre sitios solo existe con la credencial que el navegador agrega por su cuenta.
+- Un usuario tiene a lo sumo 10 conexiones abiertas, y la siguiente se rechaza en el handshake:
+  alcanza para varias pestañas y dispositivos. Manda a lo sumo 100 mensajes por minuto, y la
+  conexión que se pasa se cierra con 1008. Los contadores viven en Valkey, compartidos por todos
+  los procesos.
+- Una conexión sin mensajes no se cierra. Contradice OWASP, que pide cerrar las inactivas: la
+  conexión existe para esperar eventos del servidor, y el ping de Uvicorn ya cierra la que se cayó.
+- Los mensajes no llevan nonce. Contradice OWASP, que lo pide contra la repetición: WSS ya impide
+  que alguien fuera de la conexión repita un mensaje.
 
 <br>
 
@@ -548,17 +559,6 @@ de SQLAlchemy.
   una prueba a la siguiente.
 - Un WebSocket se prueba con `ASGIWebSocketTransport` de httpx-ws: corre en el loop de la prueba y
   ve su transacción. `TestClient` corre la app en otro loop.
-
-<br>
-
----
----
-
-<br>
-
-## Detrás de un proxy
-
-Estándar: [*Behind a Proxy*](../fuentes/fastapi/behind-a-proxy.md) de FastAPI.
 
 <br>
 

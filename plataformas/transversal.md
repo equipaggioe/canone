@@ -244,17 +244,25 @@ Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
 
 ## WebSocket
 
-Estándares: [RFC 6455](../fuentes/rfc/rfc6455.txt) y
-[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
+Estándares: [RFC 6455](../fuentes/rfc/rfc6455.txt) y, del
+[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP, las
+secciones *Always Use WSS* y *Session Management*, sin su párrafo de `SameSite`.
 
-- La web se autentica con la cookie de sesión del handshake. Una app, con el token de acceso en el
-  primer mensaje: si no llega en 5 segundos, el servidor cierra con 1008. De las dos formas que da
-  OWASP para un token, el mensaje no lo deja en los registros de acceso.
-- Al refrescar la sesión, una app manda el token nuevo por la misma conexión. Cuando vence el que
-  tiene, el servidor cierra con 1008.
+- La web se autentica con la cookie de sesión del handshake, y una app, con
+  `Authorization: Bearer` en el handshake, como en REST.
+- Una sesión que no vale o un token vencido cierran la conexión con 4401, del rango privado de
+  RFC 6455: un código propio separa la sesión de cualquier otro cierre. En el handshake, el
+  servidor acepta la conexión para cerrarla: un rechazo con 401 Uvicorn lo registra como error, y
+  uno con 403 no dice que el problema es la sesión.
+- Ante un 4401, una app refresca la sesión una sola vez y reconecta, y la web vuelve al inicio de
+  sesión.
+- Al refrescar la sesión, una app manda el token nuevo por la misma conexión.
+- Borrar una sesión cierra sus conexiones en el momento. Deja sin efecto la revalidación periódica
+  de *Session Management*: el cierre llega con el borrado, no en la siguiente revisión.
 - Los mensajes son JSON `{type, data}`, en camelCase como la API.
-- Al perder la conexión, el cliente reconecta con espera exponencial y jitter, y vuelve a pedir el
-  estado por REST. Lo que se envió mientras estaba desconectado no se repite.
+- Al perder la conexión, el cliente reconecta con espera exponencial y jitter, con hasta 30
+  segundos entre intentos, y vuelve a pedir el estado por REST. Lo que se envió mientras estaba
+  desconectado no se repite.
 
 ## Cómo se hace cumplir
 

@@ -39,11 +39,11 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [fastapi/settings.md](fastapi/settings.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/settings.md> |  |
 | [fastapi/async-tests.md](fastapi/async-tests.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/async-tests.md> |  |
 | [fastapi/testing-dependencies.md](fastapi/testing-dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/testing-dependencies.md> |  |
-| [fastapi/websockets.md](fastapi/websockets.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/websockets.md> |  |
 | [fastapi/opentelemetry.md](fastapi/opentelemetry.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/opentelemetry.md> |  |
 | [fastapi/request-files.md](fastapi/request-files.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/request-files.md> |  |
 | [fastapi/deployment-concepts.md](fastapi/deployment-concepts.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/deployment/concepts.md> |  |
 | [fastapi/deployment-manually.md](fastapi/deployment-manually.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/deployment/manually.md> |  |
+| [uvicorn/settings.md](uvicorn/settings.md) | <https://raw.githubusercontent.com/encode/uvicorn/master/docs/settings.md> |  |
 | [pydantic/config.md](pydantic/config.md) | <https://raw.githubusercontent.com/pydantic/pydantic/main/docs/concepts/config.md> |  |
 | [pydantic-settings/index.md](pydantic-settings/index.md) | <https://raw.githubusercontent.com/pydantic/pydantic-settings/main/docs/index.md> |  |
 | [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/orm/extensions/asyncio.rst> |  |
@@ -253,6 +253,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pytest-qt/signals.rst](pytest-qt/signals.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/signals.rst> |  |
 | [caddy/automatic-https.md](caddy/automatic-https.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/automatic-https.md> |  |
 | [caddy/running.md](caddy/running.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/running.md> |  |
+| [caddy/reverse_proxy.md](caddy/reverse_proxy.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/reverse_proxy.md> |  |
 | [systemd/systemd.unit.xml](systemd/systemd.unit.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.unit.xml> |  |
 | [systemd/systemd.service.xml](systemd/systemd.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.service.xml> |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.exec.xml> |  |

@@ -1,6 +1,6 @@
 # ADR-0056 · Una regla es lo que escribe la página, y lo que adopta una fuente es una convención
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 4 lo reemplaza el [ADR-0063](0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md)
 - **Fecha:** 2026-10-16
 - **Alcance:** `plataformas/` y `fuentes/`
 

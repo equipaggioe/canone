@@ -1,6 +1,6 @@
 # ADR-0030 · Una página cita lo que adopta en su mayoría, y lo demás es regla propia
 
-- **Estado:** Aceptada. El punto 4 lo reemplaza el [ADR-0056](0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
+- **Estado:** Aceptada. El punto 4 lo reemplaza el [ADR-0056](0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md), y el punto 3, el [ADR-0063](0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md)
 - **Fecha:** 2026-10-05
 - **Alcance:** `plataformas/` y `fuentes/`
 

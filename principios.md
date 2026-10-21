@@ -36,6 +36,13 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 - [`scripts/verificar.py`](scripts/verificar.py) revisa el largo de las funciones, los métodos y las
   clases, y que la configuración no repita el nombre del repositorio.
 
+## Leer las fuentes
+
+Al escribir código que cae en una sección de una página de [`plataformas/`](plataformas/), se lee
+el texto en [`fuentes/`](fuentes/) de lo que esa sección cita, salvo que la fuente sea de
+conocimiento general, como PEP 8 o SemVer, o que una herramienta de «Cómo se hace cumplir» la
+verifique. Ante la duda, se lee.
+
 ## Sin fallbacks
 
 Nada de valores por defecto silenciosos, handlers vacíos ni degradados silenciosos, en ningún

@@ -30,45 +30,54 @@ escribe la página como regla, y sirve para una de tres cosas:
 Una convención que no sirve para ninguna de las tres no va, y una que sirve vale aunque ninguna
 herramienta la haga cumplir.
 
-### Las fuentes son las convenciones
+### Qué puede ser fuente
 
-- Una revisión empieza por la lista de lo que la tecnología obliga a decidir. Cada punto se
-  responde con una fuente citada o, si ninguna lo cubre, con una regla propia.
-- Las fuentes se eligen para que cubran casi todas las convenciones de un asunto, y así la página
-  escribe pocas reglas.
-- Para cada asunto se busca una fuente en este orden, y se prefiere la de menor número:
+Una revisión empieza por la lista de lo que la tecnología obliga a decidir. Cada punto se responde
+con una fuente citada o, si ninguna lo cubre, con una regla propia. Una fuente, o la parte que se
+cita, cumple los siete requisitos:
 
-  | Orden | Fuente |
-  |---|---|
-  | 1 | El texto normativo de un estándar de la tecnología (MUST, SHOULD o RECOMMENDED) y la recomendación escrita en su documentación, en su versión más reciente |
-  | 2 | Un estándar de un campo, como OWASP, NIST o ISO |
-  | 3 | Una especificación de facto, como SemVer, Conventional Commits o The Twelve-Factor App |
-  | 4 | Una guía publicada por una organización de referencia, como Google AIP o las guías de API de Microsoft |
+1. **Normativa:** dice qué se debe, se debería o no se debe hacer. Cada frase citada se puede
+   reescribir como «se usa X» o «no se hace Y». Los pasos, los ejemplos y las explicaciones no
+   cuentan, aunque estén en la documentación oficial.
+2. **Decide algo:** responde a un punto de la lista de lo que hay que decidir.
+3. **Autoridad:** la escribe quien define la tecnología, o un organismo, para que otros la
+   adopten: un estándar, una especificación, una guía de estilo oficial, OWASP o NIST. Un
+   tutorial, el código de los ejemplos, un proyecto de muestra, un blog, un curso, un foro, lo que
+   hace la comunidad o la popularidad no.
+4. **Acotada:** la parte citada se puede leer entera al escribir el código de su sección, salvo que
+   su fuente sea de conocimiento general, como PEP 8 o SemVer, o que una herramienta de «Cómo se
+   hace cumplir» la verifique.
+5. **Fija:** tiene versión o fecha y corresponde a la versión de la tecnología que se usa. La copia
+   de [fuentes/](../fuentes/) congela esa versión.
+6. **Con licencia:** su licencia permite copiar el texto en `fuentes/`.
+7. **Independiente:** la parte citada no depende de la infraestructura de quien la publica.
 
-- Elegir una fuente de mayor número en un asunto que otra de menor número ya cubre es una regla
-  propia.
-- Una guía de orden 4 se cita solo si se escribió para que otros la adopten:
-  - Es pública y su licencia permite usarla.
-  - Es normativa: convenciones numeradas con MUST o SHOULD, no consejos sueltos.
-  - Está versionada, con historial de cambios. La copia de `fuentes/` fija la versión adoptada.
-  - La parte citada no depende de la infraestructura de quien la publica.
-- Nunca se citan los tutoriales, el código de los ejemplos, los proyectos de muestra, lo que hace
-  la comunidad, la popularidad, los blogs, los cursos ni los foros.
+Si dos fuentes que cumplen los siete requisitos regulan lo mismo, se cita la de menor orden y, a
+igual orden, la que cubre más del asunto:
+
+| Orden | Fuente |
+|---|---|
+| 1 | Un estándar de la tecnología y la recomendación escrita en su documentación |
+| 2 | Un estándar de un campo, como OWASP, NIST o ISO |
+| 3 | Una especificación de facto, como SemVer, Conventional Commits o The Twelve-Factor App |
+| 4 | Una guía de una organización de referencia, como Google AIP o las guías de API de Microsoft |
+
+### Qué implica citar
+
 - Se cita lo que se adopta en su mayoría: una fuente entera o solo una parte, como una sección, un
   capítulo, una AIP o un nivel de ASVS. Todo lo demás, venga de donde venga, es una regla propia.
 - Citar una fuente, o una parte de ella, adopta todas sus convenciones explícitas: lo que se debe,
-  se debería o no se debe hacer, aunque nada lo haga cumplir. Se cumplen como si fueran obligatorias
-  y no se escriben. Los pasos de un procedimiento y el «cómo se hace» no son convenciones, aunque
-  estén en su documentación oficial.
+  se debería o no se debe hacer, aunque nada lo haga cumplir. Se cumplen como si fueran
+  obligatorias.
+- Dos partes citadas nunca regulan lo mismo. Si dos fuentes chocan en un asunto, se cita solo la
+  que mejor se adapta, o se dice qué secciones se aplican de cada una.
 - Lo que una herramienta hace por defecto no viene de ninguna fuente, pero rige mientras la página
   no diga otra cosa. Cambiarlo es una regla propia, salvo que una fuente citada pida el cambio.
 - Una regla propia no nombra una fuente que la página no cita, tampoco para contradecirla: lleva
   solo su razón.
-- Dos partes citadas nunca regulan lo mismo. Si dos fuentes chocan en un asunto, se cita solo la
-  que mejor se adapta, o se dice qué secciones se aplican de cada una.
-- Cada sección nombra las partes que cita y enlaza su texto en [fuentes/](../fuentes/), que
-  guarda solo lo que se cita. Una fuente que rige varias secciones se cita en cada una solo con la
-  parte que la rige, y ninguna parte se cita en dos secciones.
+- Cada sección nombra las partes que cita y enlaza su texto en `fuentes/`, que guarda solo lo que
+  se cita. Una fuente que rige varias secciones se cita en cada una solo con la parte que la rige,
+  y ninguna parte se cita en dos secciones.
 
 ### Qué escribe la página
 
@@ -138,5 +147,6 @@ el [ADR-0029](../adr/0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los
 el [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md),
 el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md),
 el [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md),
-el [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md)
-y el [ADR-0056](../adr/0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md).
+el [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md),
+el [ADR-0056](../adr/0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
+y el [ADR-0063](../adr/0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md).

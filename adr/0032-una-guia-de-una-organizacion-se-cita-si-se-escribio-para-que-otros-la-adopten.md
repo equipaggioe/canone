@@ -1,6 +1,6 @@
 # ADR-0032 · Una guía de una organización se cita si se escribió para que otros la adopten
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0063](0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md)
 - **Fecha:** 2026-10-05
 - **Alcance:** `plataformas/` y `fuentes/`
 

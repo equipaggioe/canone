@@ -43,9 +43,9 @@ configuración de esta página más la de su plataforma.
 - Ninguna dependencia bloqueada tiene una vulnerabilidad conocida.
 - Una vulnerabilidad se ignora solo por su identificador, con `--ignore-vuln`. Sacar el paquete
   del análisis también tapa sus vulnerabilidades futuras.
-- Todo paquete que el código importa está declarado en `pyproject.toml`, aunque otro paquete ya
-  lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete
-  cambia.
+- Todo paquete que importa el código de `src/` está declarado en `dependencies`, aunque otro
+  paquete ya lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese
+  paquete cambia.
 - Toda dependencia declarada se usa.
 
 ## Estilo
@@ -68,8 +68,8 @@ Estándares: las secciones *Ergonomic Practices* y *Types* de
 [*Typing Best Practices*](../fuentes/typing/best_practices.rst) y
 [*Modernizing Superseded Typing Features*](../fuentes/typing/modernizing.rst).
 
-- Pyrefly en modo strict. Entiende sin plugin los alias que genera `to_camel` y los campos que
-  pydantic-settings lee del entorno.
+- Pyrefly en modo strict, salvo `missing-override-decorator`, que activa solo qt.md. Entiende sin
+  plugin los alias que genera `to_camel` y los campos que pydantic-settings lee del entorno.
 - Toda función va anotada: el verificador puede no revisar el cuerpo de una función sin anotar.
 - Un error de tipos se ignora con `# pyrefly: ignore[<código>]`: Pyrefly aplica `# type: ignore` a
   toda la línea sin mirar el código.
@@ -149,24 +149,24 @@ Estándar: la sección *Using pytest's strict mode* de las
 |---|---|
 | Python 3.13 de Debian 13 | `requires-python` y uv con `python-preference = "only-system"` |
 | El bloqueo | `uv sync --locked` en CI |
-| PEP 8 | `ruff format` y ruff `E`, `W`, `N`, `BLE` y `UP009`, con `max-doc-length = 72` |
+| PEP 8: *Code Lay-out*, *Whitespace in Expressions and Statements*, *Naming Conventions* y las comparaciones de *Programming Recommendations* | `ruff format` y ruff `E` salvo `E722`, `W`, `N` salvo `N811` a `N814`, `N817` y `N818`, y `UP009`, con `max-doc-length = 72` |
 | Reglas `F` | ruff `F` |
 | Orden de los imports | ruff `I` |
-| PEP 257 | ruff `D` con `convention = "pep257"` |
-| *Modernizing Superseded Typing Features* | ruff `UP006`, `UP007`, `UP013`, `UP019`, `UP035`, `UP040`, `UP045` y `UP046` con `target-version = "py313"`, y `PYI050` y `PYI057` |
-| Pyrefly en modo strict | `preset = "strict"` |
+| PEP 257: la forma de los docstrings | ruff `D` con `convention = "pep257"` |
+| *Modernizing Superseded Typing Features*, salvo *Type Comments*, `NoReturn` como retorno y `TypeGuard` | ruff `UP006`, `UP007`, `UP013`, `UP019`, `UP035`, `UP040`, `UP045` y `UP046` con `target-version = "py313"`, y `PYI050` y `PYI057` |
+| Pyrefly en modo strict | `preset = "strict"` y `missing-override-decorator = false` |
 | Toda función anotada | Pyrefly con `preset = "strict"` y `unannotated-return = "error"` |
 | `# pyrefly: ignore` | Pyrefly con `enabled-ignores = ["pyrefly"]` |
 | `# noqa` con código | ruff `PGH004` |
 | `__init__.py` | ruff `INP` |
 | Imports absolutos | ruff `TID252` con `ban-relative-imports = "all"` |
-| Toda salida por logging | ruff `T20` |
+| Toda salida por logging: sin `print` ni `pprint` | ruff `T20` |
 | Argumentos `%s` en los mensajes | ruff `G00` |
 | Fechas aware | ruff `DTZ` |
 | *Running Blocking Code*: llamadas que bloquean | ruff `ASYNC2` |
 | Referencia de las tareas fuera de un `TaskGroup` | ruff `RUF006` |
 | Pruebas en modo de desarrollo | `PYTHONDEVMODE=1` en el paso de pytest de CI |
-| *Text Encoding*: codificación explícita | `PYTHONWARNDEFAULTENCODING=1` en el paso de pytest de CI y `error::EncodingWarning` en `filterwarnings` |
+| *Text Encoding*: codificación explícita en el código que corren las pruebas | `PYTHONWARNDEFAULTENCODING=1` en el paso de pytest de CI y `error::EncodingWarning` en `filterwarnings` |
 | Reglas `PT` | ruff `PT` |
 | *Using pytest's strict mode* | `strict = true` |
 | Sin `mktemp` | ruff `S306` |

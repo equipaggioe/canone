@@ -91,6 +91,7 @@ La página escribe solo tres clases de reglas:
 Cómo se escribe:
 
 - Cada regla dice qué se usa y cómo queda. No es un procedimiento ni un tutorial.
+- Dos reglas de una página no chocan: una que deja casos fuera de otra los nombra.
 - Una regla lleva razón, en una frase corta, solo en dos casos: por qué contradice, deja sin efecto
   o endurece una fuente, y cómo ayuda una elección que no es trivial. Una regla trivial, como un
   color o el largo de línea, no lleva razón: es una preferencia. Fuera de la razón, sin
@@ -125,6 +126,7 @@ Las secciones van en siete bloques, en este orden. Una página escribe solo los 
 - La tabla «Cómo se hace cumplir» nombra en su primera columna la fuente o la parte citada, o
   una regla que la página ya escribió. Nunca redacta una regla nueva para llenar la fila.
 - Una herramienta que marca más de lo que dice su fila impone una convención no escrita, y no va.
+- Las herramientas de una fila hacen cumplir todo lo que nombra su primera columna.
 
 ### Alcance
 
@@ -135,6 +137,16 @@ Las secciones van en siete bloques, en este orden. Una página escribe solo los 
   trabaja en una pieza encuentra sus reglas en su página.
 - Nombra los archivos de `plantilla/` que salen de ella.
 - No dice qué repositorio la usa ni cuándo elegir una plataforma sobre otra.
+
+### Cómo se revisa
+
+Una revisión da un veredicto sobre cada fuente citada, cada regla y cada fila de «Cómo se hace
+cumplir», contra los criterios de este archivo, y no solo sobre lo que encuentra mal: lo que no se
+evaluó queda a la vista.
+
+- Cada veredicto lleva su evidencia: comprobado, con el comando que lo reproduce; leído, con la
+  línea de la fuente, o sin confirmar.
+- Lo que marca una herramienta se comprueba con un experimento, no de memoria.
 
 ### De dónde se escribe
 
@@ -149,4 +161,5 @@ el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a
 el [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md),
 el [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md),
 el [ADR-0056](../adr/0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
-y el [ADR-0063](../adr/0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md).
+el [ADR-0063](../adr/0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md)
+y el [ADR-0064](../adr/0064-una-revision-da-un-veredicto-con-evidencia-sobre-cada-regla-fuente-y-fila.md).

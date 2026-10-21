@@ -11,20 +11,14 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [python/pep-0008.rst](python/pep-0008.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0008.rst> |  |
 | [python/pep-0257.rst](python/pep-0257.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0257.rst> |  |
 | [python/pep-0698.rst](python/pep-0698.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0698.rst> |  |
-| [python/logging-howto.rst](python/logging-howto.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/howto/logging.rst> |  |
-| [python/asyncio-dev.rst](python/asyncio-dev.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/asyncio-dev.rst> |  |
-| [python/asyncio-task.rst](python/asyncio-task.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/asyncio-task.rst> |  |
-| [python/datetime.rst](python/datetime.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/datetime.rst> |  |
+| [python/asyncio-dev.rst](python/asyncio-dev.rst) | <https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/asyncio-dev.rst> | Rama 3.13, la versión que usan las piezas: la de `main` nombra `InterpreterPoolExecutor`, que no existe en 3.13. |
 | [python/io.rst](python/io.rst) | <https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/io.rst> | Rama 3.13, la versión que usan las piezas: desde 3.15 la codificación por defecto es UTF-8 y la sección *Text Encoding* ya no recomienda indicarla. |
-| [python/security_warnings.rst](python/security_warnings.rst) | <https://raw.githubusercontent.com/python/cpython/main/Doc/library/security_warnings.rst> |  |
 | [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pyproject-toml.rst> |  |
 | [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/dependency-groups.rst> |  |
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |
 | [uv/sync.md](uv/sync.md) | <https://raw.githubusercontent.com/astral-sh/uv/main/docs/concepts/projects/sync.md> |  |
 | [babel/messages.rst](babel/messages.rst) | <https://raw.githubusercontent.com/python-babel/babel/master/docs/messages.rst> |  |
 | [babel/cmdline.rst](babel/cmdline.rst) | <https://raw.githubusercontent.com/python-babel/babel/master/docs/cmdline.rst> |  |
-| [typing/spec/annotations.rst](typing/spec/annotations.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/spec/annotations.rst> |  |
-| [typing/spec/directives.rst](typing/spec/directives.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/spec/directives.rst> |  |
 | [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> |  |
 | [typing/modernizing.rst](typing/modernizing.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/guides/modernizing.rst> |  |
 | [fastapi/dependencies.md](fastapi/dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/dependencies/index.md> |  |

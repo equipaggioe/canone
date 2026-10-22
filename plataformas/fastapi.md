@@ -221,9 +221,11 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 ## Contraseñas
 
 Estándares: de [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), la sección 3.1.1
-*Passwords*, salvo sus tres últimos párrafos, sobre cómo se guarda la contraseña, y la sección 4.2
-*Account Recovery*; y la sección *Argon2id* del
-[*Password Storage Cheat Sheet*](../fuentes/owasp/Password_Storage.md) de OWASP.
+*Passwords*, salvo sus tres últimos párrafos, sobre cómo se guarda la contraseña, y los que cita
+[transversal.md](transversal.md#contraseñas), y la sección 4.2 *Account Recovery*; y la sección
+*Argon2id* del [*Password Storage Cheat Sheet*](../fuentes/owasp/Password_Storage.md) de OWASP.
+
+Contrato: [transversal.md](transversal.md#contraseñas).
 
 - Una contraseña se guarda con `PasswordHash.recommended()` de pwdlib: Argon2id con 64 MiB y 3
   pasadas, por encima de los mínimos de OWASP.

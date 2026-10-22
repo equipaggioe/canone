@@ -35,6 +35,12 @@ Estándar: la sección *Message format* de
 - Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el formato de
   WICG reserva el final de la última para sintaxis futura.
 
+## Contraseñas
+
+Estándar: de la sección 3.1.1.2 *Password Verifiers* de
+[NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), los párrafos sobre la guía para elegir una
+contraseña, los gestores de contraseñas y mostrar la contraseña mientras se escribe.
+
 ## Errores
 
 Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt) y [RFC 6901](../fuentes/rfc/rfc6901.txt).

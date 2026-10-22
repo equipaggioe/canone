@@ -4,11 +4,7 @@ Cómo queda el servidor.
 
 ## Caddy
 
-Estándares: de Caddy, [*Automatic HTTPS*](https://caddyserver.com/docs/automatic-https) y las
-secciones *Streaming* y *Defaults*, en *Headers*, de
-[`reverse_proxy`](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy), que se enlazan
-en su sitio porque su licencia no permite copiarlas; de OWASP,
-[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), la sección
+Estándares: de OWASP, [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), la sección
 *HTTPS* del [*REST Security Cheat Sheet*](../fuentes/owasp/REST_Security.md) y la sección
 *Infrastructure Configuration* del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
 
@@ -20,14 +16,15 @@ en su sitio porque su licencia no permite copiarlas; de OWASP,
 ## Configuración
 
 Estándares: de systemd 257, la versión de Debian 13, [`systemd.exec`](../fuentes/systemd/systemd.exec.xml),
-en *Environment* y *Credentials*, y [*Secrets Management Cheat Sheet*](../fuentes/owasp/Secrets_Management.md)
-de OWASP.
+en *Environment* y *Credentials*, y la sección 2.7, *Secret Lifecycle*, del
+[*Secrets Management Cheat Sheet*](../fuentes/owasp/Secrets_Management.md) de OWASP.
 
-- Los secretos viven solo en el `EnvironmentFile`.
+- Cada secreto llega al servicio con `LoadCredential=`, y la aplicación lo lee de
+  `$CREDENTIALS_DIRECTORY`.
 
 ## coturn
 
-Estándar: la sección 21.1.4, *Fake Data*, del [RFC 8656](../fuentes/rfc/rfc8656.txt).
+Estándar: la sección 21.2, *Firewall Considerations*, del [RFC 8656](../fuentes/rfc/rfc8656.txt).
 
 - coturn escucha en 3478 (UDP y TCP) y en 5349 (TLS), y niega relevar hacia direcciones privadas con
   `denied-peer-ip`. Endurece el RFC, que deja la restricción al administrador: TURN no sirve de
@@ -44,7 +41,8 @@ Estándar: `StateDirectory=` de [`systemd.exec`](../fuentes/systemd/systemd.exec
 
 Estándares: la sección *Proxy Forwarded Headers* de
 [*Behind a Proxy*](../fuentes/fastapi/behind-a-proxy.md) de FastAPI, y de systemd, `ExecStart=` y
-`ExecStartPre=` de [`systemd.service`](../fuentes/systemd/systemd.service.xml) y `OnCalendar=` de
+`ExecStartPre=` de [`systemd.service`](../fuentes/systemd/systemd.service.xml), la sección
+*Sandboxing* de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml) y `OnCalendar=` de
 [`systemd.timer`](../fuentes/systemd/systemd.timer.xml).
 
 - Antes de arrancar, el servidor compila sus catálogos con `pybabel compile -d src/app/locale`.

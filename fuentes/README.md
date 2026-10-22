@@ -18,13 +18,9 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pyproject-toml.rst> |  |
 | [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/dependency-groups.rst> |  |
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |
-| [uv/sync.md](uv/sync.md) | <https://raw.githubusercontent.com/astral-sh/uv/main/docs/concepts/projects/sync.md> |  |
 | [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> |  |
 | [typing/modernizing.rst](typing/modernizing.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/guides/modernizing.rst> |  |
-| [fastapi/behind-a-proxy.md](fastapi/behind-a-proxy.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/behind-a-proxy.md> |  |
-| [fastapi/deployment-concepts.md](fastapi/deployment-concepts.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/deployment/concepts.md> |  |
-| [fastapi/deployment-manually.md](fastapi/deployment-manually.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/deployment/manually.md> |  |
-| [uvicorn/settings.md](uvicorn/settings.md) | <https://raw.githubusercontent.com/encode/uvicorn/master/docs/settings.md> |  |
+| [fastapi/behind-a-proxy.md](fastapi/behind-a-proxy.md) | <https://raw.githubusercontent.com/fastapi/fastapi/0.142.0/docs/en/docs/advanced/behind-a-proxy.md> |  |
 | [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/extensions/asyncio.rst> |  |
 | [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/session_basics.rst> |  |
 | [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/rel_1_20_0/docs/build/autogenerate.rst> |  |
@@ -35,9 +31,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [postgresql/syntax.sgml](postgresql/syntax.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/syntax.sgml> |  |
 | [postgresql/indices.sgml](postgresql/indices.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml> |  |
 | [postgresql/backup.sgml](postgresql/backup.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml> |  |
-| [postgresql/pg_dump.sgml](postgresql/pg_dump.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ref/pg_dump.sgml> |  |
-| [postgresql/pg_restore.sgml](postgresql/pg_restore.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ref/pg_restore.sgml> |  |
-| [postgresql/client-auth.sgml](postgresql/client-auth.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/client-auth.sgml> |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> |  |
 | [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217 |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |
@@ -82,23 +75,21 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Content_Security_Policy_Cheat_Sheet.md> |  |
 | [owasp/Forgot_Password.md](owasp/Forgot_Password.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Forgot_Password_Cheat_Sheet.md> |  |
 | [owasp/Password_Storage.md](owasp/Password_Storage.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Password_Storage_Cheat_Sheet.md> |  |
-| [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/HTTP_Headers_Cheat_Sheet.md> |  |
+| [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/HTTP_Headers_Cheat_Sheet.md> |  |
 | [owasp/Logging.md](owasp/Logging.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Cheat_Sheet.md> |  |
 | [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md> |  |
-| [owasp/REST_Security.md](owasp/REST_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/REST_Security_Cheat_Sheet.md> |  |
-| [owasp/Secrets_Management.md](owasp/Secrets_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Secrets_Management_Cheat_Sheet.md> |  |
+| [owasp/REST_Security.md](owasp/REST_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/REST_Security_Cheat_Sheet.md> |  |
+| [owasp/Secrets_Management.md](owasp/Secrets_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Secrets_Management_Cheat_Sheet.md> |  |
 | [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> |  |
 | [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/File_Upload_Cheat_Sheet.md> |  |
 | [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/WebSocket_Security_Cheat_Sheet.md> |  |
-| [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/main/topics/admin.md> |  |
-| [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/main/topics/security.md> |  |
-| [coturn/README.turnserver](coturn/README.turnserver) | <https://raw.githubusercontent.com/coturn/coturn/master/README.turnserver> |  |
+| [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md> | Valkey 8.1, la versión de Debian 13 |
+| [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md> | Valkey 8.1, la versión de Debian 13 |
 | [firebase/manage-tokens.md](firebase/manage-tokens.md) | <https://firebase.google.com/docs/cloud-messaging/manage-tokens> | Página web convertida a Markdown |
 | [firebase/set-message-type.md](firebase/set-message-type.md) | <https://firebase.google.com/docs/cloud-messaging/customize-messages/set-message-type> | Página web convertida a Markdown |
 | [firebase/android-message-priority.md](firebase/android-message-priority.md) | <https://firebase.google.com/docs/cloud-messaging/android-message-priority> | Página web convertida a Markdown |
 | [firebase/flutter-receive-messages.md](firebase/flutter-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/flutter/receive-messages> | Página web convertida a Markdown |
 | [firebase/android-receive-messages.md](firebase/android-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/android/receive-messages> | Página web convertida a Markdown |
-| [aws-s3/object-lifecycle-mgmt.md](aws-s3/object-lifecycle-mgmt.md) | <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html> | Página web convertida a Markdown |
 | [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md> |  |
 | [sveltekit/project-structure.md](sveltekit/project-structure.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/10-getting-started/30-project-structure.md> |  |
 | [sveltekit/load.md](sveltekit/load.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/20-load.md> |  |
@@ -220,11 +211,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pytest-qt/qapplication.rst](pytest-qt/qapplication.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/qapplication.rst> |  |
 | [pytest-qt/logging.rst](pytest-qt/logging.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/logging.rst> |  |
 | [pytest-qt/signals.rst](pytest-qt/signals.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/signals.rst> |  |
-| [caddy/automatic-https.md](caddy/automatic-https.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/automatic-https.md> |  |
-| [caddy/running.md](caddy/running.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/running.md> |  |
-| [caddy/reverse_proxy.md](caddy/reverse_proxy.md) | <https://raw.githubusercontent.com/caddyserver/website/master/src/docs/markdown/caddyfile/directives/reverse_proxy.md> |  |
-| [systemd/systemd.unit.xml](systemd/systemd.unit.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.unit.xml> |  |
-| [systemd/systemd.service.xml](systemd/systemd.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.service.xml> |  |
-| [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.exec.xml> |  |
-| [systemd/systemd.timer.xml](systemd/systemd.timer.xml) | <https://raw.githubusercontent.com/systemd/systemd/main/man/systemd.timer.xml> |  |
-| [fhs/fhs-3.0.txt](fhs/fhs-3.0.txt) | <https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.txt> | La jerarquía de archivos que sigue Debian |
+| [systemd/systemd.service.xml](systemd/systemd.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.service.xml> | systemd 257, la versión de Debian 13 |
+| [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.exec.xml> | systemd 257, la versión de Debian 13 |
+| [systemd/systemd.timer.xml](systemd/systemd.timer.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.timer.xml> | systemd 257, la versión de Debian 13 |

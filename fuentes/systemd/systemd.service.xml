@@ -50,6 +50,12 @@
     which configure resource control settings for the processes of the
     service.</para>
 
+    <para>If SysV init compat is enabled, systemd automatically creates service units that wrap SysV init
+    scripts (the service name is the same as the name of the script, with a <literal>.service</literal>
+    suffix added); see
+    <citerefentry><refentrytitle>systemd-sysv-generator</refentrytitle><manvolnum>8</manvolnum></citerefentry>.
+    </para>
+
     <para>The <citerefentry><refentrytitle>systemd-run</refentrytitle><manvolnum>1</manvolnum></citerefentry>
     command allows creating <filename>.service</filename> and <filename>.scope</filename> units dynamically
     and transiently from the command line.</para>
@@ -256,26 +262,6 @@
             command for reloading of the service's configuration.</para>
 
             <para>The signal to send can be tweaked via <varname>ReloadSignal=</varname>, see below.</para>
-
-            <para>For <option>notify-reload</option> services, systemd verifies that the service's main process
-            has actually installed a handler for the configured reload signal (by default
-            <constant>SIGHUP</constant>). This verification checks for both traditional signal handlers (via
-            <citerefentry project="man-pages"><refentrytitle>sigaction</refentrytitle><manvolnum>2</manvolnum></citerefentry>)
-            and blocked signals that are typically handled via
-            <citerefentry project="man-pages"><refentrytitle>signalfd</refentrytitle><manvolnum>2</manvolnum></citerefentry>.
-            This verification is performed at two points:</para>
-
-            <orderedlist>
-              <listitem><para>When the service first sends <literal>READY=1</literal> during initial startup. If no
-              signal handler is detected at this point, the service startup is aborted.</para></listitem>
-
-              <listitem><para>Immediately before sending the reload signal. If the handler is no longer present,
-              systemd logs a warning but the reload signal is still sent.</para></listitem>
-            </orderedlist>
-
-            <para>This prevents accidentally starting services that lack the required signal handler. Services
-            using <option>notify-reload</option> must install their reload signal handler before sending the
-            initial <literal>READY=1</literal> notification.</para>
             </listitem>
 
             <listitem><para>Behavior of <option>idle</option> is very similar to <option>simple</option>; however,
@@ -325,11 +311,11 @@
           <itemizedlist>
             <listitem><para>If set to <option>main</option> (the default), the service manager
             will consider the unit stopped when the main process, which is determined according to the
-            <varname>Type=</varname>, exits.</para></listitem>
+            <varname>Type=</varname>, exits. Consequently, it cannot be used with
+            <varname>Type=</varname><option>oneshot</option>.</para></listitem>
 
             <listitem><para>If set to <option>cgroup</option>, the service will be considered running as long as at
-            least one process in the cgroup has not exited. This option cannot be used with
-            <varname>Type=</varname><option>oneshot</option>.</para></listitem>
+            least one process in the cgroup has not exited.</para></listitem>
           </itemizedlist>
 
           <para>It is generally recommended to use <varname>ExitType=</varname><option>main</option> when a service has
@@ -477,15 +463,6 @@
         signal, etc.), the unit will be considered failed (and remaining commands will be skipped). Exit code of 0 or
         those matching <varname>SuccessExitStatus=</varname> will continue execution to the next commands.</para>
 
-        <para>Note that an <varname>ExecCondition=</varname> skip is <emphasis>not</emphasis> equivalent to a
-        unit-level <varname>Condition…=</varname> or <varname>Assert…=</varname> check failing. Because
-        <varname>ExecCondition=</varname> runs as part of the activation transition, a skip causes the unit to
-        transition from <constant>active</constant> to <constant>inactive</constant>, and consequently
-        <varname>SuccessAction=</varname> (see
-        <citerefentry><refentrytitle>systemd.unit</refentrytitle><manvolnum>5</manvolnum></citerefentry>) will be
-        honored. By contrast, <varname>Condition…=</varname> directives in the <literal>[Unit]</literal> section
-        prevent activation entirely and therefore do not trigger <varname>SuccessAction=</varname>.</para>
-
         <para>The same recommendations about not running long-running processes in <varname>ExecStartPre=</varname>
         also applies to <varname>ExecCondition=</varname>. <varname>ExecCondition=</varname> will also run the commands
         in <varname>ExecStopPost=</varname>, as part of stopping the service, in the case of any non-zero or abnormal
@@ -498,8 +475,8 @@
       <varlistentry>
         <term><varname>ExecReload=</varname></term>
 
-        <listitem><para>Commands to execute to trigger a configuration reload in the service. This setting
-        may take multiple command lines, following the same scheme as described for
+        <listitem><para>Commands to execute to trigger a configuration reload in the service. This argument
+        takes multiple command lines, following the same scheme as described for
         <varname>ExecStart=</varname> above. Use of this setting is optional. Specifier and environment
         variable substitution is supported here following the same scheme as for
         <varname>ExecStart=</varname>.</para>
@@ -509,12 +486,13 @@
 
         <programlisting>ExecReload=kill -HUP $MAINPID</programlisting>
 
-        <para>Note however that reloading a daemon by enqueuing a signal without completion notification
-        (as is the case with the example line above) is usually not a good choice, because this is an
-        asynchronous operation and hence not suitable when ordering reloads of multiple services against
-        each other. It is thus strongly recommended to either use <varname>Type=notify-reload</varname>,
-        or to set <varname>ExecReload=</varname> to a command that not only triggers a configuration reload
-        of the daemon, but also synchronously waits for it to complete. For example, <citerefentry
+        <para>Note however that reloading a daemon by enqueuing a signal (as with the example line above) is
+        usually not a good choice, because this is an asynchronous operation and hence not suitable when
+        ordering reloads of multiple services against each other. It is thus strongly recommended to either
+        use <varname>Type=</varname><option>notify-reload</option> in place of
+        <varname>ExecReload=</varname>, or to set <varname>ExecReload=</varname> to a command that not only
+        triggers a configuration reload of the daemon, but also synchronously waits for it to complete. For
+        example, <citerefentry
         project='mankier'><refentrytitle>dbus-broker</refentrytitle><manvolnum>1</manvolnum></citerefentry>
         uses the following:</para>
 
@@ -522,22 +500,6 @@
         /org/freedesktop/DBus org.freedesktop.DBus \
         ReloadConfig
 </programlisting>
-
-        <para>This setting can be combined with <varname>Type=notify-reload</varname>, in which case
-        the service main process is signaled after all specified command lines finish execution. Specially,
-        if <literal>RELOADING=1</literal> notification is received before <varname>ExecReload=</varname>
-        completes, the signaling is skipped and the service manager immediately starts listening for
-        <literal>READY=1</literal>.</para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term><varname>ExecReloadPost=</varname></term>
-
-        <listitem><para>Commands to execute after a successful reload operation. Syntax for this setting
-        is exactly the same as <varname>ExecReload=</varname>.</para>
-
-        <xi:include href="version-info.xml" xpointer="v259"/>
         </listitem>
       </varlistentry>
 
@@ -663,22 +625,6 @@ RestartMaxDelaySec=160s</programlisting>
       </varlistentry>
 
       <varlistentry>
-        <term><varname>RestartRandomizedDelaySec=</varname></term>
-        <listitem><para>Delay automatic restarts by a randomly selected, evenly distributed amount of time
-        between 0 and the specified time value, added on top of the delay otherwise configured via
-        <varname>RestartSec=</varname> (and <varname>RestartSteps=</varname>/<varname>RestartMaxDelaySec=</varname>,
-        if used). Takes a value in the same format as <varname>RestartSec=</varname>. Defaults to 0, indicating
-        that no randomized delay shall be applied.</para>
-
-        <para>This setting is useful to stretch out the restarts of similarly configured service instances that
-        fail at the same time, to prevent them from restarting simultaneously and possibly resulting in
-        resource congestion. It is the restart-side analogue of <varname>RandomizedDelaySec=</varname> in
-        <citerefentry><refentrytitle>systemd.timer</refentrytitle><manvolnum>5</manvolnum></citerefentry>.</para>
-
-        <xi:include href="version-info.xml" xpointer="v262"/></listitem>
-      </varlistentry>
-
-      <varlistentry>
         <term><varname>TimeoutStartSec=</varname></term>
         <listitem><para>Configures the time to wait for start-up. If a daemon service does not signal
         start-up completion within the configured time, the service will be considered failed and will be
@@ -700,7 +646,7 @@ RestartMaxDelaySec=160s</programlisting>
         <citerefentry><refentrytitle>sd_notify</refentrytitle><manvolnum>3</manvolnum></citerefentry>).
         </para>
 
-        <para>Note that the start timeout is also applied to service reloads, regardless of whether implemented
+        <para>Note that the start timeout is also applied to service reloads, regardless if implemented
         through <varname>ExecReload=</varname> or via the reload logic enabled via <varname>Type=notify-reload</varname>.
         If the reload does not complete within the configured time, the reload will be considered failed and
         the service will continue running with the old configuration. This will not affect the running service,
@@ -979,16 +925,6 @@ RestartMaxDelaySec=160s</programlisting>
                 <entry/>
                 <entry>X</entry>
               </row>
-              <row>
-                <entry>Termination due to OOM</entry>
-                <entry/>
-                <entry>X</entry>
-                <entry/>
-                <entry>X</entry>
-                <entry>X</entry>
-                <entry/>
-                <entry/>
-              </row>
             </tbody>
           </tgroup>
         </table>
@@ -1150,14 +1086,18 @@ RestartMaxDelaySec=160s</programlisting>
 
       <varlistentry>
         <term><varname>RootDirectoryStartOnly=</varname></term>
-        <listitem><para>Takes a boolean argument. If true, the root directory, as configured with the
+        <listitem><para>Takes a boolean argument. If true, the root
+        directory, as configured with the
         <varname>RootDirectory=</varname> option (see
         <citerefentry><refentrytitle>systemd.exec</refentrytitle><manvolnum>5</manvolnum></citerefentry>
-        for more information), is only applied to the process started with <varname>ExecStart=</varname>,
-        and not to the various other <varname>ExecStartPre=</varname>, <varname>ExecStartPost=</varname>,
-        <varname>ExecReload=</varname>, <varname>ExecReloadPost=</varname>, <varname>ExecStop=</varname>,
-        and <varname>ExecStopPost=</varname> commands. If false, the setting is applied to all
-        configured commands the same way. Defaults to false.</para></listitem>
+        for more information), is only applied to the process started
+        with <varname>ExecStart=</varname>, and not to the various
+        other <varname>ExecStartPre=</varname>,
+        <varname>ExecStartPost=</varname>,
+        <varname>ExecReload=</varname>, <varname>ExecStop=</varname>,
+        and <varname>ExecStopPost=</varname> commands. If false, the
+        setting is applied to all configured commands the same way.
+        Defaults to false.</para></listitem>
       </varlistentry>
 
       <varlistentry>
@@ -1290,83 +1230,19 @@ RestartMaxDelaySec=160s</programlisting>
       <varlistentry>
         <term><varname>FileDescriptorStorePreserve=</varname></term>
         <listitem><para>Takes one of <constant>no</constant>, <constant>yes</constant>,
-        <constant>restart</constant>, <constant>on-success</constant> and controls when to release the
-        service's file descriptor store (i.e. when to close the contained file descriptors, if any). If set
-        to <constant>no</constant> the file descriptor store is automatically released when the service is
-        stopped; if <constant>restart</constant> (the default) it is kept around as long as the unit is
-        neither inactive nor failed, or a job is queued for the service, or the service is expected to be
-        restarted. If <constant>yes</constant> the file descriptor store is kept around and garbage
-        collection of the unit is disabled. The latter is useful to keep entries in the file descriptor
-        store pinned until the unit is removed, the service manager exits, or the file descriptors get
-        <constant>EPOLLHUP</constant> or <constant>EPOLLERR</constant>. If <constant>on-success</constant>
-        the behaviour is identical to <constant>yes</constant>, except that the file descriptor store is
-        discarded if the unit enters the permanent <literal>failed</literal> state (i.e. once all automated
-        restart attempts driven by <varname>Restart=</varname> have been exhausted). The store is preserved
-        across the transitionary failed states that precede each individual auto-restart attempt.</para>
-
-        <para>When set to <constant>yes</constant> or <constant>on-success</constant>, and the service is
-        itself running under another service manager (e.g. a service of <filename>user@.service</filename>,
-        or a payload inside
-        <citerefentry><refentrytitle>systemd-nspawn</refentrytitle><manvolnum>1</manvolnum></citerefentry>),
-        file descriptors pushed into the store are also forwarded one level up via the enveloping manager's
-        <varname>$NOTIFY_SOCKET</varname>, tagged with the originating unit id, so that they are preserved
-        across restarts of the inner manager and handed back to the originating unit when it is started
-        again. For this to take effect, the enveloping unit must itself enable
-        <varname>FileDescriptorStoreMax=</varname> and a non-<constant>no</constant>/<constant>restart</constant>
-        value for <varname>FileDescriptorStorePreserve=</varname>.
-        See the <ulink url="https://systemd.io/FILE_DESCRIPTOR_STORE">File Descriptor Store</ulink>
-        overview for details.</para>
-
-        <para>Setting this to <constant>yes</constant> or <constant>on-success</constant> also ensures the
-        file descriptor store is kept loaded across a <literal>kexec</literal>-based reboot on kernels
-        supporting the <ulink
-        url="https://docs.kernel.org/userspace-api/liveupdate.html">Live Update Orchestrator</ulink>,
-        so that compatible file descriptors (such as <citerefentry
-        project='man-pages'><refentrytitle>memfd_create</refentrytitle><manvolnum>2</manvolnum></citerefentry>)
-        are preserved and handed back to the service on the other side. See the <ulink
-        url="https://systemd.io/FILE_DESCRIPTOR_STORE">File Descriptor Store</ulink> overview for
-        details.</para>
+        <constant>restart</constant> and controls when to release the service's file descriptor store
+        (i.e. when to close the contained file descriptors, if any). If set to <constant>no</constant> the
+        file descriptor store is automatically released when the service is stopped; if
+        <constant>restart</constant> (the default) it is kept around as long as the unit is neither inactive
+        nor failed, or a job is queued for the service, or the service is expected to be restarted. If
+        <constant>yes</constant> the file descriptor store is kept around until the unit is removed from
+        memory (i.e. is not referenced anymore and inactive). The latter is useful to keep entries in the
+        file descriptor store pinned until the service manager exits.</para>
 
         <para>Use <command>systemctl clean --what=fdstore …</command> to release the file descriptor store
         explicitly.</para>
 
         <xi:include href="version-info.xml" xpointer="v254"/></listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term><varname>LUOSession=</varname></term>
-        <listitem><para>Takes a whitespace-separated list of names. For each name, when the service is
-        started the service manager creates a LUO session via the <ulink
-        url="https://docs.kernel.org/userspace-api/liveupdate.html">Live Update Orchestrator</ulink> (LUO,
-        i.e. <filename>/dev/liveupdate</filename>) and hands the resulting session file descriptor to the
-        service through the file descriptor store, using the configured name as its
-        <literal>FDNAME=</literal>. The session is hence passed to the service's processes via
-        <citerefentry><refentrytitle>sd_listen_fds</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
-        like any other file descriptor store entry. The service may then preserve additional file
-        descriptors (such as <citerefentry
-        project='man-pages'><refentrytitle>memfd_create</refentrytitle><manvolnum>2</manvolnum></citerefentry>
-        memory file descriptors) in the session, which survive a <literal>kexec</literal>-based reboot and
-        can be retrieved again on the other side.</para>
-
-        <para>A session is only handed out if one with the same name is not already present in the service's
-        file descriptor store. This way a session handed out on first start, or restored across a
-        <literal>kexec</literal>, is reused on the next start rather than replaced. The kernel-level session
-        name is derived deterministically from the unit name and the configured name, so that it remains
-        stable and unique, and it fits within the length limit imposed by the kernel.</para>
-
-        <para>This setting implies <varname>FileDescriptorStoreMax=</varname> is set to at least the number
-        of configured sessions. To ensure the sessions are kept pinned and preserved across a
-        <literal>kexec</literal>, combine this with <varname>FileDescriptorStorePreserve=yes</varname> (see
-        above). If <filename>/dev/liveupdate</filename> is not available no session is handed out, and the
-        service is started normally. This setting may be specified more than once, in which case the lists
-        are combined. If the empty string is assigned the list is reset and all prior assignments have no
-        effect.</para>
-
-        <para>For further information on the file descriptor store see the <ulink
-        url="https://systemd.io/FILE_DESCRIPTOR_STORE">File Descriptor Store</ulink> overview.</para>
-
-        <xi:include href="system-only.xml" xpointer="singular"/>
-        <xi:include href="version-info.xml" xpointer="v262"/></listitem>
       </varlistentry>
 
       <varlistentry>
@@ -1409,13 +1285,11 @@ RestartMaxDelaySec=160s</programlisting>
         <para>This setting takes one of <constant>continue</constant>, <constant>stop</constant> or
         <constant>kill</constant>. If set to <constant>continue</constant> and a process in the unit is
         killed by the OOM killer, this is logged but the unit continues running. If set to
-        <constant>stop</constant> the event is logged and the unit's processes are terminated cleanly by the
-        service manager. If set to <constant>kill</constant> and one of the unit's processes is killed by the
-        OOM killer the kernel is instructed to kill all remaining processes of the unit too, by setting the
-        <filename>memory.oom.group</filename> attribute to <constant>1</constant>; also see kernel page
-        <ulink url="https://docs.kernel.org/admin-guide/cgroup-v2.html">Control Group v2</ulink>. In case of
-        both <constant>stop</constant> and <constant>kill</constant>, the service ultimately ends up in the
-        <constant>oom-kill</constant> failed state after which <varname>Restart=</varname> may apply.
+        <constant>stop</constant> the event is logged but the unit is terminated cleanly by the service
+        manager. If set to <constant>kill</constant> and one of the unit's processes is killed by the OOM
+        killer the kernel is instructed to kill all remaining processes of the unit too, by setting the
+        <filename>memory.oom.group</filename> attribute to <constant>1</constant>; also see kernel
+        page <ulink url="https://docs.kernel.org/admin-guide/cgroup-v2.html">Control Group v2</ulink>.
         </para>
 
         <para>Defaults to the setting <varname>DefaultOOMPolicy=</varname> in
@@ -1480,28 +1354,6 @@ RestartMaxDelaySec=160s</programlisting>
         <xi:include href="version-info.xml" xpointer="v253"/></listitem>
       </varlistentry>
 
-      <varlistentry>
-        <term><varname>RefreshOnReload=</varname></term>
-
-        <listitem><para>Takes a boolean argument, or a list of resources defined in
-        <citerefentry><refentrytitle>systemd.exec</refentrytitle><manvolnum>5</manvolnum></citerefentry>.
-        Possible values are <option>extensions</option> and <option>credentials</option>, separated by space.
-        Prepending the list with a single tilde character (<literal>~</literal>) inverts the effect.
-        Defaults to <option>extensions</option>. An empty assignment resets the list to default. If enabled,
-        the corresponding resources (<option>ExtensionImages=</option>/<option>ExtensionDirectories=</option>
-        for <option>extensions</option> and <option>LoadCredential=</option>/<option>ImportCredential=</option>/
-        <option>SetCredential=</option> (along with their <option>Encrypted</option> counterparts)
-        for <option>credentials</option>) will be refreshed on service reload. If <option>yes</option>,
-        all resources listed above that are used by the service shall be refreshed.</para>
-
-        <para>Specially, if this option is set explicitly, and the respective resources are in use,
-        the service may be reloaded without any actual reload mechanism (<option>ExecReload=</option>
-        or <option>Type=notify-reload</option>) for notifying the main process, in which case the reload
-        is considered complete immediately after refreshing.</para>
-
-        <xi:include href="version-info.xml" xpointer="v260"/></listitem>
-      </varlistentry>
-
     </variablelist>
 
     <para id='shared-unit-options'>Check
@@ -1561,7 +1413,7 @@ RestartMaxDelaySec=160s</programlisting>
         <tbody>
           <row>
             <entry><literal>@</literal></entry>
-            <entry>If the executable path is prefixed with <literal>@</literal>, the second specified token will be passed as <constant>argv[0]</constant> to the executed process (instead of the actual filename), followed by the further arguments specified, unless <literal>|</literal> is also specified, in which case it enables login shell semantics for the shell spawned by prefixing <literal>-</literal> to <constant>argv[0]</constant>.</entry>
+            <entry>If the executable path is prefixed with <literal>@</literal>, the second specified token will be passed as <constant>argv[0]</constant> to the executed process (instead of the actual filename), followed by the further arguments specified.</entry>
           </row>
 
           <row>
@@ -1586,17 +1438,18 @@ RestartMaxDelaySec=160s</programlisting>
           </row>
 
           <row>
-            <entry><literal>|</literal></entry>
+            <entry><literal>!!</literal></entry>
 
-            <entry>If <literal>|</literal> is specified standalone as executable path, invoke the default shell of <varname>User=</varname>. If specified as a prefix, use the shell (<literal>-c</literal>) to spawn the executable. When <literal>@</literal> is used in conjunction, <constant>argv[0]</constant> of shell will be prefixed with <literal>-</literal> to enable login shell semantics.</entry>
+            <entry>This prefix is very similar to <literal>!</literal>, however it only has an effect on systems lacking support for ambient process capabilities, i.e. without support for <varname>AmbientCapabilities=</varname>. It's intended to be used for unit files that take benefit of ambient capabilities to run processes with minimal privileges wherever possible while remaining compatible with systems that lack ambient capabilities support. Note that when <literal>!!</literal> is used, and a system lacking ambient capability support is detected any configured <varname>SystemCallFilter=</varname> and <varname>CapabilityBoundingSet=</varname> stanzas are implicitly modified, in order to permit spawned processes to drop credentials and capabilities themselves, even if this is configured to not be allowed. Moreover, if this prefix is used and a system lacking ambient capability support is detected <varname>AmbientCapabilities=</varname> will be skipped and not be applied. On systems supporting ambient capabilities, <literal>!!</literal> has no effect and is redundant.</entry>
           </row>
         </tbody>
       </tgroup>
     </table>
 
-    <para><literal>@</literal>, <literal>|</literal>, <literal>-</literal>, <literal>:</literal>, and one of
-    <literal>+</literal>/<literal>!</literal> may be used together and they can appear in any order.
-    However, <literal>+</literal> and <literal>!</literal> may not be specified at the same time.</para>
+    <para><literal>@</literal>, <literal>-</literal>, <literal>:</literal>, and one of
+    <literal>+</literal>/<literal>!</literal>/<literal>!!</literal> may be used together and they can appear in any
+    order. However, only one of <literal>+</literal>, <literal>!</literal>, <literal>!!</literal> may be used at a
+    time.</para>
 
     <para>For each command, the first argument must be either an absolute path to an executable or a simple
     file name without any slashes. If the command is not a full (absolute) path, it will be resolved to a
@@ -1638,7 +1491,7 @@ ExecStart=/bin/echo ${ONE} ${TWO} ${THREE}
 ExecStart=/bin/echo $ONE $TWO $THREE</programlisting>
     <para>This results in <filename>/bin/echo</filename> being
     called twice, the first time with arguments
-    <literal>one</literal>,
+    <literal>'one'</literal>,
     <literal>'two two' too</literal>, <literal></literal>,
     and the second time with arguments
     <literal>one</literal>, <literal>two two</literal>,
@@ -1660,9 +1513,9 @@ ExecStart=/bin/echo $ONE $TWO $THREE</programlisting>
     includes e.g. <varname>$USER</varname>, but not
     <varname>$TERM</varname>).</para>
 
-    <para>Note that shell command lines are not directly supported, and <literal>|</literal> invokes the user's
-    default shell which isn't deterministic. It's recommended to specify a shell implementation explicitly
-    if portability is desired. Example:</para>
+    <para>Note that shell command lines are not directly supported. If
+    shell command lines are to be used, they need to be passed
+    explicitly to a shell implementation of some kind. Example:</para>
     <programlisting>ExecStart=sh -c 'dmesg | tac'</programlisting>
 
     <para>Example:</para>

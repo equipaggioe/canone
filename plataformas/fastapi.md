@@ -4,10 +4,6 @@ Un servidor en FastAPI. Se suma a [python.md](python.md).
 
 ## Proyecto
 
-Estándares: la sección *An example file structure* de
-[*Bigger Applications - Multiple Files*](../fuentes/fastapi/bigger-applications.md) de FastAPI y
-la sección *Creating an Environment* del [tutorial](../fuentes/alembic/tutorial.rst) de Alembic.
-
 ```text
 server/
   .gitignore
@@ -77,16 +73,12 @@ Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 
 ## Configuración
 
-Estándares: las secciones *Pydantic `Settings`* y *Settings in another module* de
-[*Settings and Environment Variables*](../fuentes/fastapi/settings.md) de FastAPI, y
-[pydantic-settings](../fuentes/pydantic-settings/index.md).
-
+- La configuración es una instancia de `Settings`, que hereda de `BaseSettings` de
+  pydantic-settings.
 - Todo campo de `Settings` es obligatorio y sin valor por defecto.
 - En desarrollo, las variables salen de `uv run --env-file .env`.
 
 ## Esquemas
-
-Estándar: la [configuración de modelos](../fuentes/pydantic/config.md) de Pydantic.
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
@@ -101,9 +93,11 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 ## Base de datos
 
-Estándares: [*Session Basics*](../fuentes/sqlalchemy/session_basics.rst), la
-[extensión asyncio](../fuentes/sqlalchemy/asyncio.rst) y el
-[pool de conexiones](../fuentes/sqlalchemy/pooling.rst) de SQLAlchemy.
+Estándares: las preguntas *When do I make a `sessionmaker`?* y *When do I construct a `Session`,
+when do I commit it, and when do I close it?* de
+[*Session Basics*](../fuentes/sqlalchemy/session_basics.rst), y las secciones *Using AsyncSession
+with Concurrent Tasks* y *Preventing Implicit IO when Using AsyncSession* de la
+[extensión asyncio](../fuentes/sqlalchemy/asyncio.rst) de SQLAlchemy.
 
 - `AsyncSession` con asyncpg.
 - `lazy="raise"` en toda relación.
@@ -118,24 +112,21 @@ Estándares: [*Session Basics*](../fuentes/sqlalchemy/session_basics.rst), la
 
 ## Migraciones
 
-Estándares: el [tutorial](../fuentes/alembic/tutorial.rst), salvo *Creating an Environment*, la
-[autogeneración](../fuentes/alembic/autogenerate.rst) y la
-[plantilla async](../fuentes/alembic/async/env.py) de Alembic, y
-[*The Importance of Naming Constraints*](../fuentes/alembic/naming.rst).
+Estándar: la sección *What does Autogenerate Detect (and what does it not detect?)* de la
+[autogeneración](../fuentes/alembic/autogenerate.rst) de Alembic.
+
+- `alembic/` sale de la plantilla `async` de Alembic: las migraciones corren con asyncpg, como la
+  app.
+- La `MetaData` de la `Base` lleva una `naming_convention`: una migración no puede borrar ni cambiar
+  una restricción sin nombre.
 
 ## Inyección de dependencias
 
-Estándares: [*Dependencies*](../fuentes/fastapi/dependencies.md) y
-[*Dependencies with yield*](../fuentes/fastapi/dependencies-with-yield.md) de FastAPI.
-
+- Las dependencias y los parámetros de una ruta se declaran con `Annotated`.
 - La dependencia de la `AsyncSession` lleva `scope="function"`. El commit corre antes de enviar la
   respuesta: si falla, el cliente recibe el error y no un 200.
 
 ## Routers
-
-Estándar: las secciones *`APIRouter`*, *Another module with `APIRouter`*, *The main `FastAPI`* e
-*Include an `APIRouter` in another* de
-[*Bigger Applications - Multiple Files*](../fuentes/fastapi/bigger-applications.md) de FastAPI.
 
 - Los routers se incluyen en un `APIRouter(prefix="/api")` de `main.py`.
 - Un recurso lleva el mismo nombre de archivo en `routers/`, `services/` y `schemas/`.
@@ -145,13 +136,11 @@ Estándar: las secciones *`APIRouter`*, *Another module with `APIRouter`*, *The 
 
 ## Ciclo de vida
 
-Estándar: [*Lifespan Events*](../fuentes/fastapi/events.md) de FastAPI.
+- El arranque y el cierre van en el `lifespan` de la app: `on_event` está obsoleto.
 
 ## Tareas en segundo plano
 
-Estándares: [*Background Tasks*](../fuentes/fastapi/background-tasks.md) y la sección
-*Background Tasks and Dependencies with `yield`, Technical Details* de
-[*Advanced Dependencies*](../fuentes/fastapi/advanced-dependencies.md) de FastAPI.
+- El trabajo que sigue a la respuesta va en `BackgroundTasks`.
 
 ## Tareas periódicas
 
@@ -170,8 +159,7 @@ Estándares: [*Background Tasks*](../fuentes/fastapi/background-tasks.md) y la s
 
 ## Archivos
 
-Estándares: [*File Upload Cheat Sheet*](../fuentes/owasp/File_Upload.md) de OWASP y
-[*Request Files*](../fuentes/fastapi/request-files.md) de FastAPI.
+Estándar: [*File Upload Cheat Sheet*](../fuentes/owasp/File_Upload.md) de OWASP.
 
 Contrato: [transversal.md](transversal.md#archivos).
 
@@ -231,11 +219,12 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 
 Estándares: las secciones V6.2 *Password Security* y V6.4 *Authentication Factor Lifecycle and
 Recovery*, en el nivel 1, de [ASVS 5.0](../fuentes/owasp/ASVS_V6_Authentication.md) de OWASP;
-las secciones *Password hashing*, *Install `pwdlib`* y *Hash and verify the passwords* de
-[*OAuth2 with Password (and hashing), Bearer with JWT tokens*](../fuentes/fastapi/oauth2-jwt.md)
-de FastAPI, y [*Forgot Password Cheat Sheet*](../fuentes/owasp/Forgot_Password.md) de OWASP,
-salvo *Security Questions*.
+la sección *Argon2id* del [*Password Storage Cheat Sheet*](../fuentes/owasp/Password_Storage.md)
+de OWASP, y [*Forgot Password Cheat Sheet*](../fuentes/owasp/Forgot_Password.md) de OWASP, salvo
+*Security Questions*.
 
+- Una contraseña se guarda con `PasswordHash.recommended()` de pwdlib: Argon2id con 64 MiB y 3
+  pasadas, por encima de los mínimos de OWASP.
 - Toda contraseña tiene al menos 8 caracteres. Contradice ASVS, que recomienda con fuerza 15: una
   de 15 aleja al usuario.
 - La lista de bloqueo es un archivo del servidor.
@@ -268,8 +257,6 @@ Estándar: [Standard Webhooks](../fuentes/standard-webhooks/standard-webhooks.md
 
 ## Errores
 
-Estándar: [*Handling Errors*](../fuentes/fastapi/handling-errors.md) de FastAPI.
-
 Contrato: [transversal.md](transversal.md#errores).
 
 - Un error con tipo propio se lanza con `AppError`; uno que su código de estado ya explica, con
@@ -284,9 +271,6 @@ Contrato: [transversal.md](transversal.md#fechas).
   segundos, y conserva el desfase que recibe; un `datetime`, además, una hora sin zona.
 
 ## Idiomas
-
-Estándares: [*Working with Message Catalogs*](../fuentes/babel/messages.rst) y
-[*Command-Line Interface*](../fuentes/babel/cmdline.rst) de Babel.
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
@@ -303,9 +287,6 @@ Estándar: la sección 4 de [RFC 6585](../fuentes/rfc/rfc6585.txt), *429 Too Man
   reintentar.
 
 ## Llamadas de voz y video
-
-Estándar: la sección *TURN REST API* de la
-[documentación de coturn](../fuentes/coturn/README.turnserver).
 
 Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
 
@@ -330,7 +311,8 @@ Contrato: [transversal.md](transversal.md#montos).
 
 ## OpenAPI y clientes
 
-Estándar: la [especificación OpenAPI 3.1](../fuentes/openapi/openapi-3.1.2.md).
+Estándar: el *Operation Object* y el *Responses Object* de la
+[especificación OpenAPI 3.1](../fuentes/openapi/openapi-3.1.2.md).
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
@@ -354,9 +336,6 @@ Contrato: [transversal.md](transversal.md#paginación).
   la clave `PAGE_TOKEN_KEY`.
 
 ## Pagos
-
-Estándares: [*Idempotent requests*](../fuentes/stripe/idempotent-requests.md) y los
-[webhooks](../fuentes/stripe/webhooks.md) de Stripe.
 
 Contrato: [transversal.md](transversal.md#pagos).
 
@@ -395,11 +374,7 @@ secciones 15.5.4 *403 Forbidden* y 15.5.5 *404 Not Found* de
 
 ## Push
 
-Estándares: la sección *Choose a server option* de
-[*Your server environment and FCM*](../fuentes/firebase/server-environment.md), la sección
-*Admin SDK error codes* de [*FCM Error Codes*](../fuentes/firebase/error-codes.md), salvo
-`messaging/registration-token-not-registered`, que rige el contrato,
-[RFC 8030](../fuentes/rfc/rfc8030.txt) y [RFC 8291](../fuentes/rfc/rfc8291.txt).
+Estándares: [RFC 8030](../fuentes/rfc/rfc8030.txt) y [RFC 8291](../fuentes/rfc/rfc8291.txt).
 
 Contrato: [transversal.md](transversal.md#push).
 
@@ -493,10 +468,8 @@ Contrato: [transversal.md](transversal.md#sesión).
 
 ## Trazas
 
-Estándares: las secciones *Customize telemetry* y *Choose what to record* de
-[*OpenTelemetry*](../fuentes/fastapi/opentelemetry.md) de FastAPI, y la regla `trace-id` de la
-sección 3.2.2.2 *version-format* y la sección 3.2.2.3 *trace-id* de
-[Trace Context](../fuentes/w3c/trace-context-1.md) de W3C.
+Estándar: la regla `trace-id` de la sección 3.2.2.2 *version-format* y la sección 3.2.2.3
+*trace-id* de [Trace Context](../fuentes/w3c/trace-context-1.md) de W3C.
 
 - La app configura un `TracerProvider` del SDK de OpenTelemetry: sin él, FastAPI no crea spans y no
   hay trace-id.
@@ -516,10 +489,9 @@ Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
 
 ## WebSocket
 
-Estándares: [*Pub/Sub*](../fuentes/valkey/pubsub.md) de Valkey y, del
-[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP, las
-secciones *Origin Header Validation*, *Message-Level Authorization*, *Input Validation* y
-*Denial-of-Service Protection*.
+Estándar: las secciones *Origin Header Validation*, *Message-Level Authorization*, *Input
+Validation* y *Denial-of-Service Protection* del
+[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
 Contrato: [transversal.md](transversal.md#websocket).
 
@@ -545,20 +517,19 @@ Contrato: [transversal.md](transversal.md#websocket).
 
 ## Pruebas
 
-Estándares: [*Async Tests*](../fuentes/fastapi/async-tests.md) y
-[*Testing Dependencies with Overrides*](../fuentes/fastapi/testing-dependencies.md) de FastAPI, las
-[pruebas con AnyIO](../fuentes/anyio/testing.rst) y
-[*Joining a Session into an External Transaction*](../fuentes/sqlalchemy/session_transaction.rst)
-de SQLAlchemy.
-
-- `anyio_backend` es `asyncio`. asyncpg y la app solo corren en asyncio.
+- Las pruebas asíncronas corren con el plugin de pytest de AnyIO, con `anyio_mode = "auto"`, y
+  `anyio_backend` es `asyncio`: asyncpg y la app solo corren en asyncio.
 - Las pruebas corren contra PostgreSQL. Ven los mismos tipos y restricciones que producción.
 - La base de prueba se arma con `alembic upgrade head` antes de pytest: las pruebas ven el esquema
   de las migraciones, no el de los modelos.
 - Las pruebas corren contra Valkey, que se vacía en cada prueba: un conteo de intentos no pasa de
   una prueba a la siguiente.
-- Un WebSocket se prueba con `ASGIWebSocketTransport` de httpx-ws: corre en el loop de la prueba y
-  ve su transacción. `TestClient` corre la app en otro loop.
+- Cada prueba corre en una transacción que se deshace al terminar, y las sesiones de la app se unen
+  a ella con `join_transaction_mode="create_savepoint"`: un commit de la app no sale de la prueba.
+- Una prueba llama a la app con `AsyncClient` y `ASGITransport` de httpx, y a un WebSocket con
+  `ASGIWebSocketTransport` de httpx-ws, nunca con `TestClient`: corren en el loop de la prueba y
+  ven su transacción, y `TestClient` corre la app en otro loop.
+- Una dependencia se reemplaza en una prueba con `app.dependency_overrides`.
 
 <br>
 
@@ -572,7 +543,7 @@ de SQLAlchemy.
 | Qué | Con qué |
 |---|---|
 | Todo campo de `Settings` es obligatorio | `test_settings_are_required` |
-| *Dependencies*: `Annotated` | ruff `FAST002` |
+| Las dependencias y los parámetros de una ruta con `Annotated` | ruff `FAST002` |
 | El commit corre antes de enviar la respuesta | `test_failed_commit_is_a_server_error` |
 | Los nombres en camelCase: todo esquema hereda del esquema base | `test_schemas_inherit_schema` |
 | El esquema base lee por nombre, y el de entrada solo por alias | `test_schemas_read_rows_by_name` |
@@ -585,6 +556,6 @@ de SQLAlchemy.
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | La versión mínima de cliente, en tres enteros | `test_outdated_client_is_rejected` |
 | La base de prueba con las migraciones | `uv run alembic upgrade head` antes de pytest en el job `server` de CI |
-| *Async Tests* y el WebSocket con httpx-ws: sin `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
+| Las pruebas nunca llaman a la app con `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
 | Un `pageToken` ilegible o con otros parámetros responde 422 | `test_invalid_page_token_points_to_the_parameter` |
 | Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

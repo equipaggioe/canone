@@ -3,6 +3,8 @@
 Copia de los textos de las fuentes que citan las páginas de [plataformas/](../plataformas/). Una página se revisa contra el texto de aquí, no de memoria. Una fuente que solo cita un ADR no se copia: el ADR la usa como argumento de su decisión, y ninguna página adopta sus convenciones.
 
 - Cada archivo es el texto de su fuente, sin editar. Cuando la fuente es una página web, es su contenido convertido a Markdown.
+- Cada archivo se descarga del tag o la rama de la versión que se usa, nunca de `main` ni de `master`. Una fuente sin versiones se descarga de un commit fijo, y su URL lleva el SHA.
+- Al cambiar la versión de una tecnología, se vuelven a descargar sus fuentes.
 - Para actualizar un archivo se vuelve a descargar de su fuente; `git diff` muestra qué cambió.
 - Una fuente que ninguna página cita se borra.
 
@@ -17,38 +19,15 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/dependency-groups.rst> |  |
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |
 | [uv/sync.md](uv/sync.md) | <https://raw.githubusercontent.com/astral-sh/uv/main/docs/concepts/projects/sync.md> |  |
-| [babel/messages.rst](babel/messages.rst) | <https://raw.githubusercontent.com/python-babel/babel/master/docs/messages.rst> |  |
-| [babel/cmdline.rst](babel/cmdline.rst) | <https://raw.githubusercontent.com/python-babel/babel/master/docs/cmdline.rst> |  |
 | [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> |  |
 | [typing/modernizing.rst](typing/modernizing.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/guides/modernizing.rst> |  |
-| [fastapi/dependencies.md](fastapi/dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/dependencies/index.md> |  |
-| [fastapi/dependencies-with-yield.md](fastapi/dependencies-with-yield.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/dependencies/dependencies-with-yield.md> |  |
-| [fastapi/advanced-dependencies.md](fastapi/advanced-dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/advanced-dependencies.md> |  |
-| [fastapi/bigger-applications.md](fastapi/bigger-applications.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/bigger-applications.md> |  |
-| [fastapi/handling-errors.md](fastapi/handling-errors.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/handling-errors.md> |  |
-| [fastapi/oauth2-jwt.md](fastapi/oauth2-jwt.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/security/oauth2-jwt.md> |  |
-| [fastapi/background-tasks.md](fastapi/background-tasks.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/background-tasks.md> |  |
-| [fastapi/events.md](fastapi/events.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/events.md> |  |
 | [fastapi/behind-a-proxy.md](fastapi/behind-a-proxy.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/behind-a-proxy.md> |  |
-| [fastapi/settings.md](fastapi/settings.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/settings.md> |  |
-| [fastapi/async-tests.md](fastapi/async-tests.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/async-tests.md> |  |
-| [fastapi/testing-dependencies.md](fastapi/testing-dependencies.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/testing-dependencies.md> |  |
-| [fastapi/opentelemetry.md](fastapi/opentelemetry.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/advanced/opentelemetry.md> |  |
-| [fastapi/request-files.md](fastapi/request-files.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/tutorial/request-files.md> |  |
 | [fastapi/deployment-concepts.md](fastapi/deployment-concepts.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/deployment/concepts.md> |  |
 | [fastapi/deployment-manually.md](fastapi/deployment-manually.md) | <https://raw.githubusercontent.com/fastapi/fastapi/master/docs/en/docs/deployment/manually.md> |  |
 | [uvicorn/settings.md](uvicorn/settings.md) | <https://raw.githubusercontent.com/encode/uvicorn/master/docs/settings.md> |  |
-| [pydantic/config.md](pydantic/config.md) | <https://raw.githubusercontent.com/pydantic/pydantic/main/docs/concepts/config.md> |  |
-| [pydantic-settings/index.md](pydantic-settings/index.md) | <https://raw.githubusercontent.com/pydantic/pydantic-settings/main/docs/index.md> |  |
-| [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/orm/extensions/asyncio.rst> |  |
-| [sqlalchemy/pooling.rst](sqlalchemy/pooling.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/core/pooling.rst> |  |
-| [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/orm/session_basics.rst> |  |
-| [sqlalchemy/session_transaction.rst](sqlalchemy/session_transaction.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/main/doc/build/orm/session_transaction.rst> |  |
-| [alembic/tutorial.rst](alembic/tutorial.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/tutorial.rst> |  |
-| [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/autogenerate.rst> |  |
-| [alembic/naming.rst](alembic/naming.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/docs/build/naming.rst> |  |
-| [alembic/async/env.py](alembic/async/env.py) | <https://raw.githubusercontent.com/sqlalchemy/alembic/main/alembic/templates/async/env.py> |  |
-| [anyio/testing.rst](anyio/testing.rst) | <https://raw.githubusercontent.com/agronholm/anyio/master/docs/testing.rst> |  |
+| [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/extensions/asyncio.rst> |  |
+| [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/session_basics.rst> |  |
+| [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/rel_1_20_0/docs/build/autogenerate.rst> |  |
 | [postgresql/datatype.sgml](postgresql/datatype.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/datatype.sgml> |  |
 | [postgresql/json.sgml](postgresql/json.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/json.sgml> |  |
 | [postgresql/func.sgml](postgresql/func.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/func.sgml> |  |
@@ -81,7 +60,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc9429.txt](rfc/rfc9429.txt) | <https://www.rfc-editor.org/rfc/rfc9429.txt> |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> |  |
 | [rfc/rfc9700.txt](rfc/rfc9700.txt) | <https://www.rfc-editor.org/rfc/rfc9700.txt> |  |
-| [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/versions/3.1.2.md> | Línea 3.1, la versión que genera FastAPI |
+| [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md> | Línea 3.1, la versión que genera FastAPI |
 | [google-aip/aip-0158.md](google-aip/aip-0158.md) | <https://raw.githubusercontent.com/aip-dev/google.aip.dev/master/aip/general/0158.md> |  |
 | [w3c/trace-context-1.md](w3c/trace-context-1.md) | <https://www.w3.org/TR/trace-context-1/> | Página web convertida a Markdown |
 | [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |
@@ -99,32 +78,28 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md> | Versión 5.0.0 |
 | [owasp/ASVS_V6_Authentication.md](owasp/ASVS_V6_Authentication.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x15-V6-Authentication.md> | Versión 5.0.0 |
 | [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md> | Versión 5.0.0 |
-| [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Authorization_Cheat_Sheet.md> |  |
+| [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Authorization_Cheat_Sheet.md> |  |
 | [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Content_Security_Policy_Cheat_Sheet.md> |  |
-| [owasp/Forgot_Password.md](owasp/Forgot_Password.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Forgot_Password_Cheat_Sheet.md> |  |
+| [owasp/Forgot_Password.md](owasp/Forgot_Password.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Forgot_Password_Cheat_Sheet.md> |  |
+| [owasp/Password_Storage.md](owasp/Password_Storage.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Password_Storage_Cheat_Sheet.md> |  |
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/HTTP_Headers_Cheat_Sheet.md> |  |
-| [owasp/Logging.md](owasp/Logging.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Logging_Cheat_Sheet.md> |  |
-| [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md> |  |
+| [owasp/Logging.md](owasp/Logging.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Cheat_Sheet.md> |  |
+| [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md> |  |
 | [owasp/REST_Security.md](owasp/REST_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/REST_Security_Cheat_Sheet.md> |  |
 | [owasp/Secrets_Management.md](owasp/Secrets_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Secrets_Management_Cheat_Sheet.md> |  |
 | [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> |  |
-| [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/File_Upload_Cheat_Sheet.md> |  |
-| [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/WebSocket_Security_Cheat_Sheet.md> |  |
-| [valkey/pubsub.md](valkey/pubsub.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/main/topics/pubsub.md> |  |
+| [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/File_Upload_Cheat_Sheet.md> |  |
+| [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/WebSocket_Security_Cheat_Sheet.md> |  |
 | [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/main/topics/admin.md> |  |
 | [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/main/topics/security.md> |  |
 | [coturn/README.turnserver](coturn/README.turnserver) | <https://raw.githubusercontent.com/coturn/coturn/master/README.turnserver> |  |
 | [firebase/manage-tokens.md](firebase/manage-tokens.md) | <https://firebase.google.com/docs/cloud-messaging/manage-tokens> | Página web convertida a Markdown |
 | [firebase/set-message-type.md](firebase/set-message-type.md) | <https://firebase.google.com/docs/cloud-messaging/customize-messages/set-message-type> | Página web convertida a Markdown |
-| [firebase/server-environment.md](firebase/server-environment.md) | <https://firebase.google.com/docs/cloud-messaging/server-environment> | Página web convertida a Markdown |
-| [firebase/error-codes.md](firebase/error-codes.md) | <https://firebase.google.com/docs/cloud-messaging/error-codes> | Página web convertida a Markdown |
 | [firebase/android-message-priority.md](firebase/android-message-priority.md) | <https://firebase.google.com/docs/cloud-messaging/android-message-priority> | Página web convertida a Markdown |
 | [firebase/flutter-receive-messages.md](firebase/flutter-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/flutter/receive-messages> | Página web convertida a Markdown |
 | [firebase/android-receive-messages.md](firebase/android-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/android/receive-messages> | Página web convertida a Markdown |
 | [aws-s3/object-lifecycle-mgmt.md](aws-s3/object-lifecycle-mgmt.md) | <https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html> | Página web convertida a Markdown |
-| [stripe/idempotent-requests.md](stripe/idempotent-requests.md) | <https://docs.stripe.com/api/idempotent_requests.md> |  |
-| [stripe/webhooks.md](stripe/webhooks.md) | <https://docs.stripe.com/webhooks.md> |  |
-| [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/main/spec/standard-webhooks.md> |  |
+| [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md> |  |
 | [sveltekit/project-structure.md](sveltekit/project-structure.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/10-getting-started/30-project-structure.md> |  |
 | [sveltekit/load.md](sveltekit/load.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/20-load.md> |  |
 | [sveltekit/page-options.md](sveltekit/page-options.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/40-page-options.md> |  |

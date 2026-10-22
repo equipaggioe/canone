@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  artifact:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: PIEZA/package.json
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+          cache: pnpm
+          cache-dependency-path: PIEZA/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+        working-directory: PIEZA
+      - run: pnpm build
+        working-directory: PIEZA
+      - run: |
+          mkdir -p dist/PIEZA
+          cp -r PIEZA/build/. dist/PIEZA
+          cp -r server scripts dist
+          tar -czf "${{ github.event.repository.name }}-$GITHUB_REF_NAME.tar.gz" -C dist .
+          sha256sum "${{ github.event.repository.name }}-$GITHUB_REF_NAME.tar.gz" > "${{ github.event.repository.name }}-$GITHUB_REF_NAME.sha256"
+      - run: gh release create "$GITHUB_REF_NAME" --generate-notes "${{ github.event.repository.name }}-$GITHUB_REF_NAME".*
+
+  desktop:
+    needs: artifact
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            ext: bin
+            archivo: desktop-linux.bin
+          - os: windows-latest
+            ext: exe
+            archivo: desktop-windows.exe
+          - os: macos-latest
+            ext: app
+            archivo: desktop-macos.zip
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: desktop
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked --group deploy
+      - run: uv run pyside6-deploy -c pysidedeploy.spec --force
+      - if: runner.os == 'macOS'
+        run: ditto -c -k --keepParent dist/*.app "${{ matrix.archivo }}"
+      - if: runner.os != 'macOS'
+        run: mv dist/*.${{ matrix.ext }} "${{ matrix.archivo }}"
+      - run: gh release upload "$GITHUB_REF_NAME" "${{ matrix.archivo }}"

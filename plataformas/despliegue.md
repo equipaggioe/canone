@@ -75,6 +75,24 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 
 - El almacén en memoria de todas las piezas es Valkey.
 
+## Versiones
+
+- Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI construye de ese tag un artefacto con el servidor
+  y el build de la web, y lo publica en un release de GitHub con su SHA-256.
+- Cada versión queda en `/srv/<app>/releases/<versión>/`, y el enlace `/srv/<app>/current` apunta
+  a la activa. Los datos quedan fuera de las versiones, en `/var/lib/<app>/`.
+- `deploy <versión>` es el `scripts/deploy.py` del repositorio, instalado en el servidor: una
+  persona lo lanza por `ssh`. Sus pasos, en este orden: verifica el SHA-256, `uv sync --frozen`,
+  `alembic upgrade head`, cambia `current`, reinicia las unidades y consulta `GET /api/health`.
+- Un paso que falla detiene el script. Si `GET /api/health` no responde 204, `current` vuelve a la
+  versión anterior. El rollback no deshace las migraciones.
+- Caddy sirve el build de cada superficie web, `web/`, `panel/` y `landing/`, desde
+  `current/<pieza>/`. La PWA es `web/`.
+- El CI construye del mismo tag los instalables de `desktop/` y los adjunta al release como
+  `desktop-<sistema>.<ext>`. `deploy` los copia con ese nombre, igual en cada versión, a
+  `/srv/<app>/downloads/`, fuera de `releases/`, y Caddy los sirve de ahí: la landing enlaza
+  siempre al mismo nombre.
+
 ## Cómo se hace cumplir
 
 | Qué | Con qué |

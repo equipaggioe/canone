@@ -41,7 +41,7 @@ Lo que necesita canal nativo va en un plugin local bajo `plugins/`.
 Lo que `consola` hace no se duplica en un script del repositorio. Lo de una sola pieza va dentro de
 ella, no en `scripts/`.
 
-El repositorio no trae scripts de despliegue propios. Cómo tiene que quedar el servidor está en
+Cómo queda el servidor y cómo llega una versión a él está en
 [plataformas/despliegue.md](plataformas/despliegue.md).
 
 ## Archivos del raíz
@@ -52,6 +52,7 @@ El repositorio no trae scripts de despliegue propios. Cómo tiene que quedar el 
 | `.gitignore` | Solo lo que no es de ninguna plataforma. Cada pieza tiene el suyo |
 | `.gitattributes` | Se copia sin editar |
 | `.github/workflows/ci.yml` | Un job por pieza que el repositorio tenga |
+| `.github/workflows/release.yml` | Con cada tag, un job para el artefacto del servidor y la web, y uno por cada instalable ([despliegue.md](plataformas/despliegue.md#versiones)) |
 
 El estado va en una línea sola, `Estado: en desarrollo` o `Estado: en producción`, y es el único
 lugar donde se declara. De él depende qué compatibilidad se permite

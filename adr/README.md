@@ -75,3 +75,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0065](0065-la-licencia-de-una-fuente-no-decide-si-se-cita.md) | La licencia de una fuente no decide si se cita | `plataformas/` y `fuentes/` | Aceptada |
 | [0066](0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md) | Una fuente corresponde a la versión en uso, aunque no tenga fecha | `plataformas/` y `fuentes/` | Aceptada |
 | [0067](0067-la-autenticacion-sigue-a-nist-y-el-bloqueo-cuenta-fallos-consecutivos-con-esperas.md) | La autenticación sigue a NIST, y el bloqueo cuenta fallos consecutivos con esperas crecientes | Con autenticación | Aceptada |
+| [0068](0068-una-version-se-despliega-desde-un-tag-con-un-artefacto-y-un-script.md) | Una versión se despliega desde un tag, con un artefacto y un script | Con `server/` | Aceptada |

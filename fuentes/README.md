@@ -20,7 +20,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |
 | [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> |  |
 | [typing/modernizing.rst](typing/modernizing.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/guides/modernizing.rst> |  |
-| [fastapi/behind-a-proxy.md](fastapi/behind-a-proxy.md) | <https://raw.githubusercontent.com/fastapi/fastapi/0.142.0/docs/en/docs/advanced/behind-a-proxy.md> |  |
 | [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/extensions/asyncio.rst> |  |
 | [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/session_basics.rst> |  |
 | [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/rel_1_20_0/docs/build/autogenerate.rst> |  |
@@ -205,6 +204,4 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pytest-qt/qapplication.rst](pytest-qt/qapplication.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/qapplication.rst> |  |
 | [pytest-qt/logging.rst](pytest-qt/logging.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/logging.rst> |  |
 | [pytest-qt/signals.rst](pytest-qt/signals.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/signals.rst> |  |
-| [systemd/systemd.service.xml](systemd/systemd.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.service.xml> | systemd 257, la versión de Debian 13 |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.exec.xml> | systemd 257, la versión de Debian 13 |
-| [systemd/systemd.timer.xml](systemd/systemd.timer.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.timer.xml> | systemd 257, la versión de Debian 13 |

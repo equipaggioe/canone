@@ -1,6 +1,6 @@
 # ADR-0060 · La web presenta la sesión con una cookie opaca, y una app con un JWT y un refresco rotado
 
-- **Estado:** Aceptada, salvo los puntos 8, 9 y 10, que siguen en propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-10-16
 - **Alcance:** las secciones «Sesión» de
   [plataformas/transversal.md](../plataformas/transversal.md#sesión) y de
@@ -31,11 +31,11 @@ Cheat Sheet* de OWASP, y RFC 6265. Varias partes regulaban lo mismo, RFC 6265 no
    [ADR-0044](0044-el-bloqueo-cuenta-en-una-ventana-y-el-titular-lo-ve-en-la-app.md).
 6. Una app hace un solo refresco a la vez.
 7. La web autentica el WebSocket con la cookie del handshake.
-8. *(propuesta)* El token de la web tiene 256 bits y la fila guarda su SHA-256. Va en la cookie
+8. El token de la web tiene 256 bits y la fila guarda su SHA-256. Va en la cookie
    `__Host-session`, `HttpOnly` y `SameSite=Strict`, con 30 días de `Max-Age` que se renuevan con
    el último uso.
-9. *(propuesta)* El último uso de una sesión de la web se actualiza a lo sumo cada 15 minutos.
-10. *(propuesta)* Una petición con la cookie y un método que no es seguro responde 403 si su
+9. El último uso de una sesión de la web se actualiza a lo sumo cada 15 minutos.
+10. Una petición con la cookie y un método que no es seguro responde 403 si su
     `Origin` falta o no es el del servidor.
 
 ## Consecuencias

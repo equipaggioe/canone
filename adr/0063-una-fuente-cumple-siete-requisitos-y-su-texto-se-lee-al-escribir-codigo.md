@@ -1,6 +1,6 @@
 # ADR-0063 · Una fuente cumple siete requisitos, y su texto se lee al escribir código
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El requisito «con licencia» del punto 1 lo quita el [ADR-0065](0065-la-licencia-de-una-fuente-no-decide-si-se-cita.md), y el requisito «fija», el [ADR-0066](0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md)
 - **Fecha:** 2026-10-21
 - **Alcance:** `plataformas/`, `fuentes/` y `principios.md`
 

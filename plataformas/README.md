@@ -34,7 +34,7 @@ herramienta la haga cumplir.
 
 Una revisión empieza por la lista de lo que la tecnología obliga a decidir. Cada punto se responde
 con una fuente citada o, si ninguna lo cubre, con una regla propia. Una fuente, o la parte que se
-cita, cumple los siete requisitos:
+cita, cumple los seis requisitos:
 
 1. **Normativa:** dice qué se debe, se debería o no se debe hacer. Cada frase citada se puede
    reescribir como «se usa X» o «no se hace Y». Los pasos, los ejemplos y las explicaciones no
@@ -47,12 +47,11 @@ cita, cumple los siete requisitos:
 4. **Acotada:** la parte citada se puede leer entera al escribir el código de su sección, salvo que
    su fuente sea de conocimiento general, como PEP 8 o SemVer, o que una herramienta de «Cómo se
    hace cumplir» la verifique.
-5. **Fija:** tiene versión o fecha y corresponde a la versión de la tecnología que se usa. La copia
-   de [fuentes/](../fuentes/) congela esa versión.
-6. **Con licencia:** su licencia permite copiar el texto en `fuentes/`.
-7. **Independiente:** la parte citada no depende de la infraestructura de quien la publica.
+5. **De la versión en uso:** corresponde a la versión de la tecnología que se usa. La copia de
+   [fuentes/](../fuentes/) congela ese texto.
+6. **Independiente:** la parte citada no depende de la infraestructura de quien la publica.
 
-Si dos fuentes que cumplen los siete requisitos regulan lo mismo, se cita la de menor orden y, a
+Si dos fuentes que cumplen los seis requisitos regulan lo mismo, se cita la de menor orden y, a
 igual orden, la que cubre más del asunto:
 
 | Orden | Fuente |
@@ -161,5 +160,7 @@ el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a
 el [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md),
 el [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md),
 el [ADR-0056](../adr/0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
-el [ADR-0063](../adr/0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md)
-y el [ADR-0064](../adr/0064-una-revision-da-un-veredicto-con-evidencia-sobre-cada-regla-fuente-y-fila.md).
+el [ADR-0063](../adr/0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md),
+el [ADR-0064](../adr/0064-una-revision-da-un-veredicto-con-evidencia-sobre-cada-regla-fuente-y-fila.md),
+el [ADR-0065](../adr/0065-la-licencia-de-una-fuente-no-decide-si-se-cita.md)
+y el [ADR-0066](../adr/0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md).

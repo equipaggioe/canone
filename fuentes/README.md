@@ -54,18 +54,18 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> |  |
 | [rfc/rfc9700.txt](rfc/rfc9700.txt) | <https://www.rfc-editor.org/rfc/rfc9700.txt> |  |
 | [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md> | Línea 3.1, la versión que genera FastAPI |
-| [google-aip/aip-0158.md](google-aip/aip-0158.md) | <https://raw.githubusercontent.com/aip-dev/google.aip.dev/master/aip/general/0158.md> |  |
+| [google-aip/aip-0158.md](google-aip/aip-0158.md) | <https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0158.md> |  |
 | [w3c/trace-context-1.md](w3c/trace-context-1.md) | <https://www.w3.org/TR/trace-context-1/> | Página web convertida a Markdown |
 | [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |
-| [w3c/webauthn-3.bs](w3c/webauthn-3.bs) | <https://raw.githubusercontent.com/w3c/webauthn/main/index.bs> |  |
-| [w3c/webrtc.html](w3c/webrtc.html) | <https://raw.githubusercontent.com/w3c/webrtc-pc/main/webrtc.html> |  |
-| [w3c/push-api.html](w3c/push-api.html) | <https://raw.githubusercontent.com/w3c/push-api/gh-pages/index.html> |  |
+| [w3c/webauthn-3.html](w3c/webauthn-3.html) | <https://www.w3.org/TR/2026/REC-webauthn-3-20260825/> | Recomendación del 2026-08-25 |
+| [w3c/webrtc.html](w3c/webrtc.html) | <https://www.w3.org/TR/2025/REC-webrtc-20250313/> | Recomendación del 2025-03-13 |
+| [w3c/push-api.html](w3c/push-api.html) | <https://www.w3.org/TR/2026/WD-push-api-20261005/> | Borrador de trabajo del 2026-10-05 |
 | [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> |  |
 | [dtcg/format.html](dtcg/format.html) | <https://www.designtokens.org/tr/2025.10/format/> |  |
 | [dtcg/color.html](dtcg/color.html) | <https://www.designtokens.org/tr/2025.10/color/> |  |
 | [dtcg/resolver.html](dtcg/resolver.html) | <https://www.designtokens.org/tr/2025.10/resolver/> |  |
 | [whatwg/notifications.bs](whatwg/notifications.bs) | <https://raw.githubusercontent.com/whatwg/notifications/main/notifications.bs> |  |
-| [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/main/index.bs> |  |
+| [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs> |  |
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | Texto extraído del PDF |
 | [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md> | Versión 5.0.0 |
@@ -80,14 +80,11 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md> |  |
 | [owasp/REST_Security.md](owasp/REST_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/REST_Security_Cheat_Sheet.md> |  |
 | [owasp/Secrets_Management.md](owasp/Secrets_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Secrets_Management_Cheat_Sheet.md> |  |
-| [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> |  |
+| [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> |  |
 | [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/File_Upload_Cheat_Sheet.md> |  |
 | [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/WebSocket_Security_Cheat_Sheet.md> |  |
 | [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md> | Valkey 8.1, la versión de Debian 13 |
 | [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md> | Valkey 8.1, la versión de Debian 13 |
-| [firebase/manage-tokens.md](firebase/manage-tokens.md) | <https://firebase.google.com/docs/cloud-messaging/manage-tokens> | Página web convertida a Markdown |
-| [firebase/set-message-type.md](firebase/set-message-type.md) | <https://firebase.google.com/docs/cloud-messaging/customize-messages/set-message-type> | Página web convertida a Markdown |
-| [firebase/android-message-priority.md](firebase/android-message-priority.md) | <https://firebase.google.com/docs/cloud-messaging/android-message-priority> | Página web convertida a Markdown |
 | [firebase/flutter-receive-messages.md](firebase/flutter-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/flutter/receive-messages> | Página web convertida a Markdown |
 | [firebase/android-receive-messages.md](firebase/android-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/android/receive-messages> | Página web convertida a Markdown |
 | [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md> |  |
@@ -146,8 +143,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pub/provider/README.md](pub/provider/README.md) | <https://raw.githubusercontent.com/rrousselGit/provider/master/packages/provider/README.md> |  |
 | [pub/flutter_map/README.md](pub/flutter_map/README.md) | <https://raw.githubusercontent.com/fleaflet/flutter_map/master/README.md> |  |
 | [pub/sms_autofill/README.md](pub/sms_autofill/README.md) | <https://raw.githubusercontent.com/jaumard/sms_autofill/master/README.md> |  |
-| [osm/tile-usage-policy.md](osm/tile-usage-policy.md) | <https://operations.osmfoundation.org/policies/tiles/> | Página web convertida a Markdown |
-| [osm/nominatim-usage-policy.md](osm/nominatim-usage-policy.md) | <https://operations.osmfoundation.org/policies/nominatim/> | Página web convertida a Markdown |
 | [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | <https://osmfoundation.org/wiki/Licence/Attribution_Guidelines> | Página web convertida a Markdown |
 | [leaflet/quick-start.md](leaflet/quick-start.md) | <https://raw.githubusercontent.com/Leaflet/Leaflet/main/docs/examples/quick-start/index.md> |  |
 | [maplibre/android-getting-started.md](maplibre/android-getting-started.md) | <https://raw.githubusercontent.com/maplibre/maplibre-native/main/platform/android/docs/getting-started.md> |  |
@@ -167,7 +162,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [android/navigation-3.md](android/navigation-3.md) | <https://developer.android.com/guide/navigation/navigation-3> | Página web convertida a Markdown |
 | [android/accessibility-apps.md](android/accessibility-apps.md) | <https://developer.android.com/guide/topics/ui/accessibility/apps> | Página web convertida a Markdown |
 | [android/accessibility-principles.md](android/accessibility-principles.md) | <https://developer.android.com/guide/topics/ui/accessibility/principles> | Página web convertida a Markdown |
-| [android/sms-retriever-verify.md](android/sms-retriever-verify.md) | <https://developers.google.com/identity/sms-retriever/verify> | Página web convertida a Markdown |
 | [android/sms-retriever-request.md](android/sms-retriever-request.md) | <https://developers.google.com/identity/sms-retriever/request> | Página web convertida a Markdown |
 | [android/credential-manager-prerequisites.md](android/credential-manager-prerequisites.md) | <https://developer.android.com/identity/credential-manager/prerequisites> | Página web convertida a Markdown |
 | [android/create-passkeys.md](android/create-passkeys.md) | <https://developer.android.com/identity/passkeys/create-passkeys> | Página web convertida a Markdown |

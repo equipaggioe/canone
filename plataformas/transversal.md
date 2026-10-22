@@ -4,7 +4,7 @@ Lo que tienen que cumplir juntas varias piezas. Lo que hace una sola pieza va en
 
 ## Accesibilidad
 
-Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
+Estándar: los criterios de éxito de nivel A y AA de [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 
 - Todos los clientes cumplen el nivel AA, también las apps. Es la vara que nombra la guía de
   Flutter, y una sola para todos los clientes.
@@ -26,10 +26,8 @@ Estándar: [RFC 7578](../fuentes/rfc/rfc7578.txt).
 
 ## Código por SMS
 
-Estándares: la sección *Message format* de
-[*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG
-y la sección *Construct a verification message* de
-[*Perform SMS Verification on a Server*](../fuentes/android/sms-retriever-verify.md) de Google.
+Estándar: la sección *Message format* de
+[*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG.
 
 - El código tiene 6 dígitos.
 - El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el
@@ -64,8 +62,9 @@ Estándar: [RFC 3339](../fuentes/rfc/rfc3339.txt).
 
 ## Idiomas
 
-Estándares: [RFC 5646](../fuentes/rfc/rfc5646.txt) y la sección 12.5.4 de
-[RFC 9110](../fuentes/rfc/rfc9110.txt), *Accept-Language*.
+Estándares: las secciones 2.1 *Syntax* y 4.1 *Choice of Language Tag* de
+[RFC 5646](../fuentes/rfc/rfc5646.txt) y la sección 12.5.4 de [RFC 9110](../fuentes/rfc/rfc9110.txt),
+*Accept-Language*.
 
 - Todo producto se diseña multilingüe.
 - El idioma base es `es`.
@@ -76,8 +75,9 @@ Estándares: [RFC 5646](../fuentes/rfc/rfc5646.txt) y la sección 12.5.4 de
 
 ## Llamadas de voz y video
 
-Estándares: [RFC 9429](../fuentes/rfc/rfc9429.txt), JSEP, y la sección *RTCIceServer Dictionary*
-de [WebRTC](../fuentes/w3c/webrtc.html) de W3C.
+Estándares: las secciones 4.1.10.2 *Rollback* y 5.7 *Processing a Rollback* de
+[RFC 9429](../fuentes/rfc/rfc9429.txt), JSEP, y la sección *RTCIceServer Dictionary* de
+[WebRTC](../fuentes/w3c/webrtc.html) de W3C.
 
 - La señalización va por el WebSocket de la app.
 - coturn usa credenciales temporales (`use-auth-secret`), que el servidor entrega por la API.
@@ -90,17 +90,14 @@ de [WebRTC](../fuentes/w3c/webrtc.html) de W3C.
 
 ## Mapas
 
-Estándares: la [política de uso de teselas](../fuentes/osm/tile-usage-policy.md), la
-[política de uso de Nominatim](../fuentes/osm/nominatim-usage-policy.md) y la
-[guía de atribución](../fuentes/osm/attribution-guidelines.md) de OpenStreetMap.
+Estándar: la [guía de atribución](../fuentes/osm/attribution-guidelines.md) de OpenStreetMap.
 
 - Las teselas son raster, con URL `{z}/{x}/{y}`.
-- Mientras el uso quepa en la política, las teselas son las de `tile.openstreetmap.org`.
-- La URL de las teselas y su atribución las entrega el servidor en su configuración pública.
-  Endurece la recomendación de la política: cambiar de proveedor no exige publicar otra versión de
-  las apps.
-- Los clientes buscan direcciones en el servidor, que consulta a Nominatim. El límite de la
-  política es por aplicación, y solo el servidor ve el total.
+- Las teselas son las de `tile.openstreetmap.org`.
+- La URL de las teselas y su atribución las entrega el servidor en su configuración pública:
+  cambiar de proveedor no exige publicar otra versión de las apps.
+- Los clientes buscan direcciones en el servidor, que consulta a Nominatim: su límite es por
+  aplicación, y solo el servidor ve el total.
 
 ## Montos
 
@@ -144,7 +141,9 @@ de OWASP.
 
 ## Passkeys
 
-Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.bs) de W3C, la sección
+Estándares: las secciones 5.4 *Options for Credential Creation*, 5.5 *Options for Assertion
+Generation* y 7 *WebAuthn Relying Party Operations* de
+[*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C, la sección
 4.1 *Authorization Code Grant* de [RFC 6749](../fuentes/rfc/rfc6749.txt),
 [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y la sección
 2.1 *Protecting Redirect-Based Flows* de [RFC 9700](../fuentes/rfc/rfc9700.txt).
@@ -155,11 +154,8 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.bs) de W3C
 
 ## Push
 
-Estándares: [*Firebase Cloud Messaging message types*](../fuentes/firebase/set-message-type.md),
-[*Best practices for FCM registration management*](../fuentes/firebase/manage-tokens.md),
-[*Set and manage Android message priority*](../fuentes/firebase/android-message-priority.md), las
-secciones *Push subscription*, *Declarative push message*, *PushSubscriptionOptions Interface*,
-*PushSubscription interface* y *PushEncryptionKeyName enumeration* de la
+Estándares: las secciones *Push subscription*, *Declarative push message*, *PushSubscriptionOptions
+Interface*, *PushSubscription interface* y *PushEncryptionKeyName enumeration* de la
 [*Push API*](../fuentes/w3c/push-api.html) de W3C y [RFC 8292](../fuentes/rfc/rfc8292.txt).
 
 - Android y Flutter reciben push por FCM.
@@ -205,8 +201,10 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
 > `scripts/tokens.py` y `brand/tokens/` de la plantilla están en revisión. La comprobación de
 > `verificar.py` está desactivada.
 
-Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el
-[módulo de color](../fuentes/dtcg/color.html) y el [resolver](../fuentes/dtcg/resolver.html).
+Estándares: de DTCG 2025.10, las secciones 5 *Design token*, 6.1 *Group Structure*, 7.1.1 *Curly
+Brace Syntax*, 7.2 *Reference Resolution* y 8.1 *Color* del [formato](../fuentes/dtcg/format.html),
+las secciones 4.1 *Format* y 4.2.1 *sRGB* del [módulo de color](../fuentes/dtcg/color.html), y las
+secciones 4 *Syntax* y 6 *Resolution logic* del [resolver](../fuentes/dtcg/resolver.html).
 
 - Los colores de un producto van en `brand/tokens/`: `colors.resolver.json` y los `.tokens.json`
   que cita. Son la única fuente de los colores de todos sus clientes.
@@ -244,7 +242,7 @@ Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
 
 ## WebSocket
 
-Estándares: [RFC 6455](../fuentes/rfc/rfc6455.txt) y, del
+Estándares: la sección 7.4 *Status Codes* de [RFC 6455](../fuentes/rfc/rfc6455.txt) y, del
 [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP, las
 secciones *Always Use WSS* y *Session Management*, sin su párrafo de `SameSite`.
 

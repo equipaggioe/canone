@@ -165,8 +165,8 @@ Contrato: [transversal.md](transversal.md#archivos).
 
 - El servidor recibe un archivo como `UploadFile`.
 - Toda imagen se vuelve a codificar con Pillow antes de guardarse, aplicando antes la orientación
-  EXIF. Endurece OWASP, que lo da como técnica: también borra los metadatos de la foto, y sin
-  aplicar la orientación la foto queda girada.
+  EXIF. Endurece OWASP, que lo deja como opcional: borra los metadatos de la foto, y sin aplicar
+  antes la orientación queda girada.
 - Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`.
 - La fila de un archivo guarda su tipo, su tamaño y su nombre original.
 - El archivo en disco se llama con el ID de su fila.

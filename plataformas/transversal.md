@@ -6,14 +6,11 @@ Lo que tienen que cumplir juntas varias piezas. Lo que hace una sola pieza va en
 
 Estándar: los criterios de éxito de nivel A y AA de [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 
-- Todos los clientes cumplen el nivel AA, también las apps. Es la vara que nombra la guía de
-  Flutter, y una sola para todos los clientes.
+- Todos los clientes cumplen el nivel AA, también las apps: una sola vara para todos los clientes.
 - Cada objetivo táctil mide al menos 48 × 48: dp en las apps y px de CSS en la web. Endurece los 24
-  px del criterio 2.5.8, porque la web también se usa en el teléfono, y es la medida que Android
-  recomienda.
+  px del criterio 2.5.8: la web también se usa en el teléfono.
 - Los colores de `brand/tokens/` cumplen los criterios 1.4.3 y 1.4.11 en los dos modos: cada rol
-  de texto contra los fondos en que va, con 4.5:1, y `outline` contra cada superficie, con 3:1. El
-  contraste no se elige a ojo.
+  de texto contra los fondos en que va, y `outline` contra cada superficie.
 - El texto grande también pide 4.5:1. Endurece el criterio 1.4.3, que le pide 3:1: un rol no sabe
   el tamaño del texto que lleva.
 
@@ -21,8 +18,8 @@ Estándar: los criterios de éxito de nivel A y AA de [WCAG 2.2](../fuentes/w3c/
 
 Estándar: [RFC 7578](../fuentes/rfc/rfc7578.txt).
 
-- Un archivo se sube en su propia petición, nunca en base64 dentro de un JSON: base64 agranda el
-  archivo un tercio y el servidor lee el JSON entero en memoria.
+- Un archivo se sube como `multipart/form-data`, en su propia petición, nunca en base64 dentro de
+  un JSON: base64 agranda el archivo un tercio y el servidor lee el JSON entero en memoria.
 
 ## Código por SMS
 
@@ -76,8 +73,7 @@ Estándares: las secciones 2.1 *Syntax* y 4.1 *Choice of Language Tag* de
 - El idioma base es `es`.
 - La base guarda códigos, nunca textos traducidos, y cada cliente los traduce con su catálogo.
 - El cliente muestra el texto de su catálogo para el `type` de un error, en vez de `detail`.
-- El cliente manda en `Accept-Language` el idioma que eligió el usuario. El servidor lo guarda con
-  el FID de cada instalación de la app, y en el usuario el último elegido, para el correo.
+- El cliente manda en `Accept-Language` el idioma que eligió el usuario.
 
 ## Llamadas de voz y video
 
@@ -111,24 +107,26 @@ Estándares: la sección 2.2 de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493, 
 [lista de monedas](../fuentes/iso/iso-4217-list-one.xml) de ISO 4217.
 
 - Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal, sin
-  exponente, y la moneda en su código ISO 4217. Un monto no se formatea sin su moneda.
+  exponente, y la moneda en su código ISO 4217.
+- Un monto no se formatea sin su moneda.
 - Cada cliente lo conserva como cadena o como el decimal de su lenguaje, nunca como `double`, y no
   calcula con él: los totales, impuestos y descuentos llegan calculados del servidor. Así ningún
   cliente necesita una biblioteca decimal.
 
 ## OpenAPI y clientes
 
-- La API habla en camelCase. Cada cliente genera del `openapi.json` del servidor los modelos del
-  cable, en la convención de su lenguaje, y ninguno los escribe a mano. Copiado a mano en varios
-  lenguajes, el contrato diverge sin que nadie lo note.
+- La API habla en camelCase.
+- Cada cliente genera del `openapi.json` del servidor los modelos del cable, en la convención de su
+  lenguaje, y ninguno los escribe a mano: copiado a mano en varios lenguajes, el contrato diverge
+  sin que nadie lo note.
 - Los valores de un enum van en snake_case.
 
 ## Paginación
 
 Estándar: la [AIP-158](../fuentes/google-aip/aip-0158.md) de Google, *Pagination*.
 
-- La respuesta es `{"items": [...], "nextPageToken": "..."}`, y la última página lleva
-  `"nextPageToken": ""`. El campo siempre está.
+- La respuesta es `{"items": [...], "nextPageToken": "..."}`, y el campo `nextPageToken` siempre
+  está.
 - `pageSize` vale 50 por defecto y 100 como máximo.
 - Una lista que muestra números de página acepta `skip` y devuelve `totalSize`. Las demás no.
 - Con `skip`, un `pageSize` mayor que 100 responde 422. Contradice AIP-158, que lo recorta: el
@@ -169,8 +167,8 @@ Interface*, *PushSubscription interface* y *PushEncryptionKeyName enumeration* d
   llamada entrante.
 - Un Web Push es un mensaje declarativo, con la ruta que abre en `navigate`.
 - Una llamada entrante llega por un mensaje de FCM solo de datos y de prioridad alta.
-- Un push vence cuando caduca lo que avisa; el de una llamada entrante, cuando deja de sonar. En la
-  web, el de una llamada lleva `Urgency: high`.
+- Un push vence cuando caduca lo que avisa; el de una llamada entrante, cuando deja de sonar.
+- En la web, el push de una llamada entrante lleva `Urgency: high`.
 - El FID y la suscripción web pertenecen a la sesión: se borran cuando la sesión se cierra o
   vence.
 - La web recibe push con la Push API, sin el SDK de FCM: la CSP queda en `'self'`.
@@ -197,8 +195,7 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
   del sistema: ningún almacenamiento guarda un token que da acceso directo a la API.
 - Una app hace un solo refresco a la vez, y las peticiones que reciben un 401 mientras tanto lo
   esperan. Con la rotación, dos refrescos simultáneos presentan tokens ya rotados.
-- Ante un 401, una app refresca la sesión una sola vez y reintenta una sola vez. Nunca un bucle
-  silencioso.
+- Ante un 401, una app refresca la sesión una sola vez y reintenta una sola vez.
 
 ## Tema
 
@@ -207,10 +204,12 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
 > `scripts/tokens.py` y `brand/tokens/` de la plantilla están en revisión. La comprobación de
 > `verificar.py` está desactivada.
 
-Estándares: de DTCG 2025.10, las secciones 5 *Design token*, 6.1 *Group Structure*, 7.1.1 *Curly
-Brace Syntax*, 7.2 *Reference Resolution* y 8.1 *Color* del [formato](../fuentes/dtcg/format.html),
-las secciones 4.1 *Format* y 4.2.1 *sRGB* del [módulo de color](../fuentes/dtcg/color.html), y las
-secciones 4 *Syntax* y 6 *Resolution logic* del [resolver](../fuentes/dtcg/resolver.html).
+Estándares: de DTCG 2025.10, las secciones 5.1 *Name and value*, 5.2.1 *Description*, 5.2.2
+*Type*, 6.1 *Group Structure*, 7.1.1 *Curly Brace Syntax*, 7.2.2 *Chained References* y 7.2.3
+*Circular References* del [formato](../fuentes/dtcg/format.html), las secciones 4.1 *Format* y
+4.2.1 *sRGB* del [módulo de color](../fuentes/dtcg/color.html), y las secciones 4.1 *Root level
+properties*, 4.2 *Reference objects*, 6.1 *Input validation*, 6.2 *Ordering* y 6.3 *Aliases* del
+[resolver](../fuentes/dtcg/resolver.html).
 
 - Los colores de un producto van en `brand/tokens/`: `colors.resolver.json` y los `.tokens.json`
   que cita. Son la única fuente de los colores de todos sus clientes.
@@ -226,8 +225,6 @@ secciones 4 *Syntax* y 6 *Resolution logic* del [resolver](../fuentes/dtcg/resol
   [Accesibilidad](#accesibilidad).
 - Lo generado se commitea: un cliente compila sin correr el generador.
 - Cada cliente sigue el modo claro u oscuro del sistema.
-- Los tamaños van en el módulo de tema de cada cliente, sin tamaños literales fuera de él. Las
-  unidades y las guías de cada plataforma son distintas.
 
 Plantilla: `scripts/tokens.py` es canónico y se copia sin editar; `brand/tokens/` es un punto de
 partida.
@@ -237,7 +234,7 @@ partida.
 Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
 [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
-- Cada cliente instalable manda `User-Agent: <pieza>/<versión>`, como `mobile/1.4.0`. La versión
+- Cada cliente instalable manda `User-Agent: <pieza>/<versión>`. La versión
   son tres enteros, `MAJOR.MINOR.PATCH`, y se compara número por número.
 - Una versión menor que la mínima de su pieza recibe un 400 de tipo
   `https://<dominio>/api/problems/client-outdated`, y el cliente pide actualizar la app. Lo mismo

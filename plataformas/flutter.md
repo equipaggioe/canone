@@ -133,6 +133,7 @@ Contrato: [transversal.md](transversal.md#tema).
 
 - El tema claro y el oscuro usan `lightColorScheme` y `darkColorScheme`, generados en
   `ui/core/themes/colors.dart`, y `themeMode` es `ThemeMode.system`.
+- Los tamaños van en `ui/core/themes/`, sin tamaños literales fuera de él.
 
 ## Cómo se hace cumplir
 

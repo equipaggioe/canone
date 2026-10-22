@@ -75,6 +75,7 @@ Contrato: [transversal.md](transversal.md#tema).
 
 - `page.theme` y `page.dark_theme` se arman en `theme.py` con `LIGHT` y `DARK`, generados en
   `colors.py`, y `page.theme_mode` es `ThemeMode.SYSTEM`.
+- Los tamaños van en `theme.py`, sin tamaños literales fuera de él.
 
 ## Publicación
 

@@ -102,9 +102,9 @@ el [preset Wind4](../fuentes/unocss/presets-wind4.md) y el
 [plugin de Vite](../fuentes/unocss/integrations-vite.md).
 
 - El preset es Wind4. Trae el reset y genera las variables CSS del tema.
-- Los tokens van en el `theme` de `uno.config.ts`. Los colores son `colors`, generado en
-  `src/lib/colors.ts`, y sus variables CSS entran como preflight desde `colorsCss`, con el modo
-  oscuro de `prefers-color-scheme`.
+- Los tokens van en el `theme` de `uno.config.ts`, sin tamaños literales fuera de él. Los colores
+  son `colors`, generado en `src/lib/colors.ts`, y sus variables CSS entran como preflight desde
+  `colorsCss`, con el modo oscuro de `prefers-color-scheme`.
 
 Contrato: [transversal.md](transversal.md#tema).
 - Las clases de utilidad se escriben en archivos `.svelte`. UnoCSS no lee `.ts` por defecto.

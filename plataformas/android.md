@@ -144,6 +144,7 @@ Contrato: [transversal.md](transversal.md#tema).
 - El `ColorScheme` claro y el oscuro son `LightColorScheme` y `DarkColorScheme`, generados en
   `ui/theme/Colors.kt`, sin color dinámico, y el modo sigue al sistema. El color dinámico
   reemplazaría la paleta del producto, que es la misma en todas las superficies.
+- Los tamaños van en `ui/theme/`, sin tamaños literales fuera de él.
 
 ## Pruebas
 

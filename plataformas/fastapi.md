@@ -281,6 +281,8 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - El servidor traduce con Babel.
 - El `.mo` no se versiona: se compila del `.po` con `pybabel compile -d src/app/locale`. Un `.mo`
   versionado puede quedar desfasado de su `.po`.
+- El servidor guarda el idioma de `Accept-Language` con el FID de cada instalación de la app, y en
+  el usuario el último elegido, para el correo.
 
 ## Límite de tasa
 

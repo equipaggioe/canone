@@ -127,6 +127,7 @@ Contrato: [transversal.md](transversal.md#tema).
 - La paleta de la `QApplication` sale de `palette()` con `LIGHT` o `DARK`, generados en
   `colors.py`, según `QStyleHints.colorScheme()`, y se vuelve a aplicar con `colorSchemeChanged`.
   El evento `ApplicationPaletteChange` no sirve: la app lo provoca al aplicar su paleta.
+- Los tamaños van en `theme.py`, sin tamaños literales fuera de él.
 
 Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico y se copia sin
 editar.

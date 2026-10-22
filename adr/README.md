@@ -51,10 +51,10 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0041](0041-una-tarea-periodica-se-dispara-desde-la-pieza-y-su-interruptor-es-obligatorio.md) | Una tarea periódica se dispara desde la pieza, y su interruptor es un campo obligatorio | Con `server/` | Reemplazada por ADR-0043 |
 | [0042](0042-una-sesion-vencida-se-borra-sin-gracia.md) | Una sesión vencida se borra sin gracia | Con autenticación | Aceptada |
 | [0043](0043-una-tarea-periodica-la-dispara-un-timer-de-systemd.md) | Una tarea periódica la dispara un timer de systemd | Con `server/` | Aceptada |
-| [0044](0044-el-bloqueo-cuenta-en-una-ventana-y-el-titular-lo-ve-en-la-app.md) | El bloqueo cuenta los intentos en una ventana, y el titular lo ve en la app | Con autenticación | Aceptada; el punto 1 lo reemplaza ADR-0045; el punto 3, en lo permanente, ADR-0047, y el punto 6, ADR-0060 |
-| [0045](0045-el-login-y-las-contrasenas-siguen-el-nivel-1-de-asvs.md) | El login y las contraseñas siguen el nivel 1 de ASVS | Con autenticación | Aceptada |
+| [0044](0044-el-bloqueo-cuenta-en-una-ventana-y-el-titular-lo-ve-en-la-app.md) | El bloqueo cuenta los intentos en una ventana, y el titular lo ve en la app | Con autenticación | Aceptada; el punto 1 lo reemplaza ADR-0045; los puntos 2 y 3, ADR-0067, y el punto 6, ADR-0060 |
+| [0045](0045-el-login-y-las-contrasenas-siguen-el-nivel-1-de-asvs.md) | El login y las contraseñas siguen el nivel 1 de ASVS | Con autenticación | Aceptada; los puntos 1, 2 y 3 los reemplaza ADR-0067 |
 | [0046](0046-la-contrasena-se-restablece-con-un-codigo-por-correo-o-por-sms.md) | La contraseña se restablece con un código por correo o por SMS | Con autenticación | Aceptada |
-| [0047](0047-el-titular-levanta-el-bloqueo-desde-una-sesion-abierta.md) | El titular levanta el bloqueo desde una sesión abierta | Con autenticación | Aceptada |
+| [0047](0047-el-titular-levanta-el-bloqueo-desde-una-sesion-abierta.md) | El titular levanta el bloqueo desde una sesión abierta | Con autenticación | Aceptada; el punto 2 lo reemplaza ADR-0067 |
 | [0048](0048-una-app-flutter-usa-riverpod-go-router-dio-y-freezed.md) | Una app Flutter usa Riverpod, go_router, Dio y Freezed | Con Flutter | Propuesta |
 | [0049](0049-la-ubicacion-en-segundo-plano-de-una-app-flutter-usa-geolocator-y-native-geofence.md) | La ubicación en segundo plano de una app Flutter usa geolocator con servicio en primer plano y native_geofence | Con Flutter | Propuesta |
 | [0050](0050-un-monto-entra-solo-como-cadena-y-sale-sin-exponente.md) | Un monto entra solo como cadena y sale sin exponente | Con montos, en el servidor | Aceptada |
@@ -74,3 +74,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0064](0064-una-revision-da-un-veredicto-con-evidencia-sobre-cada-regla-fuente-y-fila.md) | Una revisión da un veredicto con evidencia sobre cada regla, fuente y fila | `plataformas/` | Aceptada |
 | [0065](0065-la-licencia-de-una-fuente-no-decide-si-se-cita.md) | La licencia de una fuente no decide si se cita | `plataformas/` y `fuentes/` | Aceptada |
 | [0066](0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md) | Una fuente corresponde a la versión en uso, aunque no tenga fecha | `plataformas/` y `fuentes/` | Aceptada |
+| [0067](0067-la-autenticacion-sigue-a-nist-y-el-bloqueo-cuenta-fallos-consecutivos-con-esperas.md) | La autenticación sigue a NIST, y el bloqueo cuenta fallos consecutivos con esperas crecientes | Con autenticación | Aceptada |

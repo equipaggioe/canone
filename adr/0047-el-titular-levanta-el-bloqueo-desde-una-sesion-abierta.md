@@ -1,6 +1,7 @@
 # ADR-0047 · El titular levanta el bloqueo desde una sesión abierta
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 2 lo reemplaza el
+  [ADR-0067](0067-la-autenticacion-sigue-a-nist-y-el-bloqueo-cuenta-fallos-consecutivos-con-esperas.md)
 - **Fecha:** 2026-10-12
 - **Alcance:** la sección «Autenticación» de [`plataformas/fastapi.md`](../plataformas/fastapi.md)
 

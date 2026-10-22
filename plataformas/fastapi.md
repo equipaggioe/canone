@@ -176,8 +176,9 @@ Contrato: [transversal.md](transversal.md#archivos).
 
 ## Autenticación
 
-Estándar: las secciones V6.1 *Authentication Documentation* y V6.3 *General Authentication
-Security*, en el nivel 1, de [ASVS 5.0](../fuentes/owasp/ASVS_V6_Authentication.md) de OWASP.
+Estándares: de [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), las secciones 2.1.1 y 2.1.2
+de *AAL1*, 3.2.2 *Rate Limiting (Throttling)*, 4.1 *Authenticator Binding* y 4.6 *Account
+Notifications*, y las secciones 2.2.1 y 2.2.2 de *AAL2* en las cuentas de administración.
 
 - Una cuenta se registra con un correo o con un teléfono, verificado con un código.
 - Una cuenta no tiene nombre de usuario.
@@ -188,14 +189,17 @@ Security*, en el nivel 1, de [ASVS 5.0](../fuentes/owasp/ASVS_V6_Authentication.
 - Cambiar el correo, el teléfono o una passkey pide volver a autenticarse en ese momento.
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el
   viejo recibe un aviso.
-- El conteo de intentos fallidos vive en Valkey.
-- Una cuenta con 10 intentos fallidos en 15 minutos queda bloqueada 30 minutos, y con el segundo
-  bloqueo queda bloqueada hasta que el titular lo levanta.
-- El segundo bloqueo es un estado de la cuenta en la base: si Valkey pierde sus datos, el bloqueo
-  sigue.
-- El titular ve en la app cada intento fallido y cada bloqueo de su cuenta.
-- El bloqueo cierra solo el login: las sesiones abiertas siguen.
-- El bloqueo se levanta desde una sesión abierta o, en una cuenta con contraseña, restableciéndola.
+- Las direcciones de aviso son el correo, el teléfono y el push a las apps con sesión abierta: una
+  cuenta con un solo medio también tiene dos.
+- El límite de fallos consecutivos es 100.
+- Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con
+  cada fallo hasta una hora, y un intento antes de tiempo responde 429: llegar a los 100 fallos
+  lleva unos cuatro días, y el titular lo ve antes.
+- Los fallos consecutivos y la hora del siguiente intento viven en la base: sin ventana de tiempo,
+  perderlos le regala al atacante 100 intentos nuevos.
+- El titular ve en la app cada intento fallido y cada autenticador deshabilitado.
+- Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
+- El titular vuelve a habilitarlo desde una sesión abierta o, si es la contraseña, restableciéndola.
 - El login con contraseña responde el mismo error exista o no la cuenta.
 
 ## Código por SMS
@@ -211,31 +215,29 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 - Un código nuevo reemplaza al anterior: solo vale el último.
 - Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta
   10 por hora.
-- Un código se invalida al tercer intento fallido, y cada intento fallido cuenta para el bloqueo de
-  la cuenta.
+- Un código se invalida al tercer intento fallido.
 - Quien perdió su número y no tiene otra forma de entrar recupera la cuenta con un administrador.
 
 ## Contraseñas
 
-Estándares: las secciones V6.2 *Password Security* y V6.4 *Authentication Factor Lifecycle and
-Recovery*, en el nivel 1, de [ASVS 5.0](../fuentes/owasp/ASVS_V6_Authentication.md) de OWASP;
-la sección *Argon2id* del [*Password Storage Cheat Sheet*](../fuentes/owasp/Password_Storage.md)
-de OWASP, y [*Forgot Password Cheat Sheet*](../fuentes/owasp/Forgot_Password.md) de OWASP, salvo
-*Security Questions*.
+Estándares: de [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), la sección 3.1.1
+*Passwords*, salvo sus tres últimos párrafos, sobre cómo se guarda la contraseña, y la sección 4.2
+*Account Recovery*; y la sección *Argon2id* del
+[*Password Storage Cheat Sheet*](../fuentes/owasp/Password_Storage.md) de OWASP.
 
 - Una contraseña se guarda con `PasswordHash.recommended()` de pwdlib: Argon2id con 64 MiB y 3
   pasadas, por encima de los mínimos de OWASP.
-- Toda contraseña tiene al menos 8 caracteres. Contradice ASVS, que recomienda con fuerza 15: una
-  de 15 aleja al usuario.
+- Toda contraseña tiene al menos 8 caracteres. Contradice NIST, que pide 15 cuando la contraseña es
+  el único factor: una de 15 aleja al usuario.
 - La lista de bloqueo es un archivo del servidor.
 - Una cuenta restablece su contraseña con un código que recibe, a su elección, en el correo o en el
   teléfono que registró.
 - La solicitud para restablecer responde 404 si la cuenta no existe, y una IP que recibe 10 en 15
-  minutos queda bloqueada 30 minutos. Contradice OWASP, que pide la misma respuesta exista o no la
-  cuenta: el registro ya lo revela.
+  minutos queda bloqueada 30 minutos: el registro ya revela si la cuenta existe.
 - El código para restablecer tiene 6 dígitos, vive en Valkey con un TTL de 10 minutos, y uno nuevo
   reemplaza al anterior.
-- Un código para restablecer se invalida al tercer intento fallido.
+- Un código para restablecer se invalida al tercer intento fallido, y cada fallo cuenta entre los
+  fallos consecutivos de la contraseña.
 - Cada correo y cada número reciben un código para restablecer por minuto, y hasta 5 por hora.
 - Cambiar la contraseña cierra las demás sesiones y renueva los tokens de la sesión que hizo el
   cambio; restablecerla cierra todas.

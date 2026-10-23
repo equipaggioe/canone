@@ -14,6 +14,7 @@ partida** se copia y después es del repositorio.
 | `.gitignore` | Raíz | Punto de partida | [repositorio.md](../repositorio.md) |
 | `.github/workflows/ci.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [repositorio.md](../repositorio.md), [python.md](../plataformas/python.md) |
 | `.github/workflows/release.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [despliegue.md](../plataformas/despliegue.md) |
+| `scripts/deploy.py` | `scripts/` | Punto de partida: `PRODUCTO` y `OWNER` toman los nombres del repositorio, y se ajustan `TOKEN`, `UNITS`, `PORT` y `DESKTOP` | [despliegue.md](../plataformas/despliegue.md#versiones) |
 | `scripts/tokens.py` | `scripts/` | Canónico | [transversal.md](../plataformas/transversal.md) |
 | `brand/tokens/` | `brand/tokens/` | Punto de partida | [transversal.md](../plataformas/transversal.md) |
 | `python/.gitignore` | Cada pieza Python | Punto de partida | [python.md](../plataformas/python.md) |

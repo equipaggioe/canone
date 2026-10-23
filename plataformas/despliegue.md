@@ -50,8 +50,9 @@ sección *WebSocket Protocol Configuration* del
 
 - `ExecStartPre=` compila los catálogos de [fastapi.md](fastapi.md#idiomas).
 - El servidor arranca con
-  `uvicorn app.main:app --ws-max-size 65536 --ws-per-message-deflate false`:
+  `uvicorn app.main:app --port <puerto> --ws-max-size 65536 --ws-per-message-deflate false`:
   `fastapi run` no le pasa a Uvicorn las opciones de WebSocket.
+  - `--port` es propio de cada app: dos apps de la misma máquina no chocan.
   - `--ws-max-size 65536` cumple el límite de mensaje de [fastapi.md](fastapi.md#websocket).
   - `--ws-per-message-deflate false` cumple *Compression security* de OWASP.
 - Caddy le llega al servidor por loopback: nadie salta los límites de Caddy, y Uvicorn cree las
@@ -77,21 +78,30 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 
 ## Versiones
 
-- Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI construye de ese tag un artefacto con el servidor
-  y el build de la web, y lo publica en un release de GitHub con su SHA-256.
+- Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI corre en ese tag los jobs de `ci.yml`, y solo si
+  pasan construye un artefacto con el servidor y el build de la web, y lo publica en un release de
+  GitHub con su SHA-256.
 - Cada versión queda en `/srv/<app>/releases/<versión>/`, y el enlace `/srv/<app>/current` apunta
   a la activa. Los datos quedan fuera de las versiones, en `/var/lib/<app>/`.
-- `deploy <versión>` es el `scripts/deploy.py` del repositorio, instalado en el servidor: una
-  persona lo lanza por `ssh`. Sus pasos, en este orden: verifica el SHA-256, `uv sync --frozen`,
-  `alembic upgrade head`, cambia `current`, reinicia las unidades y consulta `GET /api/health`.
-- Un paso que falla detiene el script. Si `GET /api/health` no responde 204, `current` vuelve a la
-  versión anterior. El rollback no deshace las migraciones.
+- `releases/` guarda las cinco versiones más recientes y la activa: las demás siguen en sus
+  releases de GitHub.
+- Quien despliega firma el `.sha256` del release en su máquina con `ssh-keygen -Y sign`, y el
+  servidor solo instala lo que firma una llave de `/etc/<app>/allowed_signers`: una cuenta de
+  GitHub comprometida no alcanza para desplegar.
+- `scripts/deploy.py` instala un tag en el servidor, y una persona lo lanza por `ssh`.
+- Las migraciones corren en la unidad `<app>-migrate@<versión>.service`, con las credenciales del
+  servidor, porque `alembic/env.py` lee `Settings`, salvo `database_url`, que es la del rol dueño
+  del esquema. El rol del servidor no tiene DDL: un error o una inyección en la app no cambian el
+  esquema.
+- Si la versión nueva no pasa `GET /api/health`, `current` vuelve a la anterior solo si no hubo
+  migraciones: el código anterior no corre sobre la base migrada.
+- En un repositorio privado, el release se baja con un token de GitHub de solo lectura, cifrado
+  con `systemd-creds`.
 - Caddy sirve el build de cada superficie web, `web/`, `panel/` y `landing/`, desde
   `current/<pieza>/`. La PWA es `web/`.
 - El CI construye del mismo tag los instalables de `desktop/` y los adjunta al release como
-  `desktop-<sistema>.<ext>`. `deploy` los copia con ese nombre, igual en cada versión, a
-  `/srv/<app>/downloads/`, fuera de `releases/`, y Caddy los sirve de ahí: la landing enlaza
-  siempre al mismo nombre.
+  `desktop-<sistema>.<ext>`. Caddy los sirve con ese nombre, igual en cada versión, desde
+  `/srv/<app>/downloads/`, fuera de `releases/`: la landing enlaza siempre al mismo nombre.
 
 ## Cómo se hace cumplir
 

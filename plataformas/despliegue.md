@@ -9,6 +9,11 @@ Estándares: de OWASP, [*HTTP Security Response Headers Cheat Sheet*](../fuentes
 *Infrastructure Configuration* del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
 
 - Caddy pone las cabeceras con la directiva `header`, para la web y para la API.
+- `Permissions-Policy` niega cada función potente del navegador que la app no usa, y la que usa va
+  con `(self)`. Contradice la recomendación de OWASP, que niega la cámara, el micrófono y la
+  ubicación: WebRTC y los mapas los usan.
+- No se envía `Cross-Origin-Embedder-Policy`. Contradice a OWASP: solo habilita el aislamiento entre
+  orígenes, que ninguna pieza usa, y bloquea las teselas de OSM y el formulario de pago incrustado.
 - Caddy corta el cuerpo con `request_body`: 1 MB en la API y 10 MB en las rutas de subida. El
   límite actúa antes de que el cuerpo llegue a Python.
 - Caddy nunca sirve el directorio de los archivos de los usuarios: cada archivo pasa por el servidor,
@@ -48,7 +53,8 @@ Estándares: la sección *Sandboxing* de [`systemd.exec`](../fuentes/systemd/sys
 sección *WebSocket Protocol Configuration* del
 [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
-- `ExecStartPre=` compila los catálogos de [fastapi.md](fastapi.md#idiomas).
+- Las unidades son las de `plantilla/infra/`, instaladas en `/etc/systemd/system/` con los datos
+  de cada app.
 - El servidor arranca con
   `uvicorn app.main:app --port <puerto> --ws-max-size 65536 --ws-per-message-deflate false`:
   `fastapi run` no le pasa a Uvicorn las opciones de WebSocket.
@@ -67,7 +73,11 @@ PostgreSQL.
 
 - El respaldo de la base es un `pg_dump` diario en formato custom: `pg_restore` puede restaurar
   solo una parte.
-- El respaldo sale de la máquina, con la base y `/var/lib/<app>/files/` juntos.
+- El respaldo sale de la máquina con `restic`, cifrado, hacia un repositorio S3 externo, con el
+  dump y `/var/lib/<app>/files/` juntos. Corre cada día después del dump y conserva 7 diarios,
+  4 semanales y 12 mensuales.
+- El dump y `restic` son unidades distintas: el dump corre como `postgres`, y `restic` solo puede
+  leer, con `CAP_DAC_READ_SEARCH`.
 
 ## Valkey
 
@@ -79,8 +89,8 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 ## Versiones
 
 - Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI corre en ese tag los jobs de `ci.yml`, y solo si
-  pasan construye un artefacto con el servidor y el build de la web, y lo publica en un release de
-  GitHub con su SHA-256.
+  pasan construye un artefacto con el servidor, sus catálogos compilados y el build de la web, y lo
+  publica en un release de GitHub con su SHA-256.
 - Cada versión queda en `/srv/<app>/releases/<versión>/`, y el enlace `/srv/<app>/current` apunta
   a la activa. Los datos quedan fuera de las versiones, en `/var/lib/<app>/`.
 - `releases/` guarda las cinco versiones más recientes y la activa: las demás siguen en sus

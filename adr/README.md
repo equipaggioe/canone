@@ -76,3 +76,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0066](0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md) | Una fuente corresponde a la versión en uso, aunque no tenga fecha | `plataformas/` y `fuentes/` | Aceptada |
 | [0067](0067-la-autenticacion-sigue-a-nist-y-el-bloqueo-cuenta-fallos-consecutivos-con-esperas.md) | La autenticación sigue a NIST, y el bloqueo cuenta fallos consecutivos con esperas crecientes | Con autenticación | Aceptada |
 | [0068](0068-una-version-se-despliega-desde-un-tag-con-un-artefacto-y-un-script.md) | Una versión se despliega desde un tag, con un artefacto y un script | Con `server/` | Aceptada |
+| [0069](0069-el-servidor-se-instala-desde-plantilla-infra-y-sus-cabeceras-no-frenan-a-las-apps.md) | El servidor se instala desde `plantilla/infra/`, y sus cabeceras no frenan a las apps | Con `server/` | Aceptada |

@@ -30,10 +30,17 @@ jobs:
         working-directory: PIEZA
       - run: pnpm build
         working-directory: PIEZA
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run --locked pybabel compile -d src/app/locale
+        working-directory: server
       - run: |
           mkdir -p dist/PIEZA
           cp -r PIEZA/build/. dist/PIEZA
           cp -r server scripts dist
+          rm -rf dist/server/.venv
           tar -czf "${{ github.event.repository.name }}-$GITHUB_REF_NAME.tar.gz" -C dist .
           sha256sum "${{ github.event.repository.name }}-$GITHUB_REF_NAME.tar.gz" > "${{ github.event.repository.name }}-$GITHUB_REF_NAME.sha256"
       - run: gh release create "$GITHUB_REF_NAME" --generate-notes "${{ github.event.repository.name }}-$GITHUB_REF_NAME".*

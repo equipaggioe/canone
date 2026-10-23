@@ -24,7 +24,7 @@ dominio. Un producto con una sola web tiene `web/`; uno con tres tiene `web/`, `
 | `desktop/` | Cliente instalable en una computadora |
 | `packages/` | Código compartido entre piezas, como paquete instalable y no copiado. Dentro, el nombre es el del dominio a secas: `packages/mobile/`, `packages/protocol/` |
 | `docs/` | `arquitectura/`, `adr/`, `planes/`. Nada más — ver [documentacion.md](documentacion.md) |
-| `scripts/` | Lo que es del repositorio entero y `consola` no hace |
+| `scripts/` | Lo que es del repositorio entero |
 | `brand/` | Logo y colores del producto, con los colores en `tokens/` ([transversal.md](plataformas/transversal.md#tema)). No es una pieza: no corre en ningún lado y lo leen las piezas ([ADR-0017](adr/0017-la-marca-vive-en-brand.md)) |
 | `.consola/` | `params.json` y `config.env`. Lo lee `consola`; no se edita a mano y no se commitea |
 
@@ -38,8 +38,7 @@ construido: Flet en un teléfono es `mobile/` y Flet en una computadora es `desk
 
 Lo que necesita canal nativo va en un plugin local bajo `plugins/`.
 
-Lo que `consola` hace no se duplica en un script del repositorio. Lo de una sola pieza va dentro de
-ella, no en `scripts/`.
+Lo de una sola pieza va dentro de ella, no en `scripts/`.
 
 Cómo queda el servidor y cómo llega una versión a él está en
 [plataformas/despliegue.md](plataformas/despliegue.md).

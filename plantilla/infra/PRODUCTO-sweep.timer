@@ -1,0 +1,9 @@
+[Unit]
+Description=PRODUCTO file sweep, daily
+
+[Timer]
+OnCalendar=daily
+Persistent=yes
+
+[Install]
+WantedBy=timers.target

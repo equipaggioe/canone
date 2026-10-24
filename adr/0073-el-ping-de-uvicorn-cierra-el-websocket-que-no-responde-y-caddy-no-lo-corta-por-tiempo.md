@@ -1,6 +1,6 @@
 # ADR-0073 · El ping de Uvicorn cierra el WebSocket que no responde, y Caddy no lo corta por tiempo
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-10-23
 - **Alcance:** «Caddy» de [`plataformas/despliegue.md`](../plataformas/despliegue.md)
 

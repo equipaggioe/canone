@@ -20,7 +20,7 @@ era uno solo, y Caddy tenía reglas sin un archivo que las aplicara ni algo que 
    valida con `caddy validate`.
 4. Caddy es el 2.6.2 de Debian 13. En `/api/*`, una petición cuyo `Content-Length` pasa el límite
    recibe 413 de Caddy antes de `request_body`, y el CI valida con ese mismo Caddy.
-5. *(Propuesta)* El límite de 10 MB es el de las peticiones `multipart/form-data`, y el de 1 MB, el
+5. El límite de 10 MB es el de las peticiones `multipart/form-data`, y el de 1 MB, el
    del resto de `/api/*`.
 
 ## Consecuencias

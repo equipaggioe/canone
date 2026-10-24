@@ -1,6 +1,6 @@
 # ADR-0072 · Cada instancia de Valkey limita su memoria, y Transparent Huge Pages se apaga solo para Valkey
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-10-23
 - **Alcance:** «Valkey» de [`plataformas/despliegue.md`](../plataformas/despliegue.md) y
   `plantilla/infra/`
@@ -29,8 +29,15 @@ instancias comparten la memoria de una máquina.
   sesión revocada nunca se borra para hacer lugar.
 - Una app que llena su instancia no le quita memoria a otra.
 - Una máquina sin swap no puede instalar una app hasta tenerlo.
-- Comprobado en Debian 13 con THP en `always`: con `disable-thp yes`, `/proc/<pid>/status` de
-  `valkey-server` da `THP_enabled: 0`, y con `no`, `1` y el aviso de THP en el log.
+- Comprobado en Debian 13 con Valkey 8.1.1:
+  - Con el `valkey.conf` de la plantilla y `maxmemory 1mb`, la instancia queda en `noeviction`; la
+    escritura 84 responde `OOM command not allowed when used memory > 'maxmemory'`, y las 83
+    anteriores siguen ahí.
+  - `sysctl --system` aplica `/etc/sysctl.d/valkey.conf` y deja `vm.overcommit_memory` en 1. Sin
+    él, Valkey avisa al arrancar que el overcommit está apagado.
+  - Con THP en `always`, `/proc/<pid>/status` de `valkey-server` da `THP_enabled: 0` con
+    `disable-thp yes`, y `1` con `no`, junto con el aviso de THP en el log.
+  - `check_swap()` de `install.py` pasa con tanto swap como memoria y falla con 1 kB menos.
 
 ## Descartado
 

@@ -81,5 +81,6 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0071](0071-cada-app-tiene-su-instancia-de-valkey-y-cada-superficie-su-host-en-caddy.md) | Cada app tiene su instancia de Valkey, y cada superficie, su host en Caddy | Con `server/` | Aceptada |
 | [0072](0072-cada-instancia-de-valkey-limita-su-memoria-y-thp-se-apaga-solo-para-valkey.md) | Cada instancia de Valkey limita su memoria, y Transparent Huge Pages se apaga solo para Valkey | Con `server/` | Aceptada |
 | [0073](0073-el-ping-de-uvicorn-cierra-el-websocket-que-no-responde-y-caddy-no-lo-corta-por-tiempo.md) | El ping de Uvicorn cierra el WebSocket que no responde, y Caddy no lo corta por tiempo | Con `server/` | Aceptada |
+| [0074](0074-las-credenciales-del-respaldo-tienen-una-copia-fuera-del-servidor.md) | Las credenciales del respaldo tienen una copia fuera del servidor | Con `server/` | Propuesta |
 | [0075](0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) | canone fija, el repositorio declara y consola dispara | Todos | Aceptada |
 | [0076](0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md) | Lo que cambia entre despliegues sale de un solo archivo, y lo demás es código | Con `server/` | Aceptada |

@@ -92,8 +92,9 @@ Estándares: de OWASP, la sección *Security Headers* del
 ## Configuración
 
 Estándares: de systemd 257, la versión de Debian 13, [`systemd.exec`](../fuentes/systemd/systemd.exec.xml),
-en *Environment* y *Credentials*, y la sección 2.7.1, *Creation*, del
-[*Secrets Management Cheat Sheet*](../fuentes/owasp/Secrets_Management.md) de OWASP.
+en *Environment* y *Credentials*, y las secciones 2.7.1, *Creation*, y 2.9, *Downtime, Break-glass,
+Backup and Restore*, del [*Secrets Management Cheat Sheet*](../fuentes/owasp/Secrets_Management.md)
+de OWASP.
 
 - Cada campo de `Settings` llega al servicio con `LoadCredentialEncrypted=`, cifrado con
   `systemd-creds encrypt`: no queda en claro en el disco.
@@ -103,6 +104,11 @@ en *Environment* y *Credentials*, y la sección 2.7.1, *Creation*, del
 - Las credenciales que el servidor no usa, como las de las migraciones, el respaldo y el
   despliegue, van en otra carpeta: el servidor no las recibe. `<app>-migrate/database_url` también
   se cifra con `--name=app_database_url`, porque reemplaza al de la carpeta de la app.
+- Cada credencial de `<app>-backup/` tiene una copia fuera del servidor, en el gestor de
+  contraseñas de quien despliega: `systemd-creds` cifra con una llave de la máquina, y sin
+  `restic_password` el respaldo no se lee en otra.
+- Cada mes, quien despliega abre el repositorio de restic desde su máquina con esa copia, con
+  `restic snapshots`: una copia que no abre el respaldo se descubre antes de necesitarla.
 
 ## coturn
 

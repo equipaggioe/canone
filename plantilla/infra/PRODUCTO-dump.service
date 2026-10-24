@@ -8,6 +8,7 @@ User=postgres
 Group=postgres
 StateDirectory=PRODUCTO-dump
 ExecStart=/usr/bin/pg_dump --format=custom --file=/var/lib/PRODUCTO-dump/PRODUCTO.dump --dbname=PRODUCTO
+ExecStart=/usr/bin/pg_dumpall --globals-only --file=/var/lib/PRODUCTO-dump/globals.sql
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes

@@ -1,0 +1,3 @@
+panel.DOMINIO {
+	import surface PRODUCTO panel PUERTO "PERMISOS"
+}

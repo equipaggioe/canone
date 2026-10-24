@@ -92,5 +92,8 @@ haya commits, para que una vulnerabilidad publicada después del último commit 
 ([ADR-0019](adr/0019-el-ci-corre-cada-semana-aunque-no-haya-commits.md)). La plantilla es
 [`plantilla/.github/workflows/ci.yml`](plantilla/.github/workflows/ci.yml).
 
+Cada workflow da al token `contents: read`, y solo el job que sube archivos a un release pide
+`contents: write`: `ci.yml`, llamado desde `release.yml`, hereda sus permisos.
+
 **Una regla de `canone` que no rompe CI no es una regla, es una sugerencia.** Una convención nueva
 se agrega junto con lo que la verifica.

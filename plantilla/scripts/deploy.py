@@ -9,6 +9,9 @@ Before that, on the machine that holds the key:
         PRODUCTO-v1.4.0.sha256
     gh release upload v1.4.0 PRODUCTO-v1.4.0.sha256.sig
 
+The first version has no current yet: copy this file from the tag to
+the server and run it from there.
+
 Starting point from canone: plataformas/despliegue.md, «Versiones».
 """
 
@@ -28,13 +31,12 @@ from pathlib import Path
 
 APP = "PRODUCTO"
 REPO = "OWNER/PRODUCTO"
-# None in a public repository. In a private one, the path of a
-# read-only token encrypted with `systemd-creds encrypt`.
+# None in a public repository. In a private one, a read-only token
+# encrypted with `systemd-creds encrypt`, in
+# /etc/credstore.encrypted/PRODUCTO-deploy/github_token.
 TOKEN: Path | None = None
 UNITS = ("PRODUCTO.service",)
 MIGRATE = "PRODUCTO-migrate@{}.service"
-PORT = 8000
-HEALTH = f"http://127.0.0.1:{PORT}/api/health"
 HEALTH_SECONDS = 30
 KEEP = 5
 DESKTOP = ("desktop-linux.bin", "desktop-windows.exe", "desktop-macos.zip")
@@ -45,6 +47,7 @@ CURRENT = ROOT / "current"
 DOWNLOADS = ROOT / "downloads"
 SIGNERS = Path("/etc") / APP / "allowed_signers"
 VERSION = re.compile(r"v\d+\.\d+\.\d+")
+PORT = re.compile(r"--port (\d+)")
 API = f"https://api.github.com/repos/{REPO}"
 NAME = REPO.split("/")[1]
 
@@ -96,19 +99,31 @@ def verify(checksum: Path, signature: Path) -> None:
         subprocess.run(command, stdin=data, check=True, capture_output=True, text=True)
 
 
-def fetch(version: str, assets: dict[str, str], folder: Path, token: str | None) -> Path:
-    """Download the artifact of the version and check its signature."""
+def checked(name: str, path: Path, sums: dict[str, str]) -> None:
+    """Fail unless the signed checksums give path as name."""
+    # The checksums of another version do not name this artifact.
+    if name not in sums:
+        raise DeployError(f"the signed checksums do not name {name}")
+    with path.open("rb") as file:
+        actual = hashlib.file_digest(file, "sha256").hexdigest()
+    if actual != sums[name]:
+        raise DeployError(f"{name} does not match its SHA-256")
+
+
+def fetch(
+    version: str, assets: dict[str, str], folder: Path, token: str | None
+) -> tuple[Path, dict[str, str]]:
+    """Download the artifact and the signed checksums of every file."""
     archive = folder / f"{NAME}-{version}.tar.gz"
     checksum = folder / f"{NAME}-{version}.sha256"
     signature = folder / f"{NAME}-{version}.sha256.sig"
     for path in (archive, checksum, signature):
         download(assets[path.name], path, token)
     verify(checksum, signature)
-    with archive.open("rb") as file:
-        actual = hashlib.file_digest(file, "sha256").hexdigest()
-    if actual != checksum.read_text(encoding="utf-8").split()[0]:
-        raise DeployError(f"{archive.name} does not match its SHA-256")
-    return archive
+    lines = checksum.read_text(encoding="utf-8").splitlines()
+    sums = {name: expected for expected, name in map(str.split, lines)}
+    checked(archive.name, archive, sums)
+    return archive, sums
 
 
 def install(archive: Path, target: Path) -> None:
@@ -117,7 +132,16 @@ def install(archive: Path, target: Path) -> None:
     with tarfile.open(archive) as tar:
         tar.extractall(unpacked, filter="data")
     unpacked.rename(target)
-    run("uv", "sync", "--frozen", "--no-dev", cwd=target / "server")
+    run("uv", "sync", "--locked", "--no-dev", cwd=target / "server")
+
+
+def stage(assets: dict[str, str], sums: dict[str, str], target: Path, token: str | None) -> None:
+    """Download and check the desktop installers into the release."""
+    folder = target / "downloads"
+    folder.mkdir()
+    for name in DESKTOP:
+        download(assets[name], folder / name, token)
+        checked(name, folder / name, sums)
 
 
 def heads(release: Path) -> str:
@@ -134,29 +158,55 @@ def point(target: Path) -> None:
     link.replace(CURRENT)
 
 
+def health() -> str:
+    """Return the health url, on the port of the installed unit."""
+    command = run("systemctl", "show", "--property=ExecStart", "--value", f"{APP}.service")
+    port = PORT.search(command)
+    if port is None:
+        raise DeployError(f"{APP}.service starts without --port")
+    return f"http://127.0.0.1:{port[1]}/api/health"
+
+
 def restart() -> None:
     """Restart the units and wait for the health check."""
+    url = health()
     run("systemctl", "restart", *UNITS)
     problem = "no answer"
     for _ in range(HEALTH_SECONDS):
         try:
-            with urllib.request.urlopen(HEALTH, timeout=5) as response:
+            with urllib.request.urlopen(url, timeout=5) as response:
                 if response.status == 204:
                     return
                 problem = f"status {response.status}"
         except OSError as error:
             problem = str(error)
         time.sleep(1)
-    raise Unhealthy(f"{HEALTH}: {problem}")
+    raise Unhealthy(f"{url}: {problem}")
 
 
-def publish(assets: dict[str, str], token: str | None) -> None:
-    """Replace the desktop installers that Caddy serves."""
+def migrate(version: str, target: Path, previous: Path | None, migrates: bool) -> None:
+    """Migrate to version, with the server stopped if it changes."""
+    # The previous code must not run on the migrated schema.
+    if migrates:
+        run("systemctl", "stop", *UNITS)
+    try:
+        run("systemctl", "start", MIGRATE.format(version))
+    except subprocess.CalledProcessError:
+        # env.py runs every migration in one transaction: the
+        # schema did not change.
+        shutil.rmtree(target)
+        if migrates and previous is not None:
+            restart()
+        raise
+
+
+def publish(target: Path) -> None:
+    """Move the installers of target to those that Caddy serves."""
     DOWNLOADS.mkdir(exist_ok=True)
+    staged = target / "downloads"
     for name in DESKTOP:
-        partial = DOWNLOADS / f".{name}"
-        download(assets[name], partial, token)
-        partial.replace(DOWNLOADS / name)
+        (staged / name).replace(DOWNLOADS / name)
+    staged.rmdir()
 
 
 def prune() -> None:
@@ -185,13 +235,15 @@ def deploy(version: str) -> None:
     RELEASES.mkdir(parents=True, exist_ok=True)
     try:
         with tempfile.TemporaryDirectory(dir=RELEASES) as folder:
-            install(fetch(version, assets, Path(folder), token), target)
+            archive, sums = fetch(version, assets, Path(folder), token)
+            install(archive, target)
+        stage(assets, sums, target, token)
         migrates = previous is None or heads(previous) != heads(target)
     except BaseException:
         if target.exists():
             shutil.rmtree(target)
         raise
-    run("systemctl", "start", MIGRATE.format(version))
+    migrate(version, target, previous, migrates)
     point(target)
     try:
         restart()
@@ -202,7 +254,7 @@ def deploy(version: str) -> None:
         point(previous)
         restart()
         raise DeployError(f"{error}. current is back on {previous.name}") from error
-    publish(assets, token)
+    publish(target)
     prune()
 
 

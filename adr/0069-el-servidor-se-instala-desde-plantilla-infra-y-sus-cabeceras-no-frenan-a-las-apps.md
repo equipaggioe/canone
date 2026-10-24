@@ -1,6 +1,6 @@
 # ADR-0069 · El servidor se instala desde `plantilla/infra/`, y sus cabeceras no frenan a las apps
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 2 lo reemplaza el [ADR-0070](0070-las-unidades-cargan-la-carpeta-de-credenciales-y-permissions-policy-sigue-a-owasp.md)
 - **Fecha:** 2026-10-22
 - **Alcance:** «Caddy», «Procesos» y «Respaldos» de [`plataformas/despliegue.md`](../plataformas/despliegue.md), e «Idiomas» de [`plataformas/fastapi.md`](../plataformas/fastapi.md)
 

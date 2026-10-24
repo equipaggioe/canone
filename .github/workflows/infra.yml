@@ -1,0 +1,38 @@
+name: Infra
+
+on:
+  push:
+    branches: [master]
+    paths: ["plantilla/infra/**", ".github/workflows/infra.yml"]
+  pull_request:
+    paths: ["plantilla/infra/**", ".github/workflows/infra.yml"]
+
+jobs:
+  exposure:
+    runs-on: ubuntu-latest
+    # The systemd of Debian 13, where the units run.
+    container: debian:trixie
+    steps:
+      - uses: actions/checkout@v5
+      - run: apt-get update && apt-get install --yes --no-install-recommends systemd
+      - run: |
+          for unit in plantilla/infra/*.service; do
+            systemd-analyze security --offline=yes --threshold=20 "$unit"
+          done
+
+  caddy:
+    runs-on: ubuntu-latest
+    # The Caddy of Debian 13, the one the server installs.
+    container: debian:trixie
+    steps:
+      - uses: actions/checkout@v5
+      - run: apt-get update && apt-get install --yes --no-install-recommends caddy
+      # The placeholders take values like those install.py writes.
+      - run: |
+          mkdir -p "$RUNNER_TEMP/caddy/sites"
+          cp plantilla/infra/Caddyfile "$RUNNER_TEMP/caddy/"
+          for site in plantilla/infra/PRODUCTO-*.caddy; do
+            sed -e s/PRODUCTO/app/g -e s/PUERTO/8000/g -e s/DOMINIO/example.com/g \
+              -e "s/PERMISOS/camera=()/g" "$site" > "$RUNNER_TEMP/caddy/sites/$(basename "$site")"
+          done
+          caddy validate --config "$RUNNER_TEMP/caddy/Caddyfile"

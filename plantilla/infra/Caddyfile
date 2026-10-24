@@ -1,0 +1,53 @@
+# The arguments: the app, the piece, the port of its server and its
+# Permissions-Policy.
+(surface) {
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		# ADR-0071: the CSP of SvelteKit is a meta tag, which ignores
+		# frame-ancestors.
+		Content-Security-Policy "frame-ancestors 'none'"
+		Referrer-Policy strict-origin-when-cross-origin
+		Cross-Origin-Opener-Policy same-origin
+		Cross-Origin-Resource-Policy same-site
+		Permissions-Policy "{args.3}"
+		-Server
+	}
+	handle /api/* {
+		@upload header Content-Type multipart/form-data*
+		@other not header Content-Type multipart/form-data*
+		# ADR-0071: when request_body cuts a body with a Content-Length,
+		# Caddy 2.6.2 answers 502, and the client retries a 502.
+		@upload_too_big {
+			header Content-Type multipart/form-data*
+			expression `{http.request.header.Content-Length}.matches("^[0-9]+$") && int({http.request.header.Content-Length}) > 10000000`
+		}
+		@other_too_big {
+			not header Content-Type multipart/form-data*
+			expression `{http.request.header.Content-Length}.matches("^[0-9]+$") && int({http.request.header.Content-Length}) > 1000000`
+		}
+		respond @upload_too_big 413
+		respond @other_too_big 413
+		request_body @upload {
+			max_size 10MB
+		}
+		request_body @other {
+			max_size 1MB
+		}
+		header ?Cache-Control no-store
+		header X-Robots-Tag "noindex, nofollow"
+		reverse_proxy 127.0.0.1:{args.2}
+	}
+	handle /downloads/* {
+		root * /srv/{args.0}
+		file_server
+	}
+	handle {
+		root * /srv/{args.0}/current/{args.1}
+		try_files {path} {path}/ {path}.html /200.html
+		file_server
+	}
+}
+
+import sites/*.caddy

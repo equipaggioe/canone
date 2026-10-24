@@ -76,7 +76,13 @@ Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 - La configuración es una instancia de `Settings`, que hereda de `BaseSettings` de
   pydantic-settings.
 - Todo campo de `Settings` es obligatorio y sin valor por defecto.
-- En desarrollo, las variables salen de `uv run --env-file .env`.
+- `Settings(_secrets_dir=os.environ["CREDENTIALS_DIRECTORY"])` lee solo los archivos de esa
+  carpeta, sin variables de entorno: cada valor sale de un solo lugar. Cada archivo se llama como
+  su campo con el prefijo `app_`, el que pone systemd al cargar la carpeta
+  ([despliegue.md](despliegue.md#configuración)), y `env_prefix="app_"` lo quita. Una carpeta que
+  no existe solo da un aviso, y cada campo falla igual por faltar.
+- En desarrollo, `uv run --env-file .env` apunta `CREDENTIALS_DIRECTORY` a `credentials/`, que git
+  ignora.
 
 ## Esquemas
 

@@ -7,9 +7,9 @@ Type=oneshot
 User=PRODUCTO
 Group=PRODUCTO
 WorkingDirectory=/srv/PRODUCTO/releases/%i/server
-LoadCredentialEncrypted=database_url:/etc/credstore.encrypted/PRODUCTO/migrate_database_url
-LoadCredentialEncrypted=min_client_versions:/etc/credstore.encrypted/PRODUCTO/min_client_versions
-LoadCredentialEncrypted=page_token_key:/etc/credstore.encrypted/PRODUCTO/page_token_key
+LoadCredentialEncrypted=app:/etc/credstore.encrypted/PRODUCTO
+# ADR-0070: the owner of the schema, over the server one in the folder.
+LoadCredentialEncrypted=app_database_url:/etc/credstore.encrypted/PRODUCTO-migrate/database_url
 ExecStart=/srv/PRODUCTO/releases/%i/server/.venv/bin/alembic upgrade head
 NoNewPrivileges=yes
 ProtectSystem=strict

@@ -6,7 +6,9 @@ que un repositorio debe tener**: se copia solo lo de las plataformas que el prod
 Cada archivo sale de una regla de [plataformas/](../plataformas/), y la página lo nombra. Un
 archivo **canónico** se copia sin editar y `scripts/verificar.py` comprueba que la copia no se haya
 separado ([ADR-0002](../adr/0002-los-archivos-base-se-copian-y-se-verifican.md)). Un **punto de
-partida** se copia y después es del repositorio.
+partida** se copia y después es del repositorio. Un archivo que **se instala** no se copia al
+repositorio: un script de canone lo instala en el servidor con los datos de cada app
+([ADR-0069](../adr/0069-el-servidor-se-instala-desde-plantilla-infra-y-sus-cabeceras-no-frenan-a-las-apps.md)).
 
 | Archivo | Destino | Tipo | Página |
 |---|---|---|---|
@@ -14,8 +16,8 @@ partida** se copia y después es del repositorio.
 | `.gitignore` | Raíz | Punto de partida | [repositorio.md](../repositorio.md) |
 | `.github/workflows/ci.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [repositorio.md](../repositorio.md), [python.md](../plataformas/python.md) |
 | `.github/workflows/release.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [despliegue.md](../plataformas/despliegue.md) |
-| `scripts/deploy.py` | `scripts/` | Punto de partida: `PRODUCTO` y `OWNER` toman los nombres del repositorio, y se ajustan `TOKEN`, `UNITS`, `PORT` y `DESKTOP` | [despliegue.md](../plataformas/despliegue.md#versiones) |
-| `infra/` | El servidor | Se instala desde canone, sin copiarse al repositorio: `PRODUCTO` y `PUERTO` toman los datos de la app, y salen las unidades de las piezas que no hay | [despliegue.md](../plataformas/despliegue.md) |
+| `scripts/deploy.py` | `scripts/` | Punto de partida: `PRODUCTO` y `OWNER` toman los nombres del repositorio, y se ajustan `TOKEN`, `UNITS` y `DESKTOP` | [despliegue.md](../plataformas/despliegue.md#versiones) |
+| `infra/` | El servidor | Se instala: `sudo python3 install.py <app> <puerto> <dominio>` crea el usuario de la app, su instancia de Valkey y sus sitios de Caddy; `--without` quita `sweep`, `web`, `panel` o `landing` si la app no los tiene, y `--allow` permite cada función de `Permissions-Policy` que usa | [despliegue.md](../plataformas/despliegue.md#procesos) |
 | `scripts/tokens.py` | `scripts/` | Canónico | [transversal.md](../plataformas/transversal.md) |
 | `brand/tokens/` | `brand/tokens/` | Punto de partida | [transversal.md](../plataformas/transversal.md) |
 | `python/.gitignore` | Cada pieza Python | Punto de partida | [python.md](../plataformas/python.md) |

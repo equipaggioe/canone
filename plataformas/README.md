@@ -143,7 +143,15 @@ Una revisión da un veredicto sobre cada fuente citada, cada regla y cada fila d
 cumplir», contra los criterios de este archivo, y no solo sobre lo que encuentra mal: lo que no se
 evaluó queda a la vista.
 
-- Cada veredicto lleva su evidencia: comprobado, con el comando que lo reproduce; leído, con la
+El resultado es una tabla con una fila por fuente, regla o fila evaluada:
+
+| Columna | Qué lleva |
+|---|---|
+| Fuente citada (sección) | La fuente y la parte que cita la página; en una regla o una fila, la regla o la fila y su sección en la página |
+| Alternativa | Lo que se consideró en su lugar, o «ninguna» |
+| Veredicto | «Se queda», «Cambia» o «Sale», con la razón en una frase y la evidencia |
+
+- La evidencia va dentro del veredicto: comprobado, con el comando que lo reproduce; leído, con la
   línea de la fuente, o sin confirmar.
 - Lo que marca una herramienta se comprueba con un experimento, no de memoria.
 

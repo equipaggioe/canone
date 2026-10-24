@@ -77,3 +77,5 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0067](0067-la-autenticacion-sigue-a-nist-y-el-bloqueo-cuenta-fallos-consecutivos-con-esperas.md) | La autenticación sigue a NIST, y el bloqueo cuenta fallos consecutivos con esperas crecientes | Con autenticación | Aceptada |
 | [0068](0068-una-version-se-despliega-desde-un-tag-con-un-artefacto-y-un-script.md) | Una versión se despliega desde un tag, con un artefacto y un script | Con `server/` | Aceptada |
 | [0069](0069-el-servidor-se-instala-desde-plantilla-infra-y-sus-cabeceras-no-frenan-a-las-apps.md) | El servidor se instala desde `plantilla/infra/`, y sus cabeceras no frenan a las apps | Con `server/` | Aceptada |
+| [0070](0070-las-unidades-cargan-la-carpeta-de-credenciales-y-permissions-policy-sigue-a-owasp.md) | Las unidades cargan entera la carpeta de credenciales, y `Permissions-Policy` sigue a OWASP | Con `server/` | Aceptada |
+| [0071](0071-cada-app-tiene-su-instancia-de-valkey-y-cada-superficie-su-host-en-caddy.md) | Cada app tiene su instancia de Valkey, y cada superficie, su host en Caddy | Con `server/` | Aceptada, salvo los puntos 5 y 6, en propuesta |

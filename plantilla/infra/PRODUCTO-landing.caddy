@@ -1,0 +1,3 @@
+DOMINIO {
+	import surface PRODUCTO landing PUERTO "PERMISOS"
+}

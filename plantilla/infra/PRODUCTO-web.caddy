@@ -1,0 +1,3 @@
+app.DOMINIO {
+	import surface PRODUCTO web PUERTO "PERMISOS"
+}

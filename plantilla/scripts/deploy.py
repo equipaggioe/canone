@@ -47,7 +47,8 @@ CURRENT = ROOT / "current"
 DOWNLOADS = ROOT / "downloads"
 SIGNERS = Path("/etc") / APP / "allowed_signers"
 VERSION = re.compile(r"v\d+\.\d+\.\d+")
-PORT = re.compile(r"--port (\d+)")
+# ADR-0077: the server always listens on 8000.
+HEALTH = "http://127.0.0.1:8000/api/health"
 API = f"https://api.github.com/repos/{REPO}"
 NAME = REPO.split("/")[1]
 
@@ -158,18 +159,9 @@ def point(target: Path) -> None:
     link.replace(CURRENT)
 
 
-def health() -> str:
-    """Return the health url, on the port of the installed unit."""
-    command = run("systemctl", "show", "--property=ExecStart", "--value", f"{APP}.service")
-    port = PORT.search(command)
-    if port is None:
-        raise DeployError(f"{APP}.service starts without --port")
-    return f"http://127.0.0.1:{port[1]}/api/health"
-
-
 def restart() -> None:
     """Restart the units and wait for the health check."""
-    url = health()
+    url = HEALTH
     run("systemctl", "restart", *UNITS)
     problem = "no answer"
     for _ in range(HEALTH_SECONDS):

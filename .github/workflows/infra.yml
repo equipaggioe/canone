@@ -32,7 +32,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/caddy/sites"
           cp plantilla/infra/Caddyfile "$RUNNER_TEMP/caddy/"
           for site in plantilla/infra/PRODUCTO-*.caddy; do
-            sed -e s/PRODUCTO/app/g -e s/PUERTO/8000/g -e s/DOMINIO/example.com/g \
+            sed -e s/PRODUCTO/app/g -e s/DOMINIO/example.com/g \
               -e "s/PERMISOS/camera=()/g" "$site" > "$RUNNER_TEMP/caddy/sites/$(basename "$site")"
           done
           caddy validate --config "$RUNNER_TEMP/caddy/Caddyfile"

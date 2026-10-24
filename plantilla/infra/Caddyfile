@@ -1,5 +1,5 @@
-# The arguments: the app, the piece, the port of its server and its
-# Permissions-Policy.
+# The arguments: the app, the piece and its Permissions-Policy. The server
+# listens on 8000 (ADR-0077).
 (surface) {
 	header {
 		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
@@ -11,7 +11,7 @@
 		Referrer-Policy strict-origin-when-cross-origin
 		Cross-Origin-Opener-Policy same-origin
 		Cross-Origin-Resource-Policy same-site
-		Permissions-Policy "{args.3}"
+		Permissions-Policy "{args.2}"
 		-Server
 	}
 	handle /api/* {
@@ -37,7 +37,7 @@
 		}
 		header ?Cache-Control no-store
 		header X-Robots-Tag "noindex, nofollow"
-		reverse_proxy 127.0.0.1:{args.2}
+		reverse_proxy 127.0.0.1:8000
 	}
 	handle /downloads/* {
 		root * /srv/{args.0}

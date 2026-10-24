@@ -1,6 +1,6 @@
 r"""Install the user, units, Valkey and Caddy of an app on this machine.
 
-    sudo python3 install.py <app> <port> <domain> <memory> \
+    sudo python3 install.py <app> <domain> <memory> \
         [--without sweep|web|panel|landing] [--allow <feature>]
 
 From canone: plataformas/despliegue.md.
@@ -94,7 +94,6 @@ def parse() -> argparse.Namespace:
     """Read the arguments of the command line."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("app", help="the name of the repository")
-    parser.add_argument("port", type=int, help="the port the server listens on")
     parser.add_argument("domain", help="the domain of the landing")
     parser.add_argument("memory", help="the maxmemory of its Valkey, like 256mb")
     parser.add_argument("--without", action="append", default=[], choices=OPTIONAL)
@@ -124,7 +123,6 @@ def main() -> None:
     )
     values = {
         "PRODUCTO": app,
-        "PUERTO": str(arguments.port),
         "DOMINIO": arguments.domain,
         "PERMISOS": policy,
         "MEMORIA": arguments.memory,
@@ -144,7 +142,7 @@ def main() -> None:
     subprocess.run(["systemd-sysusers"], check=True)
     subprocess.run(["sysctl", "--system"], check=True)
     subprocess.run(["systemctl", "daemon-reload"], check=True)
-    # ADR-0071: no app shares the instance of the package.
+    # ADR-0077: the app has its own instance, apart from the one of the package.
     subprocess.run(["systemctl", "disable", "--now", "valkey-server.service"], check=True)
     subprocess.run(["systemctl", "enable", "--now", f"valkey-server@{app}.service"], check=True)
     # deploy.py starts the server once there is a current version.

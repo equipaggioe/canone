@@ -78,9 +78,10 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0068](0068-una-version-se-despliega-desde-un-tag-con-un-artefacto-y-un-script.md) | Una versión se despliega desde un tag, con un artefacto y un script | Con `server/` | Aceptada |
 | [0069](0069-el-servidor-se-instala-desde-plantilla-infra-y-sus-cabeceras-no-frenan-a-las-apps.md) | El servidor se instala desde `plantilla/infra/`, y sus cabeceras no frenan a las apps | Con `server/` | Aceptada |
 | [0070](0070-las-unidades-cargan-la-carpeta-de-credenciales-y-permissions-policy-sigue-a-owasp.md) | Las unidades cargan entera la carpeta de credenciales, y `Permissions-Policy` sigue a OWASP | Con `server/` | Aceptada |
-| [0071](0071-cada-app-tiene-su-instancia-de-valkey-y-cada-superficie-su-host-en-caddy.md) | Cada app tiene su instancia de Valkey, y cada superficie, su host en Caddy | Con `server/` | Aceptada |
+| [0071](0071-cada-app-tiene-su-instancia-de-valkey-y-cada-superficie-su-host-en-caddy.md) | Cada app tiene su instancia de Valkey, y cada superficie, su host en Caddy | Con `server/` | Aceptada; el motivo del punto 1 lo reemplaza ADR-0077 |
 | [0072](0072-cada-instancia-de-valkey-limita-su-memoria-y-thp-se-apaga-solo-para-valkey.md) | Cada instancia de Valkey limita su memoria, y Transparent Huge Pages se apaga solo para Valkey | Con `server/` | Aceptada |
 | [0073](0073-el-ping-de-uvicorn-cierra-el-websocket-que-no-responde-y-caddy-no-lo-corta-por-tiempo.md) | El ping de Uvicorn cierra el WebSocket que no responde, y Caddy no lo corta por tiempo | Con `server/` | Aceptada |
 | [0074](0074-las-credenciales-del-respaldo-tienen-una-copia-fuera-del-servidor.md) | Las credenciales del respaldo tienen una copia fuera del servidor | Con `server/` | Propuesta |
-| [0075](0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) | canone fija, el repositorio declara y consola dispara | Todos | Aceptada |
+| [0075](0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) | canone fija, el repositorio declara y consola dispara | Todos | Aceptada; la primera consecuencia y el motivo de los descartes los reemplaza ADR-0077 |
 | [0076](0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md) | Lo que cambia entre despliegues sale de un solo archivo, y lo demás es código | Con `server/` | Aceptada |
+| [0077](0077-un-vps-aloja-un-solo-producto.md) | Un VPS aloja un solo producto | Con `server/` | Aceptada |

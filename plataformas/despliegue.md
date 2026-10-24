@@ -1,6 +1,6 @@
 # Despliegue
 
-Cómo queda el servidor.
+Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus superficies web.
 
 ## Proyecto
 
@@ -133,15 +133,14 @@ la entrada de `StateDirectory=`, que cita «Datos», y la
 sección *WebSocket Protocol Configuration* del
 [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
-- Las unidades son las de `plantilla/infra/`, que `install.py` instala con el nombre, el puerto y
-  el dominio de cada app, sin las de las piezas que no tiene.
-- El usuario de cada app lo crea `systemd-sysusers` desde el `sysusers.conf` de
+- Las unidades son las de `plantilla/infra/`, que `install.py` instala con el nombre y
+  el dominio de la app, sin las de las piezas que no tiene.
+- El usuario de la app lo crea `systemd-sysusers` desde el `sysusers.conf` de
   `plantilla/infra/`, que `install.py` instala.
 - El servidor arranca con
-  `uvicorn app.main:app --port <puerto> --ws-max-size 65536 --ws-per-message-deflate false`:
+  `uvicorn app.main:app --port 8000 --ws-max-size 65536 --ws-per-message-deflate false`:
   `fastapi run` no le pasa a Uvicorn las opciones de WebSocket.
-  - `--port` es propio de cada app: dos apps de la misma máquina no chocan. `deploy.py` lo lee de
-    la unidad instalada.
+  - `--port` es 8000 en todo producto: la máquina no aloja otro servidor.
   - `--ws-max-size 65536` cumple el límite de mensaje de [fastapi.md](fastapi.md#websocket).
   - `--ws-per-message-deflate false` cumple *Compression security* de OWASP.
 - Caddy le llega al servidor por loopback: nadie salta los límites de Caddy, y Uvicorn cree las
@@ -169,9 +168,9 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 [*Administration*](../fuentes/valkey/admin.md) y [*Security*](../fuentes/valkey/security.md).
 
 - El almacén en memoria de todas las piezas es Valkey.
-- Cada app tiene su instancia, `valkey-server@<app>`, sin TCP y con el socket
-  `/run/valkey-<app>/valkey-server.sock`, que solo abre el grupo de la app: ninguna app lee ni pisa
-  las claves de otra. La instancia `valkey-server` del paquete queda apagada.
+- La app tiene su instancia, `valkey-server@<app>`, sin TCP y con el socket
+  `/run/valkey-<app>/valkey-server.sock`, que solo abre el grupo de la app: el resto de los
+  procesos de la máquina no lee sus claves. La instancia `valkey-server` del paquete queda apagada.
 - Cada instancia tiene el `maxmemory` que recibe `install.py`, y la política `noeviction`, su valor
   por defecto: al llenarse, una escritura falla en vez de borrar un código o un contador.
 - `vm.overcommit_memory = 1` va en `/etc/sysctl.d/valkey.conf`: Debian 13 no trae

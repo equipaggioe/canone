@@ -1,9 +1,0 @@
-[Unit]
-Description=PRODUCTO off-site backup, daily
-
-[Timer]
-OnCalendar=daily
-Persistent=yes
-
-[Install]
-WantedBy=timers.target

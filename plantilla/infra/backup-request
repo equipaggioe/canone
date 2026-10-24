@@ -1,0 +1,27 @@
+#!/bin/sh
+# ADR-0078: the only command of the receiver. It asks for the backup and waits for its result.
+unit=PRODUCTO-backup.service
+show() { systemctl show --property="$1" --value "$unit"; }
+# Without the tunnel, restic would retry for hours.
+if ! python3 -c 'import socket; socket.create_connection(("127.0.0.1", 8001), 5)' 2>/dev/null; then
+    echo "backup: no tunnel on 127.0.0.1:8001"
+    exit 1
+fi
+# A backup that is already running is the one this receiver waits for.
+before=$(show InvocationID)
+[ -n "$(show Job)" ] && before=
+touch /run/PRODUCTO-receiver/request
+tries=30
+while [ -z "$(show Job)" ] && [ "$(show InvocationID)" = "$before" ] && [ "$tries" -gt 0 ]; do
+    sleep 1
+    tries=$((tries - 1))
+done
+# The start job of a oneshot lasts until it ends, the dump included.
+while [ -n "$(show Job)" ]; do sleep 2; done
+if [ "$(show InvocationID)" = "$before" ]; then
+    echo "backup: did not start"
+    exit 1
+fi
+result=$(show Result)
+echo "backup: $result"
+[ "$result" = success ]

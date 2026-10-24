@@ -1,0 +1,8 @@
+[Unit]
+Description=PRODUCTO backup, when the receiver asks
+
+[Path]
+PathChanged=/run/PRODUCTO-receiver/request
+
+[Install]
+WantedBy=paths.target

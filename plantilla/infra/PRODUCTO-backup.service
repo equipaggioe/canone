@@ -1,20 +1,24 @@
 [Unit]
-Description=PRODUCTO off-site backup
+Description=PRODUCTO backup to the receiver
 Requires=PRODUCTO-dump.service
-After=PRODUCTO-dump.service network-online.target
-Wants=network-online.target
+After=PRODUCTO-dump.service
 
 [Service]
 Type=oneshot
 DynamicUser=yes
 CacheDirectory=PRODUCTO-backup
-LoadCredentialEncrypted=restic_repository:/etc/credstore.encrypted/PRODUCTO-backup/restic_repository
 LoadCredentialEncrypted=restic_password:/etc/credstore.encrypted/PRODUCTO-backup/restic_password
-LoadCredentialEncrypted=s3_key_id:/etc/credstore.encrypted/PRODUCTO-backup/s3_key_id
-LoadCredentialEncrypted=s3_secret_key:/etc/credstore.encrypted/PRODUCTO-backup/s3_secret_key
-Environment=RESTIC_REPOSITORY_FILE=%d/restic_repository
+# ADR-0078: the rest-server of the receiver, through its tunnel.
+Environment=RESTIC_REPOSITORY=rest:http://127.0.0.1:8001/PRODUCTO/
 Environment=RESTIC_PASSWORD_FILE=%d/restic_password
-ExecStart=/bin/sh -c 'export AWS_ACCESS_KEY_ID="$$(cat %d/s3_key_id)" AWS_SECRET_ACCESS_KEY="$$(cat %d/s3_secret_key)";   restic backup --cache-dir /var/cache/PRODUCTO-backup --host PRODUCTO /var/lib/PRODUCTO-dump /var/lib/PRODUCTO/files &&   exec restic forget --cache-dir /var/cache/PRODUCTO-backup --host PRODUCTO --prune --keep-daily 7 --keep-weekly 4 --keep-monthly 12'
+Environment=RESTIC_CACHE_DIR=/var/cache/PRODUCTO-backup
+# A tunnel that drops leaves restic retrying.
+TimeoutStartSec=4h
+# The first backup creates the repository.
+ExecStart=/bin/sh -c 'restic cat config >/dev/null 2>&1 || exec restic init'
+ExecStart=/usr/bin/restic backup --host PRODUCTO /var/lib/PRODUCTO-dump /var/lib/PRODUCTO/files
+# Its time is the time of the last backup, which the server reads.
+ExecStartPost=+/usr/bin/install -m 0644 /dev/null /var/lib/PRODUCTO/last-backup
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes

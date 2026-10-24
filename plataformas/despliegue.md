@@ -7,7 +7,8 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 ```
 /etc/
 ├── <app>/
-│   └── allowed_signers
+│   ├── allowed_signers
+│   └── receivers                   las llaves de las receptoras
 ├── caddy/
 │   ├── Caddyfile
 │   └── sites/
@@ -18,22 +19,25 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 │   ├── <app>-migrate/
 │   │   └── database_url
 │   ├── <app>-backup/
-│   │   ├── restic_repository
-│   │   ├── restic_password
-│   │   ├── s3_key_id
-│   │   └── s3_secret_key
+│   │   └── restic_password
 │   └── <app>-deploy/
 │       └── github_token            solo en un repositorio privado
+├── ssh/sshd_config.d/
+│   └── <app>-receiver.conf
 ├── sysctl.d/
 │   └── valkey.conf
 ├── sysusers.d/
 │   └── <app>.conf
 ├── systemd/system/
-│   ├── <app>*.service, <app>*.timer
+│   ├── <app>*.service, <app>*.timer, <app>-backup.path
 │   └── valkey-server@<app>.service.d/
 │       └── group.conf
+├── tmpfiles.d/
+│   └── <app>.conf
 └── valkey/
     └── valkey-<app>.conf
+/run/<app>-receiver/
+└── request                         la receptora pide el respaldo
 /srv/<app>/
 ├── current -> releases/<versión>
 ├── downloads/
@@ -45,7 +49,8 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
         └── web/, panel/, landing/
 /var/lib/
 ├── <app>/
-│   └── files/
+│   ├── files/
+│   └── last-backup                 su fecha es la del último respaldo
 ├── <app>-dump/
 │   ├── <app>.dump
 │   └── globals.sql
@@ -55,6 +60,7 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 
 Plantilla: [`plantilla/infra/`](../plantilla/infra/), con las unidades, los sitios de Caddy, la
 configuración de Valkey y `install.py`, que los instala;
+[`plantilla/receiver/`](../plantilla/receiver/), que corre en la receptora;
 [`plantilla/.github/workflows/release.yml`](../plantilla/.github/workflows/release.yml) y
 [`plantilla/scripts/deploy.py`](../plantilla/scripts/deploy.py).
 
@@ -107,8 +113,8 @@ de OWASP.
 - Cada credencial de `<app>-backup/` tiene una copia fuera del servidor, en el gestor de
   contraseñas de quien despliega: `systemd-creds` cifra con una llave de la máquina, y sin
   `restic_password` el respaldo no se lee en otra.
-- Cada mes, quien despliega abre el repositorio de restic desde su máquina con esa copia, con
-  `restic snapshots`: una copia que no abre el respaldo se descubre antes de necesitarla.
+- Cada mes, quien despliega limpia el repositorio de la receptora con esa copia, como dice
+  «Respaldos»: una copia que no abre el respaldo se descubre antes de necesitarla.
 
 ## coturn
 
@@ -154,11 +160,28 @@ sección *WebSocket Protocol Configuration* del
 Estándar: la sección *SQL Dump* de [*Backup and Restore*](../fuentes/postgresql/backup.sgml) de
 PostgreSQL.
 
-- El respaldo de la base es un `pg_dump` diario en formato custom: `pg_restore` puede restaurar
-  solo una parte.
-- El respaldo sale de la máquina con `restic`, cifrado, hacia un repositorio S3 externo, con el
-  dump y `/var/lib/<app>/files/` juntos. Corre cada día después del dump y conserva 7 diarios,
-  4 semanales y 12 mensuales.
+- El respaldo de la base es un `pg_dump` en formato custom, que corre antes de cada respaldo:
+  `pg_restore` puede restaurar solo una parte.
+- El respaldo lleva el dump y `/var/lib/<app>/files/`, y sale de la máquina con `restic`, cifrado,
+  hacia una receptora: una computadora de quien despliega, cualquiera, con `rest-server`. El código
+  no va: está en los releases.
+- La receptora pide el respaldo con `plantilla/receiver/`: abre `rest-server` en su puerto 8001 y
+  un túnel `ssh -R` al 8001 del servidor, espera el resultado y cierra los dos. Corre al iniciar
+  sesión y cada día, o a mano.
+- `rest-server` corre con `--append-only` y sin contraseña, y solo escucha en el loopback de la
+  receptora: el servidor agrega respaldos, pero no borra ni reescribe los que hay, y restic los
+  cifra.
+- La receptora entra con la cuenta `<app>-receiver`, solo con una llave de
+  `/etc/<app>/receivers`, y solo corre el comando que pide el respaldo, sin terminal ni otro túnel
+  que el del 8001: una llave robada solo pide un respaldo.
+- El comando comprueba el túnel antes de pedir el respaldo, y el respaldo se corta a las 4 h: un
+  respaldo sin receptora no queda colgado.
+- El primer respaldo crea el repositorio.
+- Cada respaldo bueno cambia la fecha de `/var/lib/<app>/last-backup`, y el journal guarda cada
+  corrida. El monitor de equipaggio avisa cuando el último respaldo tiene más de 48 h.
+- Los respaldos se limpian en la receptora, porque el servidor no puede borrar: cada mes, quien
+  despliega corre `restic forget --prune --keep-daily 7 --keep-weekly 4 --keep-monthly 12` sobre la
+  carpeta del producto.
 - El dump y `restic` son unidades distintas: el dump corre como `postgres`, y `restic` solo puede
   leer, con `CAP_DAC_READ_SEARCH`.
 
@@ -217,4 +240,5 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 
 | Qué | Con qué |
 |---|---|
+| `<app>-receiver.conf` que lee `sshd` | `sshd -t` en el OpenSSH de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Exposición de cada unidad | `systemd-analyze security --offline=yes --threshold=20 <unidad>`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

@@ -1,4 +1,4 @@
-r"""Install the user, units, Valkey and Caddy of an app on this machine.
+r"""Install the users, units, Valkey, Caddy and backup receiver of an app on this machine.
 
     sudo python3 install.py <app> <domain> <memory> \
         [--without sweep|web|panel|landing] [--allow <feature>]
@@ -19,8 +19,14 @@ TARGETS = {
     "valkey.conf": "/etc/valkey/valkey-PRODUCTO.conf",
     "valkey-group.conf": f"{UNITS}/valkey-server@PRODUCTO.service.d/group.conf",
     "sysctl.conf": "/etc/sysctl.d/valkey.conf",
+    "tmpfiles.conf": "/etc/tmpfiles.d/PRODUCTO.conf",
+    "sshd-receiver.conf": "/etc/ssh/sshd_config.d/PRODUCTO-receiver.conf",
+    "backup-request": "/usr/local/libexec/PRODUCTO-backup-request",
     "Caddyfile": "/etc/caddy/Caddyfile",
 }
+# The files that run, and the file that holds the keys of the receivers.
+EXECUTABLES = ("backup-request",)
+RECEIVERS = "/etc/PRODUCTO/receivers"
 # Units and sites of a piece the app may not have.
 OPTIONAL = ("sweep", "web", "panel", "landing")
 # ADR-0070: the standardized features of the W3C registry, at commit 2939804, and
@@ -128,18 +134,26 @@ def main() -> None:
         "MEMORIA": arguments.memory,
     }
     for name, target in TARGETS.items():
-        write(HERE / name, Path(target.replace("PRODUCTO", app)), values)
+        path = Path(target.replace("PRODUCTO", app))
+        write(HERE / name, path, values)
+        if name in EXECUTABLES:
+            path.chmod(0o755)
+    # ADR-0078: whoever deploys adds the key of each receiver.
+    receivers = Path(RECEIVERS.replace("PRODUCTO", app))
+    receivers.parent.mkdir(parents=True, exist_ok=True)
+    receivers.touch(exist_ok=True)
     skipped = tuple(f"PRODUCTO-{name}." for name in arguments.without)
-    timers = []
+    triggers = []
     for source in sorted(HERE.glob("PRODUCTO*")):
         if source.name.startswith(skipped):
             continue
         folder = SITES if source.suffix == ".caddy" else UNITS
         target = folder / source.name.replace("PRODUCTO", app)
         write(source, target, values)
-        if target.suffix == ".timer":
-            timers.append(target.name)
+        if target.suffix in (".timer", ".path"):
+            triggers.append(target.name)
     subprocess.run(["systemd-sysusers"], check=True)
+    subprocess.run(["systemd-tmpfiles", "--create", f"/etc/tmpfiles.d/{app}.conf"], check=True)
     subprocess.run(["sysctl", "--system"], check=True)
     subprocess.run(["systemctl", "daemon-reload"], check=True)
     # ADR-0077: the app has its own instance, apart from the one of the package.
@@ -147,8 +161,10 @@ def main() -> None:
     subprocess.run(["systemctl", "enable", "--now", f"valkey-server@{app}.service"], check=True)
     # deploy.py starts the server once there is a current version.
     subprocess.run(["systemctl", "enable", f"{app}.service"], check=True)
-    subprocess.run(["systemctl", "enable", "--now", *timers], check=True)
+    subprocess.run(["systemctl", "enable", "--now", *triggers], check=True)
     subprocess.run(["systemctl", "reload", "caddy.service"], check=True)
+    subprocess.run(["sshd", "-t"], check=True)
+    subprocess.run(["systemctl", "reload", "ssh.service"], check=True)
 
 
 if __name__ == "__main__":

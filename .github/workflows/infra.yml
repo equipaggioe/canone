@@ -36,3 +36,16 @@ jobs:
               -e "s/PERMISOS/camera=()/g" "$site" > "$RUNNER_TEMP/caddy/sites/$(basename "$site")"
           done
           caddy validate --config "$RUNNER_TEMP/caddy/Caddyfile"
+
+  sshd:
+    runs-on: ubuntu-latest
+    # The OpenSSH of Debian 13, which reads the receiver's Match block.
+    container: debian:trixie
+    steps:
+      - uses: actions/checkout@v5
+      - run: apt-get update && apt-get install --yes --no-install-recommends openssh-server
+      - run: |
+          sed s/PRODUCTO/app/g plantilla/infra/sshd-receiver.conf > /etc/ssh/sshd_config.d/app-receiver.conf
+          mkdir -p /run/sshd
+          ssh-keygen -A
+          sshd -t

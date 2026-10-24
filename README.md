@@ -24,6 +24,22 @@ tecnología:
 
 El criterio completo está en [plataformas/README.md](plataformas/README.md).
 
+## Quién hace qué
+
+Por qué se reparte así: [ADR-0075](adr/0075-canone-fija-el-repositorio-declara-y-consola-dispara.md).
+
+| Quién | Qué hace | Qué no hace |
+|---|---|---|
+| **canone** | Fija las reglas y da las plantillas | No guarda datos de ninguna app ni corre nada |
+| **El repositorio** | Sigue las reglas, copia las plantillas que se copian y declara sus datos: nombre, puerto, dominio, memoria, superficies y campos de `Settings` | No reimplementa una plantilla ni decide cómo se instala |
+| **consola** | Lee los datos del repositorio y dispara: instala `plantilla/infra/` desde canone, crea el tag, firma y corre `deploy.py` desde el repositorio | No escribe unidades, configuración ni scripts propios. Si algo no tiene plantilla, primero se agrega a canone |
+
+- Una plantilla **que se copia**, como `release.yml` o `deploy.py`, consola la toma del repositorio.
+- Una plantilla **que se instala**, como `infra/`, consola la toma de canone.
+- Un secreto no se declara con su valor en el repositorio: el repositorio declara el campo, y el
+  valor vive en `.consola/config.env`, la única fuente de lo que cambia entre despliegues
+  ([ADR-0076](adr/0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md)).
+
 ## Índice
 
 | Archivo | Cuándo aplica |

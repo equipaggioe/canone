@@ -26,7 +26,7 @@ dominio. Un producto con una sola web tiene `web/`; uno con tres tiene `web/`, `
 | `docs/` | `arquitectura/`, `adr/`, `planes/`. Nada más — ver [documentacion.md](documentacion.md) |
 | `scripts/` | Lo que es del repositorio entero |
 | `brand/` | Logo y colores del producto, con los colores en `tokens/` ([transversal.md](plataformas/transversal.md#tema)). No es una pieza: no corre en ningún lado y lo leen las piezas ([ADR-0017](adr/0017-la-marca-vive-en-brand.md)) |
-| `.consola/` | `params.json` y `config.env`. Lo lee `consola`; no se edita a mano y no se commitea |
+| `.consola/` | `params.json` y `config.env`. Lo lee `consola`; no se edita a mano y no se commitea. `config.env` es la única fuente de lo que cambia entre despliegues, secreto o no ([ADR-0076](adr/0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md)) |
 
 `panel/` y `landing/` son las dos excepciones al patrón, y lo son porque la industria ya las nombra
 así: un *admin panel* es la interfaz interna de gestión y una *landing page* es el sitio público.

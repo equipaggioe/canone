@@ -24,6 +24,8 @@ Cómo queda el servidor.
 │   │   └── s3_secret_key
 │   └── <app>-deploy/
 │       └── github_token            solo en un repositorio privado
+├── sysctl.d/
+│   └── valkey.conf
 ├── sysusers.d/
 │   └── <app>.conf
 ├── systemd/system/
@@ -58,7 +60,8 @@ configuración de Valkey y `install.py`, que los instala;
 
 ## Caddy
 
-Estándares: de OWASP, [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), la sección
+Estándares: de OWASP, la sección *Security Headers* del
+[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), la sección
 *HTTPS* del [*REST Security Cheat Sheet*](../fuentes/owasp/REST_Security.md) y la sección
 *Infrastructure Configuration* del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
 
@@ -67,8 +70,8 @@ Estándares: de OWASP, [*HTTP Security Response Headers Cheat Sheet*](../fuentes
   `panel.<dominio>`. En cada uno, `/api/*` va al servidor de la app, en el mismo origen que la web
   ([transversal.md](transversal.md#sesión)), y `/downloads/*`, a `/srv/<app>/downloads/`.
 - Caddy pone las cabeceras con la directiva `header`, para la web y para la API.
-- `Permissions-Policy` niega `camera`, `display-capture`, `geolocation` y `microphone`, las que
-  piden WebRTC y los mapas, y permite con `(self)` las que la app declara con `install.py --allow`.
+- `Permissions-Policy` niega cada función que la app no usa, y permite con `(self)` las que la app
+  declara con `install.py --allow`.
 - Caddy envía también `Content-Security-Policy: frame-ancestors 'none'`: la CSP de SvelteKit va en
   una etiqueta `meta`, que no admite `frame-ancestors`.
 - No se envía `Cross-Origin-Embedder-Policy`. Contradice a OWASP: solo habilita el aislamiento entre
@@ -80,13 +83,16 @@ Estándares: de OWASP, [*HTTP Security Response Headers Cheat Sheet*](../fuentes
 - Una petición cuyo `Content-Length` pasa el límite recibe 413 antes de `request_body`: al cortarla,
   `request_body` responde 502, y el cliente reintenta un 502
   ([transversal.md](transversal.md#reintentos)).
+- Caddy no corta por tiempo una conexión WebSocket: Uvicorn manda un ping cada 20 s y cierra la
+  que no responde en 20 s, sus valores por defecto. Una conexión viva no se corta, y una caída no
+  queda abierta.
 - Caddy nunca sirve el directorio de los archivos de los usuarios: cada archivo pasa por el servidor,
   que aplica los permisos de su recurso.
 
 ## Configuración
 
 Estándares: de systemd 257, la versión de Debian 13, [`systemd.exec`](../fuentes/systemd/systemd.exec.xml),
-en *Environment* y *Credentials*, y la sección 2.7, *Secret Lifecycle*, del
+en *Environment* y *Credentials*, y la sección 2.7.1, *Creation*, del
 [*Secrets Management Cheat Sheet*](../fuentes/owasp/Secrets_Management.md) de OWASP.
 
 - Cada campo de `Settings` llega al servicio con `LoadCredentialEncrypted=`, cifrado con
@@ -108,14 +114,16 @@ Estándar: la sección 21.2, *Firewall Considerations*, del [RFC 8656](../fuente
 
 ## Datos
 
-Estándar: `StateDirectory=` de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml).
+Estándar: la entrada de `StateDirectory=`, en *Sandboxing*, de
+[`systemd.exec`](../fuentes/systemd/systemd.exec.xml).
 
 - Los archivos de los usuarios viven en el `StateDirectory=` del servicio, `/var/lib/<app>/files/`.
   Están en la misma máquina y el respaldo los cubre junto con la base.
 
 ## Procesos
 
-Estándares: la sección *Sandboxing* de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml) y la
+Estándares: la sección *Sandboxing* de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml), sin
+la entrada de `StateDirectory=`, que cita «Datos», y la
 sección *WebSocket Protocol Configuration* del
 [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
@@ -158,6 +166,13 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 - Cada app tiene su instancia, `valkey-server@<app>`, sin TCP y con el socket
   `/run/valkey-<app>/valkey-server.sock`, que solo abre el grupo de la app: ninguna app lee ni pisa
   las claves de otra. La instancia `valkey-server` del paquete queda apagada.
+- Cada instancia tiene el `maxmemory` que recibe `install.py`, y la política `noeviction`, su valor
+  por defecto: al llenarse, una escritura falla en vez de borrar un código o un contador.
+- `vm.overcommit_memory = 1` va en `/etc/sysctl.d/valkey.conf`: Debian 13 no trae
+  `/etc/sysctl.conf`.
+- Transparent Huge Pages no se apaga en la máquina. Deja sin efecto *Valkey setup tips*:
+  `disable-thp yes`, el valor por defecto de Valkey 8.1, las apaga solo para su proceso, sin
+  cambiar los demás.
 
 ## Versiones
 
@@ -196,4 +211,3 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 | Qué | Con qué |
 |---|---|
 | Exposición de cada unidad | `systemd-analyze security --offline=yes --threshold=20 <unidad>`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
-| Configuración de Caddy | `caddy validate` con el Caddy de Debian 13, en el mismo workflow |

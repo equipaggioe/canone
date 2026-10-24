@@ -1,6 +1,6 @@
 r"""Install the user, units, Valkey and Caddy of an app on this machine.
 
-    sudo python3 install.py <app> <port> <domain> \
+    sudo python3 install.py <app> <port> <domain> <memory> \
         [--without sweep|web|panel|landing] [--allow <feature>]
 
 From canone: plataformas/despliegue.md.
@@ -18,12 +18,67 @@ TARGETS = {
     "sysusers.conf": "/etc/sysusers.d/PRODUCTO.conf",
     "valkey.conf": "/etc/valkey/valkey-PRODUCTO.conf",
     "valkey-group.conf": f"{UNITS}/valkey-server@PRODUCTO.service.d/group.conf",
+    "sysctl.conf": "/etc/sysctl.d/valkey.conf",
     "Caddyfile": "/etc/caddy/Caddyfile",
 }
 # Units and sites of a piece the app may not have.
 OPTIONAL = ("sweep", "web", "panel", "landing")
-# ADR-0071: what WebRTC and the maps ask for.
-FEATURES = ("camera", "display-capture", "geolocation", "microphone")
+# ADR-0070: the standardized features of the W3C registry, at commit 2939804, and
+# publickey-credentials-create of Web Authentication Level 3. The policy denies the ones the app
+# does not allow.
+FEATURES = (
+    "accelerometer",
+    "ambient-light-sensor",
+    "attribution-reporting",
+    "autoplay",
+    "battery",
+    "bluetooth",
+    "camera",
+    "ch-ua",
+    "ch-ua-arch",
+    "ch-ua-bitness",
+    "ch-ua-full-version",
+    "ch-ua-full-version-list",
+    "ch-ua-high-entropy-values",
+    "ch-ua-mobile",
+    "ch-ua-model",
+    "ch-ua-platform",
+    "ch-ua-platform-version",
+    "ch-ua-wow64",
+    "compute-pressure",
+    "cross-origin-isolated",
+    "direct-sockets",
+    "display-capture",
+    "encrypted-media",
+    "execution-while-not-rendered",
+    "execution-while-out-of-viewport",
+    "fullscreen",
+    "geolocation",
+    "gyroscope",
+    "hid",
+    "identity-credentials-get",
+    "idle-detection",
+    "keyboard-map",
+    "magnetometer",
+    "mediasession",
+    "microphone",
+    "midi",
+    "navigation-override",
+    "otp-credentials",
+    "payment",
+    "picture-in-picture",
+    "publickey-credentials-create",
+    "publickey-credentials-get",
+    "screen-wake-lock",
+    "serial",
+    "storage-access",
+    "sync-xhr",
+    "tools",
+    "usb",
+    "web-share",
+    "window-management",
+    "xr-spatial-tracking",
+)
 
 
 def write(source: Path, target: Path, values: dict[str, str]) -> None:
@@ -41,14 +96,28 @@ def parse() -> argparse.Namespace:
     parser.add_argument("app", help="the name of the repository")
     parser.add_argument("port", type=int, help="the port the server listens on")
     parser.add_argument("domain", help="the domain of the landing")
+    parser.add_argument("memory", help="the maxmemory of its Valkey, like 256mb")
     parser.add_argument("--without", action="append", default=[], choices=OPTIONAL)
     parser.add_argument("--allow", action="append", default=[], choices=FEATURES)
     return parser.parse_args()
 
 
+def check_swap() -> None:
+    """Fail if the machine has less swap than memory, as Valkey setup tips asks."""
+    meminfo = dict(
+        line.split(":", 1)
+        for line in Path("/proc/meminfo").read_text(encoding="utf-8").splitlines()
+    )
+    memory = int(meminfo["MemTotal"].split()[0])
+    swap = int(meminfo["SwapTotal"].split()[0])
+    if swap < memory:
+        raise SystemExit(f"The machine has {swap} kB of swap and {memory} kB of memory.")
+
+
 def main() -> None:
     """Write the files of the app, and enable its services."""
     arguments = parse()
+    check_swap()
     app = arguments.app
     policy = ", ".join(
         f"{name}=(self)" if name in arguments.allow else f"{name}=()" for name in FEATURES
@@ -58,6 +127,7 @@ def main() -> None:
         "PUERTO": str(arguments.port),
         "DOMINIO": arguments.domain,
         "PERMISOS": policy,
+        "MEMORIA": arguments.memory,
     }
     for name, target in TARGETS.items():
         write(HERE / name, Path(target.replace("PRODUCTO", app)), values)
@@ -72,6 +142,7 @@ def main() -> None:
         if target.suffix == ".timer":
             timers.append(target.name)
     subprocess.run(["systemd-sysusers"], check=True)
+    subprocess.run(["sysctl", "--system"], check=True)
     subprocess.run(["systemctl", "daemon-reload"], check=True)
     # ADR-0071: no app shares the instance of the package.
     subprocess.run(["systemctl", "disable", "--now", "valkey-server.service"], check=True)

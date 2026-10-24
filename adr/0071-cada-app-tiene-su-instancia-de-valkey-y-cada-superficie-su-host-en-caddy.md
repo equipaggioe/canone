@@ -20,9 +20,7 @@ era uno solo, y Caddy tenía reglas sin un archivo que las aplicara ni algo que 
    valida con `caddy validate`.
 4. Caddy es el 2.6.2 de Debian 13. En `/api/*`, una petición cuyo `Content-Length` pasa el límite
    recibe 413 de Caddy antes de `request_body`, y el CI valida con ese mismo Caddy.
-5. `Permissions-Policy` niega `camera`, `display-capture`, `geolocation` y
-   `microphone`, y `install.py --allow` permite con `(self)` las que usa la app.
-6. El límite de 10 MB es el de las peticiones `multipart/form-data`, y el de 1 MB, el
+5. *(Propuesta)* El límite de 10 MB es el de las peticiones `multipart/form-data`, y el de 1 MB, el
    del resto de `/api/*`.
 
 ## Consecuencias
@@ -57,5 +55,8 @@ era uno solo, y Caddy tenía reglas sin un archivo que las aplicara ni algo que 
   tiene el soporte de seguridad de stable.
 - **Aceptar el 502:** el cliente reintenta una subida que nunca va a pasar, y el 502 no se
   distingue de una caída del servidor.
+- **Que `Permissions-Policy` niegue solo `camera`, `display-capture`, `geolocation` y
+  `microphone`:** OWASP pide negar cada función que el sitio no usa, como ya decidió el
+  [ADR-0070](0070-las-unidades-cargan-la-carpeta-de-credenciales-y-permissions-policy-sigue-a-owasp.md).
 - **Distinguir las rutas de subida por su path:** ninguna regla fija esos paths, y una subida
   siempre es `multipart/form-data`.

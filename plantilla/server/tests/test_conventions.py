@@ -207,9 +207,7 @@ def test_schema_datetimes_are_timestamps() -> None:
         and issubclass(value, BaseModel)
         and value.__module__ == module.__name__
         for field_name, field in value.model_fields.items()
-        if mentions_datetime(
-            Annotated[field.annotation, *field.metadata] if field.metadata else field.annotation
-        )
+        if mentions_datetime(field.rebuild_annotation())
     ]
     assert not offenders
 

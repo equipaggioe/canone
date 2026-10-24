@@ -74,6 +74,8 @@ jobs:
       QT_QPA_PLATFORM: offscreen
     steps:
       - uses: actions/checkout@v5
+      # Qt loads libEGL, which the runner image does not have.
+      - run: sudo apt-get update && sudo apt-get install -y libegl1
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
@@ -123,6 +125,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: PIEZA/package.json
       - uses: actions/setup-node@v5
         with:
           node-version: "20"

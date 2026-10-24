@@ -45,11 +45,13 @@ jobs:
           cp -r server scripts dist
           rm -rf dist/server/.venv
           tar -czf "${{ github.event.repository.name }}-$GITHUB_REF_NAME.tar.gz" -C dist .
-      - run: gh release create "$GITHUB_REF_NAME" --generate-notes "${{ github.event.repository.name }}-$GITHUB_REF_NAME.tar.gz"
+      # A draft until checksums: a failed job leaves no half release.
+      - run: gh release create "$GITHUB_REF_NAME" --draft --generate-notes "${{ github.event.repository.name }}-$GITHUB_REF_NAME.tar.gz"
 
   desktop:
     needs: artifact
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
@@ -77,6 +79,8 @@ jobs:
           python-version: "3.13"
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --locked --group deploy
+      # pyside6-deploy does not create exec_directory on Linux or Windows.
+      - run: mkdir -p dist
       - run: uv run pyside6-deploy -c pysidedeploy.spec --force
       - if: runner.os == 'macOS'
         run: ditto -c -k --keepParent dist/*.app "${{ matrix.archivo }}"
@@ -97,3 +101,4 @@ jobs:
       - run: gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --dir assets
       - run: (cd assets && sha256sum -- *) > "$SUMS"
       - run: gh release upload "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" "$SUMS"
+      - run: gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false

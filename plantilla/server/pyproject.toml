@@ -18,6 +18,7 @@ dependencies = [
 [dependency-groups]
 dev = [
   "anyio>=4.15",
+  "babel>=2.17",
   "deptry>=0.25",
   "httpx>=0.28",
   "pip-audit>=2.10",

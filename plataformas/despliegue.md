@@ -180,6 +180,8 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
   pasan construye un artefacto con el servidor, sus catálogos compilados y el build de la web, y lo
   publica en un release de GitHub. El `.sha256` del release lleva el SHA-256 de cada archivo, con
   los instalables.
+- El release es un borrador hasta que tiene el `.sha256`: un job que falla no deja publicado un
+  release a medias.
 - Cada versión queda en `/srv/<app>/releases/<versión>/`, y el enlace `/srv/<app>/current` apunta
   a la activa. Los datos quedan fuera de las versiones, en `/var/lib/<app>/`.
 - `releases/` guarda las cinco versiones más recientes y la activa: las demás siguen en sus

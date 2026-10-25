@@ -98,9 +98,8 @@ Estándares: de OWASP, la sección *Security Headers* del
 ## Configuración
 
 Estándares: de systemd 257, la versión de Debian 13, [`systemd.exec`](../fuentes/systemd/systemd.exec.xml),
-en *Environment* y *Credentials*, y las secciones 2.7.1, *Creation*, y 2.9, *Downtime, Break-glass,
-Backup and Restore*, del [*Secrets Management Cheat Sheet*](../fuentes/owasp/Secrets_Management.md)
-de OWASP.
+en *Environment* y *Credentials*, y la sección 2.7.1, *Creation*, del
+[*Secrets Management Cheat Sheet*](../fuentes/owasp/Secrets_Management.md) de OWASP.
 
 - Cada campo de `Settings` llega al servicio con `LoadCredentialEncrypted=`, cifrado con
   `systemd-creds encrypt`: no queda en claro en el disco.
@@ -110,11 +109,6 @@ de OWASP.
 - Las credenciales que el servidor no usa, como las de las migraciones, el respaldo y el
   despliegue, van en otra carpeta: el servidor no las recibe. `<app>-migrate/database_url` también
   se cifra con `--name=app_database_url`, porque reemplaza al de la carpeta de la app.
-- Cada credencial de `<app>-backup/` tiene una copia fuera del servidor, en el gestor de
-  contraseñas de quien despliega: `systemd-creds` cifra con una llave de la máquina, y sin
-  `restic_password` el respaldo no se lee en otra.
-- Cada mes, quien despliega limpia el repositorio de la receptora con esa copia, como dice
-  «Respaldos»: una copia que no abre el respaldo se descubre antes de necesitarla.
 
 ## coturn
 
@@ -153,6 +147,8 @@ sección *WebSocket Protocol Configuration* del
   cabeceras `X-Forwarded-*` solo de loopback, su valor por defecto.
 - El timer del barrido de archivos de [fastapi.md](fastapi.md#archivos) corre
   `python -m app.tasks sweep` cada día.
+- El timer de la purga de `event_log` de [fastapi.md](fastapi.md#registro-de-eventos) corre
+  `python -m app.tasks purge` cada día.
 - Cada unidad queda con una exposición de 2.0 o menos en `systemd-analyze security`.
 
 ## Respaldos
@@ -163,11 +159,9 @@ PostgreSQL.
 - El respaldo de la base es un `pg_dump` en formato custom, que corre antes de cada respaldo:
   `pg_restore` puede restaurar solo una parte.
 - El respaldo lleva el dump y `/var/lib/<app>/files/`, y sale de la máquina con `restic`, cifrado,
-  hacia una receptora: una computadora de quien despliega, cualquiera, con `rest-server`. El código
-  no va: está en los releases.
+  hacia una receptora con `rest-server`. El código no va: está en los releases.
 - La receptora pide el respaldo con `plantilla/receiver/`: abre `rest-server` en su puerto 8001 y
-  un túnel `ssh -R` al 8001 del servidor, espera el resultado y cierra los dos. Corre al iniciar
-  sesión y cada día, o a mano.
+  un túnel `ssh -R` al 8001 del servidor, espera el resultado y cierra los dos.
 - `rest-server` corre con `--append-only` y sin contraseña, y solo escucha en el loopback de la
   receptora: el servidor agrega respaldos, pero no borra ni reescribe los que hay, y restic los
   cifra.
@@ -178,10 +172,7 @@ PostgreSQL.
   respaldo sin receptora no queda colgado.
 - El primer respaldo crea el repositorio.
 - Cada respaldo bueno cambia la fecha de `/var/lib/<app>/last-backup`, y el journal guarda cada
-  corrida. El monitor de equipaggio avisa cuando el último respaldo tiene más de 48 h.
-- Los respaldos se limpian en la receptora, porque el servidor no puede borrar: cada mes, quien
-  despliega corre `restic forget --prune --keep-daily 7 --keep-weekly 4 --keep-monthly 12` sobre la
-  carpeta del producto.
+  corrida.
 - El dump y `restic` son unidades distintas: el dump corre como `postgres`, y `restic` solo puede
   leer, con `CAP_DAC_READ_SEARCH`.
 
@@ -214,11 +205,11 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
   a la activa. Los datos quedan fuera de las versiones, en `/var/lib/<app>/`.
 - `releases/` guarda las cinco versiones más recientes y la activa: las demás siguen en sus
   releases de GitHub.
-- Quien despliega firma el `.sha256` del release en su máquina con `ssh-keygen -Y sign`, y el
-  servidor solo instala el artefacto y los instalables que ese `.sha256` nombra, si lo firma una
-  llave de `/etc/<app>/allowed_signers`: una cuenta de GitHub comprometida después de la firma no
-  alcanza para desplegar otro archivo ni una versión anterior.
-- `scripts/deploy.py` instala un tag en el servidor, y una persona lo lanza por `ssh`.
+- El `.sha256` del release se firma fuera de GitHub con `ssh-keygen -Y sign`, y el servidor solo
+  instala el artefacto y los instalables que ese `.sha256` nombra, si lo firma una llave de
+  `/etc/<app>/allowed_signers`: una cuenta de GitHub comprometida después de la firma no alcanza
+  para desplegar otro archivo ni una versión anterior.
+- `scripts/deploy.py` instala un tag en el servidor y se lanza por `ssh`, no desde el CI.
 - Las migraciones corren en la unidad `<app>-migrate@<versión>.service`, con las credenciales del
   servidor, porque `alembic/env.py` lee `Settings`, salvo `database_url`, que es la del rol dueño
   del esquema. El rol del servidor no tiene DDL: un error o una inyección en la app no cambian el

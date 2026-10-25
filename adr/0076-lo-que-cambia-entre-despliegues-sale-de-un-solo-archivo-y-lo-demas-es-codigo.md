@@ -34,8 +34,7 @@ un secreto a otra solución.
 
 ## Consecuencias
 
-- Los secretos de producción quedan en claro en la máquina de quien despliega: el disco tiene que
-  estar cifrado.
+- Los secretos de producción quedan en claro en la máquina de quien despliega.
 - Lo que no es secreto, como el puerto o el dominio, no tiene historial en git.
 - El [ADR-0074](0074-las-credenciales-del-respaldo-tienen-una-copia-fuera-del-servidor.md) guarda
   las credenciales del respaldo en un gestor de contraseñas, que hoy no se usa: falta decidir dónde

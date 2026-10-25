@@ -1,6 +1,6 @@
 # ADR-0078 · El respaldo lo pide una receptora, y lo guarda su `rest-server`
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 7 lo reemplaza el [ADR-0079](0079-canone-no-fija-la-operacion-del-respaldo.md)
 - **Fecha:** 2026-10-24
 - **Alcance:** «Respaldos», «Configuración» y «Proyecto» de
   [`plataformas/despliegue.md`](../plataformas/despliegue.md), `plantilla/infra/` y

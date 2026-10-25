@@ -1,6 +1,6 @@
 # ADR-0074 · Las credenciales del respaldo tienen una copia fuera del servidor
 
-- **Estado:** Propuesta
+- **Estado:** Descartada por el [ADR-0079](0079-canone-no-fija-la-operacion-del-respaldo.md)
 - **Fecha:** 2026-10-23
 - **Alcance:** «Configuración» de [`plataformas/despliegue.md`](../plataformas/despliegue.md)
 

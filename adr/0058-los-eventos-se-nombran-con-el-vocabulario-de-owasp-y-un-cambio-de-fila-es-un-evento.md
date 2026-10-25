@@ -1,6 +1,6 @@
 # ADR-0058 · Los eventos se nombran con el vocabulario de OWASP, y un cambio de fila es un evento
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. La purga del punto 11 la reemplaza el [ADR-0080](0080-la-purga-de-event-log-es-una-funcion-y-una-ruta-de-salud-dice-que-alertar.md)
 - **Fecha:** 2026-10-16
 - **Alcance:** la sección «Registro de eventos» de
   [plataformas/fastapi.md](../plataformas/fastapi.md#registro-de-eventos); el servidor

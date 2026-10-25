@@ -41,6 +41,55 @@
           }
         }
       }
+    },
+    "/api/health/events": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Events",
+        "description": "Tell when the last critical event and the last backup were.",
+        "operationId": "healthEvents",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthEvents"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -57,6 +106,41 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "HealthEvents": {
+        "properties": {
+          "lastCriticalAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastcriticalat"
+          },
+          "lastBackupAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastbackupat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lastCriticalAt",
+          "lastBackupAt"
+        ],
+        "title": "HealthEvents",
+        "description": "The last critical event and the last good backup, or null."
       },
       "ValidationError": {
         "properties": {
@@ -97,6 +181,12 @@
           "type"
         ],
         "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }

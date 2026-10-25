@@ -44,6 +44,7 @@ jobs:
           folder="$RUNNER_TEMP/credentials"
           mkdir "$folder"
           printf %s postgresql+asyncpg://postgres:postgres@localhost:5432/postgres > "$folder/app_database_url"
+          printf %s test-health-token > "$folder/app_health_token"
           printf %s "{}" > "$folder/app_min_client_versions"
           printf %s 0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY= > "$folder/app_page_token_key"
           echo "CREDENTIALS_DIRECTORY=$folder" >> "$GITHUB_ENV"
@@ -59,6 +60,8 @@ jobs:
       - run: |
           uv export --locked --no-emit-project --format requirements.txt -o "$RUNNER_TEMP/req.txt"
           uv run pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/req.txt"
+      # The role of the server, which the migrations grant.
+      - run: psql postgresql://postgres:postgres@localhost:5432/postgres -c "CREATE ROLE PRODUCTO"
       - run: uv run alembic upgrade head
       - run: uv run pytest
         env:

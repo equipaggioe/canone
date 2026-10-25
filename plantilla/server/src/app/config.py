@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="app_")
 
     database_url: str
+    health_token: str
     min_client_versions: dict[str, Annotated[str, StringConstraints(pattern=f"^{VERSION}$")]]
     page_token_key: str
 

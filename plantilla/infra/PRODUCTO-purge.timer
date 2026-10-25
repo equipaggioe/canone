@@ -1,0 +1,9 @@
+[Unit]
+Description=PRODUCTO event purge, daily
+
+[Timer]
+OnCalendar=daily
+Persistent=yes
+
+[Install]
+WantedBy=timers.target

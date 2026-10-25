@@ -62,7 +62,8 @@ Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 `tracing.py`, `models/__init__.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`,
 `schemas/base.py`, `schemas/page.py` y `tests/test_conventions.py`. Se copian y se completan
 `config.py`, `dependencies.py`, `enums.py`, `errors.py`, `main.py`, los `health.py` de `routers/`,
-`schemas/` y `services/`, y `tests/conftest.py`.
+`schemas/` y `services/`, `models/event/`, `services/events.py`, la migración de `event_log` y
+`tests/conftest.py`.
 
 <br>
 
@@ -424,12 +425,19 @@ Estándares: las secciones *Where to record event data*, *Which events to log*, 
 - Un valor de una fila entra en `details` solo si su tabla y su campo están en una lista blanca:
   una columna nueva no se registra sola. Un campo fuera de la lista se registra como cambiado, sin
   su valor.
-- La retención de `event_log` es una constante en días, mayor que cero: la IP y el user agent son
-  datos personales.
+- La retención de `event_log` es una constante en días, mayor que cero, en la migración que crea
+  la purga: la IP y el user agent son datos personales. La plantilla guarda 365.
 - Un evento se escribe en su propia transacción, salvo el de un cambio de fila, que va en la del
   cambio: un fallo queda aunque la petición se deshaga, y un cambio deshecho no queda.
-- El rol de la app solo tiene `INSERT` y `SELECT` sobre `event_log`, y la purga de la retención usa
-  otro rol: un error o una inyección en la app no borran el rastro.
+- El rol de la app solo tiene `INSERT` y `SELECT` sobre `event_log`: un error o una inyección en la
+  app no cambian ni borran el rastro. El rol no es el dueño de la tabla.
+- *(propuesta)* El rol de la app se llama como la app.
+- La purga es la función `purge_event_log()`, del dueño del esquema y con `SECURITY DEFINER`, que
+  solo borra lo que pasó la retención. El rol de la app solo puede ejecutarla, y la corre una tarea
+  periódica: a lo sumo adelanta una purga, sin otra credencial de base.
+- Los permisos de una tabla los da la migración que la crea: quedan versionados y el CI los prueba.
+- *(propuesta)* `actor_id` es un `uuid` sin clave foránea, y `ip_address`, un `inet`: el rastro
+  sobrevive a la cuenta, e `inet` rechaza una dirección malformada.
 
 ## Reintentos
 
@@ -439,6 +447,13 @@ Contrato: [transversal.md](transversal.md#reintentos).
 
 - `GET /api/health` responde 204, o 503 si la base o Valkey no contestan: un servidor con una
   dependencia caída no está vivo aunque el proceso responda.
+- `GET /api/health/events` responde `lastCriticalAt`, la hora del último evento `critical` de
+  `event_log`, y `lastBackupAt`, la fecha de `last-backup` de
+  [despliegue.md](despliegue.md#respaldos), o `null` si no hay. Quien lo consulta decide cuándo avisar: el servidor no fija umbrales.
+- La ruta exige el token de `health_token` en `Authorization: Bearer`, comparado en tiempo
+  constante, y sin él responde 401.
+- *(propuesta)* El servidor lee `last-backup` en la carpeta padre de su `StateDirectory=`, sin otra
+  configuración.
 
 ## Sesión
 
@@ -574,4 +589,6 @@ Contrato: [transversal.md](transversal.md#websocket).
 | La base de prueba con las migraciones | `uv run alembic upgrade head` antes de pytest en el job `server` de CI |
 | Las pruebas nunca llaman a la app con `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
 | Un `pageToken` ilegible o con otros parámetros responde 422 | `test_invalid_page_token_points_to_the_parameter` |
+| El rol de la app no cambia ni borra `event_log`, y la purga respeta la retención | `test_server_cannot_change_events` y `test_purge_deletes_only_expired_events` |
+| `GET /api/health/events` exige el token | `test_events_need_the_token` |
 | Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

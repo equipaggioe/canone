@@ -5,9 +5,9 @@ import asyncio
 from collections.abc import Awaitable, Callable
 
 from app.database import engine
-from app.services import files
+from app.services import events, files
 
-TASKS: dict[str, Callable[[], Awaitable[None]]] = {"sweep": files.sweep}
+TASKS: dict[str, Callable[[], Awaitable[None]]] = {"purge": events.purge, "sweep": files.sweep}
 
 
 async def run(task: str) -> None:

@@ -1,6 +1,7 @@
 """Write the events of event_log, and purge the expired ones."""
 
 from collections.abc import Mapping
+from datetime import timedelta
 from typing import Any
 from uuid import UUID
 
@@ -10,6 +11,9 @@ from app.database import SessionFactory
 from app.enums import EventLevel
 from app.models.event.event_log import EventLog
 from app.tracing import trace_id
+
+# The IP and the user agent are personal data.
+RETENTION_DAYS = 365
 
 # The fields whose value a row change keeps, by table: a new column is
 # not logged by itself.
@@ -65,10 +69,11 @@ def changes(table: str, changed: Mapping[str, Any]) -> dict[str, Any]:
 
 
 async def purge() -> None:
-    """Delete the expired events, with the function of the migration.
+    """Delete the events past the retention.
 
-    The role of the server cannot delete from event_log; the function
-    deletes only what is older than the retention.
+    Only the owner of the schema deletes from event_log: the purge runs
+    with the database_url of the migrations.
     """
+    expired = EventLog.occurred_at < sa.func.now() - timedelta(days=RETENTION_DAYS)
     async with SessionFactory.begin() as session:
-        await session.execute(sa.text("SELECT purge_event_log()"))
+        await session.execute(sa.delete(EventLog).where(expired))

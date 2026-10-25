@@ -1,6 +1,7 @@
 # ADR-0080 · La purga de `event_log` es una función, y una ruta de salud dice qué alertar
 
-- **Estado:** Aceptada, salvo los puntos 6, 7 y 8, en propuesta
+- **Estado:** Aceptada. Los puntos 3 y 4 los reemplaza el
+  [ADR-0081](0081-la-purga-de-event-log-la-corre-el-dueno-del-esquema.md)
 - **Fecha:** 2026-10-24
 - **Alcance:** «Registro de eventos» y «Salud» de [`plataformas/fastapi.md`](../plataformas/fastapi.md),
   «Procesos» de [`plataformas/despliegue.md`](../plataformas/despliegue.md), `plantilla/server/` y
@@ -28,9 +29,9 @@ unidad, el servidor lee la fecha de `/var/lib/<app>/last-backup`.
    borra lo que pasó la retención. El rol de la app solo la ejecuta, desde una tarea diaria.
 4. La retención está en la migración que crea la función, y la plantilla guarda 365 días.
 5. Los permisos de una tabla los da la migración que la crea.
-6. *(propuesta)* El rol de la app se llama como la app.
-7. *(propuesta)* `actor_id` es un `uuid` sin clave foránea, e `ip_address`, un `inet`.
-8. *(propuesta)* El servidor lee `last-backup` en la carpeta padre de su `StateDirectory=`.
+6. El rol de la app se llama como la app.
+7. `actor_id` es un `uuid` sin clave foránea, e `ip_address`, un `inet`.
+8. El servidor lee `last-backup` en la carpeta padre de su `StateDirectory=`.
 
 ## Consecuencias
 

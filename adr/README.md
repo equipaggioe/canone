@@ -87,4 +87,6 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0077](0077-un-vps-aloja-un-solo-producto.md) | Un VPS aloja un solo producto | Con `server/` | Aceptada |
 | [0078](0078-el-respaldo-lo-pide-una-receptora-y-lo-guarda-su-rest-server.md) | El respaldo lo pide una receptora, y lo guarda su `rest-server` | Con `server/` | Aceptada; el punto 7 lo reemplaza ADR-0079 |
 | [0079](0079-canone-no-fija-la-operacion-del-respaldo.md) | canone no fija la operación del respaldo | Con `server/` | Aceptada |
-| [0080](0080-la-purga-de-event-log-es-una-funcion-y-una-ruta-de-salud-dice-que-alertar.md) | La purga de `event_log` es una función, y una ruta de salud dice qué alertar | Con `server/` | Aceptada, salvo los puntos 6, 7 y 8, en propuesta |
+| [0080](0080-la-purga-de-event-log-es-una-funcion-y-una-ruta-de-salud-dice-que-alertar.md) | La purga de `event_log` es una función, y una ruta de salud dice qué alertar | Con `server/` | Aceptada; los puntos 3 y 4 los reemplaza ADR-0081 |
+| [0081](0081-la-purga-de-event-log-la-corre-el-dueno-del-esquema.md) | La purga de `event_log` la corre el dueño del esquema | Con `server/` | Aceptada |
+| [0082](0082-la-ruta-de-salud-dice-cuanto-disco-queda.md) | La ruta de salud dice cuánto disco queda | Con `server/` | Aceptada |

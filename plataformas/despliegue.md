@@ -148,7 +148,8 @@ sección *WebSocket Protocol Configuration* del
 - El timer del barrido de archivos de [fastapi.md](fastapi.md#archivos) corre
   `python -m app.tasks sweep` cada día.
 - El timer de la purga de `event_log` de [fastapi.md](fastapi.md#registro-de-eventos) corre
-  `python -m app.tasks purge` cada día.
+  `python -m app.tasks purge` cada día. Su unidad carga además `app_database_url` desde
+  `<app>-migrate/`, como la de las migraciones.
 - Cada unidad queda con una exposición de 2.0 o menos en `systemd-analyze security`.
 
 ## Respaldos
@@ -175,6 +176,8 @@ PostgreSQL.
   corrida.
 - El dump y `restic` son unidades distintas: el dump corre como `postgres`, y `restic` solo puede
   leer, con `CAP_DAC_READ_SEARCH`.
+- El dump no lleva `RemoveIPC=`: al detenerse, borraría la memoria compartida de PostgreSQL, que
+  corre con el mismo usuario, y la base rechazaría toda conexión.
 
 ## Valkey
 

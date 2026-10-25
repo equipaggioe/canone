@@ -50,11 +50,11 @@ async def test_server_cannot_change_events(session: AsyncSession, statement: str
 
 
 async def test_purge_deletes_only_expired_events(session: AsyncSession) -> None:
-    """The purge, run as the server, keeps what is in retention."""
+    """The purge keeps what is in retention."""
     now = datetime.now(UTC)
-    await insert(session, now - timedelta(days=400))
+    await insert(session, now - timedelta(days=events.RETENTION_DAYS + 1))
     await insert(session, now)
-    await as_server(session, "SELECT purge_event_log()")
+    await events.purge()
     left = await session.scalars(sa.select(EventLog.occurred_at))
     assert list(left) == [now]
 

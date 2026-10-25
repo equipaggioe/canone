@@ -19,8 +19,6 @@ depends_on: Union[str, Sequence[str], None] = None
 
 # The role of the server, named as the app.
 ROLE = "PRODUCTO"
-# The IP and the user agent are personal data.
-RETENTION_DAYS = 365
 
 
 def upgrade() -> None:
@@ -46,29 +44,10 @@ def upgrade() -> None:
     op.create_index("ix_event_log_critical", "event_log", ["occurred_at"], postgresql_where=sa.text("level = 'critical'"))
     # The server cannot change or delete the trail.
     op.execute(f"GRANT INSERT, SELECT ON event_log TO {ROLE}")
-    # It purges through a function of the owner, which deletes only
-    # what is past the retention.
-    op.execute(
-        f"""
-        CREATE FUNCTION purge_event_log() RETURNS bigint
-        LANGUAGE sql SECURITY DEFINER SET search_path = pg_catalog, pg_temp
-        AS $$
-            WITH purged AS (
-                DELETE FROM public.event_log
-                WHERE occurred_at < now() - interval '{RETENTION_DAYS} days'
-                RETURNING 1
-            )
-            SELECT count(*) FROM purged
-        $$
-        """
-    )
-    op.execute("REVOKE EXECUTE ON FUNCTION purge_event_log() FROM PUBLIC")
-    op.execute(f"GRANT EXECUTE ON FUNCTION purge_event_log() TO {ROLE}")
 
 
 def downgrade() -> None:
     """Downgrade schema."""
-    op.execute("DROP FUNCTION purge_event_log()")
     op.drop_index("ix_event_log_critical", table_name="event_log", postgresql_where=sa.text("level = 'critical'"))
     op.drop_index(op.f("ix_event_log_occurred_at"), table_name="event_log")
     op.drop_table("event_log")

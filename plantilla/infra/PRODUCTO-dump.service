@@ -35,5 +35,6 @@ SystemCallFilter=~@privileged @resources
 CapabilityBoundingSet=
 AmbientCapabilities=
 DevicePolicy=closed
-RemoveIPC=yes
+# No RemoveIPC=: it would remove the shared memory of PostgreSQL, which
+# runs as the same user, and the database would refuse every connection.
 UMask=0077

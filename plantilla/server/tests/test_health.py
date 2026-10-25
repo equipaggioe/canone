@@ -1,6 +1,7 @@
 """The health check, and what to alert on."""
 
 import os
+import shutil
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -37,7 +38,8 @@ async def test_events_tell_last_critical_and_backup(
     """The route answers the last critical event and the last backup."""
     headers = {"Authorization": f"Bearer {settings.health_token}"}
     response = await client.get("/api/health/events", headers=headers)
-    assert response.json() == {"lastCriticalAt": None, "lastBackupAt": None}
+    first = response.json()
+    assert (first["lastCriticalAt"], first["lastBackupAt"]) == (None, None)
     row = events.event("authz_admin", EventLevel.CRITICAL)
     session.add(row)
     await session.flush()
@@ -50,3 +52,12 @@ async def test_events_tell_last_critical_and_backup(
     assert datetime.fromisoformat(body["lastBackupAt"]) == datetime.fromtimestamp(
         1_800_000_000, UTC
     )
+
+
+async def test_events_tell_the_disk(client: AsyncClient, app_folder: Path) -> None:
+    """The route answers the free and total bytes of the disk."""
+    headers = {"Authorization": f"Bearer {settings.health_token}"}
+    body = (await client.get("/api/health/events", headers=headers)).json()
+    usage = shutil.disk_usage(app_folder)
+    assert body["diskTotalBytes"] == usage.total
+    assert 0 <= body["diskFreeBytes"] <= usage.total

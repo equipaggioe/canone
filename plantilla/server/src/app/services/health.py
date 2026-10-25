@@ -1,5 +1,6 @@
 """Whether the server reaches its database, and what to alert on."""
 
+import shutil
 from datetime import UTC, datetime
 
 import sqlalchemy as sa
@@ -40,3 +41,13 @@ def last_backup() -> datetime | None:
     except FileNotFoundError:
         return None
     return datetime.fromtimestamp(seconds, UTC)
+
+
+def disk_usage() -> tuple[int, int]:
+    """Return the free and the total bytes of the disk of the files.
+
+    Free is what a user without privileges may still write, as
+    PostgreSQL does.
+    """
+    usage = shutil.disk_usage(files.folder())
+    return usage.free, usage.total

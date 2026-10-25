@@ -8,6 +8,8 @@ User=PRODUCTO
 Group=PRODUCTO
 WorkingDirectory=/srv/PRODUCTO/current/server
 LoadCredentialEncrypted=app:/etc/credstore.encrypted/PRODUCTO
+# The owner of the schema, the only role that deletes from event_log.
+LoadCredentialEncrypted=app_database_url:/etc/credstore.encrypted/PRODUCTO-migrate/database_url
 ExecStart=/srv/PRODUCTO/current/server/.venv/bin/python -m app.tasks purge
 NoNewPrivileges=yes
 ProtectSystem=strict

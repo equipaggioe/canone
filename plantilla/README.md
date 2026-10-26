@@ -39,4 +39,5 @@ repositorio: un script de canone lo instala en el servidor con los datos de cada
 | `flutter/analysis_options.yaml` | Cada app Flutter | Canónico | [flutter.md](../plataformas/flutter.md) |
 | `flutter/.gitignore` | Cada app Flutter | Punto de partida | [repositorio.md](../repositorio.md) |
 | `android/.editorconfig` | `mobile/` | Canónico | [android.md](../plataformas/android.md) |
+| `android/gradle/wrapper/gradle-wrapper.properties` | `mobile/gradle/wrapper/` y `android/gradle/wrapper/` de cada app Flutter | Canónico | [android.md](../plataformas/android.md), [flutter.md](../plataformas/flutter.md) |
 | `android/.gitignore` | `mobile/` | Punto de partida | [repositorio.md](../repositorio.md) |

@@ -7,6 +7,13 @@ Una app de Android en Kotlin y Jetpack Compose.
 Estándar: [*Migrate your build to version catalogs*](../fuentes/android/version-catalogs.md).
 
 - Gradle usa Kotlin DSL y corre con el JDK 21 de Debian 13.
+- Gradle 9.8.0, AGP 9.4.1 y Kotlin 2.4.20, también en las apps Flutter. Con una sola versión, un
+  proyecto no se queda con la que traía la plantilla el día en que se creó.
+- Gradle corre con el wrapper y su distribución `-bin`: `-all` solo agrega las fuentes y la
+  documentación de Gradle.
+
+Plantilla: [`plantilla/android/gradle/wrapper/gradle-wrapper.properties`](../plantilla/android/gradle/wrapper/gradle-wrapper.properties),
+que se copia sin editar.
 
 ## Estilo
 
@@ -157,4 +164,5 @@ Estándares: los [fundamentos de pruebas](../fuentes/android/testing-fundamental
 
 | Qué | Con qué |
 |---|---|
+| Gradle, AGP y Kotlin | [`scripts/verificar.py`](../scripts/verificar.py) |
 | Objetivos, etiquetas y contraste | `enableAccessibilityChecks()` en las pruebas de UI |

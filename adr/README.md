@@ -95,3 +95,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0085](0085-el-dueno-del-esquema-entra-por-peer-con-su-cuenta-y-corre-el-volcado.md) | El dueño del esquema entra por `peer` con su cuenta, y corre el volcado | Con `server/` | Aceptada |
 | [0086](0086-las-pruebas-corren-con-los-permisos-del-servidor-y-las-migraciones-con-el-dueno.md) | Las pruebas corren con los permisos del servidor, y las migraciones con el dueño | Con `server/` | Aceptada |
 | [0087](0087-la-cuenta-que-administra-no-es-una-cuenta-de-la-app.md) | La cuenta que administra no es una cuenta de la app | Con `server/` | Aceptada |
+| [0088](0088-gradle-agp-y-kotlin-tienen-una-sola-version-en-android-y-flutter.md) | Gradle, AGP y Kotlin tienen una sola versión en Android y en Flutter | Con Android o Flutter | Aceptada; los puntos 3 y 4 son propuesta |

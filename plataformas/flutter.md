@@ -2,6 +2,12 @@
 
 Una app en Flutter.
 
+## Proyecto
+
+- Gradle, AGP y Kotlin son los de [android.md](android.md#proyecto), con su
+  `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en
+  `android/settings.gradle.kts`.
+
 ## Estilo
 
 Estándares: [*Effective Dart*](../fuentes/dart/effective-dart-index.md):
@@ -139,4 +145,5 @@ Contrato: [transversal.md](transversal.md#tema).
 
 | Qué | Con qué |
 |---|---|
+| Gradle, AGP y Kotlin | [`scripts/verificar.py`](../scripts/verificar.py) |
 | Objetivos, etiquetas y contraste | Las guías de `flutter_test` en cada pantalla |

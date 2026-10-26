@@ -275,6 +275,39 @@ def comparar(copia: Path, canonico: Path, nombre: str) -> list[str]:
     return []
 
 
+# plataformas/android.md, «Proyecto»: una sola versión de Gradle, AGP y Kotlin en Android y en
+# Flutter. Gradle sale del wrapper canónico; AGP y Kotlin, de los plugins que declara el proyecto:
+# el catálogo de versiones en Android y settings.gradle.kts en Flutter.
+WRAPPER = Path("gradle/wrapper/gradle-wrapper.properties")
+PLUGINS = {"com.android.application": "9.4.1", "org.jetbrains.kotlin.android": "2.4.20"}
+PLUGIN_KTS = re.compile(r'id\("([\w.]+)"\)\s+version\s+"([^"]+)"')
+
+
+def plugins_catalogo(catalogo: Path) -> dict[str, str]:
+    datos = tomllib.loads(catalogo.read_text(encoding="utf-8"))
+    versiones = datos.get("versions", {})
+    declarados = {}
+    for plugin in datos.get("plugins", {}).values():
+        if isinstance(plugin, str):
+            nombre, _, version = plugin.partition(":")
+        else:
+            nombre, version = plugin["id"], plugin.get("version", "")
+            if isinstance(version, dict):
+                version = versiones.get(version.get("ref"), "")
+        declarados[nombre] = version
+    return declarados
+
+
+def versiones_gradle(proyecto: Path, nombre: str, declarados: dict[str, str]) -> list[str]:
+    fallas = comparar(proyecto / WRAPPER, PLANTILLA / "android" / WRAPPER, f"{nombre}/{WRAPPER.as_posix()}")
+    for plugin, version in PLUGINS.items():
+        if declarados.get(plugin) != version:
+            fallas.append(
+                f"plataformas/android.md: {nombre} declara {plugin} {declarados.get(plugin, 'sin versión')}, no {version}"
+            )
+    return fallas
+
+
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
 
@@ -375,6 +408,10 @@ def revisar(repo: Path) -> list[str]:
                 f"{app.name}/analysis_options.yaml",
             )
         )
+        settings = app / "android/settings.gradle.kts"
+        if settings.exists():
+            declarados = dict(PLUGIN_KTS.findall(settings.read_text(encoding="utf-8")))
+            fallas.extend(versiones_gradle(app / "android", f"{app.name}/android", declarados))
 
     # Android: solo para las apps que existan.
     for settings in repo.glob("*/settings.gradle.kts"):
@@ -382,6 +419,11 @@ def revisar(repo: Path) -> list[str]:
         fallas.extend(
             comparar(app / ".editorconfig", PLANTILLA / "android/.editorconfig", f"{app.name}/.editorconfig")
         )
+        catalogo = app / "gradle/libs.versions.toml"
+        if not catalogo.exists():
+            fallas.append(f"plataformas/android.md: falta {app.name}/gradle/libs.versions.toml")
+            continue
+        fallas.extend(versiones_gradle(app, app.name, plugins_catalogo(catalogo)))
 
     docs = repo / "docs"
     if docs.is_dir():

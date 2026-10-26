@@ -556,6 +556,10 @@ Contrato: [transversal.md](transversal.md#websocket).
 - Las pruebas corren contra PostgreSQL. Ven los mismos tipos y restricciones que producción.
 - La base de prueba se arma con `alembic upgrade head` antes de pytest: las pruebas ven el esquema
   de las migraciones, no el de los modelos.
+- Las migraciones de prueba entran como el rol dueño del esquema, y cada conexión de las pruebas
+  toma el rol del servidor con `SET ROLE`: una prueba tiene los permisos del servidor en
+  producción, y una tabla sin su `GRANT` falla en el CI. Lo que corre el dueño, como la purga, se
+  prueba con el fixture `owner`.
 - Las pruebas corren contra Valkey, que se vacía en cada prueba: un conteo de intentos no pasa de
   una prueba a la siguiente.
 - Cada prueba corre en una transacción que se deshace al terminar, y las sesiones de la app se unen
@@ -590,6 +594,7 @@ Contrato: [transversal.md](transversal.md#websocket).
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | La versión mínima de cliente, en tres enteros | `test_outdated_client_is_rejected` |
 | La base de prueba con las migraciones | `uv run alembic upgrade head` antes de pytest en el job `server` de CI |
+| Las migraciones de prueba como el dueño, y las pruebas con los permisos del servidor | `alembic upgrade head` con la credencial del dueño en el job `server` de CI, y `run_as_server` de `tests/conftest.py` |
 | Las pruebas nunca llaman a la app con `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
 | Un `pageToken` ilegible o con otros parámetros responde 422 | `test_invalid_page_token_points_to_the_parameter` |
 | El rol de la app no cambia ni borra `event_log`, y la purga respeta la retención | `test_server_cannot_change_events` y `test_purge_deletes_only_expired_events` |

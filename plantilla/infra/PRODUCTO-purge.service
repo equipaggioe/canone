@@ -4,8 +4,8 @@ After=postgresql.service
 
 [Service]
 Type=oneshot
-User=PRODUCTO
-Group=PRODUCTO
+User=PRODUCTO_owner
+Group=PRODUCTO_owner
 WorkingDirectory=/srv/PRODUCTO/current/server
 LoadCredentialEncrypted=app:/etc/credstore.encrypted/PRODUCTO
 # The owner of the schema, the only role that deletes from event_log.

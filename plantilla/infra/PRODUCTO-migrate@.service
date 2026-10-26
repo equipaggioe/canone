@@ -4,8 +4,8 @@ After=postgresql.service
 
 [Service]
 Type=oneshot
-User=PRODUCTO
-Group=PRODUCTO
+User=PRODUCTO_owner
+Group=PRODUCTO_owner
 WorkingDirectory=/srv/PRODUCTO/releases/%i/server
 LoadCredentialEncrypted=app:/etc/credstore.encrypted/PRODUCTO
 # ADR-0070: the owner of the schema, over the server one in the folder.

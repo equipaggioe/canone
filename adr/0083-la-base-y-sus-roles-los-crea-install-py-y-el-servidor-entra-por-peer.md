@@ -1,6 +1,7 @@
 # ADR-0083 · La base y sus roles los crea `install.py`, y el servidor entra por `peer`
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. Los puntos 3 y 4 los reemplaza el
+  [ADR-0085](0085-el-dueno-del-esquema-entra-por-peer-con-su-cuenta-y-corre-el-volcado.md)
 - **Fecha:** 2026-10-25
 - **Alcance:** «PostgreSQL» de [`plataformas/despliegue.md`](../plataformas/despliegue.md) y
   `plantilla/infra/install.py`

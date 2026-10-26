@@ -13,9 +13,12 @@ from app.services import files
 
 
 async def test_sweep_deletes_only_old_files_without_row(
-    session: AsyncSession, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    session: AsyncSession, owner: None, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """A file with a row, or newer than the margin, stays."""
+    """A file with a row, or newer than the margin, stays.
+
+    The owner creates the table, as a migration would.
+    """
     table = sa.Table("note_file", sa.MetaData(), sa.Column("id", sa.Uuid, primary_key=True))
     await session.run_sync(lambda sync: table.create(sync.connection()))
     kept = "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"

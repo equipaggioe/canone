@@ -4,10 +4,27 @@ from collections.abc import AsyncIterator
 
 import pytest
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import event
+from sqlalchemy.engine import AdaptedConnection
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
+from sqlalchemy.pool import ConnectionPoolEntry
 
 from app.database import SessionFactory, engine
 from app.main import app
+
+# The roles of the server and of the owner of the schema, as
+# install.py creates them.
+SERVER = "PRODUCTO"
+OWNER = "PRODUCTO_owner"
+
+
+@event.listens_for(engine.sync_engine, "connect")
+def run_as_server(connection: AdaptedConnection, entry: ConnectionPoolEntry) -> None:
+    """Give each connection the privileges of the server.
+
+    The role lasts the whole connection, outside any transaction.
+    """
+    connection.run_async(lambda driver: driver.execute(f"SET ROLE {SERVER}"))
 
 
 @pytest.fixture(scope="session")
@@ -17,13 +34,13 @@ def anyio_backend() -> str:
 
 
 @pytest.fixture
-async def database(monkeypatch: pytest.MonkeyPatch) -> AsyncIterator[None]:
+async def database(monkeypatch: pytest.MonkeyPatch) -> AsyncIterator[AsyncConnection]:
     """Bind the session factory to a transaction that is rolled back."""
     async with engine.connect() as connection:
         transaction = await connection.begin()
         monkeypatch.setitem(SessionFactory.kw, "bind", connection)
         monkeypatch.setitem(SessionFactory.kw, "join_transaction_mode", "create_savepoint")
-        yield
+        yield connection
         await transaction.rollback()
     # Each test runs in its own event loop, and a pooled
     # connection belongs to the old one.
@@ -31,14 +48,20 @@ async def database(monkeypatch: pytest.MonkeyPatch) -> AsyncIterator[None]:
 
 
 @pytest.fixture
-async def session(database: None) -> AsyncIterator[AsyncSession]:
+async def owner(database: AsyncConnection) -> None:
+    """Run the test as the owner of the schema, like the purge."""
+    await database.exec_driver_sql(f"SET LOCAL ROLE {OWNER}")
+
+
+@pytest.fixture
+async def session(database: AsyncConnection) -> AsyncIterator[AsyncSession]:
     """Open a session of the test, inside its transaction."""
     async with SessionFactory() as session:
         yield session
 
 
 @pytest.fixture
-async def client(database: None) -> AsyncIterator[AsyncClient]:
+async def client(database: AsyncConnection) -> AsyncIterator[AsyncClient]:
     """Call the app in process, inside the transaction of the test."""
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client

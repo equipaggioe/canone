@@ -11,32 +11,28 @@ from app.enums import EventLevel
 from app.models.event.event_log import EventLog
 from app.services import events
 
-# The role of the server, as the migration grants it.
-ROLE = "PRODUCTO"
-
 
 async def insert(session: AsyncSession, occurred_at: datetime) -> None:
-    """Insert an event as the owner, at a given time."""
+    """Insert an event at a given time."""
     row = events.event("authn_login_fail", EventLevel.WARN)
     row.occurred_at = occurred_at
     session.add(row)
     await session.flush()
 
 
-async def as_server(session: AsyncSession, statement: str) -> None:
-    """Run a statement as the role of the server, in a savepoint."""
+async def in_savepoint(session: AsyncSession, statement: str) -> None:
+    """Run a statement in a savepoint, which a refusal rolls back."""
     async with session.begin_nested():
-        await session.execute(sa.text(f"SET LOCAL ROLE {ROLE}"))
         await session.execute(sa.text(statement))
 
 
 async def test_server_inserts_and_reads_events(session: AsyncSession) -> None:
     """The role of the server inserts an event and reads it back."""
-    await as_server(
+    await in_savepoint(
         session,
         "INSERT INTO event_log (action, level, trace_id) VALUES ('authn_login_fail', 'warn', '')",
     )
-    await as_server(session, "SELECT * FROM event_log")
+    await in_savepoint(session, "SELECT * FROM event_log")
 
 
 @pytest.mark.parametrize(
@@ -46,10 +42,10 @@ async def test_server_inserts_and_reads_events(session: AsyncSession) -> None:
 async def test_server_cannot_change_events(session: AsyncSession, statement: str) -> None:
     """The role of the server neither changes nor deletes the trail."""
     with pytest.raises(DBAPIError, match="permission denied"):
-        await as_server(session, statement)
+        await in_savepoint(session, statement)
 
 
-async def test_purge_deletes_only_expired_events(session: AsyncSession) -> None:
+async def test_purge_deletes_only_expired_events(session: AsyncSession, owner: None) -> None:
     """The purge keeps what is in retention."""
     now = datetime.now(UTC)
     await insert(session, now - timedelta(days=events.RETENTION_DAYS + 1))

@@ -57,3 +57,43 @@ jobs:
           grep -x "permitrootlogin no" "$RUNNER_TEMP/sshd.txt"
           grep -x "passwordauthentication no" "$RUNNER_TEMP/sshd.txt"
           grep -x "kbdinteractiveauthentication no" "$RUNNER_TEMP/sshd.txt"
+
+  postgres:
+    runs-on: ubuntu-latest
+    # The PostgreSQL and PostGIS of Debian 13, with the accounts and roles install.py creates.
+    container: debian:trixie
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+      - run: |
+          apt-get update
+          apt-get install --yes --no-install-recommends postgresql postgresql-17-postgis-3 python3 systemd
+          pg_ctlcluster 17 main status || pg_ctlcluster 17 main start
+      - run: |
+          sed s/PRODUCTO/app/g plantilla/infra/sysusers.conf > /etc/sysusers.d/app.conf
+          systemd-sysusers /etc/sysusers.d/app.conf
+          python3 -c 'import sys; sys.path.insert(0, "plantilla/infra"); import install; install.create_database("app", ["postgis"])'
+      - run: |
+          fails() { if "$@"; then exit 1; fi; }
+          query() { runuser -u "$1" -- psql -X -v ON_ERROR_STOP=1 --dbname=app "${@:2}"; }
+          # No role is a superuser, and each account logs in only as its role.
+          test "$(query postgres -Atc "SELECT count(*) FROM pg_roles WHERE rolname IN ('app', 'app_owner') AND NOT rolsuper")" = 2
+          test "$(query app -Atc "SELECT current_user")" = app
+          test "$(query app_owner -Atc "SELECT current_user")" = app_owner
+          fails query app --username=app_owner -c "SELECT 1"
+          fails query app --host=127.0.0.1 --username=app_owner --no-password -c "SELECT 1"
+          # The owner creates tables, and the server only uses what it is granted.
+          query app_owner -c "CREATE TABLE place (id int PRIMARY KEY, spot geography(Point, 4326))" -c "GRANT SELECT, INSERT ON place TO app"
+          query app -c "INSERT INTO place VALUES (1, ST_MakePoint(-70.6, -33.4))"
+          fails query app -c "CREATE TABLE other (id int)"
+          # The dump of the unit, restored by the owner on the database install.py creates again.
+          set -f
+          dump=$(sed -n '/^ExecStart=/{s/^ExecStart=//;s/PRODUCTO/app/g;p}' plantilla/infra/PRODUCTO-dump.service)
+          install -d -o app_owner -g app_owner /var/lib/app-dump
+          runuser -u app_owner -- $dump
+          runuser -u postgres -- dropdb app
+          python3 -c 'import sys; sys.path.insert(0, "plantilla/infra"); import install; install.create_database("app", ["postgis"])'
+          runuser -u app_owner -- pg_restore --exit-on-error --dbname=app /var/lib/app-dump/app.dump
+          test "$(query app -Atc "SELECT ST_AsText(spot::geometry) FROM place")" = "POINT(-70.6 -33.4)"

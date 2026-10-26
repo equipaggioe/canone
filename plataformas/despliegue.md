@@ -1,6 +1,7 @@
 # Despliegue
 
 Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus superficies web.
+`<app>` es el nombre del repositorio del producto.
 
 ## Proyecto
 
@@ -53,8 +54,7 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 │   ├── files/
 │   └── last-backup                 su fecha es la del último respaldo
 ├── <app>-dump/
-│   ├── <app>.dump
-│   └── globals.sql
+│   └── <app>.dump
 └── valkey/
     └── <app>.rdb
 ```
@@ -136,12 +136,11 @@ de *Role Attributes*, en [*Database Roles*](../fuentes/postgresql/user-manag.sgm
 - `install.py` crea la base `<app>`, el rol `<app>` del servidor y el rol `<app>_owner`, dueño de
   la base. Ninguno es superusuario: las migraciones y la purga no saltan los permisos ni salen de
   la base.
-- El servidor entra por el socket con `peer`, sin contraseña: la cuenta `<app>` entra como el rol
-  `<app>` y como ningún otro. `install.py` escribe su `database_url` en `<app>/`.
-- El dueño entra por `127.0.0.1` con contraseña: las migraciones y la purga corren con la cuenta
-  `<app>`, que con `peer` solo entraría como el rol `<app>`.
-- `install.py` genera la contraseña del dueño en cada corrida, y solo la escribe cifrada, en
-  `<app>-migrate/database_url`: nadie la guarda.
+- Cada rol entra por el socket con `peer`, sin contraseña, desde la cuenta de su nombre: el
+  servidor con `<app>`, y las migraciones, la purga y el volcado con `<app>_owner`. Una cuenta entra
+  solo como su rol, y ningún rol tiene contraseña.
+- `install.py` escribe la `database_url` del servidor en `<app>/`, y la del dueño en
+  `<app>-migrate/`.
 - `install.py` crea como `postgres` las extensiones que recibe con `--extension`: una extensión que
   no es *trusted*, como PostGIS, pide un superusuario.
 
@@ -154,7 +153,7 @@ sección *WebSocket Protocol Configuration* del
 
 - Las unidades son las de `plantilla/infra/`, que `install.py` instala con el nombre y
   el dominio de la app, sin las de las piezas que no tiene.
-- El usuario de la app lo crea `systemd-sysusers` desde el `sysusers.conf` de
+- Las cuentas de la app las crea `systemd-sysusers` desde el `sysusers.conf` de
   `plantilla/infra/`, que `install.py` instala.
 - El servidor arranca con
   `uvicorn app.main:app --port 8000 --ws-max-size 65536 --ws-per-message-deflate false`:
@@ -167,8 +166,8 @@ sección *WebSocket Protocol Configuration* del
 - El timer del barrido de archivos de [fastapi.md](fastapi.md#archivos) corre
   `python -m app.tasks sweep` cada día.
 - El timer de la purga de `event_log` de [fastapi.md](fastapi.md#registro-de-eventos) corre
-  `python -m app.tasks purge` cada día. Su unidad carga además `app_database_url` desde
-  `<app>-migrate/`, como la de las migraciones.
+  `python -m app.tasks purge` cada día. Su unidad corre con la cuenta `<app>_owner` y carga además
+  `app_database_url` desde `<app>-migrate/`, como la de las migraciones.
 - Cada unidad queda con una exposición de 2.0 o menos en `systemd-analyze security`.
 
 ## Respaldos
@@ -193,10 +192,10 @@ PostgreSQL.
 - El primer respaldo crea el repositorio.
 - Cada respaldo bueno cambia la fecha de `/var/lib/<app>/last-backup`, y el journal guarda cada
   corrida.
-- El dump y `restic` son unidades distintas: el dump corre como `postgres`, y `restic` solo puede
-  leer, con `CAP_DAC_READ_SEARCH`.
-- El dump no lleva `RemoveIPC=`: al detenerse, borraría la memoria compartida de PostgreSQL, que
-  corre con el mismo usuario, y la base rechazaría toda conexión.
+- El dump y `restic` son unidades distintas: el dump corre como `<app>_owner`, y `restic` solo
+  puede leer, con `CAP_DAC_READ_SEARCH`.
+- El dump no lleva los roles ni las extensiones: los crea `install.py`, y el dueño, que restaura,
+  no puede crear una extensión que no es *trusted*.
 
 ## SSH
 
@@ -214,8 +213,10 @@ Estándar: de OpenSSH 10.0, la versión de Debian 13, [`sshd_config`](../fuentes
   ella. Perder la computadora no deja fuera.
 - `install.py` bloquea la contraseña de `root`: la consola web del proveedor, que no pasa por
   `sshd`, recibe la cuenta y su contraseña.
-- `install.py` falla si la máquina no tiene `sudo`, si una llave no es válida, o si no recibe
-  `--admin` y no lo lanza `sudo` desde una cuenta con llave.
+- `install.py` falla si la máquina no tiene `sudo`, si una llave no es válida, si no recibe
+  `--admin` y no lo lanza `sudo` desde una cuenta con llave, o si la cuenta es `<app>`,
+  `<app>_owner` o `<app>-receiver`: `systemd-sysusers` conserva una cuenta que ya existe, y la app
+  correría con una cuenta del grupo `sudo`.
 
 ## Valkey
 
@@ -274,4 +275,5 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 |---|---|
 | `00-<app>.conf` y `<app>-receiver.conf` que lee `sshd` | `sshd -t` en el OpenSSH de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Solo llaves y sin `root`, aunque un archivo del proveedor permita contraseñas | `sshd -T` con un `50-cloud-init.conf` que las permite, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Los roles de «PostgreSQL», y que el dump del dueño se restaura en la base que crea `install.py` | Las cuentas de `sysusers.conf`, `create_database` de `install.py` y el `pg_dump` de la unidad, en el PostgreSQL y el PostGIS de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Exposición de cada unidad | `systemd-analyze security --offline=yes --threshold=20 <unidad>`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

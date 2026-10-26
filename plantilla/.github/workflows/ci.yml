@@ -43,11 +43,14 @@ jobs:
       - run: |
           folder="$RUNNER_TEMP/credentials"
           mkdir "$folder"
-          printf %s postgresql+asyncpg://postgres:postgres@localhost:5432/postgres > "$folder/app_database_url"
+          printf %s postgresql+asyncpg://postgres:postgres@localhost:5432/PRODUCTO > "$folder/app_database_url"
           printf %s test-health-token > "$folder/app_health_token"
           printf %s "{}" > "$folder/app_min_client_versions"
           printf %s 0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY= > "$folder/app_page_token_key"
           echo "CREDENTIALS_DIRECTORY=$folder" >> "$GITHUB_ENV"
+          # The migrations log in as the owner of the schema, as in production.
+          cp -r "$folder" "$RUNNER_TEMP/owner"
+          printf %s postgresql+asyncpg://PRODUCTO_owner:owner@localhost:5432/PRODUCTO > "$RUNNER_TEMP/owner/app_database_url"
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
@@ -60,9 +63,15 @@ jobs:
       - run: |
           uv export --locked --no-emit-project --format requirements.txt -o "$RUNNER_TEMP/req.txt"
           uv run pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/req.txt"
-      # The role of the server, which the migrations grant.
-      - run: psql postgresql://postgres:postgres@localhost:5432/postgres -c "CREATE ROLE PRODUCTO"
+      # The roles, the database and the extensions install.py creates.
+      - run: |
+          psql postgresql://postgres:postgres@localhost:5432/postgres -c "CREATE ROLE PRODUCTO" \
+            -c "CREATE ROLE PRODUCTO_owner LOGIN PASSWORD 'owner'" \
+            -c "CREATE DATABASE PRODUCTO OWNER PRODUCTO_owner"
+          psql postgresql://postgres:postgres@localhost:5432/PRODUCTO -c "CREATE EXTENSION postgis"
       - run: uv run alembic upgrade head
+        env:
+          CREDENTIALS_DIRECTORY: ${{ runner.temp }}/owner
       - run: uv run pytest
         env:
           PYTHONDEVMODE: "1"

@@ -4,11 +4,11 @@ After=postgresql.service
 
 [Service]
 Type=oneshot
-User=postgres
-Group=postgres
+User=PRODUCTO_owner
+Group=PRODUCTO_owner
 StateDirectory=PRODUCTO-dump
-ExecStart=/usr/bin/pg_dump --format=custom --file=/var/lib/PRODUCTO-dump/PRODUCTO.dump --dbname=PRODUCTO
-ExecStart=/usr/bin/pg_dumpall --globals-only --file=/var/lib/PRODUCTO-dump/globals.sql
+# install.py creates the roles and the extensions, and the owner could not restore an extension.
+ExecStart=/usr/bin/pg_dump --format=custom --exclude-extension=* --file=/var/lib/PRODUCTO-dump/PRODUCTO.dump --dbname=PRODUCTO
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes
@@ -35,6 +35,5 @@ SystemCallFilter=~@privileged @resources
 CapabilityBoundingSet=
 AmbientCapabilities=
 DevicePolicy=closed
-# No RemoveIPC=: it would remove the shared memory of PostgreSQL, which
-# runs as the same user, and the database would refuse every connection.
+RemoveIPC=yes
 UMask=0077

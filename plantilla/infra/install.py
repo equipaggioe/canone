@@ -14,7 +14,6 @@ import argparse
 import getpass
 import os
 import pwd
-import secrets
 import shutil
 import subprocess
 from pathlib import Path
@@ -128,12 +127,19 @@ def find_admin(arguments: argparse.Namespace) -> str:
     if arguments.admin is not None:
         if not arguments.key:
             raise SystemExit("--admin needs its keys in --key.")
-        return arguments.admin
-    if arguments.key:
-        raise SystemExit("--key needs the account in --admin.")
-    user = os.environ.get("SUDO_USER")
-    if user is None or user == "root":
-        raise SystemExit("Run install.py as root with --admin and --key, or with sudo from it.")
+        user = arguments.admin
+    else:
+        if arguments.key:
+            raise SystemExit("--key needs the account in --admin.")
+        user = os.environ.get("SUDO_USER")
+        if user is None or user == "root":
+            raise SystemExit(
+                "Run install.py as root with --admin and --key, or with sudo from it."
+            )
+    app = arguments.app
+    # ADR-0087: sysusers keeps an account that exists, and the app would run in sudo.
+    if user in (app, f"{app}_owner", f"{app}-receiver"):
+        raise SystemExit(f"{user} is an account of the app, not the one that administers.")
     return user
 
 
@@ -173,19 +179,15 @@ def create_admin(name: str, keys: list[str]) -> None:
         os.chown(path, account.pw_uid, account.pw_gid)
 
 
-def create_database(app: str, extensions: list[str]) -> str:
-    """Create the database, its two roles and its extensions, and return the owner's password."""
+def create_database(app: str, extensions: list[str]) -> None:
+    """Create the database, its two roles and its extensions."""
     owner = f"{app}_owner"
-    # A new password on each run: nobody keeps it, only its credential.
-    password = secrets.token_urlsafe(32)
     script = [
-        f"SELECT 'CREATE ROLE {role}' WHERE NOT EXISTS "
+        f"SELECT 'CREATE ROLE {role} LOGIN' WHERE NOT EXISTS "
         f"(SELECT FROM pg_roles WHERE rolname = '{role}') \\gexec"
         for role in (app, owner)
     ]
     script += [
-        f"ALTER ROLE {app} LOGIN;",
-        f"ALTER ROLE {owner} LOGIN PASSWORD '{password}';",
         (
             f"SELECT 'CREATE DATABASE {app} OWNER {owner}' WHERE NOT EXISTS "
             f"(SELECT FROM pg_database WHERE datname = '{app}') \\gexec"
@@ -201,7 +203,6 @@ def create_database(app: str, extensions: list[str]) -> str:
         cwd="/",
         check=True,
     )
-    return password
 
 
 def encrypt(folder: str, name: str, value: str) -> None:
@@ -267,14 +268,10 @@ def main() -> None:
     subprocess.run(["systemd-sysusers"], check=True)
     subprocess.run(["systemd-tmpfiles", "--create", f"/etc/tmpfiles.d/{app}.conf"], check=True)
     subprocess.run(["sysctl", "--system"], check=True)
-    # ADR-0083: the server logs in by peer, and the owner of the schema with its password.
-    password = create_database(app, arguments.extension)
-    encrypt(app, "database_url", f"postgresql+asyncpg://{app}@/{app}?host=/run/postgresql")
-    encrypt(
-        f"{app}-migrate",
-        "database_url",
-        f"postgresql+asyncpg://{app}_owner:{password}@127.0.0.1/{app}",
-    )
+    # ADR-0085: each role logs in by peer, from the account of its name.
+    create_database(app, arguments.extension)
+    for folder, role in ((app, app), (f"{app}-migrate", f"{app}_owner")):
+        encrypt(folder, "database_url", f"postgresql+asyncpg://{role}@/{app}?host=/run/postgresql")
     subprocess.run(["systemctl", "daemon-reload"], check=True)
     # ADR-0077: the app has its own instance, apart from the one of the package.
     subprocess.run(["systemctl", "disable", "--now", "valkey-server.service"], check=True)

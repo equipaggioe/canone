@@ -308,6 +308,27 @@ def versiones_gradle(proyecto: Path, nombre: str, declarados: dict[str, str]) ->
     return fallas
 
 
+# plataformas/sveltekit.md, «Pruebas»: una sola versión exacta de Playwright en todo package.json
+# del repositorio, porque cada versión descarga sus propios navegadores.
+PLAYWRIGHT = "1.64.1"
+
+
+def versiones_playwright(repo: Path) -> list[str]:
+    fallas = []
+    for ruta in sorted(listar(repo)):
+        relativo = Path(ruta)
+        if relativo.name != "package.json" or not (repo / relativo).is_file():
+            continue
+        datos = json.loads((repo / relativo).read_text(encoding="utf-8"))
+        deps = {**datos.get("dependencies", {}), **datos.get("devDependencies", {})}
+        for paquete in ("playwright", "@playwright/test"):
+            if paquete in deps and deps[paquete] != PLAYWRIGHT:
+                fallas.append(
+                    f"plataformas/sveltekit.md: {relativo.as_posix()} declara {paquete} {deps[paquete]}, no {PLAYWRIGHT}"
+                )
+    return fallas
+
+
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
 
@@ -439,6 +460,7 @@ def revisar(repo: Path) -> list[str]:
     # fallas.extend(colores_generados(repo))
     fallas.extend(nombres_largos(repo))
     fallas.extend(configuracion_con_repositorio(repo))
+    fallas.extend(versiones_playwright(repo))
 
     return fallas
 

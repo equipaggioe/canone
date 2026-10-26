@@ -96,3 +96,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0086](0086-las-pruebas-corren-con-los-permisos-del-servidor-y-las-migraciones-con-el-dueno.md) | Las pruebas corren con los permisos del servidor, y las migraciones con el dueño | Con `server/` | Aceptada |
 | [0087](0087-la-cuenta-que-administra-no-es-una-cuenta-de-la-app.md) | La cuenta que administra no es una cuenta de la app | Con `server/` | Aceptada |
 | [0088](0088-gradle-agp-y-kotlin-tienen-una-sola-version-en-android-y-flutter.md) | Gradle, AGP y Kotlin tienen una sola versión en Android y en Flutter | Con Android o Flutter | Aceptada; los puntos 3 y 4 son propuesta |
+| [0089](0089-playwright-tiene-una-sola-version-exacta-en-todos-los-repositorios.md) | Playwright tiene una sola versión exacta en todos los repositorios | Con Playwright | Aceptada; los puntos 2, 3 y 4 son propuesta |

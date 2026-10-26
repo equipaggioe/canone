@@ -145,6 +145,10 @@ Contrato: [transversal.md](transversal.md#push).
 Estándares: [*Getting Started*](../fuentes/vitest/guide.md) y
 [*Features*](../fuentes/vitest/features.md) de Vitest.
 
+- Las pruebas en el navegador usan Playwright 1.64.1, con la versión exacta en `package.json`. La
+  misma versión va en todo `package.json` del repositorio que declare Playwright: cada versión
+  descarga sus propios navegadores.
+
 ## Adaptador
 
 Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de SvelteKit.
@@ -159,3 +163,4 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | Qué | Con qué |
 |---|---|
 | Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |
+| Playwright 1.64.1 | [`scripts/verificar.py`](../scripts/verificar.py) |

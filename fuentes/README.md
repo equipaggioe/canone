@@ -30,6 +30,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [postgresql/syntax.sgml](postgresql/syntax.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/syntax.sgml> |  |
 | [postgresql/indices.sgml](postgresql/indices.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml> |  |
 | [postgresql/backup.sgml](postgresql/backup.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml> |  |
+| [postgresql/client-auth.sgml](postgresql/client-auth.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/client-auth.sgml> |  |
+| [postgresql/user-manag.sgml](postgresql/user-manag.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/user-manag.sgml> |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> |  |
 | [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217 |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |
@@ -203,3 +205,4 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pytest-qt/logging.rst](pytest-qt/logging.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/logging.rst> |  |
 | [pytest-qt/signals.rst](pytest-qt/signals.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/signals.rst> |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.exec.xml> | systemd 257, la versión de Debian 13 |
+| [openssh/sshd_config.5](openssh/sshd_config.5) | <https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/sshd_config.5> | OpenSSH 10.0, la versión de Debian 13 |

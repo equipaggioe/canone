@@ -45,7 +45,15 @@ jobs:
       - uses: actions/checkout@v5
       - run: apt-get update && apt-get install --yes --no-install-recommends openssh-server
       - run: |
+          sed s/PRODUCTO/app/g plantilla/infra/sshd.conf > /etc/ssh/sshd_config.d/00-app.conf
           sed s/PRODUCTO/app/g plantilla/infra/sshd-receiver.conf > /etc/ssh/sshd_config.d/app-receiver.conf
           mkdir -p /run/sshd
           ssh-keygen -A
           sshd -t
+      # A provider's file that allows passwords does not win over the template.
+      - run: |
+          printf 'PermitRootLogin yes\nPasswordAuthentication yes\n' > /etc/ssh/sshd_config.d/50-cloud-init.conf
+          sshd -T > "$RUNNER_TEMP/sshd.txt"
+          grep -x "permitrootlogin no" "$RUNNER_TEMP/sshd.txt"
+          grep -x "passwordauthentication no" "$RUNNER_TEMP/sshd.txt"
+          grep -x "kbdinteractiveauthentication no" "$RUNNER_TEMP/sshd.txt"

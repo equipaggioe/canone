@@ -1,18 +1,28 @@
-r"""Install the users, units, Valkey, Caddy and backup receiver of an app on this machine.
+r"""Install the users, database, units, Valkey, Caddy and ssh access of an app on this machine.
 
-    sudo python3 install.py <app> <domain> <memory> \
-        [--without sweep|web|panel|landing] [--allow <feature>]
+    python3 install.py <app> <domain> <memory> --admin <name> --key <key> --key <key> \
+        [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>]
+
+The first time it runs as root, and creates the account that administers the machine with its
+keys and the password it asks for. Afterwards ssh only takes keys and root does not log in, so it
+runs with sudo from that account, and --admin and --key only add keys.
 
 From canone: plataformas/despliegue.md.
 """
 
 import argparse
+import getpass
+import os
+import pwd
+import secrets
+import shutil
 import subprocess
 from pathlib import Path
 
 HERE = Path(__file__).parent
 UNITS = Path("/etc/systemd/system")
 SITES = Path("/etc/caddy/sites")
+CREDENTIALS = Path("/etc/credstore.encrypted")
 # The files that are not units or sites, and where each one goes.
 TARGETS = {
     "sysusers.conf": "/etc/sysusers.d/PRODUCTO.conf",
@@ -20,6 +30,7 @@ TARGETS = {
     "valkey-group.conf": f"{UNITS}/valkey-server@PRODUCTO.service.d/group.conf",
     "sysctl.conf": "/etc/sysctl.d/valkey.conf",
     "tmpfiles.conf": "/etc/tmpfiles.d/PRODUCTO.conf",
+    "sshd.conf": "/etc/ssh/sshd_config.d/00-PRODUCTO.conf",
     "sshd-receiver.conf": "/etc/ssh/sshd_config.d/PRODUCTO-receiver.conf",
     "backup-request": "/usr/local/libexec/PRODUCTO-backup-request",
     "Caddyfile": "/etc/caddy/Caddyfile",
@@ -104,7 +115,105 @@ def parse() -> argparse.Namespace:
     parser.add_argument("memory", help="the maxmemory of its Valkey, like 256mb")
     parser.add_argument("--without", action="append", default=[], choices=OPTIONAL)
     parser.add_argument("--allow", action="append", default=[], choices=FEATURES)
+    parser.add_argument("--extension", action="append", default=[], help="like postgis")
+    parser.add_argument("--admin", help="the account that administers the machine")
+    parser.add_argument("--key", action="append", default=[], help="a public key of --admin")
     return parser.parse_args()
+
+
+def find_admin(arguments: argparse.Namespace) -> str:
+    """Return the account that administers the machine, the way in once root cannot."""
+    if shutil.which("sudo") is None:
+        raise SystemExit("sudo is not installed, and root will not log in.")
+    if arguments.admin is not None:
+        if not arguments.key:
+            raise SystemExit("--admin needs its keys in --key.")
+        return arguments.admin
+    if arguments.key:
+        raise SystemExit("--key needs the account in --admin.")
+    user = os.environ.get("SUDO_USER")
+    if user is None or user == "root":
+        raise SystemExit("Run install.py as root with --admin and --key, or with sudo from it.")
+    return user
+
+
+def check_keys(keys: list[str]) -> None:
+    """Fail on a key that ssh-keygen cannot read."""
+    for key in keys:
+        subprocess.run(["ssh-keygen", "-l", "-f", "-"], input=key, text=True, check=True)
+
+
+def create_admin(name: str, keys: list[str]) -> None:
+    """Create the account in sudo with the password it asks for, and add the keys it lacks."""
+    try:
+        pwd.getpwnam(name)
+    except KeyError:
+        # ADR-0084: a key kept off your computer lets you in when that computer is lost.
+        if len(keys) < 2:
+            raise SystemExit("A new account needs two keys: yours and one kept elsewhere.")
+        password = getpass.getpass(f"Password of {name}: ")
+        if not password or password != getpass.getpass("Again: "):
+            raise SystemExit("The passwords are empty or do not match.")
+        subprocess.run(
+            ["useradd", "--create-home", "--shell", "/bin/bash", "--groups", "sudo", name],
+            check=True,
+        )
+        subprocess.run(["chpasswd"], input=f"{name}:{password}", text=True, check=True)
+    account = pwd.getpwnam(name)
+    folder = Path(account.pw_dir) / ".ssh"
+    target = folder / "authorized_keys"
+    folder.mkdir(mode=0o700, exist_ok=True)
+    present = target.read_text(encoding="utf-8").splitlines() if target.is_file() else []
+    lines = present + [key for key in keys if key not in present]
+    if not any(line.strip() for line in lines):
+        raise SystemExit(f"{target} has no key, and ssh will only take keys.")
+    target.write_text("".join(f"{line}\n" for line in lines), encoding="utf-8")
+    target.chmod(0o600)
+    for path in (folder, target):
+        os.chown(path, account.pw_uid, account.pw_gid)
+
+
+def create_database(app: str, extensions: list[str]) -> str:
+    """Create the database, its two roles and its extensions, and return the owner's password."""
+    owner = f"{app}_owner"
+    # A new password on each run: nobody keeps it, only its credential.
+    password = secrets.token_urlsafe(32)
+    script = [
+        f"SELECT 'CREATE ROLE {role}' WHERE NOT EXISTS "
+        f"(SELECT FROM pg_roles WHERE rolname = '{role}') \\gexec"
+        for role in (app, owner)
+    ]
+    script += [
+        f"ALTER ROLE {app} LOGIN;",
+        f"ALTER ROLE {owner} LOGIN PASSWORD '{password}';",
+        (
+            f"SELECT 'CREATE DATABASE {app} OWNER {owner}' WHERE NOT EXISTS "
+            f"(SELECT FROM pg_database WHERE datname = '{app}') \\gexec"
+        ),
+        f"\\connect {app}",
+        # An extension that is not trusted, like postgis, needs a superuser.
+        *(f"CREATE EXTENSION IF NOT EXISTS {name};" for name in extensions),
+    ]
+    subprocess.run(
+        ["runuser", "-u", "postgres", "--", "psql", "-X", "-q", "-v", "ON_ERROR_STOP=1"],
+        input="\n".join(script),
+        text=True,
+        cwd="/",
+        check=True,
+    )
+    return password
+
+
+def encrypt(folder: str, name: str, value: str) -> None:
+    """Write value as the credential app_<name> of folder, encrypted."""
+    target = CREDENTIALS / folder / name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        ["systemd-creds", "encrypt", f"--name=app_{name}", "-", str(target)],
+        input=value,
+        text=True,
+        check=True,
+    )
 
 
 def check_swap() -> None:
@@ -123,6 +232,9 @@ def main() -> None:
     """Write the files of the app, and enable its services."""
     arguments = parse()
     check_swap()
+    admin = find_admin(arguments)
+    check_keys(arguments.key)
+    create_admin(admin, arguments.key)
     app = arguments.app
     policy = ", ".join(
         f"{name}=(self)" if name in arguments.allow else f"{name}=()" for name in FEATURES
@@ -155,6 +267,14 @@ def main() -> None:
     subprocess.run(["systemd-sysusers"], check=True)
     subprocess.run(["systemd-tmpfiles", "--create", f"/etc/tmpfiles.d/{app}.conf"], check=True)
     subprocess.run(["sysctl", "--system"], check=True)
+    # ADR-0083: the server logs in by peer, and the owner of the schema with its password.
+    password = create_database(app, arguments.extension)
+    encrypt(app, "database_url", f"postgresql+asyncpg://{app}@/{app}?host=/run/postgresql")
+    encrypt(
+        f"{app}-migrate",
+        "database_url",
+        f"postgresql+asyncpg://{app}_owner:{password}@127.0.0.1/{app}",
+    )
     subprocess.run(["systemctl", "daemon-reload"], check=True)
     # ADR-0077: the app has its own instance, apart from the one of the package.
     subprocess.run(["systemctl", "disable", "--now", "valkey-server.service"], check=True)
@@ -165,6 +285,8 @@ def main() -> None:
     subprocess.run(["systemctl", "reload", "caddy.service"], check=True)
     subprocess.run(["sshd", "-t"], check=True)
     subprocess.run(["systemctl", "reload", "ssh.service"], check=True)
+    # ADR-0084: the console of the provider takes the account that administers, not root.
+    subprocess.run(["passwd", "--lock", "root"], check=True)
 
 
 if __name__ == "__main__":

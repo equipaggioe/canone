@@ -90,3 +90,5 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0080](0080-la-purga-de-event-log-es-una-funcion-y-una-ruta-de-salud-dice-que-alertar.md) | La purga de `event_log` es una función, y una ruta de salud dice qué alertar | Con `server/` | Aceptada; los puntos 3 y 4 los reemplaza ADR-0081 |
 | [0081](0081-la-purga-de-event-log-la-corre-el-dueno-del-esquema.md) | La purga de `event_log` la corre el dueño del esquema | Con `server/` | Aceptada |
 | [0082](0082-la-ruta-de-salud-dice-cuanto-disco-queda.md) | La ruta de salud dice cuánto disco queda | Con `server/` | Aceptada |
+| [0083](0083-la-base-y-sus-roles-los-crea-install-py-y-el-servidor-entra-por-peer.md) | La base y sus roles los crea `install.py`, y el servidor entra por `peer` | Con `server/` | Aceptada |
+| [0084](0084-ssh-solo-acepta-llaves-y-root-no-entra.md) | `ssh` solo acepta llaves, y `root` no entra | Con `server/` | Aceptada |

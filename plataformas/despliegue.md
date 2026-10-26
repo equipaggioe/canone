@@ -23,6 +23,7 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 │   └── <app>-deploy/
 │       └── github_token            solo en un repositorio privado
 ├── ssh/sshd_config.d/
+│   ├── 00-<app>.conf               solo llaves, y root no entra
 │   └── <app>-receiver.conf
 ├── sysctl.d/
 │   └── valkey.conf
@@ -126,6 +127,24 @@ Estándar: la entrada de `StateDirectory=`, en *Sandboxing*, de
 - Los archivos de los usuarios viven en el `StateDirectory=` del servicio, `/var/lib/<app>/files/`.
   Están en la misma máquina y el respaldo los cubre junto con la base.
 
+## PostgreSQL
+
+Estándares: de PostgreSQL 17, la versión de Debian 13, *Peer Authentication*, en
+[*Client Authentication*](../fuentes/postgresql/client-auth.sgml), y la entrada *superuser status*
+de *Role Attributes*, en [*Database Roles*](../fuentes/postgresql/user-manag.sgml).
+
+- `install.py` crea la base `<app>`, el rol `<app>` del servidor y el rol `<app>_owner`, dueño de
+  la base. Ninguno es superusuario: las migraciones y la purga no saltan los permisos ni salen de
+  la base.
+- El servidor entra por el socket con `peer`, sin contraseña: la cuenta `<app>` entra como el rol
+  `<app>` y como ningún otro. `install.py` escribe su `database_url` en `<app>/`.
+- El dueño entra por `127.0.0.1` con contraseña: las migraciones y la purga corren con la cuenta
+  `<app>`, que con `peer` solo entraría como el rol `<app>`.
+- `install.py` genera la contraseña del dueño en cada corrida, y solo la escribe cifrada, en
+  `<app>-migrate/database_url`: nadie la guarda.
+- `install.py` crea como `postgres` las extensiones que recibe con `--extension`: una extensión que
+  no es *trusted*, como PostGIS, pide un superusuario.
+
 ## Procesos
 
 Estándares: la sección *Sandboxing* de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml), sin
@@ -178,6 +197,25 @@ PostgreSQL.
   leer, con `CAP_DAC_READ_SEARCH`.
 - El dump no lleva `RemoveIPC=`: al detenerse, borraría la memoria compartida de PostgreSQL, que
   corre con el mismo usuario, y la base rechazaría toda conexión.
+
+## SSH
+
+Estándar: de OpenSSH 10.0, la versión de Debian 13, [`sshd_config`](../fuentes/openssh/sshd_config.5).
+
+- `sshd` solo acepta llaves, y `root` no entra: se entra con la cuenta que administra la máquina y
+  `sudo`.
+- La regla va en `/etc/ssh/sshd_config.d/00-<app>.conf`, que se lee antes que los archivos del
+  proveedor, como `50-cloud-init.conf`: `sshd` se queda con el primer valor de cada opción.
+- `install.py` crea la cuenta con `--admin`, en el grupo `sudo`, con las llaves de `--key` y la
+  contraseña que pide al crearla. La primera vez corre como `root`, que entra con lo que da el
+  proveedor; después, con `sudo` desde la cuenta, y `--admin` y `--key` solo agregan llaves.
+- `sudo` pide la contraseña de la cuenta: una llave robada no da `root`.
+- La cuenta nace con dos llaves: la de la computadora de quien administra y una guardada fuera de
+  ella. Perder la computadora no deja fuera.
+- `install.py` bloquea la contraseña de `root`: la consola web del proveedor, que no pasa por
+  `sshd`, recibe la cuenta y su contraseña.
+- `install.py` falla si la máquina no tiene `sudo`, si una llave no es válida, o si no recibe
+  `--admin` y no lo lanza `sudo` desde una cuenta con llave.
 
 ## Valkey
 
@@ -234,5 +272,6 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 
 | Qué | Con qué |
 |---|---|
-| `<app>-receiver.conf` que lee `sshd` | `sshd -t` en el OpenSSH de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| `00-<app>.conf` y `<app>-receiver.conf` que lee `sshd` | `sshd -t` en el OpenSSH de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Solo llaves y sin `root`, aunque un archivo del proveedor permita contraseñas | `sshd -T` con un `50-cloud-init.conf` que las permite, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Exposición de cada unidad | `systemd-analyze security --offline=yes --threshold=20 <unidad>`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

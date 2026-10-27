@@ -33,6 +33,7 @@ build-backend = "uv_build"
 
 [tool.uv]
 python-preference = "only-system"
+required-version = "==0.13.5"
 
 [tool.uv.build-backend]
 module-name = "app"

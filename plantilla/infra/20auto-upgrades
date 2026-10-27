@@ -1,0 +1,3 @@
+// ADR-0092: unattended-upgrades installs the updates of Debian every day, by itself.
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";

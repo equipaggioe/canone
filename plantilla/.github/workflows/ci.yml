@@ -55,6 +55,8 @@ jobs:
         with:
           python-version: "3.13"
       - uses: astral-sh/setup-uv@v6
+        with:
+          version-file: server/pyproject.toml
       - run: uv sync --locked
       - run: uv run ruff format --check
       - run: uv run ruff check
@@ -92,6 +94,8 @@ jobs:
         with:
           python-version: "3.13"
       - uses: astral-sh/setup-uv@v6
+        with:
+          version-file: desktop/pyproject.toml
       - run: uv sync --locked
       - run: uv run ruff format --check
       - run: uv run ruff check
@@ -116,6 +120,8 @@ jobs:
         with:
           python-version: "3.13"
       - uses: astral-sh/setup-uv@v6
+        with:
+          version-file: PIEZA/pyproject.toml
       - run: uv sync --locked
       - run: uv run ruff format --check
       - run: uv run ruff check

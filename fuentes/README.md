@@ -62,6 +62,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [w3c/webrtc.html](w3c/webrtc.html) | <https://www.w3.org/TR/2025/REC-webrtc-20250313/> | Recomendación del 2025-03-13 |
 | [w3c/push-api.html](w3c/push-api.html) | <https://www.w3.org/TR/2026/WD-push-api-20261005/> | Borrador de trabajo del 2026-10-05 |
 | [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> |  |
+| [w3c/permissions-policy-features.md](w3c/permissions-policy-features.md) | <https://raw.githubusercontent.com/w3c/webappsec-permissions-policy/29398046f1e0cb45c091adda853df74925dc740a/features.md> | Commit 2939804. Lista de nombres, no fuente (ADR-0095) |
 | [dtcg/format.html](dtcg/format.html) | <https://www.designtokens.org/tr/2025.10/format/> |  |
 | [dtcg/color.html](dtcg/color.html) | <https://www.designtokens.org/tr/2025.10/color/> |  |
 | [dtcg/resolver.html](dtcg/resolver.html) | <https://www.designtokens.org/tr/2025.10/resolver/> |  |
@@ -69,6 +70,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs> |  |
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | Texto extraído del PDF |
+| [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | <https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf> | Texto extraído del PDF |
+| [fhs/fhs-3.0.txt](fhs/fhs-3.0.txt) | <https://www.debian.org/doc/packaging-manuals/fhs/fhs-3.0.txt> | Versión 3.0, la que sigue Debian 13. Copia de Debian: refspecs.linuxfoundation.org rechaza la descarga |
 | [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md> | Versión 5.0.0 |
 | [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md> | Versión 5.0.0 |
 | [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Authorization_Cheat_Sheet.md> |  |

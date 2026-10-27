@@ -3,9 +3,9 @@ name: Infra
 on:
   push:
     branches: [master]
-    paths: ["plantilla/infra/**", ".github/workflows/infra.yml"]
+    paths: ["plantilla/infra/**", "scripts/infra/**", ".github/workflows/infra.yml"]
   pull_request:
-    paths: ["plantilla/infra/**", ".github/workflows/infra.yml"]
+    paths: ["plantilla/infra/**", "scripts/infra/**", ".github/workflows/infra.yml"]
 
 jobs:
   exposure:
@@ -57,6 +57,17 @@ jobs:
           grep -x "permitrootlogin no" "$RUNNER_TEMP/sshd.txt"
           grep -x "passwordauthentication no" "$RUNNER_TEMP/sshd.txt"
           grep -x "kbdinteractiveauthentication no" "$RUNNER_TEMP/sshd.txt"
+
+  nftables:
+    runs-on: ubuntu-latest
+    # The nftables of Debian 13, probed from another network namespace.
+    container:
+      image: debian:trixie
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v5
+      - run: apt-get update && apt-get install --yes --no-install-recommends nftables iproute2 python3
+      - run: sh scripts/infra/nftables.sh plantilla/infra/nftables.conf
 
   postgres:
     runs-on: ubuntu-latest

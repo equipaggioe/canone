@@ -37,6 +37,8 @@ jobs:
         with:
           python-version: "3.13"
       - uses: astral-sh/setup-uv@v6
+        with:
+          version-file: server/pyproject.toml
       - run: uv run --locked pybabel compile -d src/app/locale
         working-directory: server
       - run: |
@@ -78,6 +80,8 @@ jobs:
         with:
           python-version: "3.13"
       - uses: astral-sh/setup-uv@v6
+        with:
+          version-file: desktop/pyproject.toml
       - run: uv sync --locked --group deploy
       # pyside6-deploy does not create exec_directory on Linux or Windows.
       - run: mkdir -p dist

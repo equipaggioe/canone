@@ -5,6 +5,10 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 
 ## Proyecto
 
+Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/etc`; 3.15, `/run`;
+3.17, `/srv`; 4.6, `/usr/lib`; 4.9, `/usr/local`, y 5.8, `/var/lib`, en
+[*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt).
+
 ```
 /etc/
 ├── <app>/
@@ -23,6 +27,7 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 │   │   └── restic_password
 │   └── <app>-deploy/
 │       └── github_token            solo en un repositorio privado
+├── nftables.conf
 ├── ssh/sshd_config.d/
 │   ├── 00-<app>.conf               solo llaves, y root no entra
 │   └── <app>-receiver.conf
@@ -49,6 +54,8 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
         ├── server/
         ├── scripts/
         └── web/, panel/, landing/
+/usr/local/lib/<app>/
+└── backup-request                  el único comando de la receptora
 /var/lib/
 ├── <app>/
 │   ├── files/
@@ -77,8 +84,10 @@ Estándares: de OWASP, la sección *Security Headers* del
   `panel.<dominio>`. En cada uno, `/api/*` va al servidor de la app, en el mismo origen que la web
   ([transversal.md](transversal.md#sesión)), y `/downloads/*`, a `/srv/<app>/downloads/`.
 - Caddy pone las cabeceras con la directiva `header`, para la web y para la API.
-- `Permissions-Policy` niega cada función que la app no usa, y permite con `(self)` las que la app
-  declara con `install.py --allow`.
+- `Permissions-Policy` nombra cada función de *Standardized Features* del
+  [registro del W3C](../fuentes/w3c/permissions-policy-features.md), y `publickey-credentials-create`
+  de Web Authentication Level 3: niega las que la app no usa, y permite con `(self)` las que declara
+  con `install.py --allow`.
 - Caddy envía también `Content-Security-Policy: frame-ancestors 'none'`: la CSP de SvelteKit va en
   una etiqueta `meta`, que no admite `frame-ancestors`.
 - No se envía `Cross-Origin-Embedder-Policy`. Contradice a OWASP: solo habilita el aislamiento entre
@@ -111,7 +120,7 @@ en *Environment* y *Credentials*, y la sección 2.7.1, *Creation*, del
   despliegue, van en otra carpeta: el servidor no las recibe. `<app>-migrate/database_url` también
   se cifra con `--name=app_database_url`, porque reemplaza al de la carpeta de la app.
 
-## coturn
+## Coturn
 
 Estándar: la sección 21.2, *Firewall Considerations*, del [RFC 8656](../fuentes/rfc/rfc8656.txt).
 
@@ -126,6 +135,31 @@ Estándar: la entrada de `StateDirectory=`, en *Sandboxing*, de
 
 - Los archivos de los usuarios viven en el `StateDirectory=` del servicio, `/var/lib/<app>/files/`.
   Están en la misma máquina y el respaldo los cubre junto con la base.
+
+## Firewall
+
+Estándar: la sección 4.1.3, *TCP and UDP*, de NIST SP 800-41 Rev. 1,
+[*Guidelines on Firewalls and Firewall Policy*](../fuentes/nist/sp800-41r1.txt).
+
+- El firewall es el nftables de Debian 13, con `/etc/nftables.conf`, que `install.py` instala y
+  carga.
+- Entran el 22 y el 80 por TCP, y el 443 por TCP y por UDP, el del HTTP/3 de Caddy. Con TURN entran
+  también los puertos de «Coturn».
+- ICMP entra entero: IPv6 lo necesita para encontrar a sus vecinos.
+- Lo que sale no se filtra: la app habla con dominios de terceros, cuyas direcciones cambian.
+- Nada pasa por la máquina hacia otra red.
+
+## Máquina
+
+- La máquina es Debian 13, y cada programa sale de sus paquetes: `caddy`, `postgresql`,
+  `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`,
+  `nftables` y `unattended-upgrades`, y `coturn` si usa TURN.
+- uv no está en Debian 13: sale del release de GitHub de la versión de
+  [python.md](python.md#proyecto), con su SHA-256 comprobado.
+- `unattended-upgrades` instala solo, cada día, las actualizaciones de Debian 13, y `install.py` lo
+  enciende con `/etc/apt/apt.conf.d/20auto-upgrades`: una actualización de seguridad que espera a
+  alguien deja la máquina expuesta mientras tanto. La del kernel se aplica al reiniciar la máquina,
+  a mano.
 
 ## PostgreSQL
 
@@ -196,6 +230,9 @@ PostgreSQL.
   puede leer, con `CAP_DAC_READ_SEARCH`.
 - El dump no lleva los roles ni las extensiones: los crea `install.py`, y el dueño, que restaura,
   no puede crear una extensión que no es *trusted*.
+- Se restaura en una máquina instalada con `install.py` y las mismas `--extension`:
+  `restic restore` trae el dump y `/var/lib/<app>/files/`, y `<app>_owner` corre
+  `pg_restore --exit-on-error` sobre la base que creó `install.py`.
 
 ## SSH
 
@@ -231,6 +268,7 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
   por defecto: al llenarse, una escritura falla en vez de borrar un código o un contador.
 - `vm.overcommit_memory = 1` va en `/etc/sysctl.d/valkey.conf`: Debian 13 no trae
   `/etc/sysctl.conf`.
+- `install.py` falla si la máquina tiene menos swap que memoria, como pide *Valkey setup tips*.
 - Transparent Huge Pages no se apaga en la máquina. Deja sin efecto *Valkey setup tips*:
   `disable-thp yes`, el valor por defecto de Valkey 8.1, las apaga solo para su proceso, sin
   cambiar los demás.
@@ -245,6 +283,8 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
   release a medias.
 - Cada versión queda en `/srv/<app>/releases/<versión>/`, y el enlace `/srv/<app>/current` apunta
   a la activa. Los datos quedan fuera de las versiones, en `/var/lib/<app>/`.
+- El artefacto no lleva el entorno del servidor: cada versión lo crea en la máquina con
+  `uv sync --locked --no-dev`, con el Python 3.13 de Debian 13.
 - `releases/` guarda las cinco versiones más recientes y la activa: las demás siguen en sus
   releases de GitHub.
 - El `.sha256` del release se firma fuera de GitHub con `ssh-keygen -Y sign`, y el servidor solo
@@ -256,11 +296,14 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
   servidor, porque `alembic/env.py` lee `Settings`, salvo `database_url`, que es la del rol dueño
   del esquema. El rol del servidor no tiene DDL: un error o una inyección en la app no cambian el
   esquema.
+- Una versión trae migraciones si sus heads de Alembic no son los de la activa, o si no hay una
+  activa.
 - Si la versión trae migraciones, el servidor se detiene antes de migrar: el código anterior no
   corre sobre la base migrada. Si la migración falla, la versión se borra y vuelve la anterior,
   porque `env.py` aplica todas las migraciones en una sola transacción.
-- Si la versión nueva no pasa `GET /api/health`, `current` vuelve a la anterior solo si no hubo
-  migraciones: el código anterior no corre sobre la base migrada.
+- Si `GET /api/health` de la versión nueva no responde 204 en 30 intentos, uno por segundo,
+  `current` vuelve a la anterior solo si no hubo migraciones: el código anterior no corre sobre la
+  base migrada.
 - En un repositorio privado, el release se baja con un token de GitHub de solo lectura, cifrado
   con `systemd-creds`.
 - Caddy sirve el build de cada superficie web, `web/`, `panel/` y `landing/`, desde
@@ -277,3 +320,4 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 | Solo llaves y sin `root`, aunque un archivo del proveedor permita contraseñas | `sshd -T` con un `50-cloud-init.conf` que las permite, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Los roles de «PostgreSQL», y que el dump del dueño se restaura en la base que crea `install.py` | Las cuentas de `sysusers.conf`, `create_database` de `install.py` y el `pg_dump` de la unidad, en el PostgreSQL y el PostGIS de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Exposición de cada unidad | `systemd-analyze security --offline=yes --threshold=20 <unidad>`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Los puertos que entran, y que lo que sale no se filtra, de «Firewall» | `nftables.conf` cargado en el nftables de Debian 13, con conexiones desde otro namespace de red, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

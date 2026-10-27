@@ -26,8 +26,12 @@ decía cuál de los tres decidía, así que la duda volvía en cada cambio.
 
 ## Consecuencias
 
-- Un VPS con varias apps no depende de qué versión de consola instaló cada una: todas salen de la
-  misma plantilla.
+- La regla y su prueba van en el mismo commit: `infra.yml` de canone prueba las plantillas contra
+  `despliegue.md`, y falla cuando una se separa de la otra.
+- El servidor se instala sin consola, con `ssh` y `python3 install.py`.
+- La razón original, que un VPS con varias apps no dependiera de qué versión de consola instaló
+  cada una, cayó con el
+  [ADR-0077](0077-un-vps-aloja-un-solo-producto.md): una máquina aloja un solo producto.
 - Lo que hoy falta en canone, como la creación de los roles de Postgres o coturn, bloquea a consola
   hasta que canone tenga su regla y su plantilla.
 - El puerto, el dominio y la memoria van en `.consola/config.env`, junto con lo demás que cambia
@@ -37,5 +41,8 @@ decía cuál de los tres decidía, así que la duda volvía en cada cambio.
 
 - **Que consola genere la configuración del servidor:** dos fuentes del mismo archivo, que se
   pisan en una máquina compartida.
-- **Que cada repositorio copie `plantilla/infra/`:** el Caddyfile y Valkey se comparten entre las
-  apps de la máquina, y una copia por repositorio se separaría de las demás.
+- **Que consola guarde los scripts y canone solo las reglas:** la prueba de cada regla quedaría en
+  otro repositorio, canone no fallaría cuando consola se separe de ella, y el servidor no se podría
+  instalar sin consola.
+- **Que cada repositorio copie `plantilla/infra/`:** cada copia se separaría de las demás, y un
+  cambio en las unidades no llegaría a todas las apps al reinstalar.

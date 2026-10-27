@@ -1,4 +1,4 @@
-r"""Install the users, database, units, Valkey, Caddy and ssh access of an app on this machine.
+r"""Install the users, database, units, Valkey, Caddy, firewall and ssh of an app on this machine.
 
     python3 install.py <app> <domain> <memory> --admin <name> --key <key> --key <key> \
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>]
@@ -31,8 +31,10 @@ TARGETS = {
     "tmpfiles.conf": "/etc/tmpfiles.d/PRODUCTO.conf",
     "sshd.conf": "/etc/ssh/sshd_config.d/00-PRODUCTO.conf",
     "sshd-receiver.conf": "/etc/ssh/sshd_config.d/PRODUCTO-receiver.conf",
-    "backup-request": "/usr/local/libexec/PRODUCTO-backup-request",
+    "backup-request": "/usr/local/lib/PRODUCTO/backup-request",
     "Caddyfile": "/etc/caddy/Caddyfile",
+    "nftables.conf": "/etc/nftables.conf",
+    "20auto-upgrades": "/etc/apt/apt.conf.d/20auto-upgrades",
 }
 # The files that run, and the file that holds the keys of the receivers.
 EXECUTABLES = ("backup-request",)
@@ -233,6 +235,9 @@ def main() -> None:
     """Write the files of the app, and enable its services."""
     arguments = parse()
     check_swap()
+    # ADR-0092: without it, 20auto-upgrades turns on nothing and nothing says so.
+    if shutil.which("unattended-upgrade") is None:
+        raise SystemExit("unattended-upgrades is not installed, and Debian would not update.")
     admin = find_admin(arguments)
     check_keys(arguments.key)
     create_admin(admin, arguments.key)
@@ -268,6 +273,9 @@ def main() -> None:
     subprocess.run(["systemd-sysusers"], check=True)
     subprocess.run(["systemd-tmpfiles", "--create", f"/etc/tmpfiles.d/{app}.conf"], check=True)
     subprocess.run(["sysctl", "--system"], check=True)
+    # ADR-0093: what comes in is denied unless the ruleset lists it.
+    subprocess.run(["systemctl", "enable", "nftables.service"], check=True)
+    subprocess.run(["systemctl", "reload-or-restart", "nftables.service"], check=True)
     # ADR-0085: each role logs in by peer, from the account of its name.
     create_database(app, arguments.extension)
     for folder, role in ((app, app), (f"{app}-migrate", f"{app}_owner")):

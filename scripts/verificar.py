@@ -329,6 +329,26 @@ def versiones_playwright(repo: Path) -> list[str]:
     return fallas
 
 
+# plataformas/python.md, «Proyecto»: una sola versión exacta de uv en todo pyproject.toml, la misma
+# con que el servidor crea el entorno.
+UV = "0.13.5"
+
+
+def versiones_uv(repo: Path) -> list[str]:
+    fallas = []
+    for ruta in sorted(listar(repo)):
+        relativo = Path(ruta)
+        if relativo.name != "pyproject.toml" or not (repo / relativo).is_file():
+            continue
+        datos = tomllib.loads((repo / relativo).read_text(encoding="utf-8"))
+        declarada = datos.get("tool", {}).get("uv", {}).get("required-version")
+        if declarada is None:
+            fallas.append(f"plataformas/python.md: {relativo.as_posix()} no declara required-version")
+        elif declarada != f"=={UV}":
+            fallas.append(f"plataformas/python.md: {relativo.as_posix()} declara uv {declarada}, no =={UV}")
+    return fallas
+
+
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
 
@@ -461,6 +481,7 @@ def revisar(repo: Path) -> list[str]:
     fallas.extend(nombres_largos(repo))
     fallas.extend(configuracion_con_repositorio(repo))
     fallas.extend(versiones_playwright(repo))
+    fallas.extend(versiones_uv(repo))
 
     return fallas
 

@@ -74,6 +74,8 @@ igual orden, la que cubre más del asunto:
   no diga otra cosa. Cambiarlo es una regla propia, salvo que una fuente citada pida el cambio.
 - Una regla propia no nombra una fuente que la página no cita, tampoco para contradecirla: lleva
   solo su razón.
+- Una lista de nombres que una regla toma de otro, como los de un registro, no es una fuente: la
+  regla dice de dónde la toma y enlaza su copia en `fuentes/`, aunque no se cite.
 - Cada sección nombra las partes que cita y enlaza su texto en `fuentes/`, que guarda solo lo que
   se cita. Una fuente que rige varias secciones se cita en cada una solo con la parte que la rige,
   y ninguna parte se cita en dos secciones.
@@ -170,5 +172,6 @@ el [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla
 el [ADR-0056](../adr/0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
 el [ADR-0063](../adr/0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md),
 el [ADR-0064](../adr/0064-una-revision-da-un-veredicto-con-evidencia-sobre-cada-regla-fuente-y-fila.md),
-el [ADR-0065](../adr/0065-la-licencia-de-una-fuente-no-decide-si-se-cita.md)
-y el [ADR-0066](../adr/0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md).
+el [ADR-0065](../adr/0065-la-licencia-de-una-fuente-no-decide-si-se-cita.md),
+el [ADR-0066](../adr/0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md)
+y el [ADR-0095](../adr/0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md).

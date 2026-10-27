@@ -22,6 +22,7 @@ path = "src"
 
 [tool.uv]
 python-preference = "only-system"
+required-version = "==0.13.5"
 
 [tool.ruff]
 line-length = 99

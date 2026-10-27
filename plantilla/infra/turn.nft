@@ -1,0 +1,3 @@
+# ADR-0096: with TURN, coturn listens on 3478 and relays by UDP on 49152 to 65535.
+add rule inet filter input tcp dport 3478 accept
+add rule inet filter input udp dport { 3478, 49152-65535 } accept

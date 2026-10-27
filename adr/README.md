@@ -99,7 +99,8 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0089](0089-playwright-tiene-una-sola-version-exacta-en-todos-los-repositorios.md) | Playwright tiene una sola versión exacta en todos los repositorios | Con Playwright | Aceptada; los puntos 2, 3 y 4 son propuesta |
 | [0090](0090-la-maquina-es-debian-13-sus-programas-salen-de-sus-paquetes-y-uv-tiene-una-sola-version-exacta.md) | La máquina es Debian 13, sus programas salen de sus paquetes, y uv tiene una sola versión exacta | Con Python | Aceptada |
 | [0091](0091-cada-version-crea-su-entorno-en-el-servidor-y-una-migracion-se-reconoce-por-sus-heads.md) | Cada versión crea su entorno en el servidor, y una migración se reconoce por sus heads | Con `server/` | Aceptada |
-| [0092](0092-las-actualizaciones-de-debian-se-instalan-solas-con-unattended-upgrades.md) | Las actualizaciones de Debian se instalan solas, con unattended-upgrades | Con `server/` | Aceptada; el punto 3 es propuesta |
+| [0092](0092-las-actualizaciones-de-debian-se-instalan-solas-con-unattended-upgrades.md) | Las actualizaciones de Debian se instalan solas, con unattended-upgrades | Con `server/` | Aceptada |
 | [0093](0093-lo-que-entra-se-niega-por-defecto-con-nftables-y-lo-que-sale-no-se-filtra.md) | Lo que entra se niega por defecto con nftables, y lo que sale no se filtra | Con `server/` | Aceptada |
 | [0094](0094-el-arbol-del-servidor-sigue-el-fhs-3-0.md) | El árbol del servidor sigue el FHS 3.0 | Con `server/` | Aceptada |
 | [0095](0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md) | Una lista de nombres que toma una regla no es una fuente | `plataformas/` y `fuentes/` | Aceptada |
+| [0096](0096-coturn-releva-por-udp-sin-tls-y-niega-lo-que-iana-no-marca-como-alcanzable.md) | coturn releva por UDP, sin TLS, y niega lo que IANA no marca como alcanzable | Con `server/` | Aceptada; el punto 12 es propuesta |

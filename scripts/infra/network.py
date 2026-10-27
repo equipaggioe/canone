@@ -1,7 +1,7 @@
 """Listen on the ports of the server, or probe them from outside.
 
     python3 network.py listen
-    python3 network.py probe <address>
+    python3 network.py probe <address> [turn]
     python3 network.py out <address>
 
 plataformas/despliegue.md, «Firewall».
@@ -17,6 +17,9 @@ TCP_OPEN = (22, 80, 443)
 TCP_CLOSED = (8000, 5432)
 UDP_OPEN = (443,)
 UDP_CLOSED = (53,)
+# ADR-0096: what comes in only with TURN.
+TURN_TCP = (3478,)
+TURN_UDP = (3478, 49152, 65535)
 TIMEOUT = 2
 
 
@@ -35,10 +38,10 @@ def echo(server: socket.socket) -> None:
 
 def listen() -> None:
     """Listen on every port the probe tries."""
-    for port in TCP_OPEN + TCP_CLOSED:
+    for port in TCP_OPEN + TCP_CLOSED + TURN_TCP:
         server = socket.create_server(("0.0.0.0", port))
         threading.Thread(target=accept, args=(server,), daemon=True).start()
-    for port in UDP_OPEN + UDP_CLOSED:
+    for port in UDP_OPEN + UDP_CLOSED + TURN_UDP:
         server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         server.bind(("0.0.0.0", port))
         threading.Thread(target=echo, args=(server,), daemon=True).start()
@@ -66,8 +69,8 @@ def reaches_udp(address: str, port: int) -> bool:
     return True
 
 
-def probe(address: str) -> None:
-    """Fail unless exactly the open ports get through."""
+def probe(address: str, *turn: str) -> None:
+    """Fail unless exactly the open ports get through, with those of TURN if turn is given."""
     wrong = [
         f"{kind} {port}"
         for kind, reaches, ports, expected in (
@@ -75,6 +78,8 @@ def probe(address: str) -> None:
             ("tcp", reaches_tcp, TCP_CLOSED, False),
             ("udp", reaches_udp, UDP_OPEN, True),
             ("udp", reaches_udp, UDP_CLOSED, False),
+            ("tcp", reaches_tcp, TURN_TCP, bool(turn)),
+            ("udp", reaches_udp, TURN_UDP, bool(turn)),
         )
         for port in ports
         if reaches(address, port) != expected

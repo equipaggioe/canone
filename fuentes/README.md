@@ -71,6 +71,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | Texto extraído del PDF |
 | [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | <https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf> | Texto extraído del PDF |
+| [iana/iana-ipv4-special-registry.csv](iana/iana-ipv4-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry-1.csv> | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |
+| [iana/iana-ipv6-special-registry.csv](iana/iana-ipv6-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry-1.csv> | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |
 | [fhs/fhs-3.0.txt](fhs/fhs-3.0.txt) | <https://www.debian.org/doc/packaging-manuals/fhs/fhs-3.0.txt> | Versión 3.0, la que sigue Debian 13. Copia de Debian: refspecs.linuxfoundation.org rechaza la descarga |
 | [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md> | Versión 5.0.0 |
 | [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md> | Versión 5.0.0 |

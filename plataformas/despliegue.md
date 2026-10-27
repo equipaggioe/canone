@@ -14,6 +14,8 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 ├── <app>/
 │   ├── allowed_signers
 │   └── receivers                   las llaves de las receptoras
+├── apt/apt.conf.d/
+│   └── 20auto-upgrades
 ├── caddy/
 │   ├── Caddyfile
 │   └── sites/
@@ -28,6 +30,8 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 │   └── <app>-deploy/
 │       └── github_token            solo en un repositorio privado
 ├── nftables.conf
+├── nftables.d/
+│   └── turn.nft                    solo con TURN
 ├── ssh/sshd_config.d/
 │   ├── 00-<app>.conf               solo llaves, y root no entra
 │   └── <app>-receiver.conf
@@ -41,6 +45,7 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 │       └── group.conf
 ├── tmpfiles.d/
 │   └── <app>.conf
+├── turnserver.conf                 solo con TURN
 └── valkey/
     └── valkey-<app>.conf
 /run/<app>-receiver/
@@ -122,11 +127,35 @@ en *Environment* y *Credentials*, y la sección 2.7.1, *Creation*, del
 
 ## Coturn
 
-Estándar: la sección 21.2, *Firewall Considerations*, del [RFC 8656](../fuentes/rfc/rfc8656.txt).
+Estándares: del [RFC 8656](../fuentes/rfc/rfc8656.txt), las secciones 7.2, *Receiving an Allocate
+Request*; 21.2, *Firewall Considerations*, y 21.3.1, *DoS against TURN Server*.
 
-- coturn escucha en 3478 (UDP y TCP) y en 5349 (TLS), y niega relevar hacia direcciones privadas con
-  `denied-peer-ip`, una restricción que el RFC deja al servidor: TURN no sirve de puente a la red
-  interna.
+- Solo una app con llamadas usa coturn: `install.py --turn` instala `/etc/turnserver.conf` y abre
+  sus puertos con `/etc/nftables.d/turn.nft`.
+- coturn escucha solo en el 3478, por UDP y por TCP, sin TLS: WebRTC ya cifra la llamada, y TLS
+  pediría el certificado de Caddy, que vive en una carpeta interna suya.
+- Releva solo por UDP, del 49152 al 65535: WebRTC no releva por TCP.
+- Las credenciales son las temporales de [transversal.md](transversal.md#llamadas-de-voz-y-video),
+  firmadas con un secreto que `install.py` genera la primera vez y conserva, para que una credencial
+  ya entregada siga sirviendo. Va en `static-auth-secret` de `/etc/turnserver.conf`, que solo lee el
+  grupo `turnserver`, y como `turn_secret` en la carpeta de credenciales de la app. El `realm` es el
+  dominio de la app.
+- En una máquina cuya interfaz tiene solo una dirección privada, porque la pública le llega por NAT,
+  `install.py --turn-ip <pública>` agrega `external-ip=<pública>/<privada>`, con la privada por la
+  que la máquina sale a internet: sin ella, coturn entrega su dirección privada, y la otra parte de
+  la llamada no lo alcanza.
+- Una credencial tiene a lo sumo 10 asignaciones, y cada una 500 000 bytes por segundo, 4 Mbit/s:
+  `user-quota` y `max-bps`.
+- coturn niega relevar hacia cada bloque que los registros de direcciones de uso especial de IANA,
+  [IPv4](../fuentes/iana/iana-ipv4-special-registry.csv) e
+  [IPv6](../fuentes/iana/iana-ipv6-special-registry.csv), marcan como no alcanzable globalmente: TURN
+  no sirve de puente a la red interna. Las direcciones sin especificar, `0.0.0.0` y `::`, no van en
+  `denied-peer-ip`, porque coturn las lee como cualquier dirección: la primera queda dentro de
+  `0.0.0.0/8`, y la segunda coturn la niega por sí mismo.
+- `no-multicast-peers` niega las direcciones de multicast, y coturn niega por defecto las de
+  loopback.
+- coturn no abre su consola de administración (`no-cli`), que por defecto escucha en el 5766 de la
+  máquina para cualquier cuenta de ella.
 
 ## Datos
 
@@ -142,7 +171,8 @@ Estándar: la sección 4.1.3, *TCP and UDP*, de NIST SP 800-41 Rev. 1,
 [*Guidelines on Firewalls and Firewall Policy*](../fuentes/nist/sp800-41r1.txt).
 
 - El firewall es el nftables de Debian 13, con `/etc/nftables.conf`, que `install.py` instala y
-  carga.
+  carga. Incluye `/etc/nftables.d/*.nft`, donde una pieza que la app puede no tener agrega sus
+  reglas.
 - Entran el 22 y el 80 por TCP, y el 443 por TCP y por UDP, el del HTTP/3 de Caddy. Con TURN entran
   también los puertos de «Coturn».
 - ICMP entra entero: IPv6 lo necesita para encontrar a sus vecinos.
@@ -320,4 +350,6 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 | Solo llaves y sin `root`, aunque un archivo del proveedor permita contraseñas | `sshd -T` con un `50-cloud-init.conf` que las permite, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Los roles de «PostgreSQL», y que el dump del dueño se restaura en la base que crea `install.py` | Las cuentas de `sysusers.conf`, `create_database` de `install.py` y el `pg_dump` de la unidad, en el PostgreSQL y el PostGIS de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Exposición de cada unidad | `systemd-analyze security --offline=yes --threshold=20 <unidad>`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
-| Los puertos que entran, y que lo que sale no se filtra, de «Firewall» | `nftables.conf` cargado en el nftables de Debian 13, con conexiones desde otro namespace de red, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Los puertos que entran, y que lo que sale no se filtra, de «Firewall» | `nftables.conf` cargado en el nftables de Debian 13, con y sin `turn.nft`, con conexiones desde otro namespace de red, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que coturn releva hacia internet, y no hacia una red privada o loopback, con otro secreto ni pasada la cuota, y que `denied-peer-ip` sigue los registros de IANA | `turnserver.conf` en el coturn de Debian 13, con `turnutils_uclient` desde otro namespace de red, y [`scripts/infra/peers.py`](../scripts/infra/peers.py), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que detrás de un NAT dos clientes se alcanzan solo con el `external-ip` de `install.py --turn-ip` | `turnserver.conf` en el coturn de Debian 13, detrás de un NAT de nftables, con la dirección privada que da `private_ip` de `install.py`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

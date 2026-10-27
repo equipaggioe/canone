@@ -18,7 +18,7 @@ puede no traerlo.
    `unattended-upgrades`. Una actualización de seguridad que espera a que alguien la instale deja
    la máquina expuesta mientras tanto, y nadie mira la máquina cada día.
 2. `unattended-upgrades` está en la lista de paquetes de «Máquina».
-3. *(propuesta)* `install.py` lo enciende con `plantilla/infra/20auto-upgrades`, en
+3. `install.py` lo enciende con `plantilla/infra/20auto-upgrades`, en
    `/etc/apt/apt.conf.d/20auto-upgrades`, y falla si no está instalado.
 4. La actualización del kernel se aplica al reiniciar la máquina, a mano.
 

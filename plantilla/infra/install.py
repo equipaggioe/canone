@@ -1,7 +1,8 @@
-r"""Install the users, database, units, Valkey, Caddy, firewall and ssh of an app on this machine.
+r"""Install the users, database, units, Valkey, Caddy, firewall, coturn and ssh of an app here.
 
     python3 install.py <app> <domain> <memory> --admin <name> --key <key> --key <key> \
-        [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>]
+        [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
+        [--turn [--turn-ip <public ipv4>]]
 
 The first time it runs as root, and creates the account that administers the machine with its
 keys and the password it asks for. Afterwards ssh only takes keys and root does not log in, so it
@@ -12,8 +13,11 @@ From canone: plataformas/despliegue.md.
 
 import argparse
 import getpass
+import ipaddress
+import json
 import os
 import pwd
+import secrets
 import shutil
 import subprocess
 from pathlib import Path
@@ -39,6 +43,8 @@ TARGETS = {
 # The files that run, and the file that holds the keys of the receivers.
 EXECUTABLES = ("backup-request",)
 RECEIVERS = "/etc/PRODUCTO/receivers"
+# The files of coturn and its ports, only with --turn.
+TURN = {"turnserver.conf": "/etc/turnserver.conf", "turn.nft": "/etc/nftables.d/turn.nft"}
 # Units and sites of a piece the app may not have.
 OPTIONAL = ("sweep", "web", "panel", "landing")
 # ADR-0070: the standardized features of the W3C registry, at commit 2939804, and
@@ -119,6 +125,12 @@ def parse() -> argparse.Namespace:
     parser.add_argument("--extension", action="append", default=[], help="like postgis")
     parser.add_argument("--admin", help="the account that administers the machine")
     parser.add_argument("--key", action="append", default=[], help="a public key of --admin")
+    parser.add_argument("--turn", action="store_true", help="the app relays calls with coturn")
+    parser.add_argument(
+        "--turn-ip",
+        type=ipaddress.IPv4Address,
+        help="the public IPv4 of the machine, when its interface has only a private one",
+    )
     return parser.parse_args()
 
 
@@ -219,6 +231,26 @@ def encrypt(folder: str, name: str, value: str) -> None:
     )
 
 
+def turn_secret() -> str:
+    """Return the secret of coturn, new the first time: a credential handed out keeps working."""
+    for line in Path(TURN["turnserver.conf"]).read_text(encoding="utf-8").splitlines():
+        if line.startswith("static-auth-secret="):
+            return line.removeprefix("static-auth-secret=")
+    return secrets.token_urlsafe(32)
+
+
+def private_ip() -> str:
+    """Return the IPv4 the machine goes out to the internet with, behind the NAT of --turn-ip."""
+    # Any address of the internet takes the default route, and route get sends nothing.
+    route = subprocess.run(
+        ["ip", "-json", "-4", "route", "get", "192.0.2.1"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return json.loads(route.stdout)[0]["prefsrc"]
+
+
 def check_swap() -> None:
     """Fail if the machine has less swap than memory, as Valkey setup tips asks."""
     meminfo = dict(
@@ -238,6 +270,10 @@ def main() -> None:
     # ADR-0092: without it, 20auto-upgrades turns on nothing and nothing says so.
     if shutil.which("unattended-upgrade") is None:
         raise SystemExit("unattended-upgrades is not installed, and Debian would not update.")
+    if arguments.turn and shutil.which("turnserver") is None:
+        raise SystemExit("coturn is not installed, and --turn needs it.")
+    if arguments.turn_ip is not None and not arguments.turn:
+        raise SystemExit("--turn-ip needs --turn.")
     admin = find_admin(arguments)
     check_keys(arguments.key)
     create_admin(admin, arguments.key)
@@ -250,12 +286,26 @@ def main() -> None:
         "DOMINIO": arguments.domain,
         "PERMISOS": policy,
         "MEMORIA": arguments.memory,
+        "SECRETO": turn_secret() if arguments.turn else "",
     }
     for name, target in TARGETS.items():
         path = Path(target.replace("PRODUCTO", app))
         write(HERE / name, path, values)
         if name in EXECUTABLES:
             path.chmod(0o755)
+    # ADR-0096: coturn relays only for an app with calls, and its secret is not for everyone.
+    if arguments.turn:
+        for name, target in TURN.items():
+            write(HERE / name, Path(target), values)
+        # ADR-0096: behind a NAT, coturn hands out its public address, not the private one.
+        if arguments.turn_ip is not None:
+            with Path(TURN["turnserver.conf"]).open("a", encoding="utf-8") as config:
+                config.write(f"external-ip={arguments.turn_ip}/{private_ip()}\n")
+        shutil.chown(TURN["turnserver.conf"], "root", "turnserver")
+        Path(TURN["turnserver.conf"]).chmod(0o640)
+        encrypt(app, "turn_secret", values["SECRETO"])
+    else:
+        Path(TURN["turn.nft"]).unlink(missing_ok=True)
     # ADR-0078: whoever deploys adds the key of each receiver.
     receivers = Path(RECEIVERS.replace("PRODUCTO", app))
     receivers.parent.mkdir(parents=True, exist_ok=True)
@@ -288,6 +338,9 @@ def main() -> None:
     subprocess.run(["systemctl", "enable", f"{app}.service"], check=True)
     subprocess.run(["systemctl", "enable", "--now", *triggers], check=True)
     subprocess.run(["systemctl", "reload", "caddy.service"], check=True)
+    if arguments.turn:
+        subprocess.run(["systemctl", "enable", "coturn.service"], check=True)
+        subprocess.run(["systemctl", "restart", "coturn.service"], check=True)
     subprocess.run(["sshd", "-t"], check=True)
     subprocess.run(["systemctl", "reload", "ssh.service"], check=True)
     # ADR-0084: the console of the provider takes the account that administers, not root.

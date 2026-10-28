@@ -255,11 +255,19 @@ def turn_secret() -> str:
 
 
 def check_logs(arguments: argparse.Namespace) -> None:
-    """Fail on --logs without its tools or its two other flags, or on those flags without it."""
+    """Fail on --logs without its tools or its two other flags, or on those flags without it.
+
+    Fail without --logs on a machine that sends: equipaggio knows the key of its tunnel.
+    """
     given = (arguments.logs_key is not None, arguments.logs_ip is not None)
     if arguments.logs is None:
         if any(given):
             raise SystemExit("--logs-key and --logs-ip need --logs.")
+        if Path(LOGS["logs.conf"]).exists():
+            raise SystemExit(
+                f"This machine sends its journal to equipaggio, so it needs --logs. To stop, "
+                f"disable wg-quick@logs and systemd-journal-upload, and delete {LOGS['logs.conf']}."
+            )
         return
     if not all(given):
         raise SystemExit("--logs needs --logs-key and --logs-ip.")

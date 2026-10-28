@@ -37,23 +37,29 @@ Comprobado en Debian 13.5 con systemd 257.13, wireguard-tools 1.0.20210914 y Pos
 - Con una transacción abierta que escribió primero y otra que confirmó después, una lectura por `id`
   ve la segunda y no la primera. Con `xid < pg_snapshot_xmin(pg_current_snapshot())` no ve ninguna
   hasta que la primera confirma, y después ve las dos.
+- Con `MaxRetentionSec=20s`, `MaxFileSec=5s` y una entrada por segundo, journald borró una entrada a
+  los 20 s sin rotar a mano. Sin `MaxFileSec=`, seguía a los 40 s.
 
 ## Decisión
 
 1. Los registros de cada producto salen a un registro central, en la máquina de equipaggio.
-2. *(propuesta)* journald guarda en disco y 365 días, con un archivo por día.
-3. *(propuesta)* PostgreSQL escribe en el journal, con `log_destination = 'syslog'`.
-4. *(propuesta)* `systemd-journal-upload` envía el journal a `http://10.77.0.1:19532` por un túnel
+2. journald guarda en disco y 365 días, con un archivo por día.
+3. PostgreSQL escribe en el journal, con `log_destination = 'syslog'`.
+4. `systemd-journal-upload` envía el journal a `http://10.77.0.1:19532` por un túnel
    de WireGuard, `wg-quick@logs`, solo con `install.py --logs`. `install.py` genera la llave del
    túnel la primera vez, la conserva e imprime la pública.
-5. *(propuesta)* `systemd-journal-upload` reintenta sin límite.
-6. *(propuesta)* `GET /api/health/event-log`, con el token de `/api/health/events`, responde
+5. `systemd-journal-upload` reintenta sin límite.
+6. `GET /api/health/event-log`, con el token de `/api/health/events`, responde
    `event_log` por páginas, en orden de `(xid, id)`, y solo las filas con un `xid` menor que
    `pg_snapshot_xmin(pg_current_snapshot())`.
-7. *(propuesta)* Detectar que un registro de `event_log` se cambió o se borró le toca a equipaggio,
+7. Detectar que un registro de `event_log` se cambió o se borró le toca a equipaggio,
    que compara su copia con la ruta. Reemplaza el punto 3 del ADR-0098.
-8. *(propuesta)* Registrar y vigilar cada acceso sigue sin efecto, como dice el punto 4 del
+8. Registrar y vigilar cada acceso sigue sin efecto, como dice el punto 4 del
    ADR-0098.
+9. `install.py` sin `--logs` falla en una máquina que tiene `/etc/wireguard/logs.conf`. Para dejar
+   de enviar, se apagan `wg-quick@logs` y `systemd-journal-upload` y se borra ese archivo.
+10. El job `install` de `infra.yml` corre `install.py --logs` en un Debian 13 con systemd, en un
+    contenedor, con `scripts/infra/install-logs.sh`.
 
 ## Consecuencias
 
@@ -74,8 +80,10 @@ Comprobado en Debian 13.5 con systemd 257.13, wireguard-tools 1.0.20210914 y Pos
 - En cada máquina, la dirección 10.77.0.1 queda tomada por el túnel.
 - Equipaggio tiene que construir el extremo del túnel con `systemd-journal-remote`, la retención de
   su copia, la copia y la comparación de `event_log`, y el aviso cuando una máquina deja de enviar.
-- El CI no comprueba `StartLimitIntervalSec=0`, la retención ni `log_destination`: necesitan
-  systemd corriendo, y se probaron a mano.
+- Reinstalar sin `--logs` una máquina que envía falla: no deja el túnel encendido sin decirlo ni
+  borra una llave que equipaggio ya registró.
+- El CI comprueba `StartLimitIntervalSec=0`, `log_destination` y la retención. La retención, reducida
+  a 20 s con archivos de 5 s: la de 365 días no se puede esperar.
 
 ## Descartado
 
@@ -102,5 +110,9 @@ Comprobado en Debian 13.5 con systemd 257.13, wireguard-tools 1.0.20210914 y Pos
 - **Un cursor por `id` o por hora:** se salta la fila de una transacción que confirma tarde.
 - **Un token aparte para la ruta:** el consumidor es el mismo, y los dos tokens vivirían cifrados
   con la misma llave en equipaggio.
+- **Borrar el túnel al reinstalar sin `--logs`, como `--turn` borra `turn.nft`:** la siguiente
+  `--logs` generaría otra llave, y equipaggio dejaría de recibir hasta registrarla.
+- **Comprobar en el CI que los archivos tienen sus líneas:** repite el archivo y no prueba que
+  systemd lo cumple.
 - **pgaudit, para el punto 4 del ADR-0098:** el dueño le quita el `SELECT` al auditor sin aviso, y
   equipaggio lo recibiría sin poder notarlo.

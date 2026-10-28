@@ -273,6 +273,9 @@ en *Where to Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml)
   extremo de equipaggio. La dirección es una constante del túnel; la de la máquina, `--logs-ip`, la
   da equipaggio. Sin `--logs` no sale: la máquina de equipaggio se instala igual y no se envía a sí
   misma.
+- Una máquina que envía no se reinstala sin `--logs`: `install.py` falla si existe
+  `/etc/wireguard/logs.conf`, porque equipaggio ya registró la llave de su túnel. Para dejar de
+  enviar, se apagan `wg-quick@logs` y `systemd-journal-upload` y se borra ese archivo.
 - Equipaggio reconoce cada máquina por la llave de su túnel: el `systemd-journal-remote` de Debian 13
   no verifica certificados de cliente, porque está compilado sin GnuTLS.
 - `install.py` genera la llave privada del túnel la primera vez, la conserva en `logs.conf`, con
@@ -401,4 +404,5 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 | Los puertos que entran, y que lo que sale no se filtra, de «Firewall» | `nftables.conf` cargado en el nftables de Debian 13, con y sin `turn.nft`, con conexiones desde otro namespace de red, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que coturn releva hacia internet, y no hacia una red privada o loopback, con otro secreto ni pasada la cuota, y que `denied-peer-ip` sigue los registros de IANA | `turnserver.conf` en el coturn de Debian 13, con `turnutils_uclient` desde otro namespace de red, y [`scripts/infra/peers.py`](../scripts/infra/peers.py), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que el journal llega al registro central por el túnel de la plantilla, en el archivo de la dirección de su llave, y que otra llave con la misma dirección no llega | `logs.conf` y `journal-upload.conf` con el `systemd-journal-upload` y el WireGuard de Debian 13, desde otro namespace de red, con [`scripts/infra/logs.sh`](../scripts/infra/logs.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que `install.py --logs` exige sus tres banderas juntas, envía el journal y el registro de PostgreSQL por el túnel, conserva la llave y falla sin `--logs` en una máquina que envía; que el uploader reintenta sin quedar en `failed`; y que journald borra una entrada a más tardar un archivo después de su retención | `install.py` en un Debian 13 con systemd, en un contenedor, con un extremo en otro namespace de red y la retención reducida a 20 s con archivos de 5 s, con [`scripts/infra/install-logs.sh`](../scripts/infra/install-logs.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que detrás de un NAT dos clientes se alcanzan solo con el `external-ip` de `install.py --turn-ip` | `turnserver.conf` en el coturn de Debian 13, detrás de un NAT de nftables, con la dirección privada que da `private_ip` de `install.py`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

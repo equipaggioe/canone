@@ -97,6 +97,36 @@ jobs:
           systemd-journal-remote wireguard-tools iproute2
       - run: sh scripts/infra/logs.sh plantilla/infra/logs.conf plantilla/infra/journal-upload.conf
 
+  install:
+    runs-on: ubuntu-latest
+    # install.py --logs on a Debian 13 with systemd as PID 1, which a job container does not run.
+    steps:
+      - uses: actions/checkout@v5
+      # install.py asks for as much swap as memory, and the container sees those of the runner.
+      - run: |
+          memory=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
+          swap=$(awk '/^SwapTotal:/ {print $2}' /proc/meminfo)
+          if [ "$swap" -lt "$memory" ]; then
+            sudo fallocate -l "$((memory - swap + 1024))K" /mnt/swap-ci
+            sudo chmod 600 /mnt/swap-ci
+            sudo mkswap /mnt/swap-ci
+            sudo swapon /mnt/swap-ci
+          fi
+          sudo modprobe wireguard
+      - run: |
+          docker build --tag machine - <<'EOF'
+          FROM debian:trixie
+          RUN apt-get update && apt-get install --yes --no-install-recommends \
+              systemd systemd-sysv sudo unattended-upgrades openssh-server postgresql caddy \
+              valkey-server nftables procps python3 wireguard-tools systemd-journal-remote iproute2
+          CMD ["/sbin/init"]
+          EOF
+      - run: >-
+          docker run --detach --name machine --privileged --cgroupns=private --env container=docker
+          --tmpfs /run --tmpfs /run/lock --volume "$PWD:/canone:ro" machine
+      - run: timeout 120 docker exec machine systemctl is-system-running --wait || true
+      - run: docker exec machine sh /canone/scripts/infra/install-logs.sh /canone/plantilla/infra/install.py
+
   postgres:
     runs-on: ubuntu-latest
     # The PostgreSQL and PostGIS of Debian 13, with the accounts and roles install.py creates.

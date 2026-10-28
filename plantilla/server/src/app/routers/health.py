@@ -33,9 +33,10 @@ def check_health_token(
 
 @router.get("/events", dependencies=[Depends(check_health_token)])
 async def events() -> HealthEvents:
-    """Tell the last critical event, the last backup and the disk."""
+    """Tell the last events, the last backup and the disk."""
     free, total = health.disk_usage()
     return HealthEvents(
+        last_event_at=await health.last_event(),
         last_critical_at=await health.last_critical(),
         last_backup_at=health.last_backup(),
         disk_free_bytes=free,

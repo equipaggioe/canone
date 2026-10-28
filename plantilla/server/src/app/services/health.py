@@ -22,6 +22,12 @@ async def database_answers() -> bool:
     return True
 
 
+async def last_event() -> datetime | None:
+    """Return when the last event of any level happened."""
+    async with SessionFactory() as session:
+        return await session.scalar(sa.select(sa.func.max(EventLog.occurred_at)))
+
+
 async def last_critical() -> datetime | None:
     """Return when the last critical event happened."""
     query = sa.select(sa.func.max(EventLog.occurred_at)).where(

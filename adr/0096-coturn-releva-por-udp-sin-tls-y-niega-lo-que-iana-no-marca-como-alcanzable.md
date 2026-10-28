@@ -1,6 +1,6 @@
 # ADR-0096 · coturn releva por UDP, sin TLS, y niega lo que IANA no marca como alcanzable
 
-- **Estado:** Aceptada; el punto 12 es propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-10-27
 - **Alcance:** «Coturn», «Firewall» y «Proyecto» de
   [`plataformas/despliegue.md`](../plataformas/despliegue.md), `plantilla/infra/`, `scripts/infra/`
@@ -35,7 +35,7 @@ abría los puertos por donde coturn releva: una llamada por TURN habría fallado
     que quita sin `--turn`.
 11. En una máquina cuya interfaz tiene solo una dirección privada, `install.py --turn-ip <pública>`
     agrega `external-ip` a `/etc/turnserver.conf`, e `infra.yml` lo prueba detrás de un NAT.
-12. *(propuesta)* La línea es `external-ip=<pública>/<privada>`, y la privada es la de la ruta por
+12. La línea es `external-ip=<pública>/<privada>`, y la privada es la de la ruta por
     defecto, de `ip route get`.
 
 ## Consecuencias

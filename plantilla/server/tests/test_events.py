@@ -45,6 +45,26 @@ async def test_server_cannot_change_events(session: AsyncSession, statement: str
         await in_savepoint(session, statement)
 
 
+async def test_only_the_server_and_owner_read_events(session: AsyncSession) -> None:
+    """No other role reads event_log, by a grant or a membership."""
+    grants = sa.text(
+        "SELECT DISTINCT pg_get_userbyid(a.grantee) FROM pg_class c, aclexplode(c.relacl) a "
+        "WHERE c.oid = 'event_log'::regclass AND a.privilege_type = 'SELECT'"
+    )
+    expected = sa.text(
+        "SELECT current_user UNION SELECT pg_get_userbyid(relowner) "
+        "FROM pg_class WHERE oid = 'event_log'::regclass"
+    )
+    members = sa.text(
+        "SELECT count(*) FROM pg_auth_members WHERE roleid IN "
+        "(SELECT oid FROM pg_roles WHERE rolname IN (:server, :owner))"
+    )
+    readers = set(await session.scalars(grants))
+    server, owner = sorted(await session.scalars(expected), key=len)
+    assert readers == {server, owner}
+    assert await session.scalar(members, {"server": server, "owner": owner}) == 0
+
+
 async def test_purge_deletes_only_expired_events(session: AsyncSession, owner: None) -> None:
     """The purge keeps what is in retention."""
     now = datetime.now(UTC)

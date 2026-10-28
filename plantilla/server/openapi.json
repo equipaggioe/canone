@@ -48,7 +48,7 @@
           "health"
         ],
         "summary": "Events",
-        "description": "Tell the last critical event, the last backup and the disk.",
+        "description": "Tell the last events, the last backup and the disk.",
         "operationId": "healthEvents",
         "security": [
           {
@@ -109,6 +109,18 @@
       },
       "HealthEvents": {
         "properties": {
+          "lastEventAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lasteventat"
+          },
           "lastCriticalAt": {
             "anyOf": [
               {
@@ -144,13 +156,14 @@
         },
         "type": "object",
         "required": [
+          "lastEventAt",
           "lastCriticalAt",
           "lastBackupAt",
           "diskFreeBytes",
           "diskTotalBytes"
         ],
         "title": "HealthEvents",
-        "description": "The last critical event, the last good backup and the disk."
+        "description": "The last events, the last good backup and the disk."
       },
       "ValidationError": {
         "properties": {

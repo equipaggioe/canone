@@ -431,6 +431,15 @@ Estándares: las secciones *Where to record event data*, *Which events to log*, 
   cambio: un fallo queda aunque la petición se deshaga, y un cambio deshecho no queda.
 - El rol de la app solo tiene `INSERT` y `SELECT` sobre `event_log`: un error o una inyección en la
   app no cambian ni borran el rastro. El rol no es el dueño de la tabla.
+- Solo el rol de la app y el dueño leen `event_log`, y ningún rol es miembro de ellos: la
+  revisión periódica de quién lee que pide *Protection* corre en cada CI.
+- La copia en solo lectura que pide *Protection* es el respaldo de
+  [despliegue.md](despliegue.md#respaldos), en cada corrida.
+- *Protection* queda sin efecto en detectar que un registro se cambió o se borró: solo pueden
+  hacerlo el dueño y `root`, y `root` también cambia lo que lo detectaría. Lo que pasó hasta el
+  último respaldo queda en una copia que no se reescribe.
+- *Protection* queda sin efecto en registrar y vigilar cada acceso: solo leen la app y quien opera
+  el servidor, y vigilar es un proceso de operación.
 - El rol de la app se llama como la app.
 - La purga es una tarea periódica que borra lo que pasó la retención con la credencial del dueño
   del esquema, la de las migraciones: el servidor no la recibe.
@@ -450,6 +459,9 @@ Contrato: [transversal.md](transversal.md#reintentos).
   `event_log`, y `lastBackupAt`, la fecha de `last-backup` de
   [despliegue.md](despliegue.md#respaldos), o `null` si no hay. Quien lo consulta decide cuándo
   avisar: el servidor no fija umbrales.
+- La misma ruta responde `lastEventAt`, la hora del último evento de `event_log` de cualquier
+  nivel, o `null`: si `event_log` deja de recibir eventos, `lastCriticalAt` sigue en `null`, como
+  cuando no pasó nada grave.
 - La misma ruta responde `diskFreeBytes` y `diskTotalBytes`, del disco de su `StateDirectory=`:
   con el disco lleno PostgreSQL deja de escribir, y `SELECT 1` sigue respondiendo. El libre es el
   que puede escribir un usuario sin privilegios, como PostgreSQL.
@@ -598,6 +610,8 @@ Contrato: [transversal.md](transversal.md#websocket).
 | Las pruebas nunca llaman a la app con `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
 | Un `pageToken` ilegible o con otros parámetros responde 422 | `test_invalid_page_token_points_to_the_parameter` |
 | El rol de la app no cambia ni borra `event_log`, y la purga respeta la retención | `test_server_cannot_change_events` y `test_purge_deletes_only_expired_events` |
+| Solo el rol de la app y el dueño leen `event_log` | `test_only_the_server_and_owner_read_events` |
 | `GET /api/health/events` exige el token | `test_events_need_the_token` |
+| `GET /api/health/events` dice el último evento de cualquier nivel | `test_events_tell_the_last_event` |
 | `GET /api/health/events` dice el disco de su carpeta | `test_events_tell_the_disk` |
 | Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

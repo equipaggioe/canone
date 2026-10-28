@@ -103,4 +103,6 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0093](0093-lo-que-entra-se-niega-por-defecto-con-nftables-y-lo-que-sale-no-se-filtra.md) | Lo que entra se niega por defecto con nftables, y lo que sale no se filtra | Con `server/` | Aceptada |
 | [0094](0094-el-arbol-del-servidor-sigue-el-fhs-3-0.md) | El árbol del servidor sigue el FHS 3.0 | Con `server/` | Aceptada |
 | [0095](0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md) | Una lista de nombres que toma una regla no es una fuente | `plataformas/` y `fuentes/` | Aceptada |
-| [0096](0096-coturn-releva-por-udp-sin-tls-y-niega-lo-que-iana-no-marca-como-alcanzable.md) | coturn releva por UDP, sin TLS, y niega lo que IANA no marca como alcanzable | Con `server/` | Aceptada; el punto 12 es propuesta |
+| [0096](0096-coturn-releva-por-udp-sin-tls-y-niega-lo-que-iana-no-marca-como-alcanzable.md) | coturn releva por UDP, sin TLS, y niega lo que IANA no marca como alcanzable | Con `server/` | Aceptada |
+| [0097](0097-la-ruta-de-salud-dice-cuando-fue-el-ultimo-evento.md) | La ruta de salud dice cuándo fue el último evento | Con `server/` | Aceptada |
+| [0098](0098-protection-se-cumple-con-los-permisos-y-el-respaldo-y-no-detecta-ni-audita-accesos.md) | *Protection* se cumple con los permisos y el respaldo, y no detecta cambios ni audita accesos | Con `server/` | Aceptada |

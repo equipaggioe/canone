@@ -54,6 +54,22 @@ async def test_events_tell_last_critical_and_backup(
     )
 
 
+async def test_events_tell_the_last_event(
+    client: AsyncClient, session: AsyncSession, app_folder: Path
+) -> None:
+    """The route answers the last event of any level."""
+    headers = {"Authorization": f"Bearer {settings.health_token}"}
+    first = (await client.get("/api/health/events", headers=headers)).json()
+    assert first["lastEventAt"] is None
+    row = events.event("authn_login_success", EventLevel.INFO)
+    session.add(row)
+    await session.flush()
+    await session.refresh(row)
+    body = (await client.get("/api/health/events", headers=headers)).json()
+    assert datetime.fromisoformat(body["lastEventAt"]) == row.occurred_at
+    assert body["lastCriticalAt"] is None
+
+
 async def test_events_tell_the_disk(client: AsyncClient, app_folder: Path) -> None:
     """The route answers the free and total bytes of the disk."""
     headers = {"Authorization": f"Bearer {settings.health_token}"}

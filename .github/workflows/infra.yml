@@ -80,7 +80,7 @@ jobs:
       - uses: actions/checkout@v5
       - run: >-
           apt-get update && apt-get install --yes --no-install-recommends
-          coturn iproute2 nftables python3
+          coturn iproute2 nftables procps python3
       - run: sh scripts/infra/coturn.sh plantilla/infra/turnserver.conf
       - run: sh scripts/infra/coturn-nat.sh plantilla/infra/turnserver.conf
 
@@ -124,7 +124,14 @@ jobs:
       - run: >-
           docker run --detach --name machine --privileged --cgroupns=private --env container=docker
           --tmpfs /run --tmpfs /run/lock --volume "$PWD:/canone:ro" machine
-      - run: timeout 120 docker exec machine systemctl is-system-running --wait || true
+      # Until systemd answers, and the boot is done: it mounts a new /tmp on the way.
+      - run: |
+          for attempt in $(seq 120); do
+            state=$(docker exec machine systemctl is-system-running --wait 2> /dev/null) && break
+            if [ "$state" = degraded ]; then docker exec machine systemctl --failed; break; fi
+            sleep 1
+          done
+          echo "$state"
       - run: docker exec machine sh /canone/scripts/infra/install-logs.sh /canone/plantilla/infra/install.py
 
   postgres:
@@ -141,6 +148,7 @@ jobs:
           apt-get install --yes --no-install-recommends postgresql postgresql-17-postgis-3 python3 systemd
           pg_ctlcluster 17 main status || pg_ctlcluster 17 main start
       - run: |
+          mkdir -p /etc/sysusers.d
           sed s/PRODUCTO/app/g plantilla/infra/sysusers.conf > /etc/sysusers.d/app.conf
           systemd-sysusers /etc/sysusers.d/app.conf
           python3 -c 'import sys; sys.path.insert(0, "plantilla/infra"); import install; install.create_database("app", ["postgis"])'

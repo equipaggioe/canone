@@ -84,6 +84,19 @@ jobs:
       - run: sh scripts/infra/coturn.sh plantilla/infra/turnserver.conf
       - run: sh scripts/infra/coturn-nat.sh plantilla/infra/turnserver.conf
 
+  logs:
+    runs-on: ubuntu-latest
+    # The uploader of Debian 13, sending through the tunnel from another network namespace.
+    container:
+      image: debian:trixie
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v5
+      - run: >-
+          apt-get update && apt-get install --yes --no-install-recommends
+          systemd-journal-remote wireguard-tools iproute2
+      - run: sh scripts/infra/logs.sh plantilla/infra/logs.conf plantilla/infra/journal-upload.conf
+
   postgres:
     runs-on: ubuntu-latest
     # The PostgreSQL and PostGIS of Debian 13, with the accounts and roles install.py creates.

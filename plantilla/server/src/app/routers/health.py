@@ -4,11 +4,12 @@ import hmac
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.config import settings
-from app.schemas.health import HealthEvents
+from app.schemas.health import HealthEvents, LoggedEvent
+from app.schemas.page import Page, PageParams, decode_token, encode_token
 from app.services import health
 
 router = APIRouter(prefix="/health", tags=["health"])
@@ -42,3 +43,13 @@ async def events() -> HealthEvents:
         disk_free_bytes=free,
         disk_total_bytes=total,
     )
+
+
+@router.get("/event-log", dependencies=[Depends(check_health_token)])
+async def event_log(params: Annotated[PageParams, Query()]) -> Page[LoggedEvent]:
+    """Page event_log up to the oldest open transaction."""
+    after = decode_token(params.page_token, {}, tuple[int, int]) if params.page_token else None
+    rows = await health.settled_events(after, params.page_size)
+    full = len(rows) == params.page_size
+    token = encode_token((rows[-1].xid, rows[-1].id), {}) if full else ""
+    return Page(items=[LoggedEvent.model_validate(row) for row in rows], next_page_token=token)

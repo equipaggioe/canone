@@ -6,11 +6,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
+import sqlalchemy as sa
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
 
 from app.config import settings
+from app.database import engine
 from app.enums import EventLevel
+from app.models.event.event_log import EventLog
 from app.services import events
 
 
@@ -22,12 +25,13 @@ def app_folder(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return tmp_path
 
 
+@pytest.mark.parametrize("path", ["/api/health/events", "/api/health/event-log"])
 @pytest.mark.parametrize("headers", [{}, {"Authorization": "Bearer wrong"}])
 async def test_events_need_the_token(
-    client: AsyncClient, app_folder: Path, headers: dict[str, str]
+    client: AsyncClient, app_folder: Path, path: str, headers: dict[str, str]
 ) -> None:
-    """Without the token, the route answers 401."""
-    response = await client.get("/api/health/events", headers=headers)
+    """Without the token, the routes answer 401."""
+    response = await client.get(path, headers=headers)
     assert response.status_code == 401
     assert response.headers["www-authenticate"] == "Bearer"
 
@@ -77,3 +81,41 @@ async def test_events_tell_the_disk(client: AsyncClient, app_folder: Path) -> No
     usage = shutil.disk_usage(app_folder)
     assert body["diskTotalBytes"] == usage.total
     assert 0 <= body["diskFreeBytes"] <= usage.total
+
+
+async def insert_event(connection: AsyncConnection) -> int:
+    """Insert an event as the server and return its id."""
+    statement = (
+        sa.insert(EventLog)
+        .values(action="authn_login_fail", level=EventLevel.WARN, trace_id="")
+        .returning(EventLog.id)
+    )
+    return (await connection.execute(statement)).scalar_one()
+
+
+async def read_event_log(client: AsyncClient) -> list[int]:
+    """Read the event log one event per page, to the last page."""
+    headers = {"Authorization": f"Bearer {settings.health_token}"}
+    ids: list[int] = []
+    token = ""
+    while True:
+        params = {"pageSize": 1, "pageToken": token}
+        body = (await client.get("/api/health/event-log", headers=headers, params=params)).json()
+        ids += [item["id"] for item in body["items"]]
+        token = body["nextPageToken"]
+        if not token:
+            return ids
+
+
+async def test_event_log_waits_for_an_open_transaction(
+    client: AsyncClient, committed: list[int]
+) -> None:
+    """An event that commits late holds back the events after it."""
+    async with engine.connect() as late:
+        transaction = await late.begin()
+        committed.append(await insert_event(late))
+        async with engine.begin() as other:
+            committed.append(await insert_event(other))
+        assert await read_event_log(client) == []
+        await transaction.commit()
+    assert await read_event_log(client) == committed

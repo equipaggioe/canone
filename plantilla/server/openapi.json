@@ -90,10 +90,90 @@
           }
         }
       }
+    },
+    "/api/health/event-log": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Event Log",
+        "description": "Page event_log up to the oldest open transaction.",
+        "operationId": "healthEventLog",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 50,
+              "title": "Pagesize"
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Pagetoken"
+            }
+          },
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_LoggedEvent_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "EventLevel": {
+        "type": "string",
+        "enum": [
+          "info",
+          "warn",
+          "critical"
+        ],
+        "title": "EventLevel",
+        "description": "The level that the OWASP vocabulary gives each event."
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -164,6 +244,145 @@
         ],
         "title": "HealthEvents",
         "description": "The last events, the last good backup and the disk."
+      },
+      "LoggedEvent": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Occurredat"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "level": {
+            "$ref": "#/components/schemas/EventLevel"
+          },
+          "actorId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actorid"
+          },
+          "actorLabel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actorlabel"
+          },
+          "targetType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Targettype"
+          },
+          "targetId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Targetid"
+          },
+          "ipAddress": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "ipv4"
+              },
+              {
+                "type": "string",
+                "format": "ipv6"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ipaddress"
+          },
+          "userAgent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Useragent"
+          },
+          "traceId": {
+            "type": "string",
+            "title": "Traceid"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "occurredAt",
+          "action",
+          "level",
+          "actorId",
+          "actorLabel",
+          "targetType",
+          "targetId",
+          "ipAddress",
+          "userAgent",
+          "traceId",
+          "details"
+        ],
+        "title": "LoggedEvent",
+        "description": "One row of event_log, as the server wrote it."
+      },
+      "Page_LoggedEvent_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LoggedEvent"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "nextPageToken": {
+            "type": "string",
+            "title": "Nextpagetoken"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "nextPageToken"
+        ],
+        "title": "Page[LoggedEvent]"
       },
       "ValidationError": {
         "properties": {

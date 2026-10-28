@@ -435,9 +435,9 @@ Estándares: las secciones *Where to record event data*, *Which events to log*, 
   revisión periódica de quién lee que pide *Protection* corre en cada CI.
 - La copia en solo lectura que pide *Protection* es el respaldo de
   [despliegue.md](despliegue.md#respaldos), en cada corrida.
-- *Protection* queda sin efecto en detectar que un registro se cambió o se borró: solo pueden
-  hacerlo el dueño y `root`, y `root` también cambia lo que lo detectaría. Lo que pasó hasta el
-  último respaldo queda en una copia que no se reescribe.
+- Detectar que un registro se cambió o se borró, como pide *Protection*, le toca a quien copia
+  `event_log` fuera de la máquina por la ruta de [Salud](#salud): en la máquina, solo el dueño y
+  `root` pueden cambiarlo, y `root` también cambia lo que lo detectaría.
 - *Protection* queda sin efecto en registrar y vigilar cada acceso: solo leen la app y quien opera
   el servidor, y vigilar es un proceso de operación.
 - El rol de la app se llama como la app.
@@ -469,6 +469,13 @@ Contrato: [transversal.md](transversal.md#reintentos).
   constante, y sin él responde 401.
 - El servidor lee `last-backup` en la carpeta padre de su `StateDirectory=`, sin otra
   configuración.
+- `GET /api/health/event-log`, con el mismo token, responde las filas de `event_log` en un `Page` de
+  [Paginación](#paginación), en orden de transacción: quien vigila las copia fuera de la máquina y
+  nota si una se cambió o se borró.
+- `event_log` tiene la columna `xid`, un `xid8` con `pg_current_xact_id()` por defecto, y la ruta
+  solo responde las filas con un `xid` menor que `pg_snapshot_xmin(pg_current_snapshot())`: una
+  transacción que confirma tarde deja filas con un `xid` menor que el de las ya leídas, y un cursor
+  por `id` o por hora se las saltaría.
 
 ## Sesión
 
@@ -611,7 +618,8 @@ Contrato: [transversal.md](transversal.md#websocket).
 | Un `pageToken` ilegible o con otros parámetros responde 422 | `test_invalid_page_token_points_to_the_parameter` |
 | El rol de la app no cambia ni borra `event_log`, y la purga respeta la retención | `test_server_cannot_change_events` y `test_purge_deletes_only_expired_events` |
 | Solo el rol de la app y el dueño leen `event_log` | `test_only_the_server_and_owner_read_events` |
-| `GET /api/health/events` exige el token | `test_events_need_the_token` |
+| `GET /api/health/events` y `GET /api/health/event-log` exigen el token | `test_events_need_the_token` |
 | `GET /api/health/events` dice el último evento de cualquier nivel | `test_events_tell_the_last_event` |
 | `GET /api/health/events` dice el disco de su carpeta | `test_events_tell_the_disk` |
+| `GET /api/health/event-log` no responde una fila mientras siga abierta una transacción anterior | `test_event_log_waits_for_an_open_transaction` |
 | Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

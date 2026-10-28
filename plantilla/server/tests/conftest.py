@@ -3,6 +3,7 @@
 from collections.abc import AsyncIterator
 
 import pytest
+import sqlalchemy as sa
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import event
 from sqlalchemy.engine import AdaptedConnection
@@ -11,6 +12,7 @@ from sqlalchemy.pool import ConnectionPoolEntry
 
 from app.database import SessionFactory, engine
 from app.main import app
+from app.models.event.event_log import EventLog
 
 # The roles of the server and of the owner of the schema, as
 # install.py creates them.
@@ -65,3 +67,13 @@ async def client(database: AsyncConnection) -> AsyncIterator[AsyncClient]:
     """Call the app in process, inside the transaction of the test."""
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client
+
+
+@pytest.fixture
+async def committed() -> AsyncIterator[list[int]]:
+    """Collect the events a test commits; the owner deletes them."""
+    ids: list[int] = []
+    yield ids
+    async with engine.begin() as connection:
+        await connection.exec_driver_sql(f"SET LOCAL ROLE {OWNER}")
+        await connection.execute(sa.delete(EventLog).where(EventLog.id.in_(ids)))

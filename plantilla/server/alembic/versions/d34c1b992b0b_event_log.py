@@ -42,12 +42,16 @@ def upgrade() -> None:
     )
     op.create_index(op.f("ix_event_log_occurred_at"), "event_log", ["occurred_at"])
     op.create_index("ix_event_log_critical", "event_log", ["occurred_at"], postgresql_where=sa.text("level = 'critical'"))
+    # ADR-0100: SQLAlchemy has no xid8.
+    op.execute("ALTER TABLE event_log ADD COLUMN xid xid8 NOT NULL DEFAULT pg_current_xact_id()")
+    op.create_index("ix_event_log_xid", "event_log", ["xid", "id"])
     # The server cannot change or delete the trail.
     op.execute(f"GRANT INSERT, SELECT ON event_log TO {ROLE}")
 
 
 def downgrade() -> None:
     """Downgrade schema."""
+    op.drop_index("ix_event_log_xid", table_name="event_log")
     op.drop_index("ix_event_log_critical", table_name="event_log", postgresql_where=sa.text("level = 'critical'"))
     op.drop_index(op.f("ix_event_log_occurred_at"), table_name="event_log")
     op.drop_table("event_log")

@@ -1,8 +1,9 @@
-r"""Install the users, database, units, Valkey, Caddy, firewall, coturn and ssh of an app here.
+r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn and ssh of an app.
 
     python3 install.py <app> <domain> <memory> --admin <name> --key <key> --key <key> \
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
-        [--turn [--turn-ip <public ipv4>]]
+        [--turn [--turn-ip <public ipv4>]] \
+        [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>]
 
 The first time it runs as root, and creates the account that administers the machine with its
 keys and the password it asks for. Afterwards ssh only takes keys and root does not log in, so it
@@ -39,12 +40,21 @@ TARGETS = {
     "Caddyfile": "/etc/caddy/Caddyfile",
     "nftables.conf": "/etc/nftables.conf",
     "20auto-upgrades": "/etc/apt/apt.conf.d/20auto-upgrades",
+    "journald.conf": "/etc/systemd/journald.conf.d/00-PRODUCTO.conf",
+    "postgresql.conf": "/etc/postgresql/17/main/conf.d/PRODUCTO.conf",
 }
 # The files that run, and the file that holds the keys of the receivers.
 EXECUTABLES = ("backup-request",)
 RECEIVERS = "/etc/PRODUCTO/receivers"
 # The files of coturn and its ports, only with --turn.
 TURN = {"turnserver.conf": "/etc/turnserver.conf", "turn.nft": "/etc/nftables.d/turn.nft"}
+# The tunnel to equipaggio and its uploader, only with --logs.
+LOGS = {
+    "logs.conf": "/etc/wireguard/logs.conf",
+    "journal-upload.conf": "/etc/systemd/journal-upload.conf.d/00-PRODUCTO.conf",
+    "journal-upload-retry.conf": f"{UNITS}/systemd-journal-upload.service.d/PRODUCTO.conf",
+}
+UPLOADER = Path("/usr/lib/systemd/systemd-journal-upload")
 # Units and sites of a piece the app may not have.
 OPTIONAL = ("sweep", "web", "panel", "landing")
 # ADR-0070: the standardized features of the W3C registry, at commit 2939804, and
@@ -130,6 +140,11 @@ def parse() -> argparse.Namespace:
         "--turn-ip",
         type=ipaddress.IPv4Address,
         help="the public IPv4 of the machine, when its interface has only a private one",
+    )
+    parser.add_argument("--logs", help="the WireGuard endpoint of equipaggio, like host:51820")
+    parser.add_argument("--logs-key", help="the WireGuard public key of equipaggio")
+    parser.add_argument(
+        "--logs-ip", type=ipaddress.IPv4Address, help="the address equipaggio gave the machine"
     )
     return parser.parse_args()
 
@@ -239,6 +254,32 @@ def turn_secret() -> str:
     return secrets.token_urlsafe(32)
 
 
+def check_logs(arguments: argparse.Namespace) -> None:
+    """Fail on --logs without its tools or its two other flags, or on those flags without it."""
+    given = (arguments.logs_key is not None, arguments.logs_ip is not None)
+    if arguments.logs is None:
+        if any(given):
+            raise SystemExit("--logs-key and --logs-ip need --logs.")
+        return
+    if not all(given):
+        raise SystemExit("--logs needs --logs-key and --logs-ip.")
+    if shutil.which("wg-quick") is None or not UPLOADER.is_file():
+        raise SystemExit(
+            "wireguard-tools or systemd-journal-remote is not installed, and --logs needs them."
+        )
+
+
+def logs_key() -> str:
+    """Return the private key of the tunnel, new the first time: equipaggio knows its pair."""
+    config = Path(LOGS["logs.conf"])
+    if config.is_file():
+        for line in config.read_text(encoding="utf-8").splitlines():
+            if line.startswith("PrivateKey = "):
+                return line.removeprefix("PrivateKey = ")
+    key = subprocess.run(["wg", "genkey"], capture_output=True, text=True, check=True)
+    return key.stdout.strip()
+
+
 def private_ip() -> str:
     """Return the IPv4 the machine goes out to the internet with, behind the NAT of --turn-ip."""
     # Any address of the internet takes the default route, and route get sends nothing.
@@ -274,6 +315,7 @@ def main() -> None:
         raise SystemExit("coturn is not installed, and --turn needs it.")
     if arguments.turn_ip is not None and not arguments.turn:
         raise SystemExit("--turn-ip needs --turn.")
+    check_logs(arguments)
     admin = find_admin(arguments)
     check_keys(arguments.key)
     create_admin(admin, arguments.key)
@@ -287,6 +329,10 @@ def main() -> None:
         "PERMISOS": policy,
         "MEMORIA": arguments.memory,
         "SECRETO": turn_secret() if arguments.turn else "",
+        "LLAVE": logs_key() if arguments.logs else "",
+        "TUNEL": str(arguments.logs_ip),
+        "CENTRAL": arguments.logs_key or "",
+        "EXTREMO": arguments.logs or "",
     }
     for name, target in TARGETS.items():
         path = Path(target.replace("PRODUCTO", app))
@@ -306,6 +352,11 @@ def main() -> None:
         encrypt(app, "turn_secret", values["SECRETO"])
     else:
         Path(TURN["turn.nft"]).unlink(missing_ok=True)
+    # ADR-0100: the journal goes to equipaggio only from a machine whose key it knows.
+    if arguments.logs:
+        for name, target in LOGS.items():
+            write(HERE / name, Path(target.replace("PRODUCTO", app)), values)
+        Path(LOGS["logs.conf"]).chmod(0o600)
     # ADR-0078: whoever deploys adds the key of each receiver.
     receivers = Path(RECEIVERS.replace("PRODUCTO", app))
     receivers.parent.mkdir(parents=True, exist_ok=True)
@@ -331,6 +382,8 @@ def main() -> None:
     for folder, role in ((app, app), (f"{app}-migrate", f"{app}_owner")):
         encrypt(folder, "database_url", f"postgresql+asyncpg://{role}@/{app}?host=/run/postgresql")
     subprocess.run(["systemctl", "daemon-reload"], check=True)
+    subprocess.run(["systemctl", "restart", "systemd-journald.service"], check=True)
+    subprocess.run(["systemctl", "reload", "postgresql@17-main.service"], check=True)
     # ADR-0077: the app has its own instance, apart from the one of the package.
     subprocess.run(["systemctl", "disable", "--now", "valkey-server.service"], check=True)
     subprocess.run(["systemctl", "enable", "--now", f"valkey-server@{app}.service"], check=True)
@@ -341,6 +394,14 @@ def main() -> None:
     if arguments.turn:
         subprocess.run(["systemctl", "enable", "coturn.service"], check=True)
         subprocess.run(["systemctl", "restart", "coturn.service"], check=True)
+    if arguments.logs:
+        for unit in ("wg-quick@logs.service", "systemd-journal-upload.service"):
+            subprocess.run(["systemctl", "enable", unit], check=True)
+            subprocess.run(["systemctl", "restart", unit], check=True)
+        public = subprocess.run(
+            ["wg", "pubkey"], input=values["LLAVE"], capture_output=True, text=True, check=True
+        )
+        print(f"The key of this machine, for equipaggio: {public.stdout.strip()}")
     subprocess.run(["sshd", "-t"], check=True)
     subprocess.run(["systemctl", "reload", "ssh.service"], check=True)
     # ADR-0084: the console of the provider takes the account that administers, not root.

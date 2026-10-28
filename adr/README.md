@@ -105,4 +105,5 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0095](0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md) | Una lista de nombres que toma una regla no es una fuente | `plataformas/` y `fuentes/` | Aceptada |
 | [0096](0096-coturn-releva-por-udp-sin-tls-y-niega-lo-que-iana-no-marca-como-alcanzable.md) | coturn releva por UDP, sin TLS, y niega lo que IANA no marca como alcanzable | Con `server/` | Aceptada |
 | [0097](0097-la-ruta-de-salud-dice-cuando-fue-el-ultimo-evento.md) | La ruta de salud dice cuándo fue el último evento | Con `server/` | Aceptada |
-| [0098](0098-protection-se-cumple-con-los-permisos-y-el-respaldo-y-no-detecta-ni-audita-accesos.md) | *Protection* se cumple con los permisos y el respaldo, y no detecta cambios ni audita accesos | Con `server/` | Aceptada |
+| [0098](0098-protection-se-cumple-con-los-permisos-y-el-respaldo-y-no-detecta-ni-audita-accesos.md) | *Protection* se cumple con los permisos y el respaldo, y no detecta cambios ni audita accesos | Con `server/` | Aceptada; el punto 3 lo reemplaza ADR-0100 |
+| [0100](0100-los-registros-salen-a-equipaggio-el-journal-por-wireguard-y-event-log-por-una-ruta-de-salud.md) | Los registros salen a equipaggio: el journal por WireGuard, y `event_log` por una ruta de salud | Con `server/` | Aceptada |

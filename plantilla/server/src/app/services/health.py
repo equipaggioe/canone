@@ -37,6 +37,21 @@ async def last_critical() -> datetime | None:
         return await session.scalar(query)
 
 
+async def settled_events(after: tuple[int, int] | None, size: int) -> list[EventLog]:
+    """Return events by transaction, below the oldest one still open.
+
+    ADR-0100: a transaction that commits late writes rows below those
+    already read; below the oldest open one, no row is still to come.
+    """
+    oldest = sa.func.pg_snapshot_xmin(sa.func.pg_current_snapshot())
+    query = sa.select(EventLog).where(EventLog.xid < oldest)
+    if after is not None:
+        query = query.where(sa.tuple_(EventLog.xid, EventLog.id) > after)
+    query = query.order_by(EventLog.xid, EventLog.id).limit(size)
+    async with SessionFactory() as session:
+        return list(await session.scalars(query))
+
+
 def last_backup() -> datetime | None:
     """Return the time of last-backup, which each good backup touches.
 

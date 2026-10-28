@@ -32,6 +32,8 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 ├── nftables.conf
 ├── nftables.d/
 │   └── turn.nft                    solo con TURN
+├── postgresql/17/main/conf.d/
+│   └── <app>.conf
 ├── ssh/sshd_config.d/
 │   ├── 00-<app>.conf               solo llaves, y root no entra
 │   └── <app>-receiver.conf
@@ -39,15 +41,24 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 │   └── valkey.conf
 ├── sysusers.d/
 │   └── <app>.conf
-├── systemd/system/
-│   ├── <app>*.service, <app>*.timer, <app>-backup.path
-│   └── valkey-server@<app>.service.d/
-│       └── group.conf
+├── systemd/
+│   ├── journal-upload.conf.d/
+│   │   └── 00-<app>.conf           solo con --logs
+│   ├── journald.conf.d/
+│   │   └── 00-<app>.conf
+│   └── system/
+│       ├── <app>*.service, <app>*.timer, <app>-backup.path
+│       ├── systemd-journal-upload.service.d/
+│       │   └── <app>.conf          solo con --logs
+│       └── valkey-server@<app>.service.d/
+│           └── group.conf
 ├── tmpfiles.d/
 │   └── <app>.conf
 ├── turnserver.conf                 solo con TURN
-└── valkey/
-    └── valkey-<app>.conf
+├── valkey/
+│   └── valkey-<app>.conf
+└── wireguard/
+    └── logs.conf                   solo con --logs
 /run/<app>-receiver/
 └── request                         la receptora pide el respaldo
 /srv/<app>/
@@ -183,7 +194,8 @@ Estándar: la sección 4.1.3, *TCP and UDP*, de NIST SP 800-41 Rev. 1,
 
 - La máquina es Debian 13, y cada programa sale de sus paquetes: `caddy`, `postgresql`,
   `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`,
-  `nftables` y `unattended-upgrades`, y `coturn` si usa TURN.
+  `nftables` y `unattended-upgrades`; `coturn` si usa TURN, y `systemd-journal-remote` y
+  `wireguard-tools` si envía su journal con `--logs`.
 - uv no está en Debian 13: sale del release de GitHub de la versión de
   [python.md](python.md#proyecto), con su SHA-256 comprobado.
 - `unattended-upgrades` instala solo, cada día, las actualizaciones de Debian 13, y `install.py` lo
@@ -233,6 +245,42 @@ sección *WebSocket Protocol Configuration* del
   `python -m app.tasks purge` cada día. Su unidad corre con la cuenta `<app>_owner` y carga además
   `app_database_url` desde `<app>-migrate/`, como la de las migraciones.
 - Cada unidad queda con una exposición de 2.0 o menos en `systemd-analyze security`.
+
+## Registros
+
+Estándares: `Storage=`, `MaxRetentionSec=` y `MaxFileSec=` de
+[`journald.conf`](../fuentes/systemd/journald.conf.xml),
+[`systemd-journal-upload`](../fuentes/systemd/systemd-journal-upload.service.xml) y
+[`journal-upload.conf`](../fuentes/systemd/journal-upload.conf.xml) de systemd; `log_destination`,
+en *Where to Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml) de PostgreSQL; y
+[`wg-quick`](../fuentes/wireguard/wg-quick.8) y *CONFIGURATION FILE FORMAT* de
+[`wg`](../fuentes/wireguard/wg.8) de WireGuard.
+
+- journald guarda en disco: `Storage=persistent` en `/etc/systemd/journald.conf.d/00-<app>.conf`.
+  Con `auto`, el valor por defecto, guarda en memoria si falta `/var/log/journal`, sin avisar.
+- El journal guarda 365 días, como `event_log` en [fastapi.md](fastapi.md#registro-de-eventos):
+  también guarda direcciones IP de personas, como las que registra `sshd`. Son
+  `MaxRetentionSec=365day` y `MaxFileSec=1day`: journald borra un archivo entero cuando su primera
+  entrada pasa la retención, y con el mes de `MaxFileSec=` por defecto una entrada se borraría hasta
+  un mes antes o un mes después.
+- PostgreSQL escribe en el journal, con `log_destination = 'syslog'` en
+  `/etc/postgresql/17/main/conf.d/<app>.conf`, y su registro sale de la máquina con el resto. Con
+  una carga extrema, syslog descarta mensajes en vez de frenar a PostgreSQL. Lo que escribe al
+  arrancar, antes de leer la configuración, sigue en `/var/log/postgresql/`.
+- Con `install.py --logs <host:puerto> --logs-key <llave> --logs-ip <dirección>`, el journal sale al
+  registro central de equipaggio: `wg-quick@logs` abre un túnel de WireGuard con
+  `/etc/wireguard/logs.conf`, y `systemd-journal-upload` envía a `http://10.77.0.1:19532`, el
+  extremo de equipaggio. La dirección es una constante del túnel; la de la máquina, `--logs-ip`, la
+  da equipaggio. Sin `--logs` no sale: la máquina de equipaggio se instala igual y no se envía a sí
+  misma.
+- Equipaggio reconoce cada máquina por la llave de su túnel: el `systemd-journal-remote` de Debian 13
+  no verifica certificados de cliente, porque está compilado sin GnuTLS.
+- `install.py` genera la llave privada del túnel la primera vez, la conserva en `logs.conf`, con
+  permisos 600, e imprime la pública para registrarla en equipaggio. Con esa llave solo se agregan
+  entradas: no se lee ni se borra lo que ya se envió.
+- `systemd-journal-upload` reintenta sin límite, con `StartLimitIntervalSec=0` en
+  `systemd-journal-upload.service.d/<app>.conf`: la unidad de Debian deja de reintentar después de
+  cinco fallos rápidos, y no vuelve a enviar aunque equipaggio responda de nuevo.
 
 ## Respaldos
 
@@ -352,4 +400,5 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 | Exposición de cada unidad | `systemd-analyze security --offline=yes --threshold=20 <unidad>`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Los puertos que entran, y que lo que sale no se filtra, de «Firewall» | `nftables.conf` cargado en el nftables de Debian 13, con y sin `turn.nft`, con conexiones desde otro namespace de red, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que coturn releva hacia internet, y no hacia una red privada o loopback, con otro secreto ni pasada la cuota, y que `denied-peer-ip` sigue los registros de IANA | `turnserver.conf` en el coturn de Debian 13, con `turnutils_uclient` desde otro namespace de red, y [`scripts/infra/peers.py`](../scripts/infra/peers.py), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que el journal llega al registro central por el túnel de la plantilla, en el archivo de la dirección de su llave, y que otra llave con la misma dirección no llega | `logs.conf` y `journal-upload.conf` con el `systemd-journal-upload` y el WireGuard de Debian 13, desde otro namespace de red, con [`scripts/infra/logs.sh`](../scripts/infra/logs.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que detrás de un NAT dos clientes se alcanzan solo con el `external-ip` de `install.py --turn-ip` | `turnserver.conf` en el coturn de Debian 13, detrás de un NAT de nftables, con la dirección privada que da `private_ip` de `install.py`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

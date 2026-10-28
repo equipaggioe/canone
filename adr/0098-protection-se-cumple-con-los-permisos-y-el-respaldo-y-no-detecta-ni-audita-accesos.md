@@ -1,6 +1,7 @@
 # ADR-0098 · *Protection* se cumple con los permisos y el respaldo, y no detecta cambios ni audita accesos
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 3 lo reemplaza el
+  [ADR-0100](0100-los-registros-salen-a-equipaggio-el-journal-por-wireguard-y-event-log-por-una-ruta-de-salud.md)
 - **Fecha:** 2026-10-27
 - **Alcance:** «Registro de eventos» de [`plataformas/fastapi.md`](../plataformas/fastapi.md) y
   `plantilla/server/`

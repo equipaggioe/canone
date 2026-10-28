@@ -1,6 +1,7 @@
 # ADR-0061 · Las trazas salen de la telemetría de FastAPI, y el cliente muestra el `traceId`
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 2 lo reemplaza
+  [ADR-0099](0099-las-trazas-no-se-exportan-y-ninguna-variable-de-entorno-agrega-un-exportador.md)
 - **Fecha:** 2026-10-16
 - **Alcance:** «Trazas» de [plataformas/fastapi.md](../plataformas/fastapi.md#trazas), «Errores» de
   [plataformas/transversal.md](../plataformas/transversal.md#errores), y `tracing.py`, `errors.py` y

@@ -29,7 +29,13 @@ api = APIRouter(prefix="/api", dependencies=[Depends(check_client_version)])
 api.include_router(health.router)
 api.include_router(problems.router)
 
-app = FastAPI(lifespan=lifespan, generate_unique_id_function=operation_id)
+# ADR-0099: the telemetry stays in the process, whatever the
+# environment says.
+app = FastAPI(
+    lifespan=lifespan,
+    generate_unique_id_function=operation_id,
+    telemetry={"auto_configure": False},
+)
 errors.install(app)
 tracing.install()
 app.include_router(api)

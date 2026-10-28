@@ -2,8 +2,11 @@
 
 import ast
 import importlib
+import os
 import pkgutil
 import re
+import subprocess
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from types import ModuleType
@@ -256,6 +259,41 @@ async def test_traceparent_starts_a_new_trace() -> None:
             "/no-such-route", headers={"traceparent": f"00-{sent}-00f067aa0ba902b7-01"}
         )
     assert response.json()["traceId"] not in (sent, "")
+
+
+# Starts and stops the app, and prints how many span processors it
+# added. FastAPI reads FASTAPI_OTEL_AUTO_CONFIGURE when it builds the
+# app, so the probe imports it in a process of its own.
+TELEMETRY_PROBE = """
+import asyncio
+from opentelemetry.sdk.trace import TracerProvider
+added = []
+TracerProvider.add_span_processor = lambda _, processor: added.append(processor)
+from app.main import app
+messages = iter([{"type": "lifespan.startup"}, {"type": "lifespan.shutdown"}])
+async def receive():
+    return next(messages)
+async def send(message):
+    pass
+asyncio.run(app({"type": "lifespan", "asgi": {"version": "3.0"}}, receive, send))
+print(len(added))
+"""
+
+
+def test_otlp_variables_export_nothing() -> None:
+    """The app adds no exporter, whatever the OTLP variables say."""
+    environment = os.environ | {
+        "FASTAPI_OTEL_AUTO_CONFIGURE": "true",
+        "OTEL_EXPORTER_OTLP_ENDPOINT": "http://127.0.0.1:4318",
+    }
+    result = subprocess.run(
+        [sys.executable, "-c", TELEMETRY_PROBE],
+        env=environment,
+        capture_output=True,
+        encoding="utf-8",
+        check=True,
+    )
+    assert result.stdout == "0\n"
 
 
 class Item(InputSchema):

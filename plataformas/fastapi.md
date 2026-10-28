@@ -526,6 +526,10 @@ Estándar: la regla `trace-id` de la sección 3.2.2.2 *version-format* y la secc
 
 - La app configura un `TracerProvider` del SDK de OpenTelemetry: sin él, FastAPI no crea spans y no
   hay trace-id.
+- La telemetría no sale del proceso: el `TracerProvider` no tiene exportador, y la app crea FastAPI
+  con `telemetry={"auto_configure": False}`, porque `OTEL_EXPORTER_OTLP_ENDPOINT` le agregaría uno
+  sin cambiar el código. Una traza no ve la base ni sigue a otro servicio, y su trace-id ya está en
+  cada log y en cada error.
 - El propagador global de OpenTelemetry ignora `traceparent`: cada petición y cada WebSocket
   empiezan una traza nueva. El cliente no elige el id con el que se buscan sus registros. Es un
   propagador propio: con `OTEL_PROPAGATORS=none`, FastAPI falla en cada petición.
@@ -609,6 +613,7 @@ Contrato: [transversal.md](transversal.md#websocket).
 | Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |
+| Las variables OTLP no agregan un exportador | `test_otlp_variables_export_nothing` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | La versión mínima de cliente, en tres enteros | `test_outdated_client_is_rejected` |

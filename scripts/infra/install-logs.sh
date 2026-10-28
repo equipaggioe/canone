@@ -3,7 +3,7 @@
 # namespace: the flags go together, the journal and PostgreSQL arrive through the tunnel, the
 # uploader keeps retrying while the central end is down, a second run keeps the key, a run without
 # --logs fails, and journald deletes an entry within a file of its retention. install.py runs as
-# root, with an account that already administers, so it asks no password.
+# root, with umask 077 and an account that already administers, so it asks no password.
 #
 #     sh install-logs.sh <install.py>
 set -eu
@@ -42,6 +42,8 @@ receiver() {
     pids="$pids $receiver"
 }
 fails() { if "$@" 2> "$work/error"; then exit 1; fi; }
+# Whoever deploys may have a strict umask, and install.py does not take it.
+umask 077
 for name in a b; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
 run() {
     python3 "$install" demo demo.example 64mb --admin operador \
@@ -59,8 +61,7 @@ ip addr add 192.0.2.2/24 dev to-central
 ip link set to-central up
 ip -n central addr add 192.0.2.1/24 dev central
 ip -n central link set central up
-# install.py runs with the umask of whoever deploys, so only the key gets this one.
-(umask 077 && wg genkey > "$work/central.key")
+wg genkey > "$work/central.key"
 wg pubkey < "$work/central.key" > "$work/central.pub"
 ip -n central link add wg0 type wireguard
 ip -n central addr add 10.77.0.1/24 dev wg0
@@ -82,6 +83,7 @@ test -n "$key"
 test "$(stat -c %a /etc/wireguard/logs.conf)" = 600
 ip netns exec central wg set wg0 peer "$key" allowed-ips 10.77.0.2/32
 systemctl is-enabled wg-quick@logs.service "$upload"
+systemctl is-active valkey-server@demo.service
 
 step "An entry arrives, in the file of 10.77.0.2"
 logger -t install-logs "first-$$"

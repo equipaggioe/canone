@@ -314,6 +314,8 @@ def check_swap() -> None:
 
 def main() -> None:
     """Write the files of the app, and enable its services."""
+    # Each service reads its files as its own account, whatever the umask of whoever deploys.
+    os.umask(0o022)
     arguments = parse()
     check_swap()
     # ADR-0092: without it, 20auto-upgrades turns on nothing and nothing says so.

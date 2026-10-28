@@ -99,10 +99,10 @@ jobs:
 
   install:
     runs-on: ubuntu-latest
-    # install.py --logs on a Debian 13 with systemd as PID 1, which a job container does not run.
+    # install.py --logs on a Debian 13 booted by systemd-nspawn, with systemd running.
     steps:
       - uses: actions/checkout@v5
-      # install.py asks for as much swap as memory, and the container sees those of the runner.
+      # install.py asks for as much swap as memory, and the machine sees those of the runner.
       - run: |
           memory=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
           swap=$(awk '/^SwapTotal:/ {print $2}' /proc/meminfo)
@@ -113,28 +113,30 @@ jobs:
             sudo swapon /mnt/swap-ci
           fi
           sudo modprobe wireguard
-      - run: |
-          docker build --tag machine - <<'EOF'
-          FROM debian:trixie
-          RUN apt-get update && apt-get install --yes --no-install-recommends \
-              systemd systemd-sysv sudo unattended-upgrades openssh-server postgresql caddy \
-              valkey-server nftables procps python3 wireguard-tools systemd-journal-remote iproute2
-          CMD ["/sbin/init"]
-          EOF
       - run: >-
-          docker run --detach --name machine --privileged --cgroupns=private --env container=docker
-          --tmpfs /run --tmpfs /run/lock --volume "$PWD:/canone:ro" machine
-      # Until systemd answers, and the boot is done: it mounts a new /tmp on the way.
+          sudo apt-get update && sudo apt-get install --yes --no-install-recommends
+          debootstrap systemd-container debian-archive-keyring
+      - run: >-
+          sudo debootstrap --variant=minbase
+          --include=systemd,systemd-sysv,dbus,sudo,unattended-upgrades,openssh-server,postgresql,caddy,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2
+          trixie /var/lib/machines/machine http://deb.debian.org/debian
+      # Its own network, for its firewall; and /proc/sys writable, for the sysctl of Valkey.
+      - run: >-
+          sudo systemd-run --unit=machine --setenv=SYSTEMD_NSPAWN_API_VFS_WRITABLE=1
+          systemd-nspawn --boot --machine=machine --directory=/var/lib/machines/machine
+          --private-network --capability=all --bind-ro="$PWD:/canone"
       - run: |
           for attempt in $(seq 120); do
-            state=$(docker exec machine systemctl is-system-running --wait 2> /dev/null) && break
-            if [ "$state" = degraded ]; then docker exec machine systemctl --failed; break; fi
+            state=$(sudo systemctl --machine=machine is-system-running --wait 2> /dev/null) && break
+            if [ "$state" = degraded ]; then sudo systemctl --machine=machine --failed; break; fi
             sleep 1
           done
           echo "$state"
-      - run: docker exec machine sh /canone/scripts/infra/install-logs.sh /canone/plantilla/infra/install.py
+      - run: >-
+          sudo systemd-run --machine=machine --wait --pipe --quiet
+          sh /canone/scripts/infra/install-logs.sh /canone/plantilla/infra/install.py
       - if: failure()
-        run: docker exec machine sh -c 'systemctl --failed; journalctl --no-pager --priority=info -n 300'
+        run: sudo journalctl --machine=machine --no-pager --priority=info -n 300
 
   postgres:
     runs-on: ubuntu-latest

@@ -133,6 +133,8 @@ jobs:
           done
           echo "$state"
       - run: docker exec machine sh /canone/scripts/infra/install-logs.sh /canone/plantilla/infra/install.py
+      - if: failure()
+        run: docker exec machine sh -c 'systemctl --failed; journalctl --no-pager --priority=info -n 300'
 
   postgres:
     runs-on: ubuntu-latest

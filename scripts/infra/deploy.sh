@@ -3,7 +3,9 @@
 # place of GitHub: the first version migrates and goes live, a tag goes in once, an unhealthy
 # version goes back to the previous, a failed migration leaves nothing, a checksum signed by a key
 # outside allowed_signers or of another version installs nothing, and releases/ keeps the five
-# newest. uv finds every package in UV_CACHE_DIR, filled before the machine lost its network.
+# newest. The server reads the credentials of credentials.py, and the daily purge and sweep run
+# on what goes live. uv finds every package in UV_CACHE_DIR, filled before the machine lost its
+# network.
 #
 #     sh deploy.sh <canone>
 set -eu
@@ -31,13 +33,12 @@ key() { cat "$work/$1.pub"; }
 id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
 python3 "$canone/plantilla/infra/install.py" demo demo.example 64mb --admin operador \
     --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)"
-# The fields of Settings that consola writes, besides the database_url of install.py.
-credential() {
-    printf %s "$2" | systemd-creds encrypt --name="app_$1" - "/etc/credstore.encrypted/demo/$1"
-}
-credential health_token test-health-token
-credential min_client_versions '{}'
-credential page_token_key 0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY=
+# The fields of Settings besides the database_url of install.py.
+python3 "$canone/plantilla/infra/credentials.py" demo <<'EOF'
+health_token=test-health-token
+min_client_versions={}
+page_token_key=0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY=
+EOF
 # The repository of the product is demo, and GitHub answers from this machine.
 sed -e 's/PRODUCTO/demo/g' -e 's/OWNER/owner/g' -e 's#https://api.github.com#http://127.0.0.1:9000#' \
     "$canone/plantilla/scripts/deploy.py" > "$work/deploy.py"
@@ -111,6 +112,13 @@ test "$(current)" = v1.0.0
 healthy
 test "$(runuser -u postgres -- psql -XAt --dbname=demo -c "SELECT to_regclass('event_log')")" = event_log
 test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.0.0"
+
+step "The purge and the sweep run every day, and each ends well"
+for task in purge sweep; do
+    systemctl is-active --quiet "demo-$task.timer"
+    systemctl show --property=TimersCalendar --value "demo-$task.timer" | grep -qF 'OnCalendar=*-*-* 00:00:00 ;'
+    systemctl start "demo-$task.service"
+done
 
 step "A tag goes in once"
 fails deploy v1.0.0

@@ -84,7 +84,8 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 ```
 
 Plantilla: [`plantilla/infra/`](../plantilla/infra/), con las unidades, los sitios de Caddy, la
-configuración de Valkey y `install.py`, que los instala;
+configuración de Valkey, `install.py`, que los instala, y `credentials.py`, que cifra las
+credenciales;
 [`plantilla/receiver/`](../plantilla/receiver/), que corre en la receptora;
 [`plantilla/.github/workflows/release.yml`](../plantilla/.github/workflows/release.yml) y
 [`plantilla/scripts/deploy.py`](../plantilla/scripts/deploy.py).
@@ -136,6 +137,14 @@ en *Environment* y *Credentials*, y la sección 2.7.1, *Creation*, del
 - Las credenciales que el servidor no usa, como las de las migraciones, el respaldo y el
   despliegue, van en otra carpeta: el servidor no las recibe. `<app>-migrate/database_url` también
   se cifra con `--name=app_database_url`, porque reemplaza al de la carpeta de la app.
+- `credentials.py <app>` cifra las credenciales que lee por stdin, una línea `campo=valor` por
+  credencial y el valor sin comillas: cada campo de `Settings` en `<app>/`, `restic_password` en
+  `<app>-backup/` y `github_token` en `<app>-deploy/`, estas dos con su propio nombre en `--name`.
+  Escribe solo los campos que recibe y reinicia el servidor si corre, así que cambiar un secreto no
+  pasa por `install.py`.
+- `credentials.py` falla sin escribir nada si una línea no es `campo=valor`, si un valor está vacío
+  o un campo repetido, o si recibe `database_url` o `turn_secret`, que escribe `install.py`. Su
+  mensaje nunca lleva el valor.
 
 ## Coturn
 
@@ -203,6 +212,9 @@ y de unattended-upgrades 2.12, la versión de Debian 13, `Automatic-Reboot` y
   `systemd-journal-remote` y `wireguard-tools` si envía su journal con `--logs`.
 - La máquina llega a `install.py` con sus paquetes y con tanto swap como memoria, que pide
   «Valkey»: los pone quien prepara la máquina, e `install.py` falla si faltan.
+- El host de cada superficie que la app tiene, `<dominio>`, `app.<dominio>` y `panel.<dominio>`,
+  apunta a la máquina antes de `install.py`: Caddy obtiene el certificado de cada host por ACME, y
+  reintenta mientras el host no la alcanza.
 - `systemd-timesyncd` sincroniza la hora, e `install.py` falla si no está habilitado: las
   credenciales temporales de TURN, las sesiones y las fechas del journal dependen del reloj.
   `systemd-timesyncd` choca con cualquier otro paquete de hora, como `chrony`, y lo reemplaza.
@@ -427,8 +439,8 @@ Estándar: de OpenSSH 10.0, la sección *ALLOWED SIGNERS* de [`ssh-keygen`](../f
 | Qué | Con qué |
 |---|---|
 | Que cada host sirve su pieza con las cabeceras de «Caddy», que `/api/*` las lleva y no se guarda en caché, que un cuerpo que pasa su límite recibe 413 y no llega entero al servidor, y que `/downloads/` sirve los instalables | El `Caddyfile` y los sitios en el Caddy de Debian 13, con certificados propios de Caddy y un servidor en el 8000 que registra lo que le llega, con [`scripts/infra/caddy.sh`](../scripts/infra/caddy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
-| Que una máquina nueva necesita dos `--signer`, que cada llave firma solo para `deploy` y que después solo se agregan; que `install.py` falla sin `systemd-timesyncd` habilitado; y que apt lee el reinicio automático de las 04:00 | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn`, con [`scripts/infra/install.sh`](../scripts/infra/install.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
-| Que `deploy.py` migra y publica la primera versión, instala un tag una sola vez, vuelve a la anterior si la nueva no responde y no trae migraciones, borra la versión cuya migración falla, no instala nada firmado por una llave ajena ni con el `.sha256` de otra versión, y conserva las cinco versiones más recientes | `deploy.py` en la máquina que deja `install.py`, con los releases servidos desde la misma máquina en vez de GitHub y los paquetes del servidor en la caché de uv, con [`scripts/infra/deploy.sh`](../scripts/infra/deploy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que una máquina nueva necesita dos `--signer`, que cada llave firma solo para `deploy` y que después solo se agregan; que `install.py` falla sin `systemd-timesyncd` habilitado; que apt lee el reinicio automático de las 04:00; que `credentials.py` cifra cada campo en su carpeta y con el nombre que carga su unidad, escribe solo lo que recibe y no escribe nada si una línea está mal; que Valkey no abre TCP, que su socket solo lo abre el grupo de la app, que tiene su `maxmemory` con `noeviction` y `vm.overcommit_memory = 1`, y que la instancia del paquete queda apagada; y que `root` no tiene contraseña y una cuenta de la app no puede ser la que administra | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn`, con [`scripts/infra/install.sh`](../scripts/infra/install.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que `deploy.py` migra y publica la primera versión, con las credenciales de `credentials.py`, que los timers de la purga y el barrido son diarios y sus unidades terminan bien sobre esa versión, que instala un tag una sola vez, vuelve a la anterior si la nueva no responde y no trae migraciones, borra la versión cuya migración falla, no instala nada firmado por una llave ajena ni con el `.sha256` de otra versión, y conserva las cinco versiones más recientes | `deploy.py` en la máquina que deja `install.py`, con los releases servidos desde la misma máquina en vez de GitHub y los paquetes del servidor en la caché de uv, con [`scripts/infra/deploy.sh`](../scripts/infra/deploy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que sin túnel no arranca un respaldo, que la receptora guarda el dump y los archivos y el servidor no los borra, que su llave no abre una terminal ni otro túnel, que un respaldo cortado mientras tiene su lock no frena el siguiente, que un respaldo que llega a su límite falla, y que lo que trae `restic restore` vuelve sobre la base que crea `install.py` | `plantilla/receiver/backup.sh` desde otro namespace de red, con el `restic-rest-server` de Debian 13 y el límite reducido de 4 h a 5 s, con [`scripts/infra/backup.sh`](../scripts/infra/backup.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | `00-<app>.conf` y `<app>-receiver.conf` que lee `sshd` | `sshd -t` en el OpenSSH de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Solo llaves y sin `root`, aunque un archivo del proveedor permita contraseñas | `sshd -T` con un `50-cloud-init.conf` que las permite, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

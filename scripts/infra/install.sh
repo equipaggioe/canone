@@ -1,12 +1,15 @@
 #!/bin/sh
 # Runs install.py on a Debian 13 with systemd running: a new machine needs two --signer, which
 # go to allowed_signers for the namespace deploy.py checks and are only added afterwards; it fails
-# without systemd-timesyncd enabled; and apt reads the automatic reboot at 04:00. install.py runs
-# as root, with an account that already administers, so it asks no password.
+# without systemd-timesyncd enabled; apt reads the automatic reboot at 04:00; credentials.py
+# encrypts each field where its unit loads it; Valkey opens only its socket, for the group of the
+# app, with its maxmemory; and root has no password, and an account of the app does not administer.
+# install.py runs as root, with an account that already administers, so it asks no password.
 #
 #     sh install.sh <canone>
 set -eu
 install=$1/plantilla/infra/install.py
+credentials=$1/plantilla/infra/credentials.py
 work=$(mktemp -d)
 signers=/etc/demo/allowed_signers
 trap 'status=$?; systemctl enable --quiet systemd-timesyncd.service; rm -rf "$work"; exit "$status"' EXIT
@@ -58,3 +61,43 @@ systemctl enable --quiet systemd-timesyncd.service
 step "apt reboots by itself at 04:00 when a package asks for it"
 test "$(apt-config dump --format '%v%n' Unattended-Upgrade::Automatic-Reboot)" = true
 test "$(apt-config dump --format '%v%n' Unattended-Upgrade::Automatic-Reboot-Time)" = 04:00
+
+step "credentials.py encrypts each field in the folder and under the name its unit loads it with"
+credentials() { python3 "$credentials" demo; }
+decrypt() { systemd-creds decrypt --name="$1" "/etc/credstore.encrypted/$2" -; }
+printf 'health_token=t-1\nrestic_password=r-1\ngithub_token=g-1\n' | credentials
+test "$(decrypt app_health_token demo/health_token)" = t-1
+test "$(decrypt restic_password demo-backup/restic_password)" = r-1
+test "$(decrypt github_token demo-deploy/github_token)" = g-1
+
+step "It writes only the fields it reads, and nothing when a line is wrong"
+echo 'health_token=t-2' | credentials
+test "$(decrypt app_health_token demo/health_token)" = t-2
+test "$(decrypt restic_password demo-backup/restic_password)" = r-1
+for input in 'health_token=t-3\nnot a field' 'Health=x' 'health_token=' 'a=1\na=2' '# only a comment'; do
+    printf '%b\n' "$input" | fails credentials
+done
+test "$(decrypt app_health_token demo/health_token)" = t-2
+for field in database_url turn_secret; do
+    echo "$field=x" | fails credentials
+    grep -qxF "install.py writes $field." "$work/error"
+done
+
+step "Valkey listens only on its socket, which only the group of the app opens, with its maxmemory"
+socket=/run/valkey-demo/valkey-server.sock
+test "$(stat -c '%G %a' "$socket")" = "demo 770"
+test "$(runuser -u demo -- valkey-cli -s "$socket" ping)" = PONG
+fails runuser -u nobody -- valkey-cli -s "$socket" ping
+setting() { runuser -u demo -- valkey-cli -s "$socket" --raw config get "$1" | tail -n 1; }
+test "$(setting port)" = 0
+test "$(setting maxmemory)" = 67108864
+test "$(setting maxmemory-policy)" = noeviction
+test "$(systemctl is-enabled valkey-server.service || true)" = disabled
+test "$(sysctl -n vm.overcommit_memory)" = 1
+
+step "root has no password, and the account that administers is not one of the app"
+test "$(passwd --status root | cut -d ' ' -f 2)" = L
+for account in demo demo_owner demo-receiver; do
+    fails python3 "$install" demo demo.example 64mb --admin "$account" --key "$(key a)" --key "$(key b)"
+    grep -qxF "$account is an account of the app, not the one that administers." "$work/error"
+done

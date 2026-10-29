@@ -37,7 +37,7 @@ key() { cat "$work/$1.pub"; }
 # An account that already administers: install.py only adds its keys, and asks no password.
 id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
 python3 "$canone/plantilla/infra/install.py" demo demo.example 64mb --admin operador \
-    --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)"
+    --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)" --owner owner
 echo "restic_password=$password" | python3 "$canone/plantilla/infra/credentials.py" demo
 
 step "The receiver, at 192.0.2.1, with its key in /etc/demo/receivers"

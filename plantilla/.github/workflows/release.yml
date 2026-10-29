@@ -44,7 +44,7 @@ jobs:
       - run: |
           mkdir -p dist/PIEZA
           cp -r PIEZA/build/. dist/PIEZA
-          cp -r server scripts dist
+          cp -r server dist
           rm -rf dist/server/.venv
           tar -czf "${{ github.event.repository.name }}-$GITHUB_REF_NAME.tar.gz" -C dist .
       # A draft until checksums: a failed job leaves no half release.

@@ -48,7 +48,7 @@ for name in a b s1 s2; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
 run() {
     python3 "$install" demo demo.example 64mb --admin operador \
         --key "$(cat "$work/a.pub")" --key "$(cat "$work/b.pub")" \
-        --signer "$(cat "$work/s1.pub")" --signer "$(cat "$work/s2.pub")" "$@"
+        --signer "$(cat "$work/s1.pub")" --signer "$(cat "$work/s2.pub")" --owner owner "$@"
 }
 logs() { run --logs 192.0.2.1:51820 --logs-key "$(cat "$work/central.pub")" --logs-ip 10.77.0.2; }
 # An account that already administers: install.py only adds its keys, and asks no password.

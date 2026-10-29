@@ -1,6 +1,6 @@
 # ADR-0068 · Una versión se despliega desde un tag, con un artefacto y un script
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 3 lo reemplaza el [ADR-0106](0106-deploy-py-se-instala-desde-plantilla-infra-con-los-datos-de-la-app.md)
 - **Fecha:** 2026-10-22
 - **Alcance:** la sección «Versiones» de [`plataformas/despliegue.md`](../plataformas/despliegue.md)
 

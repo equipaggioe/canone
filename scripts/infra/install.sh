@@ -18,7 +18,8 @@ fails() { if "$@" 2> "$work/error"; then exit 1; fi; }
 for name in a b s1 s2 s3 x; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
 key() { cat "$work/$1.pub"; }
 run() {
-    python3 "$install" demo demo.example 64mb --admin operador --key "$(key a)" --key "$(key b)" "$@"
+    python3 "$install" demo demo.example 64mb --admin operador --key "$(key a)" --key "$(key b)" \
+        --owner owner "$@"
 }
 # An account that already administers: install.py only adds its keys, and asks no password.
 id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
@@ -98,6 +99,7 @@ test "$(sysctl -n vm.overcommit_memory)" = 1
 step "root has no password, and the account that administers is not one of the app"
 test "$(passwd --status root | cut -d ' ' -f 2)" = L
 for account in demo demo_owner demo-receiver; do
-    fails python3 "$install" demo demo.example 64mb --admin "$account" --key "$(key a)" --key "$(key b)"
+    fails python3 "$install" demo demo.example 64mb --admin "$account" --key "$(key a)" \
+        --key "$(key b)" --owner owner
     grep -qxF "$account is an account of the app, not the one that administers." "$work/error"
 done

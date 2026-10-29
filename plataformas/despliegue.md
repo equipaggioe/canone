@@ -29,7 +29,7 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 │   ├── <app>-backup/
 │   │   └── restic_password
 │   └── <app>-deploy/
-│       └── github_token            solo en un repositorio privado
+│       └── github_token            solo con --private
 ├── nftables.conf
 ├── nftables.d/
 │   └── turn.nft                    solo con TURN
@@ -69,10 +69,10 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 └── releases/
     └── <versión>/
         ├── server/
-        ├── scripts/
         └── web/, panel/, landing/
 /usr/local/lib/<app>/
-└── backup-request                  el único comando de la receptora
+├── backup-request                  el único comando de la receptora
+└── deploy.py
 /var/lib/
 ├── <app>/
 │   ├── files/
@@ -84,11 +84,10 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 ```
 
 Plantilla: [`plantilla/infra/`](../plantilla/infra/), con las unidades, los sitios de Caddy, la
-configuración de Valkey, `install.py`, que los instala, y `credentials.py`, que cifra las
-credenciales;
-[`plantilla/receiver/`](../plantilla/receiver/), que corre en la receptora;
-[`plantilla/.github/workflows/release.yml`](../plantilla/.github/workflows/release.yml) y
-[`plantilla/scripts/deploy.py`](../plantilla/scripts/deploy.py).
+configuración de Valkey, `install.py`, que los instala, `credentials.py`, que cifra las
+credenciales, y `deploy.py`, que instala cada versión;
+[`plantilla/receiver/`](../plantilla/receiver/), que corre en la receptora, y
+[`plantilla/.github/workflows/release.yml`](../plantilla/.github/workflows/release.yml).
 
 ## Caddy
 
@@ -413,7 +412,11 @@ Estándar: de OpenSSH 10.0, la sección *ALLOWED SIGNERS* de [`ssh-keygen`](../f
   nombres `deploy`, el que firma y comprueba `deploy.py`. Una máquina nueva necesita dos: la de la
   computadora de quien firma y una guardada fuera de ella. Perder la computadora no impide
   desplegar. Después, `--signer` solo agrega llaves, y una llave se retira borrando su línea.
-- `scripts/deploy.py` instala un tag en el servidor y se lanza por `ssh`, no desde el CI.
+- `/usr/local/lib/<app>/deploy.py` instala un tag en el servidor y se lanza por `ssh`, no desde el
+  CI. `install.py` lo instala con el dueño del repositorio en GitHub que recibe con `--owner`. Con
+  `--private`, el script baja el release con el token de `<app>-deploy/`, y cada `--desktop` nombra
+  un instalable que el release trae: `linux`, `windows` o `macos`. Reinicia `<app>.service`, la
+  única unidad del servidor.
 - Las migraciones corren en la unidad `<app>-migrate@<versión>.service`, con las credenciales del
   servidor, porque `alembic/env.py` lee `Settings`, salvo `database_url`, que es la del rol dueño
   del esquema. El rol del servidor no tiene DDL: un error o una inyección en la app no cambian el
@@ -440,7 +443,7 @@ Estándar: de OpenSSH 10.0, la sección *ALLOWED SIGNERS* de [`ssh-keygen`](../f
 |---|---|
 | Que cada host sirve su pieza con las cabeceras de «Caddy», que `/api/*` las lleva y no se guarda en caché, que un cuerpo que pasa su límite recibe 413 y no llega entero al servidor, y que `/downloads/` sirve los instalables | El `Caddyfile` y los sitios en el Caddy de Debian 13, con certificados propios de Caddy y un servidor en el 8000 que registra lo que le llega, con [`scripts/infra/caddy.sh`](../scripts/infra/caddy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que una máquina nueva necesita dos `--signer`, que cada llave firma solo para `deploy` y que después solo se agregan; que `install.py` falla sin `systemd-timesyncd` habilitado; que apt lee el reinicio automático de las 04:00; que `credentials.py` cifra cada campo en su carpeta y con el nombre que carga su unidad, escribe solo lo que recibe y no escribe nada si una línea está mal; que Valkey no abre TCP, que su socket solo lo abre el grupo de la app, que tiene su `maxmemory` con `noeviction` y `vm.overcommit_memory = 1`, y que la instancia del paquete queda apagada; y que `root` no tiene contraseña y una cuenta de la app no puede ser la que administra | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn`, con [`scripts/infra/install.sh`](../scripts/infra/install.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
-| Que `deploy.py` migra y publica la primera versión, con las credenciales de `credentials.py`, que los timers de la purga y el barrido son diarios y sus unidades terminan bien sobre esa versión, que instala un tag una sola vez, vuelve a la anterior si la nueva no responde y no trae migraciones, borra la versión cuya migración falla, no instala nada firmado por una llave ajena ni con el `.sha256` de otra versión, y conserva las cinco versiones más recientes | `deploy.py` en la máquina que deja `install.py`, con los releases servidos desde la misma máquina en vez de GitHub y los paquetes del servidor en la caché de uv, con [`scripts/infra/deploy.sh`](../scripts/infra/deploy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que `deploy.py` migra y publica la primera versión, con las credenciales de `credentials.py`, que los timers de la purga y el barrido son diarios y sus unidades terminan bien sobre esa versión, que instala un tag una sola vez, vuelve a la anterior si la nueva no responde y no trae migraciones, borra la versión cuya migración falla, no instala nada firmado por una llave ajena ni con el `.sha256` de otra versión, y conserva las cinco versiones más recientes | El `deploy.py` que instala `install.py`, con los releases servidos desde la misma máquina en vez de GitHub y los paquetes del servidor en la caché de uv, con [`scripts/infra/deploy.sh`](../scripts/infra/deploy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que sin túnel no arranca un respaldo, que la receptora guarda el dump y los archivos y el servidor no los borra, que su llave no abre una terminal ni otro túnel, que un respaldo cortado mientras tiene su lock no frena el siguiente, que un respaldo que llega a su límite falla, y que lo que trae `restic restore` vuelve sobre la base que crea `install.py` | `plantilla/receiver/backup.sh` desde otro namespace de red, con el `restic-rest-server` de Debian 13 y el límite reducido de 4 h a 5 s, con [`scripts/infra/backup.sh`](../scripts/infra/backup.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | `00-<app>.conf` y `<app>-receiver.conf` que lee `sshd` | `sshd -t` en el OpenSSH de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Solo llaves y sin `root`, aunque un archivo del proveedor permita contraseñas | `sshd -T` con un `50-cloud-init.conf` que las permite, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

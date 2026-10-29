@@ -3,11 +3,11 @@ name: Infra
 on:
   push:
     branches: [master]
-    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/scripts/**", "plantilla/server/**",
-      "scripts/infra/**", "fuentes/iana/**", ".github/workflows/infra.yml"]
+    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/server/**", "scripts/infra/**",
+      "fuentes/iana/**", ".github/workflows/infra.yml"]
   pull_request:
-    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/scripts/**", "plantilla/server/**",
-      "scripts/infra/**", "fuentes/iana/**", ".github/workflows/infra.yml"]
+    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/server/**", "scripts/infra/**",
+      "fuentes/iana/**", ".github/workflows/infra.yml"]
 
 jobs:
   exposure:

@@ -1,6 +1,6 @@
 #!/bin/sh
-# Runs deploy.py on a Debian 13 that install.py set up, with releases served from this machine in
-# place of GitHub: the first version migrates and goes live, a tag goes in once, an unhealthy
+# Runs the deploy.py that install.py installs on a Debian 13, with releases served from this machine
+# in place of GitHub: the first version migrates and goes live, a tag goes in once, an unhealthy
 # version goes back to the previous, a failed migration leaves nothing, a checksum signed by a key
 # outside allowed_signers or of another version installs nothing, and releases/ keeps the five
 # newest. The server reads the credentials of credentials.py, and the daily purge and sweep run
@@ -32,27 +32,26 @@ key() { cat "$work/$1.pub"; }
 # An account that already administers: install.py only adds its keys, and asks no password.
 id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
 python3 "$canone/plantilla/infra/install.py" demo demo.example 64mb --admin operador \
-    --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)"
+    --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)" \
+    --owner owner --desktop linux --desktop windows --desktop macos
 # The fields of Settings besides the database_url of install.py.
 python3 "$canone/plantilla/infra/credentials.py" demo <<'EOF'
 health_token=test-health-token
 min_client_versions={}
 page_token_key=0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY=
 EOF
-# The repository of the product is demo, and GitHub answers from this machine.
-sed -e 's/PRODUCTO/demo/g' -e 's/OWNER/owner/g' -e 's#https://api.github.com#http://127.0.0.1:9000#' \
-    "$canone/plantilla/scripts/deploy.py" > "$work/deploy.py"
+# The deploy.py of install.py, with GitHub answering from this machine.
+sed 's#https://api.github.com#http://127.0.0.1:9000#' /usr/local/lib/demo/deploy.py > "$work/deploy.py"
 deploy() { UV_OFFLINE=1 python3 "$work/deploy.py" "$1"; }
 
 # release <version> <signing key> [<function that changes the tree>]: what release.yml publishes.
 release() {
     tree=$work/tree-$1
     assets=$api/assets/$1
-    mkdir -p "$tree/web" "$tree/scripts" "$assets"
+    mkdir -p "$tree/web" "$assets"
     tar -C "$canone/plantilla" --exclude=.venv --exclude=__pycache__ --exclude=.pytest_cache \
         --exclude=.ruff_cache -cf - server | tar -C "$tree" -xf -
     sed -i 's/PRODUCTO/demo/' "$tree/server/alembic/versions/d34c1b992b0b_event_log.py"
-    cp "$work/deploy.py" "$tree/scripts/"
     echo "$1" > "$tree/web/index.html"
     if [ $# -ge 3 ]; then "$3" "$tree"; fi
     tar -czf "$assets/demo-$1.tar.gz" -C "$tree" .

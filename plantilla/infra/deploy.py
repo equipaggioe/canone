@@ -1,6 +1,6 @@
 r"""Install a version of the server and the web on this machine.
 
-    sudo python3 /srv/PRODUCTO/current/scripts/deploy.py v1.4.0
+    sudo python3 /usr/local/lib/PRODUCTO/deploy.py v1.4.0
 
 Before that, on the machine that holds the key:
 
@@ -9,10 +9,8 @@ Before that, on the machine that holds the key:
         PRODUCTO-v1.4.0.sha256
     gh release upload v1.4.0 PRODUCTO-v1.4.0.sha256.sig
 
-The first version has no current yet: copy this file from the tag to
-the server and run it from there.
-
-Starting point from canone: plataformas/despliegue.md, «Versiones».
+install.py installs it with the data of the app. From canone:
+plataformas/despliegue.md, «Versiones».
 """
 
 import argparse
@@ -29,17 +27,20 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+# install.py writes the owner of the repository on GitHub, whether it
+# is private, and the desktop installers that each release brings.
 APP = "PRODUCTO"
-REPO = "OWNER/PRODUCTO"
-# None in a public repository. In a private one, a read-only token
-# encrypted with `systemd-creds encrypt`, in
-# /etc/credstore.encrypted/PRODUCTO-deploy/github_token.
-TOKEN: Path | None = None
-UNITS = ("PRODUCTO.service",)
+REPO = "DUENO/PRODUCTO"
+PRIVATE: bool = PRIVADO
+DESKTOP: tuple[str, ...] = INSTALABLES
+# A private repository downloads with a read-only token, which
+# credentials.py encrypts.
+TOKEN = Path("/etc/credstore.encrypted") / f"{APP}-deploy" / "github_token"
+# ADR-0106: the only unit of the server that install.py installs.
+SERVICE = f"{APP}.service"
 MIGRATE = "PRODUCTO-migrate@{}.service"
 HEALTH_SECONDS = 30
 KEEP = 5
-DESKTOP = ("desktop-linux.bin", "desktop-windows.exe", "desktop-macos.zip")
 
 ROOT = Path("/srv") / APP
 RELEASES = ROOT / "releases"
@@ -50,7 +51,6 @@ VERSION = re.compile(r"v\d+\.\d+\.\d+")
 # ADR-0077: the server always listens on 8000.
 HEALTH = "http://127.0.0.1:8000/api/health"
 API = f"https://api.github.com/repos/{REPO}"
-NAME = REPO.split("/")[1]
 
 
 class DeployError(Exception):
@@ -115,9 +115,9 @@ def fetch(
     version: str, assets: dict[str, str], folder: Path, token: str | None
 ) -> tuple[Path, dict[str, str]]:
     """Download the artifact and the signed checksums of every file."""
-    archive = folder / f"{NAME}-{version}.tar.gz"
-    checksum = folder / f"{NAME}-{version}.sha256"
-    signature = folder / f"{NAME}-{version}.sha256.sig"
+    archive = folder / f"{APP}-{version}.tar.gz"
+    checksum = folder / f"{APP}-{version}.sha256"
+    signature = folder / f"{APP}-{version}.sha256.sig"
     for path in (archive, checksum, signature):
         download(assets[path.name], path, token)
     verify(checksum, signature)
@@ -162,7 +162,7 @@ def point(target: Path) -> None:
 def restart() -> None:
     """Restart the units and wait for the health check."""
     url = HEALTH
-    run("systemctl", "restart", *UNITS)
+    run("systemctl", "restart", SERVICE)
     problem = "no answer"
     for _ in range(HEALTH_SECONDS):
         try:
@@ -180,7 +180,7 @@ def migrate(version: str, target: Path, previous: Path | None, migrates: bool) -
     """Migrate to version, with the server stopped if it changes."""
     # The previous code must not run on the migrated schema.
     if migrates:
-        run("systemctl", "stop", *UNITS)
+        run("systemctl", "stop", SERVICE)
     try:
         run("systemctl", "start", MIGRATE.format(version))
     except subprocess.CalledProcessError:
@@ -217,9 +217,9 @@ def deploy(version: str) -> None:
     if target.exists():
         raise DeployError(f"{target} already exists")
     previous = CURRENT.resolve() if CURRENT.exists() else None
-    token = None if TOKEN is None else run("systemd-creds", "decrypt", str(TOKEN), "-").strip()
+    token = run("systemd-creds", "decrypt", str(TOKEN), "-").strip() if PRIVATE else None
     assets = release_assets(version, token)
-    artifact = f"{NAME}-{version}"
+    artifact = f"{APP}-{version}"
     names = {f"{artifact}.tar.gz", f"{artifact}.sha256", f"{artifact}.sha256.sig", *DESKTOP}
     missing = names - assets.keys()
     if missing:

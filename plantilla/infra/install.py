@@ -1,7 +1,7 @@
 r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn and ssh of an app.
 
     python3 install.py <app> <domain> <memory> --admin <name> --key <key> --key <key> \
-        --signer <key> --signer <key> \
+        --signer <key> --signer <key> --owner <owner> [--private] [--desktop linux|windows|macos] \
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
         [--turn [--turn-ip <public ipv4>]] \
         [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>]
@@ -38,6 +38,7 @@ TARGETS = {
     "sshd.conf": "/etc/ssh/sshd_config.d/00-PRODUCTO.conf",
     "sshd-receiver.conf": "/etc/ssh/sshd_config.d/PRODUCTO-receiver.conf",
     "backup-request": "/usr/local/lib/PRODUCTO/backup-request",
+    "deploy.py": "/usr/local/lib/PRODUCTO/deploy.py",
     "Caddyfile": "/etc/caddy/Caddyfile",
     "nftables.conf": "/etc/nftables.conf",
     "20auto-upgrades": "/etc/apt/apt.conf.d/20auto-upgrades",
@@ -59,6 +60,12 @@ LOGS = {
     "journal-upload-retry.conf": f"{UNITS}/systemd-journal-upload.service.d/PRODUCTO.conf",
 }
 UPLOADER = Path("/usr/lib/systemd/systemd-journal-upload")
+# The desktop installer of each system, with the name Caddy serves it by.
+INSTALLERS = {
+    "linux": "desktop-linux.bin",
+    "windows": "desktop-windows.exe",
+    "macos": "desktop-macos.zip",
+}
 # Units and sites of a piece the app may not have.
 OPTIONAL = ("sweep", "web", "panel", "landing")
 # ADR-0070: the standardized features of the W3C registry, at commit 2939804, and
@@ -141,6 +148,13 @@ def parse() -> argparse.Namespace:
     parser.add_argument("--key", action="append", default=[], help="a public key of --admin")
     parser.add_argument(
         "--signer", action="append", default=[], help="a public key that signs the releases"
+    )
+    parser.add_argument("--owner", required=True, help="the owner of the repository on GitHub")
+    parser.add_argument(
+        "--private", action="store_true", help="the repository is private, and needs a token"
+    )
+    parser.add_argument(
+        "--desktop", action="append", default=[], choices=INSTALLERS, help="a desktop installer"
     )
     parser.add_argument("--turn", action="store_true", help="the app relays calls with coturn")
     parser.add_argument(
@@ -368,6 +382,12 @@ def main() -> None:
         "TUNEL": str(arguments.logs_ip),
         "CENTRAL": arguments.logs_key or "",
         "EXTREMO": arguments.logs or "",
+        # ADR-0106: what deploy.py downloads, written as Python.
+        "DUENO": arguments.owner,
+        "PRIVADO": repr(arguments.private),
+        "INSTALABLES": repr(
+            tuple(name for system, name in INSTALLERS.items() if system in arguments.desktop)
+        ),
     }
     for name, target in TARGETS.items():
         path = Path(target.replace("PRODUCTO", app))

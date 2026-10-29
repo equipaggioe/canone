@@ -99,7 +99,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0089](0089-playwright-tiene-una-sola-version-exacta-en-todos-los-repositorios.md) | Playwright tiene una sola versión exacta en todos los repositorios | Con Playwright | Aceptada; los puntos 2, 3 y 4 son propuesta |
 | [0090](0090-la-maquina-es-debian-13-sus-programas-salen-de-sus-paquetes-y-uv-tiene-una-sola-version-exacta.md) | La máquina es Debian 13, sus programas salen de sus paquetes, y uv tiene una sola versión exacta | Con Python | Aceptada |
 | [0091](0091-cada-version-crea-su-entorno-en-el-servidor-y-una-migracion-se-reconoce-por-sus-heads.md) | Cada versión crea su entorno en el servidor, y una migración se reconoce por sus heads | Con `server/` | Aceptada |
-| [0092](0092-las-actualizaciones-de-debian-se-instalan-solas-con-unattended-upgrades.md) | Las actualizaciones de Debian se instalan solas, con unattended-upgrades | Con `server/` | Aceptada |
+| [0092](0092-las-actualizaciones-de-debian-se-instalan-solas-con-unattended-upgrades.md) | Las actualizaciones de Debian se instalan solas, con unattended-upgrades | Con `server/` | Aceptada; el punto 4 lo reemplaza ADR-0103 |
 | [0093](0093-lo-que-entra-se-niega-por-defecto-con-nftables-y-lo-que-sale-no-se-filtra.md) | Lo que entra se niega por defecto con nftables, y lo que sale no se filtra | Con `server/` | Aceptada |
 | [0094](0094-el-arbol-del-servidor-sigue-el-fhs-3-0.md) | El árbol del servidor sigue el FHS 3.0 | Con `server/` | Aceptada |
 | [0095](0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md) | Una lista de nombres que toma una regla no es una fuente | `plataformas/` y `fuentes/` | Aceptada |
@@ -108,3 +108,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0098](0098-protection-se-cumple-con-los-permisos-y-el-respaldo-y-no-detecta-ni-audita-accesos.md) | *Protection* se cumple con los permisos y el respaldo, y no detecta cambios ni audita accesos | Con `server/` | Aceptada; el punto 3 lo reemplaza ADR-0100 |
 | [0099](0099-las-trazas-no-se-exportan-y-ninguna-variable-de-entorno-agrega-un-exportador.md) | Las trazas no se exportan, y ninguna variable de entorno agrega un exportador | Con `server/` | Aceptada |
 | [0100](0100-los-registros-salen-a-equipaggio-el-journal-por-wireguard-y-event-log-por-una-ruta-de-salud.md) | Los registros salen a equipaggio: el journal por WireGuard, y `event_log` por una ruta de salud | Con `server/` | Aceptada |
+| [0101](0101-el-journal-guarda-a-lo-sumo-365-dias-y-equipaggio-nota-la-maquina-que-deja-de-enviar.md) | El journal guarda a lo sumo 365 días, y equipaggio nota la máquina que deja de enviar | Con `server/` | Aceptada |
+| [0102](0102-la-hora-la-sincroniza-systemd-timesyncd-e-install-py-falla-si-no-esta-habilitado.md) | La hora la sincroniza systemd-timesyncd, e `install.py` falla si no está habilitado | Con `server/` | Aceptada |
+| [0103](0103-unattended-upgrades-reinicia-la-maquina-a-las-0400-cuando-una-actualizacion-lo-pide.md) | unattended-upgrades reinicia la máquina a las 04:00 cuando una actualización lo pide | Con `server/` | Aceptada |
+| [0104](0104-las-llaves-que-firman-los-releases-las-agrega-install-py-dos-en-una-maquina-nueva.md) | Las llaves que firman los releases las agrega `install.py`, dos en una máquina nueva | Con `server/` | Aceptada |

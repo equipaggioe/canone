@@ -1,13 +1,14 @@
 r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn and ssh of an app.
 
     python3 install.py <app> <domain> <memory> --admin <name> --key <key> --key <key> \
+        --signer <key> --signer <key> \
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
         [--turn [--turn-ip <public ipv4>]] \
         [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>]
 
 The first time it runs as root, and creates the account that administers the machine with its
 keys and the password it asks for. Afterwards ssh only takes keys and root does not log in, so it
-runs with sudo from that account, and --admin and --key only add keys.
+runs with sudo from that account, and --admin, --key and --signer only add keys.
 
 From canone: plataformas/despliegue.md.
 """
@@ -40,12 +41,15 @@ TARGETS = {
     "Caddyfile": "/etc/caddy/Caddyfile",
     "nftables.conf": "/etc/nftables.conf",
     "20auto-upgrades": "/etc/apt/apt.conf.d/20auto-upgrades",
+    "52automatic-reboot": "/etc/apt/apt.conf.d/52automatic-reboot",
     "journald.conf": "/etc/systemd/journald.conf.d/00-PRODUCTO.conf",
     "postgresql.conf": "/etc/postgresql/17/main/conf.d/PRODUCTO.conf",
 }
-# The files that run, and the file that holds the keys of the receivers.
+# The files that run, the file that holds the keys of the receivers, and the one that holds the
+# keys that sign the releases.
 EXECUTABLES = ("backup-request",)
 RECEIVERS = "/etc/PRODUCTO/receivers"
+SIGNERS = "/etc/PRODUCTO/allowed_signers"
 # The files of coturn and its ports, only with --turn.
 TURN = {"turnserver.conf": "/etc/turnserver.conf", "turn.nft": "/etc/nftables.d/turn.nft"}
 # The tunnel to equipaggio and its uploader, only with --logs.
@@ -135,6 +139,9 @@ def parse() -> argparse.Namespace:
     parser.add_argument("--extension", action="append", default=[], help="like postgis")
     parser.add_argument("--admin", help="the account that administers the machine")
     parser.add_argument("--key", action="append", default=[], help="a public key of --admin")
+    parser.add_argument(
+        "--signer", action="append", default=[], help="a public key that signs the releases"
+    )
     parser.add_argument("--turn", action="store_true", help="the app relays calls with coturn")
     parser.add_argument(
         "--turn-ip",
@@ -206,6 +213,19 @@ def create_admin(name: str, keys: list[str]) -> None:
     target.chmod(0o600)
     for path in (folder, target):
         os.chown(path, account.pw_uid, account.pw_gid)
+
+
+def add_signers(app: str, keys: list[str]) -> None:
+    """Add the keys that sign the releases, for the namespace deploy.py checks."""
+    target = Path(SIGNERS.replace("PRODUCTO", app))
+    present = target.read_text(encoding="utf-8").splitlines() if target.is_file() else []
+    # ADR-0104: a key kept off your computer lets you deploy when that computer is lost.
+    if not any(line.strip() for line in present) and len(keys) < 2:
+        raise SystemExit("A new machine needs two --signer: yours and one kept elsewhere.")
+    lines = [f'deploy namespaces="deploy" {key}' for key in keys]
+    lines = present + [line for line in lines if line not in present]
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("".join(f"{line}\n" for line in lines), encoding="utf-8")
 
 
 def create_database(app: str, extensions: list[str]) -> None:
@@ -321,15 +341,20 @@ def main() -> None:
     # ADR-0092: without it, 20auto-upgrades turns on nothing and nothing says so.
     if shutil.which("unattended-upgrade") is None:
         raise SystemExit("unattended-upgrades is not installed, and Debian would not update.")
+    # ADR-0102: the credentials of TURN, the sessions and the journal go by the clock.
+    timesyncd = ["systemctl", "is-enabled", "--quiet", "systemd-timesyncd.service"]
+    if subprocess.run(timesyncd, check=False).returncode != 0:
+        raise SystemExit("systemd-timesyncd is not enabled, and the clock would drift.")
     if arguments.turn and shutil.which("turnserver") is None:
         raise SystemExit("coturn is not installed, and --turn needs it.")
     if arguments.turn_ip is not None and not arguments.turn:
         raise SystemExit("--turn-ip needs --turn.")
     check_logs(arguments)
     admin = find_admin(arguments)
-    check_keys(arguments.key)
+    check_keys(arguments.key + arguments.signer)
     create_admin(admin, arguments.key)
     app = arguments.app
+    add_signers(app, arguments.signer)
     policy = ", ".join(
         f"{name}=(self)" if name in arguments.allow else f"{name}=()" for name in FEATURES
     )

@@ -5,8 +5,13 @@
 #
 # rest-server, ssh and curl are on the PATH. From canone: plataformas/despliegue.md.
 set -eu
+# Debian names the binary of rest-server after its package, restic-rest-server.
+if ! server=$(command -v rest-server || command -v restic-rest-server); then
+    echo "rest-server is not installed" >&2
+    exit 1
+fi
 # The server adds backups, but cannot delete or rewrite them.
-rest-server --path "$3" --listen 127.0.0.1:8001 --append-only --no-auth &
+"$server" --path "$3" --listen 127.0.0.1:8001 --append-only --no-auth &
 rest=$!
 trap 'kill "$rest"' EXIT
 tries=50

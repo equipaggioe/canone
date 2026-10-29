@@ -214,6 +214,9 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [systemd/journald.conf.xml](systemd/journald.conf.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journald.conf.xml> | systemd 257, la versión de Debian 13 |
 | [systemd/systemd-journal-upload.service.xml](systemd/systemd-journal-upload.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd-journal-upload.service.xml> | systemd 257, la versión de Debian 13 |
 | [systemd/journal-upload.conf.xml](systemd/journal-upload.conf.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journal-upload.conf.xml> | systemd 257, la versión de Debian 13 |
+| [systemd/systemd-timesyncd.service.xml](systemd/systemd-timesyncd.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd-timesyncd.service.xml> | systemd 257, la versión de Debian 13 |
 | [wireguard/wg-quick.8](wireguard/wg-quick.8) | <https://git.zx2c4.com/wireguard-tools/plain/src/man/wg-quick.8?h=v1.0.20210914> | wireguard-tools 1.0.20210914, la versión de Debian 13 |
 | [wireguard/wg.8](wireguard/wg.8) | <https://git.zx2c4.com/wireguard-tools/plain/src/man/wg.8?h=v1.0.20210914> | wireguard-tools 1.0.20210914, la versión de Debian 13 |
 | [openssh/sshd_config.5](openssh/sshd_config.5) | <https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/sshd_config.5> | OpenSSH 10.0, la versión de Debian 13 |
+| [openssh/ssh-keygen.1](openssh/ssh-keygen.1) | <https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/ssh-keygen.1> | OpenSSH 10.0, la versión de Debian 13 |
+| [unattended-upgrades/50unattended-upgrades.Debian](unattended-upgrades/50unattended-upgrades.Debian) | <https://sources.debian.org/data/main/u/unattended-upgrades/2.12/data/50unattended-upgrades.Debian> | unattended-upgrades 2.12, la versión de Debian 13 |

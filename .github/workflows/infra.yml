@@ -3,9 +3,11 @@ name: Infra
 on:
   push:
     branches: [master]
-    paths: ["plantilla/infra/**", "scripts/infra/**", "fuentes/iana/**", ".github/workflows/infra.yml"]
+    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/scripts/**", "plantilla/server/**",
+      "scripts/infra/**", "fuentes/iana/**", ".github/workflows/infra.yml"]
   pull_request:
-    paths: ["plantilla/infra/**", "scripts/infra/**", "fuentes/iana/**", ".github/workflows/infra.yml"]
+    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/scripts/**", "plantilla/server/**",
+      "scripts/infra/**", "fuentes/iana/**", ".github/workflows/infra.yml"]
 
 jobs:
   exposure:
@@ -26,16 +28,8 @@ jobs:
     container: debian:trixie
     steps:
       - uses: actions/checkout@v5
-      - run: apt-get update && apt-get install --yes --no-install-recommends caddy
-      # The placeholders take values like those install.py writes.
-      - run: |
-          mkdir -p "$RUNNER_TEMP/caddy/sites"
-          cp plantilla/infra/Caddyfile "$RUNNER_TEMP/caddy/"
-          for site in plantilla/infra/PRODUCTO-*.caddy; do
-            sed -e s/PRODUCTO/app/g -e s/DOMINIO/example.com/g \
-              -e "s/PERMISOS/camera=()/g" "$site" > "$RUNNER_TEMP/caddy/sites/$(basename "$site")"
-          done
-          caddy validate --config "$RUNNER_TEMP/caddy/Caddyfile"
+      - run: apt-get update && apt-get install --yes --no-install-recommends caddy curl python3
+      - run: sh scripts/infra/caddy.sh "$PWD"
 
   sshd:
     runs-on: ubuntu-latest
@@ -99,7 +93,12 @@ jobs:
 
   install:
     runs-on: ubuntu-latest
-    # install.py --logs on a Debian 13 booted by systemd-nspawn, with systemd running.
+    # install.py on a Debian 13 booted by systemd-nspawn, with systemd running, and each script on
+    # its own machine.
+    strategy:
+      fail-fast: false
+      matrix:
+        script: [install.sh, install-logs.sh, deploy.sh, backup.sh]
     steps:
       - uses: actions/checkout@v5
       # install.py asks for as much swap as memory, and the machine sees those of the runner.
@@ -118,8 +117,23 @@ jobs:
           debootstrap systemd-container debian-archive-keyring
       - run: >-
           sudo debootstrap --variant=minbase
-          --include=systemd,systemd-sysv,dbus,sudo,unattended-upgrades,openssh-server,postgresql,caddy,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2
+          --include=systemd,systemd-sysv,dbus,sudo,unattended-upgrades,systemd-timesyncd,openssh-server,postgresql,caddy,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2,restic,restic-rest-server,curl
           trixie /var/lib/machines/machine http://deb.debian.org/debian
+      # The machine has no internet: deploy.py finds each package of the server in the cache of uv.
+      - if: matrix.script == 'deploy.sh'
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - if: matrix.script == 'deploy.sh'
+        uses: astral-sh/setup-uv@v6
+        with:
+          version-file: plantilla/server/pyproject.toml
+      - if: matrix.script == 'deploy.sh'
+        run: |
+          cp -r plantilla/server "$RUNNER_TEMP/server"
+          (cd "$RUNNER_TEMP/server" && UV_CACHE_DIR="$RUNNER_TEMP/uv" uv sync --locked --no-dev)
+          sudo cp -r "$RUNNER_TEMP/uv" /var/lib/machines/machine/var/cache/uv-ci
+          sudo install -m 755 "$(command -v uv)" /var/lib/machines/machine/usr/local/bin/uv
       # Its own network, for its firewall; and /proc/sys writable, for the sysctl of Valkey.
       - run: >-
           sudo systemd-run --unit=machine --setenv=SYSTEMD_NSPAWN_API_VFS_WRITABLE=1
@@ -133,8 +147,8 @@ jobs:
           done
           echo "$state"
       - run: >-
-          sudo systemd-run --machine=machine --wait --pipe --quiet
-          sh /canone/scripts/infra/install-logs.sh /canone/plantilla/infra/install.py
+          sudo systemd-run --machine=machine --wait --pipe --quiet --setenv=UV_CACHE_DIR=/var/cache/uv-ci
+          sh /canone/scripts/infra/${{ matrix.script }} /canone
       - if: failure()
         run: sudo journalctl --machine=machine --no-pager --priority=info -n 300
 

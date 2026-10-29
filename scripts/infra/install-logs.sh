@@ -5,9 +5,9 @@
 # --logs fails, and journald deletes an entry within a file of its retention. install.py runs as
 # root, with umask 077 and an account that already administers, so it asks no password.
 #
-#     sh install-logs.sh <install.py>
+#     sh install-logs.sh <canone>
 set -eu
-install=$1
+install=$1/plantilla/infra/install.py
 work=$(mktemp -d)
 upload=systemd-journal-upload.service
 retry=/etc/systemd/system/systemd-journal-upload.service.d/demo.conf
@@ -44,10 +44,11 @@ receiver() {
 fails() { if "$@" 2> "$work/error"; then exit 1; fi; }
 # Whoever deploys may have a strict umask, and install.py does not take it.
 umask 077
-for name in a b; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
+for name in a b s1 s2; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
 run() {
     python3 "$install" demo demo.example 64mb --admin operador \
-        --key "$(cat "$work/a.pub")" --key "$(cat "$work/b.pub")" "$@"
+        --key "$(cat "$work/a.pub")" --key "$(cat "$work/b.pub")" \
+        --signer "$(cat "$work/s1.pub")" --signer "$(cat "$work/s2.pub")" "$@"
 }
 logs() { run --logs 192.0.2.1:51820 --logs-key "$(cat "$work/central.pub")" --logs-ip 10.77.0.2; }
 # An account that already administers: install.py only adds its keys, and asks no password.

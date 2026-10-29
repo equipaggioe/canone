@@ -15,7 +15,8 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 │   ├── allowed_signers
 │   └── receivers                   las llaves de las receptoras
 ├── apt/apt.conf.d/
-│   └── 20auto-upgrades
+│   ├── 20auto-upgrades
+│   └── 52automatic-reboot
 ├── caddy/
 │   ├── Caddyfile
 │   └── sites/
@@ -192,16 +193,29 @@ Estándar: la sección 4.1.3, *TCP and UDP*, de NIST SP 800-41 Rev. 1,
 
 ## Máquina
 
+Estándares: de systemd 257, [`systemd-timesyncd.service`](../fuentes/systemd/systemd-timesyncd.service.xml),
+y de unattended-upgrades 2.12, la versión de Debian 13, `Automatic-Reboot` y
+`Automatic-Reboot-Time` en [`50unattended-upgrades`](../fuentes/unattended-upgrades/50unattended-upgrades.Debian).
+
 - La máquina es Debian 13, y cada programa sale de sus paquetes: `caddy`, `postgresql`,
   `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`,
-  `nftables` y `unattended-upgrades`; `coturn` si usa TURN, y `systemd-journal-remote` y
-  `wireguard-tools` si envía su journal con `--logs`.
+  `nftables`, `unattended-upgrades` y `systemd-timesyncd`; `coturn` si usa TURN, y
+  `systemd-journal-remote` y `wireguard-tools` si envía su journal con `--logs`.
+- La máquina llega a `install.py` con sus paquetes y con tanto swap como memoria, que pide
+  «Valkey»: los pone quien prepara la máquina, e `install.py` falla si faltan.
+- `systemd-timesyncd` sincroniza la hora, e `install.py` falla si no está habilitado: las
+  credenciales temporales de TURN, las sesiones y las fechas del journal dependen del reloj.
+  `systemd-timesyncd` choca con cualquier otro paquete de hora, como `chrony`, y lo reemplaza.
 - uv no está en Debian 13: sale del release de GitHub de la versión de
   [python.md](python.md#proyecto), con su SHA-256 comprobado.
 - `unattended-upgrades` instala solo, cada día, las actualizaciones de Debian 13, y `install.py` lo
   enciende con `/etc/apt/apt.conf.d/20auto-upgrades`: una actualización de seguridad que espera a
-  alguien deja la máquina expuesta mientras tanto. La del kernel se aplica al reiniciar la máquina,
-  a mano.
+  alguien deja la máquina expuesta mientras tanto.
+- Un kernel nuevo corre solo después de reiniciar, y `unattended-upgrades` reinicia la máquina a
+  las 04:00, en la hora de la máquina, cuando una actualización lo pide, con
+  `/etc/apt/apt.conf.d/52automatic-reboot`. El gancho del kernel de `unattended-upgrades` lo pide
+  con `/var/run/reboot-required`. La app cae alrededor de un minuto y corta las llamadas y el
+  respaldo en curso, y el siguiente respaldo corre igual.
 
 ## PostgreSQL
 
@@ -251,7 +265,7 @@ sección *WebSocket Protocol Configuration* del
 
 ## Registros
 
-Estándares: `Storage=`, `MaxRetentionSec=` y `MaxFileSec=` de
+Estándares: `Storage=`, `SystemMaxUse=`, `MaxRetentionSec=` y `MaxFileSec=` de
 [`journald.conf`](../fuentes/systemd/journald.conf.xml),
 [`systemd-journal-upload`](../fuentes/systemd/systemd-journal-upload.service.xml) y
 [`journal-upload.conf`](../fuentes/systemd/journal-upload.conf.xml) de systemd; `log_destination`,
@@ -261,11 +275,14 @@ en *Where to Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml)
 
 - journald guarda en disco: `Storage=persistent` en `/etc/systemd/journald.conf.d/00-<app>.conf`.
   Con `auto`, el valor por defecto, guarda en memoria si falta `/var/log/journal`, sin avisar.
-- El journal guarda 365 días, como `event_log` en [fastapi.md](fastapi.md#registro-de-eventos):
-  también guarda direcciones IP de personas, como las que registra `sshd`. Son
-  `MaxRetentionSec=365day` y `MaxFileSec=1day`: journald borra un archivo entero cuando su primera
-  entrada pasa la retención, y con el mes de `MaxFileSec=` por defecto una entrada se borraría hasta
-  un mes antes o un mes después.
+- El journal guarda a lo sumo 365 días, como `event_log` en
+  [fastapi.md](fastapi.md#registro-de-eventos): también guarda direcciones IP de personas, como las
+  que registra `sshd`. Son `MaxRetentionSec=365day` y `MaxFileSec=1day`: journald borra un archivo
+  entero cuando su primera entrada pasa la retención, y con el mes de `MaxFileSec=` por defecto una
+  entrada se borraría hasta un mes antes o un mes después.
+- journald borra antes si el journal llega a `SystemMaxUse=`, que queda en su valor por defecto: el
+  10 % del disco, y a lo sumo 4G. La copia que vale es la de equipaggio, y un límite mayor le quitaría
+  disco a la app. Lo que no salió todavía se pierde si el túnel sigue caído hasta llenar ese límite.
 - PostgreSQL escribe en el journal, con `log_destination = 'syslog'` en
   `/etc/postgresql/17/main/conf.d/<app>.conf`, y su registro sale de la máquina con el resto. Con
   una carga extrema, syslog descarta mensajes en vez de frenar a PostgreSQL. Lo que escribe al
@@ -276,6 +293,9 @@ en *Where to Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml)
   extremo de equipaggio. La dirección es una constante del túnel; la de la máquina, `--logs-ip`, la
   da equipaggio. Sin `--logs` no sale: la máquina de equipaggio se instala igual y no se envía a sí
   misma.
+- Detectar que una máquina dejó de enviar le toca a equipaggio, por la hora de la última entrada que
+  recibió de ella: cada máquina escribe en el journal al menos una vez por día, con el timer de la
+  purga de `event_log`.
 - Una máquina que envía no se reinstala sin `--logs`: `install.py` falla si existe
   `/etc/wireguard/logs.conf`, porque equipaggio ya registró la llave de su túnel. Para dejar de
   enviar, se apagan `wg-quick@logs` y `systemd-journal-upload` y se borra ese archivo.
@@ -359,6 +379,8 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 
 ## Versiones
 
+Estándar: de OpenSSH 10.0, la sección *ALLOWED SIGNERS* de [`ssh-keygen`](../fuentes/openssh/ssh-keygen.1).
+
 - Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI corre en ese tag los jobs de `ci.yml`, y solo si
   pasan construye un artefacto con el servidor, sus catálogos compilados y el build de la web, y lo
   publica en un release de GitHub. El `.sha256` del release lleva el SHA-256 de cada archivo, con
@@ -375,6 +397,10 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
   instala el artefacto y los instalables que ese `.sha256` nombra, si lo firma una llave de
   `/etc/<app>/allowed_signers`: una cuenta de GitHub comprometida después de la firma no alcanza
   para desplegar otro archivo ni una versión anterior.
+- `install.py --signer` agrega cada llave que firma a `allowed_signers`, solo para el espacio de
+  nombres `deploy`, el que firma y comprueba `deploy.py`. Una máquina nueva necesita dos: la de la
+  computadora de quien firma y una guardada fuera de ella. Perder la computadora no impide
+  desplegar. Después, `--signer` solo agrega llaves, y una llave se retira borrando su línea.
 - `scripts/deploy.py` instala un tag en el servidor y se lanza por `ssh`, no desde el CI.
 - Las migraciones corren en la unidad `<app>-migrate@<versión>.service`, con las credenciales del
   servidor, porque `alembic/env.py` lee `Settings`, salvo `database_url`, que es la del rol dueño
@@ -400,6 +426,10 @@ Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup 
 
 | Qué | Con qué |
 |---|---|
+| Que cada host sirve su pieza con las cabeceras de «Caddy», que `/api/*` las lleva y no se guarda en caché, que un cuerpo que pasa su límite recibe 413 y no llega entero al servidor, y que `/downloads/` sirve los instalables | El `Caddyfile` y los sitios en el Caddy de Debian 13, con certificados propios de Caddy y un servidor en el 8000 que registra lo que le llega, con [`scripts/infra/caddy.sh`](../scripts/infra/caddy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que una máquina nueva necesita dos `--signer`, que cada llave firma solo para `deploy` y que después solo se agregan; que `install.py` falla sin `systemd-timesyncd` habilitado; y que apt lee el reinicio automático de las 04:00 | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn`, con [`scripts/infra/install.sh`](../scripts/infra/install.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que `deploy.py` migra y publica la primera versión, instala un tag una sola vez, vuelve a la anterior si la nueva no responde y no trae migraciones, borra la versión cuya migración falla, no instala nada firmado por una llave ajena ni con el `.sha256` de otra versión, y conserva las cinco versiones más recientes | `deploy.py` en la máquina que deja `install.py`, con los releases servidos desde la misma máquina en vez de GitHub y los paquetes del servidor en la caché de uv, con [`scripts/infra/deploy.sh`](../scripts/infra/deploy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que sin túnel no arranca un respaldo, que la receptora guarda el dump y los archivos y el servidor no los borra, que su llave no abre una terminal ni otro túnel, que un respaldo cortado mientras tiene su lock no frena el siguiente, que un respaldo que llega a su límite falla, y que lo que trae `restic restore` vuelve sobre la base que crea `install.py` | `plantilla/receiver/backup.sh` desde otro namespace de red, con el `restic-rest-server` de Debian 13 y el límite reducido de 4 h a 5 s, con [`scripts/infra/backup.sh`](../scripts/infra/backup.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | `00-<app>.conf` y `<app>-receiver.conf` que lee `sshd` | `sshd -t` en el OpenSSH de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Solo llaves y sin `root`, aunque un archivo del proveedor permita contraseñas | `sshd -T` con un `50-cloud-init.conf` que las permite, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Los roles de «PostgreSQL», y que el dump del dueño se restaura en la base que crea `install.py` | Las cuentas de `sysusers.conf`, `create_database` de `install.py` y el `pg_dump` de la unidad, en el PostgreSQL y el PostGIS de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

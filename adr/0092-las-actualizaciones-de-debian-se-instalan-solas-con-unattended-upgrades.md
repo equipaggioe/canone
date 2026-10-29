@@ -1,6 +1,7 @@
 # ADR-0092 · Las actualizaciones de Debian se instalan solas, con unattended-upgrades
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 4 lo reemplaza el
+  [ADR-0103](0103-unattended-upgrades-reinicia-la-maquina-a-las-0400-cuando-una-actualizacion-lo-pide.md)
 - **Fecha:** 2026-10-27
 - **Alcance:** «Máquina» de [`plataformas/despliegue.md`](../plataformas/despliegue.md) y
   `plantilla/infra/`

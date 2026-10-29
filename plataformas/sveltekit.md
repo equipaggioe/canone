@@ -8,6 +8,8 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
 
 - Node es el de Debian 13, y solo se usa para construir.
 - pnpm maneja las dependencias. No deja importar un paquete que no esté declarado.
+- `package.json` declara la versión exacta de pnpm en `packageManager`, como `pnpm@10.34.6`:
+  `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra.
 - TypeScript va en modo strict, y `svelte-check` lo revisa.
 - Prettier formatea, con `prettier-plugin-svelte` y líneas de 99, y ESLint revisa con
   `eslint-plugin-svelte`.
@@ -164,3 +166,4 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 |---|---|
 | Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |
 | Playwright 1.64.1 | [`scripts/verificar.py`](../scripts/verificar.py) |
+| La versión exacta de pnpm en `packageManager` | [`scripts/verificar.py`](../scripts/verificar.py) |

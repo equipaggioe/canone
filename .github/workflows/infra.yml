@@ -117,7 +117,7 @@ jobs:
           debootstrap systemd-container debian-archive-keyring
       - run: >-
           sudo debootstrap --variant=minbase
-          --include=systemd,systemd-sysv,dbus,sudo,unattended-upgrades,systemd-timesyncd,openssh-server,postgresql,caddy,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2,restic,restic-rest-server,curl
+          --include=systemd,systemd-sysv,dbus,sudo,ca-certificates,unattended-upgrades,systemd-timesyncd,openssh-server,postgresql,caddy,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2,restic,restic-rest-server,curl
           trixie /var/lib/machines/machine http://deb.debian.org/debian
       # The machine has no internet: deploy.py finds each package of the server in the cache of uv.
       - if: matrix.script == 'deploy.sh'

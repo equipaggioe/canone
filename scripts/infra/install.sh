@@ -1,7 +1,7 @@
 #!/bin/sh
 # Runs install.py on a Debian 13 with systemd running: a new machine needs two --signer, which
 # go to allowed_signers for the namespace deploy.py checks and are only added afterwards; it fails
-# without systemd-timesyncd enabled; apt reads the automatic reboot at 04:00; credentials.py
+# without systemd-timesyncd enabled or without ca-certificates; apt reads the automatic reboot at 04:00; credentials.py
 # encrypts each field where its unit loads it; Valkey opens only its socket, for the group of the
 # app, with its maxmemory; and root has no password, and an account of the app does not administer.
 # install.py runs as root, with an account that already administers, so it asks no password.
@@ -12,7 +12,15 @@ install=$1/plantilla/infra/install.py
 credentials=$1/plantilla/infra/credentials.py
 work=$(mktemp -d)
 signers=/etc/demo/allowed_signers
-trap 'status=$?; systemctl enable --quiet systemd-timesyncd.service; rm -rf "$work"; exit "$status"' EXIT
+certificates=/etc/ssl/certs/ca-certificates.crt
+cleanup() {
+    status=$?
+    systemctl enable --quiet systemd-timesyncd.service
+    if [ -f "$work/certificates" ]; then mv "$work/certificates" "$certificates"; fi
+    rm -rf "$work"
+    exit "$status"
+}
+trap cleanup EXIT
 step() { printf '\n== %s\n' "$*"; }
 fails() { if "$@" 2> "$work/error"; then exit 1; fi; }
 for name in a b s1 s2 s3 x; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
@@ -58,6 +66,12 @@ systemctl disable --quiet systemd-timesyncd.service
 fails run
 grep -qxF 'systemd-timesyncd is not enabled, and the clock would drift.' "$work/error"
 systemctl enable --quiet systemd-timesyncd.service
+
+step "Without ca-certificates, it fails"
+mv "$certificates" "$work/certificates"
+fails run
+grep -qxF 'ca-certificates is not installed, and deploy.py would not reach GitHub.' "$work/error"
+mv "$work/certificates" "$certificates"
 
 step "apt reboots by itself at 04:00 when a package asks for it"
 test "$(apt-config dump --format '%v%n' Unattended-Upgrade::Automatic-Reboot)" = true

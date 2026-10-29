@@ -3,9 +3,10 @@
 # in place of GitHub: the first version migrates and goes live, a tag goes in once, an unhealthy
 # version goes back to the previous, a failed migration leaves nothing, a checksum signed by a key
 # outside allowed_signers or of another version installs nothing, and releases/ keeps the five
-# newest. The server reads the credentials of credentials.py, and the daily purge and sweep run
-# on what goes live. uv finds every package in UV_CACHE_DIR, filled before the machine lost its
-# network.
+# newest. A private repository deploys only with --private and its token, which does not follow
+# the redirect of a download to another host. The server reads the credentials of credentials.py,
+# and the daily purge and sweep run on what goes live. uv finds every package in UV_CACHE_DIR,
+# filled before the machine lost its network.
 #
 #     sh deploy.sh <canone>
 set -eu
@@ -31,17 +32,21 @@ for name in a b s1 s2 x; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; don
 key() { cat "$work/$1.pub"; }
 # An account that already administers: install.py only adds its keys, and asks no password.
 id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
-python3 "$canone/plantilla/infra/install.py" demo demo.example 64mb --admin operador \
-    --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)" \
-    --owner owner --desktop linux --desktop windows --desktop macos
+# setup [<flag>]: install.py, and its deploy.py with GitHub answering from this machine.
+setup() {
+    python3 "$canone/plantilla/infra/install.py" demo demo.example 64mb --admin operador \
+        --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)" \
+        --owner owner --desktop linux --desktop windows --desktop macos "$@"
+    sed 's#https://api.github.com#http://127.0.0.1:9000#' /usr/local/lib/demo/deploy.py \
+        > "$work/deploy.py"
+}
+setup
 # The fields of Settings besides the database_url of install.py.
 python3 "$canone/plantilla/infra/credentials.py" demo <<'EOF'
 health_token=test-health-token
 min_client_versions={}
 page_token_key=0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY=
 EOF
-# The deploy.py of install.py, with GitHub answering from this machine.
-sed 's#https://api.github.com#http://127.0.0.1:9000#' /usr/local/lib/demo/deploy.py > "$work/deploy.py"
 deploy() { UV_OFFLINE=1 python3 "$work/deploy.py" "$1"; }
 
 # release <version> <signing key> [<function that changes the tree>]: what release.yml publishes.
@@ -100,7 +105,68 @@ EOF
 }
 
 mkdir -p "$api"
-python3 -m http.server --bind 127.0.0.1 9000 --directory "$api" > /dev/null 2>&1 &
+# GitHub: the API on 9000 and its downloads, redirected to another host. With $work/token, the
+# repository is private: without a token it answers 404, and with another token, 401.
+cat > "$work/github.py" <<'EOF'
+import sys
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+api, token = Path(sys.argv[1]), Path(sys.argv[2])
+
+
+class Handler(BaseHTTPRequestHandler):
+    def log_message(self, *arguments):
+        pass
+
+    def send_file(self):
+        path = api / self.path.lstrip("/")
+        if not path.is_file():
+            self.send_error(404)
+            return
+        body = path.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+
+class Api(Handler):
+    def do_GET(self):
+        if token.exists():
+            given = self.headers.get("Authorization")
+            if given is None:
+                self.send_error(404)
+                return
+            if given != f"Bearer {token.read_text(encoding='utf-8')}":
+                self.send_error(401)
+                return
+        if self.path.startswith("/assets/"):
+            self.send_response(302)
+            self.send_header("Location", f"http://localhost:9001{self.path}")
+            self.end_headers()
+            return
+        self.send_file()
+
+
+class Downloads(Handler):
+    def do_GET(self):
+        # The token is for the API, and another host must not receive it.
+        if "Authorization" in self.headers:
+            self.send_error(403)
+            return
+        self.send_file()
+
+
+servers = [
+    ThreadingHTTPServer(("127.0.0.1", 9000), Api),
+    ThreadingHTTPServer(("127.0.0.1", 9001), Downloads),
+]
+for server in servers:
+    threading.Thread(target=server.serve_forever).start()
+EOF
+python3 "$work/github.py" "$api" "$work/token" &
 pids="$pids $!"
 until curl -s -o /dev/null http://127.0.0.1:9000/; do sleep 0.2; done
 
@@ -162,3 +228,22 @@ test "$(current)" = v1.1.5
 healthy
 test "$(ls /srv/demo/releases | tr '\n' ' ')" = "v1.1.1 v1.1.2 v1.1.3 v1.1.4 v1.1.5 "
 test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.1.5"
+
+step "A private repository answers 404 without --private, and 401 with another token"
+printf %s test-github-token > "$work/token"
+release v1.2.0 s1
+fails deploy v1.2.0
+grep -qF ': 404 Not Found' "$work/error"
+setup --private
+echo github_token=another-token | python3 "$canone/plantilla/infra/credentials.py" demo
+fails deploy v1.2.0
+grep -qF ': 401 Unauthorized' "$work/error"
+test ! -e /srv/demo/releases/v1.2.0
+test "$(current)" = v1.1.5
+
+step "With its token it deploys, and the token does not follow a download to another host"
+echo github_token=test-github-token | python3 "$canone/plantilla/infra/credentials.py" demo
+deploy v1.2.0
+test "$(current)" = v1.2.0
+healthy
+test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.2.0"

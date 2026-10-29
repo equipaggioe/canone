@@ -60,6 +60,8 @@ LOGS = {
     "journal-upload-retry.conf": f"{UNITS}/systemd-journal-upload.service.d/PRODUCTO.conf",
 }
 UPLOADER = Path("/usr/lib/systemd/systemd-journal-upload")
+# The certificates of ca-certificates, which deploy.py checks GitHub against.
+CERTIFICATES = Path("/etc/ssl/certs/ca-certificates.crt")
 # The desktop installer of each system, with the name Caddy serves it by.
 INSTALLERS = {
     "linux": "desktop-linux.bin",
@@ -355,6 +357,8 @@ def main() -> None:
     # ADR-0092: without it, 20auto-upgrades turns on nothing and nothing says so.
     if shutil.which("unattended-upgrade") is None:
         raise SystemExit("unattended-upgrades is not installed, and Debian would not update.")
+    if not CERTIFICATES.is_file():
+        raise SystemExit("ca-certificates is not installed, and deploy.py would not reach GitHub.")
     # ADR-0102: the credentials of TURN, the sessions and the journal go by the clock.
     timesyncd = ["systemctl", "is-enabled", "--quiet", "systemd-timesyncd.service"]
     if subprocess.run(timesyncd, check=False).returncode != 0:

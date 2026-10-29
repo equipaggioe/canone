@@ -415,6 +415,11 @@ def revisar(repo: Path) -> list[str]:
         deps = {**datos.get("dependencies", {}), **datos.get("devDependencies", {})}
         if "@sveltejs/kit" not in deps:
             continue
+        # pnpm/action-setup toma de aquí la versión de pnpm, y falla si no la encuentra.
+        if not re.fullmatch(r"pnpm@\d+\.\d+\.\d+(\+\S+)?", datos.get("packageManager", "")):
+            fallas.append(
+                f"plataformas/sveltekit.md: {superficie.name}/package.json no declara la versión exacta de pnpm en packageManager"
+            )
         if "@sveltejs/adapter-static" not in deps:
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no usa adapter-static")
         if not (superficie / "uno.config.ts").exists():

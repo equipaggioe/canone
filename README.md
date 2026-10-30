@@ -29,19 +29,20 @@ cambia junto con sus plantillas, y solo instalándola se prueba entera.
 
 ## Quién hace qué
 
-Por qué se reparte así: [ADR-0075](adr/0075-canone-fija-el-repositorio-declara-y-consola-dispara.md).
+Por qué se reparte así: [ADR-0075](adr/0075-canone-fija-el-repositorio-declara-y-consola-dispara.md)
+y [ADR-0107](adr/0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md).
 
 | Quién | Qué hace | Qué no hace |
 |---|---|---|
-| **canone** | Fija las reglas y da las plantillas | No guarda datos de ninguna app ni decide cuándo se corre nada |
-| **El repositorio** | Sigue las reglas, copia las plantillas que se copian y declara sus datos: nombre, puerto, dominio, memoria, superficies y campos de `Settings` | No reimplementa una plantilla ni decide cómo se instala |
-| **consola** | Lee los datos del repositorio y dispara: instala `plantilla/infra/` desde canone, crea el tag, firma y corre el `deploy.py` que instaló `install.py` | No escribe unidades, configuración ni scripts propios. Si algo no tiene plantilla, primero se agrega a canone |
+| **canone** | Fija las reglas, da las plantillas y fija cada programa por su interfaz: sus argumentos y su stdin | No guarda datos de ninguna app, no decide cuándo se corre nada ni nombra con qué se corre |
+| **El repositorio** | Sigue las reglas, copia las plantillas que se copian y declara sus datos: nombre, superficies y campos de `Settings` | No reimplementa una plantilla ni decide cómo se instala |
+| **Quien despliega** | Corre los programas de canone por su interfaz, a mano o con la herramienta que elija | No escribe encima de lo que instalan: ni unidades, ni configuración, ni scripts propios |
 
-- Una plantilla **que se copia**, como `release.yml`, consola la toma del repositorio.
-- Una plantilla **que se instala**, como `infra/` con su `deploy.py`, consola la toma de canone.
-- Un secreto no se declara con su valor en el repositorio: el repositorio declara el campo, y el
-  valor vive en `.consola/config.env`, la única fuente de lo que cambia entre despliegues
-  ([ADR-0076](adr/0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md)).
+- Una plantilla **que se copia**, como `release.yml`, vive en el repositorio.
+- Una plantilla **que se instala**, como `infra/` con su `deploy.py`, se toma de canone.
+- Lo que cambia entre despliegues, secreto o no, no se commitea: el repositorio declara el campo, y
+  el valor llega al servidor como argumento de `install.py`, como el dominio y la memoria, o por
+  `credentials.py`. canone no fija dónde lo guarda quien despliega.
 
 ## Índice
 

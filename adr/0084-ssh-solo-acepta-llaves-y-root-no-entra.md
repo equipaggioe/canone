@@ -1,6 +1,7 @@
 # ADR-0084 · `ssh` solo acepta llaves, y `root` no entra
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 4 lo reemplaza el
+  [ADR-0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md)
 - **Fecha:** 2026-10-25
 - **Alcance:** «SSH» de [`plataformas/despliegue.md`](../plataformas/despliegue.md) y
   `plantilla/infra/`

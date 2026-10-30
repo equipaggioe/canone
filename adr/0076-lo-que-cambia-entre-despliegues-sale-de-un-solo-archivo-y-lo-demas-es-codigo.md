@@ -1,7 +1,8 @@
 # ADR-0076 · Lo que cambia entre despliegues sale de un solo archivo, y lo demás es código
 
 - **Estado:** Aceptada. El punto 3 lo reemplaza el
-  [ADR-0105](0105-las-credenciales-las-cifra-credentials-py-de-canone-y-consola-solo-se-las-pasa.md)
+  [ADR-0105](0105-las-credenciales-las-cifra-credentials-py-de-canone-y-consola-solo-se-las-pasa.md),
+  y los puntos 2 y 4, el [ADR-0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md)
 - **Fecha:** 2026-10-24
 - **Alcance:** «Configuración» de [`plataformas/fastapi.md`](../plataformas/fastapi.md) y `.consola/`
   en [`repositorio.md`](../repositorio.md)

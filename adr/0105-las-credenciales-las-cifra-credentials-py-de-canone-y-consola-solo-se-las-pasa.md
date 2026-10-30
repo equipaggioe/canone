@@ -1,6 +1,7 @@
 # ADR-0105 · Las credenciales las cifra credentials.py de canone, y consola solo se las pasa
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 2 lo reemplaza el
+  [ADR-0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md)
 - **Fecha:** 2026-10-28
 - **Alcance:** «Configuración» de [`plataformas/despliegue.md`](../plataformas/despliegue.md) y
   `plantilla/infra/`

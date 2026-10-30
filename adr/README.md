@@ -82,8 +82,8 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0072](0072-cada-instancia-de-valkey-limita-su-memoria-y-thp-se-apaga-solo-para-valkey.md) | Cada instancia de Valkey limita su memoria, y Transparent Huge Pages se apaga solo para Valkey | Con `server/` | Aceptada |
 | [0073](0073-el-ping-de-uvicorn-cierra-el-websocket-que-no-responde-y-caddy-no-lo-corta-por-tiempo.md) | El ping de Uvicorn cierra el WebSocket que no responde, y Caddy no lo corta por tiempo | Con `server/` | Aceptada |
 | [0074](0074-las-credenciales-del-respaldo-tienen-una-copia-fuera-del-servidor.md) | Las credenciales del respaldo tienen una copia fuera del servidor | Con `server/` | Descartada por ADR-0079 |
-| [0075](0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) | canone fija, el repositorio declara y consola dispara | Todos | Aceptada; la primera consecuencia y el motivo de los descartes los reemplaza ADR-0077 |
-| [0076](0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md) | Lo que cambia entre despliegues sale de un solo archivo, y lo demás es código | Con `server/` | Aceptada; el punto 3 lo reemplaza ADR-0105 |
+| [0075](0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) | canone fija, el repositorio declara y consola dispara | Todos | Aceptada; la primera consecuencia y el motivo de los descartes los reemplaza ADR-0077, y los puntos 3 y 4, ADR-0107 |
+| [0076](0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md) | Lo que cambia entre despliegues sale de un solo archivo, y lo demás es código | Con `server/` | Aceptada; el punto 3 lo reemplaza ADR-0105, y los puntos 2 y 4, ADR-0107 |
 | [0077](0077-un-vps-aloja-un-solo-producto.md) | Un VPS aloja un solo producto | Con `server/` | Aceptada |
 | [0078](0078-el-respaldo-lo-pide-una-receptora-y-lo-guarda-su-rest-server.md) | El respaldo lo pide una receptora, y lo guarda su `rest-server` | Con `server/` | Aceptada; el punto 7 lo reemplaza ADR-0079 |
 | [0079](0079-canone-no-fija-la-operacion-del-respaldo.md) | canone no fija la operación del respaldo | Con `server/` | Aceptada |
@@ -91,7 +91,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0081](0081-la-purga-de-event-log-la-corre-el-dueno-del-esquema.md) | La purga de `event_log` la corre el dueño del esquema | Con `server/` | Aceptada |
 | [0082](0082-la-ruta-de-salud-dice-cuanto-disco-queda.md) | La ruta de salud dice cuánto disco queda | Con `server/` | Aceptada |
 | [0083](0083-la-base-y-sus-roles-los-crea-install-py-y-el-servidor-entra-por-peer.md) | La base y sus roles los crea `install.py`, y el servidor entra por `peer` | Con `server/` | Aceptada; los puntos 3 y 4 los reemplaza ADR-0085 |
-| [0084](0084-ssh-solo-acepta-llaves-y-root-no-entra.md) | `ssh` solo acepta llaves, y `root` no entra | Con `server/` | Aceptada |
+| [0084](0084-ssh-solo-acepta-llaves-y-root-no-entra.md) | `ssh` solo acepta llaves, y `root` no entra | Con `server/` | Aceptada; el punto 4 lo reemplaza ADR-0107 |
 | [0085](0085-el-dueno-del-esquema-entra-por-peer-con-su-cuenta-y-corre-el-volcado.md) | El dueño del esquema entra por `peer` con su cuenta, y corre el volcado | Con `server/` | Aceptada |
 | [0086](0086-las-pruebas-corren-con-los-permisos-del-servidor-y-las-migraciones-con-el-dueno.md) | Las pruebas corren con los permisos del servidor, y las migraciones con el dueño | Con `server/` | Aceptada |
 | [0087](0087-la-cuenta-que-administra-no-es-una-cuenta-de-la-app.md) | La cuenta que administra no es una cuenta de la app | Con `server/` | Aceptada |
@@ -112,5 +112,6 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0102](0102-la-hora-la-sincroniza-systemd-timesyncd-e-install-py-falla-si-no-esta-habilitado.md) | La hora la sincroniza systemd-timesyncd, e `install.py` falla si no está habilitado | Con `server/` | Aceptada |
 | [0103](0103-unattended-upgrades-reinicia-la-maquina-a-las-0400-cuando-una-actualizacion-lo-pide.md) | unattended-upgrades reinicia la máquina a las 04:00 cuando una actualización lo pide | Con `server/` | Aceptada |
 | [0104](0104-las-llaves-que-firman-los-releases-las-agrega-install-py-dos-en-una-maquina-nueva.md) | Las llaves que firman los releases las agrega `install.py`, dos en una máquina nueva | Con `server/` | Aceptada |
-| [0105](0105-las-credenciales-las-cifra-credentials-py-de-canone-y-consola-solo-se-las-pasa.md) | Las credenciales las cifra `credentials.py` de canone, y consola solo se las pasa | Con `server/` | Aceptada |
+| [0105](0105-las-credenciales-las-cifra-credentials-py-de-canone-y-consola-solo-se-las-pasa.md) | Las credenciales las cifra `credentials.py` de canone, y consola solo se las pasa | Con `server/` | Aceptada; el punto 2 lo reemplaza ADR-0107 |
 | [0106](0106-deploy-py-se-instala-desde-plantilla-infra-con-los-datos-de-la-app.md) | `deploy.py` se instala desde `plantilla/infra/` con los datos de la app, y no se copia al repositorio | Con `server/` | Aceptada |
+| [0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md) | canone fija la interfaz de sus programas, y no la herramienta que los corre | Todos | Aceptada |

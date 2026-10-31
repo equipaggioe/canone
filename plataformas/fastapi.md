@@ -184,9 +184,9 @@ Contrato: [transversal.md](transversal.md#archivos).
 
 ## Autenticación
 
-Estándares: de [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), las secciones 2.1.1 y 2.1.2
-de *AAL1*, 3.2.2 *Rate Limiting (Throttling)*, 4.1 *Authenticator Binding* y 4.6 *Account
-Notifications*, y las secciones 2.2.1 y 2.2.2 de *AAL2* en las cuentas de administración.
+Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), en *AAL1* y en *AAL2* para las
+cuentas de administración, salvo lo que rige en «Código por SMS», «Contraseñas», «Passkeys» y
+«Sesión», y en [transversal.md](transversal.md#contraseñas).
 
 - Una cuenta se registra con un correo o con un teléfono, verificado con un código.
 - Una cuenta no tiene nombre de usuario.
@@ -209,10 +209,12 @@ Notifications*, y las secciones 2.2.1 y 2.2.2 de *AAL2* en las cuentas de admini
 - Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
 - El titular vuelve a habilitarlo desde una sesión abierta o, si es la contraseña, restableciéndola.
 - El login con contraseña responde el mismo error exista o no la cuenta.
+- La sección 2.4 *General Requirements* de NIST queda sin efecto: pide los controles de SP 800-53
+  y los procesos de registros, privacidad y reclamos de una agencia federal.
 
 ## Código por SMS
 
-Estándar: la sección 3.1.3.2 *Out-of-Band Verifiers* de
+Estándar: las secciones 3.1.3 *Out-of-Band Devices* y 3.2.9 *Restricted Authenticators* de
 [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
 Contrato: [transversal.md](transversal.md#código-por-sms).
@@ -372,6 +374,16 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 ## Passkeys
 
+Estándares: de [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), las secciones 3.1.6
+*Single-Factor Cryptographic Authentication*, 3.1.7 *Multi-Factor Cryptographic Authentication*,
+3.2.4 *Attestation*, 3.2.5 *Phishing Resistance*, 3.2.7 *Replay Resistance* y 3.2.8 *Authentication
+Intent*, y el apéndice B *Syncable Authenticators*; y de
+[*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C, las secciones 6.1.1
+*Signature Counter Considerations*, 6.1.3 *Credential Backup State*, 7 *WebAuthn Relying Party
+Operations*, 13.1 *Credential ID Unsigned*, 13.4 *Security considerations for Relying Parties* y
+14.6 *Privacy considerations for Relying Parties*. Lo demás lo cumplen el autenticador y el
+navegador.
+
 Contrato: [transversal.md](transversal.md#passkeys).
 
 - Las passkeys se validan con `webauthn`.
@@ -404,7 +416,7 @@ secciones 15.5.4 *403 Forbidden* y 15.5.5 *404 Not Found* de
 
 Estándar: lo que [RFC 8030](../fuentes/rfc/rfc8030.txt) le pide al servidor de aplicación: la
 sección 5 *Requesting Push Message Delivery*, salvo 5.3, que rige en
-[transversal.md](transversal.md#push), y las secciones 7.2 a 7.4 y 8.
+[transversal.md](transversal.md#push).
 
 Contrato: [transversal.md](transversal.md#push).
 
@@ -502,15 +514,23 @@ de ASVS 5.0 de OWASP, el capítulo
 [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) y el capítulo
 [V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), salvo V3.2.1 y
 V3.4, que quedan sin efecto en [despliegue.md](despliegue.md#caddy), y V3.2.2, que rige en
-[sveltekit.md](sveltekit.md#csp); y el párrafo de
-`SameSite` de *Session Management* del
-[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
+[sveltekit.md](sveltekit.md#csp); y el párrafo de `SameSite` de *Session Management* del
+[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md); y de
+[NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), las secciones 2.1.3 y 2.2.3 *Reauthentication*
+y 5 *Session Management*.
 
 Contrato: [transversal.md](transversal.md#sesión).
 
 - La web y las apps comparten la tabla de sesiones: cambia solo el token que presenta cada una.
 - Cada inicio de sesión crea una fila de sesión, con su creación y su último uso. La sesión vence
   tras 30 días sin uso, y cerrar sesión borra la fila.
+- Una sesión de usuario no tiene vencimiento total. Contradice la sección 2.1.3 de NIST, que lo pide
+  de a lo sumo 30 días: pedir entrar de nuevo cada mes aleja al usuario de una app de uso diario, y
+  el refresco rotado descubre un token robado cuando el dueño vuelve a refrescar.
+- Una sesión de una cuenta de administración vence a las 24 horas de iniciarse, o tras 1 hora sin
+  uso, como pide la sección 2.2.3 de NIST.
+- La sección 5.1 *Session Bindings* de NIST queda sin efecto: la cookie y los tokens los rigen
+  ASVS, RFC 8725 y RFC 9700.
 - El último uso se actualiza al refrescar, en una app, y a lo sumo cada 15 minutos, en la web: una
   escritura por petición cargaría la base sin mover el vencimiento.
 - Una tarea periódica borra las sesiones vencidas.
@@ -591,9 +611,6 @@ Contrato: [transversal.md](transversal.md#websocket).
 <br>
 
 ## Pruebas
-
-Estándar: la sección *Testing WebSocket Security* del
-[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
 - Las pruebas asíncronas corren con el plugin de pytest de AnyIO, con `anyio_mode = "auto"`, y
   `anyio_backend` es `asyncio`: asyncpg y la app solo corren en asyncio.

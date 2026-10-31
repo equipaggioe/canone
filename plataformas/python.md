@@ -145,8 +145,7 @@ Estándar: la sección 4.3.4 *https Certificate Verification* de
 
 ## Pruebas
 
-Estándar: las secciones *Do not run via setuptools*, *Checking with flake8-pytest-style* y
-*Using pytest's strict mode* de las
+Estándar: las secciones *Do not run via setuptools* y *Using pytest's strict mode* de las
 [buenas prácticas de pytest](../fuentes/pytest/goodpractices.rst).
 
 - Las pruebas se escriben con pytest: un `assert` simple muestra los valores que fallaron, y los

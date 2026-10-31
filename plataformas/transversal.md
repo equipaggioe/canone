@@ -67,9 +67,9 @@ Estándares: [RFC 3339](../fuentes/rfc/rfc3339.txt) y la sección 4.3 *Time and 
 
 ## Idiomas
 
-Estándares: las secciones 2.1 *Syntax* y 4.1 *Choice of Language Tag* de
-[RFC 5646](../fuentes/rfc/rfc5646.txt) y la sección 12.5.4 de [RFC 9110](../fuentes/rfc/rfc9110.txt),
-*Accept-Language*.
+Estándares: las secciones 2 *The Language Tag* y 4 *Formation and Processing of Language Tags*
+de [RFC 5646](../fuentes/rfc/rfc5646.txt) y la sección 12.5.4 de
+[RFC 9110](../fuentes/rfc/rfc9110.txt), *Accept-Language*.
 
 - Todo producto se diseña multilingüe.
 - El idioma base es `es`.
@@ -79,9 +79,7 @@ Estándares: las secciones 2.1 *Syntax* y 4.1 *Choice of Language Tag* de
 
 ## Llamadas de voz y video
 
-Estándares: las secciones 4.1.10.2 *Rollback* y 5.7 *Processing a Rollback* de
-[RFC 9429](../fuentes/rfc/rfc9429.txt), JSEP, y la sección *RTCIceServer Dictionary* de
-[WebRTC](../fuentes/w3c/webrtc.html) de W3C.
+Estándar: la sección *RTCIceServer Dictionary* de [WebRTC](../fuentes/w3c/webrtc.html) de W3C.
 
 - La señalización va por el WebSocket de la app.
 - coturn usa credenciales temporales (`use-auth-secret`), que el servidor entrega por la API.
@@ -151,9 +149,8 @@ Estándar: la [AIP-158](../fuentes/google-aip/aip-0158.md) de Google, *Paginatio
 
 ## Passkeys
 
-Estándares: las secciones 5.4 *Options for Credential Creation*, 5.5 *Options for Assertion
-Generation* y 7 *WebAuthn Relying Party Operations* de
-[*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C, la sección
+Estándares: las secciones 5.4 *Options for Credential Creation* y 5.5 *Options for Assertion
+Generation* de [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C, la sección
 4.1 *Authorization Code Grant* de [RFC 6749](../fuentes/rfc/rfc6749.txt),
 [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y la sección
 2.1 *Protecting Redirect-Based Flows* de [RFC 9700](../fuentes/rfc/rfc9700.txt).
@@ -167,8 +164,8 @@ Generation* y 7 *WebAuthn Relying Party Operations* de
 Estándares: las secciones *Push subscription*, *Declarative push message*, *PushSubscriptionOptions
 Interface*, *PushSubscription interface* y *PushEncryptionKeyName enumeration* de la
 [*Push API*](../fuentes/w3c/push-api.html) de W3C, la sección 5.3 *Push Message Urgency* de
-[RFC 8030](../fuentes/rfc/rfc8030.txt), y las secciones 2 *Application Server Self-Identification*
-y 4.1 *Creating a Restricted Push Message Subscription* de [RFC 8292](../fuentes/rfc/rfc8292.txt).
+[RFC 8030](../fuentes/rfc/rfc8030.txt), y la sección 2 *Application Server Self-Identification*
+de [RFC 8292](../fuentes/rfc/rfc8292.txt).
 
 - Android y Flutter reciben push por FCM.
 - Un mensaje de FCM lleva `notification` y, en `data`, la ruta que abre al tocarlo, salvo el de una

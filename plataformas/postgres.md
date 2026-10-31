@@ -30,13 +30,12 @@ Estándares: de PostgreSQL 17, la versión de Debian 13, las entradas de los tip
 - `uuid` con `gen_random_uuid()`: en una tabla cuyas filas crea el cliente, que genera el id para
   crear por `PUT`, como fija [transversal.md](transversal.md#reintentos), o cuyas filas pertenecen a un usuario y no
   deben poder enumerarse.
+- Una tabla particionada lleva como clave su id, de una de las reglas anteriores, y las columnas de
+  partición, como `(id, created_at)`: PostgreSQL exige que la clave las incluya.
+- Una tabla cuyas filas se identifican por un par de valores, como `(role, permission)`, lleva ese
+  par como clave, sin id propio. Cada columna es una clave foránea o un `text`.
 - Una identity es `GENERATED ALWAYS`, que rechaza un id escrito a mano.
 - Una clave foránea tiene el tipo de la clave que apunta.
-
-> **Por revisar** (anotado desde navetta el 2026-10-17): `test_primary_key_is_allowed` exige una clave
-> de una sola columna, y PostgreSQL exige que la clave de una tabla particionada incluya la columna
-> de partición, como `(id, created_at)`. Tampoco admite una clave natural compuesta, como
-> `(role, permission)`. navetta las exime en su copia de la prueba.
 
 ## Definición de datos
 
@@ -90,7 +89,7 @@ Con las pruebas de `tests/test_conventions.py` de [fastapi.md](fastapi.md):
 
 | Qué | Prueba |
 |---|---|
-| Clave `text`, identity `ALWAYS` o `uuid` con `gen_random_uuid()` | `test_primary_key_is_allowed` |
+| Clave `text`, identity `ALWAYS` o `uuid` con `gen_random_uuid()`, la de una tabla particionada y la de un par de valores | `test_primary_key_is_allowed` y `test_primary_key_rules` |
 | Cadenas `text` | `test_strings_are_text` |
 | `timestamptz` | `test_datetimes_are_aware` |
 | Enumerados como `text` con `CHECK` | `test_enums_are_checked_text` |

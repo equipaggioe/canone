@@ -58,14 +58,80 @@ def is_allowed_key(column: sa.Column[Any]) -> bool:
     return False
 
 
+def partition_columns(table: sa.Table) -> set[str]:
+    """Return the columns that partition a table, if any."""
+    partition = table.dialect_options["postgresql"].get("partition_by") or ""
+    return set(re.findall(r"\w+", partition)) & set(table.columns.keys())
+
+
+def is_allowed_primary_key(table: sa.Table) -> bool:
+    """Tell whether a table key follows postgres.md."""
+    columns = list(table.primary_key.columns)
+    partition = partition_columns(table)
+    if partition:
+        own = [column for column in columns if column.name not in partition]
+        names = {column.name for column in columns}
+        return partition <= names and len(own) == 1 and is_allowed_key(own[0])
+    if len(columns) == 1:
+        return is_allowed_key(columns[0])
+    return all(column.foreign_keys or isinstance(column.type, sa.Text) for column in columns)
+
+
 def test_primary_key_is_allowed() -> None:
-    """Every table has one key of the four rules of postgres.md."""
-    offenders = [
-        table.name
-        for table in TABLES
-        if len(table.primary_key.columns) != 1 or not is_allowed_key(table.primary_key.columns[0])
-    ]
+    """Every table has a key of the rules of postgres.md."""
+    offenders = [table.name for table in TABLES if not is_allowed_primary_key(table)]
     assert not offenders
+
+
+def key_table(name: str, *columns: sa.Column[Any], **options: Any) -> sa.Table:
+    """Build a table apart from the models, to try a key on it."""
+    metadata = sa.MetaData()
+    sa.Table("account", metadata, sa.Column("id", sa.Uuid, primary_key=True))
+    return sa.Table(name, metadata, *columns, **options)
+
+
+@pytest.mark.parametrize(
+    ("table", "allowed"),
+    [
+        (
+            key_table(
+                "reading",
+                sa.Column("id", sa.BigInteger, sa.Identity(always=True), primary_key=True),
+                sa.Column("created_at", sa.DateTime(timezone=True), primary_key=True),
+                postgresql_partition_by="RANGE (created_at)",
+            ),
+            True,
+        ),
+        (
+            key_table(
+                "reading",
+                sa.Column("id", sa.BigInteger, primary_key=True),
+                sa.Column("created_at", sa.DateTime(timezone=True), primary_key=True),
+                postgresql_partition_by="RANGE (created_at)",
+            ),
+            False,
+        ),
+        (
+            key_table(
+                "role_permission",
+                sa.Column("role", sa.Text, primary_key=True),
+                sa.Column("permission", sa.Text, primary_key=True),
+            ),
+            True,
+        ),
+        (
+            key_table(
+                "membership",
+                sa.Column("account_id", sa.ForeignKey("account.id"), primary_key=True),
+                sa.Column("position", sa.Integer, primary_key=True),
+            ),
+            False,
+        ),
+    ],
+)
+def test_primary_key_rules(table: sa.Table, allowed: bool) -> None:
+    """Check partitioned keys and natural keys."""
+    assert is_allowed_primary_key(table) is allowed
 
 
 def test_foreign_keys_declare_on_delete() -> None:

@@ -169,7 +169,9 @@ Estándar: la sección *What does Autogenerate Detect (and what does it not dete
 
 ## Archivos
 
-Estándar: [*File Upload Cheat Sheet*](../fuentes/owasp/File_Upload.md) de OWASP.
+Estándares: de OWASP, el [*File Upload Cheat Sheet*](../fuentes/owasp/File_Upload.md) y la
+sección *Secure File Download Headers* del
+[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md).
 
 Contrato: [transversal.md](transversal.md#archivos).
 
@@ -305,8 +307,13 @@ Estándar: la sección 4 de [RFC 6585](../fuentes/rfc/rfc6585.txt), *429 Too Man
 
 ## Llamadas de voz y video
 
+Estándar: el párrafo sobre el usuario de la sección 21.1.6, *Eavesdropping Traffic*, del
+[RFC 8656](../fuentes/rfc/rfc8656.txt).
+
 Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
 
+- El usuario de una credencial de TURN es solo su vencimiento, sin la cuenta: coturn lo recibe sin
+  cifrar.
 - Una credencial de TURN dura 1 hora. coturn la revisa solo al abrir el relay, así que vencer no
   corta una llamada en curso.
 - La llamada que suena vive en Valkey, con su oferta y un TTL de 60 segundos. Una llamada sin
@@ -440,6 +447,9 @@ Estándares: las secciones *Where to record event data*, *Which events to log*, 
   `root` pueden cambiarlo, y `root` también cambia lo que lo detectaría.
 - *Protection* queda sin efecto en registrar y vigilar cada acceso: solo leen la app y quien opera
   el servidor, y vigilar es un proceso de operación.
+- La sección *Security Monitoring and Logging* del
+  [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) queda sin efecto: qué se
+  registra lo rige el *Logging Cheat Sheet*, que cubre más.
 - El rol de la app se llama como la app.
 - La purga es una tarea periódica que borra lo que pasó la retención con la credencial del dueño
   del esquema, la de las migraciones: el servidor no la recibe.
@@ -484,7 +494,9 @@ sección 4.14 *Refresh Token Protection* de [RFC 9700](../fuentes/rfc/rfc9700.tx
 de ASVS 5.0 de OWASP, el capítulo
 [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) y las secciones V3.3
 *Cookie Setup* y V3.5 *Browser Origin Separation* de
-[V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md).
+[V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md); y el párrafo de
+`SameSite` de *Session Management* del
+[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
 
 Contrato: [transversal.md](transversal.md#sesión).
 
@@ -546,8 +558,9 @@ Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
 
 ## WebSocket
 
-Estándar: las secciones *Origin Header Validation*, *Message-Level Authorization*, *Input
-Validation* y *Denial-of-Service Protection* del
+Estándar: las secciones *Origin Header Validation*, *Additional CSWSH Protections*,
+*Message-Level Authorization*, *Input Validation*, *Service Tunneling Risks*, *Denial-of-Service
+Protection* y *Framework-Specific Best Practices* del
 [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
 Contrato: [transversal.md](transversal.md#websocket).
@@ -573,6 +586,9 @@ Contrato: [transversal.md](transversal.md#websocket).
 <br>
 
 ## Pruebas
+
+Estándar: la sección *Testing WebSocket Security* del
+[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
 - Las pruebas asíncronas corren con el plugin de pytest de AnyIO, con `anyio_mode = "auto"`, y
   `anyio_backend` es `asyncio`: asyncpg y la app solo corren en asyncio.

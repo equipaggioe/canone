@@ -1,3 +1,5 @@
 panel.DOMINIO {
 	import surface PRODUCTO panel "PERMISOS"
+	# Only the landing is public.
+	header X-Robots-Tag "noindex, nofollow"
 }

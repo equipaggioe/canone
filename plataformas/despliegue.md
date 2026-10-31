@@ -91,10 +91,13 @@ credenciales, y `deploy.py`, que instala cada versión;
 
 ## Caddy
 
-Estándares: de OWASP, la sección *Security Headers* del
-[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), la sección
-*HTTPS* del [*REST Security Cheat Sheet*](../fuentes/owasp/REST_Security.md) y la sección
-*Infrastructure Configuration* del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
+Estándares: de OWASP, el
+[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), salvo
+*Access-Control-Allow-Origin*, que rige en [transversal.md](transversal.md#sesión); *Secure File
+Download Headers*, en [fastapi.md](fastapi.md#archivos), y los párrafos sobre la CSP de
+*X-XSS-Protection* y sobre la Cache API de *Cache-Control*, en «CSP» y «Push» de
+[sveltekit.md](sveltekit.md); y la sección *Infrastructure Configuration* del
+[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
 
 - Caddy es el 2.6.2 de Debian 13.
 - Cada superficie tiene su host: `landing` en `<dominio>`, `web` en `app.<dominio>` y `panel` en
@@ -109,6 +112,11 @@ Estándares: de OWASP, la sección *Security Headers* del
   una etiqueta `meta`, que no admite `frame-ancestors`.
 - No se envía `Cross-Origin-Embedder-Policy`. Contradice a OWASP: solo habilita el aislamiento entre
   orígenes, que ninguna pieza usa, y bloquea las teselas de OSM y el formulario de pago incrustado.
+- `app.<dominio>`, `panel.<dominio>` y `/api/*` llevan `X-Robots-Tag: noindex, nofollow`: solo la
+  landing es pública.
+- La sección V3.4 *Browser Security Mechanism Headers* de
+  [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md) queda sin efecto: regula las mismas
+  cabeceras que el *HTTP Security Response Headers Cheat Sheet*, que cubre más.
 - Caddy corta el cuerpo de `/api/*` con `request_body`: 10 MB en una petición
   `multipart/form-data`, la forma en que se sube un archivo
   ([transversal.md](transversal.md#archivos)), y 1 MB en las demás. Lo que pasa del límite no llega
@@ -124,9 +132,8 @@ Estándares: de OWASP, la sección *Security Headers* del
 
 ## Configuración
 
-Estándares: de systemd 257, la versión de Debian 13, [`systemd.exec`](../fuentes/systemd/systemd.exec.xml),
-en *Environment* y *Credentials*, y la sección 2.7.1, *Creation*, del
-[*Secrets Management Cheat Sheet*](../fuentes/owasp/Secrets_Management.md) de OWASP.
+Estándar: de systemd 257, la versión de Debian 13, la entrada `LoadCredentialEncrypted=` de
+[`systemd.exec`](../fuentes/systemd/systemd.exec.xml).
 
 - Cada campo de `Settings` llega al servicio con `LoadCredentialEncrypted=`, cifrado con
   `systemd-creds encrypt`: no queda en claro en el disco.
@@ -147,8 +154,12 @@ en *Environment* y *Credentials*, y la sección 2.7.1, *Creation*, del
 
 ## Coturn
 
-Estándares: del [RFC 8656](../fuentes/rfc/rfc8656.txt), las secciones 7.2, *Receiving an Allocate
-Request*; 21.2, *Firewall Considerations*, y 21.3.1, *DoS against TURN Server*.
+Estándar: del [RFC 8656](../fuentes/rfc/rfc8656.txt), las secciones 3.1, *Transports*; 7.2,
+*Receiving an Allocate Request*; 21.1.1, *Obtaining Unauthorized Allocations*; 21.1.6,
+*Eavesdropping Traffic*, salvo su párrafo sobre el usuario, que rige en
+[fastapi.md](fastapi.md#llamadas-de-voz-y-video); 21.1.7, *TURN Loop Attack*; 21.2, *Firewall
+Considerations*; 21.3, *Insider Attacks*, y 21.4, *Tunnel Amplification Attack*. Lo demás lo cumplen
+coturn y el navegador.
 
 - Solo una app con llamadas usa coturn: `install.py --turn` instala `/etc/turnserver.conf` y abre
   sus puertos con `/etc/nftables.d/turn.nft`.
@@ -168,12 +179,15 @@ Request*; 21.2, *Firewall Considerations*, y 21.3.1, *DoS against TURN Server*.
   `user-quota` y `max-bps`.
 - coturn niega relevar hacia cada bloque que los registros de direcciones de uso especial de IANA,
   [IPv4](../fuentes/iana/iana-ipv4-special-registry.csv) e
-  [IPv6](../fuentes/iana/iana-ipv6-special-registry.csv), marcan como no alcanzable globalmente: TURN
-  no sirve de puente a la red interna. Las direcciones sin especificar, `0.0.0.0` y `::`, no van en
+  [IPv6](../fuentes/iana/iana-ipv6-special-registry.csv), marcan como no alcanzable globalmente, y
+  hacia 6to4, `2002::/16`, que el registro marca como alcanzable: TURN no sirve de puente a la red
+  interna ni a un túnel. Las direcciones sin especificar, `0.0.0.0` y `::`, no van en
   `denied-peer-ip`, porque coturn las lee como cualquier dirección: la primera queda dentro de
   `0.0.0.0/8`, y la segunda coturn la niega por sí mismo.
 - `no-multicast-peers` niega las direcciones de multicast, y coturn niega por defecto las de
   loopback.
+- `turn.nft` descarta lo que llega al 3478 desde Teredo, `2001::/32`, o 6to4, `2002::/16`: coturn
+  acepta una petición desde un túnel.
 - coturn no abre su consola de administración (`no-cli`), que por defecto escucha en el 5766 de la
   máquina para cualquier cuenta de ella.
 
@@ -187,8 +201,8 @@ Estándar: la entrada de `StateDirectory=`, en *Sandboxing*, de
 
 ## Firewall
 
-Estándar: la sección 4.1.3, *TCP and UDP*, de NIST SP 800-41 Rev. 1,
-[*Guidelines on Firewalls and Firewall Policy*](../fuentes/nist/sp800-41r1.txt).
+Estándar: NIST SP 800-41 Rev. 1,
+[*Guidelines on Firewalls and Firewall Policy*](../fuentes/nist/sp800-41r1.txt), entera.
 
 - El firewall es el nftables de Debian 13, con `/etc/nftables.conf`, que `install.py` instala y
   carga. Incluye `/etc/nftables.d/*.nft`, donde una pieza que la app puede no tener agrega sus
@@ -196,13 +210,15 @@ Estándar: la sección 4.1.3, *TCP and UDP*, de NIST SP 800-41 Rev. 1,
 - Entran el 22 y el 80 por TCP, y el 443 por TCP y por UDP, el del HTTP/3 de Caddy. Con TURN entran
   también los puertos de «Coturn».
 - ICMP entra entero: IPv6 lo necesita para encontrar a sus vecinos.
-- Lo que sale no se filtra: la app habla con dominios de terceros, cuyas direcciones cambian.
+- Fuera del loopback no entra nada con origen en `0.0.0.0/8`, `127.0.0.0/8`, `169.254.0.0/16` ni
+  `::1`.
+- Lo que sale no se filtra. Contradice a NIST, que pide filtrar también lo que sale: la app habla
+  con dominios de terceros, cuyas direcciones cambian.
 - Nada pasa por la máquina hacia otra red.
 
 ## Máquina
 
-Estándares: de systemd 257, [`systemd-timesyncd.service`](../fuentes/systemd/systemd-timesyncd.service.xml),
-y de unattended-upgrades 2.12, la versión de Debian 13, `Automatic-Reboot` y
+Estándar: de unattended-upgrades 2.12, la versión de Debian 13, `Automatic-Reboot` y
 `Automatic-Reboot-Time` en [`50unattended-upgrades`](../fuentes/unattended-upgrades/50unattended-upgrades.Debian).
 
 - La máquina es Debian 13, y cada programa sale de sus paquetes: `caddy`, `postgresql`,
@@ -248,9 +264,9 @@ de *Role Attributes*, en [*Database Roles*](../fuentes/postgresql/user-manag.sgm
 
 ## Procesos
 
-Estándares: la sección *Sandboxing* de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml), sin
-la entrada de `StateDirectory=`, que cita «Datos», y la
-sección *WebSocket Protocol Configuration* del
+Estándares: las entradas de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml) que usan las
+unidades de `plantilla/infra/`, salvo `LoadCredentialEncrypted=`, que cita «Configuración», y
+`StateDirectory=`, que cita «Datos»; y la sección *WebSocket Protocol Configuration* del
 [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
 - Las unidades son las de `plantilla/infra/`, que `install.py` instala con el nombre y
@@ -277,13 +293,12 @@ sección *WebSocket Protocol Configuration* del
 
 ## Registros
 
-Estándares: `Storage=`, `SystemMaxUse=`, `MaxRetentionSec=` y `MaxFileSec=` de
-[`journald.conf`](../fuentes/systemd/journald.conf.xml),
-[`systemd-journal-upload`](../fuentes/systemd/systemd-journal-upload.service.xml) y
-[`journal-upload.conf`](../fuentes/systemd/journal-upload.conf.xml) de systemd; `log_destination`,
-en *Where to Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml) de PostgreSQL; y
-[`wg-quick`](../fuentes/wireguard/wg-quick.8) y *CONFIGURATION FILE FORMAT* de
-[`wg`](../fuentes/wireguard/wg.8) de WireGuard.
+Estándares: de systemd, `Storage=`, `SystemMaxUse=`, `MaxRetentionSec=` y `MaxFileSec=` de
+[`journald.conf`](../fuentes/systemd/journald.conf.xml), y `URL=` de
+[`journal-upload.conf`](../fuentes/systemd/journal-upload.conf.xml); `log_destination`, en *Where to
+Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml) de PostgreSQL; y de WireGuard,
+`Address` de [`wg-quick`](../fuentes/wireguard/wg-quick.8), y `PrivateKey`, `PublicKey`, `Endpoint`
+y `AllowedIPs` en *CONFIGURATION FILE FORMAT* de [`wg`](../fuentes/wireguard/wg.8).
 
 - journald guarda en disco: `Storage=persistent` en `/etc/systemd/journald.conf.d/00-<app>.conf`.
   Con `auto`, el valor por defecto, guarda en memoria si falta `/var/log/journal`, sin avisar.
@@ -322,8 +337,7 @@ en *Where to Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml)
 
 ## Respaldos
 
-Estándar: la sección *SQL Dump* de [*Backup and Restore*](../fuentes/postgresql/backup.sgml) de
-PostgreSQL.
+Estándar: [*Backup and Restore*](../fuentes/postgresql/backup.sgml) de PostgreSQL, entero.
 
 - El respaldo de la base es un `pg_dump` en formato custom, que corre antes de cada respaldo:
   `pg_restore` puede restaurar solo una parte.
@@ -348,11 +362,13 @@ PostgreSQL.
   no puede crear una extensión que no es *trusted*.
 - Se restaura en una máquina instalada con `install.py` y las mismas `--extension`:
   `restic restore` trae el dump y `/var/lib/<app>/files/`, y `<app>_owner` corre
-  `pg_restore --exit-on-error` sobre la base que creó `install.py`.
+  `pg_restore --exit-on-error` sobre la base que creó `install.py`, y después `ANALYZE`.
 
 ## SSH
 
-Estándar: de OpenSSH 10.0, la versión de Debian 13, [`sshd_config`](../fuentes/openssh/sshd_config.5).
+Estándar: de OpenSSH 10.0, la versión de Debian 13, las entradas de
+[`sshd_config`](../fuentes/openssh/sshd_config.5) que usan `sshd.conf` y `sshd-receiver.conf` de
+`plantilla/infra/`.
 
 - `sshd` solo acepta llaves, y `root` no entra: se entra con la cuenta que administra la máquina y
   `sudo`.
@@ -373,8 +389,8 @@ Estándar: de OpenSSH 10.0, la versión de Debian 13, [`sshd_config`](../fuentes
 
 ## Valkey
 
-Estándares: de Valkey 8.1, la versión de Debian 13, la sección *Valkey setup tips* de
-[*Administration*](../fuentes/valkey/admin.md) y [*Security*](../fuentes/valkey/security.md).
+Estándares: de Valkey 8.1, la versión de Debian 13, [*Administration*](../fuentes/valkey/admin.md)
+y [*Security*](../fuentes/valkey/security.md), enteros.
 
 - El almacén en memoria de todas las piezas es Valkey.
 - La app tiene su instancia, `valkey-server@<app>`, sin TCP y con el socket
@@ -442,16 +458,16 @@ Estándar: de OpenSSH 10.0, la sección *ALLOWED SIGNERS* de [`ssh-keygen`](../f
 
 | Qué | Con qué |
 |---|---|
-| Que cada host sirve su pieza con las cabeceras de «Caddy», que `/api/*` las lleva y no se guarda en caché, que un cuerpo que pasa su límite recibe 413 y no llega entero al servidor, y que `/downloads/` sirve los instalables | El `Caddyfile` y los sitios en el Caddy de Debian 13, con certificados propios de Caddy y un servidor en el 8000 que registra lo que le llega, con [`scripts/infra/caddy.sh`](../scripts/infra/caddy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que cada host sirve su pieza con las cabeceras de «Caddy» y su charset, que solo la landing se indexa, que `/api/*` las lleva y no se guarda en caché, que un cuerpo que pasa su límite recibe 413 y no llega entero al servidor, y que `/downloads/` sirve los instalables | El `Caddyfile` y los sitios en el Caddy de Debian 13, con certificados propios de Caddy y un servidor en el 8000 que registra lo que le llega, con [`scripts/infra/caddy.sh`](../scripts/infra/caddy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que una máquina nueva necesita dos `--signer`, que cada llave firma solo para `deploy` y que después solo se agregan; que `install.py` falla sin `systemd-timesyncd` habilitado o sin `ca-certificates`; que apt lee el reinicio automático de las 04:00; que `credentials.py` cifra cada campo en su carpeta y con el nombre que carga su unidad, escribe solo lo que recibe y no escribe nada si una línea está mal; que Valkey no abre TCP, que su socket solo lo abre el grupo de la app, que tiene su `maxmemory` con `noeviction` y `vm.overcommit_memory = 1`, y que la instancia del paquete queda apagada; y que `root` no tiene contraseña y una cuenta de la app no puede ser la que administra | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn`, con [`scripts/infra/install.sh`](../scripts/infra/install.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que `deploy.py` migra y publica la primera versión, con las credenciales de `credentials.py`, que los timers de la purga y el barrido son diarios y sus unidades terminan bien sobre esa versión, que instala un tag una sola vez, vuelve a la anterior si la nueva no responde y no trae migraciones, borra la versión cuya migración falla, no instala nada firmado por una llave ajena ni con el `.sha256` de otra versión, conserva las cinco versiones más recientes, y que en un repositorio privado despliega solo con `--private` y su token, que no sigue la redirección de una descarga a otro host | El `deploy.py` que instala `install.py`, con los releases servidos desde la misma máquina en vez de GitHub, sus descargas redirigidas a otro host, y los paquetes del servidor en la caché de uv, con [`scripts/infra/deploy.sh`](../scripts/infra/deploy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
-| Que sin túnel no arranca un respaldo, que la receptora guarda el dump y los archivos y el servidor no los borra, que su llave no abre una terminal ni otro túnel, que un respaldo cortado mientras tiene su lock no frena el siguiente, que un respaldo que llega a su límite falla, y que lo que trae `restic restore` vuelve sobre la base que crea `install.py` | `plantilla/receiver/backup.sh` desde otro namespace de red, con el `restic-rest-server` de Debian 13 y el límite reducido de 4 h a 5 s, con [`scripts/infra/backup.sh`](../scripts/infra/backup.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que sin túnel no arranca un respaldo, que la receptora guarda el dump y los archivos y el servidor no los borra, que su llave no abre una terminal ni otro túnel, que un respaldo cortado mientras tiene su lock no frena el siguiente, que un respaldo que llega a su límite falla, y que lo que trae `restic restore` vuelve sobre la base que crea `install.py` y se analiza | `plantilla/receiver/backup.sh` desde otro namespace de red, con el `restic-rest-server` de Debian 13 y el límite reducido de 4 h a 5 s, con [`scripts/infra/backup.sh`](../scripts/infra/backup.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | `00-<app>.conf` y `<app>-receiver.conf` que lee `sshd` | `sshd -t` en el OpenSSH de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Solo llaves y sin `root`, aunque un archivo del proveedor permita contraseñas | `sshd -T` con un `50-cloud-init.conf` que las permite, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Los roles de «PostgreSQL», y que el dump del dueño se restaura en la base que crea `install.py` | Las cuentas de `sysusers.conf`, `create_database` de `install.py` y el `pg_dump` de la unidad, en el PostgreSQL y el PostGIS de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Exposición de cada unidad | `systemd-analyze security --offline=yes --threshold=20 <unidad>`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
-| Los puertos que entran, y que lo que sale no se filtra, de «Firewall» | `nftables.conf` cargado en el nftables de Debian 13, con y sin `turn.nft`, con conexiones desde otro namespace de red, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
-| Que coturn releva hacia internet, y no hacia una red privada o loopback, con otro secreto ni pasada la cuota, y que `denied-peer-ip` sigue los registros de IANA | `turnserver.conf` en el coturn de Debian 13, con `turnutils_uclient` desde otro namespace de red, y [`scripts/infra/peers.py`](../scripts/infra/peers.py), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Los puertos que entran, que no entra un origen que nunca es válido ni una petición de TURN desde un túnel, y que lo que sale no se filtra, de «Firewall» | `nftables.conf` cargado en el nftables de Debian 13, con y sin `turn.nft`, con conexiones desde otro namespace de red, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que coturn releva hacia internet, y no hacia una red privada o loopback, con otro secreto ni pasada la cuota, y que `denied-peer-ip` sigue los registros de IANA y niega 6to4 | `turnserver.conf` en el coturn de Debian 13, con `turnutils_uclient` desde otro namespace de red, y [`scripts/infra/peers.py`](../scripts/infra/peers.py), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que el journal llega al registro central por el túnel de la plantilla, en el archivo de la dirección de su llave, y que otra llave con la misma dirección no llega | `logs.conf` y `journal-upload.conf` con el `systemd-journal-upload` y el WireGuard de Debian 13, desde otro namespace de red, con [`scripts/infra/logs.sh`](../scripts/infra/logs.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que `install.py --logs` exige sus tres banderas juntas, envía el journal y el registro de PostgreSQL por el túnel, conserva la llave, falla sin `--logs` en una máquina que envía e instala aunque quien despliega tenga la umask 077; que el uploader reintenta sin quedar en `failed`; y que journald borra una entrada a más tardar un archivo después de su retención | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn` y con la umask 077, con un extremo en otro namespace de red y la retención reducida a 20 s con archivos de 5 s, con [`scripts/infra/install-logs.sh`](../scripts/infra/install-logs.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que detrás de un NAT dos clientes se alcanzan solo con el `external-ip` de `install.py --turn-ip` | `turnserver.conf` en el coturn de Debian 13, detrás de un NAT de nftables, con la dirección privada que da `private_ip` de `install.py`, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

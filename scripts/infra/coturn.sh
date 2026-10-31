@@ -1,7 +1,7 @@
 #!/bin/sh
 # Runs coturn with the config in a turn namespace and relays from an outside namespace: it relays
-# to a peer on the internet, and not to a private or loopback one, with another secret, or past
-# the quota of a credential.
+# to a peer on the internet, and not to a private, loopback or tunneled one, with another secret,
+# or past the quota of a credential.
 #
 #     sh coturn.sh <turnserver.conf>
 set -eu
@@ -23,13 +23,16 @@ ip netns add outside
 ip link add turn type veth peer name outside
 ip link set turn netns turn
 ip link set outside netns outside
-# 1.2.3.0/24 and 2001:4860::/64 stand for the internet, and 10.9.1.0/24 for a private network.
-ip -n turn addr add 1.2.3.1/24 dev turn
-ip -n turn addr add 10.9.1.1/24 dev turn
-ip -n turn addr add 2001:4860::1/64 dev turn nodad
-ip -n outside addr add 1.2.3.2/24 dev outside
-ip -n outside addr add 10.9.1.2/24 dev outside
-ip -n outside addr add 2001:4860::2/64 dev outside nodad
+# 1.2.3.0/24 and 2001:4860::/64 stand for the internet, 10.9.1.0/24 for a private network, and
+# 2001:0:102:302::/64 and 2002:102:302::/64 for Teredo and 6to4.
+for network in 1.2.3 10.9.1; do
+    ip -n turn addr add "$network.1/24" dev turn
+    ip -n outside addr add "$network.2/24" dev outside
+done
+for network in 2001:4860 2001:0:102:302 2002:102:302; do
+    ip -n turn addr add "$network::1/64" dev turn nodad
+    ip -n outside addr add "$network::2/64" dev outside nodad
+done
 for namespace in turn outside; do
     ip -n "$namespace" link set lo up
     ip -n "$namespace" link set "$namespace" up
@@ -65,6 +68,8 @@ relays no -W secret -e 127.0.0.1 1.2.3.1
 relays no -W secret -e 0.0.0.0 1.2.3.1
 relays no -W secret -x -e ::1 2001:4860::1
 relays no -W secret -x -e ::ffff:127.0.0.1 2001:4860::1
+relays no -W secret -x -e 2001:0:102:302::2 2001:4860::1
+relays no -W secret -x -e 2002:102:302::2 2001:4860::1
 # Each client of turnutils_uclient takes two allocations, and a credential holds ten.
 relays yes -W secret -m 5 -e 1.2.3.2 1.2.3.1
 relays no -W secret -m 6 -e 1.2.3.2 1.2.3.1

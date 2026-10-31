@@ -1,4 +1,4 @@
-"""Fail unless coturn denies exactly the blocks that the IANA registries mark as not reachable.
+"""Fail unless coturn denies exactly 6to4 and the blocks the IANA registries mark as not reachable.
 
     python3 peers.py <turnserver.conf> <folder of the registries>
 
@@ -12,11 +12,15 @@ import sys
 from pathlib import Path
 
 REGISTRIES = ("iana-ipv4-special-registry.csv", "iana-ipv6-special-registry.csv")
+# RFC 8656, 21.4: a tunnel the registry marks as reachable.
+TUNNELED = ("2002::/16",)
 
 
 def registered(folder: Path) -> set[tuple[str, str]]:
-    """Return the first and last address of each block that is not globally reachable."""
-    blocks = set()
+    """Return the first and last address of each tunneled block, or not globally reachable."""
+    blocks = {
+        (str(network[0]), str(network[-1])) for network in map(ipaddress.ip_network, TUNNELED)
+    }
     for name in REGISTRIES:
         with (folder / name).open(encoding="utf-8", newline="") as registry:
             for row in csv.DictReader(registry):

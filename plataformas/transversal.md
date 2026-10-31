@@ -187,6 +187,9 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
 
 ## Sesión
 
+Estándar: la sección *Access-Control-Allow-Origin* del
+[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md) de OWASP.
+
 - La API se sirve en el mismo origen que la web, bajo `/api`. No hace falta CORS, y la cookie de
   sesión es de primera parte.
 - La web presenta su sesión con una cookie, y una app, con un token de acceso que renueva con un
@@ -247,7 +250,8 @@ Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
 
 Estándares: la sección 7.4 *Status Codes* de [RFC 6455](../fuentes/rfc/rfc6455.txt) y, del
 [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP, las
-secciones *Always Use WSS* y *Session Management*, sin su párrafo de `SameSite`.
+secciones *Always Use WSS* y *Session Management*, sin su párrafo de `SameSite`, que rige en
+[fastapi.md](fastapi.md#sesión).
 
 - La web se autentica con la cookie de sesión del handshake, y una app, con
   `Authorization: Bearer` en el handshake, como en REST.

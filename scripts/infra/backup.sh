@@ -137,5 +137,6 @@ runuser -u postgres -- dropdb demo
 python3 -c "import sys; sys.path.insert(0, '$canone/plantilla/infra'); import install; install.create_database('demo', [])"
 chmod 755 "$work/restore" "$work/restore/var" "$work/restore/var/lib" "$work/restore/var/lib/demo-dump"
 runuser -u demo_owner -- pg_restore --exit-on-error --dbname=demo "$work/restore/var/lib/demo-dump/demo.dump"
+runuser -u demo_owner -- psql -X -v ON_ERROR_STOP=1 --dbname=demo -c ANALYZE
 test "$(runuser -u demo_owner -- psql -XAt --dbname=demo -c "SELECT name FROM place")" = "first-$$"
 test "$(cat "$work/restore/var/lib/demo/files/one")" = "file-$$"

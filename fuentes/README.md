@@ -30,10 +30,10 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [postgresql/ddl.sgml](postgresql/ddl.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ddl.sgml> |  |  |
 | [postgresql/syntax.sgml](postgresql/syntax.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/syntax.sgml> |  |  |
 | [postgresql/indices.sgml](postgresql/indices.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml> |  |  |
-| [postgresql/backup.sgml](postgresql/backup.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml> |  |  |
-| [postgresql/client-auth.sgml](postgresql/client-auth.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/client-auth.sgml> |  |  |
-| [postgresql/user-manag.sgml](postgresql/user-manag.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/user-manag.sgml> |  |  |
-| [postgresql/config.sgml](postgresql/config.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/config.sgml> |  |  |
+| [postgresql/backup.sgml](postgresql/backup.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml> | entera |  |
+| [postgresql/client-auth.sgml](postgresql/client-auth.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/client-auth.sgml> | por entradas |  |
+| [postgresql/user-manag.sgml](postgresql/user-manag.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/user-manag.sgml> | por entradas |  |
+| [postgresql/config.sgml](postgresql/config.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/config.sgml> | por entradas |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> |  |  |
 | [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> |  | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217 |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |  |
@@ -50,7 +50,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc8252.txt](rfc/rfc8252.txt) | <https://www.rfc-editor.org/rfc/rfc8252.txt> |  |  |
 | [rfc/rfc8291.txt](rfc/rfc8291.txt) | <https://www.rfc-editor.org/rfc/rfc8291.txt> |  |  |
 | [rfc/rfc8292.txt](rfc/rfc8292.txt) | <https://www.rfc-editor.org/rfc/rfc8292.txt> |  |  |
-| [rfc/rfc8656.txt](rfc/rfc8656.txt) | <https://www.rfc-editor.org/rfc/rfc8656.txt> |  |  |
+| [rfc/rfc8656.txt](rfc/rfc8656.txt) | <https://www.rfc-editor.org/rfc/rfc8656.txt> | entera |  |
 | [rfc/rfc8725.txt](rfc/rfc8725.txt) | <https://www.rfc-editor.org/rfc/rfc8725.txt> |  |  |
 | [rfc/rfc9110.txt](rfc/rfc9110.txt) | <https://www.rfc-editor.org/rfc/rfc9110.txt> |  |  |
 | [rfc/rfc9429.txt](rfc/rfc9429.txt) | <https://www.rfc-editor.org/rfc/rfc9429.txt> |  |  |
@@ -72,7 +72,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs> |  |  |
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> |  | Texto extraído del PDF |
-| [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | <https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf> |  | Texto extraído del PDF |
+| [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | <https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf> | entera | Texto extraído del PDF |
 | [iana/iana-ipv4-special-registry.csv](iana/iana-ipv4-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |
 | [iana/iana-ipv6-special-registry.csv](iana/iana-ipv6-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |
 | [fhs/fhs-3.0.txt](fhs/fhs-3.0.txt) | <https://www.debian.org/doc/packaging-manuals/fhs/fhs-3.0.txt> | por entradas | Versión 3.0, la que sigue Debian 13. Copia de Debian: refspecs.linuxfoundation.org rechaza la descarga |
@@ -84,13 +84,11 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/HTTP_Headers_Cheat_Sheet.md> | entera |  |
 | [owasp/Logging.md](owasp/Logging.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Cheat_Sheet.md> |  |  |
 | [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md> |  |  |
-| [owasp/REST_Security.md](owasp/REST_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/REST_Security_Cheat_Sheet.md> |  |  |
-| [owasp/Secrets_Management.md](owasp/Secrets_Management.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Secrets_Management_Cheat_Sheet.md> |  |  |
 | [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> |  |  |
 | [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/File_Upload_Cheat_Sheet.md> |  |  |
 | [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/WebSocket_Security_Cheat_Sheet.md> | entera |  |
-| [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md> |  | Valkey 8.1, la versión de Debian 13 |
-| [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md> |  | Valkey 8.1, la versión de Debian 13 |
+| [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md> | entera | Valkey 8.1, la versión de Debian 13 |
+| [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md> | entera | Valkey 8.1, la versión de Debian 13 |
 | [firebase/flutter-receive-messages.md](firebase/flutter-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/flutter/receive-messages> |  | Página web convertida a Markdown |
 | [firebase/android-receive-messages.md](firebase/android-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/android/receive-messages> |  | Página web convertida a Markdown |
 | [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md> |  |  |
@@ -213,11 +211,9 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pytest-qt/signals.rst](pytest-qt/signals.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/signals.rst> |  |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.exec.xml> | por entradas | systemd 257, la versión de Debian 13 |
 | [systemd/journald.conf.xml](systemd/journald.conf.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journald.conf.xml> | por entradas | systemd 257, la versión de Debian 13 |
-| [systemd/systemd-journal-upload.service.xml](systemd/systemd-journal-upload.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd-journal-upload.service.xml> |  | systemd 257, la versión de Debian 13 |
-| [systemd/journal-upload.conf.xml](systemd/journal-upload.conf.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journal-upload.conf.xml> |  | systemd 257, la versión de Debian 13 |
-| [systemd/systemd-timesyncd.service.xml](systemd/systemd-timesyncd.service.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd-timesyncd.service.xml> |  | systemd 257, la versión de Debian 13 |
-| [wireguard/wg-quick.8](wireguard/wg-quick.8) | <https://git.zx2c4.com/wireguard-tools/plain/src/man/wg-quick.8?h=v1.0.20210914> |  | wireguard-tools 1.0.20210914, la versión de Debian 13 |
-| [wireguard/wg.8](wireguard/wg.8) | <https://git.zx2c4.com/wireguard-tools/plain/src/man/wg.8?h=v1.0.20210914> |  | wireguard-tools 1.0.20210914, la versión de Debian 13 |
+| [systemd/journal-upload.conf.xml](systemd/journal-upload.conf.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journal-upload.conf.xml> | por entradas | systemd 257, la versión de Debian 13 |
+| [wireguard/wg-quick.8](wireguard/wg-quick.8) | <https://git.zx2c4.com/wireguard-tools/plain/src/man/wg-quick.8?h=v1.0.20210914> | por entradas | wireguard-tools 1.0.20210914, la versión de Debian 13 |
+| [wireguard/wg.8](wireguard/wg.8) | <https://git.zx2c4.com/wireguard-tools/plain/src/man/wg.8?h=v1.0.20210914> | por entradas | wireguard-tools 1.0.20210914, la versión de Debian 13 |
 | [openssh/sshd_config.5](openssh/sshd_config.5) | <https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/sshd_config.5> | por entradas | OpenSSH 10.0, la versión de Debian 13 |
-| [openssh/ssh-keygen.1](openssh/ssh-keygen.1) | <https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/ssh-keygen.1> |  | OpenSSH 10.0, la versión de Debian 13 |
-| [unattended-upgrades/50unattended-upgrades.Debian](unattended-upgrades/50unattended-upgrades.Debian) | <https://sources.debian.org/data/main/u/unattended-upgrades/2.12/data/50unattended-upgrades.Debian> |  | unattended-upgrades 2.12, la versión de Debian 13 |
+| [openssh/ssh-keygen.1](openssh/ssh-keygen.1) | <https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/ssh-keygen.1> | por entradas | OpenSSH 10.0, la versión de Debian 13 |
+| [unattended-upgrades/50unattended-upgrades.Debian](unattended-upgrades/50unattended-upgrades.Debian) | <https://sources.debian.org/data/main/u/unattended-upgrades/2.12/data/50unattended-upgrades.Debian> | por entradas | unattended-upgrades 2.12, la versión de Debian 13 |

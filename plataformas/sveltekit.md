@@ -84,8 +84,11 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 
 ## CSP
 
-Estándares: [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md)
-de OWASP y [CSP Level 3](../fuentes/w3c/csp3.bs) de W3C.
+Estándares: de OWASP, el
+[*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md) y el párrafo
+sobre la CSP de *X-XSS-Protection* del
+[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md); y
+[CSP Level 3](../fuentes/w3c/csp3.bs) de W3C.
 
 - La CSP la genera SvelteKit con `kit.csp` en modo `hash`, sobre `default-src 'self'`. El script de
   arranque de SvelteKit va en línea y necesita su hash.
@@ -134,8 +137,10 @@ Contrato: [transversal.md](transversal.md#mapas).
 ## Push
 
 Estándares: las secciones *Permission*, *PushManager interface*, *PushMessageData interface* y
-*Events* de la [*Push API*](../fuentes/w3c/push-api.html) de W3C, y el
-[*Notifications API Standard*](../fuentes/whatwg/notifications.bs) de WHATWG.
+*Events* de la [*Push API*](../fuentes/w3c/push-api.html) de W3C; el
+[*Notifications API Standard*](../fuentes/whatwg/notifications.bs) de WHATWG, y el párrafo sobre la
+Cache API de *Cache-Control* del
+[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md) de OWASP.
 
 Contrato: [transversal.md](transversal.md#push).
 

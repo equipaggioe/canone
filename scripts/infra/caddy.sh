@@ -1,8 +1,9 @@
 #!/bin/sh
 # Runs the Caddyfile and the sites of plantilla/infra in Caddy, with a server on 8000 that counts
-# what reaches it: each host serves its piece with the headers, /api/* carries them too and is not
-# cached, a body over its limit gets 413, by its Content-Length or cut by request_body, and never
-# reaches the server whole, and /downloads/ serves the installers. Caddy signs its own certificates.
+# what reaches it: each host serves its piece with the headers and its charset, only the landing is
+# indexed, /api/* carries the headers too and is not cached, a body over its limit gets 413, by its
+# Content-Length or cut by request_body, and never reaches the server whole, and /downloads/ serves
+# the installers. Caddy signs its own certificates.
 #
 #     sh caddy.sh <canone>
 set -eu
@@ -96,13 +97,19 @@ headers() {
     if grep -qi '^cross-origin-embedder-policy:' "$1"; then exit 1; fi
 }
 
-step "Each host serves its piece, with the headers"
+step "Each host serves its piece, with the headers and its charset, and only the landing is indexed"
 for pair in example.com:landing app.example.com:web panel.example.com:panel; do
     host=${pair%%:*}
     https "$host" -D "$work/headers" -o "$work/body" "https://$host/"
     test "$(cat "$work/body")" = "${pair#*:}"
     tr -d '\r' < "$work/headers" > "$work/clean"
     headers "$work/clean"
+    grep -qix 'content-type: text/html; charset=utf-8' "$work/clean"
+    if [ "${pair#*:}" = landing ]; then
+        if grep -qi '^x-robots-tag:' "$work/clean"; then exit 1; fi
+    else
+        grep -qix 'x-robots-tag: noindex, nofollow' "$work/clean"
+    fi
 done
 
 step "HTTP goes to HTTPS"

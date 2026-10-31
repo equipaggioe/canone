@@ -1,3 +1,5 @@
 # ADR-0096: with TURN, coturn listens on 3478 and relays by UDP on 49152 to 65535.
+# RFC 8656, 21.4: no request from Teredo or 6to4.
+add rule inet filter input ip6 saddr { 2001::/32, 2002::/16 } meta l4proto { tcp, udp } th dport 3478 drop
 add rule inet filter input tcp dport 3478 accept
 add rule inet filter input udp dport { 3478, 49152-65535 } accept

@@ -95,7 +95,14 @@ igual orden, la que cubre más del asunto:
   solo su razón.
 - Una lista de nombres que una regla toma de otro, como los de un registro, no es una fuente: la
   regla dice de dónde la toma y enlaza su copia en `fuentes/`, aunque no se cite.
-- Cada sección enlaza en `fuentes/` el texto de lo que cita.
+- Cada sección enlaza en `fuentes/` el texto de lo que cita. Nombra cada parte por su título en
+  cursiva o por su entrada entre comillas invertidas, antes del enlace, como «las secciones *A* y
+  *B* de [X]», o después, como «[X], la sección *A*». Una cita sin partes es de la fuente entera, y
+  lo que de ella rige en otra sección va después de «salvo».
+- `scripts/verificar.py --canone` comprueba en CI que cada fuente citada tenga su «Cita», que una
+  por entradas nombre sus entradas, que una entera se cite entera en una sola sección y diga con
+  «salvo» lo que rige en otra, que ninguna parte rija en dos secciones y que no se cite una lista
+  de nombres.
 
 ### Qué escribe la página
 

@@ -1,0 +1,16 @@
+name: Fuentes
+
+on:
+  push:
+    branches: [master]
+    paths: ["plataformas/**", "fuentes/README.md", "scripts/verificar.py", ".github/workflows/fuentes.yml"]
+  pull_request:
+    paths: ["plataformas/**", "fuentes/README.md", "scripts/verificar.py", ".github/workflows/fuentes.yml"]
+
+jobs:
+  citas:
+    runs-on: ubuntu-latest
+    # ADR-0108: each part of a source rules in one section, as plataformas/README.md says.
+    steps:
+      - uses: actions/checkout@v5
+      - run: python3 scripts/verificar.py --canone

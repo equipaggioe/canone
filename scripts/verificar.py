@@ -3,6 +3,9 @@
 
     python scripts/verificar.py --repo ../navetta
     python scripts/verificar.py --todos ..
+    python scripts/verificar.py --canone
+
+Con --canone revisa las citas de plataformas/ contra fuentes/README.md.
 
 Cada comprobación cita el ADR que la fija. Falla con código 1 y la lista de incumplimientos: una
 regla que no rompe CI es una sugerencia, no una regla.
@@ -349,6 +352,113 @@ def versiones_uv(repo: Path) -> list[str]:
     return fallas
 
 
+# ADR-0108 y ADR-0109: una fuente se cita entera o por entradas, cada parte de una fuente entera
+# rige en una sola sección, y una lista de nombres no se cita (ADR-0095). Una cita nombra sus
+# partes antes del enlace, como «las secciones *A* y *B* de [X]», o después, como «[X], la sección
+# *A*»; sin partes, la cita es de la fuente entera, y «salvo» nombra lo que rige en otro lado.
+FUENTE = re.compile(r"\[[^\]]*\]\(\.\./fuentes/([^)#]+)[^)]*\)")
+ENLACE = re.compile(r"\[[^\]]*\]\([^)]*\)")
+PARTES = re.compile(
+    r"\b(secci[oó]n|secciones|p[aá]rrafos?|requisitos?|entradas?|opci[oó]n|propiedad|regla"
+    r"|preguntas|ap[eé]ndice|lo que)\b",
+    re.IGNORECASE,
+)
+NOMBRES = re.compile(r"`[^`]+`|\*[^*]+\*")
+SALVEDAD = re.compile(r"\b(salvo|sin su)\b.*", re.IGNORECASE)
+DE_LA_SIGUIENTE = re.compile(r"\b(de|del|de la|de las|de los|en)\s*$")
+# «las entradas de [A] y de [B]»: un enlace que se coordina con el anterior comparte sus partes.
+COORDINADO = re.compile(r"^\W*(y|e)?\s*(de|del|de la|de las|de los)\s*$")
+
+
+def citas_por_fuente() -> dict[str, list[tuple[str, str, str]]]:
+    """Devuelve, por fuente, cada cita: su sección, el texto de sus partes y el de su salvedad."""
+    citas: dict[str, list[tuple[str, str, str]]] = {}
+    for pagina in sorted((CANONE / "plataformas").glob("*.md")):
+        seccion = ""
+        for bloque in pagina.read_text(encoding="utf-8").split("\n\n"):
+            if bloque.startswith("## "):
+                seccion = bloque.splitlines()[0][3:]
+                bloque = "\n".join(bloque.splitlines()[1:]).strip()
+            if not bloque.startswith("Estándar"):
+                continue
+            texto = " ".join(bloque.split())
+            enlaces = list(FUENTE.finditer(texto))
+            tramos = [texto[a.end() : b.start()] for a, b in zip(enlaces, enlaces[1:])]
+            tramos.append(texto[enlaces[-1].end() :] if enlaces else "")
+            antes = texto[: enlaces[0].start()] if enlaces else ""
+            anteriores = ""
+            for enlace, tramo in zip(enlaces, tramos):
+                if DE_LA_SIGUIENTE.search(tramo):
+                    despues, siguiente = tramo.rsplit(";", 1) if ";" in tramo else ("", tramo)
+                else:
+                    despues, siguiente = tramo, tramo.rsplit(";", 1)[1] if ";" in tramo else ""
+                propio = ENLACE.sub("", antes + " " + despues)
+                coordinado = antes.strip() and COORDINADO.match(antes)
+                if anteriores and coordinado and not nombra_partes(despues):
+                    propio = anteriores
+                anteriores = propio
+                salvedad = " ".join(m.group(0) for m in SALVEDAD.finditer(propio))
+                lugar = f"{pagina.name} «{seccion}»"
+                citas.setdefault(enlace.group(1), []).append(
+                    (lugar, SALVEDAD.sub("", propio), salvedad)
+                )
+                antes = siguiente
+    return citas
+
+
+def nombra_partes(partes: str) -> bool:
+    return bool(PARTES.search(partes) or NOMBRES.search(partes))
+
+
+def cita_de_fuentes() -> dict[str, str]:
+    """Devuelve la columna «Cita» de cada fuente, o su nota si es una lista de nombres."""
+    columnas: dict[str, str] = {}
+    for linea in (CANONE / "fuentes/README.md").read_text(encoding="utf-8").splitlines():
+        celdas = [celda.strip() for celda in linea.split("|")]
+        if len(celdas) == 6 and celdas[1].startswith("["):
+            archivo = celdas[1][1 : celdas[1].index("]")]
+            columnas[archivo] = celdas[3] or celdas[4]
+    return columnas
+
+
+def reparto_de_fuentes() -> list[str]:
+    fallas: list[str] = []
+    columnas = cita_de_fuentes()
+    for fuente, citas in sorted(citas_por_fuente().items()):
+        cita = columnas.get(fuente, "")
+        if cita not in ("entera", "por entradas"):
+            motivo = "es una lista de nombres" if "no fuente" in cita else "no tiene «Cita»"
+            fallas.extend(f"ADR-0108: {lugar} cita {fuente}, que {motivo}" for lugar, _, _ in citas)
+            continue
+        enteras = [lugar for lugar, partes, _ in citas if not nombra_partes(partes)]
+        if cita == "por entradas":
+            fallas.extend(
+                f"ADR-0108: {lugar} cita {fuente} sin sus entradas" for lugar in enteras
+            )
+            continue
+        if len(enteras) > 1:
+            fallas.append(f"ADR-0108: {fuente} se cita entera en {' y '.join(enteras)}")
+        sin_salvedad = [
+            lugar for lugar, partes, salvedad in citas if not nombra_partes(partes) and not salvedad
+        ]
+        if sin_salvedad and len(citas) > len(enteras):
+            fallas.append(
+                f"ADR-0108: {fuente} se cita entera en {sin_salvedad[0]} sin decir qué rige"
+                " en otra sección"
+            )
+        vistas: dict[str, str] = {}
+        for lugar, partes, _ in citas:
+            nombres = NOMBRES.findall(partes)
+            if re.search(r"p[aá]rrafo", partes, re.IGNORECASE):
+                nombres = ["párrafo " + " ".join(sorted(nombres))]
+            for nombre in nombres:
+                if vistas.setdefault(nombre, lugar) != lugar:
+                    fallas.append(
+                        f"ADR-0108: {nombre} de {fuente} rige en {vistas[nombre]} y en {lugar}"
+                    )
+    return fallas
+
+
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
 
@@ -481,7 +591,7 @@ def revisar(repo: Path) -> list[str]:
                 + ", ".join(sueltos)
             )
 
-    # Desactivada mientras «Tema» de transversal.md está por revisar.
+    # Desactivada mientras «Tema» de transversal.md está en desarrollo: ningún producto la usa.
     # fallas.extend(colores_generados(repo))
     fallas.extend(nombres_largos(repo))
     fallas.extend(configuracion_con_repositorio(repo))
@@ -495,11 +605,18 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", type=Path)
     parser.add_argument("--todos", type=Path, help="directorio que contiene los repositorios")
+    parser.add_argument("--canone", action="store_true", help="revisa las citas de plataformas/")
     args = parser.parse_args()
 
     # La consola de Windows no es UTF-8 y los nombres de archivo llevan acentos.
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+    if args.canone:
+        fallas = reparto_de_fuentes()
+        print(f"\ncanone: {len(fallas)} incumplimientos")
+        for falla in fallas:
+            print(f"  - {falla}")
+        return 1 if fallas else 0
     if args.todos:
         repos = [
             p

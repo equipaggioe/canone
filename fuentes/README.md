@@ -64,9 +64,9 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [dtcg/format.html](dtcg/format.html) | <https://www.designtokens.org/tr/2025.10/format/> | entera |  |
 | [dtcg/color.html](dtcg/color.html) | <https://www.designtokens.org/tr/2025.10/color/> | entera |  |
 | [dtcg/resolver.html](dtcg/resolver.html) | <https://www.designtokens.org/tr/2025.10/resolver/> | entera |  |
-| [whatwg/notifications.bs](whatwg/notifications.bs) | <https://raw.githubusercontent.com/whatwg/notifications/main/notifications.bs> | por entradas |  |
+| [whatwg/notifications.bs](whatwg/notifications.bs) | <https://raw.githubusercontent.com/whatwg/notifications/main/notifications.bs> | entera |  |
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs> | entera |  |
-| [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> | por entradas |  |
+| [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> | entera |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | entera | Texto extraído del PDF |
 | [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | <https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf> | entera | Texto extraído del PDF |
 | [iana/iana-ipv4-special-registry.csv](iana/iana-ipv4-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |

@@ -184,7 +184,7 @@ Contrato: [transversal.md](transversal.md#archivos).
 
 ## Autenticación
 
-Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), en *AAL1* y en *AAL2* para las
+Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), en AAL1, y en AAL2 para las
 cuentas de administración, salvo lo que rige en «Código por SMS», «Contraseñas», «Passkeys» y
 «Sesión», y en [transversal.md](transversal.md#contraseñas).
 

@@ -57,8 +57,8 @@ Estándares: las [consideraciones](../fuentes/pyside6/considerations.rst), la
 
 ## Widgets y diálogos
 
-Estándares: [`QWidget`](../fuentes/qt/qwidget.qdoc) y [`QDialog`](../fuentes/qt/qdialog.qdoc)
-de Qt.
+Estándar: de Qt, las entradas que se usan de [`QWidget`](../fuentes/qt/qwidget.qdoc) y de
+[`QDialog`](../fuentes/qt/qdialog.qdoc).
 
 - La interfaz se construye en código. Pyrefly revisa los widgets y los diffs se leen.
 
@@ -79,7 +79,7 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándar: [`QSettings`](../fuentes/qt/qsettings.qdoc) de Qt.
+Estándar: las entradas que se usan de [`QSettings`](../fuentes/qt/qsettings.qdoc) de Qt.
 
 - `QSettings` usa `IniFormat`: el mismo archivo legible en todos los sistemas.
 - El token de refresco que pide [transversal.md](transversal.md#sesión) va en keyring, que usa el
@@ -100,8 +100,9 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Red
 
-Estándares: [`QNetworkAccessManager`](../fuentes/qt/qnetworkaccessmanager.qdoc) y
-[*Threading Classes*](../fuentes/qt/threads.qdoc) de Qt.
+Estándares: de Qt, las entradas que se usan de
+[`QNetworkAccessManager`](../fuentes/qt/qnetworkaccessmanager.qdoc), y
+[*Threading Classes*](../fuentes/qt/threads.qdoc), entero.
 
 - HTTP va por `QNetworkAccessManager`, y las respuestas se leen con modelos de Pydantic en `api/`.
   Es asíncrono sin hilos, y las respuestas llegan como señales al hilo de la interfaz.
@@ -110,7 +111,7 @@ Estándares: [`QNetworkAccessManager`](../fuentes/qt/qnetworkaccessmanager.qdoc)
 
 Estándares: [*Qt Style Sheets*](../fuentes/qt/stylesheet.qdoc), su
 [sintaxis](../fuentes/qt/stylesheet-syntax.qdoc), la
-[personalización](../fuentes/qt/stylesheet-customizing.qdoc) y la
+[personalización](../fuentes/qt/stylesheet-customizing.qdoc), y las entradas que se usan de la
 [referencia](../fuentes/qt/stylesheet-reference.qdoc).
 
 Contrato: [transversal.md](transversal.md#tema).

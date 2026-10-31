@@ -91,6 +91,15 @@ jobs:
           systemd-journal-remote wireguard-tools iproute2
       - run: sh scripts/infra/logs.sh plantilla/infra/logs.conf plantilla/infra/journal-upload.conf
 
+  uv:
+    runs-on: ubuntu-latest
+    # The Python of Debian 13 runs uv.py, which downloads uv from GitHub.
+    container: debian:trixie
+    steps:
+      - uses: actions/checkout@v5
+      - run: apt-get update && apt-get install --yes --no-install-recommends ca-certificates curl python3
+      - run: sh scripts/infra/uv.sh "$PWD"
+
   install:
     runs-on: ubuntu-latest
     # install.py on a Debian 13 booted by systemd-nspawn, with systemd running, and each script on

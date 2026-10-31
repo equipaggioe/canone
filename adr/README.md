@@ -117,3 +117,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md) | canone fija la interfaz de sus programas, y no la herramienta que los corre | Todos | Aceptada |
 | [0108](0108-una-fuente-se-cita-entera-o-por-entradas-y-cada-parte-rige-en-una-sola-seccion.md) | Una fuente se cita entera o por entradas, y cada parte de una fuente entera rige en una sola sección | `plataformas/` y `fuentes/` | Aceptada; el punto 2 lo reemplaza ADR-0109 |
 | [0109](0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md) | Lo que una fuente le pide a otro no se reparte, y su unidad es lo que tiene URL propia | `plataformas/` y `fuentes/` | Aceptada |
+| [0110](0110-uv-lo-instala-uv-py-con-su-version-y-su-sha-256-fijos.md) | uv lo instala `uv.py`, con su versión y su SHA-256 fijos | Con `server/` | Aceptada |

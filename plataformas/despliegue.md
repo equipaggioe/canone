@@ -70,6 +70,8 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
     └── <versión>/
         ├── server/
         └── web/, panel/, landing/
+/usr/local/bin/
+└── uv
 /usr/local/lib/<app>/
 ├── backup-request                  el único comando de la receptora
 └── deploy.py
@@ -85,7 +87,7 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
 
 Plantilla: [`plantilla/infra/`](../plantilla/infra/), con las unidades, los sitios de Caddy, la
 configuración de Valkey, `install.py`, que los instala, `credentials.py`, que cifra las
-credenciales, y `deploy.py`, que instala cada versión;
+credenciales, `deploy.py`, que instala cada versión, y `uv.py`, que instala uv;
 [`plantilla/receiver/`](../plantilla/receiver/), que corre en la receptora, y
 [`plantilla/.github/workflows/release.yml`](../plantilla/.github/workflows/release.yml).
 
@@ -238,8 +240,12 @@ Estándar: de unattended-upgrades 2.12, la versión de Debian 13, `Automatic-Reb
 - `systemd-timesyncd` sincroniza la hora, e `install.py` falla si no está habilitado: las
   credenciales temporales de TURN, las sesiones y las fechas del journal dependen del reloj.
   `systemd-timesyncd` choca con cualquier otro paquete de hora, como `chrony`, y lo reemplaza.
-- uv no está en Debian 13: sale del release de GitHub de la versión de
-  [python.md](python.md#proyecto), con su SHA-256 comprobado.
+- uv no está en Debian 13: `sudo python3 uv.py` lo instala en `/usr/local/bin/uv`, desde el release
+  de GitHub de la versión de [python.md](python.md#proyecto), y falla sin instalar nada si el
+  archivo no tiene el SHA-256 que `uv.py` fija para el procesador, `x86_64` o `aarch64`. Lo corre
+  quien prepara la máquina, antes del primer `deploy.py`, y otra vez cuando cambia la versión:
+  `deploy.py` crea el entorno de cada versión con `uv sync`, y otra versión de uv falla por el
+  `required-version` del `pyproject.toml`.
 - `unattended-upgrades` instala solo, cada día, las actualizaciones de Debian 13, y `install.py` lo
   enciende con `/etc/apt/apt.conf.d/20auto-upgrades`: una actualización de seguridad que espera a
   alguien deja la máquina expuesta mientras tanto.
@@ -464,6 +470,7 @@ Estándar: de OpenSSH 10.0, la sección *ALLOWED SIGNERS* de [`ssh-keygen`](../f
 |---|---|
 | Que cada host sirve su pieza con las cabeceras de «Caddy» y su charset, que solo la landing se indexa, que `/api/*` las lleva y no se guarda en caché, que un cuerpo que pasa su límite recibe 413 y no llega entero al servidor, y que `/downloads/` sirve los instalables | El `Caddyfile` y los sitios en el Caddy de Debian 13, con certificados propios de Caddy y un servidor en el 8000 que registra lo que le llega, con [`scripts/infra/caddy.sh`](../scripts/infra/caddy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que una máquina nueva necesita dos `--signer`, que cada llave firma solo para `deploy` y que después solo se agregan; que `install.py` falla sin `systemd-timesyncd` habilitado o sin `ca-certificates`; que apt lee el reinicio automático de las 04:00; que `credentials.py` cifra cada campo en su carpeta y con el nombre que carga su unidad, escribe solo lo que recibe y no escribe nada si una línea está mal; que Valkey no abre TCP, que su socket solo lo abre el grupo de la app, que tiene su `maxmemory` con `noeviction` y `vm.overcommit_memory = 1`, y que la instancia del paquete queda apagada; y que `root` no tiene contraseña y una cuenta de la app no puede ser la que administra | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn`, con [`scripts/infra/install.sh`](../scripts/infra/install.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
+| Que `uv.py` instala en `/usr/local/bin`, de `root`, la versión de uv que pide cada `pyproject.toml` de la plantilla, también sobre sí misma, y que un archivo que no tiene su SHA-256 no instala nada y deja el uv que había | `uv.py` en el Python de Debian 13, con el archivo de GitHub y el mismo archivo con un byte más servido desde la máquina, con [`scripts/infra/uv.sh`](../scripts/infra/uv.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que `deploy.py` migra y publica la primera versión, con las credenciales de `credentials.py`, que los timers de la purga y el barrido son diarios y sus unidades terminan bien sobre esa versión, que instala un tag una sola vez, vuelve a la anterior si la nueva no responde y no trae migraciones, borra la versión cuya migración falla, no instala nada firmado por una llave ajena ni con el `.sha256` de otra versión, conserva las cinco versiones más recientes, y que en un repositorio privado despliega solo con `--private` y su token, que no sigue la redirección de una descarga a otro host | El `deploy.py` que instala `install.py`, con los releases servidos desde la misma máquina en vez de GitHub, sus descargas redirigidas a otro host, y los paquetes del servidor en la caché de uv, con [`scripts/infra/deploy.sh`](../scripts/infra/deploy.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | Que sin túnel no arranca un respaldo, que la receptora guarda el dump y los archivos y el servidor no los borra, que su llave no abre una terminal ni otro túnel, que un respaldo cortado mientras tiene su lock no frena el siguiente, que un respaldo que llega a su límite falla, y que lo que trae `restic restore` vuelve sobre la base que crea `install.py` y se analiza | `plantilla/receiver/backup.sh` desde otro namespace de red, con el `restic-rest-server` de Debian 13 y el límite reducido de 4 h a 5 s, con [`scripts/infra/backup.sh`](../scripts/infra/backup.sh), en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |
 | `00-<app>.conf` y `<app>-receiver.conf` que lee `sshd` | `sshd -t` en el OpenSSH de Debian 13, en [`.github/workflows/infra.yml`](../.github/workflows/infra.yml) de canone |

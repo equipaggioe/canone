@@ -33,8 +33,8 @@ herramienta la haga cumplir.
 ### Qué puede ser fuente
 
 Una revisión empieza por la lista de lo que la tecnología obliga a decidir. Cada punto se responde
-con una fuente citada o, si ninguna lo cubre, con una regla propia. Una fuente, o la parte que se
-cita, cumple los seis requisitos:
+con una fuente citada o, si ninguna lo cubre, con una regla propia. Una fuente cumple los siete
+requisitos:
 
 1. **Normativa:** dice qué se debe, se debería o no se debe hacer. Cada frase citada se puede
    reescribir como «se usa X» o «no se hace Y». Los pasos, los ejemplos y las explicaciones no
@@ -44,14 +44,18 @@ cita, cumple los seis requisitos:
    adopten: un estándar, una especificación, una guía de estilo oficial, OWASP o NIST. Un
    tutorial, el código de los ejemplos, un proyecto de muestra, un blog, un curso, un foro, lo que
    hace la comunidad o la popularidad no.
-4. **Acotada:** la parte citada se puede leer entera al escribir el código de su sección, salvo que
-   su fuente sea de conocimiento general, como PEP 8 o SemVer, o que una herramienta de «Cómo se
-   hace cumplir» la verifique.
+4. **Acotada:** lo que una sección cita se puede leer entero al escribir su código, salvo que la
+   fuente sea de conocimiento general, como PEP 8 o SemVer, o que una herramienta de «Cómo se hace
+   cumplir» la verifique.
 5. **De la versión en uso:** corresponde a la versión de la tecnología que se usa. La copia de
    [fuentes/](../fuentes/) congela ese texto.
-6. **Independiente:** la parte citada no depende de la infraestructura de quien la publica.
+6. **Independiente:** lo que se adopta no depende de la infraestructura de quien la publica.
+7. **Cubre:** una fuente que se cita entera responde la mayoría de lo que tienen que decidir los
+   asuntos que regula, sumando lo que citan todas las páginas, y las reglas propias de esos asuntos
+   quedan en minoría. Lo que se contradice o se deja sin efecto no cuenta como cubierto. Una fuente
+   que no cubre no se cita, y sus convenciones se escriben como reglas propias.
 
-Si dos fuentes que cumplen los seis requisitos regulan lo mismo, se cita la de menor orden y, a
+Si dos fuentes que cumplen los siete requisitos regulan lo mismo, se cita la de menor orden y, a
 igual orden, la que cubre más del asunto:
 
 | Orden | Fuente |
@@ -63,22 +67,30 @@ igual orden, la que cubre más del asunto:
 
 ### Qué implica citar
 
-- Se cita lo que se adopta en su mayoría: una fuente entera o solo una parte, como una sección, un
-  capítulo, una AIP o un nivel de ASVS. Todo lo demás, venga de donde venga, es una regla propia.
-- Citar una fuente, o una parte de ella, adopta todas sus convenciones explícitas: lo que se debe,
-  se debería o no se debe hacer, aunque nada lo haga cumplir. Se cumplen como si fueran
-  obligatorias.
+- Una fuente se cita entera o por entradas:
+  - Entera, cuando trae un enfoque sobre un asunto: se adopta completa.
+  - Por entradas, cuando es una referencia de opciones independientes, como `systemd.exec` o
+    `sshd_config`: se cita cada entrada que se usa.
+- [fuentes/README.md](../fuentes/README.md) dice de cada fuente si se cita entera o por entradas.
+- La unidad es el documento que se publica por separado, como una cheat sheet, una AIP o un PEP, y
+  no el organismo que lo publica.
+- Citar adopta todas las convenciones explícitas de lo citado: lo que se debe, se debería o no se
+  debe hacer, aunque nada lo haga cumplir. Se cumplen como si fueran obligatorias.
+- Una fuente entera se reparte entre las secciones. Cada sección nombra las partes que la rigen, y
+  eso es lo que se lee al escribir su código. Una parte es un título del texto de la fuente, con
+  todo lo que tiene debajo, nombrado con el que lo contiene si su nombre se repite, o un párrafo
+  cuando un título regula asuntos de dos secciones.
+- Cada parte con convenciones rige en una sola sección, de cualquier página. Una parte que no se
+  sigue se deja sin efecto, con su razón, en la sección a la que pertenece.
 - Dos partes citadas nunca regulan lo mismo. Si dos fuentes chocan en un asunto, se cita solo la
-  que mejor se adapta, o se dice qué secciones se aplican de cada una.
+  que mejor se adapta, o se deja sin efecto lo que choca en una de ellas.
 - Lo que una herramienta hace por defecto no viene de ninguna fuente, pero rige mientras la página
   no diga otra cosa. Cambiarlo es una regla propia, salvo que una fuente citada pida el cambio.
 - Una regla propia no nombra una fuente que la página no cita, tampoco para contradecirla: lleva
   solo su razón.
 - Una lista de nombres que una regla toma de otro, como los de un registro, no es una fuente: la
   regla dice de dónde la toma y enlaza su copia en `fuentes/`, aunque no se cite.
-- Cada sección nombra las partes que cita y enlaza su texto en `fuentes/`, que guarda solo lo que
-  se cita. Una fuente que rige varias secciones se cita en cada una solo con la parte que la rige,
-  y ninguna parte se cita en dos secciones.
+- Cada sección enlaza en `fuentes/` el texto de lo que cita.
 
 ### Qué escribe la página
 
@@ -174,4 +186,5 @@ el [ADR-0063](../adr/0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-a
 el [ADR-0064](../adr/0064-una-revision-da-un-veredicto-con-evidencia-sobre-cada-regla-fuente-y-fila.md),
 el [ADR-0065](../adr/0065-la-licencia-de-una-fuente-no-decide-si-se-cita.md),
 el [ADR-0066](../adr/0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md)
-y el [ADR-0095](../adr/0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md).
+el [ADR-0095](../adr/0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md)
+y el [ADR-0108](../adr/0108-una-fuente-se-cita-entera-o-por-entradas-y-cada-parte-rige-en-una-sola-seccion.md).

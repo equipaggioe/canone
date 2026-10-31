@@ -4,9 +4,10 @@ Una app de Android en Kotlin y Jetpack Compose.
 
 ## Proyecto
 
-Estándar: [*Migrate your build to version catalogs*](../fuentes/android/version-catalogs.md).
-
 - Gradle usa Kotlin DSL y corre con el JDK 21 de Debian 13.
+- Las dependencias y los plugins se declaran en el catálogo `gradle/libs.versions.toml`, con nombres
+  en kebab-case, como `androidx-ktx`: una sola lista de versiones, y el autocompletado del IDE los
+  encuentra.
 - Gradle 9.8.0, AGP 9.4.1 y Kotlin 2.4.20, también en las apps Flutter. Con una sola versión, un
   proyecto no se queda con la que traía la plantilla el día en que se creó.
 - Gradle corre con el wrapper y su distribución `-bin`: `-all` solo agrega las fuentes y la
@@ -69,8 +70,7 @@ mobile/
 ## Compose
 
 Estándares: el [estado](../fuentes/compose/state.md) y la
-[arquitectura](../fuentes/compose/architecture.md) de Compose, y
-[Navigation 3](../fuentes/android/navigation-3.md).
+[arquitectura](../fuentes/compose/architecture.md) de Compose.
 
 ## Accesibilidad
 
@@ -112,8 +112,6 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Mapas
 
-Estándar: [*Quickstart*](../fuentes/maplibre/android-getting-started.md) de MapLibre Android.
-
 Contrato: [transversal.md](transversal.md#mapas).
 
 - El mapa usa MapLibre Android, con un estilo de una sola capa raster que arma la app con la
@@ -137,14 +135,11 @@ Contrato: [transversal.md](transversal.md#passkeys).
 
 Estándares: [*Notification runtime permission*](../fuentes/android/notification-permission.md) y
 [*Create and manage notification channels*](../fuentes/android/notification-channels.md) de
-Android, y [*Receive messages in Android apps*](../fuentes/firebase/android-receive-messages.md)
-de Firebase.
+Android.
 
 Contrato: [transversal.md](transversal.md#push).
 
 ## Tema
-
-Estándar: [Material 3 en Compose](../fuentes/compose/material3.md).
 
 Contrato: [transversal.md](transversal.md#tema).
 

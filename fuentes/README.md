@@ -85,7 +85,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/WebSocket_Security_Cheat_Sheet.md> | entera |  |
 | [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md> | entera | Valkey 8.1, la versión de Debian 13 |
 | [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md> | entera | Valkey 8.1, la versión de Debian 13 |
-| [firebase/android-receive-messages.md](firebase/android-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/android/receive-messages> |  | Página web convertida a Markdown |
 | [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md> | entera |  |
 | [sveltekit/project-structure.md](sveltekit/project-structure.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/10-getting-started/30-project-structure.md> | entera |  |
 | [sveltekit/load.md](sveltekit/load.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/20-load.md> | entera |  |
@@ -129,34 +128,30 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | <https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/develop/flutter_secure_storage/README.md> | entera |  |
 | [pub/provider/README.md](pub/provider/README.md) | <https://raw.githubusercontent.com/rrousselGit/provider/master/packages/provider/README.md> | entera |  |
 | [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | <https://osmfoundation.org/wiki/Licence/Attribution_Guidelines> | entera | Página web convertida a Markdown |
-| [maplibre/android-getting-started.md](maplibre/android-getting-started.md) | <https://raw.githubusercontent.com/maplibre/maplibre-native/main/platform/android/docs/getting-started.md> |  |  |
-| [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | <https://raw.githubusercontent.com/JetBrains/kotlin-web-site/master/docs/topics/coding-conventions.md> |  |  |
-| [android/architecture.md](android/architecture.md) | <https://developer.android.com/topic/architecture> |  | Página web convertida a Markdown |
-| [android/architecture-recommendations.md](android/architecture-recommendations.md) | <https://developer.android.com/topic/architecture/recommendations> |  | Página web convertida a Markdown |
-| [android/ui-layer.md](android/ui-layer.md) | <https://developer.android.com/topic/architecture/ui-layer> |  | Página web convertida a Markdown |
-| [android/data-layer.md](android/data-layer.md) | <https://developer.android.com/topic/architecture/data-layer> |  | Página web convertida a Markdown |
-| [android/kotlin-style-guide.md](android/kotlin-style-guide.md) | <https://developer.android.com/kotlin/style-guide> |  | Página web convertida a Markdown |
-| [android/coroutines-best-practices.md](android/coroutines-best-practices.md) | <https://developer.android.com/kotlin/coroutines/coroutines-best-practices> |  | Página web convertida a Markdown |
-| [android/hilt.md](android/hilt.md) | <https://developer.android.com/training/dependency-injection/hilt-android> |  | Página web convertida a Markdown |
-| [android/datastore.md](android/datastore.md) | <https://developer.android.com/topic/libraries/architecture/datastore> |  | Página web convertida a Markdown |
-| [android/keystore.md](android/keystore.md) | <https://developer.android.com/privacy-and-security/keystore> |  | Página web convertida a Markdown |
-| [android/version-catalogs.md](android/version-catalogs.md) | <https://developer.android.com/build/migrate-to-catalogs> |  | Página web convertida a Markdown |
-| [android/testing-fundamentals.md](android/testing-fundamentals.md) | <https://developer.android.com/training/testing/fundamentals> |  | Página web convertida a Markdown |
-| [android/localization.md](android/localization.md) | <https://developer.android.com/guide/topics/resources/localization> |  | Página web convertida a Markdown |
-| [android/navigation-3.md](android/navigation-3.md) | <https://developer.android.com/guide/navigation/navigation-3> |  | Página web convertida a Markdown |
-| [android/accessibility-apps.md](android/accessibility-apps.md) | <https://developer.android.com/guide/topics/ui/accessibility/apps> |  | Página web convertida a Markdown |
-| [android/accessibility-principles.md](android/accessibility-principles.md) | <https://developer.android.com/guide/topics/ui/accessibility/principles> |  | Página web convertida a Markdown |
-| [android/sms-retriever-request.md](android/sms-retriever-request.md) | <https://developers.google.com/identity/sms-retriever/request> |  | Página web convertida a Markdown |
-| [android/credential-manager-prerequisites.md](android/credential-manager-prerequisites.md) | <https://developer.android.com/identity/credential-manager/prerequisites> |  | Página web convertida a Markdown |
-| [android/create-passkeys.md](android/create-passkeys.md) | <https://developer.android.com/identity/passkeys/create-passkeys> |  | Página web convertida a Markdown |
-| [android/sign-in-with-passkeys.md](android/sign-in-with-passkeys.md) | <https://developer.android.com/identity/passkeys/sign-in-with-passkeys> |  | Página web convertida a Markdown |
-| [android/notification-permission.md](android/notification-permission.md) | <https://developer.android.com/develop/ui/compose/notifications/notification-permission> |  | Página web convertida a Markdown |
-| [android/notification-channels.md](android/notification-channels.md) | <https://developer.android.com/develop/ui/compose/notifications/channels> |  | Página web convertida a Markdown |
-| [compose/state.md](compose/state.md) | <https://developer.android.com/develop/ui/compose/state> |  | Página web convertida a Markdown |
-| [compose/architecture.md](compose/architecture.md) | <https://developer.android.com/develop/ui/compose/architecture> |  | Página web convertida a Markdown |
-| [compose/material3.md](compose/material3.md) | <https://developer.android.com/develop/ui/compose/designsystems/material3> |  | Página web convertida a Markdown |
-| [compose/testing.md](compose/testing.md) | <https://developer.android.com/develop/ui/compose/testing> |  | Página web convertida a Markdown |
-| [compose/accessibility-testing.md](compose/accessibility-testing.md) | <https://developer.android.com/develop/ui/compose/accessibility/testing> |  | Página web convertida a Markdown |
+| [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | <https://raw.githubusercontent.com/JetBrains/kotlin-web-site/master/docs/topics/coding-conventions.md> | entera |  |
+| [android/architecture.md](android/architecture.md) | <https://developer.android.com/topic/architecture> | entera | Página web convertida a Markdown |
+| [android/architecture-recommendations.md](android/architecture-recommendations.md) | <https://developer.android.com/topic/architecture/recommendations> | entera | Página web convertida a Markdown |
+| [android/ui-layer.md](android/ui-layer.md) | <https://developer.android.com/topic/architecture/ui-layer> | entera | Página web convertida a Markdown |
+| [android/data-layer.md](android/data-layer.md) | <https://developer.android.com/topic/architecture/data-layer> | entera | Página web convertida a Markdown |
+| [android/kotlin-style-guide.md](android/kotlin-style-guide.md) | <https://developer.android.com/kotlin/style-guide> | entera | Página web convertida a Markdown |
+| [android/coroutines-best-practices.md](android/coroutines-best-practices.md) | <https://developer.android.com/kotlin/coroutines/coroutines-best-practices> | entera | Página web convertida a Markdown |
+| [android/hilt.md](android/hilt.md) | <https://developer.android.com/training/dependency-injection/hilt-android> | entera | Página web convertida a Markdown |
+| [android/datastore.md](android/datastore.md) | <https://developer.android.com/topic/libraries/architecture/datastore> | entera | Página web convertida a Markdown |
+| [android/keystore.md](android/keystore.md) | <https://developer.android.com/privacy-and-security/keystore> | entera | Página web convertida a Markdown |
+| [android/testing-fundamentals.md](android/testing-fundamentals.md) | <https://developer.android.com/training/testing/fundamentals> | entera | Página web convertida a Markdown |
+| [android/localization.md](android/localization.md) | <https://developer.android.com/guide/topics/resources/localization> | entera | Página web convertida a Markdown |
+| [android/accessibility-apps.md](android/accessibility-apps.md) | <https://developer.android.com/guide/topics/ui/accessibility/apps> | entera | Página web convertida a Markdown |
+| [android/accessibility-principles.md](android/accessibility-principles.md) | <https://developer.android.com/guide/topics/ui/accessibility/principles> | entera | Página web convertida a Markdown |
+| [android/sms-retriever-request.md](android/sms-retriever-request.md) | <https://developers.google.com/identity/sms-retriever/request> | entera | Página web convertida a Markdown |
+| [android/credential-manager-prerequisites.md](android/credential-manager-prerequisites.md) | <https://developer.android.com/identity/credential-manager/prerequisites> | entera | Página web convertida a Markdown |
+| [android/create-passkeys.md](android/create-passkeys.md) | <https://developer.android.com/identity/passkeys/create-passkeys> | entera | Página web convertida a Markdown |
+| [android/sign-in-with-passkeys.md](android/sign-in-with-passkeys.md) | <https://developer.android.com/identity/passkeys/sign-in-with-passkeys> | entera | Página web convertida a Markdown |
+| [android/notification-permission.md](android/notification-permission.md) | <https://developer.android.com/develop/ui/compose/notifications/notification-permission> | entera | Página web convertida a Markdown |
+| [android/notification-channels.md](android/notification-channels.md) | <https://developer.android.com/develop/ui/compose/notifications/channels> | entera | Página web convertida a Markdown |
+| [compose/state.md](compose/state.md) | <https://developer.android.com/develop/ui/compose/state> | entera | Página web convertida a Markdown |
+| [compose/architecture.md](compose/architecture.md) | <https://developer.android.com/develop/ui/compose/architecture> | entera | Página web convertida a Markdown |
+| [compose/testing.md](compose/testing.md) | <https://developer.android.com/develop/ui/compose/testing> | entera | Página web convertida a Markdown |
+| [compose/accessibility-testing.md](compose/accessibility-testing.md) | <https://developer.android.com/develop/ui/compose/accessibility/testing> | entera | Página web convertida a Markdown |
 | [flet/encrypting-sensitive-data.md](flet/encrypting-sensitive-data.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/encrypting-sensitive-data.md> | entera |  |
 | [flet/securestorage.md](flet/securestorage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/services/securestorage/index.md> | por entradas |  |
 | [flet/publish.md](flet/publish.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/publish/index.md> | por entradas |  |

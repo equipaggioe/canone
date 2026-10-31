@@ -173,15 +173,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [compose/material3.md](compose/material3.md) | <https://developer.android.com/develop/ui/compose/designsystems/material3> |  | Página web convertida a Markdown |
 | [compose/testing.md](compose/testing.md) | <https://developer.android.com/develop/ui/compose/testing> |  | Página web convertida a Markdown |
 | [compose/accessibility-testing.md](compose/accessibility-testing.md) | <https://developer.android.com/develop/ui/compose/accessibility/testing> |  | Página web convertida a Markdown |
-| [flet/create-flet-app.md](flet/create-flet-app.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/getting-started/create-flet-app.md> |  |  |
-| [flet/theming.md](flet/theming.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/theming.md> |  |  |
-| [flet/client-storage.md](flet/client-storage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/client-storage.md> |  |  |
-| [flet/session-storage.md](flet/session-storage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/session-storage.md> |  |  |
-| [flet/encrypting-sensitive-data.md](flet/encrypting-sensitive-data.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/encrypting-sensitive-data.md> |  |  |
-| [flet/securestorage.md](flet/securestorage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/services/securestorage/index.md> |  |  |
-| [flet/publish.md](flet/publish.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/publish/index.md> |  |  |
-| [flet/accessibility.md](flet/accessibility.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/accessibility.md> |  |  |
-| [flet/map.md](flet/map.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/controls/map/index.md> |  |  |
+| [flet/encrypting-sensitive-data.md](flet/encrypting-sensitive-data.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/encrypting-sensitive-data.md> | entera |  |
+| [flet/publish.md](flet/publish.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/publish/index.md> | por entradas |  |
 | [pyside6/considerations.rst](pyside6/considerations.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/considerations.rst> |  |  |
 | [pyside6/porting_from2.rst](pyside6/porting_from2.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/faq/porting_from2.rst> |  |  |
 | [pyside6/signals_and_slots.rst](pyside6/signals_and_slots.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/tutorials/basictutorial/signals_and_slots.rst> |  |  |

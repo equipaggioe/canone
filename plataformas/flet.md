@@ -4,9 +4,6 @@ Una aplicación en Flet. Se suma a [python.md](python.md).
 
 ## Proyecto
 
-Estándares: [*Creating a new Flet app*](../fuentes/flet/create-flet-app.md) y la
-[estructura del proyecto](../fuentes/flet/publish.md) que supone `flet build`.
-
 ```text
 <pieza>/
   pyproject.toml
@@ -34,16 +31,11 @@ sin editar; `theme.py` es un punto de partida.
 
 ## Accesibilidad
 
-Estándar: [*Accessibility*](../fuentes/flet/accessibility.md) de Flet.
-
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándares: [*Client Storage*](../fuentes/flet/client-storage.md),
-[*Session Storage*](../fuentes/flet/session-storage.md),
-[`SecureStorage`](../fuentes/flet/securestorage.md) y
-[*Encrypting sensitive data*](../fuentes/flet/encrypting-sensitive-data.md) de Flet.
+Estándar: [*Encrypting sensitive data*](../fuentes/flet/encrypting-sensitive-data.md) de Flet.
 
 - Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en
   `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén
@@ -58,8 +50,6 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Mapas
 
-Estándar: [flet-map](../fuentes/flet/map.md).
-
 Contrato: [transversal.md](transversal.md#mapas).
 
 ## Red
@@ -69,8 +59,6 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 ## Tema
 
-Estándar: [*Theming*](../fuentes/flet/theming.md) de Flet.
-
 Contrato: [transversal.md](transversal.md#tema).
 
 - `page.theme` y `page.dark_theme` se arman en `theme.py` con `LIGHT` y `DARK`, generados en
@@ -79,7 +67,8 @@ Contrato: [transversal.md](transversal.md#tema).
 
 ## Publicación
 
-Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md).
+Estándar: las entradas de [*Publishing a Flet app*](../fuentes/flet/publish.md) que usa el
+`pyproject.toml` de la plantilla.
 
 ## Cómo se hace cumplir
 

@@ -509,7 +509,8 @@ Contrato: [transversal.md](transversal.md#reintentos).
 ## Sesión
 
 Estándares: [RFC 7519](../fuentes/rfc/rfc7519.txt), [RFC 8725](../fuentes/rfc/rfc8725.txt), la
-sección 4.14 *Refresh Token Protection* de [RFC 9700](../fuentes/rfc/rfc9700.txt) y, en el nivel 1
+las secciones 2.2 *Token Replay Prevention*, 4.10 *Misuse of Stolen Access Tokens* y 4.14 *Refresh
+Token Protection* de [RFC 9700](../fuentes/rfc/rfc9700.txt) y, en el nivel 1
 de ASVS 5.0 de OWASP, el capítulo
 [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) y el capítulo
 [V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), salvo V3.2.1 y
@@ -544,6 +545,8 @@ Contrato: [transversal.md](transversal.md#sesión).
   el del servidor. De las opciones de V3.5.2, es la que no le pide nada a la web.
 - El token de acceso de una app es un JWT firmado con HS256 que vence en 15 minutos, con el id de su
   sesión en `sid`.
+- El token de acceso no queda atado a la app que lo presenta. Contradice RFC 9700, que pide DPoP o
+  mTLS: vence en 15 minutos y vive solo en la memoria de la app.
 - El id de una sesión de una app que se cierra o se borra queda 15 minutos en Valkey, lo que dura su
   último token de acceso, y el servidor rechaza el JWT de una sesión de esa lista. Es la lista de
   revocación entre las opciones de V7.4.1.

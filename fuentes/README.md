@@ -39,20 +39,20 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> | entera |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | <https://www.rfc-editor.org/rfc/rfc5646.txt> | entera |  |
 | [rfc/rfc6455.txt](rfc/rfc6455.txt) | <https://www.rfc-editor.org/rfc/rfc6455.txt> |  | Lista de códigos de cierre, no fuente (ADR-0095) |
-| [rfc/rfc6749.txt](rfc/rfc6749.txt) | <https://www.rfc-editor.org/rfc/rfc6749.txt> |  |  |
+| [rfc/rfc6749.txt](rfc/rfc6749.txt) | <https://www.rfc-editor.org/rfc/rfc6749.txt> | entera |  |
 | [rfc/rfc6585.txt](rfc/rfc6585.txt) | <https://www.rfc-editor.org/rfc/rfc6585.txt> | entera |  |
 | [rfc/rfc6901.txt](rfc/rfc6901.txt) | <https://www.rfc-editor.org/rfc/rfc6901.txt> | entera |  |
 | [rfc/rfc7493.txt](rfc/rfc7493.txt) | <https://www.rfc-editor.org/rfc/rfc7493.txt> | entera |  |
 | [rfc/rfc7519.txt](rfc/rfc7519.txt) | <https://www.rfc-editor.org/rfc/rfc7519.txt> | entera |  |
-| [rfc/rfc7636.txt](rfc/rfc7636.txt) | <https://www.rfc-editor.org/rfc/rfc7636.txt> |  |  |
+| [rfc/rfc7636.txt](rfc/rfc7636.txt) | <https://www.rfc-editor.org/rfc/rfc7636.txt> | entera |  |
 | [rfc/rfc8030.txt](rfc/rfc8030.txt) | <https://www.rfc-editor.org/rfc/rfc8030.txt> | entera |  |
-| [rfc/rfc8252.txt](rfc/rfc8252.txt) | <https://www.rfc-editor.org/rfc/rfc8252.txt> |  |  |
+| [rfc/rfc8252.txt](rfc/rfc8252.txt) | <https://www.rfc-editor.org/rfc/rfc8252.txt> | entera |  |
 | [rfc/rfc8292.txt](rfc/rfc8292.txt) | <https://www.rfc-editor.org/rfc/rfc8292.txt> | entera |  |
 | [rfc/rfc8656.txt](rfc/rfc8656.txt) | <https://www.rfc-editor.org/rfc/rfc8656.txt> | entera |  |
 | [rfc/rfc8725.txt](rfc/rfc8725.txt) | <https://www.rfc-editor.org/rfc/rfc8725.txt> | entera |  |
 | [rfc/rfc9110.txt](rfc/rfc9110.txt) | <https://www.rfc-editor.org/rfc/rfc9110.txt> | entera |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> | entera |  |
-| [rfc/rfc9700.txt](rfc/rfc9700.txt) | <https://www.rfc-editor.org/rfc/rfc9700.txt> |  |  |
+| [rfc/rfc9700.txt](rfc/rfc9700.txt) | <https://www.rfc-editor.org/rfc/rfc9700.txt> | entera |  |
 | [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md> | por entradas | Línea 3.1, la versión que genera FastAPI |
 | [google-aip/aip-0158.md](google-aip/aip-0158.md) | <https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0158.md> | entera |  |
 | [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |  |
@@ -61,9 +61,9 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [w3c/push-api.html](w3c/push-api.html) | <https://www.w3.org/TR/2026/WD-push-api-20261005/> | por entradas | Borrador de trabajo del 2026-10-05 |
 | [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> | entera |  |
 | [w3c/permissions-policy-features.md](w3c/permissions-policy-features.md) | <https://raw.githubusercontent.com/w3c/webappsec-permissions-policy/29398046f1e0cb45c091adda853df74925dc740a/features.md> |  | Commit 2939804. Lista de nombres, no fuente (ADR-0095) |
-| [dtcg/format.html](dtcg/format.html) | <https://www.designtokens.org/tr/2025.10/format/> |  |  |
-| [dtcg/color.html](dtcg/color.html) | <https://www.designtokens.org/tr/2025.10/color/> |  |  |
-| [dtcg/resolver.html](dtcg/resolver.html) | <https://www.designtokens.org/tr/2025.10/resolver/> |  |  |
+| [dtcg/format.html](dtcg/format.html) | <https://www.designtokens.org/tr/2025.10/format/> | entera |  |
+| [dtcg/color.html](dtcg/color.html) | <https://www.designtokens.org/tr/2025.10/color/> | entera |  |
+| [dtcg/resolver.html](dtcg/resolver.html) | <https://www.designtokens.org/tr/2025.10/resolver/> | entera |  |
 | [whatwg/notifications.bs](whatwg/notifications.bs) | <https://raw.githubusercontent.com/whatwg/notifications/main/notifications.bs> |  |  |
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs> | entera |  |
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |  |

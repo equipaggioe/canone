@@ -45,7 +45,8 @@ sección 15 *Status Codes* de [RFC 9110](../fuentes/rfc/rfc9110.txt), salvo 15.5
 
 - `type` es `about:blank` o una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio
   en todos los entornos: un mismo error tiene un solo `type`.
-- Todo error que genera el servidor es problem+json.
+- Todo error que genera el servidor es problem+json, salvo los del endpoint de token de
+  [Passkeys](#passkeys), que siguen RFC 6749.
 - El cliente toma una respuesta de error sin problem+json, o con un `type` que su catálogo no
   conoce, como de tipo `about:blank`, con su `status`, y su catálogo tiene un texto por `status`
   para ese tipo.
@@ -150,14 +151,26 @@ Estándar: la [AIP-158](../fuentes/google-aip/aip-0158.md) de Google, *Paginatio
 ## Passkeys
 
 Estándares: las secciones 5.4 *Options for Credential Creation* y 5.5 *Options for Assertion
-Generation* de [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C, la sección
-4.1 *Authorization Code Grant* de [RFC 6749](../fuentes/rfc/rfc6749.txt),
-[RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y la sección
-2.1 *Protecting Redirect-Based Flows* de [RFC 9700](../fuentes/rfc/rfc9700.txt).
+Generation* de [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C; de
+[RFC 6749](../fuentes/rfc/rfc6749.txt), las secciones 2 *Client Registration*, 3 *Protocol
+Endpoints*, 4.1 *Authorization Code Grant* y 5 *Issuing an Access Token*;
+[RFC 7636](../fuentes/rfc/rfc7636.txt); [RFC 8252](../fuentes/rfc/rfc8252.txt), y
+[RFC 9700](../fuentes/rfc/rfc9700.txt), salvo 2.2, 4.10 y 4.14, que rigen en
+[fastapi.md](fastapi.md#sesión).
 
 - Una app usa la passkey con la API de su sistema operativo cuando su framework la ofrece de forma
   oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización
   según RFC 8252.
+- La app canjea el código en el endpoint de token con el formato de RFC 6749: la petición en
+  `application/x-www-form-urlencoded`, y la respuesta y sus errores con los campos de su sección 5.
+  Así la app usa AppAuth, que ya comprueba el `state` y la URI de retorno.
+- El servidor solo acepta la URI `https` reclamada de la app. Contradice RFC 8252, que pide aceptar
+  también un esquema propio y la interfaz de loopback: el único cliente nativo es la app del
+  producto.
+- El servidor no publica los metadatos de RFC 8414. Contradice RFC 9700, que los recomienda: el
+  único cliente es la app del producto, que ya conoce sus rutas.
+- Las secciones 9 *Native Applications* y 10 *Security Considerations* de RFC 6749 quedan sin
+  efecto: las reemplazan RFC 8252 y RFC 9700.
 
 ## Push
 
@@ -212,17 +225,15 @@ Unauthorized* de [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 ## Tema
 
-> **Por revisar** (anotado el 2026-10-17): no se aplica todavía. Esta sección, el «Tema» de cada
-> cliente, el [ADR-0062](../adr/0062-los-colores-de-un-producto-salen-de-brand-tokens-en-dtcg-y-un-generador-arma-el-esquema-de-cada-cliente.md),
-> `scripts/tokens.py` y `brand/tokens/` de la plantilla están en revisión. La comprobación de
-> `verificar.py` está desactivada.
+> **En desarrollo** (anotado el 2026-10-17): ningún producto la usa todavía, y `verificar.py` no la
+> comprueba. Esta sección, el «Tema» de cada cliente, el
+> [ADR-0062](../adr/0062-los-colores-de-un-producto-salen-de-brand-tokens-en-dtcg-y-un-generador-arma-el-esquema-de-cada-cliente.md),
+> `scripts/tokens.py` y `brand/tokens/` de la plantilla se revisan y se desarrollan como cualquier
+> otra parte de canone.
 
-Estándares: de DTCG 2025.10, las secciones 5.1 *Name and value*, 5.2.1 *Description*, 5.2.2
-*Type*, 6.1 *Group Structure*, 7.1.1 *Curly Brace Syntax*, 7.2.2 *Chained References* y 7.2.3
-*Circular References* del [formato](../fuentes/dtcg/format.html), las secciones 4.1 *Format* y
-4.2.1 *sRGB* del [módulo de color](../fuentes/dtcg/color.html), y las secciones 4.1 *Root level
-properties*, 4.2 *Reference objects*, 6.1 *Input validation*, 6.2 *Ordering* y 6.3 *Aliases* del
-[resolver](../fuentes/dtcg/resolver.html).
+Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el
+[módulo de color](../fuentes/dtcg/color.html) y el [resolver](../fuentes/dtcg/resolver.html),
+enteros.
 
 - Los colores de un producto van en `brand/tokens/`: `colors.resolver.json` y los `.tokens.json`
   que cita. Son la única fuente de los colores de todos sus clientes.
@@ -233,9 +244,13 @@ properties*, 4.2 *Reference objects*, 6.1 *Input validation*, 6.2 *Ordering* y 6
 - Los roles son las 46 propiedades de color no obsoletas del `ColorScheme` de Flutter, y cada modo
   las asigna todas. Compose, Flutter y Flet arman su esquema con esos roles, y uno sin asignar
   tomaría en silencio el color por defecto del framework.
-- `scripts/tokens.py` genera en cada cliente su esquema claro y su esquema oscuro, ya armados. Falla
-  ante lo que esté fuera de este subconjunto de DTCG o no cumpla el contraste de
-  [Accesibilidad](#accesibilidad).
+- `scripts/tokens.py` genera en cada cliente su esquema claro y su esquema oscuro, ya armados.
+  Implementa del formato las secciones 5.1 *Name and value*, 5.2.1 *Description*, 5.2.2 *Type*, 6.1
+  *Group Structure*, 7.1.1 *Curly Brace Syntax*, 7.2.2 *Chained References* y 7.2.3 *Circular
+  References*; del módulo de color, 4.1 *Format* y 4.2.1 *sRGB*, y del resolver, 4.1 *Root level
+  properties*, 4.2 *Reference objects*, 6.1 *Input validation*, 6.2 *Ordering* y 6.3 *Aliases*.
+  Falla ante lo demás, que queda sin efecto porque un producto solo usa colores sRGB opacos en dos
+  modos, y ante un color que no cumpla el contraste de [Accesibilidad](#accesibilidad).
 - Lo generado se commitea: un cliente compila sin correr el generador.
 - Cada cliente sigue el modo claro u oscuro del sistema.
 

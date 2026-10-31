@@ -130,6 +130,9 @@ Estándar: la [guía de desarrollo con asyncio](../fuentes/python/asyncio-dev.rs
 
 ## Seguridad
 
+Estándar: la sección 4.3.4 *https Certificate Verification* de
+[RFC 9110](../fuentes/rfc/rfc9110.txt).
+
 - Un archivo temporal se crea con `tempfile.mkstemp` o `NamedTemporaryFile`, nunca con `mktemp`:
   entre elegir el nombre y abrirlo, otro proceso puede crear el archivo.
 - Una conexión TLS usa el contexto de `ssl.create_default_context()`, sin desactivar la

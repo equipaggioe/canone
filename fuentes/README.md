@@ -50,7 +50,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc8292.txt](rfc/rfc8292.txt) | <https://www.rfc-editor.org/rfc/rfc8292.txt> | entera |  |
 | [rfc/rfc8656.txt](rfc/rfc8656.txt) | <https://www.rfc-editor.org/rfc/rfc8656.txt> | entera |  |
 | [rfc/rfc8725.txt](rfc/rfc8725.txt) | <https://www.rfc-editor.org/rfc/rfc8725.txt> | entera |  |
-| [rfc/rfc9110.txt](rfc/rfc9110.txt) | <https://www.rfc-editor.org/rfc/rfc9110.txt> |  |  |
+| [rfc/rfc9110.txt](rfc/rfc9110.txt) | <https://www.rfc-editor.org/rfc/rfc9110.txt> | entera |  |
 | [rfc/rfc9429.txt](rfc/rfc9429.txt) | <https://www.rfc-editor.org/rfc/rfc9429.txt> |  |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> | entera |  |
 | [rfc/rfc9700.txt](rfc/rfc9700.txt) | <https://www.rfc-editor.org/rfc/rfc9700.txt> |  |  |

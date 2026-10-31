@@ -115,8 +115,12 @@ Download Headers*, en [fastapi.md](fastapi.md#archivos), y los párrafos sobre l
 - `app.<dominio>`, `panel.<dominio>` y `/api/*` llevan `X-Robots-Tag: noindex, nofollow`: solo la
   landing es pública.
 - De [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), el requisito V3.2.1 y la
-  sección V3.4 *Browser Security Mechanism Headers* quedan sin efecto: regulan las mismas cabeceras
-  que el *HTTP Security Response Headers Cheat Sheet*, que cubre más.
+  sección V3.4 *Browser Security Mechanism Headers*, y la sección 10.2.4 *Server* de
+  [RFC 9110](../fuentes/rfc/rfc9110.txt), quedan sin efecto: regulan las mismas cabeceras que el
+  *HTTP Security Response Headers Cheat Sheet*, que cubre más.
+- De RFC 9110, los validadores de 8.8 *Validator Fields* y de 15.3.1 *200 OK* y la sección 13
+  *Conditional Requests* quedan sin efecto en `/api/*`: sus respuestas llevan `no-store`, y nadie
+  guarda una copia que validar.
 - Caddy corta el cuerpo de `/api/*` con `request_body`: 10 MB en una petición
   `multipart/form-data`, la forma en que se sube un archivo
   ([transversal.md](transversal.md#archivos)), y 1 MB en las demás. Lo que pasa del límite no llega

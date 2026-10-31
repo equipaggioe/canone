@@ -38,7 +38,10 @@ contraseña, los gestores de contraseñas y mostrar la contraseña mientras se e
 
 ## Errores
 
-Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt) y [RFC 6901](../fuentes/rfc/rfc6901.txt).
+Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt), [RFC 6901](../fuentes/rfc/rfc6901.txt) y la
+sección 15 *Status Codes* de [RFC 9110](../fuentes/rfc/rfc9110.txt), salvo 15.5.1, 15.5.2, 15.5.4 y
+15.5.5, que rigen en «Versión mínima de cliente», «Sesión» y
+[fastapi.md](fastapi.md#permisos).
 
 - `type` es `about:blank` o una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio
   en todos los entornos: un mismo error tiene un solo `type`.
@@ -180,7 +183,7 @@ y 4.1 *Creating a Restricted Push Message Subscription* de [RFC 8292](../fuentes
 
 ## Reintentos
 
-Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
+Estándar: las secciones 9.2 *Common Method Properties* y 9.3 *Method Definitions* de
 [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 - Un recurso que el usuario crea desde un cliente se crea por `PUT /<recurso>/{id}`, con un uuid v4
@@ -192,8 +195,10 @@ Estándar: las secciones 9.2.2 *Idempotent Methods* y 9.3.4 *PUT* de
 
 ## Sesión
 
-Estándar: la sección *Access-Control-Allow-Origin* del
-[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md) de OWASP.
+Estándares: la sección *Access-Control-Allow-Origin* del
+[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md) de OWASP, y las
+secciones 3.3 *Connections, Clients, and Servers*, 11 *HTTP Authentication* y 15.5.2 *401
+Unauthorized* de [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 - La API se sirve en el mismo origen que la web, bajo `/api`. No hace falta CORS, y la cookie de
   sesión es de primera parte.
@@ -204,6 +209,9 @@ Estándar: la sección *Access-Control-Allow-Origin* del
 - Una app hace un solo refresco a la vez, y las peticiones que reciben un 401 mientras tanto lo
   esperan. Con la rotación, dos refrescos simultáneos presentan tokens ya rotados.
 - Ante un 401, una app refresca la sesión una sola vez y reintenta una sola vez.
+- Un 401 a un token en `Authorization` lleva `WWW-Authenticate: Bearer`, y uno a la cookie de la web
+  no lleva desafío. Contradice RFC 9110, que lo pide en todo 401: la cookie no es un esquema de
+  autenticación de HTTP.
 
 ## Tema
 

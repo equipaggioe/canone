@@ -4,13 +4,15 @@ Lo común a toda pieza en Python. Lo propio de cada una va en su página y se su
 
 ## Proyecto
 
-Estándares: [*pyproject.toml specification*](../fuentes/pypa/pyproject-toml.rst) y
-[*Dependency Groups*](../fuentes/pypa/dependency-groups.rst) de PyPA.
+Estándares: las entradas de [*pyproject.toml specification*](../fuentes/pypa/pyproject-toml.rst)
+y de [*Dependency Groups*](../fuentes/pypa/dependency-groups.rst) de PyPA que usan los
+`pyproject.toml` de la plantilla, y la sección *Install package with pip* de las
+[buenas prácticas de pytest](../fuentes/pytest/goodpractices.rst).
 
 - Python 3.13, el de Debian 13: `requires-python = "==3.13.*"`. Toda herramienta que elige la
   versión más alta permitida, como `flet build`, toma 3.13.
-- uv maneja el entorno, las dependencias y la ejecución: un solo programa crea el venv, instala,
-  bloquea y ejecuta.
+- uv maneja el entorno, las dependencias y la ejecución. Contradice a pytest, que recomienda venv
+  y pip: un solo programa crea el venv, instala, bloquea y ejecuta.
 - uv es la 0.13.5 en toda pieza, en el CI, en la máquina de quien desarrolla y en el servidor:
   `required-version = "==0.13.5"` en `[tool.uv]`, y el CI la instala con `setup-uv` y
   `version-file`.
@@ -67,9 +69,8 @@ Estándares: [PEP 8](../fuentes/python/pep-0008.rst), salvo la sección *Imports
 
 ## Tipos
 
-Estándares: las secciones *Ergonomic Practices* y *Types* de
-[*Typing Best Practices*](../fuentes/typing/best_practices.rst) y
-[*Modernizing Superseded Typing Features*](../fuentes/typing/modernizing.rst).
+Estándares: [*Typing Best Practices*](../fuentes/typing/best_practices.rst) y
+[*Modernizing Superseded Typing Features*](../fuentes/typing/modernizing.rst), enteros.
 
 - Pyrefly en modo strict, salvo `missing-override-decorator`, que activa solo qt.md. Entiende sin
   plugin los alias que genera `to_camel` y los campos que pydantic-settings lee del entorno.
@@ -78,6 +79,11 @@ Estándares: las secciones *Ergonomic Practices* y *Types* de
   toda la línea sin mirar el código.
 - Todo ignore y todo `# noqa` llevan el código del error. Uno sin código también tapa los errores
   futuros de esa línea.
+- *Type Aliases* y *Built-in Generics* de *Typing Best Practices* quedan sin efecto: regulan lo
+  mismo que *Type Aliases* y *Generics in the `typing` Module* de *Modernizing*, que pide la
+  sentencia `type` en vez de `TypeAlias`.
+- *`typing.Union` and `typing.Optional`* de *Modernizing* queda sin efecto: regula lo mismo que
+  *Shorthand Syntax* de *Typing Best Practices*, que además pone `None` al final.
 
 ## Paquetes
 
@@ -101,9 +107,7 @@ Estándar: la sección *Text Encoding* de [`io`](../fuentes/python/io.rst).
 
 ## Async
 
-Estándar: las secciones *Concurrency and Multithreading*, *Running Blocking Code* y
-*Asynchronous generators best practices* de la
-[guía de desarrollo con asyncio](../fuentes/python/asyncio-dev.rst).
+Estándar: la [guía de desarrollo con asyncio](../fuentes/python/asyncio-dev.rst), entera.
 
 - Las tareas concurrentes se lanzan con `TaskGroup`, salvo una tarea que tiene que vivir más que
   la función que la lanza: no pierde tareas ni excepciones.
@@ -138,7 +142,8 @@ Estándar: las secciones *Concurrency and Multithreading*, *Running Blocking Cod
 
 ## Pruebas
 
-Estándar: la sección *Using pytest's strict mode* de las
+Estándar: las secciones *Do not run via setuptools*, *Checking with flake8-pytest-style* y
+*Using pytest's strict mode* de las
 [buenas prácticas de pytest](../fuentes/pytest/goodpractices.rst).
 
 - Las pruebas se escriben con pytest: un `assert` simple muestra los valores que fallaron, y los
@@ -157,7 +162,8 @@ Estándar: la sección *Using pytest's strict mode* de las
 | Reglas `F` | ruff `F` |
 | Orden de los imports | ruff `I` |
 | PEP 257: la forma de los docstrings | ruff `D` con `convention = "pep257"` |
-| *Modernizing Superseded Typing Features*, salvo *Type Comments*, `NoReturn` como retorno y `TypeGuard` | ruff `UP006`, `UP007`, `UP013`, `UP019`, `UP035`, `UP040`, `UP045` y `UP046` con `target-version = "py313"`, y `PYI050` y `PYI057` |
+| *Modernizing Superseded Typing Features*, salvo *Type Comments*, `NoReturn` como retorno y `TypeGuard` | ruff `UP006`, `UP013`, `UP019`, `UP035`, `UP040` y `UP046` con `target-version = "py313"`, y `PYI050` y `PYI057` |
+| *Shorthand Syntax* | ruff `UP007`, `UP045` y `RUF036` |
 | Pyrefly en modo strict | `preset = "strict"` y `missing-override-decorator = false` |
 | Toda función anotada | Pyrefly con `preset = "strict"` y `unannotated-return = "error"` |
 | `# pyrefly: ignore` | Pyrefly con `enabled-ignores = ["pyrefly"]` |

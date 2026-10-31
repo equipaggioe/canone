@@ -85,7 +85,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/WebSocket_Security_Cheat_Sheet.md> | entera |  |
 | [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md> | entera | Valkey 8.1, la versión de Debian 13 |
 | [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md> | entera | Valkey 8.1, la versión de Debian 13 |
-| [firebase/flutter-receive-messages.md](firebase/flutter-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/flutter/receive-messages> |  | Página web convertida a Markdown |
 | [firebase/android-receive-messages.md](firebase/android-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/android/receive-messages> |  | Página web convertida a Markdown |
 | [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md> | entera |  |
 | [sveltekit/project-structure.md](sveltekit/project-structure.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/10-getting-started/30-project-structure.md> | entera |  |
@@ -111,29 +110,24 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/compiling-messages.md> | entera |  |
 | [paraglide/strategy.md](paraglide/strategy.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/strategy.md> | entera |  |
 | [paraglide/sveltekit.md](paraglide/sveltekit.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/examples/sveltekit/README.md> | entera |  |
-| [dart/effective-dart-index.md](dart/effective-dart-index.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/index.md> |  |  |
-| [dart/effective-dart-style.md](dart/effective-dart-style.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/style.md> |  |  |
-| [dart/effective-dart-documentation.md](dart/effective-dart-documentation.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/documentation.md> |  |  |
-| [dart/effective-dart-usage.md](dart/effective-dart-usage.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/usage.md> |  |  |
-| [dart/effective-dart-design.md](dart/effective-dart-design.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/design.md> |  |  |
-| [flutter/app-architecture-concepts.md](flutter/app-architecture-concepts.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/app-architecture/concepts.md> |  |  |
-| [flutter/app-architecture-guide.md](flutter/app-architecture-guide.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/app-architecture/guide.md> |  |  |
-| [flutter/app-architecture-recommendations.md](flutter/app-architecture-recommendations.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/app-architecture/recommendations.md> |  |  |
-| [flutter/architecture-recommendations.yml](flutter/architecture-recommendations.yml) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/data/architectureRecommendations.yml> |  | Las recomendaciones que la página anterior muestra desde este archivo |
-| [flutter/themes.md](flutter/themes.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/cookbook/design/themes.md> |  |  |
-| [flutter/state-mgmt-simple.md](flutter/state-mgmt-simple.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/data-and-backend/state-mgmt/simple.md> |  |  |
-| [flutter/internationalization.md](flutter/internationalization.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/internationalization/index.md> |  |  |
-| [flutter/accessibility.md](flutter/accessibility.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/index.md> |  |  |
-| [flutter/accessibility-ui-design.md](flutter/accessibility-ui-design.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/ui-design-and-styling.md> |  |  |
-| [flutter/accessibility-assistive.md](flutter/accessibility-assistive.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/assistive-technologies.md> |  |  |
-| [flutter/accessibility-testing.md](flutter/accessibility-testing.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/accessibility-testing.md> |  |  |
-| [pub/flutter_lints/README.md](pub/flutter_lints/README.md) | <https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/README.md> |  |  |
-| [pub/flutter_lints/flutter.yaml](pub/flutter_lints/flutter.yaml) | <https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/lib/flutter.yaml> |  |  |
-| [pub/shared_preferences/README.md](pub/shared_preferences/README.md) | <https://raw.githubusercontent.com/flutter/packages/main/packages/shared_preferences/shared_preferences/README.md> |  |  |
-| [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | <https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/develop/flutter_secure_storage/README.md> |  |  |
-| [pub/provider/README.md](pub/provider/README.md) | <https://raw.githubusercontent.com/rrousselGit/provider/master/packages/provider/README.md> |  |  |
-| [pub/flutter_map/README.md](pub/flutter_map/README.md) | <https://raw.githubusercontent.com/fleaflet/flutter_map/master/README.md> |  |  |
-| [pub/sms_autofill/README.md](pub/sms_autofill/README.md) | <https://raw.githubusercontent.com/jaumard/sms_autofill/master/README.md> |  |  |
+| [dart/effective-dart-index.md](dart/effective-dart-index.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/index.md> | entera |  |
+| [dart/effective-dart-style.md](dart/effective-dart-style.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/style.md> | entera |  |
+| [dart/effective-dart-documentation.md](dart/effective-dart-documentation.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/documentation.md> | entera |  |
+| [dart/effective-dart-usage.md](dart/effective-dart-usage.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/usage.md> | entera |  |
+| [dart/effective-dart-design.md](dart/effective-dart-design.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/design.md> | entera |  |
+| [flutter/app-architecture-concepts.md](flutter/app-architecture-concepts.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/app-architecture/concepts.md> | entera |  |
+| [flutter/app-architecture-guide.md](flutter/app-architecture-guide.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/app-architecture/guide.md> | entera |  |
+| [flutter/app-architecture-recommendations.md](flutter/app-architecture-recommendations.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/app-architecture/recommendations.md> | entera |  |
+| [flutter/architecture-recommendations.yml](flutter/architecture-recommendations.yml) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/data/architectureRecommendations.yml> | entera | Las recomendaciones que la página anterior muestra desde este archivo |
+| [flutter/state-mgmt-simple.md](flutter/state-mgmt-simple.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/data-and-backend/state-mgmt/simple.md> | entera |  |
+| [flutter/internationalization.md](flutter/internationalization.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/internationalization/index.md> | entera |  |
+| [flutter/accessibility.md](flutter/accessibility.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/index.md> | entera |  |
+| [flutter/accessibility-assistive.md](flutter/accessibility-assistive.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/assistive-technologies.md> | entera |  |
+| [flutter/accessibility-testing.md](flutter/accessibility-testing.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/accessibility-testing.md> | entera |  |
+| [pub/flutter_lints/flutter.yaml](pub/flutter_lints/flutter.yaml) | <https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/lib/flutter.yaml> |  | Lista de reglas del analizador, no fuente (ADR-0095) |
+| [pub/shared_preferences/README.md](pub/shared_preferences/README.md) | <https://raw.githubusercontent.com/flutter/packages/main/packages/shared_preferences/shared_preferences/README.md> | entera |  |
+| [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | <https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/develop/flutter_secure_storage/README.md> | entera |  |
+| [pub/provider/README.md](pub/provider/README.md) | <https://raw.githubusercontent.com/rrousselGit/provider/master/packages/provider/README.md> | entera |  |
 | [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | <https://osmfoundation.org/wiki/Licence/Attribution_Guidelines> | entera | Página web convertida a Markdown |
 | [maplibre/android-getting-started.md](maplibre/android-getting-started.md) | <https://raw.githubusercontent.com/maplibre/maplibre-native/main/platform/android/docs/getting-started.md> |  |  |
 | [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | <https://raw.githubusercontent.com/JetBrains/kotlin-web-site/master/docs/topics/coding-conventions.md> |  |  |

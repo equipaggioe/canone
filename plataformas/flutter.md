@@ -20,12 +20,9 @@ Estándares: [*Effective Dart*](../fuentes/dart/effective-dart-index.md):
 
 ## Analizador
 
-Estándar: [flutter_lints](../fuentes/pub/flutter_lints/README.md) y su
-[configuración](../fuentes/pub/flutter_lints/flutter.yaml).
-
-- El analizador activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre
-  `flutter analyze --fatal-infos`. Endurece flutter_lints: los tipos se revisan como con Pyrefly
-  en modo strict.
+- El analizador incluye la [lista de flutter_lints](../fuentes/pub/flutter_lints/flutter.yaml) y
+  activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre
+  `flutter analyze --fatal-infos`: los tipos se revisan como con Pyrefly en modo strict.
 
 Plantilla: [`plantilla/flutter/`](../plantilla/flutter/): `analysis_options.yaml`, con el
 analizador y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.
@@ -77,7 +74,6 @@ y [provider](../fuentes/pub/provider/README.md).
 ## Accesibilidad
 
 Estándares: de Flutter, [*Accessibility*](../fuentes/flutter/accessibility.md),
-[*UI design and styling*](../fuentes/flutter/accessibility-ui-design.md),
 [*Assistive technologies*](../fuentes/flutter/accessibility-assistive.md) y
 [*Accessibility testing*](../fuentes/flutter/accessibility-testing.md).
 
@@ -97,8 +93,6 @@ Estándares: [shared_preferences](../fuentes/pub/shared_preferences/README.md) y
 
 ## Código por SMS
 
-Estándar: la sección *Usage* de [sms_autofill](../fuentes/pub/sms_autofill/README.md).
-
 Contrato: [transversal.md](transversal.md#código-por-sms).
 
 - El campo del código es `TextFieldPinAutoFill`: lleva una `InputDecoration`, y se ve como los
@@ -112,8 +106,6 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Mapas
 
-Estándar: [flutter_map](../fuentes/pub/flutter_map/README.md).
-
 Contrato: [transversal.md](transversal.md#mapas).
 
 ## Pagos
@@ -124,16 +116,9 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 ## Push
 
-Estándar: las secciones *Request permission to receive messages*, *Message handling* y
-*Handling Interaction* de [*Receive messages in Flutter apps*](../fuentes/firebase/flutter-receive-messages.md)
-de Firebase.
-
 Contrato: [transversal.md](transversal.md#push).
 
 ## Tema
-
-Estándar: [*Use themes to share colors and font styles*](../fuentes/flutter/themes.md) de
-Flutter.
 
 Contrato: [transversal.md](transversal.md#tema).
 
@@ -146,4 +131,5 @@ Contrato: [transversal.md](transversal.md#tema).
 | Qué | Con qué |
 |---|---|
 | Gradle, AGP y Kotlin | [`scripts/verificar.py`](../scripts/verificar.py) |
+| La lista de flutter_lints y los tipos estrictos | `flutter analyze --fatal-infos` en CI |
 | Objetivos, etiquetas y contraste | Las guías de `flutter_test` en cada pantalla |

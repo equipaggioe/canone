@@ -52,8 +52,8 @@ requisitos:
 6. **Independiente:** lo que se adopta no depende de la infraestructura de quien la publica.
 7. **Cubre:** una fuente que se cita entera responde la mayoría de lo que tienen que decidir los
    asuntos que regula, sumando lo que citan todas las páginas, y las reglas propias de esos asuntos
-   quedan en minoría. Lo que se contradice o se deja sin efecto no cuenta como cubierto. Una fuente
-   que no cubre no se cita, y sus convenciones se escriben como reglas propias.
+   quedan en minoría. Lo que se contradice, se deja sin efecto o se le pide a otro no cuenta como
+   cubierto. Una fuente que no cubre no se cita, y sus convenciones se escriben como reglas propias.
 
 Si dos fuentes que cumplen los siete requisitos regulan lo mismo, se cita la de menor orden y, a
 igual orden, la que cubre más del asunto:
@@ -72,10 +72,15 @@ igual orden, la que cubre más del asunto:
   - Por entradas, cuando es una referencia de opciones independientes, como `systemd.exec` o
     `sshd_config`: se cita cada entrada que se usa.
 - [fuentes/README.md](../fuentes/README.md) dice de cada fuente si se cita entera o por entradas.
-- La unidad es el documento que se publica por separado, como una cheat sheet, una AIP o un PEP, y
-  no el organismo que lo publica.
+- La unidad es lo que se publica en una URL propia, sin contar el fragmento: lo que guarda un
+  archivo de `fuentes/`, como una cheat sheet, un PEP, un capítulo de ASVS o un capítulo del manual
+  de PostgreSQL. No es el organismo que lo publica ni el manual entero.
 - Citar adopta todas las convenciones explícitas de lo citado: lo que se debe, se debería o no se
   debe hacer, aunque nada lo haga cumplir. Se cumplen como si fueran obligatorias.
+- Lo que una fuente le pide a otro no se reparte: a quien programa una herramienta que el producto
+  usa, como coturn, Uvicorn o el navegador, o a la otra parte de un protocolo, como el servicio de
+  push de Web Push. Sí se reparte cuando la herramienta deja elegirlo a quien la configura, como los
+  destinos a los que coturn niega relevar.
 - Una fuente entera se reparte entre las secciones. Cada sección nombra las partes que la rigen, y
   eso es lo que se lee al escribir su código. Una parte es un título del texto de la fuente, con
   todo lo que tiene debajo, nombrado con el que lo contiene si su nombre se repite, o un párrafo
@@ -181,10 +186,11 @@ el [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas
 el [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md),
 el [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md),
 el [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md),
-el [ADR-0056](../adr/0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
+el [ADR-0056](../adr/0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md),
 el [ADR-0063](../adr/0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md),
 el [ADR-0064](../adr/0064-una-revision-da-un-veredicto-con-evidencia-sobre-cada-regla-fuente-y-fila.md),
 el [ADR-0065](../adr/0065-la-licencia-de-una-fuente-no-decide-si-se-cita.md),
-el [ADR-0066](../adr/0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md)
-el [ADR-0095](../adr/0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md)
-y el [ADR-0108](../adr/0108-una-fuente-se-cita-entera-o-por-entradas-y-cada-parte-rige-en-una-sola-seccion.md).
+el [ADR-0066](../adr/0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md),
+el [ADR-0095](../adr/0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md),
+el [ADR-0108](../adr/0108-una-fuente-se-cita-entera-o-por-entradas-y-cada-parte-rige-en-una-sola-seccion.md)
+y el [ADR-0109](../adr/0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md).

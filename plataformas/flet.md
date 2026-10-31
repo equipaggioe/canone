@@ -35,7 +35,9 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándar: [*Encrypting sensitive data*](../fuentes/flet/encrypting-sensitive-data.md) de Flet.
+Estándares: [*Encrypting sensitive data*](../fuentes/flet/encrypting-sensitive-data.md), entero, y
+la referencia de [`SecureStorage`](../fuentes/flet/securestorage.md), por las entradas que se usan,
+de Flet.
 
 - Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en
   `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén

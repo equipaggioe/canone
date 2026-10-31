@@ -55,23 +55,20 @@ Estándar: [*Page options*](../fuentes/sveltekit/page-options.md) de SvelteKit.
 ## Estado
 
 Estándares: [*State management*](../fuentes/sveltekit/state-management.md) de SvelteKit y, de
-Svelte, [*What are runes?*](../fuentes/svelte/what-are-runes.md),
-[`$state`](../fuentes/svelte/state.md), [`$derived`](../fuentes/svelte/derived.md),
-[`$effect`](../fuentes/svelte/effect.md), [`$props`](../fuentes/svelte/props.md),
-[`$bindable`](../fuentes/svelte/bindable.md), [`$inspect`](../fuentes/svelte/inspect.md) y
-[`$host`](../fuentes/svelte/host.md).
+Svelte, [`$state`](../fuentes/svelte/state.md), [`$derived`](../fuentes/svelte/derived.md),
+[`$effect`](../fuentes/svelte/effect.md), [`$props`](../fuentes/svelte/props.md) y
+[`$bindable`](../fuentes/svelte/bindable.md).
 
 - El estado compartido son clases con `$state` en módulos `.svelte.ts` de `src/lib/state/`.
 
 ## Accesibilidad
 
-Estándares: las [advertencias del compilador](../fuentes/svelte/compile-warnings.md) de Svelte y
-[`sv check`](../fuentes/svelte/sv-check.md).
+Estándar: la opción `--fail-on-warnings` de [`sv check`](../fuentes/svelte/sv-check.md) de Svelte.
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
-- `svelte-check` corre con `--fail-on-warnings`. Las advertencias `a11y_*` del compilador rompen
-  CI.
+- `svelte-check` corre con `--fail-on-warnings`. Las advertencias `a11y_*` de la
+  [lista del compilador](../fuentes/svelte/compile-warnings.md) rompen CI.
 
 ## Código por SMS
 
@@ -99,13 +96,11 @@ V3.2.2 de [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md); y
 
 ## Estilos
 
-Estándares: de UnoCSS, la [guía](../fuentes/unocss/guide-index.md), el
-[archivo de configuración](../fuentes/unocss/guide-config-file.md), la
-[configuración](../fuentes/unocss/config-index.md), las
-[reglas](../fuentes/unocss/config-rules.md), los
-[atajos](../fuentes/unocss/config-shortcuts.md), el [tema](../fuentes/unocss/config-theme.md),
-el [preset Wind4](../fuentes/unocss/presets-wind4.md) y el
-[plugin de Vite](../fuentes/unocss/integrations-vite.md).
+Estándares: de UnoCSS, el [archivo de configuración](../fuentes/unocss/guide-config-file.md), el
+[preset Wind4](../fuentes/unocss/presets-wind4.md) y el
+[plugin de Vite](../fuentes/unocss/integrations-vite.md), enteros, y las entradas `presets`,
+`preflights` y `theme` de la [configuración](../fuentes/unocss/config-index.md) y del
+[tema](../fuentes/unocss/config-theme.md).
 
 - El preset es Wind4. Trae el reset y genera las variables CSS del tema.
 - Los tokens van en el `theme` de `uno.config.ts`, sin tamaños literales fuera de él. Los colores
@@ -118,10 +113,7 @@ Contrato: [transversal.md](transversal.md#tema).
 ## Idiomas
 
 Estándares: de Paraglide, [*Basics*](../fuentes/paraglide/basics.md),
-[*Architecture*](../fuentes/paraglide/architecture.md),
 [*Compiling Messages*](../fuentes/paraglide/compiling-messages.md),
-[*Configuration File*](../fuentes/paraglide/configuration.md),
-[*Translation File Formats*](../fuentes/paraglide/file-formats.md),
 [*Locale Detection*](../fuentes/paraglide/strategy.md) y
 [*SvelteKit i18n*](../fuentes/paraglide/sveltekit.md).
 
@@ -129,11 +121,11 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Mapas
 
-Estándar: [*Quick Start Guide*](../fuentes/leaflet/quick-start.md) de Leaflet.
-
 Contrato: [transversal.md](transversal.md#mapas).
 
 - El mapa usa Leaflet.
+- El contenido de un popup se arma con texto o con nodos del DOM, nunca con HTML que traiga datos
+  del usuario: Leaflet inserta como HTML el que recibe.
 
 ## Push
 

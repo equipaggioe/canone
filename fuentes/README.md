@@ -55,7 +55,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc9700.txt](rfc/rfc9700.txt) | <https://www.rfc-editor.org/rfc/rfc9700.txt> | entera |  |
 | [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md> | por entradas | Línea 3.1, la versión que genera FastAPI |
 | [google-aip/aip-0158.md](google-aip/aip-0158.md) | <https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0158.md> | entera |  |
-| [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |  |
+| [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> | entera |  |
 | [w3c/webauthn-3.html](w3c/webauthn-3.html) | <https://www.w3.org/TR/2026/REC-webauthn-3-20260825/> | entera | Recomendación del 2026-08-25 |
 | [w3c/webrtc.html](w3c/webrtc.html) | <https://www.w3.org/TR/2025/REC-webrtc-20250313/> | por entradas | Recomendación del 2025-03-13 |
 | [w3c/push-api.html](w3c/push-api.html) | <https://www.w3.org/TR/2026/WD-push-api-20261005/> | por entradas | Borrador de trabajo del 2026-10-05 |
@@ -64,9 +64,9 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [dtcg/format.html](dtcg/format.html) | <https://www.designtokens.org/tr/2025.10/format/> | entera |  |
 | [dtcg/color.html](dtcg/color.html) | <https://www.designtokens.org/tr/2025.10/color/> | entera |  |
 | [dtcg/resolver.html](dtcg/resolver.html) | <https://www.designtokens.org/tr/2025.10/resolver/> | entera |  |
-| [whatwg/notifications.bs](whatwg/notifications.bs) | <https://raw.githubusercontent.com/whatwg/notifications/main/notifications.bs> |  |  |
+| [whatwg/notifications.bs](whatwg/notifications.bs) | <https://raw.githubusercontent.com/whatwg/notifications/main/notifications.bs> | por entradas |  |
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs> | entera |  |
-| [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |  |
+| [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> | por entradas |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | entera | Texto extraído del PDF |
 | [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | <https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf> | entera | Texto extraído del PDF |
 | [iana/iana-ipv4-special-registry.csv](iana/iana-ipv4-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |
@@ -75,7 +75,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md> | entera | Versión 5.0.0 |
 | [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md> | entera | Versión 5.0.0 |
 | [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Authorization_Cheat_Sheet.md> | entera |  |
-| [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Content_Security_Policy_Cheat_Sheet.md> |  |  |
+| [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Content_Security_Policy_Cheat_Sheet.md> | entera |  |
 | [owasp/Password_Storage.md](owasp/Password_Storage.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Password_Storage_Cheat_Sheet.md> | entera |  |
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/HTTP_Headers_Cheat_Sheet.md> | entera |  |
 | [owasp/Logging.md](owasp/Logging.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Cheat_Sheet.md> | entera |  |
@@ -88,38 +88,29 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [firebase/flutter-receive-messages.md](firebase/flutter-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/flutter/receive-messages> |  | Página web convertida a Markdown |
 | [firebase/android-receive-messages.md](firebase/android-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/android/receive-messages> |  | Página web convertida a Markdown |
 | [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md> | entera |  |
-| [sveltekit/project-structure.md](sveltekit/project-structure.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/10-getting-started/30-project-structure.md> |  |  |
-| [sveltekit/load.md](sveltekit/load.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/20-load.md> |  |  |
-| [sveltekit/page-options.md](sveltekit/page-options.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/40-page-options.md> |  |  |
-| [sveltekit/state-management.md](sveltekit/state-management.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/50-state-management.md> |  |  |
-| [sveltekit/adapter-static.md](sveltekit/adapter-static.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/25-build-and-deploy/50-adapter-static.md> |  |  |
-| [svelte/what-are-runes.md](svelte/what-are-runes.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/01-what-are-runes.md> |  |  |
-| [svelte/state.md](svelte/state.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/02-$state.md> |  |  |
-| [svelte/derived.md](svelte/derived.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/03-$derived.md> |  |  |
-| [svelte/effect.md](svelte/effect.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/04-$effect.md> |  |  |
-| [svelte/props.md](svelte/props.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/05-$props.md> |  |  |
-| [svelte/bindable.md](svelte/bindable.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/06-$bindable.md> |  |  |
-| [svelte/inspect.md](svelte/inspect.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/07-$inspect.md> |  |  |
-| [svelte/host.md](svelte/host.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/08-$host.md> |  |  |
-| [svelte/compile-warnings.md](svelte/compile-warnings.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/98-reference/.generated/compile-warnings.md> |  |  |
-| [svelte/sv-check.md](svelte/sv-check.md) | <https://raw.githubusercontent.com/sveltejs/cli/main/documentation/docs/20-commands/30-sv-check.md> |  |  |
-| [unocss/guide-index.md](unocss/guide-index.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/guide/index.md> |  |  |
-| [unocss/guide-config-file.md](unocss/guide-config-file.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/guide/config-file.md> |  |  |
-| [unocss/config-index.md](unocss/config-index.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/config/index.md> |  |  |
-| [unocss/config-rules.md](unocss/config-rules.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/config/rules.md> |  |  |
-| [unocss/config-shortcuts.md](unocss/config-shortcuts.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/config/shortcuts.md> |  |  |
-| [unocss/config-theme.md](unocss/config-theme.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/config/theme.md> |  |  |
-| [unocss/presets-wind4.md](unocss/presets-wind4.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/presets/wind4.md> |  |  |
-| [unocss/integrations-vite.md](unocss/integrations-vite.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/integrations/vite.md> |  |  |
-| [vitest/guide.md](vitest/guide.md) | <https://raw.githubusercontent.com/vitest-dev/vitest/main/docs/guide/index.md> |  |  |
-| [vitest/features.md](vitest/features.md) | <https://raw.githubusercontent.com/vitest-dev/vitest/main/docs/guide/features.md> |  |  |
-| [paraglide/basics.md](paraglide/basics.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/basics.md> |  |  |
-| [paraglide/architecture.md](paraglide/architecture.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/architecture.md> |  |  |
-| [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/compiling-messages.md> |  |  |
-| [paraglide/configuration.md](paraglide/configuration.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/configuration.md> |  |  |
-| [paraglide/file-formats.md](paraglide/file-formats.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/file-formats.md> |  |  |
-| [paraglide/strategy.md](paraglide/strategy.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/strategy.md> |  |  |
-| [paraglide/sveltekit.md](paraglide/sveltekit.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/examples/sveltekit/README.md> |  |  |
+| [sveltekit/project-structure.md](sveltekit/project-structure.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/10-getting-started/30-project-structure.md> | entera |  |
+| [sveltekit/load.md](sveltekit/load.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/20-load.md> | entera |  |
+| [sveltekit/page-options.md](sveltekit/page-options.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/40-page-options.md> | entera |  |
+| [sveltekit/state-management.md](sveltekit/state-management.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/50-state-management.md> | entera |  |
+| [sveltekit/adapter-static.md](sveltekit/adapter-static.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/25-build-and-deploy/50-adapter-static.md> | entera |  |
+| [svelte/state.md](svelte/state.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/02-$state.md> | entera |  |
+| [svelte/derived.md](svelte/derived.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/03-$derived.md> | entera |  |
+| [svelte/effect.md](svelte/effect.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/04-$effect.md> | entera |  |
+| [svelte/props.md](svelte/props.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/05-$props.md> | entera |  |
+| [svelte/bindable.md](svelte/bindable.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/06-$bindable.md> | entera |  |
+| [svelte/compile-warnings.md](svelte/compile-warnings.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/98-reference/.generated/compile-warnings.md> |  | Lista de advertencias, no fuente (ADR-0095) |
+| [svelte/sv-check.md](svelte/sv-check.md) | <https://raw.githubusercontent.com/sveltejs/cli/main/documentation/docs/20-commands/30-sv-check.md> | por entradas |  |
+| [unocss/guide-config-file.md](unocss/guide-config-file.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/guide/config-file.md> | entera |  |
+| [unocss/config-index.md](unocss/config-index.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/config/index.md> | por entradas |  |
+| [unocss/config-theme.md](unocss/config-theme.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/config/theme.md> | por entradas |  |
+| [unocss/presets-wind4.md](unocss/presets-wind4.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/presets/wind4.md> | entera |  |
+| [unocss/integrations-vite.md](unocss/integrations-vite.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/integrations/vite.md> | entera |  |
+| [vitest/guide.md](vitest/guide.md) | <https://raw.githubusercontent.com/vitest-dev/vitest/main/docs/guide/index.md> | entera |  |
+| [vitest/features.md](vitest/features.md) | <https://raw.githubusercontent.com/vitest-dev/vitest/main/docs/guide/features.md> | entera |  |
+| [paraglide/basics.md](paraglide/basics.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/basics.md> | entera |  |
+| [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/compiling-messages.md> | entera |  |
+| [paraglide/strategy.md](paraglide/strategy.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/docs/strategy.md> | entera |  |
+| [paraglide/sveltekit.md](paraglide/sveltekit.md) | <https://raw.githubusercontent.com/opral/paraglide-js/main/examples/sveltekit/README.md> | entera |  |
 | [dart/effective-dart-index.md](dart/effective-dart-index.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/index.md> |  |  |
 | [dart/effective-dart-style.md](dart/effective-dart-style.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/style.md> |  |  |
 | [dart/effective-dart-documentation.md](dart/effective-dart-documentation.md) | <https://raw.githubusercontent.com/dart-lang/site-www/main/src/content/effective-dart/documentation.md> |  |  |
@@ -144,7 +135,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pub/flutter_map/README.md](pub/flutter_map/README.md) | <https://raw.githubusercontent.com/fleaflet/flutter_map/master/README.md> |  |  |
 | [pub/sms_autofill/README.md](pub/sms_autofill/README.md) | <https://raw.githubusercontent.com/jaumard/sms_autofill/master/README.md> |  |  |
 | [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | <https://osmfoundation.org/wiki/Licence/Attribution_Guidelines> | entera | Página web convertida a Markdown |
-| [leaflet/quick-start.md](leaflet/quick-start.md) | <https://raw.githubusercontent.com/Leaflet/Leaflet/main/docs/examples/quick-start/index.md> |  |  |
 | [maplibre/android-getting-started.md](maplibre/android-getting-started.md) | <https://raw.githubusercontent.com/maplibre/maplibre-native/main/platform/android/docs/getting-started.md> |  |  |
 | [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | <https://raw.githubusercontent.com/JetBrains/kotlin-web-site/master/docs/topics/coding-conventions.md> |  |  |
 | [android/architecture.md](android/architecture.md) | <https://developer.android.com/topic/architecture> |  | Página web convertida a Markdown |
@@ -174,6 +164,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [compose/testing.md](compose/testing.md) | <https://developer.android.com/develop/ui/compose/testing> |  | Página web convertida a Markdown |
 | [compose/accessibility-testing.md](compose/accessibility-testing.md) | <https://developer.android.com/develop/ui/compose/accessibility/testing> |  | Página web convertida a Markdown |
 | [flet/encrypting-sensitive-data.md](flet/encrypting-sensitive-data.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/encrypting-sensitive-data.md> | entera |  |
+| [flet/securestorage.md](flet/securestorage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/services/securestorage/index.md> | por entradas |  |
 | [flet/publish.md](flet/publish.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/publish/index.md> | por entradas |  |
 | [pyside6/considerations.rst](pyside6/considerations.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/considerations.rst> |  |  |
 | [pyside6/porting_from2.rst](pyside6/porting_from2.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/faq/porting_from2.rst> |  |  |

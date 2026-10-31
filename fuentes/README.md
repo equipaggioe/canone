@@ -13,7 +13,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 |---|---|---|---|
 | [python/pep-0008.rst](python/pep-0008.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0008.rst> | entera |  |
 | [python/pep-0257.rst](python/pep-0257.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0257.rst> | entera |  |
-| [python/pep-0698.rst](python/pep-0698.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0698.rst> |  |  |
+| [python/pep-0698.rst](python/pep-0698.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0698.rst> | entera |  |
 | [python/asyncio-dev.rst](python/asyncio-dev.rst) | <https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/asyncio-dev.rst> | entera | Rama 3.13, la versión que usan las piezas: la de `main` nombra `InterpreterPoolExecutor`, que no existe en 3.13. |
 | [python/io.rst](python/io.rst) | <https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/io.rst> | por entradas | Rama 3.13, la versión que usan las piezas: desde 3.15 la codificación por defecto es UTF-8 y la sección *Text Encoding* ya no recomienda indicarla. |
 | [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pyproject-toml.rst> | por entradas |  |
@@ -155,29 +155,25 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [flet/encrypting-sensitive-data.md](flet/encrypting-sensitive-data.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/cookbook/encrypting-sensitive-data.md> | entera |  |
 | [flet/securestorage.md](flet/securestorage.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/services/securestorage/index.md> | por entradas |  |
 | [flet/publish.md](flet/publish.md) | <https://raw.githubusercontent.com/flet-dev/flet/main/website/docs/publish/index.md> | por entradas |  |
-| [pyside6/considerations.rst](pyside6/considerations.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/considerations.rst> |  |  |
-| [pyside6/porting_from2.rst](pyside6/porting_from2.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/faq/porting_from2.rst> |  |  |
-| [pyside6/signals_and_slots.rst](pyside6/signals_and_slots.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/tutorials/basictutorial/signals_and_slots.rst> |  |  |
-| [pyside6/translations.rst](pyside6/translations.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/tutorials/basictutorial/translations.rst> |  |  |
-| [pyside6/deployment-pyside6-deploy.rst](pyside6/deployment-pyside6-deploy.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/deployment/deployment-pyside6-deploy.rst> |  |  |
-| [qt/objecttrees.qdoc](qt/objecttrees.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/corelib/doc/src/objectmodel/objecttrees.qdoc> |  |  |
-| [qt/layout.qdoc](qt/layout.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/layout.qdoc> |  |  |
-| [qt/model-view-programming.qdoc](qt/model-view-programming.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/model-view-programming.qdoc> |  |  |
-| [qt/stylesheet.qdoc](qt/stylesheet.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/stylesheet.qdoc> |  |  |
-| [qt/stylesheet-syntax.qdoc](qt/stylesheet-syntax.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/stylesheet-syntax.qdoc> |  |  |
-| [qt/stylesheet-customizing.qdoc](qt/stylesheet-customizing.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/stylesheet-customizing.qdoc> |  |  |
-| [qt/stylesheet-reference.qdoc](qt/stylesheet-reference.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/stylesheet-reference.qdoc> |  |  |
-| [qt/threads.qdoc](qt/threads.qdoc) | <https://raw.githubusercontent.com/qt/qtdoc/dev/doc/src/frameworks-technologies/threads.qdoc> |  |  |
-| [qt/qwidget.qdoc](qt/qwidget.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/kernel/qwidget.cpp> |  | Comentarios `/*! */` del código fuente |
-| [qt/qdialog.qdoc](qt/qdialog.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/dialogs/qdialog.cpp> |  | Comentarios `/*! */` del código fuente |
-| [qt/qsettings.qdoc](qt/qsettings.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/corelib/io/qsettings.cpp> |  | Comentarios `/*! */` del código fuente |
-| [qt/qnetworkaccessmanager.qdoc](qt/qnetworkaccessmanager.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/network/access/qnetworkaccessmanager.cpp> |  | Comentarios `/*! */` del código fuente |
-| [qt/accessible.qdoc](qt/accessible.qdoc) | <https://raw.githubusercontent.com/qt/qtdoc/dev/doc/src/frameworks-technologies/accessible.qdoc> |  |  |
-| [pytest-qt/intro.rst](pytest-qt/intro.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/intro.rst> |  |  |
-| [pytest-qt/tutorial.rst](pytest-qt/tutorial.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/tutorial.rst> |  |  |
-| [pytest-qt/qapplication.rst](pytest-qt/qapplication.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/qapplication.rst> |  |  |
-| [pytest-qt/logging.rst](pytest-qt/logging.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/logging.rst> |  |  |
-| [pytest-qt/signals.rst](pytest-qt/signals.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/signals.rst> |  |  |
+| [pyside6/considerations.rst](pyside6/considerations.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/considerations.rst> | entera |  |
+| [pyside6/porting_from2.rst](pyside6/porting_from2.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/faq/porting_from2.rst> | entera |  |
+| [pyside6/signals_and_slots.rst](pyside6/signals_and_slots.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/tutorials/basictutorial/signals_and_slots.rst> | entera |  |
+| [pyside6/translations.rst](pyside6/translations.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/tutorials/basictutorial/translations.rst> | entera |  |
+| [pyside6/deployment-pyside6-deploy.rst](pyside6/deployment-pyside6-deploy.rst) | <https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/dev/sources/pyside6/doc/deployment/deployment-pyside6-deploy.rst> | por entradas |  |
+| [qt/layout.qdoc](qt/layout.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/layout.qdoc> | entera |  |
+| [qt/model-view-programming.qdoc](qt/model-view-programming.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/model-view-programming.qdoc> | entera |  |
+| [qt/stylesheet.qdoc](qt/stylesheet.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/stylesheet.qdoc> | entera |  |
+| [qt/stylesheet-syntax.qdoc](qt/stylesheet-syntax.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/stylesheet-syntax.qdoc> | entera |  |
+| [qt/stylesheet-customizing.qdoc](qt/stylesheet-customizing.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/stylesheet-customizing.qdoc> | entera |  |
+| [qt/stylesheet-reference.qdoc](qt/stylesheet-reference.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/doc/src/widgets-and-layouts/stylesheet-reference.qdoc> | por entradas |  |
+| [qt/threads.qdoc](qt/threads.qdoc) | <https://raw.githubusercontent.com/qt/qtdoc/dev/doc/src/frameworks-technologies/threads.qdoc> | entera |  |
+| [qt/qwidget.qdoc](qt/qwidget.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/kernel/qwidget.cpp> | por entradas | Comentarios `/*! */` del código fuente |
+| [qt/qdialog.qdoc](qt/qdialog.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/widgets/dialogs/qdialog.cpp> | por entradas | Comentarios `/*! */` del código fuente |
+| [qt/qsettings.qdoc](qt/qsettings.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/corelib/io/qsettings.cpp> | por entradas | Comentarios `/*! */` del código fuente |
+| [qt/qnetworkaccessmanager.qdoc](qt/qnetworkaccessmanager.qdoc) | <https://raw.githubusercontent.com/qt/qtbase/dev/src/network/access/qnetworkaccessmanager.cpp> | por entradas | Comentarios `/*! */` del código fuente |
+| [qt/accessible.qdoc](qt/accessible.qdoc) | <https://raw.githubusercontent.com/qt/qtdoc/dev/doc/src/frameworks-technologies/accessible.qdoc> | entera |  |
+| [pytest-qt/qapplication.rst](pytest-qt/qapplication.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/qapplication.rst> | entera |  |
+| [pytest-qt/signals.rst](pytest-qt/signals.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest-qt/master/docs/signals.rst> | por entradas |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.exec.xml> | por entradas | systemd 257, la versión de Debian 13 |
 | [systemd/journald.conf.xml](systemd/journald.conf.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journald.conf.xml> | por entradas | systemd 257, la versión de Debian 13 |
 | [systemd/journal-upload.conf.xml](systemd/journal-upload.conf.xml) | <https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journal-upload.conf.xml> | por entradas | systemd 257, la versión de Debian 13 |

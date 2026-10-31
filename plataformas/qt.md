@@ -4,9 +4,6 @@ Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](py
 
 ## Proyecto
 
-Estándares: [`pyside6-deploy`](../fuentes/pyside6/deployment-pyside6-deploy.rst) y las
-[traducciones](../fuentes/pyside6/translations.rst) de PySide6.
-
 ```text
 desktop/
   pyproject.toml
@@ -57,10 +54,6 @@ Estándares: las [consideraciones](../fuentes/pyside6/considerations.rst), la
   usan esos nombres.
 - Todo método que sobrescribe otro lleva `@override`. Endurece PEP 698, que lo deja opcional: un
   `closeEvent` mal escrito nunca se llama y nada avisa.
-
-## Árbol de objetos
-
-Estándar: [*Object Trees & Ownership*](../fuentes/qt/objecttrees.qdoc) de Qt.
 
 ## Widgets y diálogos
 
@@ -134,17 +127,18 @@ editar.
 
 ## Pruebas
 
-Estándares: la [introducción](../fuentes/pytest-qt/intro.rst), el
-[tutorial](../fuentes/pytest-qt/tutorial.rst), la
-[`QApplication`](../fuentes/pytest-qt/qapplication.rst), el
-[logging](../fuentes/pytest-qt/logging.rst) y las [señales](../fuentes/pytest-qt/signals.rst)
-de pytest-qt.
+Estándares: la [`QApplication`](../fuentes/pytest-qt/qapplication.rst), entera, y las
+[señales](../fuentes/pytest-qt/signals.rst), por las entradas que se usan, de pytest-qt.
 
 - En CI, las pruebas corren con `QT_QPA_PLATFORM=offscreen`, sin pantalla.
+- Una prueba registra cada widget con `qtbot.addWidget` y lo maneja con sus propios métodos, como
+  `setText` o `setCurrentIndex`, y no con los clics de `qtbot`: `qtbot` cierra lo que se registra, y
+  el método del widget no depende de dónde cae un clic.
 
 ## Empaquetado
 
-Estándar: [`pyside6-deploy`](../fuentes/pyside6/deployment-pyside6-deploy.rst).
+Estándar: las entradas de [`pyside6-deploy`](../fuentes/pyside6/deployment-pyside6-deploy.rst) que
+usa `pysidedeploy.spec`.
 
 - `pysidedeploy.spec` va en git, con rutas relativas a `desktop/`, y la app se empaqueta solo en
   CI. Cada corrida reescribe en el archivo las rutas absolutas de la máquina.

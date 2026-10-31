@@ -4,7 +4,8 @@ La base de datos.
 
 ## Nombres
 
-Estándar: [*SQL Syntax*](../fuentes/postgresql/syntax.sgml) de PostgreSQL.
+Estándar: la entrada *Identifiers and Key Words* de
+[*SQL Syntax*](../fuentes/postgresql/syntax.sgml) de PostgreSQL.
 
 - Los nombres van en snake_case y sin comillas, las tablas en singular y las claves foráneas como
   `<tabla>_id`.
@@ -15,9 +16,10 @@ Estándar: [*SQL Syntax*](../fuentes/postgresql/syntax.sgml) de PostgreSQL.
 
 ## Clave primaria
 
-Estándares: [*Data Types*](../fuentes/postgresql/datatype.sgml),
-[*Identity Columns*](../fuentes/postgresql/ddl.sgml) y las
-[funciones de UUID](../fuentes/postgresql/func.sgml) de PostgreSQL 17, la versión de Debian 13.
+Estándares: de PostgreSQL 17, la versión de Debian 13, las entradas de los tipos numéricos y de
+`uuid` de [*Data Types*](../fuentes/postgresql/datatype.sgml), la sección *Identity Columns* de
+[*Data Definition*](../fuentes/postgresql/ddl.sgml) y la entrada de `gen_random_uuid()` de las
+[funciones de UUID](../fuentes/postgresql/func.sgml).
 
 - `text` con un `CHECK` de su formato: en una tabla de valores que codifica un estándar, como los
   países de ISO 3166-1, con su código como clave. Es el mismo en todos los entornos y se lee sin
@@ -38,14 +40,16 @@ Estándares: [*Data Types*](../fuentes/postgresql/datatype.sgml),
 
 ## Definición de datos
 
-Estándar: [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
+Estándar: [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL, salvo *Identity
+Columns*, que rige en «Clave primaria», y el párrafo de *Foreign Keys* sobre indexar las columnas
+que referencian, que rige en «Índices».
 
 - Toda clave foránea declara `ON DELETE`: `CASCADE` si el hijo pertenece al padre, `RESTRICT` si
   no. Qué pasa al borrar queda escrito en el modelo.
 
 ## Geografía
 
-Estándar: [*Data Management*](../fuentes/postgis/using_postgis_dataman.xml) de PostGIS.
+Estándar: [*Data Management*](../fuentes/postgis/using_postgis_dataman.xml) de PostGIS, entero.
 
 - Las columnas espaciales son `geography(<tipo>, 4326)`. El área de cada producto no se conoce de
   antemano, y `geography` mide en metros sin elegir proyección.
@@ -58,16 +62,18 @@ Estándar: [*Data Management*](../fuentes/postgis/using_postgis_dataman.xml) de 
 
 ## Índices
 
-Estándares: [*Indexes*](../fuentes/postgresql/indices.sgml) y
-[*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
+Estándares: [*Indexes*](../fuentes/postgresql/indices.sgml), entero, y el párrafo de *Foreign Keys*
+de [*Data Definition*](../fuentes/postgresql/ddl.sgml) sobre indexar las columnas que referencian,
+de PostgreSQL.
 
 - Toda clave foránea lleva índice. Endurece *Data Definition*, que lo da por buena idea y no lo crea:
   sin él, borrar el padre o unir las tablas recorre la tabla hija entera.
 
 ## Tipos
 
-Estándares: [*Data Types*](../fuentes/postgresql/datatype.sgml) y
-[*JSON Types*](../fuentes/postgresql/json.sgml) de PostgreSQL.
+Estándares: las entradas de [*Data Types*](../fuentes/postgresql/datatype.sgml) de los tipos que
+nombra esta sección, salvo los de «Clave primaria», y
+[*JSON Types*](../fuentes/postgresql/json.sgml), entero, de PostgreSQL.
 
 - Las cadenas son `text`. Un largo máximo que pida el dominio va en un `CHECK`: la restricción
   tiene nombre, admite también un mínimo y nunca recorta, como `varchar(n)` al convertir.

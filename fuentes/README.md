@@ -24,17 +24,17 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/extensions/asyncio.rst> | entera |  |
 | [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/session_basics.rst> | entera |  |
 | [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/rel_1_20_0/docs/build/autogenerate.rst> | entera |  |
-| [postgresql/datatype.sgml](postgresql/datatype.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/datatype.sgml> |  |  |
-| [postgresql/json.sgml](postgresql/json.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/json.sgml> |  |  |
-| [postgresql/func.sgml](postgresql/func.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/func.sgml> |  |  |
-| [postgresql/ddl.sgml](postgresql/ddl.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ddl.sgml> |  |  |
-| [postgresql/syntax.sgml](postgresql/syntax.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/syntax.sgml> |  |  |
-| [postgresql/indices.sgml](postgresql/indices.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml> |  |  |
+| [postgresql/datatype.sgml](postgresql/datatype.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/datatype.sgml> | por entradas |  |
+| [postgresql/json.sgml](postgresql/json.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/json.sgml> | entera |  |
+| [postgresql/func.sgml](postgresql/func.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/func.sgml> | por entradas |  |
+| [postgresql/ddl.sgml](postgresql/ddl.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ddl.sgml> | entera |  |
+| [postgresql/syntax.sgml](postgresql/syntax.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/syntax.sgml> | por entradas |  |
+| [postgresql/indices.sgml](postgresql/indices.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml> | entera |  |
 | [postgresql/backup.sgml](postgresql/backup.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml> | entera |  |
 | [postgresql/client-auth.sgml](postgresql/client-auth.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/client-auth.sgml> | por entradas |  |
 | [postgresql/user-manag.sgml](postgresql/user-manag.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/user-manag.sgml> | por entradas |  |
 | [postgresql/config.sgml](postgresql/config.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/config.sgml> | por entradas |  |
-| [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> |  |  |
+| [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> | entera |  |
 | [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> |  | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217. Lista de códigos, no fuente (ADR-0095) |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> | entera |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | <https://www.rfc-editor.org/rfc/rfc5646.txt> | entera |  |

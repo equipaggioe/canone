@@ -87,7 +87,8 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 Estándares: de OWASP, el
 [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md) y el párrafo
 sobre la CSP de *X-XSS-Protection* del
-[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md); y
+[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), y el requisito
+V3.2.2 de [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md); y
 [CSP Level 3](../fuentes/w3c/csp3.bs) de W3C.
 
 - La CSP la genera SvelteKit con `kit.csp` en modo `hash`, sobre `default-src 'self'`. El script de

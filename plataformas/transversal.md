@@ -4,7 +4,7 @@ Lo que tienen que cumplir juntas varias piezas. Lo que hace una sola pieza va en
 
 ## Accesibilidad
 
-Estándar: los criterios de éxito de nivel A y AA de [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
+Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 
 - Todos los clientes cumplen el nivel AA, también las apps: una sola vara para todos los clientes.
 - Cada objetivo táctil mide al menos 48 × 48: dp en las apps y px de CSS en la web. Endurece los 24
@@ -16,15 +16,13 @@ Estándar: los criterios de éxito de nivel A y AA de [WCAG 2.2](../fuentes/w3c/
 
 ## Archivos
 
-Estándar: [RFC 7578](../fuentes/rfc/rfc7578.txt).
-
 - Un archivo se sube como `multipart/form-data`, en su propia petición, nunca en base64 dentro de
   un JSON: base64 agranda el archivo un tercio y el servidor lee el JSON entero en memoria.
 
 ## Código por SMS
 
-Estándar: la sección *Message format* de
-[*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG.
+Estándar: [*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs)
+de WICG.
 
 - El código tiene 6 dígitos.
 - El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el
@@ -61,7 +59,8 @@ Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt) y [RFC 6901](../fuentes/rfc/
 
 ## Fechas
 
-Estándar: [RFC 3339](../fuentes/rfc/rfc3339.txt).
+Estándares: [RFC 3339](../fuentes/rfc/rfc3339.txt) y la sección 4.3 *Time and Date Handling* de
+[I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
 
 ## Idiomas
 
@@ -103,11 +102,11 @@ Estándar: la [guía de atribución](../fuentes/osm/attribution-guidelines.md) d
 
 ## Montos
 
-Estándares: la sección 2.2 de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493, *Numbers*, y la
-[lista de monedas](../fuentes/iso/iso-4217-list-one.xml) de ISO 4217.
+Estándar: la sección 2.2 *Numbers* de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
 
 - Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal, sin
-  exponente, y la moneda en su código ISO 4217.
+  exponente, y la moneda en su código de la
+  [lista de monedas](../fuentes/iso/iso-4217-list-one.xml) de ISO 4217.
 - Un monto no se formatea sin su moneda.
 - Cada cliente lo conserva como cadena o como el decimal de su lenguaje, nunca como `double`, y no
   calcula con él: los totales, impuestos y descuentos llegan calculados del servidor. Así ningún
@@ -115,11 +114,18 @@ Estándares: la sección 2.2 de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493, 
 
 ## OpenAPI y clientes
 
+Estándar: de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493, las secciones 2.1 *Encoding and
+Characters*, 2.3 *Object Constraints*, 3 *Software Behavior*, 4.1 *Top-Level Constructs*, 4.2
+*Must-Ignore Policy* y 4.4 *Binary Data*.
+
 - La API habla en camelCase.
 - Cada cliente genera del `openapi.json` del servidor los modelos del cable, en la convención de su
   lenguaje, y ninguno los escribe a mano: copiado a mano en varios lenguajes, el contrato diverge
   sin que nadie lo note.
 - Los valores de un enum van en snake_case.
+- El servidor responde 422 a un campo o un parámetro que no conoce. Contradice la *Must-Ignore
+  Policy*, que pide ignorarlo: el cliente y el servidor salen del mismo contrato, y un campo
+  desconocido es un error del cliente que tiene que verse.
 
 ## Paginación
 
@@ -136,12 +142,9 @@ Estándar: la [AIP-158](../fuentes/google-aip/aip-0158.md) de Google, *Paginatio
 
 ## Pagos
 
-Estándar: [*Secure Integration of Third-Party Payment Gateways Cheat Sheet*](../fuentes/owasp/Third_Party_Payment_Gateway_Integration.md)
-de OWASP.
-
 - El cliente cobra con el componente que la pasarela integra en él: la hoja de pago nativa en las
-  apps y el formulario incrustado en la web. Si la pasarela no tiene uno para ese cliente, manda a
-  su página. Contradice el paso 3 de OWASP: salir de la app para pagar se ve poco profesional.
+  apps y el formulario incrustado en la web, porque salir de la app para pagar se ve poco
+  profesional. Si la pasarela no tiene uno para ese cliente, manda a su página.
 
 ## Passkeys
 
@@ -160,7 +163,9 @@ Generation* y 7 *WebAuthn Relying Party Operations* de
 
 Estándares: las secciones *Push subscription*, *Declarative push message*, *PushSubscriptionOptions
 Interface*, *PushSubscription interface* y *PushEncryptionKeyName enumeration* de la
-[*Push API*](../fuentes/w3c/push-api.html) de W3C y [RFC 8292](../fuentes/rfc/rfc8292.txt).
+[*Push API*](../fuentes/w3c/push-api.html) de W3C, la sección 5.3 *Push Message Urgency* de
+[RFC 8030](../fuentes/rfc/rfc8030.txt), y las secciones 2 *Application Server Self-Identification*
+y 4.1 *Creating a Restricted Push Message Subscription* de [RFC 8292](../fuentes/rfc/rfc8292.txt).
 
 - Android y Flutter reciben push por FCM.
 - Un mensaje de FCM lleva `notification` y, en `data`, la ruta que abre al tocarlo, salvo el de una
@@ -248,15 +253,15 @@ Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de
 
 ## WebSocket
 
-Estándares: la sección 7.4 *Status Codes* de [RFC 6455](../fuentes/rfc/rfc6455.txt) y, del
-[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP, las
-secciones *Always Use WSS* y *Session Management*, sin su párrafo de `SameSite`, que rige en
-[fastapi.md](fastapi.md#sesión).
+Estándar: del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de
+OWASP, las secciones *Always Use WSS* y *Session Management*, sin su párrafo de `SameSite`, que
+rige en [fastapi.md](fastapi.md#sesión).
 
 - La web se autentica con la cookie de sesión del handshake, y una app, con
   `Authorization: Bearer` en el handshake, como en REST.
 - Una sesión que no vale o un token vencido cierran la conexión con 4401, del rango privado de
-  RFC 6455: un código propio separa la sesión de cualquier otro cierre. En el handshake, el
+  los [códigos de cierre](../fuentes/rfc/rfc6455.txt) de RFC 6455, en su sección 7.4: un código
+  propio separa la sesión de cualquier otro cierre. En el handshake, el
   servidor acepta la conexión para cerrarla: un rechazo con 401 Uvicorn lo registra como error, y
   uno con 403 no dice que el problema es la sesión.
 - Ante un 4401, una app refresca la sesión una sola vez y reconecta, y la web vuelve al inicio de

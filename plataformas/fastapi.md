@@ -103,11 +103,8 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 ## Base de datos
 
-Estándares: las preguntas *When do I make a `sessionmaker`?* y *When do I construct a `Session`,
-when do I commit it, and when do I close it?* de
-[*Session Basics*](../fuentes/sqlalchemy/session_basics.rst), y las secciones *Using AsyncSession
-with Concurrent Tasks* y *Preventing Implicit IO when Using AsyncSession* de la
-[extensión asyncio](../fuentes/sqlalchemy/asyncio.rst) de SQLAlchemy.
+Estándares: [*Session Basics*](../fuentes/sqlalchemy/session_basics.rst) y la
+[extensión asyncio](../fuentes/sqlalchemy/asyncio.rst) de SQLAlchemy, enteras.
 
 - `AsyncSession` con asyncpg.
 - `lazy="raise"` en toda relación.
@@ -122,8 +119,7 @@ with Concurrent Tasks* y *Preventing Implicit IO when Using AsyncSession* de la
 
 ## Migraciones
 
-Estándar: la sección *What does Autogenerate Detect (and what does it not detect?)* de la
-[autogeneración](../fuentes/alembic/autogenerate.rst) de Alembic.
+Estándar: la [autogeneración](../fuentes/alembic/autogenerate.rst) de Alembic, entera.
 
 - `alembic/` sale de la plantilla `async` de Alembic: las migraciones corren con asyncpg, como la
   app.
@@ -234,8 +230,8 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 
 Estándares: de [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), la sección 3.1.1
 *Passwords*, salvo sus tres últimos párrafos, sobre cómo se guarda la contraseña, y los que cita
-[transversal.md](transversal.md#contraseñas), y la sección 4.2 *Account Recovery*; y la sección
-*Argon2id* del [*Password Storage Cheat Sheet*](../fuentes/owasp/Password_Storage.md) de OWASP.
+[transversal.md](transversal.md#contraseñas), y la sección 4.2 *Account Recovery*; y el
+[*Password Storage Cheat Sheet*](../fuentes/owasp/Password_Storage.md) de OWASP.
 
 Contrato: [transversal.md](transversal.md#contraseñas).
 
@@ -361,10 +357,18 @@ Contrato: [transversal.md](transversal.md#paginación).
 
 ## Pagos
 
+Estándar: las secciones *What Can Go Wrong at Each Step and How to Prevent It* y *Logging and
+Monitoring* del
+[*Secure Integration of Third-Party Payment Gateways Cheat Sheet*](../fuentes/owasp/Third_Party_Payment_Gateway_Integration.md)
+de OWASP.
+
 Contrato: [transversal.md](transversal.md#pagos).
 
 - El ID de cada evento procesado se guarda con una restricción única: dos entregas simultáneas del
   mismo evento no se procesan las dos.
+- Las alertas de *Logging and Monitoring* quedan sin efecto: avisar le toca a quien vigila el
+  servidor por [Salud](#salud). La puntuación de fraude también, porque la hace la pasarela, que
+  ve los pagos de todos sus comercios.
 
 ## Passkeys
 
@@ -398,7 +402,9 @@ secciones 15.5.4 *403 Forbidden* y 15.5.5 *404 Not Found* de
 
 ## Push
 
-Estándares: [RFC 8030](../fuentes/rfc/rfc8030.txt) y [RFC 8291](../fuentes/rfc/rfc8291.txt).
+Estándar: lo que [RFC 8030](../fuentes/rfc/rfc8030.txt) le pide al servidor de aplicación: la
+sección 5 *Requesting Push Message Delivery*, salvo 5.3, que rige en
+[transversal.md](transversal.md#push), y las secciones 7.2 a 7.4 y 8.
 
 Contrato: [transversal.md](transversal.md#push).
 
@@ -412,14 +418,13 @@ Contrato: [transversal.md](transversal.md#push).
 
 ## Registro de eventos
 
-Estándares: las secciones *Where to record event data*, *Which events to log*, *Event attributes*,
-*Data to exclude*, *Customizable logging*, *Event collection*, *Verification*, *Protection* y
-*Disposal of logs* del [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) de OWASP, y la sección
+Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) de OWASP, y la sección
 *The Vocabulary* del
 [*Application Logging Vocabulary Cheat Sheet*](../fuentes/owasp/Logging_Vocabulary.md) de OWASP.
 
-- Los eventos van en una sola tabla, `event_log`: lo que pasó alrededor de una hora se lee en una
-  consulta. Un cambio de fila también es un evento, con los campos cambiados en `details`.
+- Los eventos van en una sola tabla, `event_log`, y un cambio de fila también es un evento, con
+  los campos cambiados en `details`. Contradice *Purpose*, que pide separar la auditoría de los
+  eventos de seguridad: lo que pasó alrededor de una hora se lee en una consulta.
 - `action` es el nombre del vocabulario sin sus parámetros, como `authn_login_fail`. Los parámetros
   van en sus columnas: así se consultan.
 - Las demás columnas son `occurred_at`, `actor_id`, `actor_label`, `target_type`, `target_id`,
@@ -447,6 +452,8 @@ Estándares: las secciones *Where to record event data*, *Which events to log*, 
   `root` pueden cambiarlo, y `root` también cambia lo que lo detectaría.
 - *Protection* queda sin efecto en registrar y vigilar cada acceso: solo leen la app y quien opera
   el servidor, y vigilar es un proceso de operación.
+- *Release* y *Monitoring of events* quedan sin efecto: son procesos de operación de quien vigila
+  el servidor por [Salud](#salud).
 - La sección *Security Monitoring and Logging* del
   [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) queda sin efecto: qué se
   registra lo rige el *Logging Cheat Sheet*, que cubre más.
@@ -492,9 +499,10 @@ Contrato: [transversal.md](transversal.md#reintentos).
 Estándares: [RFC 7519](../fuentes/rfc/rfc7519.txt), [RFC 8725](../fuentes/rfc/rfc8725.txt), la
 sección 4.14 *Refresh Token Protection* de [RFC 9700](../fuentes/rfc/rfc9700.txt) y, en el nivel 1
 de ASVS 5.0 de OWASP, el capítulo
-[V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) y las secciones V3.3
-*Cookie Setup* y V3.5 *Browser Origin Separation* de
-[V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md); y el párrafo de
+[V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) y el capítulo
+[V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), salvo V3.2.1 y
+V3.4, que quedan sin efecto en [despliegue.md](despliegue.md#caddy), y V3.2.2, que rige en
+[sveltekit.md](sveltekit.md#csp); y el párrafo de
 `SameSite` de *Session Management* del
 [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
 
@@ -532,9 +540,6 @@ Contrato: [transversal.md](transversal.md#sesión).
 - Un token de refresco con la firma inválida o de una sesión que no existe responde 401, sin aviso.
 
 ## Trazas
-
-Estándar: la regla `trace-id` de la sección 3.2.2.2 *version-format* y la sección 3.2.2.3
-*trace-id* de [Trace Context](../fuentes/w3c/trace-context-1.md) de W3C.
 
 - La app configura un `TracerProvider` del SDK de OpenTelemetry: sin él, FastAPI no crea spans y no
   hay trace-id.

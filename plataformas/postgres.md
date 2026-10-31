@@ -67,8 +67,7 @@ Estándares: [*Indexes*](../fuentes/postgresql/indices.sgml) y
 ## Tipos
 
 Estándares: [*Data Types*](../fuentes/postgresql/datatype.sgml) y
-[*JSON Types*](../fuentes/postgresql/json.sgml) de PostgreSQL, y la
-[lista de monedas](../fuentes/iso/iso-4217-list-one.xml) de ISO 4217.
+[*JSON Types*](../fuentes/postgresql/json.sgml) de PostgreSQL.
 
 - Las cadenas son `text`. Un largo máximo que pida el dominio va en un `CHECK`: la restricción
   tiene nombre, admite también un mínimo y nunca recorta, como `varchar(n)` al convertir.

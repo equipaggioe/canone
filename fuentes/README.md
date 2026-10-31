@@ -11,19 +11,19 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 
 | Archivo | Fuente | Cita | Nota |
 |---|---|---|---|
-| [python/pep-0008.rst](python/pep-0008.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0008.rst> |  |  |
-| [python/pep-0257.rst](python/pep-0257.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0257.rst> |  |  |
+| [python/pep-0008.rst](python/pep-0008.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0008.rst> | entera |  |
+| [python/pep-0257.rst](python/pep-0257.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0257.rst> | entera |  |
 | [python/pep-0698.rst](python/pep-0698.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0698.rst> |  |  |
-| [python/asyncio-dev.rst](python/asyncio-dev.rst) | <https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/asyncio-dev.rst> |  | Rama 3.13, la versión que usan las piezas: la de `main` nombra `InterpreterPoolExecutor`, que no existe en 3.13. |
-| [python/io.rst](python/io.rst) | <https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/io.rst> |  | Rama 3.13, la versión que usan las piezas: desde 3.15 la codificación por defecto es UTF-8 y la sección *Text Encoding* ya no recomienda indicarla. |
-| [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pyproject-toml.rst> |  |  |
-| [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/dependency-groups.rst> |  |  |
-| [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> |  |  |
-| [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> |  |  |
-| [typing/modernizing.rst](typing/modernizing.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/guides/modernizing.rst> |  |  |
-| [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/extensions/asyncio.rst> |  |  |
-| [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/session_basics.rst> |  |  |
-| [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/rel_1_20_0/docs/build/autogenerate.rst> |  |  |
+| [python/asyncio-dev.rst](python/asyncio-dev.rst) | <https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/asyncio-dev.rst> | entera | Rama 3.13, la versión que usan las piezas: la de `main` nombra `InterpreterPoolExecutor`, que no existe en 3.13. |
+| [python/io.rst](python/io.rst) | <https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/io.rst> | por entradas | Rama 3.13, la versión que usan las piezas: desde 3.15 la codificación por defecto es UTF-8 y la sección *Text Encoding* ya no recomienda indicarla. |
+| [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/pyproject-toml.rst> | por entradas |  |
+| [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | <https://raw.githubusercontent.com/pypa/packaging.python.org/main/source/specifications/dependency-groups.rst> | por entradas |  |
+| [pytest/goodpractices.rst](pytest/goodpractices.rst) | <https://raw.githubusercontent.com/pytest-dev/pytest/main/doc/en/explanation/goodpractices.rst> | entera |  |
+| [typing/best_practices.rst](typing/best_practices.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/reference/best_practices.rst> | entera |  |
+| [typing/modernizing.rst](typing/modernizing.rst) | <https://raw.githubusercontent.com/python/typing/main/docs/guides/modernizing.rst> | entera |  |
+| [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/extensions/asyncio.rst> | entera |  |
+| [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | <https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_1/doc/build/orm/session_basics.rst> | entera |  |
+| [alembic/autogenerate.rst](alembic/autogenerate.rst) | <https://raw.githubusercontent.com/sqlalchemy/alembic/rel_1_20_0/docs/build/autogenerate.rst> | entera |  |
 | [postgresql/datatype.sgml](postgresql/datatype.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/datatype.sgml> |  |  |
 | [postgresql/json.sgml](postgresql/json.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/json.sgml> |  |  |
 | [postgresql/func.sgml](postgresql/func.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/func.sgml> |  |  |
@@ -35,63 +35,60 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [postgresql/user-manag.sgml](postgresql/user-manag.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/user-manag.sgml> | por entradas |  |
 | [postgresql/config.sgml](postgresql/config.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/config.sgml> | por entradas |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> |  |  |
-| [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> |  | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217 |
-| [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> |  |  |
+| [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> |  | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217. Lista de códigos, no fuente (ADR-0095) |
+| [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> | entera |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | <https://www.rfc-editor.org/rfc/rfc5646.txt> |  |  |
-| [rfc/rfc6455.txt](rfc/rfc6455.txt) | <https://www.rfc-editor.org/rfc/rfc6455.txt> |  |  |
+| [rfc/rfc6455.txt](rfc/rfc6455.txt) | <https://www.rfc-editor.org/rfc/rfc6455.txt> |  | Lista de códigos de cierre, no fuente (ADR-0095) |
 | [rfc/rfc6749.txt](rfc/rfc6749.txt) | <https://www.rfc-editor.org/rfc/rfc6749.txt> |  |  |
-| [rfc/rfc6585.txt](rfc/rfc6585.txt) | <https://www.rfc-editor.org/rfc/rfc6585.txt> |  |  |
-| [rfc/rfc6901.txt](rfc/rfc6901.txt) | <https://www.rfc-editor.org/rfc/rfc6901.txt> |  |  |
-| [rfc/rfc7493.txt](rfc/rfc7493.txt) | <https://www.rfc-editor.org/rfc/rfc7493.txt> |  |  |
-| [rfc/rfc7519.txt](rfc/rfc7519.txt) | <https://www.rfc-editor.org/rfc/rfc7519.txt> |  |  |
-| [rfc/rfc7578.txt](rfc/rfc7578.txt) | <https://www.rfc-editor.org/rfc/rfc7578.txt> |  |  |
+| [rfc/rfc6585.txt](rfc/rfc6585.txt) | <https://www.rfc-editor.org/rfc/rfc6585.txt> | entera |  |
+| [rfc/rfc6901.txt](rfc/rfc6901.txt) | <https://www.rfc-editor.org/rfc/rfc6901.txt> | entera |  |
+| [rfc/rfc7493.txt](rfc/rfc7493.txt) | <https://www.rfc-editor.org/rfc/rfc7493.txt> | entera |  |
+| [rfc/rfc7519.txt](rfc/rfc7519.txt) | <https://www.rfc-editor.org/rfc/rfc7519.txt> | entera |  |
 | [rfc/rfc7636.txt](rfc/rfc7636.txt) | <https://www.rfc-editor.org/rfc/rfc7636.txt> |  |  |
-| [rfc/rfc8030.txt](rfc/rfc8030.txt) | <https://www.rfc-editor.org/rfc/rfc8030.txt> |  |  |
+| [rfc/rfc8030.txt](rfc/rfc8030.txt) | <https://www.rfc-editor.org/rfc/rfc8030.txt> | entera |  |
 | [rfc/rfc8252.txt](rfc/rfc8252.txt) | <https://www.rfc-editor.org/rfc/rfc8252.txt> |  |  |
-| [rfc/rfc8291.txt](rfc/rfc8291.txt) | <https://www.rfc-editor.org/rfc/rfc8291.txt> |  |  |
-| [rfc/rfc8292.txt](rfc/rfc8292.txt) | <https://www.rfc-editor.org/rfc/rfc8292.txt> |  |  |
+| [rfc/rfc8292.txt](rfc/rfc8292.txt) | <https://www.rfc-editor.org/rfc/rfc8292.txt> | entera |  |
 | [rfc/rfc8656.txt](rfc/rfc8656.txt) | <https://www.rfc-editor.org/rfc/rfc8656.txt> | entera |  |
-| [rfc/rfc8725.txt](rfc/rfc8725.txt) | <https://www.rfc-editor.org/rfc/rfc8725.txt> |  |  |
+| [rfc/rfc8725.txt](rfc/rfc8725.txt) | <https://www.rfc-editor.org/rfc/rfc8725.txt> | entera |  |
 | [rfc/rfc9110.txt](rfc/rfc9110.txt) | <https://www.rfc-editor.org/rfc/rfc9110.txt> |  |  |
 | [rfc/rfc9429.txt](rfc/rfc9429.txt) | <https://www.rfc-editor.org/rfc/rfc9429.txt> |  |  |
-| [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> |  |  |
+| [rfc/rfc9457.txt](rfc/rfc9457.txt) | <https://www.rfc-editor.org/rfc/rfc9457.txt> | entera |  |
 | [rfc/rfc9700.txt](rfc/rfc9700.txt) | <https://www.rfc-editor.org/rfc/rfc9700.txt> |  |  |
-| [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md> |  | Línea 3.1, la versión que genera FastAPI |
-| [google-aip/aip-0158.md](google-aip/aip-0158.md) | <https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0158.md> |  |  |
-| [w3c/trace-context-1.md](w3c/trace-context-1.md) | <https://www.w3.org/TR/trace-context-1/> |  | Página web convertida a Markdown |
+| [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md> | por entradas | Línea 3.1, la versión que genera FastAPI |
+| [google-aip/aip-0158.md](google-aip/aip-0158.md) | <https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0158.md> | entera |  |
 | [w3c/csp3.bs](w3c/csp3.bs) | <https://raw.githubusercontent.com/w3c/webappsec-csp/main/index.bs> |  |  |
 | [w3c/webauthn-3.html](w3c/webauthn-3.html) | <https://www.w3.org/TR/2026/REC-webauthn-3-20260825/> |  | Recomendación del 2026-08-25 |
-| [w3c/webrtc.html](w3c/webrtc.html) | <https://www.w3.org/TR/2025/REC-webrtc-20250313/> |  | Recomendación del 2025-03-13 |
-| [w3c/push-api.html](w3c/push-api.html) | <https://www.w3.org/TR/2026/WD-push-api-20261005/> |  | Borrador de trabajo del 2026-10-05 |
-| [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> |  |  |
+| [w3c/webrtc.html](w3c/webrtc.html) | <https://www.w3.org/TR/2025/REC-webrtc-20250313/> | por entradas | Recomendación del 2025-03-13 |
+| [w3c/push-api.html](w3c/push-api.html) | <https://www.w3.org/TR/2026/WD-push-api-20261005/> | por entradas | Borrador de trabajo del 2026-10-05 |
+| [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> | entera |  |
 | [w3c/permissions-policy-features.md](w3c/permissions-policy-features.md) | <https://raw.githubusercontent.com/w3c/webappsec-permissions-policy/29398046f1e0cb45c091adda853df74925dc740a/features.md> |  | Commit 2939804. Lista de nombres, no fuente (ADR-0095) |
 | [dtcg/format.html](dtcg/format.html) | <https://www.designtokens.org/tr/2025.10/format/> |  |  |
 | [dtcg/color.html](dtcg/color.html) | <https://www.designtokens.org/tr/2025.10/color/> |  |  |
 | [dtcg/resolver.html](dtcg/resolver.html) | <https://www.designtokens.org/tr/2025.10/resolver/> |  |  |
 | [whatwg/notifications.bs](whatwg/notifications.bs) | <https://raw.githubusercontent.com/whatwg/notifications/main/notifications.bs> |  |  |
-| [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs> |  |  |
+| [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | <https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs> | entera |  |
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> |  |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> |  | Texto extraído del PDF |
 | [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | <https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf> | entera | Texto extraído del PDF |
 | [iana/iana-ipv4-special-registry.csv](iana/iana-ipv4-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |
 | [iana/iana-ipv6-special-registry.csv](iana/iana-ipv6-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |
 | [fhs/fhs-3.0.txt](fhs/fhs-3.0.txt) | <https://www.debian.org/doc/packaging-manuals/fhs/fhs-3.0.txt> | por entradas | Versión 3.0, la que sigue Debian 13. Copia de Debian: refspecs.linuxfoundation.org rechaza la descarga |
-| [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md> |  | Versión 5.0.0 |
-| [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md> |  | Versión 5.0.0 |
-| [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Authorization_Cheat_Sheet.md> |  |  |
+| [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md> | entera | Versión 5.0.0 |
+| [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md> | entera | Versión 5.0.0 |
+| [owasp/Authorization.md](owasp/Authorization.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Authorization_Cheat_Sheet.md> | entera |  |
 | [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Content_Security_Policy_Cheat_Sheet.md> |  |  |
-| [owasp/Password_Storage.md](owasp/Password_Storage.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Password_Storage_Cheat_Sheet.md> |  |  |
+| [owasp/Password_Storage.md](owasp/Password_Storage.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Password_Storage_Cheat_Sheet.md> | entera |  |
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/HTTP_Headers_Cheat_Sheet.md> | entera |  |
-| [owasp/Logging.md](owasp/Logging.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Cheat_Sheet.md> |  |  |
-| [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md> |  |  |
-| [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> |  |  |
-| [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/File_Upload_Cheat_Sheet.md> |  |  |
+| [owasp/Logging.md](owasp/Logging.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Cheat_Sheet.md> | entera |  |
+| [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md> | por entradas |  |
+| [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md> | entera |  |
+| [owasp/File_Upload.md](owasp/File_Upload.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/File_Upload_Cheat_Sheet.md> | entera |  |
 | [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | <https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/WebSocket_Security_Cheat_Sheet.md> | entera |  |
 | [valkey/admin.md](valkey/admin.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md> | entera | Valkey 8.1, la versión de Debian 13 |
 | [valkey/security.md](valkey/security.md) | <https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md> | entera | Valkey 8.1, la versión de Debian 13 |
 | [firebase/flutter-receive-messages.md](firebase/flutter-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/flutter/receive-messages> |  | Página web convertida a Markdown |
 | [firebase/android-receive-messages.md](firebase/android-receive-messages.md) | <https://firebase.google.com/docs/cloud-messaging/android/receive-messages> |  | Página web convertida a Markdown |
-| [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md> |  |  |
+| [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | <https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md> | entera |  |
 | [sveltekit/project-structure.md](sveltekit/project-structure.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/10-getting-started/30-project-structure.md> |  |  |
 | [sveltekit/load.md](sveltekit/load.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/20-load.md> |  |  |
 | [sveltekit/page-options.md](sveltekit/page-options.md) | <https://raw.githubusercontent.com/sveltejs/kit/main/documentation/docs/20-core-concepts/40-page-options.md> |  |  |
@@ -147,7 +144,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pub/provider/README.md](pub/provider/README.md) | <https://raw.githubusercontent.com/rrousselGit/provider/master/packages/provider/README.md> |  |  |
 | [pub/flutter_map/README.md](pub/flutter_map/README.md) | <https://raw.githubusercontent.com/fleaflet/flutter_map/master/README.md> |  |  |
 | [pub/sms_autofill/README.md](pub/sms_autofill/README.md) | <https://raw.githubusercontent.com/jaumard/sms_autofill/master/README.md> |  |  |
-| [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | <https://osmfoundation.org/wiki/Licence/Attribution_Guidelines> |  | Página web convertida a Markdown |
+| [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | <https://osmfoundation.org/wiki/Licence/Attribution_Guidelines> | entera | Página web convertida a Markdown |
 | [leaflet/quick-start.md](leaflet/quick-start.md) | <https://raw.githubusercontent.com/Leaflet/Leaflet/main/docs/examples/quick-start/index.md> |  |  |
 | [maplibre/android-getting-started.md](maplibre/android-getting-started.md) | <https://raw.githubusercontent.com/maplibre/maplibre-native/main/platform/android/docs/getting-started.md> |  |  |
 | [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | <https://raw.githubusercontent.com/JetBrains/kotlin-web-site/master/docs/topics/coding-conventions.md> |  |  |

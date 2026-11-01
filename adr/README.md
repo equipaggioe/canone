@@ -118,3 +118,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0108](0108-una-fuente-se-cita-entera-o-por-entradas-y-cada-parte-rige-en-una-sola-seccion.md) | Una fuente se cita entera o por entradas, y cada parte de una fuente entera rige en una sola sección | `plataformas/` y `fuentes/` | Aceptada; el punto 2 lo reemplaza ADR-0109 |
 | [0109](0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md) | Lo que una fuente le pide a otro no se reparte, y su unidad es lo que tiene URL propia | `plataformas/` y `fuentes/` | Aceptada |
 | [0110](0110-uv-lo-instala-uv-py-con-su-version-y-su-sha-256-fijos.md) | uv lo instala `uv.py`, con su versión y su SHA-256 fijos | Con `server/` | Aceptada |
+| [0111](0111-android-lint-no-avisa-versiones-nuevas.md) | Android Lint no avisa versiones nuevas | Con Android | Aceptada |

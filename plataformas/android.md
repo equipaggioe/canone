@@ -25,6 +25,11 @@ y las [*Coding conventions*](../fuentes/kotlin/coding-conventions.md) de Kotlin.
   plugin de Gradle `org.jlleitschuh.gradle.ktlint`, y el estilo va en `.editorconfig`.
 - Android Lint trata las advertencias como errores, con `warningsAsErrors = true` en el bloque
   `lint` de `app/build.gradle.kts`. Endurece Android Lint: una advertencia no pasa CI.
+- El mismo bloque apaga `AndroidGradlePluginVersion`, `GradleDependency` y
+  `NewerVersionAvailable`, que avisan cuando sale una versión más nueva: Gradle, AGP y Kotlin los
+  fija «Proyecto», y con esos avisos el CI fallaría cada vez que se publica una versión, sin que
+  cambie el repositorio
+  ([ADR-0111](../adr/0111-android-lint-no-avisa-versiones-nuevas.md)).
 
 Plantilla: [`plantilla/android/`](../plantilla/android/): `.editorconfig`, que se copia sin
 editar, y `.gitignore`.

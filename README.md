@@ -9,20 +9,15 @@ convención de `docs/` y lo mínimo del repositorio.
 
 ## Objetivo
 
-canone fija las convenciones con las que se escriben todos mis proyectos, para que cualquiera de
-ellos se lea, se construya y se mantenga igual que los demás. Esas convenciones tienen que ser las
-más convenientes, y por eso salen primero de los estándares y la documentación oficial de cada
-tecnología:
+canone reúne las decisiones con las que escribo mis proyectos, para que todos se lean, se
+construyan y se mantengan de la misma forma. Cada decisión se escribe una sola vez: como regla
+propia o citando una fuente que la resuelve igual, para no redactar lo que ya está bien escrito.
 
-- **Los escribe quien mejor conoce la tecnología** y una comunidad amplia los revisa antes de
-  publicarlos. Recogen errores que un solo proyecto tardaría años en encontrar.
-- **Las herramientas se construyen sobre ellos.** El formateador, el analizador y el framework dan
-  por hecho que se siguen. Seguirlos exige menos configuración y da menos sorpresas.
-- **Se actualizan con la tecnología.** Una regla propia envejece sin que nadie lo note.
-- **Quien llega ya los conoce.** Una persona o un asistente nuevo no tiene que aprender
-  convenciones privadas, y una elección que se cita no se vuelve a discutir.
+Es una guía y no un reglamento. Sus reglas se siguen por defecto, y un repositorio con un motivo
+para apartarse de una lo hace dejándolo escrito, como dice
+[Las dos reglas que sostienen esto](#las-dos-reglas-que-sostienen-esto).
 
-El criterio completo está en [plataformas/README.md](plataformas/README.md).
+Cuándo se cita una fuente y cuál: [plataformas/README.md](plataformas/README.md).
 
 Lo que una convención exige en una máquina, canone lo da también como el programa que la deja así:
 cambia junto con sus plantillas, y solo instalándola se prueba entera.

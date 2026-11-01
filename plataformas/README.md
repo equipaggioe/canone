@@ -65,6 +65,16 @@ igual orden, la que cubre más del asunto:
 | 3 | Una especificación de facto, como SemVer, Conventional Commits o The Twelve-Factor App |
 | 4 | Una guía de una organización de referencia, como Google AIP o las guías de API de Microsoft |
 
+El orden prefiere lo que escribe quien define la tecnología:
+
+- **Lo escribe quien mejor la conoce**, y una comunidad amplia lo revisa antes de publicarlo:
+  recoge errores que un solo proyecto tardaría años en encontrar.
+- **Las herramientas se construyen sobre ello.** El formateador, el analizador y el framework dan
+  por hecho que se sigue: exige menos configuración y da menos sorpresas.
+- **Se actualiza con la tecnología**, mientras que una regla propia envejece sin que nadie lo note.
+- **Quien llega ya lo conoce:** una persona o un asistente nuevo no tiene que aprender
+  convenciones privadas.
+
 ### Qué implica citar
 
 - Una fuente se cita entera o por entradas:

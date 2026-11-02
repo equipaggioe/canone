@@ -1,88 +1,120 @@
 # canone
 
-Cómo escribo el código. **No es una lista de lo que todo repositorio debe tener**: cada producto
-elige sus piezas. Es la respuesta a «si uso X, ¿cómo lo uso?», escrita una sola vez.
+Convenciones, plantillas y herramientas compartidas para construir, organizar y mantener mis proyectos de software.
 
-Un repositorio que no tiene aplicación móvil no lee `plataformas/flutter.md`. Uno que no tiene web
-no lee `plataformas/sveltekit.md`. Lo que sí aplica siempre son los principios de método, la
-convención de `docs/` y lo mínimo del repositorio.
+## Propósito
 
-## Objetivo
+Canone centraliza las convenciones y decisiones compartidas por mis proyectos para que puedan construirse, organizarse y mantenerse de manera coherente.
 
-canone reúne las decisiones con las que escribo mis proyectos, para que todos se lean, se
-construyan y se mantengan de la misma forma. Cada decisión se escribe una sola vez: como regla
-propia o citando una fuente que la resuelve igual, para no redactar lo que ya está bien escrito.
+Al definir las convenciones de cada tecnología, prioriza la adopción de fuentes normativas externas que ya establecen criterios adecuados, evitando volver a redactar y mantener reglas existentes. Cuando esas fuentes no cubren una decisión, dejan alternativas abiertas o requieren excepciones, canone establece los criterios correspondientes.
 
-Es una guía y no un reglamento. Sus reglas se siguen por defecto, y un repositorio con un motivo
-para apartarse de una lo hace dejándolo escrito, como dice
-[Las dos reglas que sostienen esto](#las-dos-reglas-que-sostienen-esto).
+Además de documentar las convenciones, proporciona plantillas y herramientas para incorporarlas a los repositorios y comprobar su cumplimiento.
 
-Cuándo se cita una fuente y cuál: [plataformas/README.md](plataformas/README.md).
+## Aplicación
 
-Lo que una convención exige en una máquina, canone lo da también como el programa que la deja así:
-cambia junto con sus plantillas, y solo instalándola se prueba entera.
+Canone distingue entre convenciones generales y convenciones específicas de cada tecnología.
 
-## Quién hace qué
+Las siguientes convenciones aplican a todos los repositorios:
 
-Por qué se reparte así: [ADR-0075](adr/0075-canone-fija-el-repositorio-declara-y-consola-dispara.md)
-y [ADR-0107](adr/0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md).
+- `principios.md`: método de trabajo.
+- `repositorio.md`: organización, Git, README y CI.
+- `documentacion.md`: estructura y mantenimiento de la documentación de cada repositorio.
 
-| Quién | Qué hace | Qué no hace |
+Las convenciones de `plataformas/` dependen de las tecnologías utilizadas por cada proyecto. Cada repositorio consulta únicamente las páginas correspondientes a sus tecnologías y las convenciones transversales que le sean aplicables.
+
+Una página que hereda de otra incorpora también sus convenciones, sin necesidad de repetirlas. La relación de herencia se declara en la propia página.
+
+Un repositorio puede apartarse de una convención cuando exista un motivo justificado. La desviación se registra en un ADR propio, dentro de `docs/adr/`, que identifica la convención afectada y explica la decisión.
+
+## Principios
+
+**Una convención tiene una única definición.**
+
+Cada convención se adopta de una fuente normativa o se establece como una regla propia en la página correspondiente. Los demás documentos la referencian en lugar de reproducirla. Si un repositorio necesita apartarse de ella, documenta la excepción mediante un ADR propio. Si la excepción demuestra ser una mejor solución general, se incorpora a canone y sustituye la convención anterior cuando corresponda.
+
+**Toda convención que pueda verificarse automáticamente debe tener un mecanismo de cumplimiento.**
+
+Cada página identifica el archivo de configuración, la regla de análisis o la prueba que comprueba las convenciones aplicables. Las convenciones que no pueden verificarse automáticamente siguen siendo válidas y deben cumplirse igualmente.
+
+## Responsabilidades
+
+Canone, cada repositorio y quien despliega tienen responsabilidades distintas y complementarias.
+
+| Quién | Responsabilidades | Límites |
 |---|---|---|
-| **canone** | Fija las reglas, da las plantillas y fija cada programa por su interfaz: sus argumentos y su stdin | No guarda datos de ninguna app, no decide cuándo se corre nada ni nombra con qué se corre |
-| **El repositorio** | Sigue las reglas, copia las plantillas que se copian y declara sus datos: nombre, superficies y campos de `Settings` | No reimplementa una plantilla ni decide cómo se instala |
-| **Quien despliega** | Corre los programas de canone por su interfaz, a mano o con la herramienta que elija | No escribe encima de lo que instalan: ni unidades, ni configuración, ni scripts propios |
+| **Canone** | Define las convenciones, proporciona las plantillas y establece la interfaz de sus programas mediante argumentos y `stdin`. | No guarda datos de las aplicaciones, no decide cuándo se ejecutan sus programas ni impone qué herramienta debe ejecutarlos. |
+| **El repositorio** | Adopta las convenciones aplicables, incorpora las plantillas que se copian y declara sus propios datos: nombre, superficies y campos de `Settings`. | No reimplementa las plantillas ni define cómo se instalan los componentes proporcionados por canone. |
+| **Quien despliega** | Ejecuta los programas de canone, manualmente o mediante la herramienta que elija, respetando sus interfaces. | No modifica ni sustituye los archivos que instalan esos programas, como unidades, configuraciones y scripts propios. |
 
-- Una plantilla **que se copia**, como `release.yml`, vive en el repositorio.
-- Una plantilla **que se instala**, como `infra/` con su `deploy.py`, se toma de canone.
-- Lo que cambia entre despliegues, secreto o no, no se commitea: el repositorio declara el campo, y
-  el valor llega al servidor como argumento de `install.py`, como el dominio y la memoria, o por
-  `credentials.py`. canone no fija dónde lo guarda quien despliega.
+El reparto de responsabilidades se fundamenta en [ADR-0075](adr/0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) y [ADR-0107](adr/0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md).
 
-## Índice
+## Integración
 
-| Archivo | Cuándo aplica |
+Canone proporciona dos tipos de plantillas, según cómo se incorporan al proyecto o al servidor.
+
+### Plantillas que se copian
+
+Se incorporan al repositorio que las utiliza y se mantienen allí. Por ejemplo, `release.yml`.
+
+### Plantillas que se instalan
+
+Se obtienen directamente de canone y sus programas las instalan en el servidor. Por ejemplo, `infra/` y su `deploy.py`.
+
+No se copian al repositorio ni se mantienen mediante implementaciones propias.
+
+### Configuración de cada despliegue
+
+Los valores que cambian entre despliegues, sean secretos o no, no se incorporan al control de versiones. Cada repositorio declara los campos que necesita y quien despliega proporciona sus valores al servidor mediante la interfaz del programa correspondiente.
+
+Por ejemplo, `install.py` recibe valores como el dominio y la memoria mediante argumentos, mientras que las credenciales se suministran mediante `credentials.py`.
+
+Canone define cómo se reciben esos valores, pero no dónde los almacena quien despliega.
+
+## Documentación y recursos
+
+El repositorio organiza sus convenciones, referencias, decisiones, plantillas y herramientas en los siguientes archivos y directorios.
+
+| Recurso | Contenido y aplicación |
 |---|---|
-| [principios.md](principios.md) | Siempre. Método de trabajo, sin stack |
-| [repositorio.md](repositorio.md) | Siempre. Git, estructura de carpetas, README, CI |
-| [documentacion.md](documentacion.md) | Siempre. La convención `docs/` |
-| [plataformas/](plataformas/) | **Solo la página de cada tecnología que el repositorio use** |
-| [fuentes/](fuentes/) | Al escribir o revisar una página. Los textos de las fuentes que citan las páginas |
-| [adr/](adr/) | Por qué cada regla es como es |
-| [plantilla/](plantilla/) | Los archivos que se copian a un repositorio, por plataforma: canónicos o puntos de partida |
-| [scripts/verificar.py](scripts/verificar.py) | Comprueba lo que aplica a cada repositorio, y falla si no se cumple |
+| [principios.md](principios.md) | Método de trabajo, independiente de las tecnologías utilizadas. |
+| [repositorio.md](repositorio.md) | Convenciones de Git, estructura de carpetas, README y CI. |
+| [documentacion.md](documentacion.md) | Estructura y mantenimiento de la documentación de cada repositorio. |
+| [plataformas/](plataformas/) | Metodología y catálogo de convenciones específicas de cada tecnología. |
+| [fuentes/](fuentes/) | Copias de las fuentes adoptadas y material de referencia utilizado por las páginas de plataformas. |
+| [adr/](adr/) | Registro de las decisiones de canone, con su alcance y estado. |
+| [plantilla/](plantilla/) | Archivos y componentes canónicos que se copian a los repositorios o se instalan desde canone. |
+| [scripts/verificar.py](scripts/verificar.py) | Comprueba el cumplimiento de las convenciones de canone y de los repositorios que las utilizan. |
 
-## Plataformas documentadas
+## Verificación
 
-Qué es una página y de dónde sale: [plataformas/README.md](plataformas/README.md).
+`scripts/verificar.py` comprueba que canone y los repositorios que lo utilizan cumplan las convenciones verificables automáticamente.
 
-| Servidor y datos | Cliente | Transversal |
-|---|---|---|
-| [fastapi.md](plataformas/fastapi.md) | [sveltekit.md](plataformas/sveltekit.md) | [transversal.md](plataformas/transversal.md) |
-| [postgres.md](plataformas/postgres.md) | [flutter.md](plataformas/flutter.md) | |
-| [despliegue.md](plataformas/despliegue.md) | [flet.md](plataformas/flet.md) | |
-| | [qt.md](plataformas/qt.md) | |
+Para comprobar un repositorio:
 
-## Las dos reglas que sostienen esto
-
-**Una regla se escribe una sola vez.** Un repositorio que necesita apartarse abre un ADR propio que
-diga de qué se aparta y por qué, y lo enlaza desde su `docs/arquitectura/`. Si la desviación resulta
-mejor, se promueve aquí.
-
-**Una regla que se puede ejecutar, se ejecuta.** Cada página apunta al archivo de configuración, la
-regla de lint o el script que la hace fallar sola. Una regla que solo vive en prosa se incumple sin
-que nadie se entere: `models/base.py` existe en seis copias con cinco contenidos distintos, y nadie
-lo notó.
-
-## Verificar
-
-```
+```bash
 python scripts/verificar.py --repo ../<repo>
+```
+
+Para comprobar todos los repositorios dentro de un directorio:
+
+```bash
 python scripts/verificar.py --todos ..
 ```
 
-Solo comprueba las plataformas que el repositorio realmente tiene: si no hay `server/`, no exige
-nada de FastAPI.
+Para comprobar las convenciones internas de canone:
 
-Una mejora a un archivo canónico se hace primero en `plantilla/`, y desde ahí se copia a cada
-repositorio.
+```bash
+python scripts/verificar.py --canone
+```
+
+La verificación de cada repositorio considera únicamente las plataformas que utiliza. Por ejemplo, si no tiene `server/`, no exige las convenciones de FastAPI.
+
+El verificador detecta incumplimientos de las reglas que tienen mecanismos automatizados. Las convenciones que no pueden comprobarse mediante herramientas siguen siendo obligatorias.
+
+## Mantenimiento
+
+Las plantillas que se copian a los repositorios tienen una única versión canónica en `plantilla/`.
+
+Toda modificación se realiza primero en esa ubicación y después se propaga a los repositorios que utilizan la plantilla. No se utiliza una copia de un repositorio como origen para actualizar las demás.
+
+Los componentes que se instalan directamente desde canone se mantienen en el propio repositorio y se actualizan desde allí, sin crear implementaciones paralelas en los repositorios consumidores.

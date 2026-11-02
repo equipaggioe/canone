@@ -459,7 +459,8 @@ Estándar: de OpenSSH 10.0, la sección *ALLOWED SIGNERS* de [`ssh-keygen`](../f
 - En un repositorio privado, el release se baja con un token de GitHub de solo lectura, cifrado
   con `systemd-creds`.
 - Caddy sirve el build de cada superficie web, `web/`, `panel/` y `landing/`, desde
-  `current/<pieza>/`. La PWA es `web/`.
+  `current/<pieza>/`. La PWA es `web/`. Una pieza sin `index.html` sirve `200.html` también en su
+  raíz.
 - El CI construye del mismo tag los instalables de `desktop/` y los adjunta al release como
   `desktop-<sistema>.<ext>`. Caddy los sirve con ese nombre, igual en cada versión, desde
   `/srv/<app>/downloads/`, fuera de `releases/`: la landing enlaza siempre al mismo nombre.

@@ -1,7 +1,8 @@
 #!/bin/sh
 # Runs the Caddyfile and the sites of plantilla/infra in Caddy, with a server on 8000 that counts
 # what reaches it: each host serves its piece with the headers and its charset, only the landing is
-# indexed, /api/* carries the headers too and is not cached, a body over its limit gets 413, by its
+# indexed, a piece without index.html serves 200.html at its root and at any other route, /api/*
+# carries the headers too and is not cached, a body over its limit gets 413, by its
 # Content-Length or cut by request_body, and never reaches the server whole, and /downloads/ serves
 # the installers. Caddy signs its own certificates.
 #
@@ -111,6 +112,13 @@ for pair in example.com:landing app.example.com:web panel.example.com:panel; do
         grep -qix 'x-robots-tag: noindex, nofollow' "$work/clean"
     fi
 done
+
+step "A piece without index.html serves 200.html at its root and at any other route"
+rm /srv/app/current/panel/index.html
+echo fallback > /srv/app/current/panel/200.html
+test "$(https panel.example.com https://panel.example.com/)" = fallback
+test "$(https panel.example.com https://panel.example.com/login)" = fallback
+test "$(https example.com https://example.com/)" = landing
 
 step "HTTP goes to HTTPS"
 test "$(https app.example.com -o /dev/null -w '%{http_code} %{redirect_url}' http://app.example.com/)" = "308 https://app.example.com/"

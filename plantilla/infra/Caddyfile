@@ -45,6 +45,12 @@
 	}
 	handle {
 		root * /srv/{args.0}/current/{args.1}
+		# To try_files, / is a directory: without index.html, Caddy 2.6.2 answers 404.
+		@spa_root {
+			path /
+			not file /index.html
+		}
+		rewrite @spa_root /200.html
 		try_files {path} {path}/ {path}.html /200.html
 		file_server
 	}

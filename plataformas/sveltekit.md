@@ -7,6 +7,8 @@ Una superficie web con SvelteKit y UnoCSS.
 Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de SvelteKit.
 
 - Node es el de Debian 13, y solo se usa para construir.
+- SvelteKit es la versión 3, y su configuración va en `vite.config.ts`: rechaza `svelte.config.js`
+  y el alias `$lib`, que pasa a `#lib` ([ADR-0112](../adr/0112-sveltekit-es-la-version-3-y-se-configura-en-vite-config.md)).
 - pnpm maneja las dependencias. No deja importar un paquete que no esté declarado.
 - `package.json` declara la versión exacta de pnpm en `packageManager`, como `pnpm@10.34.6`:
   `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra.
@@ -20,10 +22,9 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
   eslint.config.js
   package.json
   pnpm-lock.yaml
-  svelte.config.js    el adaptador y la CSP
   tsconfig.json
   uno.config.ts       el preset y los tokens
-  vite.config.ts
+  vite.config.ts      el adaptador y la CSP
   src/
     app.html
     lib/
@@ -36,7 +37,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
 ```
 
 Plantilla: [`plantilla/sveltekit/`](../plantilla/sveltekit/): `.prettierrc`, que se copia sin
-editar, y `svelte.config.js`, `uno.config.ts` y `.gitignore`, puntos de partida.
+editar, y `vite.config.ts`, `uno.config.ts` y `.gitignore`, puntos de partida.
 
 ## Carga de datos
 
@@ -165,3 +166,4 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |
 | Playwright 1.64.1 | [`scripts/verificar.py`](../scripts/verificar.py) |
 | La versión exacta de pnpm en `packageManager` | [`scripts/verificar.py`](../scripts/verificar.py) |
+| SvelteKit 3, sin `svelte.config.js` | [`scripts/verificar.py`](../scripts/verificar.py) |

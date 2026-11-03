@@ -119,3 +119,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0109](0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md) | Lo que una fuente le pide a otro no se reparte, y su unidad es lo que tiene URL propia | `plataformas/` y `fuentes/` | Aceptada |
 | [0110](0110-uv-lo-instala-uv-py-con-su-version-y-su-sha-256-fijos.md) | uv lo instala `uv.py`, con su versión y su SHA-256 fijos | Con `server/` | Aceptada |
 | [0111](0111-android-lint-no-avisa-versiones-nuevas.md) | Android Lint no avisa versiones nuevas | Con Android | Aceptada |
+| [0112](0112-sveltekit-es-la-version-3-y-se-configura-en-vite-config.md) | SvelteKit es la versión 3, y se configura en `vite.config.ts` | Con SvelteKit | Aceptada |

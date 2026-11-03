@@ -530,6 +530,12 @@ def revisar(repo: Path) -> list[str]:
             fallas.append(
                 f"plataformas/sveltekit.md: {superficie.name}/package.json no declara la versión exacta de pnpm en packageManager"
             )
+        if not re.match(r"[\^~]?3\.", deps["@sveltejs/kit"]):
+            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no usa SvelteKit 3")
+        if (superficie / "svelte.config.js").exists():
+            fallas.append(
+                f"plataformas/sveltekit.md: {superficie.name}/ tiene svelte.config.js, que SvelteKit 3 rechaza"
+            )
         if "@sveltejs/adapter-static" not in deps:
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no usa adapter-static")
         if not (superficie / "uno.config.ts").exists():

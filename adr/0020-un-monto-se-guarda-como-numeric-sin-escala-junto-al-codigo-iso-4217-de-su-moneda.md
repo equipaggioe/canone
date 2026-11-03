@@ -2,11 +2,11 @@
 
 - **Estado:** Reemplazada por [ADR-0023](0023-un-monto-se-guarda-como-numeric-sin-escala-y-sus-decimales-los-decide-cada-repositorio.md)
 - **Fecha:** 2026-09-29
-- **Alcance:** [plataformas/pagos.md](../plataformas/pagos.md); los repositorios que guardan montos
+- **Alcance:** [plataformas/postgres.md](../plataformas/postgres.md); los repositorios que guardan montos
 
 ## Contexto
 
-[pagos.md](../plataformas/pagos.md) guardaba los montos en `bigint`, en la unidad menor de la
+`pagos.md`, que ya no existe ([ADR-0114](0114-lo-que-cumplen-juntas-varias-piezas-va-en-transversal-y-lo-demas-en-la-pagina-de-su-tecnologia.md)), guardaba los montos en `bigint`, en la unidad menor de la
 moneda, porque es la unidad de Stripe. Contradecía la recomendación de PostgreSQL, que da `numeric`
 para montos (`datatype.sgml`), y el único motivo era un proveedor que solo importa el módulo
 `payments/`.

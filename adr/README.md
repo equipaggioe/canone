@@ -121,3 +121,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0111](0111-android-lint-no-avisa-versiones-nuevas.md) | Android Lint no avisa versiones nuevas | Con Android | Aceptada |
 | [0112](0112-sveltekit-es-la-version-3-y-se-configura-en-vite-config.md) | SvelteKit es la versión 3, y se configura en `vite.config.ts` | Con SvelteKit | Aceptada |
 | [0113](0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md) | En `fuentes/` solo queda la lista de la que un programa de canone toma valores | `plataformas/` y `fuentes/` | Aceptada |
+| [0114](0114-lo-que-cumplen-juntas-varias-piezas-va-en-transversal-y-lo-demas-en-la-pagina-de-su-tecnologia.md) | Lo que cumplen juntas varias piezas va en `transversal.md`, y lo demás en la página de su tecnología | `plataformas/` | Aceptada |

@@ -108,7 +108,7 @@ Estándar: la sección 2.2 *Numbers* de [I-JSON](../fuentes/rfc/rfc7493.txt), RF
 
 - Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal, sin
   exponente, y la moneda en su código de la
-  [lista de monedas](../fuentes/iso/iso-4217-list-one.xml) de ISO 4217.
+  [lista de monedas](https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml) de ISO 4217.
 - Un monto no se formatea sin su moneda.
 - Cada cliente lo conserva como cadena o como el decimal de su lenguaje, nunca como `double`, y no
   calcula con él: los totales, impuestos y descuentos llegan calculados del servidor. Así ningún
@@ -280,7 +280,7 @@ rige en [fastapi.md](fastapi.md#sesión).
 - La web se autentica con la cookie de sesión del handshake, y una app, con
   `Authorization: Bearer` en el handshake, como en REST.
 - Una sesión que no vale o un token vencido cierran la conexión con 4401, del rango privado de
-  los [códigos de cierre](../fuentes/rfc/rfc6455.txt) de RFC 6455, en su sección 7.4: un código
+  los [códigos de cierre](https://www.rfc-editor.org/rfc/rfc6455.txt) de RFC 6455, en su sección 7.4: un código
   propio separa la sesión de cualquier otro cierre. En el handshake, el
   servidor acepta la conexión para cerrarla: un rechazo con 401 Uvicorn lo registra como error, y
   uno con 403 no dice que el problema es la sesión.

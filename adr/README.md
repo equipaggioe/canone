@@ -102,7 +102,7 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0092](0092-las-actualizaciones-de-debian-se-instalan-solas-con-unattended-upgrades.md) | Las actualizaciones de Debian se instalan solas, con unattended-upgrades | Con `server/` | Aceptada; el punto 4 lo reemplaza ADR-0103 |
 | [0093](0093-lo-que-entra-se-niega-por-defecto-con-nftables-y-lo-que-sale-no-se-filtra.md) | Lo que entra se niega por defecto con nftables, y lo que sale no se filtra | Con `server/` | Aceptada |
 | [0094](0094-el-arbol-del-servidor-sigue-el-fhs-3-0.md) | El árbol del servidor sigue el FHS 3.0 | Con `server/` | Aceptada |
-| [0095](0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md) | Una lista de nombres que toma una regla no es una fuente | `plataformas/` y `fuentes/` | Aceptada |
+| [0095](0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md) | Una lista de nombres que toma una regla no es una fuente | `plataformas/` y `fuentes/` | Aceptada; el punto 1, en lo que pide guardar la copia de toda lista, lo reemplaza el [ADR-0113](0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md) |
 | [0096](0096-coturn-releva-por-udp-sin-tls-y-niega-lo-que-iana-no-marca-como-alcanzable.md) | coturn releva por UDP, sin TLS, y niega lo que IANA no marca como alcanzable | Con `server/` | Aceptada |
 | [0097](0097-la-ruta-de-salud-dice-cuando-fue-el-ultimo-evento.md) | La ruta de salud dice cuándo fue el último evento | Con `server/` | Aceptada |
 | [0098](0098-protection-se-cumple-con-los-permisos-y-el-respaldo-y-no-detecta-ni-audita-accesos.md) | *Protection* se cumple con los permisos y el respaldo, y no detecta cambios ni audita accesos | Con `server/` | Aceptada; el punto 3 lo reemplaza ADR-0100 |
@@ -120,3 +120,4 @@ Formato y reglas: [`documentacion.md`](../documentacion.md).
 | [0110](0110-uv-lo-instala-uv-py-con-su-version-y-su-sha-256-fijos.md) | uv lo instala `uv.py`, con su versión y su SHA-256 fijos | Con `server/` | Aceptada |
 | [0111](0111-android-lint-no-avisa-versiones-nuevas.md) | Android Lint no avisa versiones nuevas | Con Android | Aceptada |
 | [0112](0112-sveltekit-es-la-version-3-y-se-configura-en-vite-config.md) | SvelteKit es la versión 3, y se configura en `vite.config.ts` | Con SvelteKit | Aceptada |
+| [0113](0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md) | En `fuentes/` solo queda la lista de la que un programa de canone toma valores | `plataformas/` y `fuentes/` | Aceptada |

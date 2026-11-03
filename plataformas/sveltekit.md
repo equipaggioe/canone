@@ -69,7 +69,7 @@ Estándar: la opción `--fail-on-warnings` de [`sv check`](../fuentes/svelte/sv-
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
 - `svelte-check` corre con `--fail-on-warnings`. Las advertencias `a11y_*` de la
-  [lista del compilador](../fuentes/svelte/compile-warnings.md) rompen CI.
+  [lista del compilador](https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/98-reference/.generated/compile-warnings.md) rompen CI.
 
 ## Código por SMS
 

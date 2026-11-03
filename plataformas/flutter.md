@@ -20,7 +20,7 @@ Estándares: [*Effective Dart*](../fuentes/dart/effective-dart-index.md):
 
 ## Analizador
 
-- El analizador incluye la [lista de flutter_lints](../fuentes/pub/flutter_lints/flutter.yaml) y
+- El analizador incluye la [lista de flutter_lints](https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/lib/flutter.yaml) y
   activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre
   `flutter analyze --fatal-infos`: los tipos se revisan como con Pyrefly en modo strict.
 

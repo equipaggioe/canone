@@ -1,6 +1,7 @@
 # ADR-0095 · Una lista de nombres que toma una regla no es una fuente
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1, en lo que pide guardar la copia de toda lista, lo reemplaza el
+  [ADR-0113](0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md)
 - **Fecha:** 2026-10-27
 - **Alcance:** «Qué implica citar» de [`plataformas/README.md`](../plataformas/README.md), «Caddy»
   de [`plataformas/despliegue.md`](../plataformas/despliegue.md) y `fuentes/`

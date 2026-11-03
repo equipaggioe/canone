@@ -96,7 +96,7 @@ Citar una fuente significa adoptar sus convenciones explícitas dentro del alcan
 
 - Los valores predeterminados de una herramienta no proceden de una fuente citada, pero rigen mientras la página no establezca otra cosa. Cambiarlos constituye una convención propia, salvo que una fuente citada exija el cambio.
 - Una convención propia no menciona fuentes que la página no cita, ni siquiera para contradecirlas. Incluye únicamente la convención y, cuando corresponda, su razón.
-- Una lista de nombres o valores que utiliza una convención no constituye una fuente por sí misma. La convención indica de dónde se obtiene la lista y enlaza su copia en `fuentes/`, aunque no se cite como fuente normativa.
+- Una lista de nombres o valores que utiliza una convención no constituye una fuente por sí misma. La convención indica de dónde se obtiene la lista. Enlaza su copia en `fuentes/` si un programa de Canone toma valores de ella, y su URL pública si no.
 
 #### Enlaces y verificación de citas
 
@@ -224,3 +224,4 @@ El fundamento de estos criterios está documentado en los siguientes ADR:
 - [ADR-0095](../adr/0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md)
 - [ADR-0108](../adr/0108-una-fuente-se-cita-entera-o-por-entradas-y-cada-parte-rige-en-una-sola-seccion.md)
 - [ADR-0109](../adr/0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md)
+- [ADR-0113](../adr/0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md)

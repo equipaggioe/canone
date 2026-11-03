@@ -1,9 +1,10 @@
 # Fuentes
 
-Copia de los textos de las fuentes que citan las páginas de [plataformas/](../plataformas/). Una página se revisa contra el texto de aquí, no de memoria. Una fuente que solo cita un ADR no se copia: el ADR la usa como argumento de su decisión, y ninguna página adopta sus convenciones.
+Copia de los textos de las fuentes que citan las páginas de [plataformas/](../plataformas/), y de las listas de las que un programa de Canone toma valores ([ADR-0113](../adr/0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md)). Una página se revisa contra el texto de aquí, no de memoria. Una fuente que solo cita un ADR no se copia: el ADR la usa como argumento de su decisión, y ninguna página adopta sus convenciones.
 
 - Cada archivo es el texto de su fuente, sin editar. Cuando la fuente es una página web, es su contenido convertido a Markdown.
 - Cada archivo se descarga del tag o la rama de la versión que se usa, nunca de `main` ni de `master`. Una fuente sin versiones se descarga de un commit fijo, y su URL lleva el SHA.
+- La publicación de una nueva versión no implica su adopción automática. Decidir si se incorpora corresponde al mantenimiento de Canone: requiere revisar sus cambios y determinar si justifican modificar las convenciones existentes.
 - Al cambiar la versión de una tecnología, se vuelven a descargar sus fuentes.
 - Para actualizar un archivo se vuelve a descargar de su fuente; `git diff` muestra qué cambió.
 - Una fuente que ninguna página cita se borra.
@@ -35,10 +36,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [postgresql/user-manag.sgml](postgresql/user-manag.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/user-manag.sgml> | por entradas |  |
 | [postgresql/config.sgml](postgresql/config.sgml) | <https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/config.sgml> | por entradas |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | <https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml> | entera |  |
-| [iso/iso-4217-list-one.xml](iso/iso-4217-list-one.xml) | <https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml> |  | Tabla de monedas vigentes, de la agencia de mantenimiento de ISO 4217. Lista de códigos, no fuente (ADR-0095) |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | <https://www.rfc-editor.org/rfc/rfc3339.txt> | entera |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | <https://www.rfc-editor.org/rfc/rfc5646.txt> | entera |  |
-| [rfc/rfc6455.txt](rfc/rfc6455.txt) | <https://www.rfc-editor.org/rfc/rfc6455.txt> |  | Lista de códigos de cierre, no fuente (ADR-0095) |
 | [rfc/rfc6749.txt](rfc/rfc6749.txt) | <https://www.rfc-editor.org/rfc/rfc6749.txt> | entera |  |
 | [rfc/rfc6585.txt](rfc/rfc6585.txt) | <https://www.rfc-editor.org/rfc/rfc6585.txt> | entera |  |
 | [rfc/rfc6901.txt](rfc/rfc6901.txt) | <https://www.rfc-editor.org/rfc/rfc6901.txt> | entera |  |
@@ -96,7 +95,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [svelte/effect.md](svelte/effect.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/04-$effect.md> | entera |  |
 | [svelte/props.md](svelte/props.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/05-$props.md> | entera |  |
 | [svelte/bindable.md](svelte/bindable.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/02-runes/06-$bindable.md> | entera |  |
-| [svelte/compile-warnings.md](svelte/compile-warnings.md) | <https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/98-reference/.generated/compile-warnings.md> |  | Lista de advertencias, no fuente (ADR-0095) |
 | [svelte/sv-check.md](svelte/sv-check.md) | <https://raw.githubusercontent.com/sveltejs/cli/main/documentation/docs/20-commands/30-sv-check.md> | por entradas |  |
 | [unocss/guide-config-file.md](unocss/guide-config-file.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/guide/config-file.md> | entera |  |
 | [unocss/config-index.md](unocss/config-index.md) | <https://raw.githubusercontent.com/unocss/unocss/main/docs/config/index.md> | por entradas |  |
@@ -123,7 +121,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [flutter/accessibility.md](flutter/accessibility.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/index.md> | entera |  |
 | [flutter/accessibility-assistive.md](flutter/accessibility-assistive.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/assistive-technologies.md> | entera |  |
 | [flutter/accessibility-testing.md](flutter/accessibility-testing.md) | <https://raw.githubusercontent.com/flutter/website/main/sites/docs/src/content/ui/accessibility/accessibility-testing.md> | entera |  |
-| [pub/flutter_lints/flutter.yaml](pub/flutter_lints/flutter.yaml) | <https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/lib/flutter.yaml> |  | Lista de reglas del analizador, no fuente (ADR-0095) |
 | [pub/shared_preferences/README.md](pub/shared_preferences/README.md) | <https://raw.githubusercontent.com/flutter/packages/main/packages/shared_preferences/shared_preferences/README.md> | entera |  |
 | [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | <https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/develop/flutter_secure_storage/README.md> | entera |  |
 | [pub/provider/README.md](pub/provider/README.md) | <https://raw.githubusercontent.com/rrousselGit/provider/master/packages/provider/README.md> | entera |  |

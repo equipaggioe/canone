@@ -79,11 +79,19 @@ El repositorio organiza sus convenciones, referencias, decisiones, plantillas y 
 | [principios.md](principios.md) | Método de trabajo, independiente de las tecnologías utilizadas. |
 | [repositorio.md](repositorio.md) | Convenciones de Git, estructura de carpetas, README y CI. |
 | [documentacion.md](documentacion.md) | Estructura y mantenimiento de la documentación de cada repositorio. |
-| [plataformas/](plataformas/) | Metodología y catálogo de convenciones específicas de cada tecnología. |
-| [fuentes/](fuentes/) | Copias de las fuentes adoptadas y material de referencia utilizado por las páginas de plataformas. |
+| [plataformas/](plataformas/) | Metodología y catálogo de convenciones específicas de cada tecnología, incluidas sus referencias normativas. |
+| [fuentes/](fuentes/) | Versiones concretas de las fuentes normativas adoptadas por canone. |
 | [adr/](adr/) | Registro de las decisiones de canone, con su alcance y estado. |
 | [plantilla/](plantilla/) | Archivos y componentes canónicos que se copian a los repositorios o se instalan desde canone. |
 | [scripts/verificar.py](scripts/verificar.py) | Comprueba el cumplimiento de las convenciones de canone y de los repositorios que las utilizan. |
+
+## Conservación de fuentes
+
+`fuentes/` conserva exclusivamente las versiones de las fuentes normativas que canone adopta. Cada copia corresponde a una versión concreta y sirve como referencia estable para las páginas que la utilizan.
+
+Las páginas de `plataformas/` identifican las convenciones que adoptan de cada fuente, sin reproducir innecesariamente su contenido.
+
+La publicación de una nueva versión no implica su adopción automática. Decidir si se incorpora corresponde al mantenimiento de canone: requiere revisar sus cambios y determinar si justifican modificar las convenciones existentes.
 
 ## Verificación
 

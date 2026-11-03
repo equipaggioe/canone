@@ -4,6 +4,18 @@ Cada página reúne las convenciones de una tecnología o ámbito de implementac
 
 Para trabajar en una pieza se consulta su página y las secciones de `transversal.md` que esta enlaza. Las demás páginas no aplican.
 
+## Terminología
+
+- **Pieza:** componente identificable de un sistema que tiene una responsabilidad y puede documentarse por separado.
+- **Tecnología:** herramienta, lenguaje, framework, plataforma o sistema concreto utilizado para implementar una pieza.
+- **Ámbito:** área de implementación que agrupa convenciones aplicables a distintas tecnologías o piezas.
+- **Convención:** criterio que determina cómo se construyen, organizan o integran las piezas de un sistema.
+- **Convención adoptada:** convención establecida por una fuente normativa externa que Canone incorpora y aplica dentro del alcance indicado.
+- **Convención propia:** convención establecida directamente por Canone porque ninguna fuente adoptada resuelve esa decisión, o porque es necesario elegir, precisar o modificar lo que establecen las fuentes.
+- **Fuente normativa:** documento externo que establece convenciones que pueden adoptarse.
+- **Material de referencia:** documentación auxiliar que aporta información, ejemplos o procedimientos, pero que no se adopta como fuente normativa.
+- **Entrada:** elemento independiente de una fuente compuesta por elementos que pueden adoptarse individualmente.
+
 | Página | Cubre |
 | :--- | :--- |
 | [transversal.md](transversal.md) | Lo que deben cumplir conjuntamente varias piezas |
@@ -19,7 +31,7 @@ Para trabajar en una pieza se consulta su página y las secciones de `transversa
 
 ## Función de las páginas
 
-Una página es un catálogo de convenciones de una tecnología o ámbito. Cada convención procede de una fuente citada o de una regla propia escrita en la página.
+Una página es un catálogo de convenciones de una tecnología o ámbito. Cada convención es adoptada de una fuente citada o establecida directamente por Canone.
 
 Las convenciones sirven para tres propósitos:
 
@@ -31,7 +43,7 @@ Una convención que no contribuye a ninguno de estos propósitos no se incluye. 
 
 ### Selección de fuentes
 
-La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Cada punto se resuelve mediante una fuente citada o, si ninguna fuente adecuada lo cubre, mediante una regla propia.
+La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Cada punto se resuelve adoptando una convención de una fuente normativa o, si ninguna fuente adecuada lo cubre, estableciendo una convención propia.
 
 Una fuente debe cumplir los siete requisitos siguientes:
 
@@ -41,7 +53,7 @@ Una fuente debe cumplir los siete requisitos siguientes:
 4. **Acotada:** el contenido citado puede leerse completo al escribir el código al que aplica. Se exceptúan las fuentes de conocimiento general, como PEP 8 o SemVer, y aquellas cuyo cumplimiento verifica una herramienta de la sección «Cumplimiento».
 5. **De la versión en uso:** corresponde a la versión de la tecnología utilizada. La copia conservada en `fuentes/` fija el texto que se adopta.
 6. **Independiente:** las convenciones adoptadas no dependen de la infraestructura de quien publica la fuente.
-7. **Cubre:** una fuente citada completa debe resolver la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente lo que adoptan todas las páginas. En esos asuntos, las reglas propias deben quedar en minoría. Lo que se contradice, se deja sin efecto o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no se cita y las convenciones que se aprovechen de ella se escriben como reglas propias.
+7. **Cubre:** una fuente citada completa debe resolver la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente lo que adoptan todas las páginas. En esos asuntos, las convenciones propias deben quedar en minoría. Lo que se contradice, se deja sin efecto o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no se cita y las convenciones que se aprovechen de ella se establecen como convenciones propias.
 
 Si varias fuentes que cumplen los siete requisitos regulan el mismo asunto, se prefiere la que tenga mayor prioridad en la tabla. A igual prioridad, se elige la que cubra una parte mayor del asunto.
 
@@ -56,7 +68,7 @@ Este orden da preferencia a lo que publica quien define la tecnología:
 
 - **Conocimiento especializado:** quien define la tecnología suele conocerla mejor, y sus propuestas pasan por la revisión de una comunidad amplia antes de publicarse.
 - **Compatibilidad con las herramientas:** los formateadores, analizadores y frameworks suelen construirse sobre esas convenciones. Adoptarlas requiere menos configuración y evita sorpresas.
-- **Vigencia:** sus recomendaciones evolucionan junto con la tecnología, mientras que una regla propia puede quedar obsoleta sin que se advierta.
+- **Vigencia:** sus recomendaciones evolucionan junto con la tecnología, mientras que una convención propia puede quedar obsoleta sin que se advierta.
 - **Conocimiento compartido:** quienes ya conocen la tecnología, incluidas las personas que se incorporan al proyecto, suelen conocer también sus convenciones oficiales.
 
 ### Adopción de fuentes
@@ -80,11 +92,11 @@ Citar una fuente significa adoptar sus convenciones explícitas dentro del alcan
 - Cada parte que contiene convenciones rige en una sola sección, de cualquier página. Si una parte no se sigue, se deja sin efecto en la sección a la que pertenece y se indica la razón.
 - Dos partes citadas no deben regular lo mismo. Si dos fuentes entran en conflicto sobre un asunto, se elige la que mejor se adapta o se deja sin efecto la parte conflictiva de una de ellas.
 
-#### Reglas propias y valores predeterminados
+#### Convenciones propias y valores predeterminados
 
-- Los valores predeterminados de una herramienta no proceden de una fuente citada, pero rigen mientras la página no establezca otra cosa. Cambiarlos constituye una regla propia, salvo que una fuente citada exija el cambio.
-- Una regla propia no menciona fuentes que la página no cita, ni siquiera para contradecirlas. Incluye únicamente la regla y, cuando corresponda, su razón.
-- Una lista de nombres o valores que utiliza una regla no constituye una fuente por sí misma. La regla indica de dónde se obtiene la lista y enlaza su copia en `fuentes/`, aunque no se cite como fuente normativa.
+- Los valores predeterminados de una herramienta no proceden de una fuente citada, pero rigen mientras la página no establezca otra cosa. Cambiarlos constituye una convención propia, salvo que una fuente citada exija el cambio.
+- Una convención propia no menciona fuentes que la página no cita, ni siquiera para contradecirlas. Incluye únicamente la convención y, cuando corresponda, su razón.
+- Una lista de nombres o valores que utiliza una convención no constituye una fuente por sí misma. La convención indica de dónde se obtiene la lista y enlaza su copia en `fuentes/`, aunque no se cite como fuente normativa.
 
 #### Enlaces y verificación de citas
 
@@ -97,30 +109,30 @@ Citar una fuente significa adoptar sus convenciones explícitas dentro del alcan
   - Ninguna parte rija en más de una sección.
   - No se cite una lista de nombres como si fuera una fuente.
 
-## Reglas de la página
+## Convenciones de la página
 
-La página no vuelve a redactar las convenciones que adopta de sus fuentes. Solo escribe lo necesario para completar esas convenciones y fijar las decisiones del proyecto.
+La página no vuelve a redactar las convenciones que adopta de sus fuentes. Solo establece las convenciones propias necesarias para completar las adoptadas y fijar las decisiones del proyecto.
 
-Puede escribir tres clases de reglas:
+Las convenciones propias se establecen en tres casos:
 
-1. **Elecciones:** la opción seleccionada cuando una fuente permite varias.
-2. **Excepciones:** lo que contradice, deja sin efecto o endurece una fuente. Endurecer significa convertir en obligatorio lo que la fuente recomienda como preferencia o condiciona a que sea posible.
-3. **Reglas propias:** decisiones que ninguna fuente citada establece.
+1. **Elecciones:** se selecciona una opción cuando una fuente permite varias.
+2. **Excepciones:** se contradice, deja sin efecto o endurece una convención adoptada. Endurecer significa convertir en obligatorio lo que la fuente recomienda como preferencia o condiciona a que sea posible.
+3. **Decisiones no cubiertas:** se establecen convenciones sobre asuntos que ninguna fuente citada resuelve.
 
 ### Redacción
 
-- Cada regla expresa qué se utiliza y cómo queda configurado. No describe procedimientos ni explica cómo hacerlo.
-- Las reglas de una misma página no deben contradecirse. Si una regla modifica el alcance de otra, debe indicar expresamente qué casos quedan fuera.
-- Una regla incluye una justificación breve únicamente cuando contradice, deja sin efecto o endurece una fuente, o cuando explica una elección cuyo motivo no resulta evidente. Las preferencias triviales no necesitan justificación.
-- No se añaden comentarios, explicaciones ni ejemplos que no sean necesarios para entender o aplicar la regla.
+- Cada convención expresa qué se utiliza y cómo queda configurado. No describe procedimientos ni explica cómo hacerlo.
+- Las convenciones de una misma página no deben contradecirse. Si una convención modifica el alcance de otra, debe indicar expresamente qué casos quedan fuera.
+- Una convención incluye una justificación breve únicamente cuando contradice, deja sin efecto o endurece una fuente, o cuando explica una elección cuyo motivo no resulta evidente. Las preferencias triviales no necesitan justificación.
+- No se añaden comentarios, explicaciones ni ejemplos que no sean necesarios para entender o aplicar la convención.
 
 ### Estructuras y distribución
 
 - Las estructuras, como el árbol de directorios, se muestran completas, aunque reproduzcan convenciones de sus fuentes. La estructura completa es la convención que debe seguirse.
 - Después de una estructura solo se especifica dónde colocar los elementos que podrían ubicarse en más de un archivo.
-- No se repite información que ya queda determinada por el nombre de un archivo, una fuente citada u otra sección de la página.
+- No se repite información que ya queda determinada por el nombre de un archivo, una fuente citada u otra sección.
 
-Estas mismas reglas de redacción se aplican a los comentarios incluidos en `plantilla/`.
+Estos mismos criterios de redacción se aplican a los comentarios incluidos en `plantilla/`.
 
 ## Orden de las secciones
 
@@ -148,11 +160,11 @@ Se utiliza una tabla con estas columnas:
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Fuente, parte citada o regla que se hace cumplir | Herramienta que la verifica o impone |
+| Fuente, parte citada o convención propia que se hace cumplir | Herramienta que la verifica o impone |
 
 #### Criterios
 
-- Cada fila debe referirse a una fuente, parte citada o regla ya documentada en la página. La tabla no introduce convenciones nuevas.
+- Cada fila debe referirse a una fuente, parte citada o convención propia ya documentada en la página. La tabla no introduce convenciones nuevas.
 - La herramienta debe hacer cumplir todo lo indicado en la primera columna.
 - Una herramienta que imponga convenciones adicionales a las documentadas en esa fila no se incluye. No debe introducir requisitos que la página no haya establecido.
 
@@ -166,13 +178,13 @@ Se utiliza una tabla con estas columnas:
 
 ## Revisión
 
-Una revisión evalúa cada fuente citada, cada regla y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.
+Una revisión evalúa cada fuente citada, cada convención y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.
 
 El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
 
 | Elemento evaluado | Alternativa | Veredicto |
 | :--- | :--- | :--- |
-| Fuente y parte citada, regla o fila de cumplimiento, con su ubicación en la página | Lo que se consideró en su lugar, o «Ninguna» | «Se queda», «Cambia» o «Sale», con la razón y la evidencia |
+| Fuente y parte citada, convención o fila de cumplimiento, con su ubicación en la página | Lo que se consideró en su lugar, o «Ninguna» | «Se queda», «Cambia» o «Sale», con la razón y la evidencia |
 
 ### Evidencia
 
@@ -188,7 +200,7 @@ Ningún elemento queda fuera de la revisión sin que conste que no fue evaluado.
 
 Las convenciones de una página se establecen a partir de las fuentes que adopta, no de cómo estén organizados o implementados los proyectos existentes.
 
-- **Las fuentes citadas** son la base para establecer las convenciones.
+- **Las fuentes citadas** son la base para establecer las convenciones adoptadas.
 - **El código de los proyectos** sirve para identificar necesidades y casos de uso, pero no constituye una referencia normativa.
 - **Las páginas anteriores** sirven como antecedente, no como autoridad. Sus convenciones deben volver a contrastarse con las fuentes.
 - **Los ADR** documentan decisiones de proyectos, pero no sustituyen las fuentes ni establecen por sí mismos convenciones para una tecnología.

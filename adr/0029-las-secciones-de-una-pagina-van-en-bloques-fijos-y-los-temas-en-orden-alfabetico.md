@@ -19,7 +19,7 @@ y `qt.md`, no encontraba el mismo tema en el mismo lugar:
 ## Decisión
 
 1. Las secciones van en siete bloques, en este orden: Proyecto, Código, Arquitectura, Temas,
-   Pruebas, Entrega y Cómo se hace cumplir.
+   Pruebas, Entrega y Cumplimiento.
 2. Los temas van en orden alfabético del título.
 3. Un título nombra lo mismo en todas las páginas.
 4. La tabla del README describe cada página en una frase y no lista sus secciones.

@@ -150,7 +150,7 @@ usa `pysidedeploy.spec`.
   `packages` del `.spec` queda vacío. `pyside6-deploy` instala sus paquetes con pip, que un venv de
   uv no trae.
 
-## Cómo se hace cumplir
+## Cumplimiento
 
 | Qué | Con qué |
 |---|---|

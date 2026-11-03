@@ -640,7 +640,7 @@ Contrato: [transversal.md](transversal.md#websocket).
 
 <br>
 
-## Cómo se hace cumplir
+## Cumplimiento
 
 | Qué | Con qué |
 |---|---|

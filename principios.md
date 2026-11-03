@@ -40,7 +40,7 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 
 Al escribir código que cae en una sección de una página de [`plataformas/`](plataformas/), se lee
 el texto en [`fuentes/`](fuentes/) de lo que esa sección cita, salvo que la fuente sea de
-conocimiento general, como PEP 8 o SemVer, o que una herramienta de «Cómo se hace cumplir» la
+conocimiento general, como PEP 8 o SemVer, o que una herramienta de «Cumplimiento» la
 verifique. Ante la duda, se lee.
 
 ## Sin fallbacks

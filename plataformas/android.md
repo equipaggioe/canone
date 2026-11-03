@@ -160,7 +160,7 @@ Estándares: los [fundamentos de pruebas](../fuentes/android/testing-fundamental
 
 - Las llamadas HTTP se prueban contra MockWebServer.
 
-## Cómo se hace cumplir
+## Cumplimiento
 
 | Qué | Con qué |
 |---|---|

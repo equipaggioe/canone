@@ -126,7 +126,7 @@ Contrato: [transversal.md](transversal.md#tema).
   `ui/core/themes/colors.dart`, y `themeMode` es `ThemeMode.system`.
 - Los tamaños van en `ui/core/themes/`, sin tamaños literales fuera de él.
 
-## Cómo se hace cumplir
+## Cumplimiento
 
 | Qué | Con qué |
 |---|---|

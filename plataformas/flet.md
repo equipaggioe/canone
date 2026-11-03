@@ -72,7 +72,7 @@ Contrato: [transversal.md](transversal.md#tema).
 Estándar: las entradas de [*Publishing a Flet app*](../fuentes/flet/publish.md) que usa el
 `pyproject.toml` de la plantilla.
 
-## Cómo se hace cumplir
+## Cumplimiento
 
 | Qué | Con qué |
 |---|---|

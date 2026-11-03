@@ -159,7 +159,7 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
   recomienda el `fallback` solo en casos puntuales: esas páginas no necesitan SEO, dependen de los
   datos del usuario, y el servidor es FastAPI, sin Node para renderizarlas.
 
-## Cómo se hace cumplir
+## Cumplimiento
 
 | Qué | Con qué |
 |---|---|

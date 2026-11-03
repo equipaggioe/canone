@@ -83,7 +83,7 @@ nombra esta sección, salvo los de «Clave primaria», y
 - Un monto es `numeric` sin precisión ni escala, junto al código de su moneda en `text`. Con escala
   declarada, `numeric` redondea sin avisar lo que la excede.
 
-## Cómo se hace cumplir
+## Cumplimiento
 
 Con las pruebas de `tests/test_conventions.py` de [fastapi.md](fastapi.md):
 

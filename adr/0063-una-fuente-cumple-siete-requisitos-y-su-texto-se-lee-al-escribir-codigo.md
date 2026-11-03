@@ -19,7 +19,7 @@ ninguna herramienta verificaba no le llegaba.
    copiarla y no depende de la infraestructura de quien la publica. Reemplaza el punto 1 del
    [ADR-0032](0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md).
 2. Acotada es que la parte citada se puede leer entera al escribir el código de su sección, salvo
-   que su fuente sea de conocimiento general o que una herramienta de «Cómo se hace cumplir» la
+   que su fuente sea de conocimiento general o que una herramienta de «Cumplimiento» la
    verifique.
 3. El orden del 1 al 4 solo desempata entre dos fuentes que cumplen los siete requisitos y regulan
    lo mismo; a igual orden, gana la que cubre más del asunto. Reemplaza el punto 3 del

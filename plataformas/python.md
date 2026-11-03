@@ -153,7 +153,7 @@ Estándar: las secciones *Do not run via setuptools* y *Using pytest's strict mo
 - Las pruebas cumplen las reglas `PT` de ruff: marcan el mal uso de fixtures, marcadores y
   `pytest.raises`.
 
-## Cómo se hace cumplir
+## Cumplimiento
 
 | Qué | Con qué |
 |---|---|

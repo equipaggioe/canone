@@ -35,7 +35,7 @@ era elegir o repetir.
    contradice o endurece el estándar, y cómo ayuda una elección que no es trivial. Una regla
    trivial, como un color o el largo de línea, no lleva frase: su razón es una preferencia. Vale
    también para los comentarios de los archivos de `plantilla/`.
-7. La tabla «Cómo se hace cumplir» nombra el estándar o su sección, o una regla que la página ya
+7. La tabla «Cumplimiento» nombra el estándar o su sección, o una regla que la página ya
    escribió. Nunca redacta una regla para llenar la fila.
 8. Una página hereda de su página madre y no repite nada de ella: `fastapi.md`, `flet.md` y `qt.md`
    heredan de `python.md`.

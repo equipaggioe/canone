@@ -229,7 +229,7 @@ Unauthorized* de [RFC 9110](../fuentes/rfc/rfc9110.txt).
 > comprueba. Esta sección, el «Tema» de cada cliente, el
 > [ADR-0062](../adr/0062-los-colores-de-un-producto-salen-de-brand-tokens-en-dtcg-y-un-generador-arma-el-esquema-de-cada-cliente.md),
 > `scripts/tokens.py` y `brand/tokens/` de la plantilla se revisan y se desarrollan como cualquier
-> otra parte de canone.
+> otra parte de Canone.
 
 Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el
 [módulo de color](../fuentes/dtcg/color.html) y el [resolver](../fuentes/dtcg/resolver.html),
@@ -294,7 +294,7 @@ rige en [fastapi.md](fastapi.md#sesión).
   segundos entre intentos, y vuelve a pedir el estado por REST. Lo que se envió mientras estaba
   desconectado no se repite.
 
-## Cómo se hace cumplir
+## Cumplimiento
 
 | Qué | Con qué |
 |---|---|

@@ -52,22 +52,6 @@ Canone, cada repositorio y quien despliega tienen responsabilidades distintas y 
 
 El reparto de responsabilidades se fundamenta en [ADR-0075](adr/0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) y [ADR-0107](adr/0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md).
 
-## Integración
-
-Canone proporciona tres tipos de plantillas, según cómo se incorporan al proyecto o al servidor.
-
-### Plantillas canónicas
-
-Se copian sin editar, y `scripts/verificar.py` comprueba que la copia no se haya separado. Por ejemplo, `.gitattributes`.
-
-### Puntos de partida
-
-Se copian y después son del repositorio. Por ejemplo, `release.yml`.
-
-### Plantillas que se instalan
-
-Se obtienen directamente de Canone y sus programas las instalan en el servidor. Por ejemplo, `infra/` y su `deploy.py`.
-
 ### Configuración de cada despliegue
 
 Los valores que cambian entre despliegues, sean secretos o no, no se incorporan al control de versiones. Cada repositorio declara los campos que necesita y quien despliega proporciona sus valores al servidor mediante la interfaz del programa correspondiente.
@@ -88,7 +72,7 @@ El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herr
 | [plataformas/](plataformas/) | Metodología y catálogo de convenciones específicas de cada tecnología o ámbito, con las fuentes que adoptan. |
 | [fuentes/](fuentes/) | Copias de las fuentes normativas adoptadas por Canone y de las listas de las que sus programas toman valores. |
 | [adr/](adr/) | Registro de las decisiones de Canone, con su alcance y estado. |
-| [plantilla/](plantilla/) | Plantillas que se copian a los repositorios o se instalan desde Canone. |
+| [plantilla/](plantilla/) | Plantillas que se copian a los repositorios o se instalan desde Canone: qué es cada tipo y cómo se mantiene. |
 | [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables y las citas de `plataformas/` contra `fuentes/`. |
 
 ## Verificación
@@ -114,11 +98,3 @@ python scripts/verificar.py --canone
 ```
 
 La verificación de cada repositorio considera únicamente las tecnologías que utiliza. Por ejemplo, si no tiene `server/`, no exige las convenciones de FastAPI.
-
-## Mantenimiento
-
-Las plantillas canónicas tienen una única versión en `plantilla/`.
-
-Toda modificación se realiza primero en esa ubicación y después se propaga a los repositorios que utilizan la plantilla. No se utiliza una copia de un repositorio como origen para actualizar las demás.
-
-Las plantillas que se instalan directamente desde Canone se mantienen en el propio repositorio y se actualizan desde allí, sin crear implementaciones paralelas en los repositorios consumidores.

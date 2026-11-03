@@ -10,6 +10,11 @@ partida** se copia y después es del repositorio. Un archivo que **se instala** 
 repositorio: un script de canone lo instala en el servidor con los datos de cada app
 ([ADR-0069](../adr/0069-el-servidor-se-instala-desde-plantilla-infra-y-sus-cabeceras-no-frenan-a-las-apps.md)).
 
+Un archivo canónico tiene una única versión aquí. Toda modificación se hace primero aquí y después se
+propaga a los repositorios que lo usan; una copia de un repositorio no sirve de origen para actualizar
+las demás. Lo que se instala se mantiene y se actualiza aquí, sin implementaciones paralelas en los
+repositorios.
+
 | Archivo | Destino | Tipo | Página |
 |---|---|---|---|
 | `.gitattributes` | Raíz | Canónico | [repositorio.md](../repositorio.md) |

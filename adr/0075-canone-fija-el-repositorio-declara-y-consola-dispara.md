@@ -3,7 +3,7 @@
 - **Estado:** Aceptada. Los puntos 3 y 4 los reemplaza el
   [ADR-0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md)
 - **Fecha:** 2026-10-23
-- **Alcance:** «Quién hace qué» de [`README.md`](../README.md)
+- **Alcance:** «Responsabilidades» de [`README.md`](../README.md)
 
 ## Contexto
 

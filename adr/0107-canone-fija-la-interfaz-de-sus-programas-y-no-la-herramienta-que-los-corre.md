@@ -2,7 +2,7 @@
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-10-29
-- **Alcance:** «Quién hace qué» de [`README.md`](../README.md), las carpetas del raíz de
+- **Alcance:** «Responsabilidades» de [`README.md`](../README.md), las carpetas del raíz de
   [`repositorio.md`](../repositorio.md) y `plantilla/.gitignore`
 
 ## Contexto

@@ -4,15 +4,15 @@ Convenciones, plantillas y herramientas compartidas para construir, organizar y 
 
 ## Propósito
 
-Mis proyectos comparten sus convenciones y decisiones en un solo lugar para construirse, organizarse y mantenerse de manera coherente.
+Mis proyectos comparten sus convenciones y decisiones en un solo lugar para leerse, construirse, organizarse y mantenerse de la misma manera.
 
 Canone es una guía, no un reglamento: sus convenciones se siguen por defecto.
 
 Cada proyecto elige las tecnologías que utiliza y consulta únicamente las convenciones correspondientes. Canone responde a la pregunta «si uso X, ¿cómo lo uso?», sin convertir su catálogo en una lista de requisitos universales.
 
-Al definir las convenciones de cada tecnología o ámbito, prioriza la adopción de fuentes normativas externas que ya establecen convenciones adecuadas, evitando volver a redactarlas y mantenerlas. Cuando esas fuentes no cubren una decisión, dejan opciones abiertas o requieren excepciones, Canone establece convenciones propias.
+Al definir las convenciones de cada tecnología o ámbito, prioriza la adopción de fuentes normativas externas que ya establecen convenciones adecuadas, evitando volver a redactarlas y mantenerlas. Cuando esas fuentes no cubren una decisión, dejan opciones abiertas o requieren excepciones, Canone establece convenciones propias. Los criterios están en [plataformas/README.md](plataformas/README.md).
 
-Además de documentar las convenciones, proporciona plantillas y herramientas para incorporarlas a los repositorios y comprobar su cumplimiento. Cuando una convención exige una configuración o un mecanismo en una máquina, Canone proporciona también el programa que lo implementa. Las convenciones, sus plantillas y sus programas se mantienen sincronizados; instalarlos permite comprobar su funcionamiento en conjunto.
+Además de documentar las convenciones, proporciona plantillas y herramientas para incorporarlas a los repositorios y comprobar su cumplimiento. Cuando una convención exige una configuración o un mecanismo en una máquina, Canone proporciona también el programa que lo implementa. Las convenciones, sus plantillas y sus programas se mantienen sincronizados; solo instalándolos se prueba su funcionamiento en conjunto.
 
 ## Aplicación
 
@@ -38,7 +38,7 @@ Cada convención es adoptada de una fuente normativa o establecida como convenci
 
 **Toda convención que pueda verificarse automáticamente debe tener una herramienta que la verifique o la imponga.**
 
-La sección «Cumplimiento» de cada página registra las herramientas que verifican o imponen sus convenciones. Cuando una convención puede materializarse en una configuración, herramienta o programa, Canone proporciona ese mecanismo. Las convenciones que no pueden verificarse automáticamente siguen siendo válidas y deben cumplirse igualmente.
+La sección «Cumplimiento» de cada página registra las herramientas que verifican o imponen sus convenciones. Las convenciones que no pueden verificarse automáticamente rigen igual.
 
 ## Responsabilidades
 
@@ -47,18 +47,22 @@ Canone, cada repositorio y quien despliega tienen responsabilidades distintas y 
 | Quién | Responsabilidades | Límites |
 |---|---|---|
 | **Canone** | Define las convenciones, proporciona las plantillas y establece la interfaz de sus programas mediante argumentos y `stdin`. | No guarda datos de las aplicaciones, no decide cuándo se ejecutan sus programas ni impone qué herramienta debe ejecutarlos. |
-| **El repositorio** | Sigue las convenciones aplicables, incorpora las plantillas que se copian y declara sus propios datos: nombre, superficies y campos de `Settings`. | No reimplementa las plantillas ni define cómo se instalan las plantillas proporcionadas por Canone. |
-| **Quien despliega** | Ejecuta los programas de Canone, manualmente o mediante la herramienta que elija, respetando sus interfaces. | No modifica ni sustituye los archivos que instalan esos programas, como unidades, configuraciones y scripts propios. |
+| **El repositorio** | Sigue las convenciones aplicables, incorpora las plantillas que se copian y declara sus propios datos: nombre, superficies y campos de `Settings`. | No reimplementa las plantillas canónicas ni define cómo se instalan las plantillas proporcionadas por Canone. |
+| **Quien despliega** | Ejecuta los programas de Canone, manualmente o mediante la herramienta que elija, respetando sus interfaces. | No escribe lo que instalan esos programas, ni con unidades, configuración o scripts propios. |
 
 El reparto de responsabilidades se fundamenta en [ADR-0075](adr/0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) y [ADR-0107](adr/0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md).
 
 ## Integración
 
-Canone proporciona dos tipos de plantillas, según cómo se incorporan al proyecto o al servidor.
+Canone proporciona tres tipos de plantillas, según cómo se incorporan al proyecto o al servidor.
 
-### Plantillas que se copian
+### Plantillas canónicas
 
-Se incorporan al repositorio que las utiliza y se mantienen allí. Por ejemplo, `release.yml`.
+Se copian sin editar, y `scripts/verificar.py` comprueba que la copia no se haya separado. Por ejemplo, `.gitattributes`.
+
+### Puntos de partida
+
+Se copian y después son del repositorio. Por ejemplo, `release.yml`.
 
 ### Plantillas que se instalan
 
@@ -76,33 +80,25 @@ Canone define cómo se reciben esos valores, pero no dónde los almacena quien d
 
 El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herramientas en los siguientes archivos y directorios.
 
-| Recurso | Contenido y aplicación |
+| Recurso | Contenido |
 |---|---|
 | [principios.md](principios.md) | Método de trabajo, independiente de las tecnologías utilizadas. |
 | [repositorio.md](repositorio.md) | Convenciones de Git, estructura de carpetas, README y CI. |
 | [documentacion.md](documentacion.md) | Estructura y mantenimiento de la documentación de cada repositorio. |
 | [plataformas/](plataformas/) | Metodología y catálogo de convenciones específicas de cada tecnología o ámbito, con las fuentes que adoptan. |
-| [fuentes/](fuentes/) | Versiones concretas de las fuentes normativas adoptadas por Canone. |
+| [fuentes/](fuentes/) | Copias de las fuentes normativas adoptadas por Canone y de las listas de las que sus programas toman valores. |
 | [adr/](adr/) | Registro de las decisiones de Canone, con su alcance y estado. |
-| [plantilla/](plantilla/) | Archivos canónicos que se copian a los repositorios o se instalan desde Canone. |
-| [scripts/verificar.py](scripts/verificar.py) | Comprueba el cumplimiento de las convenciones de Canone y de los repositorios que las utilizan. |
-
-## Conservación de fuentes
-
-`fuentes/` conserva exclusivamente las versiones de las fuentes normativas que Canone adopta. Cada copia corresponde a una versión concreta y fija el texto que se adopta.
-
-Las páginas de `plataformas/` identifican las convenciones que adoptan de cada fuente, sin reproducir innecesariamente su contenido.
-
-La publicación de una nueva versión no implica su adopción automática. Decidir si se incorpora corresponde al mantenimiento de Canone: requiere revisar sus cambios y determinar si justifican modificar las convenciones existentes.
+| [plantilla/](plantilla/) | Plantillas que se copian a los repositorios o se instalan desde Canone. |
+| [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables y las citas de `plataformas/` contra `fuentes/`. |
 
 ## Verificación
 
-`scripts/verificar.py` comprueba que Canone y los repositorios que lo utilizan cumplan las convenciones verificables automáticamente.
+`scripts/verificar.py` comprueba que los repositorios cumplan las convenciones verificables automáticamente y, con `--canone`, las citas de `plataformas/` contra `fuentes/`, y falla si encuentra un incumplimiento.
 
 Para comprobar un repositorio:
 
 ```bash
-python scripts/verificar.py --repo ../&lt;repo&gt;
+python scripts/verificar.py --repo ../<repo>
 ```
 
 Para comprobar todos los repositorios dentro de un directorio:
@@ -111,7 +107,7 @@ Para comprobar todos los repositorios dentro de un directorio:
 python scripts/verificar.py --todos ..
 ```
 
-Para comprobar las convenciones internas de Canone:
+Para comprobar las citas de `plataformas/` contra `fuentes/`:
 
 ```bash
 python scripts/verificar.py --canone
@@ -121,7 +117,7 @@ La verificación de cada repositorio considera únicamente las tecnologías que 
 
 ## Mantenimiento
 
-Las plantillas que se copian a los repositorios tienen una única versión canónica en `plantilla/`.
+Las plantillas canónicas tienen una única versión en `plantilla/`.
 
 Toda modificación se realiza primero en esa ubicación y después se propaga a los repositorios que utilizan la plantilla. No se utiliza una copia de un repositorio como origen para actualizar las demás.
 

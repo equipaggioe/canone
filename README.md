@@ -1,14 +1,14 @@
 # canone
 
-Convenciones, plantillas y herramientas compartidas para construir, organizar y mantener mis proyectos de software.
+Convenciones, plantillas y herramientas compartidas para construir, organizar y mantener proyectos de software.
 
 ## Propósito
 
-Mis proyectos comparten sus convenciones y decisiones en un solo lugar para leerse, construirse, organizarse y mantenerse de la misma manera.
+Los proyectos que usan Canone comparten sus convenciones y decisiones en un solo lugar para leerse, construirse, organizarse y mantenerse de la misma manera.
 
 Canone es una guía, no un reglamento: sus convenciones se siguen por defecto.
 
-Cada proyecto elige las tecnologías que utiliza y consulta únicamente las convenciones correspondientes. Canone responde a la pregunta «si uso X, ¿cómo lo uso?», sin convertir su catálogo en una lista de requisitos universales.
+Cada proyecto elige las tecnologías que utiliza y consulta únicamente las convenciones correspondientes. Canone responde a la pregunta «si se usa X, ¿cómo se usa?», sin convertir su catálogo en una lista de requisitos universales.
 
 Al definir las convenciones de cada tecnología o ámbito, prioriza la adopción de fuentes normativas externas que ya establecen convenciones adecuadas, evitando volver a redactarlas y mantenerlas. Cuando esas fuentes no cubren una decisión, dejan opciones abiertas o requieren excepciones, Canone establece convenciones propias. Los criterios están en [plataformas/README.md](plataformas/README.md).
 
@@ -24,9 +24,7 @@ Las siguientes convenciones aplican a todos los repositorios:
 - [repositorio.md](repositorio.md)
 - [documentacion.md](documentacion.md)
 
-Las convenciones de `plataformas/` dependen de las tecnologías utilizadas por cada proyecto. Para trabajar en una pieza se consulta su página, su página madre si la tiene y las secciones de `transversal.md` que enlazan.
-
-Una página con página madre hereda sus convenciones, sin repetirlas. La relación de herencia se declara en la propia página.
+Las convenciones de `plataformas/` dependen de las tecnologías utilizadas por cada proyecto. Qué páginas se consultan para trabajar en una pieza y cómo se heredan entre ellas está en [plataformas/README.md](plataformas/README.md).
 
 Un repositorio puede apartarse de una convención cuando exista un motivo justificado. La desviación se registra en un ADR propio, dentro de `docs/adr/`, que identifica la convención afectada y explica la decisión.
 
@@ -45,7 +43,7 @@ La sección «Cumplimiento» de cada página registra las herramientas que verif
 Canone, cada repositorio y quien despliega tienen responsabilidades distintas y complementarias.
 
 | Quién | Responsabilidades | Límites |
-|---|---|---|
+| :--- | :--- | :--- |
 | **Canone** | Define las convenciones, proporciona las plantillas y establece la interfaz de sus programas mediante argumentos y `stdin`. | No guarda datos de las aplicaciones, no decide cuándo se ejecutan sus programas ni impone qué herramienta debe ejecutarlos. |
 | **El repositorio** | Sigue las convenciones aplicables, incorpora las plantillas que se copian y declara sus propios datos: nombre, superficies y campos de `Settings`. | No reimplementa las plantillas canónicas ni define cómo se instalan las plantillas proporcionadas por Canone. |
 | **Quien despliega** | Ejecuta los programas de Canone, manualmente o mediante la herramienta que elija, respetando sus interfaces. | No escribe lo que instalan esos programas, ni con unidades, configuración o scripts propios. |
@@ -63,7 +61,7 @@ Canone define cómo se reciben esos valores, pero no dónde los almacena quien d
 El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herramientas en los siguientes archivos y directorios.
 
 | Recurso | Contenido |
-|---|---|
+| :--- | :--- |
 | [principios.md](principios.md) | Método de trabajo, independiente de las tecnologías utilizadas. |
 | [repositorio.md](repositorio.md) | Convenciones de Git, estructura de carpetas, README y CI. |
 | [documentacion.md](documentacion.md) | Estructura y mantenimiento de la documentación de cada repositorio. |

@@ -642,7 +642,7 @@ Contrato: [transversal.md](transversal.md#websocket).
 ## Cumplimiento
 
 | Convención | Herramienta |
-|---|---|
+| :--- | :--- |
 | Todo campo de `Settings` es obligatorio | `test_settings_are_required` |
 | Las dependencias y los parámetros de una ruta con `Annotated` | ruff `FAST002` |
 | El commit corre antes de enviar la respuesta | `test_failed_commit_is_a_server_error` |

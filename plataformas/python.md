@@ -156,7 +156,7 @@ Estándar: las secciones *Do not run via setuptools* y *Using pytest's strict mo
 ## Cumplimiento
 
 | Convención | Herramienta |
-|---|---|
+| :--- | :--- |
 | Python 3.13 de Debian 13 | `requires-python` y uv con `python-preference = "only-system"` |
 | uv 0.13.5 | uv con `required-version`, y `verificar.py`, que comprueba que cada `pyproject.toml` la declare |
 | El bloqueo | `uv sync --locked` en CI |

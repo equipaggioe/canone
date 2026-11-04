@@ -155,7 +155,7 @@ usa `pysidedeploy.spec`.
 ## Cumplimiento
 
 | Convención | Herramienta |
-|---|---|
+| :--- | :--- |
 | `@override` | Pyrefly `missing-override-decorator` |
 | Los nombres originales de Qt | ruff `TID251` sobre `__feature__` |
 | La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools` |

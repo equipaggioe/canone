@@ -1,21 +1,13 @@
-# plantilla
+# Plantilla
 
-Los archivos que se copian a un repositorio. No es un proyecto que corra, y **no es una lista de lo
-que un repositorio debe tener**: se copia solo lo de las plataformas que el producto use.
+Los archivos que se copian a un repositorio. No es un proyecto que corra, y **no es una lista de lo que un repositorio debe tener**: se copia solo lo de las plataformas que el producto use.
 
-Cada archivo sale de una regla de [plataformas/](../plataformas/), y la página lo nombra. Un
-archivo **canónico** se copia sin editar y `scripts/verificar.py` comprueba que la copia no se haya
-separado. Un **punto de
-partida** se copia y después es del repositorio. Un archivo que **se instala** no se copia al
-repositorio: un script de canone lo instala en el servidor con los datos de cada app.
+Cada archivo sale de una regla de [plataformas/](../plataformas/), y la página lo nombra. Un archivo **canónico** se copia sin editar y `scripts/verificar.py` comprueba que la copia no se haya separado. Un **punto de partida** se copia y después es del repositorio. Un archivo que **se instala** no se copia al repositorio: un script de canone lo instala en el servidor con los datos de cada app.
 
-Un archivo canónico tiene una única versión aquí. Toda modificación se hace primero aquí y después se
-propaga a los repositorios que lo usan; una copia de un repositorio no sirve de origen para actualizar
-las demás. Lo que se instala se mantiene y se actualiza aquí, sin implementaciones paralelas en los
-repositorios.
+Un archivo canónico tiene una única versión aquí. Toda modificación se hace primero aquí y después se propaga a los repositorios que lo usan; una copia de un repositorio no sirve de origen para actualizar las demás. Lo que se instala se mantiene y se actualiza aquí, sin implementaciones paralelas en los repositorios.
 
 | Archivo | Destino | Tipo | Página |
-|---|---|---|---|
+| :--- | :--- | :--- | :--- |
 | `.gitattributes` | Raíz | Canónico | [repositorio.md](../repositorio.md) |
 | `.gitignore` | Raíz | Punto de partida | [repositorio.md](../repositorio.md) |
 | `.github/workflows/ci.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay, `PIEZA` toma el nombre de la carpeta y `PRODUCTO`, el del repositorio | [repositorio.md](../repositorio.md), [python.md](../plataformas/python.md) |

@@ -12,7 +12,7 @@ La solución es que **cada pregunta tenga un solo lugar donde se responde** y qu
 ## Tres carpetas y nada más
 
 | Carpeta | Pregunta que responde | Cómo cambia |
-|---|---|---|
+| :--- | :--- | :--- |
 | `arquitectura/` | **Cómo es hoy** el sistema y **qué falta** | Se reescribe en el mismo commit que el código. Nunca describe el pasado ni el futuro |
 | `adr/` | **Por qué es así**: qué se decidió, qué se descartó y a qué costo | Solo se agregan registros. Uno viejo no se edita para cambiar de opinión |
 | `planes/` | **Cómo se va a construir** algo diseñado y sin terminar | Se borra cuando el trabajo termina |
@@ -20,7 +20,7 @@ La solución es que **cada pregunta tenga un solo lugar donde se responde** y qu
 ### Lo que no existe, y dónde va en su lugar
 
 | Documento habitual | Por qué no | Dónde va lo que contenía |
-|---|---|---|
+| :--- | :--- | :--- |
 | Bitácora, registro de cambios | Repite lo que ya dicen los commits y envejece | Commits. La lección que deja un error va a la arquitectura (regla o riesgo) o a un ADR |
 | Carpeta de planes terminados | Describe un estado que ya no existe | Las decisiones a `adr/`, el resultado a `arquitectura/`, y el plan se borra |
 | Lista suelta de pendientes | Nadie la limpia y se desincroniza | «Pendientes abiertos» del documento 30 de la pieza |
@@ -33,14 +33,14 @@ La solución es que **cada pregunta tenga un solo lugar donde se responde** y qu
 Plantilla **arc42** con diagramas al estilo **C4**, en dos niveles:
 
 | Nivel | Qué responde | C4 | Archivo |
-|---|---|---|---|
+| :--- | :--- | :--- | :--- |
 | Sistema | Qué piezas lo forman, cómo se hablan, qué ve cada una, cómo se despliega | Contexto (1) y contenedores (2) | `00_sistema.md` |
 | Contenedor | Cómo está construida cada pieza por dentro | Componentes (3) | Una carpeta por pieza (`servidor/`, `app/`…) |
 
 Cada carpeta de contenedor tiene un `README.md` con su índice y usa la misma numeración:
 
 | # | Contenido |
-|---|---|
+| :--- | :--- |
 | 01 | Contexto y alcance de esa pieza |
 | 02 | Estrategia y bloques |
 | 03 | Ejecución y despliegue |

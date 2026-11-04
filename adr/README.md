@@ -1,13 +1,11 @@
-# ADR de `canone`
+# ADR
 
-Decisiones transversales. **Cada una dice a qué aplica**: la mayoría vale solo para los
-repositorios que usan esa plataforma. Un repositorio que se aparta de una abre un ADR propio que
-diga de qué se aparta y por qué.
+Decisiones transversales. **Cada una dice a qué aplica**: la mayoría vale solo para los repositorios que usan esa plataforma. Un repositorio que se aparta de una abre un ADR propio que diga de qué se aparta y por qué.
 
-Formato y reglas: [`documentacion.md`](../documentacion.md).
+Formato y reglas: [documentacion.md](../documentacion.md).
 
 | # | Título | Aplica a | Estado |
-|---|---|---|---|
+| :--- | :--- | :--- | :--- |
 | [0001](0001-el-estandar-vive-en-un-repositorio.md) | El estándar vive en un repositorio y los demás lo enlazan | Todos | Aceptada; la última frase del punto 2 la reemplazan ADR-0014 y ADR-0057, y el punto 4, ADR-0040 |
 | [0002](0002-los-archivos-base-se-copian-y-se-verifican.md) | Los archivos base se copian y un script verifica la copia | Con `server/` | Aceptada |
 | [0003](0003-enum-como-varchar-con-check.md) | Un enum se guarda como VARCHAR con CHECK | Con base de datos | Reemplazada por ADR-0013 |

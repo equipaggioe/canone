@@ -11,7 +11,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 - La columna «Cita» dice si la fuente se cita `entera` o `por entradas` ([plataformas/README.md](../plataformas/README.md#unidad-y-alcance-de-la-cita)).
 
 | Archivo | Fuente | Cita | Nota |
-|---|---|---|---|
+| :--- | :--- | :--- | :--- |
 | [python/pep-0008.rst](python/pep-0008.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0008.rst> | entera |  |
 | [python/pep-0257.rst](python/pep-0257.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0257.rst> | entera |  |
 | [python/pep-0698.rst](python/pep-0698.rst) | <https://raw.githubusercontent.com/python/peps/main/peps/pep-0698.rst> | entera |  |

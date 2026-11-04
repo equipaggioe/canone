@@ -6,16 +6,16 @@ Para trabajar en una pieza se consulta su página, su página madre si la tiene 
 
 ## Terminología
 
-- **Pieza:** componente identificable de un sistema que tiene una responsabilidad y puede documentarse por separado.
-- **Tecnología:** herramienta, lenguaje, framework, plataforma o sistema concreto utilizado para implementar una pieza.
 - **Ámbito:** área de implementación que agrupa convenciones aplicables a distintas tecnologías o piezas.
 - **Convención:** criterio que determina cómo se construyen, organizan o integran las piezas de un sistema.
 - **Convención adoptada:** convención establecida por una fuente normativa externa que Canone incorpora y aplica dentro del alcance indicado.
 - **Convención propia:** convención establecida directamente por Canone porque ninguna fuente adoptada resuelve esa decisión, o porque es necesario elegir o modificar lo que establecen las fuentes.
+- **Entrada:** elemento independiente de una fuente compuesta por elementos que pueden adoptarse individualmente.
 - **Fuente normativa:** documento externo que establece convenciones que pueden adoptarse.
 - **Material de referencia:** lista de nombres o valores que utiliza una convención, como un registro, sin ser una fuente normativa.
-- **Entrada:** elemento independiente de una fuente compuesta por elementos que pueden adoptarse individualmente.
 - **Parte:** título de una fuente con todo su contenido subordinado. Si el título se repite, se identifica también el título que lo contiene. Cuando un mismo apartado abarca asuntos de secciones distintas, puede identificarse el párrafo que corresponde a cada una.
+- **Pieza:** componente identificable de un sistema que tiene una responsabilidad y puede documentarse por separado.
+- **Tecnología:** herramienta, lenguaje, framework, plataforma o sistema concreto utilizado para implementar una pieza.
 
 ## Páginas
 
@@ -48,7 +48,7 @@ Una convención que no contribuye a ninguno de estos propósitos no se incluye. 
 
 La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Cada punto se resuelve adoptando una convención de una fuente normativa o, si ninguna fuente adecuada lo cubre, estableciendo una convención propia.
 
-Una fuente debe cumplir los siete requisitos siguientes:
+Una fuente debe cumplir los ocho requisitos siguientes:
 
 1. **Normativa:** establece qué se debe, se debería o no se debe hacer. Cada enunciado citado debe poder expresarse como «se usa X» o «no se hace Y». Los procedimientos, ejemplos y explicaciones no cuentan, aunque aparezcan en la documentación oficial.
 2. **Decide algo:** responde a uno de los puntos que deben resolverse para la tecnología o ámbito.
@@ -57,8 +57,9 @@ Una fuente debe cumplir los siete requisitos siguientes:
 5. **De la versión en uso:** corresponde a la versión de la tecnología utilizada. La copia conservada en `fuentes/` fija el texto que se adopta.
 6. **Independiente:** las convenciones adoptadas no dependen de la infraestructura de quien publica la fuente.
 7. **Cubre:** una fuente citada entera debe resolver la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente lo que adoptan todas las páginas. En esos asuntos, lo no cubierto debe quedar en minoría. Lo que se contradice, se deja sin efecto o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no se cita y las convenciones que se aprovechen de ella se establecen como convenciones propias.
+8. **Aporta:** evita escribir al menos tres convenciones, contando todas las páginas que la citan. Cuenta cada enunciado o entrada que se cumple sin que una página lo escriba. No cuenta lo que una página escribe de todos modos, como una elección o lo que endurece, ni lo que deja sin efecto o se dirige a otro actor. Si no llega a tres, no se cita y sus convenciones se escriben como propias.
 
-Si varias fuentes que cumplen los siete requisitos regulan el mismo asunto, se prefiere la que tenga mayor prioridad en la tabla. A igual prioridad, se elige la que cubra una parte mayor del asunto.
+Si varias fuentes que cumplen los ocho requisitos regulan el mismo asunto, se prefiere la que tenga mayor prioridad en la tabla. A igual prioridad, se elige la que cubra una parte mayor del asunto.
 
 | Orden | Fuente |
 | :--- | :--- |
@@ -202,23 +203,4 @@ Ningún elemento queda fuera de la revisión sin que conste que no fue evaluado.
 
 Ni el código de los proyectos, ni una página anterior, ni los ADR son fuente, ni justifican recomendar una fuente o una convención propia. El código solo sirve para identificar necesidades y casos de uso. Una página se escribe de cero desde sus fuentes.
 
-El fundamento de estos criterios está documentado en los siguientes ADR:
-
-- [ADR-0018](../adr/0018-una-pagina-se-revisa-contra-la-copia-de-sus-estandares-y-solo-dice-lo-que-elige-endurece-o-no-cubren.md)
-- [ADR-0028](../adr/0028-una-pagina-esta-completa-cuando-sus-estandares-cubren-lo-que-hay-que-decidir.md)
-- [ADR-0029](../adr/0029-las-secciones-de-una-pagina-van-en-bloques-fijos-y-los-temas-en-orden-alfabetico.md)
-- [ADR-0030](../adr/0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md)
-- [ADR-0031](../adr/0031-una-revision-empieza-por-lo-que-la-tecnologia-obliga-a-decidir.md)
-- [ADR-0032](../adr/0032-una-guia-de-una-organizacion-se-cita-si-se-escribio-para-que-otros-la-adopten.md)
-- [ADR-0051](../adr/0051-un-tutorial-no-se-cita-y-lo-que-se-toma-de-el-es-regla-propia.md)
-- [ADR-0056](../adr/0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
-- [ADR-0063](../adr/0063-una-fuente-cumple-siete-requisitos-y-su-texto-se-lee-al-escribir-codigo.md)
-- [ADR-0064](../adr/0064-una-revision-da-un-veredicto-con-evidencia-sobre-cada-regla-fuente-y-fila.md)
-- [ADR-0065](../adr/0065-la-licencia-de-una-fuente-no-decide-si-se-cita.md)
-- [ADR-0066](../adr/0066-una-fuente-corresponde-a-la-version-en-uso-aunque-no-tenga-fecha.md)
-- [ADR-0095](../adr/0095-una-lista-de-nombres-que-toma-una-regla-no-es-una-fuente.md)
-- [ADR-0108](../adr/0108-una-fuente-se-cita-entera-o-por-entradas-y-cada-parte-rige-en-una-sola-seccion.md)
-- [ADR-0109](../adr/0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md)
-- [ADR-0113](../adr/0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md)
-- [ADR-0114](../adr/0114-lo-que-cumplen-juntas-varias-piezas-va-en-transversal-y-lo-demas-en-la-pagina-de-su-tecnologia.md)
-- [ADR-0115](../adr/0115-lo-que-se-cumple-es-una-convencion-adoptada-de-una-fuente-o-propia-de-canone.md)
+El porqué de estos criterios está en [adr/](../adr/README.md), con el alcance y el estado de cada decisión.

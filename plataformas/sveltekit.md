@@ -8,7 +8,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
 
 - Node es el de Debian 13, y solo se usa para construir.
 - SvelteKit es la versión 3, y su configuración va en `vite.config.ts`: rechaza `svelte.config.js`
-  y el alias `$lib`, que pasa a `#lib` ([ADR-0112](../adr/0112-sveltekit-es-la-version-3-y-se-configura-en-vite-config.md)).
+  y el alias `$lib`, que pasa a `#lib`.
 - pnpm maneja las dependencias. No deja importar un paquete que no esté declarado.
 - `package.json` declara la versión exacta de pnpm en `packageManager`, como `pnpm@10.34.6`:
   `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra.

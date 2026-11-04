@@ -225,10 +225,10 @@ Unauthorized* de [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 ## Tema
 
-> **En desarrollo; no se implementa** ([ADR-0116](../adr/0116-la-seccion-tema-esta-en-desarrollo-y-no-se-implementa.md)).
+> **En desarrollo; no se implementa.**
 > Ningún repositorio la sigue mientras esta nota esté aquí, y `verificar.py` no la exige. Vale para
 > esta sección, el «Tema» de cada cliente, el
-> [ADR-0062](../adr/0062-los-colores-de-un-producto-salen-de-brand-tokens-en-dtcg-y-un-generador-arma-el-esquema-de-cada-cliente.md),
+> ADR-0062,
 > y lo que nombran «Proyecto» y la plantilla: `colors.py`, `theme.py`, `tests/test_theme.py`,
 > `scripts/tokens.py` y `brand/tokens/`. Se revisan y se desarrollan como cualquier otra parte de
 > Canone.

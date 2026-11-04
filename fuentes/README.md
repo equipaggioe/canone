@@ -1,6 +1,6 @@
 # Fuentes
 
-Copia de los textos de las fuentes que citan las páginas de [plataformas/](../plataformas/), y de las listas de las que un programa de Canone toma valores ([ADR-0113](../adr/0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md)). Una página se revisa contra el texto de aquí, no de memoria. Una fuente que solo cita un ADR no se copia: el ADR la usa como argumento de su decisión, y ninguna página adopta sus convenciones.
+Copia de los textos de las fuentes que citan las páginas de [plataformas/](../plataformas/), y de las listas de las que un programa de Canone toma valores. Una página se revisa contra el texto de aquí, no de memoria. Una fuente que solo cita un ADR no se copia: el ADR la usa como argumento de su decisión, y ninguna página adopta sus convenciones.
 
 - Cada archivo es el texto de su fuente, sin editar. Cuando la fuente es una página web, es su contenido convertido a Markdown.
 - Cada archivo se descarga del tag o la rama de la versión que se usa, nunca de `main` ni de `master`. Una fuente sin versiones se descarga de un commit fijo, y su URL lleva el SHA.
@@ -59,7 +59,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [w3c/webrtc.html](w3c/webrtc.html) | <https://www.w3.org/TR/2025/REC-webrtc-20250313/> | por entradas | Recomendación del 2025-03-13 |
 | [w3c/push-api.html](w3c/push-api.html) | <https://www.w3.org/TR/2026/WD-push-api-20261005/> | por entradas | Borrador de trabajo del 2026-10-05 |
 | [w3c/wcag22.html](w3c/wcag22.html) | <https://www.w3.org/TR/WCAG22/> | entera |  |
-| [w3c/permissions-policy-features.md](w3c/permissions-policy-features.md) | <https://raw.githubusercontent.com/w3c/webappsec-permissions-policy/29398046f1e0cb45c091adda853df74925dc740a/features.md> |  | Commit 2939804. Lista de nombres, no fuente (ADR-0095) |
+| [w3c/permissions-policy-features.md](w3c/permissions-policy-features.md) | <https://raw.githubusercontent.com/w3c/webappsec-permissions-policy/29398046f1e0cb45c091adda853df74925dc740a/features.md> |  | Commit 2939804. Lista de nombres, no fuente |
 | [dtcg/format.html](dtcg/format.html) | <https://www.designtokens.org/tr/2025.10/format/> | entera |  |
 | [dtcg/color.html](dtcg/color.html) | <https://www.designtokens.org/tr/2025.10/color/> | entera |  |
 | [dtcg/resolver.html](dtcg/resolver.html) | <https://www.designtokens.org/tr/2025.10/resolver/> | entera |  |
@@ -68,8 +68,8 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [wicg/webotp.bs](wicg/webotp.bs) | <https://raw.githubusercontent.com/WICG/web-otp/master/index.bs> | entera |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf> | entera | Texto extraído del PDF |
 | [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | <https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf> | entera | Texto extraído del PDF |
-| [iana/iana-ipv4-special-registry.csv](iana/iana-ipv4-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |
-| [iana/iana-ipv6-special-registry.csv](iana/iana-ipv6-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente (ADR-0095) |
+| [iana/iana-ipv4-special-registry.csv](iana/iana-ipv4-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente |
+| [iana/iana-ipv6-special-registry.csv](iana/iana-ipv6-special-registry.csv) | <https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry-1.csv> |  | Descargado el 2026-10-27. Lista de direcciones, no fuente |
 | [fhs/fhs-3.0.txt](fhs/fhs-3.0.txt) | <https://www.debian.org/doc/packaging-manuals/fhs/fhs-3.0.txt> | por entradas | Versión 3.0, la que sigue Debian 13. Copia de Debian: refspecs.linuxfoundation.org rechaza la descarga |
 | [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md> | entera | Versión 5.0.0 |
 | [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | <https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md> | entera | Versión 5.0.0 |

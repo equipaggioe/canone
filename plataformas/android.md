@@ -28,8 +28,7 @@ y las [*Coding conventions*](../fuentes/kotlin/coding-conventions.md) de Kotlin.
 - El mismo bloque apaga `AndroidGradlePluginVersion`, `GradleDependency` y
   `NewerVersionAvailable`, que avisan cuando sale una versión más nueva: Gradle, AGP y Kotlin los
   fija «Proyecto», y con esos avisos el CI fallaría cada vez que se publica una versión, sin que
-  cambie el repositorio
-  ([ADR-0111](../adr/0111-android-lint-no-avisa-versiones-nuevas.md)).
+  cambie el repositorio.
 
 Plantilla: [`plantilla/android/`](../plantilla/android/): `.editorconfig`, que se copia sin
 editar, y `.gitignore`.

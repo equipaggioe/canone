@@ -77,8 +77,7 @@ Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de
 - La configuración es una instancia de `Settings`, que hereda de `BaseSettings` de
   pydantic-settings.
 - `Settings` lleva solo lo que cambia entre despliegues. Lo que no cambia es una constante del
-  módulo que lo usa: se versiona y se prueba con el código
-  ([ADR-0076](../adr/0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md)).
+  módulo que lo usa: se versiona y se prueba con el código.
 - Todo campo de `Settings` es obligatorio y sin valor por defecto.
 - `Settings(_secrets_dir=os.environ["CREDENTIALS_DIRECTORY"])` lee solo los archivos de esa
   carpeta, sin variables de entorno: cada valor sale de un solo lugar. Cada archivo se llama como

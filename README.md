@@ -50,8 +50,6 @@ Canone, cada repositorio y quien despliega tienen responsabilidades distintas y 
 | **El repositorio** | Sigue las convenciones aplicables, incorpora las plantillas que se copian y declara sus propios datos: nombre, superficies y campos de `Settings`. | No reimplementa las plantillas canónicas ni define cómo se instalan las plantillas proporcionadas por Canone. |
 | **Quien despliega** | Ejecuta los programas de Canone, manualmente o mediante la herramienta que elija, respetando sus interfaces. | No escribe lo que instalan esos programas, ni con unidades, configuración o scripts propios. |
 
-El reparto de responsabilidades se fundamenta en [ADR-0075](adr/0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) y [ADR-0107](adr/0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md).
-
 ### Configuración de cada despliegue
 
 Los valores que cambian entre despliegues, sean secretos o no, no se incorporan al control de versiones. Cada repositorio declara los campos que necesita y quien despliega proporciona sus valores al servidor mediante la interfaz del programa correspondiente.

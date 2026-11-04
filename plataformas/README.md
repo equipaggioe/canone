@@ -202,5 +202,3 @@ Ningún elemento queda fuera de la revisión sin que conste que no fue evaluado.
 ## Base de las convenciones
 
 Ni el código de los proyectos, ni una página anterior, ni los ADR son fuente, ni justifican recomendar una fuente o una convención propia. El código solo sirve para identificar necesidades y casos de uso. Una página se escribe de cero desde sus fuentes.
-
-El porqué de estos criterios está en [adr/](../adr/README.md), con el alcance y el estado de cada decisión.

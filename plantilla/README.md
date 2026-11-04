@@ -5,10 +5,9 @@ que un repositorio debe tener**: se copia solo lo de las plataformas que el prod
 
 Cada archivo sale de una regla de [plataformas/](../plataformas/), y la página lo nombra. Un
 archivo **canónico** se copia sin editar y `scripts/verificar.py` comprueba que la copia no se haya
-separado ([ADR-0002](../adr/0002-los-archivos-base-se-copian-y-se-verifican.md)). Un **punto de
+separado. Un **punto de
 partida** se copia y después es del repositorio. Un archivo que **se instala** no se copia al
-repositorio: un script de canone lo instala en el servidor con los datos de cada app
-([ADR-0069](../adr/0069-el-servidor-se-instala-desde-plantilla-infra-y-sus-cabeceras-no-frenan-a-las-apps.md)).
+repositorio: un script de canone lo instala en el servidor con los datos de cada app.
 
 Un archivo canónico tiene una única versión aquí. Toda modificación se hace primero aquí y después se
 propaga a los repositorios que lo usan; una copia de un repositorio no sirve de origen para actualizar

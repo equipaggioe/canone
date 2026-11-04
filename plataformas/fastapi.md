@@ -56,7 +56,7 @@ server/
     test_<recurso>.py
 ```
 
-Plantilla: [`plantilla/server/`](../plantilla/server/) y el job `server` de [`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Se copian sin editar `alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako`, `database.py`, `tracing.py`, `models/__init__.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py` y `tests/test_conventions.py`. Se copian y se completan `config.py`, `dependencies.py`, `enums.py`, `errors.py`, `main.py`, los `health.py` de `routers/`, `schemas/` y `services/`, `models/event/`, `services/events.py`, la migración de `event_log` y `tests/conftest.py`.
+Plantilla: [plantilla/server/](../plantilla/server/) y el job `server` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml). Se copian sin editar `alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako`, `database.py`, `tracing.py`, `models/__init__.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py` y `tests/test_conventions.py`. Se copian y se completan `config.py`, `dependencies.py`, `enums.py`, `errors.py`, `main.py`, los `health.py` de `routers/`, `schemas/` y `services/`, `models/event/`, `services/events.py`, la migración de `event_log` y `tests/conftest.py`.
 
 <br>
 

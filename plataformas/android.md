@@ -9,7 +9,7 @@ Una app de Android en Kotlin y Jetpack Compose.
 - Gradle 9.8.0, AGP 9.4.1 y Kotlin 2.4.20, también en las apps Flutter. Con una sola versión, un proyecto no se queda con la que traía la plantilla el día en que se creó.
 - Gradle corre con el wrapper y su distribución `-bin`: `-all` solo agrega las fuentes y la documentación de Gradle.
 
-Plantilla: [`plantilla/android/gradle/wrapper/gradle-wrapper.properties`](../plantilla/android/gradle/wrapper/gradle-wrapper.properties), que se copia sin editar.
+Plantilla: [plantilla/android/gradle/wrapper/gradle-wrapper.properties](../plantilla/android/gradle/wrapper/gradle-wrapper.properties), que se copia sin editar.
 
 ## Estilo
 
@@ -19,7 +19,7 @@ Estándares: la [guía de estilo de Kotlin para Android](../fuentes/android/kotl
 - Android Lint trata las advertencias como errores, con `warningsAsErrors = true` en el bloque `lint` de `app/build.gradle.kts`. Endurece Android Lint: una advertencia no pasa CI.
 - El mismo bloque apaga `AndroidGradlePluginVersion`, `GradleDependency` y `NewerVersionAvailable`, que avisan cuando sale una versión más nueva: Gradle, AGP y Kotlin los fija «Proyecto», y con esos avisos el CI fallaría cada vez que se publica una versión, sin que cambie el repositorio.
 
-Plantilla: [`plantilla/android/`](../plantilla/android/): `.editorconfig`, que se copia sin editar, y `.gitignore`.
+Plantilla: [plantilla/android/](../plantilla/android/): `.editorconfig`, que se copia sin editar, y `.gitignore`.
 
 ## Arquitectura
 
@@ -129,5 +129,5 @@ Estándares: los [fundamentos de pruebas](../fuentes/android/testing-fundamental
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Gradle, AGP y Kotlin | [`scripts/verificar.py`](../scripts/verificar.py) |
+| Gradle, AGP y Kotlin | [scripts/verificar.py](../scripts/verificar.py) |
 | Objetivos, etiquetas y contraste | `enableAccessibilityChecks()` en las pruebas de UI |

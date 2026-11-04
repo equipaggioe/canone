@@ -28,7 +28,7 @@ Estándar del layout: la sección *Choosing a test layout* de las [buenas práct
 
 - El paquete se llama `app` en toda pieza. Los archivos canónicos lo nombran y se copian sin editar.
 
-Plantilla: el `pyproject.toml` de cada pieza, en [`plantilla/server/`](../plantilla/server/), [`plantilla/qt/`](../plantilla/qt/) y [`plantilla/flet/`](../plantilla/flet/), [`plantilla/python/.gitignore`](../plantilla/python/.gitignore) y los jobs de Python de [`plantilla/.github/workflows/ci.yml`](../plantilla/.github/workflows/ci.yml). Cada uno lleva la configuración de esta página más la de su plataforma.
+Plantilla: el `pyproject.toml` de cada pieza, en [plantilla/server/](../plantilla/server/), [plantilla/qt/](../plantilla/qt/) y [plantilla/flet/](../plantilla/flet/), [plantilla/python/.gitignore](../plantilla/python/.gitignore) y los jobs de Python de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml). Cada uno lleva la configuración de esta página más la de su plataforma.
 
 ## Dependencias
 
@@ -70,7 +70,7 @@ Estándar: la sección *Imports* de [PEP 8](../fuentes/python/pep-0008.rst).
 
 ## Archivos de texto
 
-Estándar: la sección *Text Encoding* de [`io`](../fuentes/python/io.rst).
+Estándar: la sección *Text Encoding* de [io](../fuentes/python/io.rst).
 
 - Los archivos de texto se abren con `encoding="utf-8"`.
 

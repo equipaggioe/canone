@@ -45,7 +45,7 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0037](0037-la-uri-de-cada-tipo-de-problema-sirve-su-documentacion-bajo-api.md) | La URI de cada tipo de problema sirve su documentación, bajo `/api` | Con `server/` y sus clientes | Aceptada |
 | [0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md) | El login sigue a OWASP, y el conteo de intentos fallidos vive en Valkey | Con autenticación | Reemplazada por ADR-0044 |
 | [0039](0039-las-paginas-publicas-se-prerenderizan-y-las-que-piden-sesion-salen-del-fallback.md) | Las páginas públicas se prerenderizan, y las que piden sesión salen del `fallback` | Con SvelteKit | Aceptada |
-| [0040](0040-el-claude-md-global-guarda-solo-lo-que-es-para-claude.md) | `~/.claude/CLAUDE.md` guarda solo lo que es para Claude, y enlaza canone para el método | Todos | Aceptada |
+| [0040](0040-el-claude-md-global-guarda-solo-lo-que-es-para-claude.md) | `~/.claude/CLAUDE.md` guarda solo lo que es para Claude, y enlaza Canone para el método | Todos | Aceptada |
 | [0041](0041-una-tarea-periodica-se-dispara-desde-la-pieza-y-su-interruptor-es-obligatorio.md) | Una tarea periódica se dispara desde la pieza, y su interruptor es un campo obligatorio | Con `server/` | Reemplazada por ADR-0043 |
 | [0042](0042-una-sesion-vencida-se-borra-sin-gracia.md) | Una sesión vencida se borra sin gracia | Con autenticación | Aceptada |
 | [0043](0043-una-tarea-periodica-la-dispara-un-timer-de-systemd.md) | Una tarea periódica la dispara un timer de systemd | Con `server/` | Aceptada |
@@ -80,11 +80,11 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0072](0072-cada-instancia-de-valkey-limita-su-memoria-y-thp-se-apaga-solo-para-valkey.md) | Cada instancia de Valkey limita su memoria, y Transparent Huge Pages se apaga solo para Valkey | Con `server/` | Aceptada |
 | [0073](0073-el-ping-de-uvicorn-cierra-el-websocket-que-no-responde-y-caddy-no-lo-corta-por-tiempo.md) | El ping de Uvicorn cierra el WebSocket que no responde, y Caddy no lo corta por tiempo | Con `server/` | Aceptada |
 | [0074](0074-las-credenciales-del-respaldo-tienen-una-copia-fuera-del-servidor.md) | Las credenciales del respaldo tienen una copia fuera del servidor | Con `server/` | Descartada por ADR-0079 |
-| [0075](0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) | canone fija, el repositorio declara y consola dispara | Todos | Aceptada; la primera consecuencia y el motivo de los descartes los reemplaza ADR-0077, y los puntos 3 y 4, ADR-0107 |
+| [0075](0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) | Canone fija, el repositorio declara y consola dispara | Todos | Aceptada; la primera consecuencia y el motivo de los descartes los reemplaza ADR-0077, y los puntos 3 y 4, ADR-0107 |
 | [0076](0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md) | Lo que cambia entre despliegues sale de un solo archivo, y lo demás es código | Con `server/` | Aceptada; el punto 3 lo reemplaza ADR-0105, y los puntos 2 y 4, ADR-0107 |
 | [0077](0077-un-vps-aloja-un-solo-producto.md) | Un VPS aloja un solo producto | Con `server/` | Aceptada |
 | [0078](0078-el-respaldo-lo-pide-una-receptora-y-lo-guarda-su-rest-server.md) | El respaldo lo pide una receptora, y lo guarda su `rest-server` | Con `server/` | Aceptada; el punto 7 lo reemplaza ADR-0079 |
-| [0079](0079-canone-no-fija-la-operacion-del-respaldo.md) | canone no fija la operación del respaldo | Con `server/` | Aceptada |
+| [0079](0079-canone-no-fija-la-operacion-del-respaldo.md) | Canone no fija la operación del respaldo | Con `server/` | Aceptada |
 | [0080](0080-la-purga-de-event-log-es-una-funcion-y-una-ruta-de-salud-dice-que-alertar.md) | La purga de `event_log` es una función, y una ruta de salud dice qué alertar | Con `server/` | Aceptada; los puntos 3 y 4 los reemplaza ADR-0081 |
 | [0081](0081-la-purga-de-event-log-la-corre-el-dueno-del-esquema.md) | La purga de `event_log` la corre el dueño del esquema | Con `server/` | Aceptada |
 | [0082](0082-la-ruta-de-salud-dice-cuanto-disco-queda.md) | La ruta de salud dice cuánto disco queda | Con `server/` | Aceptada |
@@ -110,15 +110,15 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0102](0102-la-hora-la-sincroniza-systemd-timesyncd-e-install-py-falla-si-no-esta-habilitado.md) | La hora la sincroniza systemd-timesyncd, e `install.py` falla si no está habilitado | Con `server/` | Aceptada |
 | [0103](0103-unattended-upgrades-reinicia-la-maquina-a-las-0400-cuando-una-actualizacion-lo-pide.md) | unattended-upgrades reinicia la máquina a las 04:00 cuando una actualización lo pide | Con `server/` | Aceptada |
 | [0104](0104-las-llaves-que-firman-los-releases-las-agrega-install-py-dos-en-una-maquina-nueva.md) | Las llaves que firman los releases las agrega `install.py`, dos en una máquina nueva | Con `server/` | Aceptada |
-| [0105](0105-las-credenciales-las-cifra-credentials-py-de-canone-y-consola-solo-se-las-pasa.md) | Las credenciales las cifra `credentials.py` de canone, y consola solo se las pasa | Con `server/` | Aceptada; el punto 2 lo reemplaza ADR-0107 |
+| [0105](0105-las-credenciales-las-cifra-credentials-py-de-canone-y-consola-solo-se-las-pasa.md) | Las credenciales las cifra `credentials.py` de Canone, y consola solo se las pasa | Con `server/` | Aceptada; el punto 2 lo reemplaza ADR-0107 |
 | [0106](0106-deploy-py-se-instala-desde-plantilla-infra-con-los-datos-de-la-app.md) | `deploy.py` se instala desde `plantilla/infra/` con los datos de la app, y no se copia al repositorio | Con `server/` | Aceptada |
-| [0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md) | canone fija la interfaz de sus programas, y no la herramienta que los corre | Todos | Aceptada |
+| [0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md) | Canone fija la interfaz de sus programas, y no la herramienta que los corre | Todos | Aceptada |
 | [0108](0108-una-fuente-se-cita-entera-o-por-entradas-y-cada-parte-rige-en-una-sola-seccion.md) | Una fuente se cita entera o por entradas, y cada parte de una fuente entera rige en una sola sección | `plataformas/` y `fuentes/` | Aceptada; el punto 2 lo reemplaza ADR-0109 |
 | [0109](0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md) | Lo que una fuente le pide a otro no se reparte, y su unidad es lo que tiene URL propia | `plataformas/` y `fuentes/` | Aceptada |
 | [0110](0110-uv-lo-instala-uv-py-con-su-version-y-su-sha-256-fijos.md) | uv lo instala `uv.py`, con su versión y su SHA-256 fijos | Con `server/` | Aceptada |
 | [0111](0111-android-lint-no-avisa-versiones-nuevas.md) | Android Lint no avisa versiones nuevas | Con Android | Aceptada |
 | [0112](0112-sveltekit-es-la-version-3-y-se-configura-en-vite-config.md) | SvelteKit es la versión 3, y se configura en `vite.config.ts` | Con SvelteKit | Aceptada |
-| [0113](0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md) | En `fuentes/` solo queda la lista de la que un programa de canone toma valores | `plataformas/` y `fuentes/` | Aceptada |
+| [0113](0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md) | En `fuentes/` solo queda la lista de la que un programa de Canone toma valores | `plataformas/` y `fuentes/` | Aceptada |
 | [0114](0114-lo-que-cumplen-juntas-varias-piezas-va-en-transversal-y-lo-demas-en-la-pagina-de-su-tecnologia.md) | Lo que cumplen juntas varias piezas va en `transversal.md`, y lo demás en la página de su tecnología | `plataformas/` | Aceptada |
 | [0115](0115-lo-que-se-cumple-es-una-convencion-adoptada-de-una-fuente-o-propia-de-canone.md) | Lo que se cumple es una convención, adoptada de una fuente o propia de Canone | `plataformas/` y `fuentes/` | Aceptada |
 | [0116](0116-la-seccion-tema-esta-en-desarrollo-y-no-se-implementa.md) | La sección «Tema» está en desarrollo y no se implementa | «Tema» de `plataformas/`, `plantilla/README.md` y `verificar.py` | Aceptada, salvo el punto 2 |

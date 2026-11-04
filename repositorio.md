@@ -39,7 +39,7 @@ Cómo queda el servidor y cómo llega una versión a él está en [plataformas/d
 
 | Archivo | Contenido |
 | :--- | :--- |
-| `README.md` | Qué es el producto, si está en desarrollo o en producción, qué piezas tiene, cómo se levanta cada una, enlace a `docs/` y a `canone` |
+| `README.md` | Qué es el producto, si está en desarrollo o en producción, qué piezas tiene, cómo se levanta cada una, enlace a `docs/` y a Canone |
 | `.gitignore` | Solo lo que no es de ninguna plataforma. Cada pieza tiene el suyo |
 | `.gitattributes` | Se copia sin editar |
 | `.github/workflows/ci.yml` | Un job por pieza que el repositorio tenga |
@@ -76,4 +76,4 @@ El workflow corre con cada push a `main`, con cada pull request y una vez por se
 
 Cada workflow da al token `contents: read`, y solo el job que sube archivos a un release pide `contents: write`: `ci.yml`, llamado desde `release.yml`, hereda sus permisos.
 
-**Una regla de `canone` que no rompe CI no es una regla, es una sugerencia.** Una convención nueva se agrega junto con lo que la verifica.
+**Una regla de Canone que no rompe CI no es una regla, es una sugerencia.** Una convención nueva se agrega junto con lo que la verifica.

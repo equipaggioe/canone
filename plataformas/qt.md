@@ -41,7 +41,7 @@ desktop/
     test_theme.py
 ```
 
-Plantilla: [`plantilla/qt/`](../plantilla/qt/).
+Plantilla: [plantilla/qt/](../plantilla/qt/).
 
 ## PySide6
 
@@ -52,7 +52,7 @@ Estándares: las [consideraciones](../fuentes/pyside6/considerations.rst), la [m
 
 ## Widgets y diálogos
 
-Estándar: de Qt, las entradas que se usan de [`QWidget`](../fuentes/qt/qwidget.qdoc) y de [`QDialog`](../fuentes/qt/qdialog.qdoc).
+Estándar: de Qt, las entradas que se usan de [QWidget](../fuentes/qt/qwidget.qdoc) y de [QDialog](../fuentes/qt/qdialog.qdoc).
 
 - La interfaz se construye en código. Pyrefly revisa los widgets y los diffs se leen.
 
@@ -66,13 +66,13 @@ Estándar: [*Model/View Programming*](../fuentes/qt/model-view-programming.qdoc)
 
 ## Accesibilidad
 
-Estándares: [*Accessibility*](../fuentes/qt/accessible.qdoc) de Qt y la propiedad `accessibleName` de [`QWidget`](../fuentes/qt/qwidget.qdoc).
+Estándares: [*Accessibility*](../fuentes/qt/accessible.qdoc) de Qt y la propiedad `accessibleName` de [QWidget](../fuentes/qt/qwidget.qdoc).
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándar: las entradas que se usan de [`QSettings`](../fuentes/qt/qsettings.qdoc) de Qt.
+Estándar: las entradas que se usan de [QSettings](../fuentes/qt/qsettings.qdoc) de Qt.
 
 - `QSettings` usa `IniFormat`: el mismo archivo legible en todos los sistemas.
 - El token de refresco que pide [transversal.md](transversal.md#sesión) va en keyring, que usa el almacén de credenciales del sistema.
@@ -89,7 +89,7 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 ## Red
 
-Estándares: de Qt, las entradas que se usan de [`QNetworkAccessManager`](../fuentes/qt/qnetworkaccessmanager.qdoc), y [*Threading Classes*](../fuentes/qt/threads.qdoc), entero.
+Estándares: de Qt, las entradas que se usan de [QNetworkAccessManager](../fuentes/qt/qnetworkaccessmanager.qdoc), y [*Threading Classes*](../fuentes/qt/threads.qdoc), entero.
 
 - HTTP va por `QNetworkAccessManager`, y las respuestas se leen con modelos de Pydantic en `api/`. Es asíncrono sin hilos, y las respuestas llegan como señales al hilo de la interfaz.
 
@@ -109,14 +109,14 @@ Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico
 
 ## Pruebas
 
-Estándares: la [`QApplication`](../fuentes/pytest-qt/qapplication.rst), entera, y las [señales](../fuentes/pytest-qt/signals.rst), por las entradas que se usan, de pytest-qt.
+Estándares: la [QApplication](../fuentes/pytest-qt/qapplication.rst), entera, y las [señales](../fuentes/pytest-qt/signals.rst), por las entradas que se usan, de pytest-qt.
 
 - En CI, las pruebas corren con `QT_QPA_PLATFORM=offscreen`, sin pantalla.
 - Una prueba registra cada widget con `qtbot.addWidget` y lo maneja con sus propios métodos, como `setText` o `setCurrentIndex`, y no con los clics de `qtbot`: `qtbot` cierra lo que se registra, y el método del widget no depende de dónde cae un clic.
 
 ## Empaquetado
 
-Estándar: las entradas de [`pyside6-deploy`](../fuentes/pyside6/deployment-pyside6-deploy.rst) que usa `pysidedeploy.spec`.
+Estándar: las entradas de [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) que usa `pysidedeploy.spec`.
 
 - `pysidedeploy.spec` va en git, con rutas relativas a `desktop/`, y la app se empaqueta solo en CI. Cada corrida reescribe en el archivo las rutas absolutas de la máquina.
 - `icon.png` mide 1024 × 1024 px, el mayor tamaño que usa macOS, y es el único icono: Nuitka lo convierte al formato de cada sistema. Contradice `pyside6-deploy`, que pide `.ico` en Windows y `.icns` en macOS: un archivo sirve a todos.

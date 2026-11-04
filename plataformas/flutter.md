@@ -16,7 +16,7 @@ Estándares: [*Effective Dart*](../fuentes/dart/effective-dart-index.md): [*Styl
 
 - El analizador incluye la [lista de flutter_lints](https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/lib/flutter.yaml) y activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre `flutter analyze --fatal-infos`: los tipos se revisan como con Pyrefly en modo strict.
 
-Plantilla: [`plantilla/flutter/`](../plantilla/flutter/): `analysis_options.yaml`, con el analizador y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.
+Plantilla: [plantilla/flutter/](../plantilla/flutter/): `analysis_options.yaml`, con el analizador y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.
 
 ## Arquitectura
 
@@ -109,6 +109,6 @@ Contrato: [transversal.md](transversal.md#tema).
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Gradle, AGP y Kotlin | [`scripts/verificar.py`](../scripts/verificar.py) |
+| Gradle, AGP y Kotlin | [scripts/verificar.py](../scripts/verificar.py) |
 | La lista de flutter_lints y los tipos estrictos | `flutter analyze --fatal-infos` en CI |
 | Objetivos, etiquetas y contraste | Las guías de `flutter_test` en cada pantalla |

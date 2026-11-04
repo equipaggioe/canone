@@ -1,7 +1,6 @@
 # Documentación: arquitectura, ADR y planes
 
-Cómo se documenta **cada** repositorio. Esta es la única copia: el `docs/README.md` de un
-repositorio no repite estas reglas, las enlaza.
+Cómo se documenta **cada** repositorio. Esta es la única copia: el `docs/README.md` de un repositorio no repite estas reglas, las enlaza.
 
 ## El problema que resuelve
 
@@ -102,8 +101,7 @@ Un pendiente se **borra** de aquí en el commit que lo resuelve. No se tacha ni 
 - **Alcance:** piezas afectadas
 
 ## Contexto
-Solo si hace falta: qué problema había y qué se sabía. Las decisiones viejas que
-esta reemplazó se resumen aquí.
+Solo si hace falta: qué problema había y qué se sabía. Las decisiones viejas que esta reemplazó se resumen aquí.
 
 ## Decisión
 Lista numerada. Cada punto es una regla que se puede verificar en el código.
@@ -112,8 +110,7 @@ Lista numerada. Cada punto es una regla que se puede verificar en el código.
 Lo que se gana, lo que cuesta y lo que obliga a hacer en otro lado.
 
 ## Descartado
-Cada alternativa con el motivo concreto. Evita que alguien vuelva a proponerla
-sin saber por qué se rechazó.
+Cada alternativa con el motivo concreto. Evita que alguien vuelva a proponerla sin saber por qué se rechazó.
 ```
 
 Título mal: «Geocerca». Título bien: «La geocerca dispara por el estado que encuentra al armar».

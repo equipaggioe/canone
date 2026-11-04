@@ -33,7 +33,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
   static/
 ```
 
-Plantilla: [`plantilla/sveltekit/`](../plantilla/sveltekit/): `.prettierrc`, que se copia sin editar, y `vite.config.ts`, `uno.config.ts` y `.gitignore`, puntos de partida.
+Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, que se copia sin editar, y `vite.config.ts`, `uno.config.ts` y `.gitignore`, puntos de partida.
 
 ## Carga de datos
 
@@ -48,13 +48,13 @@ Estándar: [*Page options*](../fuentes/sveltekit/page-options.md) de SvelteKit.
 
 ## Estado
 
-Estándares: [*State management*](../fuentes/sveltekit/state-management.md) de SvelteKit y, de Svelte, [`$state`](../fuentes/svelte/state.md), [`$derived`](../fuentes/svelte/derived.md), [`$effect`](../fuentes/svelte/effect.md), [`$props`](../fuentes/svelte/props.md) y [`$bindable`](../fuentes/svelte/bindable.md).
+Estándares: [*State management*](../fuentes/sveltekit/state-management.md) de SvelteKit y, de Svelte, [$state](../fuentes/svelte/state.md), [$derived](../fuentes/svelte/derived.md), [$effect](../fuentes/svelte/effect.md), [$props](../fuentes/svelte/props.md) y [$bindable](../fuentes/svelte/bindable.md).
 
 - El estado compartido son clases con `$state` en módulos `.svelte.ts` de `src/lib/state/`.
 
 ## Accesibilidad
 
-Estándar: la opción `--fail-on-warnings` de [`sv check`](../fuentes/svelte/sv-check.md) de Svelte.
+Estándar: la opción `--fail-on-warnings` de [sv check](../fuentes/svelte/sv-check.md) de Svelte.
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
@@ -124,6 +124,6 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | Convención | Herramienta |
 | :--- | :--- |
 | Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |
-| Playwright 1.64.1 | [`scripts/verificar.py`](../scripts/verificar.py) |
-| La versión exacta de pnpm en `packageManager` | [`scripts/verificar.py`](../scripts/verificar.py) |
-| SvelteKit 3, sin `svelte.config.js` | [`scripts/verificar.py`](../scripts/verificar.py) |
+| Playwright 1.64.1 | [scripts/verificar.py](../scripts/verificar.py) |
+| La versión exacta de pnpm en `packageManager` | [scripts/verificar.py](../scripts/verificar.py) |
+| SvelteKit 3, sin `svelte.config.js` | [scripts/verificar.py](../scripts/verificar.py) |

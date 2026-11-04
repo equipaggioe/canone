@@ -1,4 +1,4 @@
-# canone
+# Canone
 
 Convenciones, plantillas y herramientas compartidas para construir, organizar y mantener proyectos de software.
 

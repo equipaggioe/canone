@@ -382,7 +382,7 @@ Estándar: de OpenSSH 10.0, la versión de Debian 13, las entradas de
 
 - `sshd` solo acepta llaves, y `root` no entra: se entra con la cuenta que administra la máquina y
   `sudo`.
-- La regla va en `/etc/ssh/sshd_config.d/00-<app>.conf`, que se lee antes que los archivos del
+- Esta configuración va en `/etc/ssh/sshd_config.d/00-<app>.conf`, que se lee antes que los archivos del
   proveedor, como `50-cloud-init.conf`: `sshd` se queda con el primer valor de cada opción.
 - `install.py` crea la cuenta con `--admin`, en el grupo `sudo`, con las llaves de `--key` y la
   contraseña que pide al crearla. La primera vez corre como `root`, que entra con lo que da el

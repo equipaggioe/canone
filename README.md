@@ -24,9 +24,9 @@ Las siguientes convenciones aplican a todos los repositorios:
 - [repositorio.md](repositorio.md)
 - [documentacion.md](documentacion.md)
 
-Las convenciones de `plataformas/` dependen de las tecnologías utilizadas por cada proyecto. Para trabajar en una pieza se consulta su página y las secciones de `transversal.md` que esta enlaza.
+Las convenciones de `plataformas/` dependen de las tecnologías utilizadas por cada proyecto. Para trabajar en una pieza se consulta su página, su página madre si la tiene y las secciones de `transversal.md` que enlazan.
 
-Cada página hereda las convenciones de su página madre, sin repetirlas. La relación de herencia se declara en la propia página.
+Una página con página madre hereda sus convenciones, sin repetirlas. La relación de herencia se declara en la propia página.
 
 Un repositorio puede apartarse de una convención cuando exista un motivo justificado. La desviación se registra en un ADR propio, dentro de `docs/adr/`, que identifica la convención afectada y explica la decisión.
 

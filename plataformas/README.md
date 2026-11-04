@@ -56,7 +56,7 @@ Una fuente debe cumplir los siete requisitos siguientes:
 4. **Acotada:** el contenido citado puede leerse completo al escribir el código al que aplica. Se exceptúan las fuentes de conocimiento general, como PEP 8 o SemVer, y aquellas cuyo cumplimiento verifica una herramienta de la sección «Cumplimiento».
 5. **De la versión en uso:** corresponde a la versión de la tecnología utilizada. La copia conservada en `fuentes/` fija el texto que se adopta.
 6. **Independiente:** las convenciones adoptadas no dependen de la infraestructura de quien publica la fuente.
-7. **Cubre:** una fuente citada entera debe resolver la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente lo que adoptan todas las páginas. En esos asuntos, las convenciones propias deben quedar en minoría. Lo que se contradice, se deja sin efecto o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no se cita y las convenciones que se aprovechen de ella se establecen como convenciones propias.
+7. **Cubre:** una fuente citada entera debe resolver la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente lo que adoptan todas las páginas. En esos asuntos, lo no cubierto debe quedar en minoría. Lo que se contradice, se deja sin efecto o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no se cita y las convenciones que se aprovechen de ella se establecen como convenciones propias.
 
 Si varias fuentes que cumplen los siete requisitos regulan el mismo asunto, se prefiere la que tenga mayor prioridad en la tabla. A igual prioridad, se elige la que cubra una parte mayor del asunto.
 
@@ -123,9 +123,9 @@ Las convenciones propias se establecen en tres casos:
 
 ### Redacción
 
-- Cada convención expresa qué se utiliza y cómo queda configurado. No describe procedimientos ni explica cómo hacerlo.
+- Cada convención expresa qué se utiliza y cómo queda. No describe procedimientos ni explica cómo hacerlo.
 - Las convenciones de una misma página no deben contradecirse. Si una convención modifica el alcance de otra, debe indicar expresamente qué casos quedan fuera.
-- Una convención incluye una justificación breve únicamente cuando contradice, deja sin efecto o endurece una fuente, o cuando explica una elección cuyo motivo no resulta evidente. Las preferencias triviales no necesitan justificación.
+- Una convención incluye una justificación breve únicamente cuando contradice, deja sin efecto o endurece una fuente, o cuando explica una elección cuyo motivo no resulta evidente. Las preferencias triviales, como un color o el largo de línea, no llevan justificación.
 - No se añaden comentarios, explicaciones ni ejemplos que no sean necesarios para entender o aplicar la convención.
 
 ### Estructuras y distribución
@@ -140,11 +140,11 @@ Estos mismos criterios de redacción se aplican a los comentarios incluidos en `
 
 Las secciones de una página siguen este orden. Se incluyen únicamente los bloques que correspondan a la tecnología o ámbito documentado.
 
-1. **Proyecto:** versión, sistema de construcción, estructura de directorios, plantillas y dependencias.
+1. **Proyecto:** la sección `Proyecto`, con versión, sistema de construcción, estructura de directorios y plantillas, y después las dependencias.
 2. **Código:** formato, análisis estático, tipado, organización de paquetes y convenciones de nombres.
 3. **Arquitectura:** organización interna de la aplicación y uso de las estructuras o mecanismos propios de la tecnología.
 4. **Temas:** convenciones agrupadas por asunto, con los temas en orden alfabético.
-5. **Pruebas:** herramientas, organización y convenciones de pruebas.
+5. **Pruebas:** la sección `Pruebas`, con herramientas, organización y convenciones de pruebas.
 6. **Entrega:** construcción, ejecución y preparación para el despliegue.
 7. **Cumplimiento:** herramientas que verifican o imponen las convenciones documentadas.
 
@@ -194,20 +194,13 @@ El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
 - **Leído:** se verificó directamente en una fuente. Se indica la sección o el fragmento que lo respalda.
 - **Sin confirmar:** no fue posible verificarlo. Se identifica expresamente como tal; no se presenta como un hecho.
 
-Las herramientas que hacen cumplir las convenciones se comprueban mediante experimentos, no por lo que aparentan hacer según su documentación.
+Las herramientas que hacen cumplir las convenciones se comprueban mediante experimentos, no de memoria ni por lo que aparentan hacer según su documentación.
 
 Ningún elemento queda fuera de la revisión sin que conste que no fue evaluado.
 
 ## Base de las convenciones
 
-Las convenciones de una página se establecen a partir de las fuentes que adopta, no de cómo estén organizados o implementados los proyectos existentes.
-
-- **Las fuentes citadas** son la base para establecer las convenciones adoptadas.
-- **El código de los proyectos** sirve para identificar necesidades y casos de uso, pero no constituye una referencia normativa.
-- **Las páginas anteriores** sirven como antecedente, no como autoridad. Sus convenciones deben volver a contrastarse con las fuentes.
-- **Los ADR** documentan decisiones de Canone, pero no sustituyen las fuentes ni establecen por sí mismos convenciones para una tecnología.
-
-Al crear o revisar una página, las convenciones se determinan a partir de las fuentes seleccionadas. No se toma una página anterior como punto de partida para corregirla o conservar su contenido.
+Ni el código de los proyectos, ni una página anterior, ni los ADR son fuente, ni justifican recomendar una fuente o una convención propia. El código solo sirve para identificar necesidades y casos de uso. Una página se escribe de cero desde sus fuentes.
 
 El fundamento de estos criterios está documentado en los siguientes ADR:
 

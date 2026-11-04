@@ -30,7 +30,7 @@ Estándares: de PostgreSQL 17, la versión de Debian 13, las entradas de los tip
 - `uuid` con `gen_random_uuid()`: en una tabla cuyas filas crea el cliente, que genera el id para
   crear por `PUT`, como fija [transversal.md](transversal.md#reintentos), o cuyas filas pertenecen a un usuario y no
   deben poder enumerarse.
-- Una tabla particionada lleva como clave su id, de una de las reglas anteriores, y las columnas de
+- Una tabla particionada lleva como clave su id, de una de las convenciones anteriores, y las columnas de
   partición, como `(id, created_at)`: PostgreSQL exige que la clave las incluya.
 - Una tabla cuyas filas se identifican por un par de valores, como `(role, permission)`, lleva ese
   par como clave, sin id propio. Cada columna es una clave foránea o un `text`.

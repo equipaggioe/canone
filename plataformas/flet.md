@@ -67,3 +67,4 @@ Estándar: las entradas de [*Publishing a Flet app*](../fuentes/flet/publish.md)
 
 | Convención | Herramienta |
 | :--- | :--- |
+| Los colores, solo en `colors.py` | `tests/test_theme.py` |

@@ -18,11 +18,11 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `brand/tokens/` | `brand/tokens/` | En desarrollo; no se copia | [transversal.md](../plataformas/transversal.md) |
 | `python/.gitignore` | Cada pieza Python | Punto de partida | [python.md](../plataformas/python.md) |
 | `server/pyproject.toml` | `server/` | Punto de partida | [python.md](../plataformas/python.md), [fastapi.md](../plataformas/fastapi.md) |
-| `server/alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako` | `server/` | Canónico | [fastapi.md](../plataformas/fastapi.md) |
-| `server/src/app/database.py`, `tracing.py`, `models/__init__.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py` | `server/src/app/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
+| `server/alembic.ini`<br>`alembic/README`<br>`alembic/env.py`<br>`alembic/script.py.mako` | `server/` | Canónico | [fastapi.md](../plataformas/fastapi.md) |
+| `server/src/app/database.py`<br>`tracing.py`<br>`models/__init__.py`<br>`models/base.py`<br>`models/ruff.toml`<br>`routers/problems.py`<br>`schemas/base.py`<br>`schemas/page.py` | `server/src/app/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
 | `server/src/app/` (el resto) | `server/src/app/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
 | `server/tests/test_conventions.py` | `server/tests/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
-| `server/tests/conftest.py`, `__init__.py` | `server/tests/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
+| `server/tests/conftest.py`<br>`__init__.py` | `server/tests/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
 | `qt/pyproject.toml` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
 | `qt/theme.py` | `desktop/src/app/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
 | `qt/tests/test_theme.py` | `desktop/tests/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
@@ -30,7 +30,7 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `flet/theme.py` | `src/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
 | `flet/tests/test_theme.py` | `tests/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
 | `sveltekit/.prettierrc` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
-| `sveltekit/.gitignore`, `vite.config.ts`, `uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |
+| `sveltekit/.gitignore`<br>`vite.config.ts`<br>`uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |
 | `flutter/analysis_options.yaml` | Cada app Flutter | Canónico | [flutter.md](../plataformas/flutter.md) |
 | `flutter/.gitignore` | Cada app Flutter | Punto de partida | [repositorio.md](../repositorio.md) |
 | `android/.editorconfig` | `mobile/` | Canónico | [android.md](../plataformas/android.md) |

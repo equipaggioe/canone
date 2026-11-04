@@ -46,6 +46,12 @@ CANONICOS = [
 # dependencia declarada, así un paquete se ve aunque nadie lo importe todavía.
 DESCARTADAS = {"psycopg", "psycopg2", "psycopg2-binary", "pytest-asyncio"}
 
+# Relativos a la pieza; la clave es la dependencia que la identifica en su pyproject.toml.
+CANONICOS_PIEZA = {
+    "pyside6": ("qt", [Path("tests/test_theme.py")]),
+    "flet": ("flet", [Path("tests/test_theme.py")]),
+}
+
 # Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del
 # dominio. `panel` y `landing` son las dos excepciones, con el nombre que ya usa la industria.
 PREFIJOS = ("server", "web", "mobile", "desktop")
@@ -541,6 +547,18 @@ def revisar(repo: Path) -> list[str]:
                 f"{superficie.name}/.prettierrc",
             )
         )
+
+    # Qt y Flet: cada pieza Python que declare la dependencia que la identifica.
+    for pyproject in repo.glob("*/pyproject.toml"):
+        pieza = pyproject.parent
+        declaradas = dependencias(pyproject)
+        for dependencia, (plantilla, canonicos) in CANONICOS_PIEZA.items():
+            if dependencia not in declaradas:
+                continue
+            for rel in canonicos:
+                fallas.extend(
+                    comparar(pieza / rel, PLANTILLA / plantilla / rel, f"{pieza.name}/{rel.as_posix()}")
+                )
 
     # Flutter: solo para las apps que existan.
     for pubspec in repo.glob("*/pubspec.yaml"):

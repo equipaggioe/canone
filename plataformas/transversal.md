@@ -149,8 +149,7 @@ Estándares: la sección *Access-Control-Allow-Origin* del [*HTTP Security Respo
 ## Tema
 
 > **En desarrollo; no se implementa.**
-> Ningún repositorio la sigue mientras esta nota esté aquí. `verificar.py` sigue exigiendo
-> `tests/test_theme.py` en toda pieza de PySide6 o de Flet: el incumplimiento recuerda lo que falta. Vale para
+> Ningún repositorio la sigue mientras esta nota esté aquí, y `verificar.py` no la exige. Vale para
 > esta sección, el «Tema» de cada cliente, el
 > ADR-0062,
 > y lo que nombran «Proyecto» y la plantilla: `colors.py`, `theme.py`, `tests/test_theme.py`,

@@ -45,20 +45,14 @@ Plantilla: [`plantilla/qt/`](../plantilla/qt/).
 
 ## PySide6
 
-Estándares: las [consideraciones](../fuentes/pyside6/considerations.rst), la
-[migración desde PySide2](../fuentes/pyside6/porting_from2.rst) y
-[señales y slots](../fuentes/pyside6/signals_and_slots.rst) de PySide6, y
-[PEP 698](../fuentes/python/pep-0698.rst).
+Estándares: las [consideraciones](../fuentes/pyside6/considerations.rst), la [migración desde PySide2](../fuentes/pyside6/porting_from2.rst) y [señales y slots](../fuentes/pyside6/signals_and_slots.rst) de PySide6, y [PEP 698](../fuentes/python/pep-0698.rst).
 
-- La API de Qt se usa con sus nombres originales. Los stubs de PySide6 y la documentación de Qt
-  usan esos nombres.
-- Todo método que sobrescribe otro lleva `@override`. Endurece PEP 698, que lo deja opcional: un
-  `closeEvent` mal escrito nunca se llama y nada avisa.
+- La API de Qt se usa con sus nombres originales. Los stubs de PySide6 y la documentación de Qt usan esos nombres.
+- Todo método que sobrescribe otro lleva `@override`. Endurece PEP 698, que lo deja opcional: un `closeEvent` mal escrito nunca se llama y nada avisa.
 
 ## Widgets y diálogos
 
-Estándar: de Qt, las entradas que se usan de [`QWidget`](../fuentes/qt/qwidget.qdoc) y de
-[`QDialog`](../fuentes/qt/qdialog.qdoc).
+Estándar: de Qt, las entradas que se usan de [`QWidget`](../fuentes/qt/qwidget.qdoc) y de [`QDialog`](../fuentes/qt/qdialog.qdoc).
 
 - La interfaz se construye en código. Pyrefly revisa los widgets y los diffs se leen.
 
@@ -72,8 +66,7 @@ Estándar: [*Model/View Programming*](../fuentes/qt/model-view-programming.qdoc)
 
 ## Accesibilidad
 
-Estándares: [*Accessibility*](../fuentes/qt/accessible.qdoc) de Qt y la propiedad
-`accessibleName` de [`QWidget`](../fuentes/qt/qwidget.qdoc).
+Estándares: [*Accessibility*](../fuentes/qt/accessible.qdoc) de Qt y la propiedad `accessibleName` de [`QWidget`](../fuentes/qt/qwidget.qdoc).
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
@@ -82,8 +75,7 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 Estándar: las entradas que se usan de [`QSettings`](../fuentes/qt/qsettings.qdoc) de Qt.
 
 - `QSettings` usa `IniFormat`: el mismo archivo legible en todos los sistemas.
-- El token de refresco que pide [transversal.md](transversal.md#sesión) va en keyring, que usa el
-  almacén de credenciales del sistema.
+- El token de refresco que pide [transversal.md](transversal.md#sesión) va en keyring, que usa el almacén de credenciales del sistema.
 
 ## Idiomas
 
@@ -92,65 +84,43 @@ Estándar: las [traducciones](../fuentes/pyside6/translations.rst) de PySide6.
 Contrato: [transversal.md](transversal.md#idiomas).
 
 - Los textos usan Qt Linguist. Un solo mecanismo traduce la app y los diálogos propios de Qt.
-- Los textos se extraen con `pyside6-lupdate -extensions py src/app`, que recorre todo el paquete.
-  `pyside6-project lupdate` solo lee los archivos que se listan a mano, y uno que falte se queda
-  sin traducir.
-- Los `.qm` y `rc_resources.py` se generan y no van en git. Salen de los `.ts` y del `.qrc`; en git
-  quedarían desfasados.
+- Los textos se extraen con `pyside6-lupdate -extensions py src/app`, que recorre todo el paquete. `pyside6-project lupdate` solo lee los archivos que se listan a mano, y uno que falte se queda sin traducir.
+- Los `.qm` y `rc_resources.py` se generan y no van en git. Salen de los `.ts` y del `.qrc`; en git quedarían desfasados.
 
 ## Red
 
-Estándares: de Qt, las entradas que se usan de
-[`QNetworkAccessManager`](../fuentes/qt/qnetworkaccessmanager.qdoc), y
-[*Threading Classes*](../fuentes/qt/threads.qdoc), entero.
+Estándares: de Qt, las entradas que se usan de [`QNetworkAccessManager`](../fuentes/qt/qnetworkaccessmanager.qdoc), y [*Threading Classes*](../fuentes/qt/threads.qdoc), entero.
 
-- HTTP va por `QNetworkAccessManager`, y las respuestas se leen con modelos de Pydantic en `api/`.
-  Es asíncrono sin hilos, y las respuestas llegan como señales al hilo de la interfaz.
+- HTTP va por `QNetworkAccessManager`, y las respuestas se leen con modelos de Pydantic en `api/`. Es asíncrono sin hilos, y las respuestas llegan como señales al hilo de la interfaz.
 
 ## Tema
 
 > **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
 
-Estándares: [*Qt Style Sheets*](../fuentes/qt/stylesheet.qdoc), su
-[sintaxis](../fuentes/qt/stylesheet-syntax.qdoc), la
-[personalización](../fuentes/qt/stylesheet-customizing.qdoc), y las entradas que se usan de la
-[referencia](../fuentes/qt/stylesheet-reference.qdoc).
+Estándares: [*Qt Style Sheets*](../fuentes/qt/stylesheet.qdoc), su [sintaxis](../fuentes/qt/stylesheet-syntax.qdoc), la [personalización](../fuentes/qt/stylesheet-customizing.qdoc), y las entradas que se usan de la [referencia](../fuentes/qt/stylesheet-reference.qdoc).
 
 Contrato: [transversal.md](transversal.md#tema).
 
-- La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada
-  desde `theme.py`. Lo que la hoja no define lo dibuja el estilo de cada sistema; Fusion lo iguala.
-- La paleta de la `QApplication` sale de `palette()` con `LIGHT` o `DARK`, generados en
-  `colors.py`, según `QStyleHints.colorScheme()`, y se vuelve a aplicar con `colorSchemeChanged`.
-  El evento `ApplicationPaletteChange` no sirve: la app lo provoca al aplicar su paleta.
+- La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada desde `theme.py`. Lo que la hoja no define lo dibuja el estilo de cada sistema; Fusion lo iguala.
+- La paleta de la `QApplication` sale de `palette()` con `LIGHT` o `DARK`, generados en `colors.py`, según `QStyleHints.colorScheme()`, y se vuelve a aplicar con `colorSchemeChanged`. El evento `ApplicationPaletteChange` no sirve: la app lo provoca al aplicar su paleta.
 - Los tamaños van en `theme.py`, sin tamaños literales fuera de él.
 
-Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico y se copia sin
-editar.
+Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico y se copia sin editar.
 
 ## Pruebas
 
-Estándares: la [`QApplication`](../fuentes/pytest-qt/qapplication.rst), entera, y las
-[señales](../fuentes/pytest-qt/signals.rst), por las entradas que se usan, de pytest-qt.
+Estándares: la [`QApplication`](../fuentes/pytest-qt/qapplication.rst), entera, y las [señales](../fuentes/pytest-qt/signals.rst), por las entradas que se usan, de pytest-qt.
 
 - En CI, las pruebas corren con `QT_QPA_PLATFORM=offscreen`, sin pantalla.
-- Una prueba registra cada widget con `qtbot.addWidget` y lo maneja con sus propios métodos, como
-  `setText` o `setCurrentIndex`, y no con los clics de `qtbot`: `qtbot` cierra lo que se registra, y
-  el método del widget no depende de dónde cae un clic.
+- Una prueba registra cada widget con `qtbot.addWidget` y lo maneja con sus propios métodos, como `setText` o `setCurrentIndex`, y no con los clics de `qtbot`: `qtbot` cierra lo que se registra, y el método del widget no depende de dónde cae un clic.
 
 ## Empaquetado
 
-Estándar: las entradas de [`pyside6-deploy`](../fuentes/pyside6/deployment-pyside6-deploy.rst) que
-usa `pysidedeploy.spec`.
+Estándar: las entradas de [`pyside6-deploy`](../fuentes/pyside6/deployment-pyside6-deploy.rst) que usa `pysidedeploy.spec`.
 
-- `pysidedeploy.spec` va en git, con rutas relativas a `desktop/`, y la app se empaqueta solo en
-  CI. Cada corrida reescribe en el archivo las rutas absolutas de la máquina.
-- `icon.png` mide 1024 × 1024 px, el mayor tamaño que usa macOS, y es el único icono: Nuitka lo
-  convierte al formato de cada sistema. Contradice `pyside6-deploy`, que pide `.ico` en Windows y
-  `.icns` en macOS: un archivo sirve a todos.
-- Nuitka con el extra `onefile`, imageio y, en Linux, patchelf van en el grupo `deploy`, y el
-  `packages` del `.spec` queda vacío. `pyside6-deploy` instala sus paquetes con pip, que un venv de
-  uv no trae.
+- `pysidedeploy.spec` va en git, con rutas relativas a `desktop/`, y la app se empaqueta solo en CI. Cada corrida reescribe en el archivo las rutas absolutas de la máquina.
+- `icon.png` mide 1024 × 1024 px, el mayor tamaño que usa macOS, y es el único icono: Nuitka lo convierte al formato de cada sistema. Contradice `pyside6-deploy`, que pide `.ico` en Windows y `.icns` en macOS: un archivo sirve a todos.
+- Nuitka con el extra `onefile`, imageio y, en Linux, patchelf van en el grupo `deploy`, y el `packages` del `.spec` queda vacío. `pyside6-deploy` instala sus paquetes con pip, que un venv de uv no trae.
 
 ## Cumplimiento
 

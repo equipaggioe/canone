@@ -4,35 +4,23 @@ Una app en Flutter.
 
 ## Proyecto
 
-- Gradle, AGP y Kotlin son los de [android.md](android.md#proyecto), con su
-  `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en
-  `android/settings.gradle.kts`.
+- Gradle, AGP y Kotlin son los de [android.md](android.md#proyecto), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
 
 ## Estilo
 
-Estándares: [*Effective Dart*](../fuentes/dart/effective-dart-index.md):
-[*Style*](../fuentes/dart/effective-dart-style.md),
-[*Documentation*](../fuentes/dart/effective-dart-documentation.md),
-[*Usage*](../fuentes/dart/effective-dart-usage.md) y
-[*Design*](../fuentes/dart/effective-dart-design.md).
+Estándares: [*Effective Dart*](../fuentes/dart/effective-dart-index.md): [*Style*](../fuentes/dart/effective-dart-style.md), [*Documentation*](../fuentes/dart/effective-dart-documentation.md), [*Usage*](../fuentes/dart/effective-dart-usage.md) y [*Design*](../fuentes/dart/effective-dart-design.md).
 
 - `dart format` usa líneas de 99.
 
 ## Analizador
 
-- El analizador incluye la [lista de flutter_lints](https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/lib/flutter.yaml) y
-  activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre
-  `flutter analyze --fatal-infos`: los tipos se revisan como con Pyrefly en modo strict.
+- El analizador incluye la [lista de flutter_lints](https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/lib/flutter.yaml) y activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre `flutter analyze --fatal-infos`: los tipos se revisan como con Pyrefly en modo strict.
 
-Plantilla: [`plantilla/flutter/`](../plantilla/flutter/): `analysis_options.yaml`, con el
-analizador y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.
+Plantilla: [`plantilla/flutter/`](../plantilla/flutter/): `analysis_options.yaml`, con el analizador y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.
 
 ## Arquitectura
 
-Estándares: [*Common architecture concepts*](../fuentes/flutter/app-architecture-concepts.md),
-[*Guide to app architecture*](../fuentes/flutter/app-architecture-guide.md) y
-[*Architecture recommendations and resources*](../fuentes/flutter/app-architecture-recommendations.md)
-de Flutter, con sus [recomendaciones](../fuentes/flutter/architecture-recommendations.yml).
+Estándares: [*Common architecture concepts*](../fuentes/flutter/app-architecture-concepts.md), [*Guide to app architecture*](../fuentes/flutter/app-architecture-guide.md) y [*Architecture recommendations and resources*](../fuentes/flutter/app-architecture-recommendations.md) de Flutter, con sus [recomendaciones](../fuentes/flutter/architecture-recommendations.yml).
 
 ```text
 <pieza>/
@@ -57,46 +45,36 @@ de Flutter, con sus [recomendaciones](../fuentes/flutter/architecture-recommenda
   test/
 ```
 
-- Las carpetas llevan el nombre del componente de arquitectura, como pide la recomendación de
-  nombres.
-- Los modelos se generan con freezed y json_serializable. freezed da igualdad, `copyWith` y JSON
-  con menos código que built_value.
+- Las carpetas llevan el nombre del componente de arquitectura, como pide la recomendación de nombres.
+- Los modelos se generan con freezed y json_serializable. freezed da igualdad, `copyWith` y JSON con menos código que built_value.
 - HTTP va por `package:http`, dentro de un solo servicio del cliente de la API.
 
 ## Estado
 
-Estándares: [*Simple app state management*](../fuentes/flutter/state-mgmt-simple.md) de Flutter
-y [provider](../fuentes/pub/provider/README.md).
+Estándares: [*Simple app state management*](../fuentes/flutter/state-mgmt-simple.md) de Flutter y [provider](../fuentes/pub/provider/README.md).
 
-- Los ViewModels son `ChangeNotifier`. Vienen con el SDK, y provider ya es la inyección de
-  dependencias.
+- Los ViewModels son `ChangeNotifier`. Vienen con el SDK, y provider ya es la inyección de dependencias.
 
 ## Accesibilidad
 
-Estándares: de Flutter, [*Accessibility*](../fuentes/flutter/accessibility.md),
-[*Assistive technologies*](../fuentes/flutter/accessibility-assistive.md) y
-[*Accessibility testing*](../fuentes/flutter/accessibility-testing.md).
+Estándares: de Flutter, [*Accessibility*](../fuentes/flutter/accessibility.md), [*Assistive technologies*](../fuentes/flutter/accessibility-assistive.md) y [*Accessibility testing*](../fuentes/flutter/accessibility-testing.md).
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
-- Cada pantalla tiene una prueba de widget con las cuatro guías: `androidTapTargetGuideline`,
-  `iOSTapTargetGuideline`, `labeledTapTargetGuideline` y `textContrastGuideline`.
+- Cada pantalla tiene una prueba de widget con las cuatro guías: `androidTapTargetGuideline`, `iOSTapTargetGuideline`, `labeledTapTargetGuideline` y `textContrastGuideline`.
 
 ## Almacenamiento
 
-Estándares: [shared_preferences](../fuentes/pub/shared_preferences/README.md) y
-[flutter_secure_storage](../fuentes/pub/flutter_secure_storage/README.md).
+Estándares: [shared_preferences](../fuentes/pub/shared_preferences/README.md) y [flutter_secure_storage](../fuentes/pub/flutter_secure_storage/README.md).
 
 - Las preferencias usan `SharedPreferencesAsync`. Sin caché, cada lectura trae el valor actual.
-- El token de refresco que pide [transversal.md](transversal.md#sesión) va en
-  flutter_secure_storage.
+- El token de refresco que pide [transversal.md](transversal.md#sesión) va en flutter_secure_storage.
 
 ## Código por SMS
 
 Contrato: [transversal.md](transversal.md#código-por-sms).
 
-- El campo del código es `TextFieldPinAutoFill`: lleva una `InputDecoration`, y se ve como los
-  demás campos del tema.
+- El campo del código es `TextFieldPinAutoFill`: lleva una `InputDecoration`, y se ve como los demás campos del tema.
 
 ## Idiomas
 
@@ -124,8 +102,7 @@ Contrato: [transversal.md](transversal.md#push).
 
 Contrato: [transversal.md](transversal.md#tema).
 
-- El tema claro y el oscuro usan `lightColorScheme` y `darkColorScheme`, generados en
-  `ui/core/themes/colors.dart`, y `themeMode` es `ThemeMode.system`.
+- El tema claro y el oscuro usan `lightColorScheme` y `darkColorScheme`, generados en `ui/core/themes/colors.dart`, y `themeMode` es `ThemeMode.system`.
 - Los tamaños van en `ui/core/themes/`, sin tamaños literales fuera de él.
 
 ## Cumplimiento

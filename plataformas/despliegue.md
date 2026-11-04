@@ -1,13 +1,10 @@
 # Despliegue
 
-Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus superficies web.
-`<app>` es el nombre del repositorio del producto.
+Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus superficies web. `<app>` es el nombre del repositorio del producto.
 
 ## Proyecto
 
-Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/etc`; 3.15, `/run`;
-3.17, `/srv`; 4.6, `/usr/lib`; 4.9, `/usr/local`, y 5.8, `/var/lib`, en
-[*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt).
+Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/etc`; 3.15, `/run`; 3.17, `/srv`; 4.6, `/usr/lib`; 4.9, `/usr/local`, y 5.8, `/var/lib`, en [*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt).
 
 ```
 /etc/
@@ -85,385 +82,178 @@ Estándar: del FHS 3.0, la versión que sigue Debian 13, las secciones 3.7, `/et
     └── <app>.rdb
 ```
 
-Plantilla: [`plantilla/infra/`](../plantilla/infra/), con las unidades, los sitios de Caddy, la
-configuración de Valkey, `install.py`, que los instala, `credentials.py`, que cifra las
-credenciales, `deploy.py`, que instala cada versión, y `uv.py`, que instala uv;
-[`plantilla/receiver/`](../plantilla/receiver/), que corre en la receptora, y
-[`plantilla/.github/workflows/release.yml`](../plantilla/.github/workflows/release.yml).
+Plantilla: [`plantilla/infra/`](../plantilla/infra/), con las unidades, los sitios de Caddy, la configuración de Valkey, `install.py`, que los instala, `credentials.py`, que cifra las credenciales, `deploy.py`, que instala cada versión, y `uv.py`, que instala uv; [`plantilla/receiver/`](../plantilla/receiver/), que corre en la receptora, y [`plantilla/.github/workflows/release.yml`](../plantilla/.github/workflows/release.yml).
 
 ## Caddy
 
-Estándares: de OWASP, el
-[*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), salvo
-*Access-Control-Allow-Origin*, que rige en [transversal.md](transversal.md#sesión); *Secure File
-Download Headers*, en [fastapi.md](fastapi.md#archivos), y los párrafos sobre la CSP de
-*X-XSS-Protection* y sobre la Cache API de *Cache-Control*, en «CSP» y «Push» de
-[sveltekit.md](sveltekit.md); y la sección *Infrastructure Configuration* del
-[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
+Estándares: de OWASP, el [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), salvo *Access-Control-Allow-Origin*, que rige en [transversal.md](transversal.md#sesión); *Secure File Download Headers*, en [fastapi.md](fastapi.md#archivos), y los párrafos sobre la CSP de *X-XSS-Protection* y sobre la Cache API de *Cache-Control*, en «CSP» y «Push» de [sveltekit.md](sveltekit.md); y la sección *Infrastructure Configuration* del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
 
 - Caddy es el 2.6.2 de Debian 13.
-- Cada superficie tiene su host: `landing` en `<dominio>`, `web` en `app.<dominio>` y `panel` en
-  `panel.<dominio>`. En cada uno, `/api/*` va al servidor de la app, en el mismo origen que la web
-  ([transversal.md](transversal.md#sesión)), y `/downloads/*`, a `/srv/<app>/downloads/`.
+- Cada superficie tiene su host: `landing` en `<dominio>`, `web` en `app.<dominio>` y `panel` en `panel.<dominio>`. En cada uno, `/api/*` va al servidor de la app, en el mismo origen que la web ([transversal.md](transversal.md#sesión)), y `/downloads/*`, a `/srv/<app>/downloads/`.
 - Caddy pone las cabeceras con la directiva `header`, para la web y para la API.
-- `Permissions-Policy` nombra cada función de *Standardized Features* del
-  [registro del W3C](../fuentes/w3c/permissions-policy-features.md), y `publickey-credentials-create`
-  de Web Authentication Level 3: niega las que la app no usa, y permite con `(self)` las que declara
-  con `install.py --allow`.
-- Caddy envía también `Content-Security-Policy: frame-ancestors 'none'`: la CSP de SvelteKit va en
-  una etiqueta `meta`, que no admite `frame-ancestors`.
-- No se envía `Cross-Origin-Embedder-Policy`. Contradice a OWASP: solo habilita el aislamiento entre
-  orígenes, que ninguna pieza usa, y bloquea las teselas de OSM y el formulario de pago incrustado.
-- `app.<dominio>`, `panel.<dominio>` y `/api/*` llevan `X-Robots-Tag: noindex, nofollow`: solo la
-  landing es pública.
-- De [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), el requisito V3.2.1 y la
-  sección V3.4 *Browser Security Mechanism Headers*, y la sección 10.2.4 *Server* de
-  [RFC 9110](../fuentes/rfc/rfc9110.txt), quedan sin efecto: regulan las mismas cabeceras que el
-  *HTTP Security Response Headers Cheat Sheet*, que cubre más.
-- De RFC 9110, los validadores de 8.8 *Validator Fields* y de 15.3.1 *200 OK* y la sección 13
-  *Conditional Requests* quedan sin efecto en `/api/*`: sus respuestas llevan `no-store`, y nadie
-  guarda una copia que validar.
-- Caddy corta el cuerpo de `/api/*` con `request_body`: 10 MB en una petición
-  `multipart/form-data`, la forma en que se sube un archivo
-  ([transversal.md](transversal.md#archivos)), y 1 MB en las demás. Lo que pasa del límite no llega
-  a Python.
-- Una petición cuyo `Content-Length` pasa el límite recibe 413 antes de `request_body`: al cortarla,
-  `request_body` responde 502, y el cliente reintenta un 502
-  ([transversal.md](transversal.md#reintentos)).
-- Caddy no corta por tiempo una conexión WebSocket: Uvicorn manda un ping cada 20 s y cierra la
-  que no responde en 20 s, sus valores por defecto. Una conexión viva no se corta, y una caída no
-  queda abierta.
-- Caddy nunca sirve el directorio de los archivos de los usuarios: cada archivo pasa por el servidor,
-  que aplica los permisos de su recurso.
+- `Permissions-Policy` nombra cada función de *Standardized Features* del [registro del W3C](../fuentes/w3c/permissions-policy-features.md), y `publickey-credentials-create` de Web Authentication Level 3: niega las que la app no usa, y permite con `(self)` las que declara con `install.py --allow`.
+- Caddy envía también `Content-Security-Policy: frame-ancestors 'none'`: la CSP de SvelteKit va en una etiqueta `meta`, que no admite `frame-ancestors`.
+- No se envía `Cross-Origin-Embedder-Policy`. Contradice a OWASP: solo habilita el aislamiento entre orígenes, que ninguna pieza usa, y bloquea las teselas de OSM y el formulario de pago incrustado.
+- `app.<dominio>`, `panel.<dominio>` y `/api/*` llevan `X-Robots-Tag: noindex, nofollow`: solo la landing es pública.
+- De [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), el requisito V3.2.1 y la sección V3.4 *Browser Security Mechanism Headers*, y la sección 10.2.4 *Server* de [RFC 9110](../fuentes/rfc/rfc9110.txt), quedan sin efecto: regulan las mismas cabeceras que el *HTTP Security Response Headers Cheat Sheet*, que cubre más.
+- De RFC 9110, los validadores de 8.8 *Validator Fields* y de 15.3.1 *200 OK* y la sección 13 *Conditional Requests* quedan sin efecto en `/api/*`: sus respuestas llevan `no-store`, y nadie guarda una copia que validar.
+- Caddy corta el cuerpo de `/api/*` con `request_body`: 10 MB en una petición `multipart/form-data`, la forma en que se sube un archivo ([transversal.md](transversal.md#archivos)), y 1 MB en las demás. Lo que pasa del límite no llega a Python.
+- Una petición cuyo `Content-Length` pasa el límite recibe 413 antes de `request_body`: al cortarla, `request_body` responde 502, y el cliente reintenta un 502 ([transversal.md](transversal.md#reintentos)).
+- Caddy no corta por tiempo una conexión WebSocket: Uvicorn manda un ping cada 20 s y cierra la que no responde en 20 s, sus valores por defecto. Una conexión viva no se corta, y una caída no queda abierta.
+- Caddy nunca sirve el directorio de los archivos de los usuarios: cada archivo pasa por el servidor, que aplica los permisos de su recurso.
 
 ## Configuración
 
-Estándar: de systemd 257, la versión de Debian 13, la entrada `LoadCredentialEncrypted=` de
-[`systemd.exec`](../fuentes/systemd/systemd.exec.xml).
+Estándar: de systemd 257, la versión de Debian 13, la entrada `LoadCredentialEncrypted=` de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml).
 
-- Cada campo de `Settings` llega al servicio con `LoadCredentialEncrypted=`, cifrado con
-  `systemd-creds encrypt`: no queda en claro en el disco.
-- Las unidades cargan entera la carpeta `/etc/credstore.encrypted/<app>/` con el prefijo `app`: un
-  campo nuevo de `Settings` no cambia las unidades. Cada archivo se llama como su campo y se cifra
-  con `--name=app_<campo>`, el nombre con que lo carga systemd.
-- Las credenciales que el servidor no usa, como las de las migraciones, el respaldo y el
-  despliegue, van en otra carpeta: el servidor no las recibe. `<app>-migrate/database_url` también
-  se cifra con `--name=app_database_url`, porque reemplaza al de la carpeta de la app.
-- `credentials.py <app>` cifra las credenciales que lee por stdin, una línea `campo=valor` por
-  credencial y el valor sin comillas: cada campo de `Settings` en `<app>/`, `restic_password` en
-  `<app>-backup/` y `github_token` en `<app>-deploy/`, estas dos con su propio nombre en `--name`.
-  Escribe solo los campos que recibe y reinicia el servidor si corre, así que cambiar un secreto no
-  pasa por `install.py`.
-- `credentials.py` falla sin escribir nada si una línea no es `campo=valor`, si un valor está vacío
-  o un campo repetido, o si recibe `database_url` o `turn_secret`, que escribe `install.py`. Su
-  mensaje nunca lleva el valor.
+- Cada campo de `Settings` llega al servicio con `LoadCredentialEncrypted=`, cifrado con `systemd-creds encrypt`: no queda en claro en el disco.
+- Las unidades cargan entera la carpeta `/etc/credstore.encrypted/<app>/` con el prefijo `app`: un campo nuevo de `Settings` no cambia las unidades. Cada archivo se llama como su campo y se cifra con `--name=app_<campo>`, el nombre con que lo carga systemd.
+- Las credenciales que el servidor no usa, como las de las migraciones, el respaldo y el despliegue, van en otra carpeta: el servidor no las recibe. `<app>-migrate/database_url` también se cifra con `--name=app_database_url`, porque reemplaza al de la carpeta de la app.
+- `credentials.py <app>` cifra las credenciales que lee por stdin, una línea `campo=valor` por credencial y el valor sin comillas: cada campo de `Settings` en `<app>/`, `restic_password` en `<app>-backup/` y `github_token` en `<app>-deploy/`, estas dos con su propio nombre en `--name`. Escribe solo los campos que recibe y reinicia el servidor si corre, así que cambiar un secreto no pasa por `install.py`.
+- `credentials.py` falla sin escribir nada si una línea no es `campo=valor`, si un valor está vacío o un campo repetido, o si recibe `database_url` o `turn_secret`, que escribe `install.py`. Su mensaje nunca lleva el valor.
 
 ## Coturn
 
-Estándar: del [RFC 8656](../fuentes/rfc/rfc8656.txt), las secciones 3.1, *Transports*; 7.2,
-*Receiving an Allocate Request*; 21.1.1, *Obtaining Unauthorized Allocations*; 21.1.6,
-*Eavesdropping Traffic*, salvo su párrafo sobre el usuario, que rige en
-[fastapi.md](fastapi.md#llamadas-de-voz-y-video); 21.1.7, *TURN Loop Attack*; 21.2, *Firewall
-Considerations*; 21.3, *Insider Attacks*, y 21.4, *Tunnel Amplification Attack*. Lo demás lo cumplen
-coturn y el navegador.
+Estándar: del [RFC 8656](../fuentes/rfc/rfc8656.txt), las secciones 3.1, *Transports*; 7.2, *Receiving an Allocate Request*; 21.1.1, *Obtaining Unauthorized Allocations*; 21.1.6, *Eavesdropping Traffic*, salvo su párrafo sobre el usuario, que rige en [fastapi.md](fastapi.md#llamadas-de-voz-y-video); 21.1.7, *TURN Loop Attack*; 21.2, *Firewall Considerations*; 21.3, *Insider Attacks*, y 21.4, *Tunnel Amplification Attack*. Lo demás lo cumplen coturn y el navegador.
 
-- Solo una app con llamadas usa coturn: `install.py --turn` instala `/etc/turnserver.conf` y abre
-  sus puertos con `/etc/nftables.d/turn.nft`.
-- coturn escucha solo en el 3478, por UDP y por TCP, sin TLS: WebRTC ya cifra la llamada, y TLS
-  pediría el certificado de Caddy, que vive en una carpeta interna suya.
+- Solo una app con llamadas usa coturn: `install.py --turn` instala `/etc/turnserver.conf` y abre sus puertos con `/etc/nftables.d/turn.nft`.
+- coturn escucha solo en el 3478, por UDP y por TCP, sin TLS: WebRTC ya cifra la llamada, y TLS pediría el certificado de Caddy, que vive en una carpeta interna suya.
 - Releva solo por UDP, del 49152 al 65535: WebRTC no releva por TCP.
-- Las credenciales son las temporales de [transversal.md](transversal.md#llamadas-de-voz-y-video),
-  firmadas con un secreto que `install.py` genera la primera vez y conserva, para que una credencial
-  ya entregada siga sirviendo. Va en `static-auth-secret` de `/etc/turnserver.conf`, que solo lee el
-  grupo `turnserver`, y como `turn_secret` en la carpeta de credenciales de la app. El `realm` es el
-  dominio de la app.
-- En una máquina cuya interfaz tiene solo una dirección privada, porque la pública le llega por NAT,
-  `install.py --turn-ip <pública>` agrega `external-ip=<pública>/<privada>`, con la privada por la
-  que la máquina sale a internet: sin ella, coturn entrega su dirección privada, y la otra parte de
-  la llamada no lo alcanza.
-- Una credencial tiene a lo sumo 10 asignaciones, y cada una 500 000 bytes por segundo, 4 Mbit/s:
-  `user-quota` y `max-bps`.
-- coturn niega relevar hacia cada bloque que los registros de direcciones de uso especial de IANA,
-  [IPv4](../fuentes/iana/iana-ipv4-special-registry.csv) e
-  [IPv6](../fuentes/iana/iana-ipv6-special-registry.csv), marcan como no alcanzable globalmente, y
-  hacia 6to4, `2002::/16`, que el registro marca como alcanzable: TURN no sirve de puente a la red
-  interna ni a un túnel. Las direcciones sin especificar, `0.0.0.0` y `::`, no van en
-  `denied-peer-ip`, porque coturn las lee como cualquier dirección: la primera queda dentro de
-  `0.0.0.0/8`, y la segunda coturn la niega por sí mismo.
-- `no-multicast-peers` niega las direcciones de multicast, y coturn niega por defecto las de
-  loopback.
-- `turn.nft` descarta lo que llega al 3478 desde Teredo, `2001::/32`, o 6to4, `2002::/16`: coturn
-  acepta una petición desde un túnel.
-- coturn no abre su consola de administración (`no-cli`), que por defecto escucha en el 5766 de la
-  máquina para cualquier cuenta de ella.
+- Las credenciales son las temporales de [transversal.md](transversal.md#llamadas-de-voz-y-video), firmadas con un secreto que `install.py` genera la primera vez y conserva, para que una credencial ya entregada siga sirviendo. Va en `static-auth-secret` de `/etc/turnserver.conf`, que solo lee el grupo `turnserver`, y como `turn_secret` en la carpeta de credenciales de la app. El `realm` es el dominio de la app.
+- En una máquina cuya interfaz tiene solo una dirección privada, porque la pública le llega por NAT, `install.py --turn-ip <pública>` agrega `external-ip=<pública>/<privada>`, con la privada por la que la máquina sale a internet: sin ella, coturn entrega su dirección privada, y la otra parte de la llamada no lo alcanza.
+- Una credencial tiene a lo sumo 10 asignaciones, y cada una 500 000 bytes por segundo, 4 Mbit/s: `user-quota` y `max-bps`.
+- coturn niega relevar hacia cada bloque que los registros de direcciones de uso especial de IANA, [IPv4](../fuentes/iana/iana-ipv4-special-registry.csv) e [IPv6](../fuentes/iana/iana-ipv6-special-registry.csv), marcan como no alcanzable globalmente, y hacia 6to4, `2002::/16`, que el registro marca como alcanzable: TURN no sirve de puente a la red interna ni a un túnel. Las direcciones sin especificar, `0.0.0.0` y `::`, no van en `denied-peer-ip`, porque coturn las lee como cualquier dirección: la primera queda dentro de `0.0.0.0/8`, y la segunda coturn la niega por sí mismo.
+- `no-multicast-peers` niega las direcciones de multicast, y coturn niega por defecto las de loopback.
+- `turn.nft` descarta lo que llega al 3478 desde Teredo, `2001::/32`, o 6to4, `2002::/16`: coturn acepta una petición desde un túnel.
+- coturn no abre su consola de administración (`no-cli`), que por defecto escucha en el 5766 de la máquina para cualquier cuenta de ella.
 
 ## Datos
 
-Estándar: la entrada de `StateDirectory=`, en *Sandboxing*, de
-[`systemd.exec`](../fuentes/systemd/systemd.exec.xml).
+Estándar: la entrada de `StateDirectory=`, en *Sandboxing*, de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml).
 
-- Los archivos de los usuarios viven en el `StateDirectory=` del servicio, `/var/lib/<app>/files/`.
-  Están en la misma máquina y el respaldo los cubre junto con la base.
+- Los archivos de los usuarios viven en el `StateDirectory=` del servicio, `/var/lib/<app>/files/`. Están en la misma máquina y el respaldo los cubre junto con la base.
 
 ## Firewall
 
-Estándar: NIST SP 800-41 Rev. 1,
-[*Guidelines on Firewalls and Firewall Policy*](../fuentes/nist/sp800-41r1.txt), entera.
+Estándar: NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*](../fuentes/nist/sp800-41r1.txt), entera.
 
-- El firewall es el nftables de Debian 13, con `/etc/nftables.conf`, que `install.py` instala y
-  carga. Incluye `/etc/nftables.d/*.nft`, donde una pieza que la app puede no tener agrega sus
-  reglas.
-- Entran el 22 y el 80 por TCP, y el 443 por TCP y por UDP, el del HTTP/3 de Caddy. Con TURN entran
-  también los puertos de «Coturn».
+- El firewall es el nftables de Debian 13, con `/etc/nftables.conf`, que `install.py` instala y carga. Incluye `/etc/nftables.d/*.nft`, donde una pieza que la app puede no tener agrega sus reglas.
+- Entran el 22 y el 80 por TCP, y el 443 por TCP y por UDP, el del HTTP/3 de Caddy. Con TURN entran también los puertos de «Coturn».
 - ICMP entra entero: IPv6 lo necesita para encontrar a sus vecinos.
-- Fuera del loopback no entra nada con origen en `0.0.0.0/8`, `127.0.0.0/8`, `169.254.0.0/16` ni
-  `::1`.
-- Lo que sale no se filtra. Contradice a NIST, que pide filtrar también lo que sale: la app habla
-  con dominios de terceros, cuyas direcciones cambian.
+- Fuera del loopback no entra nada con origen en `0.0.0.0/8`, `127.0.0.0/8`, `169.254.0.0/16` ni `::1`.
+- Lo que sale no se filtra. Contradice a NIST, que pide filtrar también lo que sale: la app habla con dominios de terceros, cuyas direcciones cambian.
 - Nada pasa por la máquina hacia otra red.
 
 ## Máquina
 
-Estándar: de unattended-upgrades 2.12, la versión de Debian 13, `Automatic-Reboot` y
-`Automatic-Reboot-Time` en [`50unattended-upgrades`](../fuentes/unattended-upgrades/50unattended-upgrades.Debian).
+Estándar: de unattended-upgrades 2.12, la versión de Debian 13, `Automatic-Reboot` y `Automatic-Reboot-Time` en [`50unattended-upgrades`](../fuentes/unattended-upgrades/50unattended-upgrades.Debian).
 
-- La máquina es Debian 13, y cada programa sale de sus paquetes: `caddy`, `postgresql`,
-  `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`,
-  `nftables`, `unattended-upgrades`, `systemd-timesyncd` y `ca-certificates`, con el que
-  `deploy.py` comprueba el certificado de GitHub; `coturn` si usa TURN, y `systemd-journal-remote`
-  y `wireguard-tools` si envía su journal con `--logs`.
-- La máquina llega a `install.py` con sus paquetes y con tanto swap como memoria, que pide
-  «Valkey»: los pone quien prepara la máquina, e `install.py` falla si faltan.
-- El host de cada superficie que la app tiene, `<dominio>`, `app.<dominio>` y `panel.<dominio>`,
-  apunta a la máquina antes de `install.py`: Caddy obtiene el certificado de cada host por ACME, y
-  reintenta mientras el host no la alcanza.
-- `systemd-timesyncd` sincroniza la hora, e `install.py` falla si no está habilitado: las
-  credenciales temporales de TURN, las sesiones y las fechas del journal dependen del reloj.
-  `systemd-timesyncd` choca con cualquier otro paquete de hora, como `chrony`, y lo reemplaza.
-- uv no está en Debian 13: `sudo python3 uv.py` lo instala en `/usr/local/bin/uv`, desde el release
-  de GitHub de la versión de [python.md](python.md#proyecto), y falla sin instalar nada si el
-  archivo no tiene el SHA-256 que `uv.py` fija para el procesador, `x86_64` o `aarch64`. Lo corre
-  quien prepara la máquina, antes del primer `deploy.py`, y otra vez cuando cambia la versión:
-  `deploy.py` crea el entorno de cada versión con `uv sync`, y otra versión de uv falla por el
-  `required-version` del `pyproject.toml`.
-- `unattended-upgrades` instala solo, cada día, las actualizaciones de Debian 13, y `install.py` lo
-  enciende con `/etc/apt/apt.conf.d/20auto-upgrades`: una actualización de seguridad que espera a
-  alguien deja la máquina expuesta mientras tanto.
-- Un kernel nuevo corre solo después de reiniciar, y `unattended-upgrades` reinicia la máquina a
-  las 04:00, en la hora de la máquina, cuando una actualización lo pide, con
-  `/etc/apt/apt.conf.d/52automatic-reboot`. El gancho del kernel de `unattended-upgrades` lo pide
-  con `/var/run/reboot-required`. La app cae alrededor de un minuto y corta las llamadas y el
-  respaldo en curso, y el siguiente respaldo corre igual.
+- La máquina es Debian 13, y cada programa sale de sus paquetes: `caddy`, `postgresql`, `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`, `nftables`, `unattended-upgrades`, `systemd-timesyncd` y `ca-certificates`, con el que `deploy.py` comprueba el certificado de GitHub; `coturn` si usa TURN, y `systemd-journal-remote` y `wireguard-tools` si envía su journal con `--logs`.
+- La máquina llega a `install.py` con sus paquetes y con tanto swap como memoria, que pide «Valkey»: los pone quien prepara la máquina, e `install.py` falla si faltan.
+- El host de cada superficie que la app tiene, `<dominio>`, `app.<dominio>` y `panel.<dominio>`, apunta a la máquina antes de `install.py`: Caddy obtiene el certificado de cada host por ACME, y reintenta mientras el host no la alcanza.
+- `systemd-timesyncd` sincroniza la hora, e `install.py` falla si no está habilitado: las credenciales temporales de TURN, las sesiones y las fechas del journal dependen del reloj. `systemd-timesyncd` choca con cualquier otro paquete de hora, como `chrony`, y lo reemplaza.
+- uv no está en Debian 13: `sudo python3 uv.py` lo instala en `/usr/local/bin/uv`, desde el release de GitHub de la versión de [python.md](python.md#proyecto), y falla sin instalar nada si el archivo no tiene el SHA-256 que `uv.py` fija para el procesador, `x86_64` o `aarch64`. Lo corre quien prepara la máquina, antes del primer `deploy.py`, y otra vez cuando cambia la versión: `deploy.py` crea el entorno de cada versión con `uv sync`, y otra versión de uv falla por el `required-version` del `pyproject.toml`.
+- `unattended-upgrades` instala solo, cada día, las actualizaciones de Debian 13, y `install.py` lo enciende con `/etc/apt/apt.conf.d/20auto-upgrades`: una actualización de seguridad que espera a alguien deja la máquina expuesta mientras tanto.
+- Un kernel nuevo corre solo después de reiniciar, y `unattended-upgrades` reinicia la máquina a las 04:00, en la hora de la máquina, cuando una actualización lo pide, con `/etc/apt/apt.conf.d/52automatic-reboot`. El gancho del kernel de `unattended-upgrades` lo pide con `/var/run/reboot-required`. La app cae alrededor de un minuto y corta las llamadas y el respaldo en curso, y el siguiente respaldo corre igual.
 
 ## PostgreSQL
 
-Estándares: de PostgreSQL 17, la versión de Debian 13, *Peer Authentication*, en
-[*Client Authentication*](../fuentes/postgresql/client-auth.sgml), y la entrada *superuser status*
-de *Role Attributes*, en [*Database Roles*](../fuentes/postgresql/user-manag.sgml).
+Estándares: de PostgreSQL 17, la versión de Debian 13, *Peer Authentication*, en [*Client Authentication*](../fuentes/postgresql/client-auth.sgml), y la entrada *superuser status* de *Role Attributes*, en [*Database Roles*](../fuentes/postgresql/user-manag.sgml).
 
-- `install.py` crea la base `<app>`, el rol `<app>` del servidor y el rol `<app>_owner`, dueño de
-  la base. Ninguno es superusuario: las migraciones y la purga no saltan los permisos ni salen de
-  la base.
-- Cada rol entra por el socket con `peer`, sin contraseña, desde la cuenta de su nombre: el
-  servidor con `<app>`, y las migraciones, la purga y el volcado con `<app>_owner`. Una cuenta entra
-  solo como su rol, y ningún rol tiene contraseña.
-- `install.py` escribe la `database_url` del servidor en `<app>/`, y la del dueño en
-  `<app>-migrate/`.
-- `install.py` crea como `postgres` las extensiones que recibe con `--extension`: una extensión que
-  no es *trusted*, como PostGIS, pide un superusuario.
+- `install.py` crea la base `<app>`, el rol `<app>` del servidor y el rol `<app>_owner`, dueño de la base. Ninguno es superusuario: las migraciones y la purga no saltan los permisos ni salen de la base.
+- Cada rol entra por el socket con `peer`, sin contraseña, desde la cuenta de su nombre: el servidor con `<app>`, y las migraciones, la purga y el volcado con `<app>_owner`. Una cuenta entra solo como su rol, y ningún rol tiene contraseña.
+- `install.py` escribe la `database_url` del servidor en `<app>/`, y la del dueño en `<app>-migrate/`.
+- `install.py` crea como `postgres` las extensiones que recibe con `--extension`: una extensión que no es *trusted*, como PostGIS, pide un superusuario.
 
 ## Procesos
 
-Estándares: las entradas de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml) que usan las
-unidades de `plantilla/infra/`, salvo `LoadCredentialEncrypted=`, que cita «Configuración», y
-`StateDirectory=`, que cita «Datos»; y la sección *WebSocket Protocol Configuration* del
-[*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
+Estándares: las entradas de [`systemd.exec`](../fuentes/systemd/systemd.exec.xml) que usan las unidades de `plantilla/infra/`, salvo `LoadCredentialEncrypted=`, que cita «Configuración», y `StateDirectory=`, que cita «Datos»; y la sección *WebSocket Protocol Configuration* del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
-- Las unidades son las de `plantilla/infra/`, que `install.py` instala con el nombre y
-  el dominio de la app, sin las de las piezas que no tiene.
-- `install.py` escribe con la umask 022, sea cual sea la de quien despliega: cada servicio lee su
-  configuración con su propia cuenta, y con la 077 Valkey no lee la suya y no arranca. Lo secreto
-  lleva sus propios permisos, como `logs.conf` con 600 y `turnserver.conf` con 640.
-- Las cuentas de la app las crea `systemd-sysusers` desde el `sysusers.conf` de
-  `plantilla/infra/`, que `install.py` instala.
-- El servidor arranca con
-  `uvicorn app.main:app --port 8000 --ws-max-size 65536 --ws-per-message-deflate false`:
-  `fastapi run` no le pasa a Uvicorn las opciones de WebSocket.
+- Las unidades son las de `plantilla/infra/`, que `install.py` instala con el nombre y el dominio de la app, sin las de las piezas que no tiene.
+- `install.py` escribe con la umask 022, sea cual sea la de quien despliega: cada servicio lee su configuración con su propia cuenta, y con la 077 Valkey no lee la suya y no arranca. Lo secreto lleva sus propios permisos, como `logs.conf` con 600 y `turnserver.conf` con 640.
+- Las cuentas de la app las crea `systemd-sysusers` desde el `sysusers.conf` de `plantilla/infra/`, que `install.py` instala.
+- El servidor arranca con `uvicorn app.main:app --port 8000 --ws-max-size 65536 --ws-per-message-deflate false`: `fastapi run` no le pasa a Uvicorn las opciones de WebSocket.
   - `--port` es 8000 en todo producto: la máquina no aloja otro servidor.
   - `--ws-max-size 65536` cumple el límite de mensaje de [fastapi.md](fastapi.md#websocket).
   - `--ws-per-message-deflate false` cumple *Compression security* de OWASP.
-- Caddy le llega al servidor por loopback: nadie salta los límites de Caddy, y Uvicorn cree las
-  cabeceras `X-Forwarded-*` solo de loopback, su valor por defecto.
-- El timer del barrido de archivos de [fastapi.md](fastapi.md#archivos) corre
-  `python -m app.tasks sweep` cada día.
-- El timer de la purga de `event_log` de [fastapi.md](fastapi.md#registro-de-eventos) corre
-  `python -m app.tasks purge` cada día. Su unidad corre con la cuenta `<app>_owner` y carga además
-  `app_database_url` desde `<app>-migrate/`, como la de las migraciones.
+- Caddy le llega al servidor por loopback: nadie salta los límites de Caddy, y Uvicorn cree las cabeceras `X-Forwarded-*` solo de loopback, su valor por defecto.
+- El timer del barrido de archivos de [fastapi.md](fastapi.md#archivos) corre `python -m app.tasks sweep` cada día.
+- El timer de la purga de `event_log` de [fastapi.md](fastapi.md#registro-de-eventos) corre `python -m app.tasks purge` cada día. Su unidad corre con la cuenta `<app>_owner` y carga además `app_database_url` desde `<app>-migrate/`, como la de las migraciones.
 - Cada unidad queda con una exposición de 2.0 o menos en `systemd-analyze security`.
 
 ## Registros
 
-Estándares: de systemd, `Storage=`, `SystemMaxUse=`, `MaxRetentionSec=` y `MaxFileSec=` de
-[`journald.conf`](../fuentes/systemd/journald.conf.xml), y `URL=` de
-[`journal-upload.conf`](../fuentes/systemd/journal-upload.conf.xml); `log_destination`, en *Where to
-Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml) de PostgreSQL; y de WireGuard,
-`Address` de [`wg-quick`](../fuentes/wireguard/wg-quick.8), y `PrivateKey`, `PublicKey`, `Endpoint`
-y `AllowedIPs` en *CONFIGURATION FILE FORMAT* de [`wg`](../fuentes/wireguard/wg.8).
+Estándares: de systemd, `Storage=`, `SystemMaxUse=`, `MaxRetentionSec=` y `MaxFileSec=` de [`journald.conf`](../fuentes/systemd/journald.conf.xml), y `URL=` de [`journal-upload.conf`](../fuentes/systemd/journal-upload.conf.xml); `log_destination`, en *Where to Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml) de PostgreSQL; y de WireGuard, `Address` de [`wg-quick`](../fuentes/wireguard/wg-quick.8), y `PrivateKey`, `PublicKey`, `Endpoint` y `AllowedIPs` en *CONFIGURATION FILE FORMAT* de [`wg`](../fuentes/wireguard/wg.8).
 
-- journald guarda en disco: `Storage=persistent` en `/etc/systemd/journald.conf.d/00-<app>.conf`.
-  Con `auto`, el valor por defecto, guarda en memoria si falta `/var/log/journal`, sin avisar.
-- El journal guarda a lo sumo 365 días, como `event_log` en
-  [fastapi.md](fastapi.md#registro-de-eventos): también guarda direcciones IP de personas, como las
-  que registra `sshd`. Son `MaxRetentionSec=365day` y `MaxFileSec=1day`: journald borra un archivo
-  entero cuando su primera entrada pasa la retención, y con el mes de `MaxFileSec=` por defecto una
-  entrada se borraría hasta un mes antes o un mes después.
-- journald borra antes si el journal llega a `SystemMaxUse=`, que queda en su valor por defecto: el
-  10 % del disco, y a lo sumo 4G. La copia que vale es la de equipaggio, y un límite mayor le quitaría
-  disco a la app. Lo que no salió todavía se pierde si el túnel sigue caído hasta llenar ese límite.
-- PostgreSQL escribe en el journal, con `log_destination = 'syslog'` en
-  `/etc/postgresql/17/main/conf.d/<app>.conf`, y su registro sale de la máquina con el resto. Con
-  una carga extrema, syslog descarta mensajes en vez de frenar a PostgreSQL. Lo que escribe al
-  arrancar, antes de leer la configuración, sigue en `/var/log/postgresql/`.
-- Con `install.py --logs <host:puerto> --logs-key <llave> --logs-ip <dirección>`, el journal sale al
-  registro central de equipaggio: `wg-quick@logs` abre un túnel de WireGuard con
-  `/etc/wireguard/logs.conf`, y `systemd-journal-upload` envía a `http://10.77.0.1:19532`, el
-  extremo de equipaggio. La dirección es una constante del túnel; la de la máquina, `--logs-ip`, la
-  da equipaggio. Sin `--logs` no sale: la máquina de equipaggio se instala igual y no se envía a sí
-  misma.
-- Detectar que una máquina dejó de enviar le toca a equipaggio, por la hora de la última entrada que
-  recibió de ella: cada máquina escribe en el journal al menos una vez por día, con el timer de la
-  purga de `event_log`.
-- Una máquina que envía no se reinstala sin `--logs`: `install.py` falla si existe
-  `/etc/wireguard/logs.conf`, porque equipaggio ya registró la llave de su túnel. Para dejar de
-  enviar, se apagan `wg-quick@logs` y `systemd-journal-upload` y se borra ese archivo.
-- Equipaggio reconoce cada máquina por la llave de su túnel: el `systemd-journal-remote` de Debian 13
-  no verifica certificados de cliente, porque está compilado sin GnuTLS.
-- `install.py` genera la llave privada del túnel la primera vez, la conserva en `logs.conf`, con
-  permisos 600, e imprime la pública para registrarla en equipaggio. Con esa llave solo se agregan
-  entradas: no se lee ni se borra lo que ya se envió.
-- `systemd-journal-upload` reintenta sin límite, con `StartLimitIntervalSec=0` en
-  `systemd-journal-upload.service.d/<app>.conf`: la unidad de Debian deja de reintentar después de
-  cinco fallos rápidos, y no vuelve a enviar aunque equipaggio responda de nuevo.
+- journald guarda en disco: `Storage=persistent` en `/etc/systemd/journald.conf.d/00-<app>.conf`. Con `auto`, el valor por defecto, guarda en memoria si falta `/var/log/journal`, sin avisar.
+- El journal guarda a lo sumo 365 días, como `event_log` en [fastapi.md](fastapi.md#registro-de-eventos): también guarda direcciones IP de personas, como las que registra `sshd`. Son `MaxRetentionSec=365day` y `MaxFileSec=1day`: journald borra un archivo entero cuando su primera entrada pasa la retención, y con el mes de `MaxFileSec=` por defecto una entrada se borraría hasta un mes antes o un mes después.
+- journald borra antes si el journal llega a `SystemMaxUse=`, que queda en su valor por defecto: el 10 % del disco, y a lo sumo 4G. La copia que vale es la de equipaggio, y un límite mayor le quitaría disco a la app. Lo que no salió todavía se pierde si el túnel sigue caído hasta llenar ese límite.
+- PostgreSQL escribe en el journal, con `log_destination = 'syslog'` en `/etc/postgresql/17/main/conf.d/<app>.conf`, y su registro sale de la máquina con el resto. Con una carga extrema, syslog descarta mensajes en vez de frenar a PostgreSQL. Lo que escribe al arrancar, antes de leer la configuración, sigue en `/var/log/postgresql/`.
+- Con `install.py --logs <host:puerto> --logs-key <llave> --logs-ip <dirección>`, el journal sale al registro central de equipaggio: `wg-quick@logs` abre un túnel de WireGuard con `/etc/wireguard/logs.conf`, y `systemd-journal-upload` envía a `http://10.77.0.1:19532`, el extremo de equipaggio. La dirección es una constante del túnel; la de la máquina, `--logs-ip`, la da equipaggio. Sin `--logs` no sale: la máquina de equipaggio se instala igual y no se envía a sí misma.
+- Detectar que una máquina dejó de enviar le toca a equipaggio, por la hora de la última entrada que recibió de ella: cada máquina escribe en el journal al menos una vez por día, con el timer de la purga de `event_log`.
+- Una máquina que envía no se reinstala sin `--logs`: `install.py` falla si existe `/etc/wireguard/logs.conf`, porque equipaggio ya registró la llave de su túnel. Para dejar de enviar, se apagan `wg-quick@logs` y `systemd-journal-upload` y se borra ese archivo.
+- Equipaggio reconoce cada máquina por la llave de su túnel: el `systemd-journal-remote` de Debian 13 no verifica certificados de cliente, porque está compilado sin GnuTLS.
+- `install.py` genera la llave privada del túnel la primera vez, la conserva en `logs.conf`, con permisos 600, e imprime la pública para registrarla en equipaggio. Con esa llave solo se agregan entradas: no se lee ni se borra lo que ya se envió.
+- `systemd-journal-upload` reintenta sin límite, con `StartLimitIntervalSec=0` en `systemd-journal-upload.service.d/<app>.conf`: la unidad de Debian deja de reintentar después de cinco fallos rápidos, y no vuelve a enviar aunque equipaggio responda de nuevo.
 
 ## Respaldos
 
 Estándar: [*Backup and Restore*](../fuentes/postgresql/backup.sgml) de PostgreSQL, entero.
 
-- El respaldo de la base es un `pg_dump` en formato custom, que corre antes de cada respaldo:
-  `pg_restore` puede restaurar solo una parte.
-- El respaldo lleva el dump y `/var/lib/<app>/files/`, y sale de la máquina con `restic`, cifrado,
-  hacia una receptora con `rest-server`. El código no va: está en los releases.
-- La receptora pide el respaldo con `plantilla/receiver/`: abre `rest-server` en su puerto 8001 y
-  un túnel `ssh -R` al 8001 del servidor, espera el resultado y cierra los dos.
-- `rest-server` corre con `--append-only` y sin contraseña, y solo escucha en el loopback de la
-  receptora: el servidor agrega respaldos, pero no borra ni reescribe los que hay, y restic los
-  cifra.
-- La receptora entra con la cuenta `<app>-receiver`, solo con una llave de
-  `/etc/<app>/receivers`, y solo corre el comando que pide el respaldo, sin terminal ni otro túnel
-  que el del 8001: una llave robada solo pide un respaldo.
-- El comando comprueba el túnel antes de pedir el respaldo, y el respaldo se corta a las 4 h: un
-  respaldo sin receptora no queda colgado.
+- El respaldo de la base es un `pg_dump` en formato custom, que corre antes de cada respaldo: `pg_restore` puede restaurar solo una parte.
+- El respaldo lleva el dump y `/var/lib/<app>/files/`, y sale de la máquina con `restic`, cifrado, hacia una receptora con `rest-server`. El código no va: está en los releases.
+- La receptora pide el respaldo con `plantilla/receiver/`: abre `rest-server` en su puerto 8001 y un túnel `ssh -R` al 8001 del servidor, espera el resultado y cierra los dos.
+- `rest-server` corre con `--append-only` y sin contraseña, y solo escucha en el loopback de la receptora: el servidor agrega respaldos, pero no borra ni reescribe los que hay, y restic los cifra.
+- La receptora entra con la cuenta `<app>-receiver`, solo con una llave de `/etc/<app>/receivers`, y solo corre el comando que pide el respaldo, sin terminal ni otro túnel que el del 8001: una llave robada solo pide un respaldo.
+- El comando comprueba el túnel antes de pedir el respaldo, y el respaldo se corta a las 4 h: un respaldo sin receptora no queda colgado.
 - El primer respaldo crea el repositorio.
-- Cada respaldo bueno cambia la fecha de `/var/lib/<app>/last-backup`, y el journal guarda cada
-  corrida.
-- El dump y `restic` son unidades distintas: el dump corre como `<app>_owner`, y `restic` solo
-  puede leer, con `CAP_DAC_READ_SEARCH`.
-- El dump no lleva los roles ni las extensiones: los crea `install.py`, y el dueño, que restaura,
-  no puede crear una extensión que no es *trusted*.
-- Se restaura en una máquina instalada con `install.py` y las mismas `--extension`:
-  `restic restore` trae el dump y `/var/lib/<app>/files/`, y `<app>_owner` corre
-  `pg_restore --exit-on-error` sobre la base que creó `install.py`, y después `ANALYZE`.
+- Cada respaldo bueno cambia la fecha de `/var/lib/<app>/last-backup`, y el journal guarda cada corrida.
+- El dump y `restic` son unidades distintas: el dump corre como `<app>_owner`, y `restic` solo puede leer, con `CAP_DAC_READ_SEARCH`.
+- El dump no lleva los roles ni las extensiones: los crea `install.py`, y el dueño, que restaura, no puede crear una extensión que no es *trusted*.
+- Se restaura en una máquina instalada con `install.py` y las mismas `--extension`: `restic restore` trae el dump y `/var/lib/<app>/files/`, y `<app>_owner` corre `pg_restore --exit-on-error` sobre la base que creó `install.py`, y después `ANALYZE`.
 
 ## SSH
 
-Estándar: de OpenSSH 10.0, la versión de Debian 13, las entradas de
-[`sshd_config`](../fuentes/openssh/sshd_config.5) que usan `sshd.conf` y `sshd-receiver.conf` de
-`plantilla/infra/`.
+Estándar: de OpenSSH 10.0, la versión de Debian 13, las entradas de [`sshd_config`](../fuentes/openssh/sshd_config.5) que usan `sshd.conf` y `sshd-receiver.conf` de `plantilla/infra/`.
 
-- `sshd` solo acepta llaves, y `root` no entra: se entra con la cuenta que administra la máquina y
-  `sudo`.
-- Esta configuración va en `/etc/ssh/sshd_config.d/00-<app>.conf`, que se lee antes que los archivos del
-  proveedor, como `50-cloud-init.conf`: `sshd` se queda con el primer valor de cada opción.
-- `install.py` crea la cuenta con `--admin`, en el grupo `sudo`, con las llaves de `--key` y la
-  contraseña que pide al crearla. La primera vez corre como `root`, que entra con lo que da el
-  proveedor; después, con `sudo` desde la cuenta, y `--admin` y `--key` solo agregan llaves.
+- `sshd` solo acepta llaves, y `root` no entra: se entra con la cuenta que administra la máquina y `sudo`.
+- Esta configuración va en `/etc/ssh/sshd_config.d/00-<app>.conf`, que se lee antes que los archivos del proveedor, como `50-cloud-init.conf`: `sshd` se queda con el primer valor de cada opción.
+- `install.py` crea la cuenta con `--admin`, en el grupo `sudo`, con las llaves de `--key` y la contraseña que pide al crearla. La primera vez corre como `root`, que entra con lo que da el proveedor; después, con `sudo` desde la cuenta, y `--admin` y `--key` solo agregan llaves.
 - `sudo` pide la contraseña de la cuenta: una llave robada no da `root`.
-- La cuenta nace con dos llaves: la de la computadora de quien administra y una guardada fuera de
-  ella. Perder la computadora no deja fuera.
-- `install.py` bloquea la contraseña de `root`: la consola web del proveedor, que no pasa por
-  `sshd`, recibe la cuenta y su contraseña.
-- `install.py` falla si la máquina no tiene `sudo`, si una llave no es válida, si no recibe
-  `--admin` y no lo lanza `sudo` desde una cuenta con llave, o si la cuenta es `<app>`,
-  `<app>_owner` o `<app>-receiver`: `systemd-sysusers` conserva una cuenta que ya existe, y la app
-  correría con una cuenta del grupo `sudo`.
+- La cuenta nace con dos llaves: la de la computadora de quien administra y una guardada fuera de ella. Perder la computadora no deja fuera.
+- `install.py` bloquea la contraseña de `root`: la consola web del proveedor, que no pasa por `sshd`, recibe la cuenta y su contraseña.
+- `install.py` falla si la máquina no tiene `sudo`, si una llave no es válida, si no recibe `--admin` y no lo lanza `sudo` desde una cuenta con llave, o si la cuenta es `<app>`, `<app>_owner` o `<app>-receiver`: `systemd-sysusers` conserva una cuenta que ya existe, y la app correría con una cuenta del grupo `sudo`.
 
 ## Valkey
 
-Estándares: de Valkey 8.1, la versión de Debian 13, [*Administration*](../fuentes/valkey/admin.md)
-y [*Security*](../fuentes/valkey/security.md), enteros.
+Estándares: de Valkey 8.1, la versión de Debian 13, [*Administration*](../fuentes/valkey/admin.md) y [*Security*](../fuentes/valkey/security.md), enteros.
 
 - El almacén en memoria de todas las piezas es Valkey.
-- La app tiene su instancia, `valkey-server@<app>`, sin TCP y con el socket
-  `/run/valkey-<app>/valkey-server.sock`, que solo abre el grupo de la app: el resto de los
-  procesos de la máquina no lee sus claves. La instancia `valkey-server` del paquete queda apagada.
-- Cada instancia tiene el `maxmemory` que recibe `install.py`, y la política `noeviction`, su valor
-  por defecto: al llenarse, una escritura falla en vez de borrar un código o un contador.
-- `vm.overcommit_memory = 1` va en `/etc/sysctl.d/valkey.conf`: Debian 13 no trae
-  `/etc/sysctl.conf`.
+- La app tiene su instancia, `valkey-server@<app>`, sin TCP y con el socket `/run/valkey-<app>/valkey-server.sock`, que solo abre el grupo de la app: el resto de los procesos de la máquina no lee sus claves. La instancia `valkey-server` del paquete queda apagada.
+- Cada instancia tiene el `maxmemory` que recibe `install.py`, y la política `noeviction`, su valor por defecto: al llenarse, una escritura falla en vez de borrar un código o un contador.
+- `vm.overcommit_memory = 1` va en `/etc/sysctl.d/valkey.conf`: Debian 13 no trae `/etc/sysctl.conf`.
 - `install.py` falla si la máquina tiene menos swap que memoria, como pide *Valkey setup tips*.
-- Transparent Huge Pages no se apaga en la máquina. Deja sin efecto *Valkey setup tips*:
-  `disable-thp yes`, el valor por defecto de Valkey 8.1, las apaga solo para su proceso, sin
-  cambiar los demás.
+- Transparent Huge Pages no se apaga en la máquina. Deja sin efecto *Valkey setup tips*: `disable-thp yes`, el valor por defecto de Valkey 8.1, las apaga solo para su proceso, sin cambiar los demás.
 
 ## Versiones
 
 Estándar: de OpenSSH 10.0, la sección *ALLOWED SIGNERS* de [`ssh-keygen`](../fuentes/openssh/ssh-keygen.1).
 
-- Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI corre en ese tag los jobs de `ci.yml`, y solo si
-  pasan construye un artefacto con el servidor, sus catálogos compilados y el build de la web, y lo
-  publica en un release de GitHub. El `.sha256` del release lleva el SHA-256 de cada archivo, con
-  los instalables.
-- El release es un borrador hasta que tiene el `.sha256`: un job que falla no deja publicado un
-  release a medias.
-- Cada versión queda en `/srv/<app>/releases/<versión>/`, y el enlace `/srv/<app>/current` apunta
-  a la activa. Los datos quedan fuera de las versiones, en `/var/lib/<app>/`.
-- El artefacto no lleva el entorno del servidor: cada versión lo crea en la máquina con
-  `uv sync --locked --no-dev`, con el Python 3.13 de Debian 13.
-- `releases/` guarda las cinco versiones más recientes y la activa: las demás siguen en sus
-  releases de GitHub.
-- El `.sha256` del release se firma fuera de GitHub con `ssh-keygen -Y sign`, y el servidor solo
-  instala el artefacto y los instalables que ese `.sha256` nombra, si lo firma una llave de
-  `/etc/<app>/allowed_signers`: una cuenta de GitHub comprometida después de la firma no alcanza
-  para desplegar otro archivo ni una versión anterior.
-- `install.py --signer` agrega cada llave que firma a `allowed_signers`, solo para el espacio de
-  nombres `deploy`, el que firma y comprueba `deploy.py`. Una máquina nueva necesita dos: la de la
-  computadora de quien firma y una guardada fuera de ella. Perder la computadora no impide
-  desplegar. Después, `--signer` solo agrega llaves, y una llave se retira borrando su línea.
-- `/usr/local/lib/<app>/deploy.py` instala un tag en el servidor y se lanza por `ssh`, no desde el
-  CI. `install.py` lo instala con el dueño del repositorio en GitHub que recibe con `--owner`. Con
-  `--private`, el script baja el release con el token de `<app>-deploy/`, y cada `--desktop` nombra
-  un instalable que el release trae: `linux`, `windows` o `macos`. Reinicia `<app>.service`, la
-  única unidad del servidor.
-- Las migraciones corren en la unidad `<app>-migrate@<versión>.service`, con las credenciales del
-  servidor, porque `alembic/env.py` lee `Settings`, salvo `database_url`, que es la del rol dueño
-  del esquema. El rol del servidor no tiene DDL: un error o una inyección en la app no cambian el
-  esquema.
-- Una versión trae migraciones si sus heads de Alembic no son los de la activa, o si no hay una
-  activa.
-- Si la versión trae migraciones, el servidor se detiene antes de migrar: el código anterior no
-  corre sobre la base migrada. Si la migración falla, la versión se borra y vuelve la anterior,
-  porque `env.py` aplica todas las migraciones en una sola transacción.
-- Si `GET /api/health` de la versión nueva no responde 204 en 30 intentos, uno por segundo,
-  `current` vuelve a la anterior solo si no hubo migraciones: el código anterior no corre sobre la
-  base migrada.
-- En un repositorio privado, el release se baja con un token de GitHub de solo lectura, cifrado
-  con `systemd-creds`.
-- Caddy sirve el build de cada superficie web, `web/`, `panel/` y `landing/`, desde
-  `current/<pieza>/`. La PWA es `web/`. Una pieza sin `index.html` sirve `200.html` también en su
-  raíz.
-- El CI construye del mismo tag los instalables de `desktop/` y los adjunta al release como
-  `desktop-<sistema>.<ext>`. Caddy los sirve con ese nombre, igual en cada versión, desde
-  `/srv/<app>/downloads/`, fuera de `releases/`: la landing enlaza siempre al mismo nombre.
+- Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI corre en ese tag los jobs de `ci.yml`, y solo si pasan construye un artefacto con el servidor, sus catálogos compilados y el build de la web, y lo publica en un release de GitHub. El `.sha256` del release lleva el SHA-256 de cada archivo, con los instalables.
+- El release es un borrador hasta que tiene el `.sha256`: un job que falla no deja publicado un release a medias.
+- Cada versión queda en `/srv/<app>/releases/<versión>/`, y el enlace `/srv/<app>/current` apunta a la activa. Los datos quedan fuera de las versiones, en `/var/lib/<app>/`.
+- El artefacto no lleva el entorno del servidor: cada versión lo crea en la máquina con `uv sync --locked --no-dev`, con el Python 3.13 de Debian 13.
+- `releases/` guarda las cinco versiones más recientes y la activa: las demás siguen en sus releases de GitHub.
+- El `.sha256` del release se firma fuera de GitHub con `ssh-keygen -Y sign`, y el servidor solo instala el artefacto y los instalables que ese `.sha256` nombra, si lo firma una llave de `/etc/<app>/allowed_signers`: una cuenta de GitHub comprometida después de la firma no alcanza para desplegar otro archivo ni una versión anterior.
+- `install.py --signer` agrega cada llave que firma a `allowed_signers`, solo para el espacio de nombres `deploy`, el que firma y comprueba `deploy.py`. Una máquina nueva necesita dos: la de la computadora de quien firma y una guardada fuera de ella. Perder la computadora no impide desplegar. Después, `--signer` solo agrega llaves, y una llave se retira borrando su línea.
+- `/usr/local/lib/<app>/deploy.py` instala un tag en el servidor y se lanza por `ssh`, no desde el CI. `install.py` lo instala con el dueño del repositorio en GitHub que recibe con `--owner`. Con `--private`, el script baja el release con el token de `<app>-deploy/`, y cada `--desktop` nombra un instalable que el release trae: `linux`, `windows` o `macos`. Reinicia `<app>.service`, la única unidad del servidor.
+- Las migraciones corren en la unidad `<app>-migrate@<versión>.service`, con las credenciales del servidor, porque `alembic/env.py` lee `Settings`, salvo `database_url`, que es la del rol dueño del esquema. El rol del servidor no tiene DDL: un error o una inyección en la app no cambian el esquema.
+- Una versión trae migraciones si sus heads de Alembic no son los de la activa, o si no hay una activa.
+- Si la versión trae migraciones, el servidor se detiene antes de migrar: el código anterior no corre sobre la base migrada. Si la migración falla, la versión se borra y vuelve la anterior, porque `env.py` aplica todas las migraciones en una sola transacción.
+- Si `GET /api/health` de la versión nueva no responde 204 en 30 intentos, uno por segundo, `current` vuelve a la anterior solo si no hubo migraciones: el código anterior no corre sobre la base migrada.
+- En un repositorio privado, el release se baja con un token de GitHub de solo lectura, cifrado con `systemd-creds`.
+- Caddy sirve el build de cada superficie web, `web/`, `panel/` y `landing/`, desde `current/<pieza>/`. La PWA es `web/`. Una pieza sin `index.html` sirve `200.html` también en su raíz.
+- El CI construye del mismo tag los instalables de `desktop/` y los adjunta al release como `desktop-<sistema>.<ext>`. Caddy los sirve con ese nombre, igual en cada versión, desde `/srv/<app>/downloads/`, fuera de `releases/`: la landing enlaza siempre al mismo nombre.
 
 ## Cumplimiento
 

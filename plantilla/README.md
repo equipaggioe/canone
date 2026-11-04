@@ -23,8 +23,8 @@ repositorios.
 | `.github/workflows/release.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay y `PIEZA` toma el nombre de la carpeta | [despliegue.md](../plataformas/despliegue.md) |
 | `infra/` | El servidor | Se instala: `install.py <app> <dominio> <memoria>` corre la primera vez como `root` con `--admin`, dos `--key` y dos `--signer`, y crea la cuenta que administra la máquina con esas llaves y la contraseña de `sudo` que pide; después corre con `sudo` desde esa cuenta. Crea el usuario de la app, el de su dueño y el de su receptora, su base con sus dos roles y sus dos `database_url`, su instancia de Valkey con ese `maxmemory`, sus sitios de Caddy el acceso de la receptora por `ssh` y el firewall de nftables, agrega cada `--signer` a las llaves que firman los releases, instala `deploy.py` con el dueño del repositorio en GitHub de `--owner`, el token de `--private` y cada instalable de `--desktop`, enciende `unattended-upgrades` con el reinicio de las 04:00, deja `ssh` solo con llaves y sin `root`, bloquea la contraseña de `root`, y falla si la máquina tiene menos swap que memoria, si no tiene `sudo`, `unattended-upgrades` o `ca-certificates`, si `systemd-timesyncd` no está habilitado, si es nueva y no recibe dos `--signer`, si recibe `--turn` y no tiene coturn, si una llave no es válida, si no recibe `--admin` y no lo lanza `sudo` desde una cuenta con llave, o si la cuenta es una de la app; `--without` quita `sweep`, `web`, `panel` o `landing` si la app no los tiene, `--allow` permite cada función de `Permissions-Policy` que usa, `--extension` crea cada extensión de PostgreSQL que necesita, y `--turn` instala coturn con su secreto y abre sus puertos, con `--turn-ip` si la IP pública le llega por NAT. `credentials.py <app>` cifra las credenciales que lee por stdin, una línea `campo=valor` por credencial, cada una en la carpeta y con el nombre que carga su unidad, y reinicia el servidor si corre | [despliegue.md](../plataformas/despliegue.md#procesos), [despliegue.md](../plataformas/despliegue.md#versiones) |
 | `receiver/` | La receptora de los respaldos | No se copia: corre en la receptora, `backup.ps1` en Windows y `backup.sh` en Linux | [despliegue.md](../plataformas/despliegue.md#respaldos) |
-| `scripts/tokens.py` | `scripts/` | Canónico | [transversal.md](../plataformas/transversal.md) |
-| `brand/tokens/` | `brand/tokens/` | Punto de partida | [transversal.md](../plataformas/transversal.md) |
+| `scripts/tokens.py` | `scripts/` | En desarrollo; no se copia | [transversal.md](../plataformas/transversal.md) |
+| `brand/tokens/` | `brand/tokens/` | En desarrollo; no se copia | [transversal.md](../plataformas/transversal.md) |
 | `python/.gitignore` | Cada pieza Python | Punto de partida | [python.md](../plataformas/python.md) |
 | `server/pyproject.toml` | `server/` | Punto de partida | [python.md](../plataformas/python.md), [fastapi.md](../plataformas/fastapi.md) |
 | `server/alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako` | `server/` | Canónico | [fastapi.md](../plataformas/fastapi.md) |
@@ -33,11 +33,11 @@ repositorios.
 | `server/tests/test_conventions.py` | `server/tests/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
 | `server/tests/conftest.py`, `__init__.py` | `server/tests/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
 | `qt/pyproject.toml` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
-| `qt/theme.py` | `desktop/src/app/` | Punto de partida | [qt.md](../plataformas/qt.md) |
-| `qt/tests/test_theme.py` | `desktop/tests/` | Canónico | [qt.md](../plataformas/qt.md) |
+| `qt/theme.py` | `desktop/src/app/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
+| `qt/tests/test_theme.py` | `desktop/tests/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
 | `flet/pyproject.toml` | La pieza Flet | Punto de partida | [python.md](../plataformas/python.md), [flet.md](../plataformas/flet.md) |
-| `flet/theme.py` | `src/` de la pieza | Punto de partida | [flet.md](../plataformas/flet.md) |
-| `flet/tests/test_theme.py` | `tests/` de la pieza | Canónico | [flet.md](../plataformas/flet.md) |
+| `flet/theme.py` | `src/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
+| `flet/tests/test_theme.py` | `tests/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
 | `sveltekit/.prettierrc` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
 | `sveltekit/.gitignore`, `vite.config.ts`, `uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |
 | `flutter/analysis_options.yaml` | Cada app Flutter | Canónico | [flutter.md](../plataformas/flutter.md) |

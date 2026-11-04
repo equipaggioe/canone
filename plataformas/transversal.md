@@ -225,11 +225,13 @@ Unauthorized* de [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 ## Tema
 
-> **En desarrollo** (anotado el 2026-10-17): ningún producto la usa todavía, y `verificar.py` no la
-> comprueba. Esta sección, el «Tema» de cada cliente, el
+> **En desarrollo; no se implementa** ([ADR-0116](../adr/0116-la-seccion-tema-esta-en-desarrollo-y-no-se-implementa.md)).
+> Ningún repositorio la sigue mientras esta nota esté aquí, y `verificar.py` no la exige. Vale para
+> esta sección, el «Tema» de cada cliente, el
 > [ADR-0062](../adr/0062-los-colores-de-un-producto-salen-de-brand-tokens-en-dtcg-y-un-generador-arma-el-esquema-de-cada-cliente.md),
-> `scripts/tokens.py` y `brand/tokens/` de la plantilla se revisan y se desarrollan como cualquier
-> otra parte de Canone.
+> y lo que nombran «Proyecto» y la plantilla: `colors.py`, `theme.py`, `tests/test_theme.py`,
+> `scripts/tokens.py` y `brand/tokens/`. Se revisan y se desarrollan como cualquier otra parte de
+> Canone.
 
 Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el
 [módulo de color](../fuentes/dtcg/color.html) y el [resolver](../fuentes/dtcg/resolver.html),

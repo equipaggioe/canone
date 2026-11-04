@@ -109,6 +109,8 @@ Estándares: de Qt, las entradas que se usan de
 
 ## Tema
 
+> **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
+
 Estándares: [*Qt Style Sheets*](../fuentes/qt/stylesheet.qdoc), su
 [sintaxis](../fuentes/qt/stylesheet-syntax.qdoc), la
 [personalización](../fuentes/qt/stylesheet-customizing.qdoc), y las entradas que se usan de la
@@ -158,6 +160,4 @@ usa `pysidedeploy.spec`.
 | Los nombres originales de Qt | ruff `TID251` sobre `__feature__` |
 | La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools` |
 | HTTP por `QNetworkAccessManager` | ruff `TID251` sobre httpx, requests y `urllib.request` |
-| Fusion y una sola hoja de estilo en `theme.py` | `tests/test_theme.py` |
-| Los colores, solo en `colors.py` | `tests/test_theme.py` |
 | Pruebas sin pantalla | `QT_QPA_PLATFORM=offscreen` en el job de CI |

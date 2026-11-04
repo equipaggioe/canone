@@ -120,6 +120,8 @@ Contrato: [transversal.md](transversal.md#push).
 
 ## Tema
 
+> **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
+
 Contrato: [transversal.md](transversal.md#tema).
 
 - El tema claro y el oscuro usan `lightColorScheme` y `darkColorScheme`, generados en

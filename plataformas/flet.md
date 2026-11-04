@@ -61,6 +61,8 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 ## Tema
 
+> **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
+
 Contrato: [transversal.md](transversal.md#tema).
 
 - `page.theme` y `page.dark_theme` se arman en `theme.py` con `LIGHT` y `DARK`, generados en
@@ -76,4 +78,3 @@ Estándar: las entradas de [*Publishing a Flet app*](../fuentes/flet/publish.md)
 
 | Qué | Con qué |
 |---|---|
-| Los colores, solo en `colors.py` | `tests/test_theme.py` |

@@ -87,7 +87,7 @@ nombra esta sección, salvo los de «Clave primaria», y
 
 Con las pruebas de `tests/test_conventions.py` de [fastapi.md](fastapi.md):
 
-| Qué | Prueba |
+| Convención | Herramienta |
 |---|---|
 | Clave `text`, identity `ALWAYS` o `uuid` con `gen_random_uuid()`, la de una tabla particionada y la de un par de valores | `test_primary_key_is_allowed` y `test_primary_key_rules` |
 | Cadenas `text` | `test_strings_are_text` |

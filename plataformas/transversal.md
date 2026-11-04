@@ -298,7 +298,7 @@ rige en [fastapi.md](fastapi.md#sesión).
 
 ## Cumplimiento
 
-| Qué | Con qué |
+| Convención | Herramienta |
 |---|---|
 | Contraste de `brand/tokens/` | `scripts/tokens.py`, que corre `verificar.py` |
 | DTCG: el subconjunto de `brand/tokens/` | `scripts/tokens.py`, que corre `verificar.py` |

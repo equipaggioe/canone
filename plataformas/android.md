@@ -164,7 +164,7 @@ Estándares: los [fundamentos de pruebas](../fuentes/android/testing-fundamental
 
 ## Cumplimiento
 
-| Qué | Con qué |
+| Convención | Herramienta |
 |---|---|
 | Gradle, AGP y Kotlin | [`scripts/verificar.py`](../scripts/verificar.py) |
 | Objetivos, etiquetas y contraste | `enableAccessibilityChecks()` en las pruebas de UI |

@@ -76,5 +76,5 @@ Estándar: las entradas de [*Publishing a Flet app*](../fuentes/flet/publish.md)
 
 ## Cumplimiento
 
-| Qué | Con qué |
+| Convención | Herramienta |
 |---|---|

@@ -642,7 +642,7 @@ Contrato: [transversal.md](transversal.md#websocket).
 
 ## Cumplimiento
 
-| Qué | Con qué |
+| Convención | Herramienta |
 |---|---|
 | Todo campo de `Settings` es obligatorio | `test_settings_are_required` |
 | Las dependencias y los parámetros de una ruta con `Annotated` | ruff `FAST002` |
@@ -668,4 +668,4 @@ Contrato: [transversal.md](transversal.md#websocket).
 | `GET /api/health/events` dice el último evento de cualquier nivel | `test_events_tell_the_last_event` |
 | `GET /api/health/events` dice el disco de su carpeta | `test_events_tell_the_disk` |
 | `GET /api/health/event-log` no responde una fila mientras siga abierta una transacción anterior | `test_event_log_waits_for_an_open_transaction` |
-| Las reglas de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |
+| Las convenciones de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

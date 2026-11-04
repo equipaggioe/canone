@@ -130,7 +130,7 @@ Contrato: [transversal.md](transversal.md#tema).
 
 ## Cumplimiento
 
-| Qué | Con qué |
+| Convención | Herramienta |
 |---|---|
 | Gradle, AGP y Kotlin | [`scripts/verificar.py`](../scripts/verificar.py) |
 | La lista de flutter_lints y los tipos estrictos | `flutter analyze --fatal-infos` en CI |

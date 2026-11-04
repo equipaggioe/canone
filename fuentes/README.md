@@ -8,7 +8,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 - Al cambiar la versión de una tecnología, se vuelven a descargar sus fuentes.
 - Para actualizar un archivo se vuelve a descargar de su fuente; `git diff` muestra qué cambió.
 - Una fuente que ninguna página cita se borra.
-- La columna «Cita» dice si la fuente se cita `entera` o `por entradas` ([plataformas/README.md](../plataformas/README.md#qué-implica-citar)).
+- La columna «Cita» dice si la fuente se cita `entera` o `por entradas` ([plataformas/README.md](../plataformas/README.md#unidad-y-alcance-de-la-cita)).
 
 | Archivo | Fuente | Cita | Nota |
 |---|---|---|---|

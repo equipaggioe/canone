@@ -2,7 +2,7 @@
 
 Cada página reúne las convenciones de una tecnología o ámbito de implementación. `transversal.md` reúne las que deben cumplir conjuntamente varias piezas de un sistema.
 
-Para trabajar en una pieza se consulta su página y las secciones de `transversal.md` que esta enlaza. Las demás páginas no aplican.
+Para trabajar en una pieza se consulta su página, su página madre si la tiene y las secciones de `transversal.md` que esas páginas enlazan. Las demás páginas no aplican.
 
 ## Terminología
 
@@ -11,10 +11,13 @@ Para trabajar en una pieza se consulta su página y las secciones de `transversa
 - **Ámbito:** área de implementación que agrupa convenciones aplicables a distintas tecnologías o piezas.
 - **Convención:** criterio que determina cómo se construyen, organizan o integran las piezas de un sistema.
 - **Convención adoptada:** convención establecida por una fuente normativa externa que Canone incorpora y aplica dentro del alcance indicado.
-- **Convención propia:** convención establecida directamente por Canone porque ninguna fuente adoptada resuelve esa decisión, o porque es necesario elegir, precisar o modificar lo que establecen las fuentes.
+- **Convención propia:** convención establecida directamente por Canone porque ninguna fuente adoptada resuelve esa decisión, o porque es necesario elegir o modificar lo que establecen las fuentes.
 - **Fuente normativa:** documento externo que establece convenciones que pueden adoptarse.
-- **Material de referencia:** documentación auxiliar que aporta información, ejemplos o procedimientos, pero que no se adopta como fuente normativa.
+- **Material de referencia:** lista de nombres o valores que utiliza una convención, como un registro, sin ser una fuente normativa.
 - **Entrada:** elemento independiente de una fuente compuesta por elementos que pueden adoptarse individualmente.
+- **Parte:** título de una fuente con todo su contenido subordinado. Si el título se repite, se identifica también el título que lo contiene. Cuando un mismo apartado abarca asuntos de secciones distintas, puede identificarse el párrafo que corresponde a cada una.
+
+## Páginas
 
 | Página | Cubre |
 | :--- | :--- |
@@ -53,7 +56,7 @@ Una fuente debe cumplir los siete requisitos siguientes:
 4. **Acotada:** el contenido citado puede leerse completo al escribir el código al que aplica. Se exceptúan las fuentes de conocimiento general, como PEP 8 o SemVer, y aquellas cuyo cumplimiento verifica una herramienta de la sección «Cumplimiento».
 5. **De la versión en uso:** corresponde a la versión de la tecnología utilizada. La copia conservada en `fuentes/` fija el texto que se adopta.
 6. **Independiente:** las convenciones adoptadas no dependen de la infraestructura de quien publica la fuente.
-7. **Cubre:** una fuente citada completa debe resolver la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente lo que adoptan todas las páginas. En esos asuntos, las convenciones propias deben quedar en minoría. Lo que se contradice, se deja sin efecto o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no se cita y las convenciones que se aprovechen de ella se establecen como convenciones propias.
+7. **Cubre:** una fuente citada entera debe resolver la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente lo que adoptan todas las páginas. En esos asuntos, las convenciones propias deben quedar en minoría. Lo que se contradice, se deja sin efecto o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no se cita y las convenciones que se aprovechen de ella se establecen como convenciones propias.
 
 Si varias fuentes que cumplen los siete requisitos regulan el mismo asunto, se prefiere la que tenga mayor prioridad en la tabla. A igual prioridad, se elige la que cubra una parte mayor del asunto.
 
@@ -73,22 +76,20 @@ Este orden da preferencia a lo que publica quien define la tecnología:
 
 ### Adopción de fuentes
 
-Citar una fuente significa adoptar sus convenciones explícitas dentro del alcance citado. Se aplican como obligatorias, incluso cuando ninguna herramienta las hace cumplir.
+Citar una fuente significa adoptar sus convenciones explícitas dentro del alcance citado: lo que indica que se debe, se debería o no se debe hacer. Se aplican como obligatorias, incluso cuando ninguna herramienta las hace cumplir.
 
 #### Unidad y alcance de la cita
 
-- Una fuente se cita completa o por entradas:
-  - **Completa:** cuando presenta un enfoque o conjunto de convenciones sobre un asunto. Se adopta en su totalidad.
+- Una fuente se cita entera o por entradas:
+  - **Entera:** cuando presenta un enfoque o conjunto de convenciones sobre un asunto. Se adopta todo su contenido, menos lo que una página deje sin efecto.
   - **Por entradas:** cuando ofrece opciones independientes, como `systemd.exec` o `sshd_config`. Se citan las entradas utilizadas.
-- [fuentes/README.md](../fuentes/README.md) registra si cada fuente se cita completa o por entradas.
+- [fuentes/README.md](../fuentes/README.md) registra si cada fuente se cita entera o por entradas.
 - La unidad de cita es el contenido publicado en una URL propia, sin contar el fragmento de la dirección. Puede ser un documento, una referencia, una cheat sheet, un PEP o un capítulo de un estándar o manual. No es el organismo que lo publica ni necesariamente el manual completo.
-- Se adoptan todas las convenciones explícitas del contenido citado: lo que indica que se debe, se debería o no se debe hacer.
 
 #### Distribución entre secciones
 
 - Las obligaciones dirigidas a otro actor no se adoptan como convenciones de la pieza. Por ejemplo, no se trasladan las instrucciones dirigidas a quienes desarrollan una herramienta que el producto utiliza, como coturn, Uvicorn o un navegador, ni las dirigidas a la otra parte de un protocolo, como el servicio de push de Web Push. Sí se adoptan las opciones que la herramienta deja a quien la configura, como los destinos a los que coturn niega relevar.
-- Una fuente citada completa puede contener convenciones que correspondan a varias secciones. La cita completa aparece en una sola sección; las partes que rigen en otras secciones se indican después de «salvo». Cada sección identifica las partes que le corresponden, porque son las que deben consultarse al escribir el código de esa sección.
-- Una parte es un título de la fuente con todo su contenido subordinado. Si el título se repite, se identifica también el título que lo contiene. Cuando un mismo apartado abarca asuntos de secciones distintas, puede identificarse el párrafo que corresponde a cada una.
+- Una fuente citada entera puede contener convenciones que correspondan a varias secciones. La cita entera aparece en una sola sección. Cada sección identifica las partes que le corresponden, porque son las que deben consultarse al escribir el código de esa sección.
 - Cada parte que contiene convenciones rige en una sola sección, de cualquier página. Si una parte no se sigue, se deja sin efecto en la sección a la que pertenece y se indica la razón.
 - Dos partes citadas no deben regular lo mismo. Si dos fuentes entran en conflicto sobre un asunto, se elige la que mejor se adapta o se deja sin efecto la parte conflictiva de una de ellas.
 
@@ -96,16 +97,17 @@ Citar una fuente significa adoptar sus convenciones explícitas dentro del alcan
 
 - Los valores predeterminados de una herramienta no proceden de una fuente citada, pero rigen mientras la página no establezca otra cosa. Cambiarlos constituye una convención propia, salvo que una fuente citada exija el cambio.
 - Una convención propia no menciona fuentes que la página no cita, ni siquiera para contradecirlas. Incluye únicamente la convención y, cuando corresponda, su razón.
-- Una lista de nombres o valores que utiliza una convención no constituye una fuente por sí misma. La convención indica de dónde se obtiene la lista. Enlaza su copia en `fuentes/` si un programa de Canone toma valores de ella, y su URL pública si no.
+- Una convención que utiliza material de referencia indica de dónde lo obtiene. Enlaza su copia en `fuentes/` si un programa de Canone toma valores de él, y su URL pública si no.
 
 #### Enlaces y verificación de citas
 
 - Cada sección enlaza en `fuentes/` la copia del contenido que cita. Identifica cada parte por su título en cursiva o por su entrada entre comillas invertidas, antes o después del enlace. Por ejemplo: «las secciones *A* y *B* de [X]» o «[X], la sección *A*».
-- Cuando no se indican partes, la cita abarca la fuente completa. Las partes de esa fuente que rigen en otras secciones se indican después de «salvo».
+- La cita va en un párrafo propio que empieza por `Estándar:` o `Estándares:`; `scripts/verificar.py --canone` solo revisa esos párrafos.
+- Cuando no se indican partes, la cita abarca la fuente entera. Las partes de esa fuente que rigen en otras secciones se indican después de «salvo».
 - `scripts/verificar.py --canone` comprueba en CI que:
   - Cada fuente citada tenga su campo «Cita».
   - Las fuentes citadas por entradas indiquen las entradas adoptadas.
-  - Las fuentes citadas completas aparezcan como tales en una sola sección e indiquen con «salvo» las partes que rigen en otras.
+  - Las fuentes citadas enteras aparezcan como tales en una sola sección e indiquen con «salvo» las partes que rigen en otras.
   - Ninguna parte rija en más de una sección.
   - No se cite una lista de nombres como si fuera una fuente.
 
@@ -146,7 +148,7 @@ Las secciones de una página siguen este orden. Se incluyen únicamente los bloq
 6. **Entrega:** construcción, ejecución y preparación para el despliegue.
 7. **Cumplimiento:** herramientas que verifican o imponen las convenciones documentadas.
 
-#### Criterios de orden
+### Criterios de orden
 
 - En **Código** y **Arquitectura**, las secciones se ordenan según sus dependencias: primero se describe lo necesario para comprender las secciones posteriores.
 - Los temas de **Temas** se presentan en orden alfabético.
@@ -162,7 +164,7 @@ Se utiliza una tabla con estas columnas:
 | :--- | :--- |
 | Fuente, parte citada o convención propia que se hace cumplir | Herramienta que la verifica o impone |
 
-#### Criterios
+### Criterios
 
 - Cada fila debe referirse a una fuente, parte citada o convención propia ya documentada en la página. La tabla no introduce convenciones nuevas.
 - La herramienta debe hacer cumplir todo lo indicado en la primera columna.
@@ -170,21 +172,21 @@ Se utiliza una tabla con estas columnas:
 
 ## Alcance
 
-- Cada página hereda las convenciones de su página madre. No debe repetirlas; únicamente documenta las particularidades de su ámbito. Por ejemplo, `fastapi.md`, `flet.md` y `qt.md` heredan de `python.md`.
-- Cada tecnología o ámbito de implementación tiene una página que reúne sus convenciones.
+- Una página con página madre hereda sus convenciones. No debe repetirlas; únicamente documenta las particularidades de su ámbito. Por ejemplo, `fastapi.md`, `flet.md` y `qt.md` heredan de `python.md`.
+- Cada página dice solo lo que hace su pieza.
 - Las convenciones que deben cumplir conjuntamente varias piezas de un sistema se documentan en `transversal.md`. Las páginas correspondientes enlazan las secciones transversales que les aplican.
 - Cada página identifica las plantillas de `plantilla/` que se derivan de sus convenciones.
 - Las páginas no indican qué repositorios utilizan cada tecnología ni establecen cuándo elegir una plataforma sobre otra.
 
 ## Revisión
 
-Una revisión evalúa cada fuente citada, cada convención y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.
+Una revisión evalúa cada fuente citada, cada convención propia y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.
 
 El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
 
 | Elemento evaluado | Alternativa | Veredicto |
 | :--- | :--- | :--- |
-| Fuente y parte citada, convención o fila de cumplimiento, con su ubicación en la página | Lo que se consideró en su lugar, o «Ninguna» | «Se queda», «Cambia» o «Sale», con la razón y la evidencia |
+| Fuente y parte citada, convención propia o fila de cumplimiento, con su ubicación en la página | Lo que se consideró en su lugar, o «Ninguna» | «Se queda», «Cambia» o «Sale», con la razón y la evidencia |
 
 ### Evidencia
 
@@ -203,7 +205,7 @@ Las convenciones de una página se establecen a partir de las fuentes que adopta
 - **Las fuentes citadas** son la base para establecer las convenciones adoptadas.
 - **El código de los proyectos** sirve para identificar necesidades y casos de uso, pero no constituye una referencia normativa.
 - **Las páginas anteriores** sirven como antecedente, no como autoridad. Sus convenciones deben volver a contrastarse con las fuentes.
-- **Los ADR** documentan decisiones de proyectos, pero no sustituyen las fuentes ni establecen por sí mismos convenciones para una tecnología.
+- **Los ADR** documentan decisiones de Canone, pero no sustituyen las fuentes ni establecen por sí mismos convenciones para una tecnología.
 
 Al crear o revisar una página, las convenciones se determinan a partir de las fuentes seleccionadas. No se toma una página anterior como punto de partida para corregirla o conservar su contenido.
 
@@ -226,3 +228,4 @@ El fundamento de estos criterios está documentado en los siguientes ADR:
 - [ADR-0109](../adr/0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md)
 - [ADR-0113](../adr/0113-en-fuentes-solo-queda-la-lista-de-la-que-un-programa-toma-valores.md)
 - [ADR-0114](../adr/0114-lo-que-cumplen-juntas-varias-piezas-va-en-transversal-y-lo-demas-en-la-pagina-de-su-tecnologia.md)
+- [ADR-0115](../adr/0115-lo-que-se-cumple-es-una-convencion-adoptada-de-una-fuente-o-propia-de-canone.md)

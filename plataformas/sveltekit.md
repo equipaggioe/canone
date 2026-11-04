@@ -161,7 +161,7 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 
 ## Cumplimiento
 
-| Qué | Con qué |
+| Convención | Herramienta |
 |---|---|
 | Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |
 | Playwright 1.64.1 | [`scripts/verificar.py`](../scripts/verificar.py) |

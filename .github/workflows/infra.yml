@@ -2,7 +2,7 @@ name: Infra
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/server/**", "scripts/infra/**",
       "fuentes/iana/**", ".github/workflows/infra.yml"]
   pull_request:

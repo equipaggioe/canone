@@ -2,7 +2,7 @@ name: Fuentes
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths: ["plataformas/**", "fuentes/README.md", "scripts/verificar.py", ".github/workflows/fuentes.yml"]
   pull_request:
     paths: ["plataformas/**", "fuentes/README.md", "scripts/verificar.py", ".github/workflows/fuentes.yml"]

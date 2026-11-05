@@ -76,4 +76,6 @@ El workflow corre con cada push a `main`, con cada pull request y una vez por se
 
 Cada workflow da al token `contents: read`, y solo el job que sube archivos a un release pide `contents: write`: `ci.yml`, llamado desde `release.yml`, hereda sus permisos.
 
+Los workflows usan `actions/checkout@v7`, `actions/setup-python@v7`, `actions/setup-node@v7`, `actions/setup-java@v6`, `astral-sh/setup-uv@v10.3.3`, `pnpm/action-setup@v6`, `gradle/actions/setup-gradle@v6` y `subosito/flutter-action@v2`, y los contenedores `postgis/postgis:17-3.5` y `debian:trixie`, que corresponden a Debian 13.
+
 **Una regla de Canone que no rompe CI no es una regla, es una sugerencia.** Una convención nueva se agrega junto con lo que la verifica.

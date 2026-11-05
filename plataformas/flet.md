@@ -4,7 +4,7 @@ Una aplicación en Flet. Se suma a [python.md](python.md).
 
 ## Proyecto
 
-- Flet 1.0.5.
+- Flet 1.0.5, que construye con Flutter 3.44.8.
 
 ```text
 <pieza>/

@@ -7,11 +7,11 @@ Una superficie web con SvelteKit y UnoCSS.
 Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de SvelteKit.
 
 - Node es el 26.13.0, la última LTS, y solo se usa para construir. No es el de Debian 13, el 20.19.2: SvelteKit 3.1.1 pide `>=22.17`, y Vitest 5.1.0, `^22.12 || ^24 || >=26`.
-- Svelte 5.57.3, sv 1.3.0, UnoCSS 66.12.0, Vitest 5.1.0 y Paraglide 3.1.0.
+- Svelte 5.57.3, sv 1.3.0, Vite 8.3.5, `@sveltejs/vite-plugin-svelte` 7.3.1, UnoCSS 66.12.0, Vitest 5.1.0 y Paraglide 3.1.0.
 - SvelteKit es la 3.1.1, y su configuración va en `vite.config.ts`: rechaza `svelte.config.js` y el alias `$lib`, que pasa a `#lib`.
 - pnpm maneja las dependencias. No deja importar un paquete que no esté declarado.
 - `package.json` declara la versión exacta de pnpm en `packageManager`, `pnpm@12.16.1`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra.
-- TypeScript va en modo strict, y `svelte-check` lo revisa.
+- TypeScript es la 6.0.3, la que genera sv 1.3.0, y va en modo strict, y `svelte-check` lo revisa.
 - Prettier formatea, con `prettier-plugin-svelte` y líneas de 99, y ESLint revisa con `eslint-plugin-svelte`.
 
 ```text

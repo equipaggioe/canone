@@ -2,7 +2,7 @@
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-11-04
-- **Alcance:** `plataformas/`, `plantilla/` y `fuentes/`
+- **Alcance:** `plataformas/`, `repositorio.md`, `plantilla/` y `fuentes/`
 
 ## Contexto
 
@@ -21,7 +21,10 @@ en 6.11.
 3. Node es el 26.13.0, la última LTS, y deja de ser el de Debian 13, el 20.19.2. SvelteKit 3.1.1 pide
    `>=22.17`, y Vitest 5.1.0, `^22.12 || ^24 || >=26`. Node solo se usa para construir, así que no
    llega al servidor.
-4. `pyproject.toml` declara con `>=` la versión que fija la página, y `uv.lock` fija la exacta.
+4. TypeScript es la 6.0.3, y no la última, porque es la que genera sv 1.3.0. Flet construye con el
+   Flutter 3.44.8 que fija Flet 1.0.5, y no con el de `flutter.md`.
+5. Las versiones de las acciones y los contenedores de CI van en `repositorio.md`.
+6. `pyproject.toml` declara con `>=` la versión que fija la página, y `uv.lock` fija la exacta.
 
 ## Consecuencias
 

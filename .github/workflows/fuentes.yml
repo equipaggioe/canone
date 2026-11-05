@@ -12,5 +12,5 @@ jobs:
     runs-on: ubuntu-latest
     # ADR-0108: each part of a source rules in one section, as plataformas/README.md says.
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: python3 scripts/verificar.py --canone

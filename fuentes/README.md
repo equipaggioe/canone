@@ -8,7 +8,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 - Al cambiar la versión de una tecnología, se vuelven a descargar sus fuentes.
 - Para actualizar un archivo se vuelve a descargar de su fuente; `git diff` muestra qué cambió.
 - Una fuente que ninguna página cita se borra.
-- La columna «Cita» dice si la fuente se cita `entera` o `por entradas` ([plataformas/README.md](../plataformas/README.md#unidad-y-alcance-de-la-cita)).
+- La columna «Cita» dice si la fuente se cita `entera`, `por partes` o `por entradas` ([plataformas/README.md](../plataformas/README.md#unidad-y-alcance-de-la-cita)).
 
 | Archivo | Fuente | Cita | Nota |
 | :--- | :--- | :--- | :--- |
@@ -17,7 +17,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [python/asyncio-dev.rst](python/asyncio-dev.rst) | [origen](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/asyncio-dev.rst) | entera | Rama 3.13, la versión que usan las piezas: la de `main` nombra `InterpreterPoolExecutor`, que no existe en 3.13. |
 | [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | [origen](https://raw.githubusercontent.com/pypa/packaging.python.org/3b98ceeae062e84ae5527f850622b057878aa11e/source/specifications/pyproject-toml.rst) | por entradas |  |
 | [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | [origen](https://raw.githubusercontent.com/pypa/packaging.python.org/cdb4bf7ce8de9263fc3ec9e4c46117f49c4f72c5/source/specifications/dependency-groups.rst) | por entradas |  |
-| [pytest/goodpractices.rst](pytest/goodpractices.rst) | [origen](https://raw.githubusercontent.com/pytest-dev/pytest/9.2.0/doc/en/explanation/goodpractices.rst) | entera |  |
+| [pytest/goodpractices.rst](pytest/goodpractices.rst) | [origen](https://raw.githubusercontent.com/pytest-dev/pytest/9.2.0/doc/en/explanation/goodpractices.rst) | por partes |  |
 | [typing/best_practices.rst](typing/best_practices.rst) | [origen](https://raw.githubusercontent.com/python/typing/953e24d71aa6ea97f58852046fc355d11b564333/docs/reference/best_practices.rst) | entera |  |
 | [typing/modernizing.rst](typing/modernizing.rst) | [origen](https://raw.githubusercontent.com/python/typing/39164cd2c5b4e2608cb8b5d2fc8af9ae6f0c0fe8/docs/guides/modernizing.rst) | entera |  |
 | [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | [origen](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_8/doc/build/orm/extensions/asyncio.rst) | entera |  |
@@ -28,28 +28,28 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [postgresql/ddl.sgml](postgresql/ddl.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ddl.sgml) | entera |  |
 | [postgresql/syntax.sgml](postgresql/syntax.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/syntax.sgml) | por entradas |  |
 | [postgresql/indices.sgml](postgresql/indices.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml) | entera |  |
-| [postgresql/backup.sgml](postgresql/backup.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml) | entera |  |
+| [postgresql/backup.sgml](postgresql/backup.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml) | por partes |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | [origen](https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml) | entera |  |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | [origen](https://www.rfc-editor.org/rfc/rfc3339.txt) | entera |  |
-| [rfc/rfc5646.txt](rfc/rfc5646.txt) | [origen](https://www.rfc-editor.org/rfc/rfc5646.txt) | entera |  |
-| [rfc/rfc6749.txt](rfc/rfc6749.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6749.txt) | entera |  |
-| [rfc/rfc6585.txt](rfc/rfc6585.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6585.txt) | entera |  |
+| [rfc/rfc5646.txt](rfc/rfc5646.txt) | [origen](https://www.rfc-editor.org/rfc/rfc5646.txt) | por partes |  |
+| [rfc/rfc6749.txt](rfc/rfc6749.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6749.txt) | por partes |  |
+| [rfc/rfc6585.txt](rfc/rfc6585.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6585.txt) | por partes |  |
 | [rfc/rfc6901.txt](rfc/rfc6901.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6901.txt) | entera |  |
-| [rfc/rfc7493.txt](rfc/rfc7493.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7493.txt) | entera |  |
+| [rfc/rfc7493.txt](rfc/rfc7493.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7493.txt) | por partes |  |
 | [rfc/rfc7519.txt](rfc/rfc7519.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7519.txt) | entera |  |
 | [rfc/rfc7636.txt](rfc/rfc7636.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7636.txt) | entera |  |
-| [rfc/rfc8030.txt](rfc/rfc8030.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8030.txt) | entera |  |
+| [rfc/rfc8030.txt](rfc/rfc8030.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8030.txt) | por partes |  |
 | [rfc/rfc8252.txt](rfc/rfc8252.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8252.txt) | entera |  |
-| [rfc/rfc8292.txt](rfc/rfc8292.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8292.txt) | entera |  |
-| [rfc/rfc8656.txt](rfc/rfc8656.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8656.txt) | entera |  |
+| [rfc/rfc8292.txt](rfc/rfc8292.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8292.txt) | por partes |  |
+| [rfc/rfc8656.txt](rfc/rfc8656.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8656.txt) | por partes |  |
 | [rfc/rfc8725.txt](rfc/rfc8725.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8725.txt) | entera |  |
-| [rfc/rfc9110.txt](rfc/rfc9110.txt) | [origen](https://www.rfc-editor.org/rfc/rfc9110.txt) | entera |  |
+| [rfc/rfc9110.txt](rfc/rfc9110.txt) | [origen](https://www.rfc-editor.org/rfc/rfc9110.txt) | por partes |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | [origen](https://www.rfc-editor.org/rfc/rfc9457.txt) | entera |  |
 | [rfc/rfc9700.txt](rfc/rfc9700.txt) | [origen](https://www.rfc-editor.org/rfc/rfc9700.txt) | entera |  |
 | [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | [origen](https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md) | por entradas | Línea 3.1, la versión que genera FastAPI |
 | [google-aip/aip-0158.md](google-aip/aip-0158.md) | [origen](https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0158.md) | entera |  |
-| [w3c/csp3.bs](w3c/csp3.bs) | [origen](https://raw.githubusercontent.com/w3c/webappsec-csp/b1bad631b091cdca904138d6947a16b89edfd2b4/index.bs) | entera |  |
-| [w3c/webauthn-3.html](w3c/webauthn-3.html) | [origen](https://www.w3.org/TR/2026/REC-webauthn-3-20260825/) | entera | Recomendación del 2026-08-25 |
+| [w3c/csp3.bs](w3c/csp3.bs) | [origen](https://raw.githubusercontent.com/w3c/webappsec-csp/b1bad631b091cdca904138d6947a16b89edfd2b4/index.bs) | por partes |  |
+| [w3c/webauthn-3.html](w3c/webauthn-3.html) | [origen](https://www.w3.org/TR/2026/REC-webauthn-3-20260825/) | por partes | Recomendación del 2026-08-25 |
 | [w3c/webrtc.html](w3c/webrtc.html) | [origen](https://www.w3.org/TR/2025/REC-webrtc-20250313/) | por entradas | Recomendación del 2025-03-13 |
 | [w3c/push-api.html](w3c/push-api.html) | [origen](https://www.w3.org/TR/2026/WD-push-api-20261005/) | por entradas | Borrador de trabajo del 2026-10-05 |
 | [w3c/wcag22.html](w3c/wcag22.html) | [origen](https://www.w3.org/TR/2024/REC-WCAG22-20241212/) | entera |  |
@@ -60,7 +60,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [whatwg/notifications.bs](whatwg/notifications.bs) | [origen](https://raw.githubusercontent.com/whatwg/notifications/7dc3884173370fe9385d538de299e415a2b9613a/notifications.bs) | entera |  |
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | [origen](https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs) | entera |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | [origen](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf) | entera | Texto extraído del PDF |
-| [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | [origen](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf) | entera | Texto extraído del PDF |
+| [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | [origen](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf) | por partes | Texto extraído del PDF |
 | [iana/iana-ipv4-special-registry.csv](iana/iana-ipv4-special-registry.csv) | [origen](https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry-1.csv) |  | Descargado el 2026-10-27. Lista de direcciones, no fuente |
 | [iana/iana-ipv6-special-registry.csv](iana/iana-ipv6-special-registry.csv) | [origen](https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry-1.csv) |  | Descargado el 2026-10-27. Lista de direcciones, no fuente |
 | [fhs/fhs-3.0.txt](fhs/fhs-3.0.txt) | [origen](https://www.debian.org/doc/packaging-manuals/fhs/fhs-3.0.txt) | por entradas | Versión 3.0, la que sigue Debian 13. Copia de Debian: refspecs.linuxfoundation.org rechaza la descarga |
@@ -72,9 +72,9 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/HTTP_Headers_Cheat_Sheet.md) | entera |  |
 | [owasp/Logging.md](owasp/Logging.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Cheat_Sheet.md) | entera |  |
 | [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md) | por entradas |  |
-| [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md) | entera |  |
+| [owasp/Third_Party_Payment_Gateway_Integration.md](owasp/Third_Party_Payment_Gateway_Integration.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Third_Party_Payment_Gateway_Integration_Cheat_Sheet.md) | por partes |  |
 | [owasp/File_Upload.md](owasp/File_Upload.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/File_Upload_Cheat_Sheet.md) | entera |  |
-| [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/WebSocket_Security_Cheat_Sheet.md) | entera |  |
+| [owasp/WebSocket_Security.md](owasp/WebSocket_Security.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/WebSocket_Security_Cheat_Sheet.md) | por partes |  |
 | [valkey/admin.md](valkey/admin.md) | [origen](https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md) | entera | Valkey 8.1, la versión de Debian 13 |
 | [valkey/security.md](valkey/security.md) | [origen](https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md) | entera | Valkey 8.1, la versión de Debian 13 |
 | [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | [origen](https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md) | entera |  |
@@ -86,7 +86,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [svelte/effect.md](svelte/effect.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/04-$effect.md) | entera |  |
 | [svelte/props.md](svelte/props.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/05-$props.md) | entera |  |
 | [unocss/presets-wind4.md](unocss/presets-wind4.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/presets/wind4.md) | entera |  |
-| [unocss/integrations-vite.md](unocss/integrations-vite.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/integrations/vite.md) | entera |  |
+| [unocss/integrations-vite.md](unocss/integrations-vite.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/integrations/vite.md) | por partes |  |
 | [paraglide/basics.md](paraglide/basics.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/bad4564fbbb0c4d204b8621fdcd5aac5c6ceb899/docs/basics.md) | entera |  |
 | [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/5ed1745276180e3cb481d5e8cefd7eae3a9d8ce6/docs/compiling-messages.md) | entera |  |
 | [paraglide/strategy.md](paraglide/strategy.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/bad4564fbbb0c4d204b8621fdcd5aac5c6ceb899/docs/strategy.md) | entera |  |
@@ -106,7 +106,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | [origen](https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/flutter_secure_storage-v11.2.0/flutter_secure_storage/README.md) | entera |  |
 | [pub/provider/README.md](pub/provider/README.md) | [origen](https://raw.githubusercontent.com/rrousselGit/provider/provider-v6.1.5+1/packages/provider/README.md) | entera |  |
 | [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | [origen](https://osmfoundation.org/wiki/Licence/Attribution_Guidelines) | entera | Página web convertida a Markdown |
-| [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | [origen](https://raw.githubusercontent.com/JetBrains/kotlin-web-site/f51dacdc4420c6690ad88d513caf3c1a0a25b75f/docs/topics/coding-conventions.md) | entera |  |
+| [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | [origen](https://raw.githubusercontent.com/JetBrains/kotlin-web-site/f51dacdc4420c6690ad88d513caf3c1a0a25b75f/docs/topics/coding-conventions.md) | por partes |  |
 | [android/architecture.md](android/architecture.md) | [origen](https://developer.android.com/topic/architecture) | entera | Página web convertida a Markdown |
 | [android/architecture-recommendations.md](android/architecture-recommendations.md) | [origen](https://developer.android.com/topic/architecture/recommendations) | entera | Página web convertida a Markdown |
 | [android/ui-layer.md](android/ui-layer.md) | [origen](https://developer.android.com/topic/architecture/ui-layer) | entera | Página web convertida a Markdown |
@@ -120,7 +120,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [android/localization.md](android/localization.md) | [origen](https://developer.android.com/guide/topics/resources/localization) | entera | Página web convertida a Markdown |
 | [android/accessibility-apps.md](android/accessibility-apps.md) | [origen](https://developer.android.com/guide/topics/ui/accessibility/apps) | entera | Página web convertida a Markdown |
 | [android/accessibility-principles.md](android/accessibility-principles.md) | [origen](https://developer.android.com/guide/topics/ui/accessibility/principles) | entera | Página web convertida a Markdown |
-| [android/sms-retriever-request.md](android/sms-retriever-request.md) | [origen](https://developers.google.com/identity/sms-retriever/request) | entera | Página web convertida a Markdown |
+| [android/sms-retriever-request.md](android/sms-retriever-request.md) | [origen](https://developers.google.com/identity/sms-retriever/request) | por partes | Página web convertida a Markdown |
 | [android/credential-manager-prerequisites.md](android/credential-manager-prerequisites.md) | [origen](https://developer.android.com/identity/credential-manager/prerequisites) | entera | Página web convertida a Markdown |
 | [android/create-passkeys.md](android/create-passkeys.md) | [origen](https://developer.android.com/identity/passkeys/create-passkeys) | entera | Página web convertida a Markdown |
 | [android/sign-in-with-passkeys.md](android/sign-in-with-passkeys.md) | [origen](https://developer.android.com/identity/passkeys/sign-in-with-passkeys) | entera | Página web convertida a Markdown |

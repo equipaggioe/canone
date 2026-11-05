@@ -492,7 +492,7 @@ def metaspace_lint(proyecto: Path, nombre: str) -> list[str]:
     return [f"plataformas/android.md: {nombre}/gradle.properties no lleva {METASPACE}"]
 
 
-# ADR-0108 y ADR-0109: una fuente se cita entera o por entradas, cada parte de una fuente entera
+# ADR-0108, ADR-0109 y ADR-0121: una fuente se cita entera, por partes o por entradas, cada parte
 # rige en una sola sección, y una lista de nombres no se cita (ADR-0095). Una cita nombra sus
 # partes antes del enlace, como «las secciones *A* y *B* de [X]», o después, como «[X], la sección
 # *A*»; sin partes, la cita es de la fuente entera, y «salvo» nombra lo que rige en otro lado.
@@ -566,7 +566,7 @@ def reparto_de_fuentes() -> list[str]:
     columnas = cita_de_fuentes()
     for fuente, citas in sorted(citas_por_fuente().items()):
         cita = columnas.get(fuente, "")
-        if cita not in ("entera", "por entradas"):
+        if cita not in ("entera", "por partes", "por entradas"):
             motivo = "es una lista de nombres" if "no fuente" in cita else "no tiene «Cita»"
             fallas.extend(f"ADR-0108: {lugar} cita {fuente}, que {motivo}" for lugar, _, _ in citas)
             continue
@@ -576,12 +576,16 @@ def reparto_de_fuentes() -> list[str]:
                 f"ADR-0108: {lugar} cita {fuente} sin sus entradas" for lugar in enteras
             )
             continue
-        if len(enteras) > 1:
+        if cita == "por partes":
+            fallas.extend(f"ADR-0121: {lugar} cita {fuente} sin sus partes" for lugar in enteras)
+        elif not enteras:
+            fallas.append(f"ADR-0121: {fuente} es `entera`, y solo se cita por partes")
+        if cita == "entera" and len(enteras) > 1:
             fallas.append(f"ADR-0108: {fuente} se cita entera en {' y '.join(enteras)}")
         sin_salvedad = [
             lugar for lugar, partes, salvedad in citas if not nombra_partes(partes) and not salvedad
         ]
-        if sin_salvedad and len(citas) > len(enteras):
+        if cita == "entera" and sin_salvedad and len(citas) > len(enteras):
             fallas.append(
                 f"ADR-0108: {fuente} se cita entera en {sin_salvedad[0]} sin decir qué rige"
                 " en otra sección"

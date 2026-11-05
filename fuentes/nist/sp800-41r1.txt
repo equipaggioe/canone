@@ -408,44 +408,44 @@ be part of an overall security program that also includes products such as antim
 Keep in mind that the expression "all rules are meant to be broken" applies when building firewalls. While firewall implementers should keep the above rules in mind during planning, every network and organization has unique requirements and idiosyncrasies that could require unique solutions.
 Organizations should consider the following when purchasing and implementing a firewall solution:
  Security Capabilities
-­ Which areas of the organization need to be protected (the perimeter, internal departments, remote
+Â­ Which areas of the organization need to be protected (the perimeter, internal departments, remote
 office, individual hosts, specific services, mobile clients, etc.)?
-­ Which types of firewall technologies will best address the kinds of traffic that need to be
+Â­ Which types of firewall technologies will best address the kinds of traffic that need to be
 protected (packet filtering, stateful inspection, application firewall, application-proxy gateway, etc.)?
-­ What additional security features--such as intrusion detection capabilities, VPNs, and content
+Â­ What additional security features--such as intrusion detection capabilities, VPNs, and content
 filtering--does the firewall need to support?
  Management
-­ Which protocols does the firewall support for remote management, such as HTTP-over-SSL,
+Â­ Which protocols does the firewall support for remote management, such as HTTP-over-SSL,
 SSH, and access over a serial cable?
-­ Are any of the firewall's remote management protocols acceptable for use, according to the
+Â­ Are any of the firewall's remote management protocols acceptable for use, according to the
 organization's policies?
-­ Can remote management be restricted to certain firewall interfaces and source IP addresses, such
+Â­ Can remote management be restricted to certain firewall interfaces and source IP addresses, such
 as those on a particular internal network?
-­ Does the firewall support centralized management for multiple devices (not necessarily just
+Â­ Does the firewall support centralized management for multiple devices (not necessarily just
 firewalls) from the same vendor?
-­ If centralized management is available, is it performed by a vendor-specific application or can it
+Â­ If centralized management is available, is it performed by a vendor-specific application or can it
 be controlled by other applications?
  Performance (generally for network firewalls only)
-­ What amount of throughput, maximum simultaneous connections, connections per second, and
+Â­ What amount of throughput, maximum simultaneous connections, connections per second, and
 latency requirements must be met to prevent the firewall from being a bottleneck for network access, for both current and future traffic needs?
 5-2
 
 GUIDELINES ON FIREWALLS AND FIREWALL POLICY
-­ Are load balancing and failover functionally required to ensure high availability? ­ Is hardware-based vs. software-based firewall preference a consideration?
+Â­ Are load balancing and failover functionally required to ensure high availability? Â­ Is hardware-based vs. software-based firewall preference a consideration?
  Integration
-­ Will the firewall require specific hardware to properly integrate within the organization's network
+Â­ Will the firewall require specific hardware to properly integrate within the organization's network
 infrastructure (specific power capabilities, specific type of network interface card [NIC], specific backup device, etc.)?
-­ Does the firewall need to be compatible with other devices on the network that provide security
+Â­ Does the firewall need to be compatible with other devices on the network that provide security
 or other services?
-­ Does the firewall's logging interoperate with existing log management systems? ­ Will installing a firewall require changes to other areas of the network?
+Â­ Does the firewall's logging interoperate with existing log management systems? Â­ Will installing a firewall require changes to other areas of the network?
  Physical Environment (generally a consideration for network firewalls, although it may also apply to the centralized components of host-based firewall implementations)
-­ Where will the firewall be physically located to ensure physical security and protection from
+Â­ Where will the firewall be physically located to ensure physical security and protection from
 disasters?
-­ Is there adequate shelf or rack space at the physical location where the firewall will be placed? ­ Will additional power, backup power, air conditioning, and/or network connections be required at
+Â­ Is there adequate shelf or rack space at the physical location where the firewall will be placed? Â­ Will additional power, backup power, air conditioning, and/or network connections be required at
 the physical location?  Personnel
-­ Who will be responsible for managing the firewall? ­ Will system administrators require training before the firewall is deployed?
+Â­ Who will be responsible for managing the firewall? Â­ Will system administrators require training before the firewall is deployed?
  Future Needs
-­ Will the firewall meet the future needs of the organization (plans to move to IPv6, anticipated
+Â­ Will the firewall meet the future needs of the organization (plans to move to IPv6, anticipated
 bandwidth requirements, compliance with regulations expected to be implemented, etc.)? Other items to consider when purchasing and implementing host-based and personal firewalls include:
  Do workstations or servers meet the minimum system requirements of the firewall being evaluated?  Will the firewall be compatible with other security software on the workstation or server (e.g.,
 antimalware software)?  Can the firewall be centrally managed and allow policies that enforce the organization's security
@@ -638,7 +638,7 @@ Other Technical Resource Sites and Documents
 
 Resource Name Achieving Defense-in-Depth with Internal Firewalls
 Best Practices for Managing Firewall Logs
-Defense in Depth: Foundations for Secure and Resilient IT Enterprises Firewall Evolution ­ Deep Packet Inspection How do Circuit-Level Gateways and Application-Level Gateways Differ? National Vulnerability Database The Perils of Deep Packet Inspection Transparent, Bridging Firewall Devices The Web Services Advisor: XML Firewalls
+Defense in Depth: Foundations for Secure and Resilient IT Enterprises Firewall Evolution Â­ Deep Packet Inspection How do Circuit-Level Gateways and Application-Level Gateways Differ? National Vulnerability Database The Perils of Deep Packet Inspection Transparent, Bridging Firewall Devices The Web Services Advisor: XML Firewalls
 
 Uniform Resource Locator (URL)
 http://www.sans.org/reading_room/whitepapers/firewalls/7 97.php?portal=a4d358dbd051422110d917753a0ebb7c

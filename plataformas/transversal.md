@@ -93,7 +93,7 @@ Estándar: de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493, las secciones 2.1 
 
 ## Paginación
 
-Estándar: la [AIP-158](../fuentes/google-aip/aip-0158.md) de Google, *Pagination*.
+Estándar: [*Pagination*](../fuentes/google-aip/aip-0158.md), la AIP-158 de Google.
 
 - La respuesta es `{"items": [...], "nextPageToken": "..."}`, y el campo `nextPageToken` siempre está.
 - `pageSize` vale 50 por defecto y 100 como máximo.

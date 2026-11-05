@@ -81,10 +81,11 @@ Citar una fuente significa adoptar sus convenciones explícitas dentro del alcan
 
 #### Unidad y alcance de la cita
 
-- Una fuente se cita entera o por entradas:
+- Una fuente se cita entera, por partes o por entradas:
   - **Entera:** cuando presenta un enfoque o conjunto de convenciones sobre un asunto. Se adopta todo su contenido, menos lo que una página deje sin efecto.
+  - **Por partes:** cuando solo algunas de sus secciones o requisitos aplican a la pieza. Se adoptan únicamente las partes nombradas.
   - **Por entradas:** cuando ofrece opciones independientes, como `systemd.exec` o `sshd_config`. Se citan las entradas utilizadas.
-- [fuentes/README.md](../fuentes/README.md) registra si cada fuente se cita entera o por entradas.
+- [fuentes/README.md](../fuentes/README.md) registra si cada fuente se cita entera, por partes o por entradas.
 - La unidad de cita es el contenido publicado en una URL propia, sin contar el fragmento de la dirección. Puede ser un documento, una referencia, una cheat sheet, un PEP o un capítulo de un estándar o manual. No es el organismo que lo publica ni necesariamente el manual completo.
 
 #### Distribución entre secciones
@@ -107,7 +108,8 @@ Citar una fuente significa adoptar sus convenciones explícitas dentro del alcan
 - Cuando no se indican partes, la cita abarca la fuente entera. Las partes de esa fuente que rigen en otras secciones se indican después de «salvo».
 - `scripts/verificar.py --canone` comprueba en CI que:
   - Cada fuente citada tenga su campo «Cita».
-  - Las fuentes citadas por entradas indiquen las entradas adoptadas.
+  - Las fuentes citadas por partes o por entradas indiquen en cada cita lo que adoptan.
+  - Las fuentes marcadas como enteras tengan una cita de la fuente entera.
   - Las fuentes citadas enteras aparezcan como tales en una sola sección e indiquen con «salvo» las partes que rigen en otras.
   - Ninguna parte rija en más de una sección.
   - No se cite una lista de nombres como si fuera una fuente.

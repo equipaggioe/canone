@@ -11,7 +11,7 @@ Estándares: las entradas de [*pyproject.toml specification*](../fuentes/pypa/py
 - uv es la 0.13.7 en toda pieza, en el CI, en la máquina de quien desarrolla y en el servidor: `required-version = "==0.13.7"` en `[tool.uv]`. El CI la instala con `setup-uv` y `version-file`, y el servidor, con `uv.py` de [despliegue.md](despliegue.md#máquina).
 - El bloqueo es `uv.lock`, en git, y se instala con `uv sync --locked`.
 - El backend de construcción es `uv_build` 0.13.7, con `<0.14` como tope.
-- pytest 9.2.0, ruff 0.17.3, Pyrefly 1.4.0, deptry 0.25.1, pip-audit 2.10.1, Pydantic 2.14.2 y httpx 0.28.1.
+- pytest 9.2.0, ruff 0.17.3, Pyrefly 1.4.0, deptry 0.25.1, pip-audit 2.10.1, Pydantic 2.13.4 y httpx 0.28.1.
 - `pyproject.toml` declara con `>=` la versión que fija cada página, y `uv.lock` fija la exacta.
 
 Estándar del layout: la sección *Choosing a test layout* de las [buenas prácticas de pytest](../fuentes/pytest/goodpractices.rst).

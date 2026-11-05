@@ -124,6 +124,7 @@ Estándar: las entradas de [pyside6-deploy](../fuentes/pyside6/deployment-pyside
 
 - `pysidedeploy.spec` va en git, con rutas relativas a `desktop/`, y la app se empaqueta solo en CI. Cada corrida reescribe en el archivo las rutas absolutas de la máquina.
 - `icon.png` mide 1024 × 1024 px, el mayor tamaño que usa macOS, y es el único icono: Nuitka lo convierte al formato de cada sistema. Contradice `pyside6-deploy`, que pide `.ico` en Windows y `.icns` en macOS: un archivo sirve a todos.
+- La carpeta `dist/`, el `exec_directory` del `.spec`, existe antes de ejecutar `pyside6-deploy`: no la crea, y al copiar el binario falla con `FileNotFoundError`. En CI, `mkdir -p dist`.
 - Nuitka con el extra `onefile`, imageio y, en Linux, patchelf van en el grupo `deploy`, y el `packages` del `.spec` queda vacío. `pyside6-deploy` instala sus paquetes con pip, que un venv de uv no trae.
 
 ## Cumplimiento

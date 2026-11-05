@@ -5,6 +5,7 @@ Una aplicación en Flet. Se suma a [python.md](python.md).
 ## Proyecto
 
 - Flet 1.0.5, que construye con Flutter 3.44.8.
+- Pydantic va exacto, `pydantic==2.13.4`, y no con `>=`: `flet build apk` ignora `uv.lock` e instala con pip desde el índice de Flet para Android, que solo trae `pydantic-core` 2.46.x. Pydantic 2.14 pide la 2.50 y la compilación falla al resolver. Contradice [python.md](python.md), que fija 2.13.4 con `>=`.
 
 ```text
 <pieza>/

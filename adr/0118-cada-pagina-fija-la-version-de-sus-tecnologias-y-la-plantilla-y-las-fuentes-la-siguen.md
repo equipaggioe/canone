@@ -22,7 +22,8 @@ en 6.11.
    `>=22.17`, y Vitest 5.1.0, `^22.12 || ^24 || >=26`. Node solo se usa para construir, así que no
    llega al servidor.
 4. TypeScript es la 6.0.3, y no la última, porque es la que genera sv 1.3.0. Flet construye con el
-   Flutter 3.44.8 que fija Flet 1.0.5, y no con el de `flutter.md`.
+   Flutter 3.44.8 que fija Flet 1.0.5, y no con el de `flutter.md`. Pydantic es la 2.13.4 y no la
+   2.14.x, porque el índice de Flet para Android solo trae `pydantic-core` 2.46.x.
 5. Las versiones de las acciones y los contenedores de CI van en `repositorio.md`.
 6. `pyproject.toml` declara con `>=` la versión que fija la página, y `uv.lock` fija la exacta.
 

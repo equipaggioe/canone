@@ -364,7 +364,7 @@ PYPROJECT = {
     "opentelemetry-sdk": ">=1.45.2",
     "patchelf": ">=0.19.3.0",
     "pip-audit": ">=2.10.1",
-    "pydantic": ">=2.14.2",
+    "pydantic": ">=2.13.4",
     "pydantic-settings": ">=2.16.2",
     "pyrefly": ">=1.4.0",
     "pyside6": ">=6.12.0",
@@ -429,9 +429,13 @@ def versiones_pyproject(repo: Path) -> list[str]:
             coincide = REQUISITO.match(requisito)
             nombre = coincide[1].lower().replace("_", "-")
             declarado = coincide[2].replace(" ", "")
-            if nombre in PYPROJECT and declarado != PYPROJECT[nombre]:
+            esperado = PYPROJECT.get(nombre)
+            # plataformas/flet.md: flet build ignora uv.lock, así que Pydantic va exacto.
+            if nombre == "pydantic" and "flet" in str(relativo.parent):
+                esperado = "==" + esperado.removeprefix(">=")
+            if nombre in PYPROJECT and declarado != esperado:
                 fallas.append(
-                    f"plataformas/: {relativo.as_posix()} declara {nombre}{declarado}, no {PYPROJECT[nombre]}"
+                    f"plataformas/: {relativo.as_posix()} declara {nombre}{declarado}, no {esperado}"
                 )
     return fallas
 

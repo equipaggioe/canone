@@ -47,10 +47,13 @@ Plantilla: [plantilla/qt/](../plantilla/qt/).
 
 ## PySide6
 
-Estándares: las [consideraciones](../fuentes/pyside6/considerations.rst), la [migración desde PySide2](../fuentes/pyside6/porting_from2.rst) y [señales y slots](../fuentes/pyside6/signals_and_slots.rst) de PySide6, y [PEP 698](../fuentes/python/pep-0698.rst).
+Estándar: las [consideraciones](../fuentes/pyside6/considerations.rst) de PySide6.
 
 - La API de Qt se usa con sus nombres originales. Los stubs de PySide6 y la documentación de Qt usan esos nombres.
-- Todo método que sobrescribe otro lleva `@override`. Endurece PEP 698, que lo deja opcional: un `closeEvent` mal escrito nunca se llama y nada avisa.
+- Todo método que sobrescribe otro lleva `@override`: un `closeEvent` mal escrito nunca se llama y nada avisa.
+- Todo método conectado a una señal lleva `@Slot`: sin él, cada conexión agrega el método al `QMetaObject` en tiempo de ejecución. [PySide6 6.12.0](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/tutorials/basictutorial/signals_and_slots.rst)
+- Un slot no es privado, con prefijo `__`: obliga a búsquedas en tiempo de ejecución. [PySide6 6.12.0](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/tutorials/basictutorial/signals_and_slots.rst)
+- Las señales con tipos distintos llevan nombres distintos. [PySide6 6.12.0](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/tutorials/basictutorial/signals_and_slots.rst)
 
 ## Widgets y diálogos
 
@@ -81,11 +84,10 @@ Estándar: las entradas que se usan de [QSettings](../fuentes/qt/qsettings.qdoc)
 
 ## Idiomas
 
-Estándar: las [traducciones](../fuentes/pyside6/translations.rst) de PySide6.
-
 Contrato: [transversal.md](transversal.md#idiomas).
 
 - Los textos usan Qt Linguist. Un solo mecanismo traduce la app y los diálogos propios de Qt.
+- Los `.qm` van en `resources.qrc`: no se distribuyen aparte. [PySide6 6.12.0](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/tutorials/basictutorial/translations.rst)
 - Los textos se extraen con `pyside6-lupdate -extensions py src/app`, que recorre todo el paquete. `pyside6-project lupdate` solo lee los archivos que se listan a mano, y uno que falte se queda sin traducir.
 - Los `.qm` y `rc_resources.py` se generan y no van en git. Salen de los `.ts` y del `.qrc`; en git quedarían desfasados.
 
@@ -99,19 +101,19 @@ Estándares: de Qt, las entradas que se usan de [QNetworkAccessManager](../fuent
 
 > **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
 
-Estándares: [*Qt Style Sheets*](../fuentes/qt/stylesheet.qdoc), su [sintaxis](../fuentes/qt/stylesheet-syntax.qdoc), la [personalización](../fuentes/qt/stylesheet-customizing.qdoc), y las entradas que se usan de la [referencia](../fuentes/qt/stylesheet-reference.qdoc).
+Estándar: las entradas que se usan de la [referencia de *Qt Style Sheets*](../fuentes/qt/stylesheet-reference.qdoc).
 
 Contrato: [transversal.md](transversal.md#tema).
 
 - La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada desde `theme.py`. Lo que la hoja no define lo dibuja el estilo de cada sistema; Fusion lo iguala.
 - La paleta de la `QApplication` sale de `palette()` con `LIGHT` o `DARK`, generados en `colors.py`, según `QStyleHints.colorScheme()`, y se vuelve a aplicar con `colorSchemeChanged`. El evento `ApplicationPaletteChange` no sirve: la app lo provoca al aplicar su paleta.
 - Los tamaños van en `theme.py`, sin tamaños literales fuera de él.
+- Una hoja de estilo que incluye datos que la app no controla se trata como una ruta no confiable: `url()` puede leer cualquier archivo local. [Qt 6.12.0](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet.qdoc)
+- En un widget complejo, como `QComboBox` o `QScrollBar`, personalizar una propiedad o un sub-control obliga a personalizar todos. [Qt 6.12.0](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet-customizing.qdoc)
 
 Plantilla: `theme.py` es un punto de partida; `tests/test_theme.py` es canónico y se copia sin editar.
 
 ## Pruebas
-
-Estándares: la [QApplication](../fuentes/pytest-qt/qapplication.rst), entera, y las [señales](../fuentes/pytest-qt/signals.rst), por las entradas que se usan, de pytest-qt.
 
 - En CI, las pruebas corren con `QT_QPA_PLATFORM=offscreen`, sin pantalla.
 - Una prueba registra cada widget con `qtbot.addWidget` y lo maneja con sus propios métodos, como `setText` o `setCurrentIndex`, y no con los clics de `qtbot`: `qtbot` cierra lo que se registra, y el método del widget no depende de dónde cae un clic.

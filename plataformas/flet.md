@@ -34,9 +34,8 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándares: [*Encrypting sensitive data*](../fuentes/flet/encrypting-sensitive-data.md), entero, y la referencia de [SecureStorage](../fuentes/flet/securestorage.md), por las entradas que se usan, de Flet.
-
-- Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén cifrado del sistema; cifrar a mano obliga a guardar la clave en algún lado.
+- Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén cifrado del sistema; cifrar a mano obliga a guardar la clave en algún lado. [Flet 1.0.5](https://raw.githubusercontent.com/flet-dev/flet/v1.0.5/website/docs/services/securestorage/index.md)
+- Un secreto no va en el código fuente. [Flet 1.0.5](https://raw.githubusercontent.com/flet-dev/flet/v1.0.5/website/docs/cookbook/encrypting-sensitive-data.md)
 
 ## Idiomas
 

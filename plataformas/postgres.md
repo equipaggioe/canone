@@ -12,7 +12,7 @@ Estándar: la entrada *Identifiers and Key Words* de [*SQL Syntax*](../fuentes/p
 
 ## Clave primaria
 
-Estándares: de PostgreSQL 17, la versión de Debian 13, las entradas de los tipos numéricos y de `uuid` de [*Data Types*](../fuentes/postgresql/datatype.sgml), la sección *Identity Columns* de [*Data Definition*](../fuentes/postgresql/ddl.sgml) y la entrada de `gen_random_uuid()` de las [funciones de UUID](../fuentes/postgresql/func.sgml).
+Estándares: de PostgreSQL 17, la versión de Debian 13, las entradas de los tipos numéricos y de `uuid` de [*Data Types*](../fuentes/postgresql/datatype.sgml) y la sección *Identity Columns* de [*Data Definition*](../fuentes/postgresql/ddl.sgml).
 
 - `text` con un `CHECK` de su formato: en una tabla de valores que codifica un estándar, como los países de ISO 3166-1, con su código como clave. Es el mismo en todos los entornos y se lee sin unir tablas.
 - `smallint` identity: en una lista propia del equipo, igual para todos los usuarios, cuyo tope cabe en `smallint`.

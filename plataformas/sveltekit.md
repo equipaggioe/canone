@@ -49,13 +49,16 @@ Estándar: [*Page options*](../fuentes/sveltekit/page-options.md) de SvelteKit.
 
 ## Estado
 
-Estándares: [*State management*](../fuentes/sveltekit/state-management.md) de SvelteKit y, de Svelte, [$state](../fuentes/svelte/state.md), [$derived](../fuentes/svelte/derived.md), [$effect](../fuentes/svelte/effect.md), [$props](../fuentes/svelte/props.md) y [$bindable](../fuentes/svelte/bindable.md).
+Estándares: [*State management*](../fuentes/sveltekit/state-management.md) de SvelteKit y, de Svelte, [$effect](../fuentes/svelte/effect.md) y [$props](../fuentes/svelte/props.md).
 
 - El estado compartido son clases con `$state` en módulos `.svelte.ts` de `src/lib/state/`.
+- Un módulo no exporta directamente un `$state` que se reasigna: quien lo importa recibe el contenedor y no el valor. [Svelte 5.57.3](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/02-$state.md)
+- Un proxy propio envuelve el objeto después de `$state`. [Svelte 5.57.3](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/02-$state.md)
+- La expresión de `$derived` no tiene efectos secundarios. [Svelte 5.57.3](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/03-$derived.md)
+- `$bindable` se usa poco: abusar de él vuelve impredecible el flujo de datos. [Svelte 5.57.3](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/06-$bindable.md)
+- Con `bind:`, el padre no pasa `undefined` a una prop `$bindable` con valor por defecto. [Svelte 5.57.3](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/06-$bindable.md)
 
 ## Accesibilidad
-
-Estándar: la opción `--fail-on-warnings` de [sv check](../fuentes/svelte/sv-check.md) de Svelte.
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
@@ -63,11 +66,10 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Código por SMS
 
-Estándar: [*WebOTP API*](../fuentes/wicg/webotp.bs) de WICG.
-
 Contrato: [transversal.md](transversal.md#código-por-sms).
 
 - El campo del código lleva `autocomplete="one-time-code"`: Safari no implementa WebOTP y llena el código por ese atributo.
+- Donde el navegador implementa WebOTP, el código se pide con `navigator.credentials.get` y `otp: { transport: ['sms'] }`. [WebOTP](https://raw.githubusercontent.com/WICG/web-otp/7c4a606a085b44d9de75001f7e801f07a4d85f8c/index.bs)
 
 ## CSP
 
@@ -79,11 +81,12 @@ Estándares: de OWASP, el [*Content Security Policy Cheat Sheet*](../fuentes/owa
 
 ## Estilos
 
-Estándares: de UnoCSS, el [archivo de configuración](../fuentes/unocss/guide-config-file.md) y el [preset Wind4](../fuentes/unocss/presets-wind4.md), enteros; el modo `global` y las secciones *Svelte* y *Sveltekit* del [plugin de Vite](../fuentes/unocss/integrations-vite.md); y las entradas `presets`, `preflights` y `theme` de la [configuración](../fuentes/unocss/config-index.md) y del [tema](../fuentes/unocss/config-theme.md).
+Estándares: de UnoCSS, el [preset Wind4](../fuentes/unocss/presets-wind4.md), entero, y el modo `global` y las secciones *Svelte* y *Sveltekit* del [plugin de Vite](../fuentes/unocss/integrations-vite.md).
 
 Contrato: [transversal.md](transversal.md#tema).
 
 - El preset es Wind4. Trae el reset y genera las variables CSS del tema.
+- La configuración va en `uno.config.ts`, y no en `vite.config.ts`: funciona mejor con el editor y las integraciones. [UnoCSS 66.12.0](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/guide/config-file.md)
 - Los tokens van en el `theme` de `uno.config.ts`, sin tamaños literales fuera de él. Los colores son `colors`, generado en `src/lib/colors.ts`, y sus variables CSS entran como preflight desde `colorsCss`, con el modo oscuro de `prefers-color-scheme`.
 - Las clases de utilidad se escriben en archivos `.svelte`. UnoCSS no lee `.ts` por defecto.
 
@@ -117,9 +120,9 @@ Contrato: [transversal.md](transversal.md#push).
 
 ## Pruebas
 
-Estándares: [*Getting Started*](../fuentes/vitest/guide.md) y [*Features*](../fuentes/vitest/features.md) de Vitest.
-
 - Las pruebas en el navegador usan Playwright 1.64.1, con la versión exacta en `package.json`. La misma versión va en todo `package.json` del repositorio que declare Playwright: cada versión descarga sus propios navegadores.
+- `.vitest` va en `.gitignore`: guarda artefactos generados. [Vitest 5.1.0](https://raw.githubusercontent.com/vitest-dev/vitest/v5.1.0/docs/guide/index.md)
+- En una prueba concurrente, los snapshots y las aserciones usan el `expect` de su contexto. [Vitest 5.1.0](https://raw.githubusercontent.com/vitest-dev/vitest/v5.1.0/docs/guide/features.md)
 
 ## Adaptador
 

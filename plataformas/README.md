@@ -97,7 +97,7 @@ Citar una fuente significa adoptar sus convenciones explícitas dentro del alcan
 #### Convenciones propias y valores predeterminados
 
 - Los valores predeterminados de una herramienta no proceden de una fuente citada, pero rigen mientras la página no establezca otra cosa. Cambiarlos constituye una convención propia, salvo que una fuente citada exija el cambio.
-- Una convención propia no menciona fuentes que la página no cita, ni siquiera para contradecirlas. Incluye únicamente la convención y, cuando corresponda, su razón.
+- Una convención propia puede enlazar el documento en el que se basa, en su versión fija. El enlace no adopta el resto del documento, y ese documento no se copia en `fuentes/`. No menciona otras fuentes que la página no cita, ni siquiera para contradecirlas. Incluye únicamente la convención, cuando corresponda su razón, y ese enlace.
 - Una convención que utiliza material de referencia indica de dónde lo obtiene. Enlaza su copia en `fuentes/` si un programa de Canone toma valores de él, y su URL pública si no.
 
 #### Enlaces y verificación de citas

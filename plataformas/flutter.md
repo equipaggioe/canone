@@ -59,11 +59,11 @@ Estándares: [*Simple app state management*](../fuentes/flutter/state-mgmt-simpl
 
 ## Accesibilidad
 
-Estándares: de Flutter, [*Accessibility*](../fuentes/flutter/accessibility.md), [*Assistive technologies*](../fuentes/flutter/accessibility-assistive.md) y [*Accessibility testing*](../fuentes/flutter/accessibility-testing.md).
+Estándar: [*Accessibility*](../fuentes/flutter/accessibility.md) de Flutter.
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
-- Cada pantalla tiene una prueba de widget con las cuatro guías: `androidTapTargetGuideline`, `iOSTapTargetGuideline`, `labeledTapTargetGuideline` y `textContrastGuideline`.
+- Cada pantalla tiene una prueba de widget con las cuatro guías: `androidTapTargetGuideline`, `iOSTapTargetGuideline`, `labeledTapTargetGuideline` y `textContrastGuideline`. [Flutter](https://raw.githubusercontent.com/flutter/website/afe82c4e59af75731eb83c2138a93837934f65b8/sites/docs/src/content/ui/accessibility/accessibility-testing.md)
 
 ## Almacenamiento
 

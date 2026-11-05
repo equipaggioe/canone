@@ -14,9 +14,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | :--- | :--- | :--- | :--- |
 | [python/pep-0008.rst](python/pep-0008.rst) | [origen](https://raw.githubusercontent.com/python/peps/5514795ade79a5bf6f3c08c562b02689d0a9feb2/peps/pep-0008.rst) | entera |  |
 | [python/pep-0257.rst](python/pep-0257.rst) | [origen](https://raw.githubusercontent.com/python/peps/f22614f903cd50d19e5463913fde6d4a17109de0/peps/pep-0257.rst) | entera |  |
-| [python/pep-0698.rst](python/pep-0698.rst) | [origen](https://raw.githubusercontent.com/python/peps/e8273d3ed3a87718778c0979a4518e07a7a87760/peps/pep-0698.rst) | entera |  |
 | [python/asyncio-dev.rst](python/asyncio-dev.rst) | [origen](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/asyncio-dev.rst) | entera | Rama 3.13, la versión que usan las piezas: la de `main` nombra `InterpreterPoolExecutor`, que no existe en 3.13. |
-| [python/io.rst](python/io.rst) | [origen](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/io.rst) | por entradas | Rama 3.13, la versión que usan las piezas: desde 3.15 la codificación por defecto es UTF-8 y la sección *Text Encoding* ya no recomienda indicarla. |
 | [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | [origen](https://raw.githubusercontent.com/pypa/packaging.python.org/3b98ceeae062e84ae5527f850622b057878aa11e/source/specifications/pyproject-toml.rst) | por entradas |  |
 | [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | [origen](https://raw.githubusercontent.com/pypa/packaging.python.org/cdb4bf7ce8de9263fc3ec9e4c46117f49c4f72c5/source/specifications/dependency-groups.rst) | por entradas |  |
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | [origen](https://raw.githubusercontent.com/pytest-dev/pytest/9.2.0/doc/en/explanation/goodpractices.rst) | entera |  |
@@ -27,14 +25,10 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [alembic/autogenerate.rst](alembic/autogenerate.rst) | [origen](https://raw.githubusercontent.com/sqlalchemy/alembic/rel_1_20_1/docs/build/autogenerate.rst) | entera |  |
 | [postgresql/datatype.sgml](postgresql/datatype.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/datatype.sgml) | por entradas |  |
 | [postgresql/json.sgml](postgresql/json.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/json.sgml) | entera |  |
-| [postgresql/func.sgml](postgresql/func.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/func.sgml) | por entradas |  |
 | [postgresql/ddl.sgml](postgresql/ddl.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ddl.sgml) | entera |  |
 | [postgresql/syntax.sgml](postgresql/syntax.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/syntax.sgml) | por entradas |  |
 | [postgresql/indices.sgml](postgresql/indices.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml) | entera |  |
 | [postgresql/backup.sgml](postgresql/backup.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml) | entera |  |
-| [postgresql/client-auth.sgml](postgresql/client-auth.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/client-auth.sgml) | por entradas |  |
-| [postgresql/user-manag.sgml](postgresql/user-manag.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/user-manag.sgml) | por entradas |  |
-| [postgresql/config.sgml](postgresql/config.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/config.sgml) | por entradas |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | [origen](https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml) | entera |  |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | [origen](https://www.rfc-editor.org/rfc/rfc3339.txt) | entera |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | [origen](https://www.rfc-editor.org/rfc/rfc5646.txt) | entera |  |
@@ -65,7 +59,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [dtcg/resolver.html](dtcg/resolver.html) | [origen](https://www.designtokens.org/tr/2025.10/resolver/) | entera |  |
 | [whatwg/notifications.bs](whatwg/notifications.bs) | [origen](https://raw.githubusercontent.com/whatwg/notifications/7dc3884173370fe9385d538de299e415a2b9613a/notifications.bs) | entera |  |
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | [origen](https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs) | entera |  |
-| [wicg/webotp.bs](wicg/webotp.bs) | [origen](https://raw.githubusercontent.com/WICG/web-otp/7c4a606a085b44d9de75001f7e801f07a4d85f8c/index.bs) | entera |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | [origen](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf) | entera | Texto extraído del PDF |
 | [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | [origen](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf) | entera | Texto extraído del PDF |
 | [iana/iana-ipv4-special-registry.csv](iana/iana-ipv4-special-registry.csv) | [origen](https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry-1.csv) |  | Descargado el 2026-10-27. Lista de direcciones, no fuente |
@@ -90,19 +83,10 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [sveltekit/page-options.md](sveltekit/page-options.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/20-core-concepts/40-page-options.md) | entera |  |
 | [sveltekit/state-management.md](sveltekit/state-management.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/20-core-concepts/50-state-management.md) | entera |  |
 | [sveltekit/adapter-static.md](sveltekit/adapter-static.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/25-build-and-deploy/50-adapter-static.md) | entera |  |
-| [svelte/state.md](svelte/state.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/02-$state.md) | entera |  |
-| [svelte/derived.md](svelte/derived.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/03-$derived.md) | entera |  |
 | [svelte/effect.md](svelte/effect.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/04-$effect.md) | entera |  |
 | [svelte/props.md](svelte/props.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/05-$props.md) | entera |  |
-| [svelte/bindable.md](svelte/bindable.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/06-$bindable.md) | entera |  |
-| [svelte/sv-check.md](svelte/sv-check.md) | [origen](https://raw.githubusercontent.com/sveltejs/cli/sv@1.3.0/documentation/docs/20-commands/30-sv-check.md) | por entradas |  |
-| [unocss/guide-config-file.md](unocss/guide-config-file.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/guide/config-file.md) | entera |  |
-| [unocss/config-index.md](unocss/config-index.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/config/index.md) | por entradas |  |
-| [unocss/config-theme.md](unocss/config-theme.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/config/theme.md) | por entradas |  |
 | [unocss/presets-wind4.md](unocss/presets-wind4.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/presets/wind4.md) | entera |  |
 | [unocss/integrations-vite.md](unocss/integrations-vite.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/integrations/vite.md) | entera |  |
-| [vitest/guide.md](vitest/guide.md) | [origen](https://raw.githubusercontent.com/vitest-dev/vitest/v5.1.0/docs/guide/index.md) | entera |  |
-| [vitest/features.md](vitest/features.md) | [origen](https://raw.githubusercontent.com/vitest-dev/vitest/v5.1.0/docs/guide/features.md) | entera |  |
 | [paraglide/basics.md](paraglide/basics.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/bad4564fbbb0c4d204b8621fdcd5aac5c6ceb899/docs/basics.md) | entera |  |
 | [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/5ed1745276180e3cb481d5e8cefd7eae3a9d8ce6/docs/compiling-messages.md) | entera |  |
 | [paraglide/strategy.md](paraglide/strategy.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/bad4564fbbb0c4d204b8621fdcd5aac5c6ceb899/docs/strategy.md) | entera |  |
@@ -118,8 +102,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [flutter/state-mgmt-simple.md](flutter/state-mgmt-simple.md) | [origen](https://raw.githubusercontent.com/flutter/website/4d79bcadda0e47e66a6a7ebe35eaea50474e4d9d/sites/docs/src/content/data-and-backend/state-mgmt/simple.md) | entera |  |
 | [flutter/internationalization.md](flutter/internationalization.md) | [origen](https://raw.githubusercontent.com/flutter/website/5aa5d3cfa2c41558b22516125c73d7a5efc4ce15/sites/docs/src/content/ui/internationalization/index.md) | entera |  |
 | [flutter/accessibility.md](flutter/accessibility.md) | [origen](https://raw.githubusercontent.com/flutter/website/954d844c43c6ad9dd7cb1855b58ae145bee49983/sites/docs/src/content/ui/accessibility/index.md) | entera |  |
-| [flutter/accessibility-assistive.md](flutter/accessibility-assistive.md) | [origen](https://raw.githubusercontent.com/flutter/website/afe82c4e59af75731eb83c2138a93837934f65b8/sites/docs/src/content/ui/accessibility/assistive-technologies.md) | entera |  |
-| [flutter/accessibility-testing.md](flutter/accessibility-testing.md) | [origen](https://raw.githubusercontent.com/flutter/website/afe82c4e59af75731eb83c2138a93837934f65b8/sites/docs/src/content/ui/accessibility/accessibility-testing.md) | entera |  |
 | [pub/shared_preferences/README.md](pub/shared_preferences/README.md) | [origen](https://raw.githubusercontent.com/flutter/packages/shared_preferences-v2.5.6/packages/shared_preferences/shared_preferences/README.md) | entera |  |
 | [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | [origen](https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/flutter_secure_storage-v11.2.0/flutter_secure_storage/README.md) | entera |  |
 | [pub/provider/README.md](pub/provider/README.md) | [origen](https://raw.githubusercontent.com/rrousselGit/provider/provider-v6.1.5+1/packages/provider/README.md) | entera |  |
@@ -146,21 +128,11 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [android/notification-channels.md](android/notification-channels.md) | [origen](https://developer.android.com/develop/ui/compose/notifications/channels) | entera | Página web convertida a Markdown |
 | [compose/state.md](compose/state.md) | [origen](https://developer.android.com/develop/ui/compose/state) | entera | Página web convertida a Markdown |
 | [compose/architecture.md](compose/architecture.md) | [origen](https://developer.android.com/develop/ui/compose/architecture) | entera | Página web convertida a Markdown |
-| [compose/testing.md](compose/testing.md) | [origen](https://developer.android.com/develop/ui/compose/testing) | entera | Página web convertida a Markdown |
-| [compose/accessibility-testing.md](compose/accessibility-testing.md) | [origen](https://developer.android.com/develop/ui/compose/accessibility/testing) | entera | Página web convertida a Markdown |
-| [flet/encrypting-sensitive-data.md](flet/encrypting-sensitive-data.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.0.5/website/docs/cookbook/encrypting-sensitive-data.md) | entera |  |
-| [flet/securestorage.md](flet/securestorage.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.0.5/website/docs/services/securestorage/index.md) | por entradas |  |
 | [flet/publish.md](flet/publish.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.0.5/website/docs/publish/index.md) | por entradas |  |
 | [pyside6/considerations.rst](pyside6/considerations.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/considerations.rst) | entera |  |
-| [pyside6/porting_from2.rst](pyside6/porting_from2.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/faq/porting_from2.rst) | entera |  |
-| [pyside6/signals_and_slots.rst](pyside6/signals_and_slots.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/tutorials/basictutorial/signals_and_slots.rst) | entera |  |
-| [pyside6/translations.rst](pyside6/translations.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/tutorials/basictutorial/translations.rst) | entera |  |
 | [pyside6/deployment-pyside6-deploy.rst](pyside6/deployment-pyside6-deploy.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/deployment/deployment-pyside6-deploy.rst) | por entradas |  |
 | [qt/layout.qdoc](qt/layout.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/layout.qdoc) | entera |  |
 | [qt/model-view-programming.qdoc](qt/model-view-programming.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/model-view-programming.qdoc) | entera |  |
-| [qt/stylesheet.qdoc](qt/stylesheet.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet.qdoc) | entera |  |
-| [qt/stylesheet-syntax.qdoc](qt/stylesheet-syntax.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet-syntax.qdoc) | entera |  |
-| [qt/stylesheet-customizing.qdoc](qt/stylesheet-customizing.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet-customizing.qdoc) | entera |  |
 | [qt/stylesheet-reference.qdoc](qt/stylesheet-reference.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet-reference.qdoc) | por entradas |  |
 | [qt/threads.qdoc](qt/threads.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtdoc/v6.12.0/doc/src/frameworks-technologies/threads.qdoc) | entera |  |
 | [qt/qwidget.qdoc](qt/qwidget.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/kernel/qwidget.cpp) | por entradas | Comentarios `/*! */` del código fuente |
@@ -168,13 +140,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [qt/qsettings.qdoc](qt/qsettings.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/corelib/io/qsettings.cpp) | por entradas | Comentarios `/*! */` del código fuente |
 | [qt/qnetworkaccessmanager.qdoc](qt/qnetworkaccessmanager.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/network/access/qnetworkaccessmanager.cpp) | por entradas | Comentarios `/*! */` del código fuente |
 | [qt/accessible.qdoc](qt/accessible.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtdoc/v6.12.0/doc/src/frameworks-technologies/accessible.qdoc) | entera |  |
-| [pytest-qt/qapplication.rst](pytest-qt/qapplication.rst) | [origen](https://raw.githubusercontent.com/pytest-dev/pytest-qt/4.5.0/docs/qapplication.rst) | entera |  |
-| [pytest-qt/signals.rst](pytest-qt/signals.rst) | [origen](https://raw.githubusercontent.com/pytest-dev/pytest-qt/4.5.0/docs/signals.rst) | por entradas |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | [origen](https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.exec.xml) | por entradas | systemd 257, la versión de Debian 13 |
-| [systemd/journald.conf.xml](systemd/journald.conf.xml) | [origen](https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journald.conf.xml) | por entradas | systemd 257, la versión de Debian 13 |
-| [systemd/journal-upload.conf.xml](systemd/journal-upload.conf.xml) | [origen](https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journal-upload.conf.xml) | por entradas | systemd 257, la versión de Debian 13 |
-| [wireguard/wg-quick.8](wireguard/wg-quick.8) | [origen](https://git.zx2c4.com/wireguard-tools/plain/src/man/wg-quick.8?h=v1.0.20210914) | por entradas | wireguard-tools 1.0.20210914, la versión de Debian 13 |
 | [wireguard/wg.8](wireguard/wg.8) | [origen](https://git.zx2c4.com/wireguard-tools/plain/src/man/wg.8?h=v1.0.20210914) | por entradas | wireguard-tools 1.0.20210914, la versión de Debian 13 |
 | [openssh/sshd_config.5](openssh/sshd_config.5) | [origen](https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/sshd_config.5) | por entradas | OpenSSH 10.0, la versión de Debian 13 |
-| [openssh/ssh-keygen.1](openssh/ssh-keygen.1) | [origen](https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/ssh-keygen.1) | por entradas | OpenSSH 10.0, la versión de Debian 13 |
-| [unattended-upgrades/50unattended-upgrades.Debian](unattended-upgrades/50unattended-upgrades.Debian) | [origen](https://sources.debian.org/data/main/u/unattended-upgrades/2.12/data/50unattended-upgrades.Debian) | por entradas | unattended-upgrades 2.12, la versión de Debian 13 |

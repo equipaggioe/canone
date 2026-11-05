@@ -60,11 +60,11 @@ Estándares: el [estado](../fuentes/compose/state.md) y la [arquitectura](../fue
 
 ## Accesibilidad
 
-Estándares: de Android, [*Make apps more accessible*](../fuentes/android/accessibility-apps.md) y [*Principles for improving app accessibility*](../fuentes/android/accessibility-principles.md), y de Compose, [*Accessibility testing*](../fuentes/compose/accessibility-testing.md).
+Estándares: de Android, [*Make apps more accessible*](../fuentes/android/accessibility-apps.md) y [*Principles for improving app accessibility*](../fuentes/android/accessibility-principles.md).
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
-- Las pruebas de UI de Compose llaman a `enableAccessibilityChecks()`.
+- Las pruebas de UI de Compose llaman a `enableAccessibilityChecks()`. [Compose](https://developer.android.com/develop/ui/compose/accessibility/testing)
 
 ## Almacenamiento
 
@@ -122,7 +122,7 @@ Contrato: [transversal.md](transversal.md#tema).
 
 ## Pruebas
 
-Estándares: los [fundamentos de pruebas](../fuentes/android/testing-fundamentals.md) y las [pruebas de Compose](../fuentes/compose/testing.md).
+Estándar: los [fundamentos de pruebas](../fuentes/android/testing-fundamentals.md).
 
 - Las llamadas HTTP se prueban contra MockWebServer.
 

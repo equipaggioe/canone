@@ -72,9 +72,7 @@ Estándar: la sección *Imports* de [PEP 8](../fuentes/python/pep-0008.rst).
 
 ## Archivos de texto
 
-Estándar: la sección *Text Encoding* de [io](../fuentes/python/io.rst).
-
-- Los archivos de texto se abren con `encoding="utf-8"`.
+- Los archivos de texto se abren con `encoding="utf-8"`. [Python 3.13](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/io.rst)
 
 ## Async
 

@@ -146,19 +146,15 @@ Estándar: la sección 4 *Firewall Policy* de NIST SP 800-41 Rev. 1, [*Guideline
 
 ## Máquina
 
-Estándar: de unattended-upgrades 2.12, la versión de Debian 13, `Automatic-Reboot` y `Automatic-Reboot-Time` en [50unattended-upgrades](../fuentes/unattended-upgrades/50unattended-upgrades.Debian).
-
 - La máquina es Debian 13, y cada programa sale de sus paquetes: `caddy`, `postgresql`, `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`, `nftables`, `unattended-upgrades`, `systemd-timesyncd` y `ca-certificates`, con el que `deploy.py` comprueba el certificado de GitHub; `coturn` si usa TURN, y `systemd-journal-remote` y `wireguard-tools` si envía su journal con `--logs`.
 - La máquina llega a `install.py` con sus paquetes y con tanto swap como memoria, que pide «Valkey»: los pone quien prepara la máquina, e `install.py` falla si faltan.
 - El host de cada superficie que la app tiene, `<dominio>`, `app.<dominio>` y `panel.<dominio>`, apunta a la máquina antes de `install.py`: Caddy obtiene el certificado de cada host por ACME, y reintenta mientras el host no la alcanza.
 - `systemd-timesyncd` sincroniza la hora, e `install.py` falla si no está habilitado: las credenciales temporales de TURN, las sesiones y las fechas del journal dependen del reloj. `systemd-timesyncd` choca con cualquier otro paquete de hora, como `chrony`, y lo reemplaza.
 - uv no está en Debian 13: `sudo python3 uv.py` lo instala en `/usr/local/bin/uv`, desde el release de GitHub de la versión de [python.md](python.md#proyecto), y falla sin instalar nada si el archivo no tiene el SHA-256 que `uv.py` fija para el procesador, `x86_64` o `aarch64`. Lo corre quien prepara la máquina, antes del primer `deploy.py`, y otra vez cuando cambia la versión: `deploy.py` crea el entorno de cada versión con `uv sync`, y otra versión de uv falla por el `required-version` del `pyproject.toml`.
 - `unattended-upgrades` instala solo, cada día, las actualizaciones de Debian 13, y `install.py` lo enciende con `/etc/apt/apt.conf.d/20auto-upgrades`: una actualización de seguridad que espera a alguien deja la máquina expuesta mientras tanto.
-- Un kernel nuevo corre solo después de reiniciar, y `unattended-upgrades` reinicia la máquina a las 04:00, en la hora de la máquina, cuando una actualización lo pide, con `/etc/apt/apt.conf.d/52automatic-reboot`. El gancho del kernel de `unattended-upgrades` lo pide con `/var/run/reboot-required`. La app cae alrededor de un minuto y corta las llamadas y el respaldo en curso, y el siguiente respaldo corre igual.
+- Un kernel nuevo corre solo después de reiniciar, y `unattended-upgrades` reinicia la máquina a las 04:00, en la hora de la máquina, cuando una actualización lo pide, con `Automatic-Reboot` y `Automatic-Reboot-Time` en `/etc/apt/apt.conf.d/52automatic-reboot`. El gancho del kernel de `unattended-upgrades` lo pide con `/var/run/reboot-required`. La app cae alrededor de un minuto y corta las llamadas y el respaldo en curso, y el siguiente respaldo corre igual.
 
 ## PostgreSQL
-
-Estándares: de PostgreSQL 17, la versión de Debian 13, *Peer Authentication*, en [*Client Authentication*](../fuentes/postgresql/client-auth.sgml), y la entrada *superuser status* de *Role Attributes*, en [*Database Roles*](../fuentes/postgresql/user-manag.sgml).
 
 - `install.py` crea la base `<app>`, el rol `<app>` del servidor y el rol `<app>_owner`, dueño de la base. Ninguno es superusuario: las migraciones y la purga no saltan los permisos ni salen de la base.
 - Cada rol entra por el socket con `peer`, sin contraseña, desde la cuenta de su nombre: el servidor con `<app>`, y las migraciones, la purga y el volcado con `<app>_owner`. Una cuenta entra solo como su rol, y ningún rol tiene contraseña.
@@ -183,7 +179,7 @@ Estándares: las entradas de [systemd.exec](../fuentes/systemd/systemd.exec.xml)
 
 ## Registros
 
-Estándares: de systemd, `Storage=`, `SystemMaxUse=`, `MaxRetentionSec=` y `MaxFileSec=` de [journald.conf](../fuentes/systemd/journald.conf.xml), y `URL=` de [journal-upload.conf](../fuentes/systemd/journal-upload.conf.xml); `log_destination`, en *Where to Log* de [*Server Configuration*](../fuentes/postgresql/config.sgml) de PostgreSQL; y de WireGuard, `Address` de [wg-quick](../fuentes/wireguard/wg-quick.8), y `PrivateKey`, `PublicKey`, `Endpoint` y `AllowedIPs` en *CONFIGURATION FILE FORMAT* de [wg](../fuentes/wireguard/wg.8).
+Estándar: de WireGuard, `PrivateKey`, `PublicKey`, `Endpoint` y `AllowedIPs` en *CONFIGURATION FILE FORMAT* de [wg](../fuentes/wireguard/wg.8).
 
 - journald guarda en disco: `Storage=persistent` en `/etc/systemd/journald.conf.d/00-<app>.conf`. Con `auto`, el valor por defecto, guarda en memoria si falta `/var/log/journal`, sin avisar.
 - El journal guarda a lo sumo 365 días, como `event_log` en [fastapi.md](fastapi.md#registro-de-eventos): también guarda direcciones IP de personas, como las que registra `sshd`. Son `MaxRetentionSec=365day` y `MaxFileSec=1day`: journald borra un archivo entero cuando su primera entrada pasa la retención, y con el mes de `MaxFileSec=` por defecto una entrada se borraría hasta un mes antes o un mes después.
@@ -236,8 +232,6 @@ Estándares: de Valkey 8.1, la versión de Debian 13, [*Administration*](../fuen
 - Transparent Huge Pages no se apaga en la máquina. Deja sin efecto *Valkey setup tips*: `disable-thp yes`, el valor por defecto de Valkey 8.1, las apaga solo para su proceso, sin cambiar los demás.
 
 ## Versiones
-
-Estándar: de OpenSSH 10.0, la sección *ALLOWED SIGNERS* de [ssh-keygen](../fuentes/openssh/ssh-keygen.1).
 
 - Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI corre en ese tag los jobs de `ci.yml`, y solo si pasan construye un artefacto con el servidor, sus catálogos compilados y el build de la web, y lo publica en un release de GitHub. El `.sha256` del release lleva el SHA-256 de cada archivo, con los instalables.
 - El release es un borrador hasta que tiene el `.sha256`: un job que falla no deja publicado un release a medias.

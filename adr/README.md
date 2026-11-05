@@ -125,3 +125,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0117](0117-una-fuente-se-cita-si-evita-escribir-al-menos-tres-convenciones.md) | Una fuente se cita si evita escribir al menos tres convenciones | `plataformas/` y `fuentes/` | Aceptada |
 | [0118](0118-cada-pagina-fija-la-version-de-sus-tecnologias-y-la-plantilla-y-las-fuentes-la-siguen.md) | Cada página fija la versión de sus tecnologías, y la plantilla y las fuentes la siguen | `plataformas/`, `plantilla/` y `fuentes/` | Aceptada |
 | [0119](0119-lo-que-corre-en-el-servidor-usa-la-version-de-debian-13-y-lo-demas-la-ultima-estable.md) | Lo que corre en el servidor usa la versión de Debian 13, y lo demás la última estable | `plataformas/`, `plantilla/` y `scripts/verificar.py` | Aceptada |
+| [0120](0120-una-convencion-propia-puede-enlazar-el-documento-en-el-que-se-basa.md) | Una convención propia puede enlazar el documento en el que se basa | `plataformas/README.md`, `plataformas/` y `fuentes/` |

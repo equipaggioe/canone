@@ -73,7 +73,7 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 
 Estándares: de OWASP, el [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md) y el párrafo sobre la CSP de *X-XSS-Protection* del [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), y el requisito V3.2.2 de [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md); y [CSP Level 3](../fuentes/w3c/csp3.bs) de W3C.
 
-- La CSP la genera SvelteKit con `kit.csp` en modo `hash`, sobre `default-src 'self'`. El script de arranque de SvelteKit va en línea y necesita su hash.
+- La CSP la genera SvelteKit con la opción `csp` de `sveltekit()` en modo `hash`, sobre `default-src 'self'`. El script de arranque de SvelteKit va en línea y necesita su hash.
 - La CSP lleva el host de las teselas en `img-src`.
 - Con un formulario de pago incrustado, la CSP lleva los dominios que documenta su pasarela en `script-src`, `frame-src` y `connect-src`.
 
@@ -81,17 +81,24 @@ Estándares: de OWASP, el [*Content Security Policy Cheat Sheet*](../fuentes/owa
 
 Estándares: de UnoCSS, el [archivo de configuración](../fuentes/unocss/guide-config-file.md), el [preset Wind4](../fuentes/unocss/presets-wind4.md) y el [plugin de Vite](../fuentes/unocss/integrations-vite.md), enteros, y las entradas `presets`, `preflights` y `theme` de la [configuración](../fuentes/unocss/config-index.md) y del [tema](../fuentes/unocss/config-theme.md).
 
+Contrato: [transversal.md](transversal.md#tema).
+
 - El preset es Wind4. Trae el reset y genera las variables CSS del tema.
 - Los tokens van en el `theme` de `uno.config.ts`, sin tamaños literales fuera de él. Los colores son `colors`, generado en `src/lib/colors.ts`, y sus variables CSS entran como preflight desde `colorsCss`, con el modo oscuro de `prefers-color-scheme`.
-
-Contrato: [transversal.md](transversal.md#tema).
 - Las clases de utilidad se escriben en archivos `.svelte`. UnoCSS no lee `.ts` por defecto.
 
 ## Idiomas
 
-Estándares: de Paraglide, [*Basics*](../fuentes/paraglide/basics.md), [*Compiling Messages*](../fuentes/paraglide/compiling-messages.md), [*Locale Detection*](../fuentes/paraglide/strategy.md) y [*SvelteKit i18n*](../fuentes/paraglide/sveltekit.md).
+Estándares: de Paraglide, [*Basics*](../fuentes/paraglide/basics.md), [*Compiling Messages*](../fuentes/paraglide/compiling-messages.md) y [*Locale Detection*](../fuentes/paraglide/strategy.md).
 
 Contrato: [transversal.md](transversal.md#idiomas).
+
+- `paraglideVitePlugin` va en `vite.config.ts`, con `outdir: './src/lib/paraglide'` y `emitTsDeclarations: true`: los mensajes se generan al construir, y el editor ve los que cambian.
+- `app.html` lleva `<html lang="%lang%" dir="%dir%">`, y un `handle` de `src/hooks.server.ts` los reemplaza dentro de `paraglideMiddleware`: cada página prerenderizada declara su idioma.
+- `reroute`, en `src/hooks.ts`, quita el idioma de la URL con `deLocalizeUrl`.
+- `paths.relative` es `false`: con el `fallback`, una ruta relativa a un recurso daría 404 en una URL con idioma.
+- Un enlace que cambia de idioma lleva `data-sveltekit-reload`: el documento y el idioma del cliente quedan iguales.
+- `@types/node` va en `devDependencies`: `svelte-check` revisa el `server.js` que genera Paraglide, que usa `async_hooks`.
 
 ## Mapas
 

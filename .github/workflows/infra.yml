@@ -15,7 +15,7 @@ jobs:
     # The systemd of Debian 13, where the units run.
     container: debian:trixie
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: apt-get update && apt-get install --yes --no-install-recommends systemd
       - run: |
           for unit in plantilla/infra/*.service; do
@@ -27,7 +27,7 @@ jobs:
     # The Caddy of Debian 13, the one the server installs.
     container: debian:trixie
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: apt-get update && apt-get install --yes --no-install-recommends caddy curl python3
       - run: sh scripts/infra/caddy.sh "$PWD"
 
@@ -36,7 +36,7 @@ jobs:
     # The OpenSSH of Debian 13, which reads the receiver's Match block.
     container: debian:trixie
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: apt-get update && apt-get install --yes --no-install-recommends openssh-server
       - run: |
           sed s/PRODUCTO/app/g plantilla/infra/sshd.conf > /etc/ssh/sshd_config.d/00-app.conf
@@ -59,7 +59,7 @@ jobs:
       image: debian:trixie
       options: --privileged
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: apt-get update && apt-get install --yes --no-install-recommends nftables iproute2 python3
       - run: sh scripts/infra/nftables.sh plantilla/infra/nftables.conf
       - run: sh scripts/infra/nftables.sh plantilla/infra/nftables.conf plantilla/infra/turn.nft
@@ -71,7 +71,7 @@ jobs:
       image: debian:trixie
       options: --privileged
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: >-
           apt-get update && apt-get install --yes --no-install-recommends
           coturn iproute2 nftables procps python3
@@ -85,7 +85,7 @@ jobs:
       image: debian:trixie
       options: --privileged
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: >-
           apt-get update && apt-get install --yes --no-install-recommends
           systemd-journal-remote wireguard-tools iproute2
@@ -96,7 +96,7 @@ jobs:
     # The Python of Debian 13 runs uv.py, which downloads uv from GitHub.
     container: debian:trixie
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: apt-get update && apt-get install --yes --no-install-recommends ca-certificates curl python3
       - run: sh scripts/infra/uv.sh "$PWD"
 
@@ -109,7 +109,7 @@ jobs:
       matrix:
         script: [install.sh, install-logs.sh, deploy.sh, backup.sh]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       # install.py asks for as much swap as memory, and the machine sees those of the runner.
       - run: |
           memory=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
@@ -130,11 +130,11 @@ jobs:
           trixie /var/lib/machines/machine http://deb.debian.org/debian
       # The machine has no internet: deploy.py finds each package of the server in the cache of uv.
       - if: matrix.script == 'deploy.sh'
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - if: matrix.script == 'deploy.sh'
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v10.3.3
         with:
           version-file: plantilla/server/pyproject.toml
       - if: matrix.script == 'deploy.sh'
@@ -169,7 +169,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: |
           apt-get update
           apt-get install --yes --no-install-recommends postgresql postgresql-17-postgis-3 python3 systemd

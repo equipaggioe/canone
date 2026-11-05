@@ -1,6 +1,6 @@
 # ADR-0118 · Cada página fija la versión de sus tecnologías, y la plantilla y las fuentes la siguen
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 2 lo reemplaza el [ADR-0119](0119-lo-que-corre-en-el-servidor-usa-la-version-de-debian-13-y-lo-demas-la-ultima-estable.md)
 - **Fecha:** 2026-11-04
 - **Alcance:** `plataformas/`, `repositorio.md`, `plantilla/` y `fuentes/`
 

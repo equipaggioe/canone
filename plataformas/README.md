@@ -122,6 +122,12 @@ Las convenciones propias se establecen en tres casos:
 2. **Excepciones:** se contradice, deja sin efecto o endurece una convención adoptada. Endurecer significa convertir en obligatorio lo que la fuente recomienda como preferencia o condiciona a que sea posible.
 3. **Decisiones no cubiertas:** se establecen convenciones sobre asuntos que ninguna fuente citada resuelve.
 
+### Versiones
+
+- Cada página fija en «Proyecto» las versiones de sus tecnologías. La plantilla y las fuentes dependen de la página: la plantilla no declara una versión que la página no estipule, y las fuentes se descargan de esa versión.
+- Lo que corre en el servidor usa la versión de Debian 13, también en desarrollo y en CI.
+- Lo que no corre en el servidor usa la última versión estable, o la última LTS si la tecnología las publica. Una excepción lleva su razón en la página.
+
 ### Redacción
 
 - Cada convención expresa qué se utiliza y cómo queda. No describe procedimientos ni explica cómo hacerlo.

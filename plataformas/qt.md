@@ -128,6 +128,7 @@ Estándar: las entradas de [pyside6-deploy](../fuentes/pyside6/deployment-pyside
 
 | Convención | Herramienta |
 | :--- | :--- |
+| PySide6, pytest-qt, Nuitka, imageio y patchelf | [scripts/verificar.py](../scripts/verificar.py) |
 | `@override` | Pyrefly `missing-override-decorator` |
 | Los nombres originales de Qt | ruff `TID251` sobre `__feature__` |
 | La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools` |

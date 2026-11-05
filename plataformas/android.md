@@ -4,7 +4,8 @@ Una app de Android en Kotlin y Jetpack Compose.
 
 ## Proyecto
 
-- Gradle usa Kotlin DSL y corre con el JDK 21 de Debian 13.
+- Gradle usa Kotlin DSL y corre con el JDK 25.0.5, la última LTS.
+- `gradle.properties` lleva `org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=2g`: con el JDK 25, Android Lint agota 512 MB de Metaspace.
 - Las dependencias y los plugins se declaran en el catálogo `gradle/libs.versions.toml`, con nombres en kebab-case, como `androidx-ktx`: una sola lista de versiones, y el autocompletado del IDE los encuentra.
 - Gradle 9.8.2, AGP 9.5.0 y Kotlin 2.4.21, también en las apps Flutter. Con una sola versión, un proyecto no se queda con la que traía la plantilla el día en que se creó.
 - Gradle corre con el wrapper y su distribución `-bin`: `-all` solo agrega las fuentes y la documentación de Gradle.
@@ -129,5 +130,6 @@ Estándares: los [fundamentos de pruebas](../fuentes/android/testing-fundamental
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Gradle, AGP y Kotlin | [scripts/verificar.py](../scripts/verificar.py) |
+| Gradle, AGP, Kotlin y el JDK | [scripts/verificar.py](../scripts/verificar.py) |
+| `MaxMetaspaceSize=2g` | [scripts/verificar.py](../scripts/verificar.py) |
 | Objetivos, etiquetas y contraste | `enableAccessibilityChecks()` en las pruebas de UI |

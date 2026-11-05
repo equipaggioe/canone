@@ -346,6 +346,152 @@ def versiones_uv(repo: Path) -> list[str]:
     return fallas
 
 
+# plataformas/README.md, «Versiones»: cada página fija las versiones, y los manifiestos y los
+# workflows de cada repositorio las siguen.
+PYPROJECT = {
+    "alembic": ">=1.20.1",
+    "anyio": ">=4.16.0",
+    "asyncpg": ">=0.32.0",
+    "babel": ">=2.18.0",
+    "cryptography": ">=50.0.2",
+    "deptry": ">=0.25.1",
+    "fastapi": ">=0.162.0",
+    "flet": ">=1.0.5",
+    "httpx": ">=0.28.1",
+    "imageio": ">=2.38.1",
+    "nuitka": ">=4.3.4",
+    "opentelemetry-api": ">=1.45.2",
+    "opentelemetry-sdk": ">=1.45.2",
+    "patchelf": ">=0.19.3.0",
+    "pip-audit": ">=2.10.1",
+    "pydantic": ">=2.14.2",
+    "pydantic-settings": ">=2.16.2",
+    "pyrefly": ">=1.4.0",
+    "pyside6": ">=6.12.0",
+    "pytest": ">=9.2.0",
+    "pytest-qt": ">=4.5.0",
+    "ruff": ">=0.17.3",
+    "sqlalchemy": ">=2.1.8",
+    "starlette": ">=1.10.0",
+    "uv-build": ">=0.13.7,<0.14",
+}
+REQUISITO = re.compile(r"^\s*([A-Za-z0-9._-]+)\s*(?:\[[^\]]*\])?\s*([^;]*)")
+NPM = {
+    "@inlang/paraglide-js": "3.1.0",
+    "@sveltejs/kit": "3.1.1",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "sv": "1.3.0",
+    "svelte": "5.57.3",
+    "typescript": "6.0.3",
+    "unocss": "66.12.0",
+    "vite": "8.3.5",
+    "vitest": "5.1.0",
+}
+PNPM = "12.16.1"
+PUB = {
+    "flutter_lints": "6.0.0",
+    "flutter_secure_storage": "11.2.0",
+    "provider": "6.1.5+1",
+    "shared_preferences": "2.5.6",
+}
+ACCIONES = {
+    "actions/checkout": "v7",
+    "actions/setup-java": "v6",
+    "actions/setup-node": "v7",
+    "actions/setup-python": "v7",
+    "astral-sh/setup-uv": "v10.3.3",
+    "gradle/actions/setup-gradle": "v6",
+    "pnpm/action-setup": "v6",
+    "subosito/flutter-action": "v2",
+}
+ENTRADAS = {
+    "actions/setup-java": ("java-version", "25.0.5"),
+    "actions/setup-node": ("node-version", "26.13.0"),
+    "actions/setup-python": ("python-version", "3.13"),
+    "subosito/flutter-action": ("flutter-version", "3.47.9"),
+}
+POSTGIS = "17-3.5"
+METASPACE = "-XX:MaxMetaspaceSize=2g"
+
+
+def versiones_pyproject(repo: Path) -> list[str]:
+    fallas = []
+    for ruta in sorted(listar(repo)):
+        relativo = Path(ruta)
+        if relativo.name != "pyproject.toml" or not (repo / relativo).is_file():
+            continue
+        datos = tomllib.loads((repo / relativo).read_text(encoding="utf-8"))
+        requisitos = list(datos.get("project", {}).get("dependencies", []))
+        requisitos += datos.get("build-system", {}).get("requires", [])
+        for grupo in datos.get("dependency-groups", {}).values():
+            requisitos += [r for r in grupo if isinstance(r, str)]
+        for requisito in requisitos:
+            coincide = REQUISITO.match(requisito)
+            nombre = coincide[1].lower().replace("_", "-")
+            declarado = coincide[2].replace(" ", "")
+            if nombre in PYPROJECT and declarado != PYPROJECT[nombre]:
+                fallas.append(
+                    f"plataformas/: {relativo.as_posix()} declara {nombre}{declarado}, no {PYPROJECT[nombre]}"
+                )
+    return fallas
+
+
+def versiones_package(superficie: Path, datos: dict, deps: dict[str, str]) -> list[str]:
+    fallas = []
+    if not re.fullmatch(rf"pnpm@{re.escape(PNPM)}(\+\S+)?", datos.get("packageManager", "")):
+        fallas.append(f"plataformas/sveltekit.md: {superficie.name}/package.json no declara pnpm@{PNPM}")
+    for paquete, version in NPM.items():
+        if paquete in deps and deps[paquete].lstrip("^~") != version:
+            fallas.append(
+                f"plataformas/sveltekit.md: {superficie.name}/ declara {paquete} {deps[paquete]}, no {version}"
+            )
+    return fallas
+
+
+def versiones_pubspec(repo: Path) -> list[str]:
+    fallas = []
+    for ruta in sorted(listar(repo)):
+        relativo = Path(ruta)
+        if relativo.name != "pubspec.yaml" or not (repo / relativo).is_file():
+            continue
+        texto = (repo / relativo).read_text(encoding="utf-8")
+        for paquete, version in PUB.items():
+            for declarada in re.findall(rf"^\s+{paquete}:[ \t]*[\"']?([^\"'\s#]+)", texto, re.M):
+                if declarada.lstrip("^") != version:
+                    fallas.append(
+                        f"plataformas/flutter.md: {relativo.as_posix()} declara {paquete} {declarada}, no {version}"
+                    )
+    return fallas
+
+
+def versiones_workflows(repo: Path) -> list[str]:
+    fallas = []
+    for ruta in sorted((repo / ".github/workflows").glob("*.yml")):
+        relativo = ruta.relative_to(repo).as_posix()
+        texto = ruta.read_text(encoding="utf-8")
+        pares = re.findall(r"uses:\s*([\w./-]+)@(\S+)", texto)
+        usadas = {accion for accion, _ in pares}
+        for accion, declarada in pares:
+            if accion in ACCIONES and declarada != ACCIONES[accion]:
+                fallas.append(f"repositorio.md: {relativo} usa {accion}@{declarada}, no @{ACCIONES[accion]}")
+        for accion, (entrada, version) in ENTRADAS.items():
+            valores = re.findall(rf"{entrada}:\s*[\"']?([^\"'\s]+)", texto)
+            if accion in usadas and set(valores) != {version}:
+                fallas.append(f"plataformas/: {relativo} no declara {entrada} {version}")
+        for imagen in re.findall(r"postgis/postgis:(\S+)", texto):
+            if imagen != POSTGIS:
+                fallas.append(f"repositorio.md: {relativo} usa postgis/postgis:{imagen}, no {POSTGIS}")
+    return fallas
+
+
+# plataformas/android.md, «Proyecto»: con el JDK 25, Android Lint agota 512 MB de Metaspace.
+def metaspace_lint(proyecto: Path, nombre: str) -> list[str]:
+    propiedades = proyecto / "gradle.properties"
+    if propiedades.exists() and METASPACE in propiedades.read_text(encoding="utf-8"):
+        return []
+    return [f"plataformas/android.md: {nombre}/gradle.properties no lleva {METASPACE}"]
+
+
 # ADR-0108 y ADR-0109: una fuente se cita entera o por entradas, cada parte de una fuente entera
 # rige en una sola sección, y una lista de nombres no se cita (ADR-0095). Una cita nombra sus
 # partes antes del enlace, como «las secciones *A* y *B* de [X]», o después, como «[X], la sección
@@ -520,12 +666,7 @@ def revisar(repo: Path) -> list[str]:
         if "@sveltejs/kit" not in deps:
             continue
         # pnpm/action-setup toma de aquí la versión de pnpm, y falla si no la encuentra.
-        if not re.fullmatch(r"pnpm@\d+\.\d+\.\d+(\+\S+)?", datos.get("packageManager", "")):
-            fallas.append(
-                f"plataformas/sveltekit.md: {superficie.name}/package.json no declara la versión exacta de pnpm en packageManager"
-            )
-        if not re.match(r"[\^~]?3\.", deps["@sveltejs/kit"]):
-            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no usa SvelteKit 3")
+        fallas.extend(versiones_package(superficie, datos, deps))
         if (superficie / "svelte.config.js").exists():
             fallas.append(
                 f"plataformas/sveltekit.md: {superficie.name}/ tiene svelte.config.js, que SvelteKit 3 rechaza"
@@ -568,6 +709,7 @@ def revisar(repo: Path) -> list[str]:
             fallas.append(f"plataformas/android.md: falta {app.name}/gradle/libs.versions.toml")
             continue
         fallas.extend(versiones_gradle(app, app.name, plugins_catalogo(catalogo)))
+        fallas.extend(metaspace_lint(app, app.name))
 
     docs = repo / "docs"
     if docs.is_dir():
@@ -585,6 +727,9 @@ def revisar(repo: Path) -> list[str]:
     fallas.extend(configuracion_con_repositorio(repo))
     fallas.extend(versiones_playwright(repo))
     fallas.extend(versiones_uv(repo))
+    fallas.extend(versiones_pyproject(repo))
+    fallas.extend(versiones_pubspec(repo))
+    fallas.extend(versiones_workflows(repo))
 
     return fallas
 
@@ -601,6 +746,9 @@ def main() -> int:
 
     if args.canone:
         fallas = reparto_de_fuentes()
+        fallas += versiones_pyproject(PLANTILLA)
+        fallas += versiones_workflows(PLANTILLA)
+        fallas += versiones_workflows(CANONE)
         print(f"\ncanone: {len(fallas)} incumplimientos")
         for falla in fallas:
             print(f"  - {falla}")

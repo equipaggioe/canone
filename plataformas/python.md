@@ -116,6 +116,7 @@ Estándar: las secciones *Do not run via setuptools* y *Using pytest's strict mo
 | :--- | :--- |
 | Python 3.13 de Debian 13 | `requires-python` y uv con `python-preference = "only-system"` |
 | uv 0.13.7 | uv con `required-version`, y `verificar.py`, que comprueba que cada `pyproject.toml` la declare |
+| Python 3.13 en CI, y las versiones de «Proyecto» con `>=` | [scripts/verificar.py](../scripts/verificar.py) |
 | El bloqueo | `uv sync --locked` en CI |
 | PEP 8: *Code Lay-out*, *Whitespace in Expressions and Statements*, *Naming Conventions* y las comparaciones de *Programming Recommendations* | `ruff format` y ruff `E` salvo `E722`, `W`, `N` salvo `N811` a `N814`, `N817` y `N818`, y `UP009`, con `max-doc-length = 72` |
 | Reglas `F` | ruff `F` |

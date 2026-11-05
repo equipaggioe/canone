@@ -7,7 +7,7 @@ Una superficie web con SvelteKit y UnoCSS.
 Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de SvelteKit.
 
 - Node es el 26.13.0, la última LTS, y solo se usa para construir. No es el de Debian 13, el 20.19.2: SvelteKit 3.1.1 pide `>=22.17`, y Vitest 5.1.0, `^22.12 || ^24 || >=26`.
-- Svelte 5.57.3, sv 1.3.0, Vite 8.3.5, `@sveltejs/vite-plugin-svelte` 7.3.1, UnoCSS 66.12.0, Vitest 5.1.0 y Paraglide 3.1.0.
+- Svelte 5.57.3, sv 1.3.0, Vite 8.3.5, `@sveltejs/vite-plugin-svelte` 7.3.1, UnoCSS 66.12.0, Vitest 5.1.0 y Paraglide 3.1.0: `package.json` los declara exactos, con `^` o con `~`.
 - SvelteKit es la 3.1.1, y su configuración va en `vite.config.ts`: rechaza `svelte.config.js` y el alias `$lib`, que pasa a `#lib`.
 - pnpm maneja las dependencias. No deja importar un paquete que no esté declarado.
 - `package.json` declara la versión exacta de pnpm en `packageManager`, `pnpm@12.16.1`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra.
@@ -126,5 +126,5 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | :--- | :--- |
 | Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |
 | Playwright 1.64.1 | [scripts/verificar.py](../scripts/verificar.py) |
-| La versión exacta de pnpm en `packageManager` | [scripts/verificar.py](../scripts/verificar.py) |
-| SvelteKit 3, sin `svelte.config.js` | [scripts/verificar.py](../scripts/verificar.py) |
+| Node en CI, `pnpm@12.16.1` en `packageManager` y las versiones de «Proyecto» | [scripts/verificar.py](../scripts/verificar.py) |
+| Sin `svelte.config.js` | [scripts/verificar.py](../scripts/verificar.py) |

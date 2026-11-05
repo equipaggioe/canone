@@ -69,3 +69,4 @@ Estándar: las entradas de [*Publishing a Flet app*](../fuentes/flet/publish.md)
 
 | Convención | Herramienta |
 | :--- | :--- |
+| Flet 1.0.5 | [scripts/verificar.py](../scripts/verificar.py) |

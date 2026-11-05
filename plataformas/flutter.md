@@ -5,7 +5,7 @@ Una app en Flutter.
 ## Proyecto
 
 - Flutter 3.47.9, con Dart 3.13.7.
-- shared_preferences 2.5.6, flutter_secure_storage 11.2.0, provider 6.1.5+1 y flutter_lints 6.0.0.
+- shared_preferences 2.5.6, flutter_secure_storage 11.2.0, provider 6.1.5+1 y flutter_lints 6.0.0: `pubspec.yaml` los declara exactos o con `^`.
 - Gradle, AGP y Kotlin son los de [android.md](android.md#proyecto), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
 
 ## Estilo
@@ -112,5 +112,6 @@ Contrato: [transversal.md](transversal.md#tema).
 | Convención | Herramienta |
 | :--- | :--- |
 | Gradle, AGP y Kotlin | [scripts/verificar.py](../scripts/verificar.py) |
+| Flutter en CI y los paquetes de «Proyecto» | [scripts/verificar.py](../scripts/verificar.py) |
 | La lista de flutter_lints y los tipos estrictos | `flutter analyze --fatal-infos` en CI |
 | Objetivos, etiquetas y contraste | Las guías de `flutter_test` en cada pantalla |

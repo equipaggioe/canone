@@ -6,10 +6,11 @@ Una superficie web con SvelteKit y UnoCSS.
 
 Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de SvelteKit.
 
-- Node es el de Debian 13, y solo se usa para construir.
-- SvelteKit es la versión 3, y su configuración va en `vite.config.ts`: rechaza `svelte.config.js` y el alias `$lib`, que pasa a `#lib`.
+- Node es el 26.13.0, la última LTS, y solo se usa para construir. No es el de Debian 13, el 20.19.2: SvelteKit 3.1.1 pide `>=22.17`, y Vitest 5.1.0, `^22.12 || ^24 || >=26`.
+- Svelte 5.57.3, sv 1.3.0, UnoCSS 66.12.0, Vitest 5.1.0 y Paraglide 3.1.0.
+- SvelteKit es la 3.1.1, y su configuración va en `vite.config.ts`: rechaza `svelte.config.js` y el alias `$lib`, que pasa a `#lib`.
 - pnpm maneja las dependencias. No deja importar un paquete que no esté declarado.
-- `package.json` declara la versión exacta de pnpm en `packageManager`, como `pnpm@10.34.6`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra.
+- `package.json` declara la versión exacta de pnpm en `packageManager`, `pnpm@12.16.1`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra.
 - TypeScript va en modo strict, y `svelte-check` lo revisa.
 - Prettier formatea, con `prettier-plugin-svelte` y líneas de 99, y ESLint revisa con `eslint-plugin-svelte`.
 
@@ -58,7 +59,7 @@ Estándar: la opción `--fail-on-warnings` de [sv check](../fuentes/svelte/sv-ch
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
-- `svelte-check` corre con `--fail-on-warnings`. Las advertencias `a11y_*` de la [lista del compilador](https://raw.githubusercontent.com/sveltejs/svelte/main/documentation/docs/98-reference/.generated/compile-warnings.md) rompen CI.
+- `svelte-check` corre con `--fail-on-warnings`. Las advertencias `a11y_*` de la [lista del compilador](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/98-reference/.generated/compile-warnings.md) rompen CI.
 
 ## Código por SMS
 

@@ -4,6 +4,8 @@ Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](py
 
 ## Proyecto
 
+- PySide6 y Qt 6.12.0, pytest-qt 4.5.0, Nuitka 4.3.4, imageio 2.38.1 y patchelf 0.19.3.0.
+
 ```text
 desktop/
   pyproject.toml

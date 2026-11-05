@@ -123,3 +123,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0115](0115-lo-que-se-cumple-es-una-convencion-adoptada-de-una-fuente-o-propia-de-canone.md) | Lo que se cumple es una convención, adoptada de una fuente o propia de Canone | `plataformas/` y `fuentes/` | Aceptada |
 | [0116](0116-la-seccion-tema-esta-en-desarrollo-y-no-se-implementa.md) | La sección «Tema» está en desarrollo y no se implementa | «Tema» de `plataformas/`, `plantilla/README.md` y `verificar.py` | Aceptada, salvo el punto 2 |
 | [0117](0117-una-fuente-se-cita-si-evita-escribir-al-menos-tres-convenciones.md) | Una fuente se cita si evita escribir al menos tres convenciones | `plataformas/` y `fuentes/` | Aceptada |
+| [0118](0118-cada-pagina-fija-la-version-de-sus-tecnologias-y-la-plantilla-y-las-fuentes-la-siguen.md) | Cada página fija la versión de sus tecnologías, y la plantilla y las fuentes la siguen | `plataformas/`, `plantilla/` y `fuentes/` | Aceptada |

@@ -16,11 +16,11 @@ import urllib.request
 from pathlib import Path
 
 # ADR-0090: the one exact version of python.md, which each pyproject.toml requires.
-VERSION = "0.13.5"
+VERSION = "0.13.7"
 # ADR-0110: the SHA-256 of the archive of each processor, from the release of that version.
 CHECKSUMS = {
-    "x86_64": "f68d291c75783122dad58ab77def0e13f3233f358731db5d6d7e8715603b928f",
-    "aarch64": "4bb69cf95ed13f23713bb7bc09f241896ea0c75b7c557e615a20604b82f9c403",
+    "x86_64": "c5221ff41b7892bfc223543883600125f6a47fe845093e0f5bdff4f359196d83",
+    "aarch64": "71279f8d3c67241e807b9d8db872d1bf541579fb9f08b7d1eb1682196d1e57dc",
 }
 RELEASES = "https://github.com/astral-sh/uv/releases/download"
 TARGET = Path("/usr/local/bin/uv")

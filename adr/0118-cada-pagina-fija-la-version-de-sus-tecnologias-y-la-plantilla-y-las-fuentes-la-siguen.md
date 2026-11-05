@@ -29,8 +29,8 @@ en 6.11.
 ## Consecuencias
 
 - Las fuentes con un tag de la versión fijada se descargan de ese tag. Quedan en un commit fijo las
-  de Paraglide, Flutter, Dart, Kotlin, flutter_secure_storage y provider, cuyos repositorios no tienen
-  ese tag, y su texto no queda ligado a una versión exacta.
+  de Paraglide, Flutter, Dart y Kotlin, cuyos repositorios no tienen ese tag, y su texto no queda
+  ligado a una versión exacta.
 - Una versión nueva se adopta a mano, y cada cambio pide revisar las reglas que citan su fuente.
 - Comprobado en el registro de npm: los requisitos de Node de SvelteKit y Vitest.
 - Sin confirmar: que las combinaciones de versiones funcionen juntas, como Gradle 9.8.2, AGP 9.5.0 y

@@ -135,7 +135,7 @@ Estándar: la entrada de `StateDirectory=`, en *Sandboxing*, de [systemd.exec](.
 
 ## Firewall
 
-Estándar: NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*](../fuentes/nist/sp800-41r1.txt), entera.
+Estándar: la sección 4 *Firewall Policy* de NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*](../fuentes/nist/sp800-41r1.txt).
 
 - El firewall es el nftables de Debian 13, con `/etc/nftables.conf`, que `install.py` instala y carga. Incluye `/etc/nftables.d/*.nft`, donde una pieza que la app puede no tener agrega sus reglas.
 - Entran el 22 y el 80 por TCP, y el 443 por TCP y por UDP, el del HTTP/3 de Caddy. Con TURN entran también los puertos de «Coturn».
@@ -198,7 +198,7 @@ Estándares: de systemd, `Storage=`, `SystemMaxUse=`, `MaxRetentionSec=` y `MaxF
 
 ## Respaldos
 
-Estándar: [*Backup and Restore*](../fuentes/postgresql/backup.sgml) de PostgreSQL, entero.
+Estándar: la sección *SQL Dump* de [*Backup and Restore*](../fuentes/postgresql/backup.sgml) de PostgreSQL.
 
 - El respaldo de la base es un `pg_dump` en formato custom, que corre antes de cada respaldo: `pg_restore` puede restaurar solo una parte.
 - El respaldo lleva el dump y `/var/lib/<app>/files/`, y sale de la máquina con `restic`, cifrado, hacia una receptora con `rest-server`. El código no va: está en los releases.

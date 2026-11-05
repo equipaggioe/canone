@@ -14,7 +14,7 @@ Plantilla: [plantilla/android/gradle/wrapper/gradle-wrapper.properties](../plant
 
 ## Estilo
 
-Estándares: la [guía de estilo de Kotlin para Android](../fuentes/android/kotlin-style-guide.md) y las [*Coding conventions*](../fuentes/kotlin/coding-conventions.md) de Kotlin.
+Estándares: la [guía de estilo de Kotlin para Android](../fuentes/android/kotlin-style-guide.md) y las secciones *Avoid redundant constructs* e *Idiomatic use of language features* de las [*Coding conventions*](../fuentes/kotlin/coding-conventions.md) de Kotlin.
 
 - ktlint formatea y revisa con el estilo `android_studio`, el de la guía de Android. Corre con el plugin de Gradle `org.jlleitschuh.gradle.ktlint`, y el estilo va en `.editorconfig`.
 - Android Lint trata las advertencias como errores, con `warningsAsErrors = true` en el bloque `lint` de `app/build.gradle.kts`. Endurece Android Lint: una advertencia no pasa CI.

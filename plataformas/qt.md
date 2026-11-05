@@ -68,7 +68,7 @@ Estándar: [*Model/View Programming*](../fuentes/qt/model-view-programming.qdoc)
 
 ## Accesibilidad
 
-Estándares: [*Accessibility*](../fuentes/qt/accessible.qdoc) de Qt y la propiedad `accessibleName` de [QWidget](../fuentes/qt/qwidget.qdoc).
+Estándares: [*Accessibility*](../fuentes/qt/accessible.qdoc) de Qt, salvo *Accessibility for Qt Quick Applications*; y la propiedad `accessibleName` de [QWidget](../fuentes/qt/qwidget.qdoc).
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 

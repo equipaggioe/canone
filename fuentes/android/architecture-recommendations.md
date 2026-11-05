@@ -128,42 +128,39 @@ Use lifecycle-aware effects in composables instead of overriding `Activity` life
   * Use `[LifecycleStartEffect](/topic/libraries/architecture/compose#lifecyclestarteffect)` to perform synchronous work when your activity starts and stops. 
   * Use `[LifecycleResumeEffect](/topic/libraries/architecture/compose#lifecycleresumeeffect)` to perform synchronous work when your activity resumes and pauses. 
   * Use `[repeatOnLifecycle](/topic/libraries/architecture/coroutines#restart)` to perform asynchronous work in response to lifecycle events. 
-  * Collect asynchronous data from Flows using `[collectAsStateWithLifecycle](/reference/kotlin/androidx/lifecycle/compose/package-summary#extension-functions)`.
-
-  
+  * Collect asynchronous data from Flows using `[collectAsStateWithLifecycle](/reference/kotlin/androidx/lifecycle/compose/package-summary#extension-functions)`.  
   
 The following snippet outlines how to perform operations given a certain Lifecycle state:
-    
-    
-      @Composable
-      fun LocationChangedEffect(
-        locationManager: LocationManager,
-        onLocationChanged: (Location) -> Unit
-      ) {
-        val currentOnLocationChanged by rememberUpdatedState(onLocationChanged)
-    
-        LifecycleStartEffect(locationManager) {
-            val listener = LocationListener { newLocation ->
-                currentOnLocationChanged(newLocation)
+        
+        @Composable
+          fun LocationChangedEffect(
+            locationManager: LocationManager,
+            onLocationChanged: (Location) -> Unit
+          ) {
+            val currentOnLocationChanged by rememberUpdatedState(onLocationChanged)
+        
+            LifecycleStartEffect(locationManager) {
+                val listener = LocationListener { newLocation ->
+                    currentOnLocationChanged(newLocation)
+                }
+        
+                try {
+                    locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        1000L,
+                        1f,
+                        listener,
+                    )
+                } catch (e: SecurityException) {
+                    // TODO: Handle missing permissions
+                }
+        
+                onStopOrDispose {
+                    locationManager.removeUpdates(listener)
+                }
             }
-    
-            try {
-                locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    1000L,
-                    1f,
-                    listener,
-                )
-            } catch (e: SecurityException) {
-                // TODO: Handle missing permissions
-            }
-    
-            onStopOrDispose {
-                locationManager.removeUpdates(listener)
-            }
-        }
-      }
-    
+          }
+        
 
 ## Handle dependencies
 
@@ -174,12 +171,9 @@ Recommendation | Description
 Use [dependency injection](/training/dependency-injection). **Strongly recommended** | Use [dependency injection](/training/dependency-injection) best practices, mainly [constructor injection](/training/dependency-injection#what-is-di) when possible.  
 Scope to a component when necessary. **Strongly recommended** | Scope to a [dependency container](/training/dependency-injection/manual#dependencies-container) when the type contains mutable data that needs to be shared or the type is expensive to initialize and is widely used in the app.  
 Use [Hilt](/training/dependency-injection/hilt-android). **Recommended** | Use [Hilt](/training/dependency-injection/hilt-android) or [manual dependency injection](/training/dependency-injection/manual) in simple apps. Use [Hilt](/training/dependency-injection/hilt-android) if your project is complex enough—for example, if it includes any of the following: 
-
-  * Multiple screens with ViewModels
-  * Uses WorkManager
-  * Has ViewModels scoped to the navigation back stack
-
-  
+    * Multiple screens with ViewModels
+    * Uses WorkManager
+    * Has ViewModels scoped to the navigation back stack  
   
 ## Testing
 
@@ -188,22 +182,27 @@ The following are some best practices for [testing](/training/testing/fundamenta
 Recommendation | Description  
 ---|---  
 [Know what to test](https://developer.android.com/training/testing/fundamentals/what-to-test). **Strongly recommended** | Unless the project is as simple as a "hello world" app, test it. At minimum, include the following:
-
-  * Unit tests for ViewModels, including Flows
-  * Unit tests for data layer entities—that is, repositories and data sources
-  * UI navigation tests that are useful as regression tests in CI
-
-  
+    * Unit tests for ViewModels, including Flows
+    * Unit tests for data layer entities—that is, repositories and data sources
+    * UI navigation tests that are useful as regression tests in CI
+    * Performance tests using [Macrobenchmark](/topic/performance/benchmarking/macrobenchmark-overview) to measure app startup and UI rendering  
 Prefer fakes to mocks. **Strongly recommended** | For more information on using fakes, see [Use test doubles in Android](/training/testing/fundamentals/test-doubles).  
 Test StateFlows. **Strongly recommended** | When testing `StateFlow`, do the following: 
-
-  * [Assert on the `value` property](/kotlin/flow/test#stateflows) whenever possible.
-  * Use [`WhileSubscribed`](/kotlin/flow/test#statein).
-
-  
+    * [Assert on the `value` property](/kotlin/flow/test#stateflows) whenever possible.
+    * Use [`WhileSubscribed`](/kotlin/flow/test#statein).  
   
 For more information, see [What to test in Android](/training/testing/fundamentals/what-to-test) and [Test your Compose layout](/develop/ui/compose/testing).
 
+## Performance
+
+The following are some best practices for [improving performance](/topic/performance/improving-overview):
+
+Recommendation | Description  
+---|---  
+Use R8 to shrink and optimize your app. **Strongly recommended** | [Enable R8](/topic/performance/app-optimization/enable-app-optimization) in full mode in your build configuration to remove unused code, obfuscate classes, and rewrite code to improve runtime performance.  
+Implement Baseline Profiles and Startup Profiles. **Strongly recommended** | Generate [Baseline Profiles](/topic/performance/baselineprofiles) and [Startup Profiles](/topic/performance/baselineprofiles/dex-layout-optimizations) to pre-compile critical code paths. This significantly reduces [startup latency](/topic/performance/issues/launch-time) (TTID and TTFD) and minimizes jank and ANRs.  
+Test performance with Macrobenchmark. **Strongly recommended** | Use the [Macrobenchmark](/topic/performance/benchmarking/macrobenchmark-overview) library to test your app's performance and prevent regressions.  
+  
 ## Models
 
 Observe these best practices when developing models in your apps:
@@ -211,12 +210,9 @@ Observe these best practices when developing models in your apps:
 Recommendation | Description  
 ---|---  
 Create a model per layer in complex apps. **Recommended** | In complex apps, create new models in different layers or components when it makes sense. Consider the following examples:
-
-  * A remote data source can map the model that it receives through the network to a simpler class with only the data the app needs.
-  * Repositories can map DAO models to simpler data classes with just the information the UI layer needs.
-  * ViewModel can include data layer models in `UiState` classes.
-
-  
+    * A remote data source can map the model that it receives through the network to a simpler class with only the data the app needs.
+    * Repositories can map DAO models to simpler data classes with just the information the UI layer needs.
+    * ViewModel can include data layer models in `UiState` classes.  
   
 ## Naming conventions
 
@@ -235,13 +231,9 @@ For more information about Android architecture, see the following additional re
 
 ### Documentation
 
-  * [Compose UI Architecture](/develop/ui/compose/architecture)
-  * [Jetpack Compose architectural layering](/develop/ui/compose/layering)
-
-
+    * [Compose UI Architecture](/develop/ui/compose/architecture)
+    * [Jetpack Compose architectural layering](/develop/ui/compose/layering)
 
 ### Views content
 
-  * [Recommendations for Android architecture (Views)](/topic/architecture/views/recommendations-views)
-
-
+    * [Recommendations for Android architecture (Views)](/topic/architecture/views/recommendations-views)

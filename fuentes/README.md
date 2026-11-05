@@ -58,7 +58,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [w3c/webauthn-3.html](w3c/webauthn-3.html) | [origen](https://www.w3.org/TR/2026/REC-webauthn-3-20260825/) | entera | Recomendación del 2026-08-25 |
 | [w3c/webrtc.html](w3c/webrtc.html) | [origen](https://www.w3.org/TR/2025/REC-webrtc-20250313/) | por entradas | Recomendación del 2025-03-13 |
 | [w3c/push-api.html](w3c/push-api.html) | [origen](https://www.w3.org/TR/2026/WD-push-api-20261005/) | por entradas | Borrador de trabajo del 2026-10-05 |
-| [w3c/wcag22.html](w3c/wcag22.html) | [origen](https://www.w3.org/TR/WCAG22/) | entera |  |
+| [w3c/wcag22.html](w3c/wcag22.html) | [origen](https://www.w3.org/TR/2024/REC-WCAG22-20241212/) | entera |  |
 | [w3c/permissions-policy-features.md](w3c/permissions-policy-features.md) | [origen](https://raw.githubusercontent.com/w3c/webappsec-permissions-policy/29398046f1e0cb45c091adda853df74925dc740a/features.md) |  | Commit 2939804. Lista de nombres, no fuente |
 | [dtcg/format.html](dtcg/format.html) | [origen](https://www.designtokens.org/tr/2025.10/format/) | entera |  |
 | [dtcg/color.html](dtcg/color.html) | [origen](https://www.designtokens.org/tr/2025.10/color/) | entera |  |

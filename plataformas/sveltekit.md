@@ -71,7 +71,7 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 
 ## CSP
 
-Estándares: de OWASP, el [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md) y el párrafo sobre la CSP de *X-XSS-Protection* del [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), y el requisito V3.2.2 de [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md); y [CSP Level 3](../fuentes/w3c/csp3.bs) de W3C.
+Estándares: de OWASP, el [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md) y el párrafo sobre la CSP de *X-XSS-Protection* del [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), y el requisito V3.2.2 de [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md); y la sección *Authoring Considerations* de [CSP Level 3](../fuentes/w3c/csp3.bs) de W3C.
 
 - La CSP la genera SvelteKit con la opción `csp` de `sveltekit()` en modo `hash`, sobre `default-src 'self'`. El script de arranque de SvelteKit va en línea y necesita su hash.
 - La CSP lleva el host de las teselas en `img-src`.
@@ -79,7 +79,7 @@ Estándares: de OWASP, el [*Content Security Policy Cheat Sheet*](../fuentes/owa
 
 ## Estilos
 
-Estándares: de UnoCSS, el [archivo de configuración](../fuentes/unocss/guide-config-file.md), el [preset Wind4](../fuentes/unocss/presets-wind4.md) y el [plugin de Vite](../fuentes/unocss/integrations-vite.md), enteros, y las entradas `presets`, `preflights` y `theme` de la [configuración](../fuentes/unocss/config-index.md) y del [tema](../fuentes/unocss/config-theme.md).
+Estándares: de UnoCSS, el [archivo de configuración](../fuentes/unocss/guide-config-file.md) y el [preset Wind4](../fuentes/unocss/presets-wind4.md), enteros; el modo `global` y las secciones *Svelte* y *Sveltekit* del [plugin de Vite](../fuentes/unocss/integrations-vite.md); y las entradas `presets`, `preflights` y `theme` de la [configuración](../fuentes/unocss/config-index.md) y del [tema](../fuentes/unocss/config-theme.md).
 
 Contrato: [transversal.md](transversal.md#tema).
 

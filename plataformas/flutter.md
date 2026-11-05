@@ -4,6 +4,8 @@ Una app en Flutter.
 
 ## Proyecto
 
+- Flutter 3.47.9, con Dart 3.13.7.
+- shared_preferences 2.5.6, flutter_secure_storage 11.2.0, provider 6.1.5+1 y flutter_lints 6.0.0.
 - Gradle, AGP y Kotlin son los de [android.md](android.md#proyecto), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
 
 ## Estilo
@@ -14,7 +16,7 @@ Estándares: [*Effective Dart*](../fuentes/dart/effective-dart-index.md): [*Styl
 
 ## Analizador
 
-- El analizador incluye la [lista de flutter_lints](https://raw.githubusercontent.com/flutter/packages/main/packages/flutter_lints/lib/flutter.yaml) y activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre `flutter analyze --fatal-infos`: los tipos se revisan como con Pyrefly en modo strict.
+- El analizador incluye la [lista de flutter_lints](https://raw.githubusercontent.com/flutter/packages/flutter_lints-v6.0.0/packages/flutter_lints/lib/flutter.yaml) y activa `strict-casts`, `strict-inference` y `strict-raw-types`, y CI corre `flutter analyze --fatal-infos`: los tipos se revisan como con Pyrefly en modo strict.
 
 Plantilla: [plantilla/flutter/](../plantilla/flutter/): `analysis_options.yaml`, con el analizador y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.
 

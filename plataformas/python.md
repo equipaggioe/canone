@@ -4,13 +4,15 @@ Lo común a toda pieza en Python. Lo propio de cada una va en su página y se su
 
 ## Proyecto
 
-Estándares: las entradas de [*pyproject.toml specification*](../fuentes/pypa/pyproject-toml.rst) y de [*Dependency Groups*](../fuentes/pypa/dependency-groups.rst) de PyPA que usan los `pyproject.toml` de la plantilla, y la sección *Install package with pip* de las [buenas prácticas de pytest](../fuentes/pytest/goodpractices.rst).
+Estándares: las entradas de [*pyproject.toml specification*](../fuentes/pypa/pyproject-toml.rst) y de [*Dependency Groups*](../fuentes/pypa/dependency-groups.rst) de PyPA que usan los `pyproject.toml` de la plantilla, y la sección *Install package in a virtual environment* de las [buenas prácticas de pytest](../fuentes/pytest/goodpractices.rst).
 
 - Python 3.13, el de Debian 13: `requires-python = "==3.13.*"`. Toda herramienta que elige la versión más alta permitida, como `flet build`, toma 3.13.
-- uv maneja el entorno, las dependencias y la ejecución. Contradice a pytest, que recomienda venv y pip: un solo programa crea el venv, instala, bloquea y ejecuta.
-- uv es la 0.13.5 en toda pieza, en el CI, en la máquina de quien desarrolla y en el servidor: `required-version = "==0.13.5"` en `[tool.uv]`. El CI la instala con `setup-uv` y `version-file`, y el servidor, con `uv.py` de [despliegue.md](despliegue.md#máquina).
+- uv maneja el entorno, las dependencias y la ejecución: un solo programa crea el venv, instala, bloquea y ejecuta.
+- uv es la 0.13.7 en toda pieza, en el CI, en la máquina de quien desarrolla y en el servidor: `required-version = "==0.13.7"` en `[tool.uv]`. El CI la instala con `setup-uv` y `version-file`, y el servidor, con `uv.py` de [despliegue.md](despliegue.md#máquina).
 - El bloqueo es `uv.lock`, en git, y se instala con `uv sync --locked`.
-- El backend de construcción es `uv_build`.
+- El backend de construcción es `uv_build` 0.13.7, con `<0.14` como tope.
+- pytest 9.2.0, ruff 0.17.3, Pyrefly 1.4.0, deptry 0.25.1, pip-audit 2.10.1, Pydantic 2.14.2 y httpx 0.28.1.
+- `pyproject.toml` declara con `>=` la versión que fija cada página, y `uv.lock` fija la exacta.
 
 Estándar del layout: la sección *Choosing a test layout* de las [buenas prácticas de pytest](../fuentes/pytest/goodpractices.rst).
 
@@ -113,7 +115,7 @@ Estándar: las secciones *Do not run via setuptools* y *Using pytest's strict mo
 | Convención | Herramienta |
 | :--- | :--- |
 | Python 3.13 de Debian 13 | `requires-python` y uv con `python-preference = "only-system"` |
-| uv 0.13.5 | uv con `required-version`, y `verificar.py`, que comprueba que cada `pyproject.toml` la declare |
+| uv 0.13.7 | uv con `required-version`, y `verificar.py`, que comprueba que cada `pyproject.toml` la declare |
 | El bloqueo | `uv sync --locked` en CI |
 | PEP 8: *Code Lay-out*, *Whitespace in Expressions and Statements*, *Naming Conventions* y las comparaciones de *Programming Recommendations* | `ruff format` y ruff `E` salvo `E722`, `W`, `N` salvo `N811` a `N814`, `N817` y `N818`, y `UP009`, con `max-doc-length = 72` |
 | Reglas `F` | ruff `F` |

@@ -276,7 +276,7 @@ def comparar(copia: Path, canonico: Path, nombre: str) -> list[str]:
 # Flutter. Gradle sale del wrapper canónico; AGP y Kotlin, de los plugins que declara el proyecto:
 # el catálogo de versiones en Android y settings.gradle.kts en Flutter.
 WRAPPER = Path("gradle/wrapper/gradle-wrapper.properties")
-PLUGINS = {"com.android.application": "9.4.1", "org.jetbrains.kotlin.android": "2.4.20"}
+PLUGINS = {"com.android.application": "9.5.0", "org.jetbrains.kotlin.android": "2.4.21"}
 PLUGIN_KTS = re.compile(r'id\("([\w.]+)"\)\s+version\s+"([^"]+)"')
 
 
@@ -328,7 +328,7 @@ def versiones_playwright(repo: Path) -> list[str]:
 
 # plataformas/python.md, «Proyecto»: una sola versión exacta de uv en todo pyproject.toml, la misma
 # con que el servidor crea el entorno.
-UV = "0.13.5"
+UV = "0.13.7"
 
 
 def versiones_uv(repo: Path) -> list[str]:

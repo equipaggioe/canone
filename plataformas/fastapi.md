@@ -4,6 +4,8 @@ Un servidor en FastAPI. Se suma a [python.md](python.md).
 
 ## Proyecto
 
+- FastAPI 0.162.0, Starlette 1.10.0, pydantic-settings 2.16.2, SQLAlchemy 2.1.8, Alembic 1.20.1, asyncpg 0.32.0, cryptography 50.0.2, OpenTelemetry 1.45.2, AnyIO 4.16.0 y Babel 2.18.0.
+
 ```text
 server/
   .gitignore

@@ -26,7 +26,7 @@ jobs:
           package_json_file: PIEZA/package.json
       - uses: actions/setup-node@v5
         with:
-          node-version: "20"
+          node-version: "26.13.0"
           cache: pnpm
           cache-dependency-path: PIEZA/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile

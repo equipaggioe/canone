@@ -4,6 +4,8 @@ Una aplicación en Flet. Se suma a [python.md](python.md).
 
 ## Proyecto
 
+- Flet 1.0.5.
+
 ```text
 <pieza>/
   pyproject.toml

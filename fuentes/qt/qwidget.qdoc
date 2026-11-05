@@ -981,7 +981,7 @@ Ensures that the widget has a window system identifier, i.e. that it is known to
 
 /*!
     Removes the action \a action from this widget's list of actions.
-    \sa insertAction(), actions()
+    \sa insertAction(), actions(), insertAction()
 */
 
 /*!
@@ -3017,7 +3017,7 @@ Ensures that the widget has a window system identifier, i.e. that it is known to
     \fn void QWidget::focusOutEvent(QFocusEvent *event)
 
     This event handler can be reimplemented in a subclass to receive
-    keyboard focus events (focus lost) for the widget. The event is
+    keyboard focus events (focus lost) for the widget. The events is
     passed in the \a event parameter.
 
     A widget normally must setFocusPolicy() to something other than

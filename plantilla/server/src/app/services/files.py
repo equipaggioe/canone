@@ -33,7 +33,9 @@ async def known_names(names: list[str]) -> set[str]:
     async with SessionFactory() as session:
         for table in file_tables():
             column = table.c.id
-            query = sa.select(sa.cast(column, sa.Text)).where(sa.cast(column, sa.Text).in_(names))
+            query = sa.select(sa.cast(column, sa.Text())).where(
+                sa.cast(column, sa.Text()).in_(names)
+            )
             known.update((await session.scalars(query)).all())
     return known
 

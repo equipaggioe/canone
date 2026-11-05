@@ -6,7 +6,7 @@ Una app de Android en Kotlin y Jetpack Compose.
 
 - Gradle usa Kotlin DSL y corre con el JDK 21 de Debian 13.
 - Las dependencias y los plugins se declaran en el catálogo `gradle/libs.versions.toml`, con nombres en kebab-case, como `androidx-ktx`: una sola lista de versiones, y el autocompletado del IDE los encuentra.
-- Gradle 9.8.0, AGP 9.4.1 y Kotlin 2.4.20, también en las apps Flutter. Con una sola versión, un proyecto no se queda con la que traía la plantilla el día en que se creó.
+- Gradle 9.8.2, AGP 9.5.0 y Kotlin 2.4.21, también en las apps Flutter. Con una sola versión, un proyecto no se queda con la que traía la plantilla el día en que se creó.
 - Gradle corre con el wrapper y su distribución `-bin`: `-all` solo agrega las fuentes y la documentación de Gradle.
 
 Plantilla: [plantilla/android/gradle/wrapper/gradle-wrapper.properties](../plantilla/android/gradle/wrapper/gradle-wrapper.properties), que se copia sin editar.

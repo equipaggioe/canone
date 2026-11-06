@@ -128,7 +128,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [android/notification-channels.md](android/notification-channels.md) | [origen](https://developer.android.com/develop/ui/compose/notifications/channels) | entera | Página web convertida a Markdown |
 | [compose/state.md](compose/state.md) | [origen](https://developer.android.com/develop/ui/compose/state) | entera | Página web convertida a Markdown |
 | [compose/architecture.md](compose/architecture.md) | [origen](https://developer.android.com/develop/ui/compose/architecture) | entera | Página web convertida a Markdown |
-| [flet/publish.md](flet/publish.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.0.5/website/docs/publish/index.md) | por entradas |  |
+| [flet/publish.md](flet/publish.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.0/website/docs/publish/index.md) | por entradas |  |
 | [pyside6/considerations.rst](pyside6/considerations.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/considerations.rst) | entera |  |
 | [pyside6/deployment-pyside6-deploy.rst](pyside6/deployment-pyside6-deploy.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/deployment/deployment-pyside6-deploy.rst) | por entradas |  |
 | [qt/layout.qdoc](qt/layout.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/layout.qdoc) | entera |  |

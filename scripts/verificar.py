@@ -356,7 +356,7 @@ PYPROJECT = {
     "cryptography": ">=50.0.2",
     "deptry": ">=0.25.1",
     "fastapi": ">=0.162.0",
-    "flet": ">=1.0.5",
+    "flet": ">=1.1.0",
     "httpx": ">=0.28.1",
     "imageio": ">=2.38.1",
     "nuitka": ">=4.3.4",
@@ -364,7 +364,7 @@ PYPROJECT = {
     "opentelemetry-sdk": ">=1.45.2",
     "patchelf": ">=0.19.3.0",
     "pip-audit": ">=2.10.1",
-    "pydantic": ">=2.13.4",
+    "pydantic": ">=2.14.3",
     "pydantic-settings": ">=2.16.2",
     "pyrefly": ">=1.4.0",
     "pyside6": ">=6.12.0",
@@ -410,6 +410,8 @@ ENTRADAS = {
     "actions/setup-python": ("python-version", "3.13"),
     "subosito/flutter-action": ("flutter-version", "3.47.9"),
 }
+# plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de python.md.
+FLET = {"pydantic": "==2.13.4"}
 POSTGIS = "17-3.5"
 METASPACE = "-XX:MaxMetaspaceSize=2g"
 
@@ -421,18 +423,20 @@ def versiones_pyproject(repo: Path) -> list[str]:
         if relativo.name != "pyproject.toml" or not (repo / relativo).is_file():
             continue
         datos = tomllib.loads((repo / relativo).read_text(encoding="utf-8"))
-        requisitos = list(datos.get("project", {}).get("dependencies", []))
+        proyecto = list(datos.get("project", {}).get("dependencies", []))
+        requisitos = list(proyecto)
         requisitos += datos.get("build-system", {}).get("requires", [])
         for grupo in datos.get("dependency-groups", {}).values():
             requisitos += [r for r in grupo if isinstance(r, str)]
+        es_flet = "flet" in datos.get("tool", {})
         for requisito in requisitos:
             coincide = REQUISITO.match(requisito)
             nombre = coincide[1].lower().replace("_", "-")
             declarado = coincide[2].replace(" ", "")
             esperado = PYPROJECT.get(nombre)
-            # plataformas/flet.md: flet build ignora uv.lock, así que Pydantic va exacto.
-            if nombre == "pydantic" and "flet" in str(relativo.parent):
-                esperado = "==" + esperado.removeprefix(">=")
+            # plataformas/flet.md: flet build no lee uv.lock, así que [project] va con ==.
+            if es_flet and requisito in proyecto and esperado:
+                esperado = FLET.get(nombre, "==" + esperado.removeprefix(">="))
             if nombre in PYPROJECT and declarado != esperado:
                 fallas.append(
                     f"plataformas/: {relativo.as_posix()} declara {nombre}{declarado}, no {esperado}"

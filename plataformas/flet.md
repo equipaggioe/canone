@@ -4,8 +4,9 @@ Una aplicación en Flet. Se suma a [python.md](python.md).
 
 ## Proyecto
 
-- Flet 1.0.5, que construye con Flutter 3.44.8.
-- Pydantic va exacto, `pydantic==2.13.4`, y no con `>=`: `flet build apk` ignora `uv.lock` e instala con pip desde el índice de Flet para Android, que solo trae `pydantic-core` 2.46.x. Pydantic 2.14 pide la 2.50 y la compilación falla al resolver. Contradice [python.md](python.md), que fija 2.13.4 con `>=`.
+- Flet 1.1.0, que construye con un Flutter 3.47 del `PATH` y, si no lo encuentra, instala el 3.47.9, el de [flutter.md](flutter.md).
+- Las dependencias de `[project]` van exactas, con `==`: `flet build` no lee `uv.lock` y le pasa a pip las dependencias tal como están escritas. Contradice el `>=` de [python.md](python.md).
+- Pydantic es la 2.13.4, y no la de [python.md](python.md): `flet build apk` instala desde el índice de Flet para Android, que trae `pydantic-core` hasta la 2.47.0. Pydantic 2.13.5 pide la 2.46.5 y la 2.14 pide la 2.50, que no están, y la compilación falla al resolver.
 
 ```text
 <pieza>/
@@ -35,8 +36,8 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-- Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén cifrado del sistema; cifrar a mano obliga a guardar la clave en algún lado. [Flet 1.0.5](https://raw.githubusercontent.com/flet-dev/flet/v1.0.5/website/docs/services/securestorage/index.md)
-- Un secreto no va en el código fuente. [Flet 1.0.5](https://raw.githubusercontent.com/flet-dev/flet/v1.0.5/website/docs/cookbook/encrypting-sensitive-data.md)
+- Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén cifrado del sistema; cifrar a mano obliga a guardar la clave en algún lado. [Flet 1.1.0](https://raw.githubusercontent.com/flet-dev/flet/v1.1.0/website/docs/services/securestorage/index.md)
+- Un secreto no va en el código fuente. [Flet 1.1.0](https://raw.githubusercontent.com/flet-dev/flet/v1.1.0/website/docs/cookbook/encrypting-sensitive-data.md)
 
 ## Idiomas
 
@@ -69,4 +70,4 @@ Estándar: las entradas de [*Publishing a Flet app*](../fuentes/flet/publish.md)
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Flet 1.0.5 | [scripts/verificar.py](../scripts/verificar.py) |
+| Flet 1.1.0, Pydantic 2.13.4 y dependencias exactas | [scripts/verificar.py](../scripts/verificar.py) |

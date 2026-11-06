@@ -97,8 +97,9 @@ Estándares: de Paraglide, [*Basics*](../fuentes/paraglide/basics.md), [*Compili
 Contrato: [transversal.md](transversal.md#idiomas).
 
 - `paraglideVitePlugin` va en `vite.config.ts`, con `outdir: './src/lib/paraglide'` y `emitTsDeclarations: true`: los mensajes se generan al construir, y el editor ve los que cambian.
-- `app.html` lleva `<html lang="%lang%" dir="%dir%">`, y un `handle` de `src/hooks.server.ts` los reemplaza dentro de `paraglideMiddleware`: cada página prerenderizada declara su idioma.
+- `app.html` lleva `<html lang="%lang%" dir="%dir%">`, y un `handle` de `src/hooks.server.ts` los reemplaza dentro de `paraglideMiddleware`: cada página prerenderizada declara su idioma. El `handle` no reasigna `event.request`, que en SvelteKit 3 es de solo lectura.
 - `reroute`, en `src/hooks.ts`, quita el idioma de la URL con `deLocalizeUrl`.
+- Los tipos `Handle` y `Reroute` se importan de `@sveltejs/kit/hooks`: `@sveltejs/kit` no los exporta.
 - `paths.relative` es `false`: con el `fallback`, una ruta relativa a un recurso daría 404 en una URL con idioma.
 - Un enlace que cambia de idioma lleva `data-sveltekit-reload`: el documento y el idioma del cliente quedan iguales.
 - `@types/node` va en `devDependencies`: `svelte-check` revisa el `server.js` que genera Paraglide, que usa `async_hooks`.

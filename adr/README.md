@@ -127,3 +127,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0119](0119-lo-que-corre-en-el-servidor-usa-la-version-de-debian-13-y-lo-demas-la-ultima-estable.md) | Lo que corre en el servidor usa la versión de Debian 13, y lo demás la última estable | `plataformas/`, `plantilla/` y `scripts/verificar.py` | Aceptada |
 | [0120](0120-una-convencion-propia-puede-enlazar-el-documento-en-el-que-se-basa.md) | Una convención propia puede enlazar el documento en el que se basa | `plataformas/README.md`, `plataformas/` y `fuentes/` |
 | [0121](0121-una-fuente-citada-solo-en-algunas-secciones-se-marca-por-partes.md) | Una fuente citada solo en algunas secciones se marca «por partes» | `plataformas/README.md`, `fuentes/README.md` y `scripts/verificar.py` |
+| [0123](0123-deploy-py-vuelve-a-una-version-guardada-y-borra-la-que-no-arranco.md) | `deploy.py` vuelve a una versión guardada con sus mismas migraciones, y borra la nueva que no arrancó | Con `server/` | Aceptada |

@@ -2,6 +2,9 @@ r"""Install a version of the server and the web on this machine.
 
     sudo python3 /usr/local/lib/PRODUCTO/deploy.py v1.4.0
 
+A version that releases/ keeps goes live again without installing it,
+if its migrations are those of the active one.
+
 Before that, on the machine that holds the key:
 
     gh release download v1.4.0 -p "*.sha256"
@@ -111,18 +114,26 @@ def checked(name: str, path: Path, sums: dict[str, str]) -> None:
         raise DeployError(f"{name} does not match its SHA-256")
 
 
+def signed_sums(
+    version: str, assets: dict[str, str], folder: Path, token: str | None
+) -> dict[str, str]:
+    """Download the checksums of every file and verify them."""
+    checksum = folder / f"{APP}-{version}.sha256"
+    signature = folder / f"{APP}-{version}.sha256.sig"
+    for path in (checksum, signature):
+        download(assets[path.name], path, token)
+    verify(checksum, signature)
+    lines = checksum.read_text(encoding="utf-8").splitlines()
+    return {name: expected for expected, name in map(str.split, lines)}
+
+
 def fetch(
     version: str, assets: dict[str, str], folder: Path, token: str | None
 ) -> tuple[Path, dict[str, str]]:
     """Download the artifact and the signed checksums of every file."""
+    sums = signed_sums(version, assets, folder, token)
     archive = folder / f"{APP}-{version}.tar.gz"
-    checksum = folder / f"{APP}-{version}.sha256"
-    signature = folder / f"{APP}-{version}.sha256.sig"
-    for path in (archive, checksum, signature):
-        download(assets[path.name], path, token)
-    verify(checksum, signature)
-    lines = checksum.read_text(encoding="utf-8").splitlines()
-    sums = {name: expected for expected, name in map(str.split, lines)}
+    download(assets[archive.name], archive, token)
     checked(archive.name, archive, sums)
     return archive, sums
 
@@ -211,13 +222,57 @@ def prune() -> None:
             shutil.rmtree(path)
 
 
+def unstage(target: Path) -> None:
+    """Delete the installers that stage left in target, if any."""
+    staged = target / "downloads"
+    if staged.exists():
+        shutil.rmtree(staged)
+
+
+def github_token() -> str | None:
+    """Return the token of a private repository, or None."""
+    return run("systemd-creds", "decrypt", str(TOKEN), "-").strip() if PRIVATE else None
+
+
+def back(version: str, target: Path, previous: Path) -> None:
+    """Make a kept version current again, with its installers."""
+    # The code of target would run on a schema it does not know.
+    if heads(target) != heads(previous):
+        raise DeployError(f"{version} has other migrations than {previous.name}")
+    if DESKTOP:
+        token = github_token()
+        assets = release_assets(version, token)
+        try:
+            with tempfile.TemporaryDirectory(dir=RELEASES) as folder:
+                sums = signed_sums(version, assets, Path(folder), token)
+            stage(assets, sums, target, token)
+        except BaseException:
+            unstage(target)
+            raise
+    point(target)
+    try:
+        restart()
+    except Unhealthy as error:
+        point(previous)
+        restart()
+        unstage(target)
+        raise DeployError(f"{error}. current is back on {previous.name}") from error
+    if DESKTOP:
+        publish(target)
+
+
 def deploy(version: str) -> None:
     """Install version and make it current, or say why not."""
     target = RELEASES / version
-    if target.exists():
-        raise DeployError(f"{target} already exists")
     previous = CURRENT.resolve() if CURRENT.exists() else None
-    token = run("systemd-creds", "decrypt", str(TOKEN), "-").strip() if PRIVATE else None
+    if target == previous:
+        raise DeployError(f"{version} is already live")
+    if target.exists() and previous is not None:
+        back(version, target, previous)
+        return
+    if target.exists():
+        raise DeployError(f"{target} exists and nothing is live")
+    token = github_token()
     assets = release_assets(version, token)
     artifact = f"{APP}-{version}"
     names = {f"{artifact}.tar.gz", f"{artifact}.sha256", f"{artifact}.sha256.sig", *DESKTOP}
@@ -245,6 +300,8 @@ def deploy(version: str) -> None:
             raise DeployError(message) from error
         point(previous)
         restart()
+        # A tag goes in again once what failed is fixed.
+        shutil.rmtree(target)
         raise DeployError(f"{error}. current is back on {previous.name}") from error
     publish(target)
     prune()

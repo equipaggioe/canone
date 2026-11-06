@@ -1,5 +1,7 @@
 # Qt
 
+> **En desarrollo; no se implementa:** [README.md](README.md#en-desarrollo).
+
 Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](python.md).
 
 ## Proyecto

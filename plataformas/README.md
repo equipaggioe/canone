@@ -187,6 +187,10 @@ Se utiliza una tabla con estas columnas:
 - Cada página identifica las plantillas de `plantilla/` que se derivan de sus convenciones.
 - Las páginas no indican qué repositorios utilizan cada tecnología ni establecen cuándo elegir una plataforma sobre otra.
 
+## En desarrollo
+
+Una página que empieza con la nota «En desarrollo; no se implementa» no se aplica a ningún repositorio mientras la nota esté: no seguirla no es una desviación, y `verificar.py` no exige nada de ella. Dentro de Canone se revisa y se desarrolla como cualquier otra parte.
+
 ## Revisión
 
 Una revisión evalúa cada fuente citada, cada convención propia y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.

@@ -1,5 +1,7 @@
 # Android
 
+> **En desarrollo; no se implementa:** [README.md](README.md#en-desarrollo).
+
 Una app de Android en Kotlin y Jetpack Compose.
 
 ## Proyecto

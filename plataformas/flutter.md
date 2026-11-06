@@ -1,5 +1,7 @@
 # Flutter
 
+> **En desarrollo; no se implementa:** [README.md](README.md#en-desarrollo).
+
 Una app en Flutter.
 
 ## Proyecto

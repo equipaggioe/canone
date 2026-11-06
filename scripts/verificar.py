@@ -24,6 +24,21 @@ from pathlib import Path
 
 CANONE = Path(__file__).resolve().parent.parent
 PLANTILLA = CANONE / "plantilla"
+PAGINAS = {pagina.name for pagina in (CANONE / "plataformas").glob("*.md")}
+
+# plataformas/README.md, «En desarrollo»: de una página que empieza con la nota no se exige nada.
+# Solo cuenta la nota anterior a la primera sección: la de una sección, como «Tema», no marca la
+# página entera.
+NOTA = "> **En desarrollo; no se implementa"
+
+
+def vigentes() -> set[str]:
+    """Devuelve las páginas de plataformas/ que no están en desarrollo."""
+    return {
+        pagina
+        for pagina in PAGINAS
+        if NOTA not in (CANONE / "plataformas" / pagina).read_text(encoding="utf-8").split("\n## ", 1)[0]
+    }
 
 CANONICOS = [
     Path("server/alembic.ini"),
@@ -347,33 +362,39 @@ def versiones_uv(repo: Path) -> list[str]:
 
 
 # plataformas/README.md, «Versiones»: cada página fija las versiones, y los manifiestos y los
-# workflows de cada repositorio las siguen.
+# workflows de cada repositorio las siguen. Van por página, para saltar las que están en desarrollo.
 PYPROJECT = {
-    "alembic": ">=1.20.1",
-    "anyio": ">=4.16.0",
-    "asyncpg": ">=0.32.0",
-    "babel": ">=2.18.0",
-    "cryptography": ">=50.0.2",
-    "deptry": ">=0.25.1",
-    "fastapi": ">=0.162.0",
-    "flet": ">=1.1.0",
-    "httpx": ">=0.28.1",
-    "imageio": ">=2.38.1",
-    "nuitka": ">=4.3.4",
-    "opentelemetry-api": ">=1.45.2",
-    "opentelemetry-sdk": ">=1.45.2",
-    "patchelf": ">=0.19.3.0",
-    "pip-audit": ">=2.10.1",
-    "pydantic": ">=2.14.3",
-    "pydantic-settings": ">=2.16.2",
-    "pyrefly": ">=1.4.0",
-    "pyside6": ">=6.12.0",
-    "pytest": ">=9.2.0",
-    "pytest-qt": ">=4.5.0",
-    "ruff": ">=0.17.3",
-    "sqlalchemy": ">=2.1.8",
-    "starlette": ">=1.10.0",
-    "uv-build": ">=0.13.7,<0.14",
+    "fastapi.md": {
+        "alembic": ">=1.20.1",
+        "anyio": ">=4.16.0",
+        "asyncpg": ">=0.32.0",
+        "babel": ">=2.18.0",
+        "cryptography": ">=50.0.2",
+        "fastapi": ">=0.162.0",
+        "opentelemetry-api": ">=1.45.2",
+        "opentelemetry-sdk": ">=1.45.2",
+        "pydantic-settings": ">=2.16.2",
+        "sqlalchemy": ">=2.1.8",
+        "starlette": ">=1.10.0",
+    },
+    "flet.md": {"flet": ">=1.1.0"},
+    "python.md": {
+        "deptry": ">=0.25.1",
+        "httpx": ">=0.28.1",
+        "pip-audit": ">=2.10.1",
+        "pydantic": ">=2.14.3",
+        "pyrefly": ">=1.4.0",
+        "pytest": ">=9.2.0",
+        "ruff": ">=0.17.3",
+        "uv-build": ">=0.13.7,<0.14",
+    },
+    "qt.md": {
+        "imageio": ">=2.38.1",
+        "nuitka": ">=4.3.4",
+        "patchelf": ">=0.19.3.0",
+        "pyside6": ">=6.12.0",
+        "pytest-qt": ">=4.5.0",
+    },
 }
 REQUISITO = re.compile(r"^\s*([A-Za-z0-9._-]+)\s*(?:\[[^\]]*\])?\s*([^;]*)")
 NPM = {
@@ -405,10 +426,10 @@ ACCIONES = {
     "subosito/flutter-action": "v2",
 }
 ENTRADAS = {
-    "actions/setup-java": ("java-version", "25.0.5"),
-    "actions/setup-node": ("node-version", "26.13.0"),
-    "actions/setup-python": ("python-version", "3.13"),
-    "subosito/flutter-action": ("flutter-version", "3.47.9"),
+    "actions/setup-java": ("android.md", "java-version", "25.0.5"),
+    "actions/setup-node": ("sveltekit.md", "node-version", "26.13.0"),
+    "actions/setup-python": ("python.md", "python-version", "3.13"),
+    "subosito/flutter-action": ("flutter.md", "flutter-version", "3.47.9"),
 }
 # plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de python.md.
 FLET = {"pydantic": "==2.13.4"}
@@ -416,7 +437,12 @@ POSTGIS = "17-3.5"
 METASPACE = "-XX:MaxMetaspaceSize=2g"
 
 
-def versiones_pyproject(repo: Path) -> list[str]:
+def versiones_pyproject(repo: Path, paginas: set[str]) -> list[str]:
+    versiones = {
+        nombre: version
+        for pagina in sorted(paginas & PYPROJECT.keys())
+        for nombre, version in PYPROJECT[pagina].items()
+    }
     fallas = []
     for ruta in sorted(listar(repo)):
         relativo = Path(ruta)
@@ -428,16 +454,18 @@ def versiones_pyproject(repo: Path) -> list[str]:
         requisitos += datos.get("build-system", {}).get("requires", [])
         for grupo in datos.get("dependency-groups", {}).values():
             requisitos += [r for r in grupo if isinstance(r, str)]
-        es_flet = "flet" in datos.get("tool", {})
+        es_flet = "flet.md" in paginas and "flet" in datos.get("tool", {})
         for requisito in requisitos:
             coincide = REQUISITO.match(requisito)
             nombre = coincide[1].lower().replace("_", "-")
             declarado = coincide[2].replace(" ", "")
-            esperado = PYPROJECT.get(nombre)
+            esperado = versiones.get(nombre)
+            if esperado is None:
+                continue
             # plataformas/flet.md: flet build no lee uv.lock, así que [project] va con ==.
-            if es_flet and requisito in proyecto and esperado:
+            if es_flet and requisito in proyecto:
                 esperado = FLET.get(nombre, "==" + esperado.removeprefix(">="))
-            if nombre in PYPROJECT and declarado != esperado:
+            if declarado != esperado:
                 fallas.append(
                     f"plataformas/: {relativo.as_posix()} declara {nombre}{declarado}, no {esperado}"
                 )
@@ -472,7 +500,7 @@ def versiones_pubspec(repo: Path) -> list[str]:
     return fallas
 
 
-def versiones_workflows(repo: Path) -> list[str]:
+def versiones_workflows(repo: Path, paginas: set[str]) -> list[str]:
     fallas = []
     for ruta in sorted((repo / ".github/workflows").glob("*.yml")):
         relativo = ruta.relative_to(repo).as_posix()
@@ -482,9 +510,9 @@ def versiones_workflows(repo: Path) -> list[str]:
         for accion, declarada in pares:
             if accion in ACCIONES and declarada != ACCIONES[accion]:
                 fallas.append(f"repositorio.md: {relativo} usa {accion}@{declarada}, no @{ACCIONES[accion]}")
-        for accion, (entrada, version) in ENTRADAS.items():
+        for accion, (pagina, entrada, version) in ENTRADAS.items():
             valores = re.findall(rf"{entrada}:\s*[\"']?([^\"'\s]+)", texto)
-            if accion in usadas and set(valores) != {version}:
+            if pagina in paginas and accion in usadas and set(valores) != {version}:
                 fallas.append(f"plataformas/: {relativo} no declara {entrada} {version}")
         for imagen in re.findall(r"postgis/postgis:(\S+)", texto):
             if imagen != POSTGIS:
@@ -613,6 +641,7 @@ def reparto_de_fuentes() -> list[str]:
 
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
+    paginas = vigentes()
 
     # Un repositorio sin server/ no tiene por qué tener sus archivos canónicos.
     if (repo / "server").is_dir():
@@ -675,7 +704,7 @@ def revisar(repo: Path) -> list[str]:
             )
         datos = json.loads(paquete.read_text(encoding="utf-8"))
         deps = {**datos.get("dependencies", {}), **datos.get("devDependencies", {})}
-        if "@sveltejs/kit" not in deps:
+        if "@sveltejs/kit" not in deps or "sveltekit.md" not in paginas:
             continue
         # pnpm/action-setup toma de aquí la versión de pnpm, y falla si no la encuentra.
         fallas.extend(versiones_package(superficie, datos, deps))
@@ -696,7 +725,7 @@ def revisar(repo: Path) -> list[str]:
         )
 
     # Flutter: solo para las apps que existan.
-    for pubspec in repo.glob("*/pubspec.yaml"):
+    for pubspec in repo.glob("*/pubspec.yaml") if "flutter.md" in paginas else []:
         app = pubspec.parent
         fallas.extend(
             comparar(
@@ -711,7 +740,7 @@ def revisar(repo: Path) -> list[str]:
             fallas.extend(versiones_gradle(app / "android", f"{app.name}/android", declarados))
 
     # Android: solo para las apps que existan.
-    for settings in repo.glob("*/settings.gradle.kts"):
+    for settings in repo.glob("*/settings.gradle.kts") if "android.md" in paginas else []:
         app = settings.parent
         fallas.extend(
             comparar(app / ".editorconfig", PLANTILLA / "android/.editorconfig", f"{app.name}/.editorconfig")
@@ -737,11 +766,13 @@ def revisar(repo: Path) -> list[str]:
     # fallas.extend(colores_generados(repo))
     fallas.extend(nombres_largos(repo))
     fallas.extend(configuracion_con_repositorio(repo))
-    fallas.extend(versiones_playwright(repo))
+    if "sveltekit.md" in paginas:
+        fallas.extend(versiones_playwright(repo))
     fallas.extend(versiones_uv(repo))
-    fallas.extend(versiones_pyproject(repo))
-    fallas.extend(versiones_pubspec(repo))
-    fallas.extend(versiones_workflows(repo))
+    fallas.extend(versiones_pyproject(repo, paginas))
+    if "flutter.md" in paginas:
+        fallas.extend(versiones_pubspec(repo))
+    fallas.extend(versiones_workflows(repo, paginas))
 
     return fallas
 
@@ -758,9 +789,10 @@ def main() -> int:
 
     if args.canone:
         fallas = reparto_de_fuentes()
-        fallas += versiones_pyproject(PLANTILLA)
-        fallas += versiones_workflows(PLANTILLA)
-        fallas += versiones_workflows(CANONE)
+        # La plantilla sigue todas las páginas, también las que están en desarrollo.
+        fallas += versiones_pyproject(PLANTILLA, PAGINAS)
+        fallas += versiones_workflows(PLANTILLA, PAGINAS)
+        fallas += versiones_workflows(CANONE, PAGINAS)
         print(f"\ncanone: {len(fallas)} incumplimientos")
         for falla in fallas:
             print(f"  - {falla}")

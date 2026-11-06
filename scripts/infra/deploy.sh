@@ -1,9 +1,10 @@
 #!/bin/sh
 # Runs the deploy.py that install.py installs on a Debian 13, with releases served from this machine
-# in place of GitHub: the first version migrates and goes live, a tag goes in once, an unhealthy
-# version goes back to the previous, a failed migration leaves nothing, a checksum signed by a key
-# outside allowed_signers or of another version installs nothing, and releases/ keeps the five
-# newest. A private repository deploys only with --private and its token, which does not follow
+# in place of GitHub: the first version migrates and goes live, the live tag does not go in again,
+# an unhealthy version goes back to the previous and leaves nothing, a failed migration leaves
+# nothing, a checksum signed by a key outside allowed_signers or of another version installs
+# nothing, releases/ keeps the five newest, and a kept version goes live again with its installers
+# only if its migrations are those of the active one. A private repository deploys only with --private and its token, which does not follow
 # the redirect of a download to another host. The server reads the credentials of credentials.py,
 # and the daily purge and sweep run on what goes live. uv finds every package in UV_CACHE_DIR,
 # filled before the machine lost its network.
@@ -103,6 +104,24 @@ def downgrade() -> None:
     pass
 EOF
 }
+migrating() {
+    cat > "$1/server/alembic/versions/eeeeeeeeeeee_noop.py" <<'EOF'
+"""A migration that changes nothing."""
+
+revision = "eeeeeeeeeeee"
+down_revision = "d34c1b992b0b"
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    pass
+
+
+def downgrade() -> None:
+    pass
+EOF
+}
 
 mkdir -p "$api"
 # GitHub: the API on 9000 and its downloads, redirected to another host. With $work/token, the
@@ -185,14 +204,15 @@ for task in purge sweep; do
     systemctl start "demo-$task.service"
 done
 
-step "A tag goes in once"
+step "The live tag does not go in again"
 fails deploy v1.0.0
-grep -qF '/srv/demo/releases/v1.0.0 already exists' "$work/error"
+grep -qF 'v1.0.0 is already live' "$work/error"
 
-step "An unhealthy version without migrations goes back to the previous, signed by the second key"
+step "An unhealthy version without migrations goes back to the previous and is deleted, signed by the second key"
 release v1.0.1 s2 broken
 fails deploy v1.0.1
 grep -qF 'current is back on v1.0.0' "$work/error"
+test ! -e /srv/demo/releases/v1.0.1
 test "$(current)" = v1.0.0
 healthy
 test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.0.0"
@@ -229,6 +249,26 @@ healthy
 test "$(ls /srv/demo/releases | tr '\n' ' ')" = "v1.1.1 v1.1.2 v1.1.3 v1.1.4 v1.1.5 "
 test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.1.5"
 
+step "A kept version with the same migrations goes live again, with its installers"
+deploy v1.1.3
+test "$(current)" = v1.1.3
+healthy
+test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.1.3"
+test ! -e /srv/demo/releases/v1.1.3/downloads
+deploy v1.1.5
+test "$(current)" = v1.1.5
+test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.1.5"
+
+step "A kept version with other migrations does not go live again"
+release v1.1.6 s1 migrating
+deploy v1.1.6
+test "$(current)" = v1.1.6
+fails deploy v1.1.5
+grep -qF 'v1.1.5 has other migrations than v1.1.6' "$work/error"
+test "$(current)" = v1.1.6
+healthy
+test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.1.6"
+
 step "A private repository answers 404 without --private, and 401 with another token"
 printf %s test-github-token > "$work/token"
 release v1.2.0 s1
@@ -239,7 +279,7 @@ echo github_token=another-token | python3 "$canone/plantilla/infra/credentials.p
 fails deploy v1.2.0
 grep -qF ': 401 Unauthorized' "$work/error"
 test ! -e /srv/demo/releases/v1.2.0
-test "$(current)" = v1.1.5
+test "$(current)" = v1.1.6
 
 step "With its token it deploys, and the token does not follow a download to another host"
 echo github_token=test-github-token | python3 "$canone/plantilla/infra/credentials.py" demo

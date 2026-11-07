@@ -249,6 +249,9 @@ healthy
 test "$(ls /srv/demo/releases | tr '\n' ' ')" = "v1.1.1 v1.1.2 v1.1.3 v1.1.4 v1.1.5 "
 test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.1.5"
 
+# systemd starts a unit at most five times in 10 s, and the steps above restart demo.service
+# once per version.
+sleep 10
 step "A kept version with the same migrations goes live again, with its installers"
 deploy v1.1.3
 test "$(current)" = v1.1.3
@@ -269,9 +272,10 @@ test "$(current)" = v1.1.6
 healthy
 test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.1.6"
 
+sleep 10
 step "A private repository answers 404 without --private, and 401 with another token"
 printf %s test-github-token > "$work/token"
-release v1.2.0 s1
+release v1.2.0 s1 migrating
 fails deploy v1.2.0
 grep -qF ': 404 Not Found' "$work/error"
 setup --private

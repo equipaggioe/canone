@@ -25,10 +25,10 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [alembic/autogenerate.rst](alembic/autogenerate.rst) | [origen](https://raw.githubusercontent.com/sqlalchemy/alembic/rel_1_20_1/docs/build/autogenerate.rst) | entera |  |
 | [postgresql/datatype.sgml](postgresql/datatype.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/datatype.sgml) | por entradas |  |
 | [postgresql/json.sgml](postgresql/json.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/json.sgml) | entera |  |
-| [postgresql/ddl.sgml](postgresql/ddl.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ddl.sgml) | entera |  |
-| [postgresql/indices.sgml](postgresql/indices.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml) | entera |  |
+| [postgresql/ddl.sgml](postgresql/ddl.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ddl.sgml) | por partes |  |
+| [postgresql/indices.sgml](postgresql/indices.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml) | por partes |  |
 | [postgresql/backup.sgml](postgresql/backup.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml) | por partes |  |
-| [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | [origen](https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml) | entera |  |
+| [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | [origen](https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml) | por partes |  |
 | [rfc/rfc3339.txt](rfc/rfc3339.txt) | [origen](https://www.rfc-editor.org/rfc/rfc3339.txt) | entera |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | [origen](https://www.rfc-editor.org/rfc/rfc5646.txt) | por partes |  |
 | [rfc/rfc6749.txt](rfc/rfc6749.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6749.txt) | por partes |  |

@@ -1,6 +1,7 @@
 # ADR-0004 · Una columna geográfica se declara con una función, no con un Annotated
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 4 de la decisión lo reemplaza el
+  [ADR-0126](0126-el-indice-gist-lo-crea-geoalchemy2-con-sus-alembic-helpers.md)
 - **Fecha:** 2026-09-22
 - **Alcance:** `server/app/models/`, repositorios con PostGIS
 

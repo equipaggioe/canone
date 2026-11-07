@@ -62,18 +62,12 @@ if find_spec("geoalchemy2") is not None:
     # nullable of the last column that uses it, so each column builds
     # its own.
     def geo_point(*, nullable: bool) -> MappedColumn[Any]:
-        """Declare a point in WGS 84.
-
-        Its GiST index goes in the migration.
-        """
-        return mapped_column(Geography("POINT", srid=4326, spatial_index=False), nullable=nullable)
+        """Declare a point in WGS 84, with its GiST index."""
+        return mapped_column(Geography("POINT", srid=4326), nullable=nullable)
 
     def geo_line(*, nullable: bool) -> MappedColumn[Any]:
-        """Declare a line in WGS 84.
-
-        Its GiST index goes in the migration.
-        """
-        return mapped_column(Geography("LINESTRING", srid=4326, spatial_index=False), nullable=nullable)
+        """Declare a line in WGS 84, with its GiST index."""
+        return mapped_column(Geography("LINESTRING", srid=4326), nullable=nullable)
 
 
 @compiles(sa.Enum, "postgresql")

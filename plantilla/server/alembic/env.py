@@ -1,7 +1,9 @@
 """Run the migrations with the async engine of the app."""
 
 import asyncio
+from importlib.util import find_spec
 from logging.config import fileConfig
+from typing import Any
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
@@ -23,6 +25,23 @@ if config.config_file_name is not None:
 
 # Importing app.models.base runs app.models, which imports every model.
 target_metadata = Base.metadata
+
+
+def spatial_options() -> dict[str, Any]:
+    """Return the Alembic hooks of geoalchemy2, if the server has it.
+
+    They skip the PostGIS tables and create each spatial index once.
+    """
+    if find_spec("geoalchemy2") is None:
+        return {}
+    from geoalchemy2 import alembic_helpers
+
+    return {
+        "include_object": alembic_helpers.include_object,
+        "process_revision_directives": alembic_helpers.writer,
+        "render_item": alembic_helpers.render_item,
+    }
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -48,6 +67,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        **spatial_options(),
     )
 
     with context.begin_transaction():
@@ -56,7 +76,7 @@ def run_migrations_offline() -> None:
 
 def do_run_migrations(connection: Connection) -> None:
     """Run the migrations on one connection."""
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(connection=connection, target_metadata=target_metadata, **spatial_options())
 
     with context.begin_transaction():
         context.run_migrations()

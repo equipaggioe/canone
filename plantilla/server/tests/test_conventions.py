@@ -200,15 +200,76 @@ def test_foreign_keys_declare_on_delete() -> None:
     assert not offenders
 
 
-def test_foreign_keys_are_indexed() -> None:
-    """Every foreign key column leads an index."""
-    offenders = [
-        f"{table.name}.{key.parent.name}"
-        for table in TABLES
-        for key in table.foreign_keys
-        if not any(list(index.columns)[0] is key.parent for index in table.indexes)
+def is_indexed(key: sa.ForeignKeyConstraint) -> bool:
+    """Tell whether an index or a key leads with the key's columns."""
+    names = {column.name for column in key.columns}
+    table = key.table
+    leads = [list(index.columns) for index in table.indexes]
+    leads += [
+        list(constraint.columns)
+        for constraint in table.constraints
+        if isinstance(constraint, (sa.PrimaryKeyConstraint, sa.UniqueConstraint))
     ]
-    assert not offenders
+    return any({column.name for column in lead[: len(names)]} == names for lead in leads)
+
+
+def unindexed_keys(tables: list[sa.Table]) -> list[str]:
+    """Return the foreign keys that no index leads."""
+    return [
+        f"{table.name}.({', '.join(key.column_keys)})"
+        for table in tables
+        for key in table.foreign_key_constraints
+        if not is_indexed(key)
+    ]
+
+
+def test_foreign_keys_are_indexed() -> None:
+    """Every foreign key leads an index or a key of its table."""
+    assert not unindexed_keys(TABLES)
+
+
+@pytest.mark.parametrize(
+    ("table", "unindexed"),
+    [
+        (
+            key_table(
+                "membership",
+                sa.Column("account_id", sa.Uuid, sa.ForeignKey("account.id"), primary_key=True),
+                sa.Column("team", sa.Text, primary_key=True),
+            ),
+            [],
+        ),
+        (
+            key_table(
+                "membership",
+                sa.Column("id", sa.Uuid, primary_key=True),
+                sa.Column("account_id", sa.Uuid, sa.ForeignKey("account.id")),
+                sa.Column("team", sa.Text),
+                sa.Index("ix_membership_account_id", "account_id", "team"),
+            ),
+            [],
+        ),
+        (
+            key_table(
+                "membership",
+                sa.Column("id", sa.Uuid, primary_key=True),
+                sa.Column("account_id", sa.Uuid, sa.ForeignKey("account.id")),
+            ),
+            ["membership.(account_id)"],
+        ),
+        (
+            key_table(
+                "membership",
+                sa.Column("team", sa.Text, primary_key=True),
+                sa.Column("account_id", sa.Uuid, sa.ForeignKey("account.id"), primary_key=True),
+            ),
+            ["membership.(account_id)"],
+        ),
+    ],
+)
+def test_unindexed_key(table: sa.Table, unindexed: list[str]) -> None:
+    """A key that leads no index is caught, even if one includes it."""
+    assert unindexed_keys([table]) == unindexed
 
 
 def test_strings_are_text() -> None:
@@ -251,6 +312,32 @@ def test_numerics_are_unscaled() -> None:
         and (column.type.precision is not None or column.type.scale is not None)
     ]
     assert not offenders
+
+
+def is_allowed_geography(column: sa.Column[Any]) -> bool:
+    """Tell whether a geography column follows postgres.md."""
+    # geoalchemy2 has no type stubs.
+    kind: Any = column.type
+    return kind.srid == 4326 and kind.spatial_index
+
+
+def geography_offenders(tables: list[sa.Table]) -> list[str]:
+    """Return the spatial columns that break postgres.md."""
+    from geoalchemy2 import Geography, Geometry
+
+    return [
+        f"{column.table.name}.{column.name}"
+        for table in tables
+        for column in table.columns
+        if isinstance(column.type, Geometry)
+        or (isinstance(column.type, Geography) and not is_allowed_geography(column))
+    ]
+
+
+def test_geography_columns() -> None:
+    """Every spatial column is a WGS 84 geography with a GiST index."""
+    pytest.importorskip("geoalchemy2")
+    assert not geography_offenders(TABLES)
 
 
 def test_enums_are_checked_text() -> None:

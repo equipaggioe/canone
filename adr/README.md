@@ -9,7 +9,7 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0001](0001-el-estandar-vive-en-un-repositorio.md) | El estándar vive en un repositorio y los demás lo enlazan | Todos | Aceptada; la última frase del punto 2 la reemplazan ADR-0014 y ADR-0057, y el punto 4, ADR-0040 |
 | [0002](0002-los-archivos-base-se-copian-y-se-verifican.md) | Los archivos base se copian y un script verifica la copia | Con `server/` | Aceptada |
 | [0003](0003-enum-como-varchar-con-check.md) | Un enum se guarda como VARCHAR con CHECK | Con base de datos | Reemplazada por ADR-0013 |
-| [0004](0004-geografia-con-funciones.md) | Una columna geográfica se declara con una función, no con un Annotated | Con PostGIS | Aceptada |
+| [0004](0004-geografia-con-funciones.md) | Una columna geográfica se declara con una función, no con un Annotated | Con PostGIS | Aceptada; el punto 4 lo reemplaza ADR-0126 |
 | [0005](0005-prefijo-api-al-montar.md) | El prefijo `/api` se aplica al montar, y la ruta no lleva versión | Con FastAPI | Reemplazada por ADR-0027 |
 | [0006](0006-dependencias-con-pyproject-y-uv.md) | Las dependencias de Python se declaran en `pyproject.toml` con `uv` | Con Python | Aceptada; el punto 3, en lo que toca a `mypy`, lo reemplaza ADR-0025 |
 | [0007](0007-adapter-static.md) | Toda superficie web usa `adapter-static` | Con SvelteKit | Reemplazada; el punto 1 lo reemplaza ADR-0039, y los puntos 2 y 3 se descartan |
@@ -131,3 +131,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0123](0123-deploy-py-vuelve-a-una-version-guardada-y-borra-la-que-no-arranco.md) | `deploy.py` vuelve a una versión guardada con sus mismas migraciones, y borra la nueva que no arrancó | Con `server/` | Aceptada |
 | [0124](0124-una-tabla-cuyas-filas-crea-el-servidor-lleva-una-identity-bigint.md) | Una tabla cuyas filas crea el servidor lleva una identity `bigint` | Con base de datos | Aceptada |
 | [0125](0125-un-numeric-va-sin-precision-ni-escala.md) | Un `numeric` va sin precisión ni escala | Con base de datos | Aceptada |
+| [0126](0126-el-indice-gist-lo-crea-geoalchemy2-con-sus-alembic-helpers.md) | El índice GiST lo crea GeoAlchemy2, con sus `alembic_helpers` | Con PostGIS | Aceptada |

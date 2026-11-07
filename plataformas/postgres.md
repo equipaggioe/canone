@@ -5,8 +5,11 @@ La base de datos.
 ## Proyecto
 
 - PostgreSQL 17 y PostGIS 3.5, los de Debian 13.
+- GeoAlchemy2 0.21.0, en el servidor que guarda geografía.
 
 ## Nombres
+
+Estándar: la sección *The System Catalog Schema* de [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
 
 - Los nombres van en snake_case y sin comillas, y las tablas en singular.
 - La clave primaria de una sola columna se llama `id`.
@@ -16,7 +19,7 @@ La base de datos.
 
 ## Clave primaria
 
-Estándar: la sección *Primary Keys* de [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
+Estándar: las secciones *Primary Keys* y *System Columns* de [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
 
 - `text` con un `CHECK` de su formato: en una tabla de valores que codifica un estándar, como los países de ISO 3166-1, con su código como clave. Es el mismo en todos los entornos y se lee sin unir tablas.
 - `integer` identity: en una lista propia del equipo, igual para todos los usuarios, cuyo tope cabe en `integer`.
@@ -29,25 +32,25 @@ Estándar: la sección *Primary Keys* de [*Data Definition*](../fuentes/postgres
 
 ## Definición de datos
 
-Estándar: [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL, salvo *Primary Keys*, que rige en «Clave primaria», y el párrafo de *Foreign Keys* sobre indexar las columnas que referencian, que rige en «Índices».
+Estándar: las secciones *Check Constraints*, *Not-Null Constraints*, *Foreign Keys* y *Modifying Tables* de [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL, salvo el párrafo de *Foreign Keys* sobre indexar las columnas que referencian, que rige en «Índices».
 
-- Toda clave foránea declara `ON DELETE`: `CASCADE` si el hijo pertenece al padre, `RESTRICT` si no. Qué pasa al borrar queda escrito en el modelo.
+- Toda clave foránea declara `ON DELETE`: `CASCADE` si el hijo pertenece al padre, `RESTRICT` si no. Qué pasa al borrar queda escrito en el modelo. Ni `SET NULL` ni `SET DEFAULT`: borrar el padre no cambia en silencio una fila que no le pertenece.
 
 ## Geografía
 
-Estándar: [*Data Management*](../fuentes/postgis/using_postgis_dataman.xml) de PostGIS, entero.
+Estándar: las secciones *Geography Data Type* y *GiST Indexes* de [*Data Management*](../fuentes/postgis/using_postgis_dataman.xml) de PostGIS.
 
 - Las columnas espaciales son `geography(<tipo>, 4326)`. El área de cada producto no se conoce de antemano, y `geography` mide en metros sin elegir proyección.
 - El ORM las declara con GeoAlchemy2.
 - La columna se declara con `geo_point()` o `geo_line()`, que crean un `Geography` por columna: un `Geography` compartido en un `Annotated` le impone su `nullable` a todas las columnas que lo usan.
 - `GeoPoint` y `GeoLine` son alias de `WKBElement`, solo para `Mapped[...]`.
-- La columna lleva `spatial_index=False`, y su índice GiST lo crea la migración, como los demás índices.
+- La columna lleva el índice GiST que crea GeoAlchemy2, con el `spatial_index` por defecto, y `env.py` le pasa a Alembic los `alembic_helpers` de GeoAlchemy2. Sin ellos, la autogeneración crea el índice dos veces y propone borrar `spatial_ref_sys`.
 
 ## Índices
 
-Estándares: [*Indexes*](../fuentes/postgresql/indices.sgml), entero, y el párrafo de *Foreign Keys* de [*Data Definition*](../fuentes/postgresql/ddl.sgml) sobre indexar las columnas que referencian, de PostgreSQL.
+Estándares: las secciones *Introduction*, *Multicolumn Indexes*, *Unique Indexes*, *Partial Indexes* e *Index-Only Scans and Covering Indexes* de [*Indexes*](../fuentes/postgresql/indices.sgml), y el párrafo de *Foreign Keys* de [*Data Definition*](../fuentes/postgresql/ddl.sgml) sobre indexar las columnas que referencian, de PostgreSQL.
 
-- Toda clave foránea lleva índice. Endurece *Data Definition*, que lo da por buena idea y no lo crea: sin él, borrar el padre o unir las tablas recorre la tabla hija entera.
+- Toda clave foránea lleva un índice cuyas primeras columnas son las suyas. Sin él, borrar una fila del padre o cambiar su clave recorre la tabla hija entera.
 
 ## Tipos
 
@@ -71,6 +74,8 @@ Con las pruebas de `tests/test_conventions.py` de [fastapi.md](fastapi.md):
 | Cadenas `text` | `test_strings_are_text` |
 | `timestamptz` | `test_datetimes_are_aware` |
 | Duraciones sin `interval` | `test_durations_are_seconds` |
-| `numeric` sin precisión ni escala | `test_numerics_are_unscaled` || Enumerados como `text` con `CHECK` | `test_enums_are_checked_text` |
-| `ON DELETE` en toda clave foránea | `test_foreign_keys_declare_on_delete` |
-| Índice en toda clave foránea | `test_foreign_keys_are_indexed` |
+| `numeric` sin precisión ni escala | `test_numerics_are_unscaled` |
+| Enumerados como `text` con `CHECK` | `test_enums_are_checked_text` |
+| Columnas espaciales `geography` en 4326, con el índice de `spatial_index` | `test_geography_columns` |
+| `ON DELETE` `CASCADE` o `RESTRICT` en toda clave foránea | `test_foreign_keys_declare_on_delete` |
+| Toda clave foránea encabeza un índice | `test_foreign_keys_are_indexed` y `test_unindexed_key` |

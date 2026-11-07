@@ -83,13 +83,15 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [sveltekit/page-options.md](sveltekit/page-options.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/20-core-concepts/40-page-options.md) | entera |  |
 | [sveltekit/state-management.md](sveltekit/state-management.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/20-core-concepts/50-state-management.md) | entera |  |
 | [sveltekit/adapter-static.md](sveltekit/adapter-static.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/25-build-and-deploy/50-adapter-static.md) | entera |  |
-| [svelte/effect.md](svelte/effect.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/04-$effect.md) | entera |  |
+| [sveltekit/accessibility.md](sveltekit/accessibility.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/40-best-practices/10-accessibility.md) | entera |  |
+| [svelte/best-practices.md](svelte/best-practices.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/07-misc/01-best-practices.md) | entera |  |
 | [svelte/props.md](svelte/props.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/05-$props.md) | entera |  |
+| [svelte/state.md](svelte/state.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/02-$state.md) | entera |  |
 | [unocss/presets-wind4.md](unocss/presets-wind4.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/presets/wind4.md) | entera |  |
 | [unocss/integrations-vite.md](unocss/integrations-vite.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/integrations/vite.md) | por partes |  |
-| [paraglide/basics.md](paraglide/basics.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/bad4564fbbb0c4d204b8621fdcd5aac5c6ceb899/docs/basics.md) | entera |  |
-| [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/5ed1745276180e3cb481d5e8cefd7eae3a9d8ce6/docs/compiling-messages.md) | entera |  |
-| [paraglide/strategy.md](paraglide/strategy.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/bad4564fbbb0c4d204b8621fdcd5aac5c6ceb899/docs/strategy.md) | entera |  |
+| [paraglide/basics.md](paraglide/basics.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/a2a2f0ea6990fb6c57e0d25ac2c24e58e3d4ee4a/docs/basics.md) | entera | Commit de la versión 3.2.1 |
+| [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/a2a2f0ea6990fb6c57e0d25ac2c24e58e3d4ee4a/docs/compiling-messages.md) | entera | Commit de la versión 3.2.1 |
+| [paraglide/strategy.md](paraglide/strategy.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/a2a2f0ea6990fb6c57e0d25ac2c24e58e3d4ee4a/docs/strategy.md) | entera | Commit de la versión 3.2.1 |
 | [dart/effective-dart-index.md](dart/effective-dart-index.md) | [origen](https://raw.githubusercontent.com/dart-lang/site-www/fd943b8add36fe5eaa55b594ea6a8501ae667407/src/content/effective-dart/index.md) | entera |  |
 | [dart/effective-dart-style.md](dart/effective-dart-style.md) | [origen](https://raw.githubusercontent.com/dart-lang/site-www/d7879f023185039ecceecca635d6ce9d182b5d87/src/content/effective-dart/style.md) | entera |  |
 | [dart/effective-dart-documentation.md](dart/effective-dart-documentation.md) | [origen](https://raw.githubusercontent.com/dart-lang/site-www/83ebb33f4768c0b568d2d07541328785aeee2199/src/content/effective-dart/documentation.md) | entera |  |

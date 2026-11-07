@@ -3,6 +3,7 @@ import { colors, colorsCss } from './src/lib/colors';
 
 export default defineConfig({
 	presets: [presetWind4({ preflights: { reset: true } })],
+	separators: [':'],
 	theme: { colors },
 	preflights: [{ getCSS: () => colorsCss }]
 });

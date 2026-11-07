@@ -320,9 +320,9 @@ def versiones_gradle(proyecto: Path, nombre: str, declarados: dict[str, str]) ->
     return fallas
 
 
-# plataformas/sveltekit.md, «Pruebas»: una sola versión exacta de Playwright en todo package.json
+# plataformas/sveltekit.md, «Pruebas»: la versión de Playwright de «Proyecto» en todo package.json
 # del repositorio, porque cada versión descarga sus propios navegadores.
-PLAYWRIGHT = "1.64.1"
+PLAYWRIGHT = "1.65.0"
 
 
 def versiones_playwright(repo: Path) -> list[str]:
@@ -398,17 +398,32 @@ PYPROJECT = {
 }
 REQUISITO = re.compile(r"^\s*([A-Za-z0-9._-]+)\s*(?:\[[^\]]*\])?\s*([^;]*)")
 NPM = {
-    "@inlang/paraglide-js": "3.1.0",
+    "@axe-core/playwright": "4.14.0",
+    "@inlang/paraglide-js": "3.2.1",
+    "@sveltejs/adapter-static": "4.0.1",
     "@sveltejs/kit": "3.1.1",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
-    "sv": "1.3.0",
+    "@types/leaflet": "1.9.22",
+    "@eslint/js": "10.0.1",
+    "@types/node": "26.6.6",
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-svelte": "3.24.1",
+    "globals": "17.14.0",
+    "leaflet": "1.9.4",
+    "openapi-fetch": "0.17.0",
+    "openapi-typescript": "7.13.0",
+    "prettier": "3.9.10",
+    "prettier-plugin-svelte": "4.1.1",
     "svelte": "5.57.3",
+    "svelte-check": "4.7.8",
     "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
     "unocss": "66.12.0",
-    "vite": "8.3.5",
+    "vite": "8.3.6",
     "vitest": "5.1.0",
 }
-PNPM = "12.16.1"
+PNPM = "12.18.0"
 PUB = {
     "flutter_lints": "6.0.0",
     "flutter_secure_storage": "11.2.0",
@@ -477,10 +492,25 @@ def versiones_package(superficie: Path, datos: dict, deps: dict[str, str]) -> li
     if not re.fullmatch(rf"pnpm@{re.escape(PNPM)}(\+\S+)?", datos.get("packageManager", "")):
         fallas.append(f"plataformas/sveltekit.md: {superficie.name}/package.json no declara pnpm@{PNPM}")
     for paquete, version in NPM.items():
-        if paquete in deps and deps[paquete].lstrip("^~") != version:
+        if paquete in deps and deps[paquete] != version:
             fallas.append(
                 f"plataformas/sveltekit.md: {superficie.name}/ declara {paquete} {deps[paquete]}, no {version}"
             )
+    return fallas
+
+
+# plataformas/sveltekit.md, «Carga de datos»: los tipos de la API se generan antes de dev y check.
+API = "openapi-typescript ../server/openapi.json -o src/lib/api/schema.d.ts"
+
+
+def scripts_package(superficie: Path, datos: dict) -> list[str]:
+    scripts = datos.get("scripts", {})
+    fallas = []
+    if scripts.get("api") != API:
+        fallas.append(f"plataformas/sveltekit.md: {superficie.name}/package.json no tiene el script api: {API}")
+    for nombre in ("dev", "check"):
+        if not scripts.get(nombre, "").startswith("pnpm api && "):
+            fallas.append(f"plataformas/sveltekit.md: el script {nombre} de {superficie.name}/ no empieza por pnpm api &&")
     return fallas
 
 
@@ -708,14 +738,24 @@ def revisar(repo: Path) -> list[str]:
             continue
         # pnpm/action-setup toma de aquí la versión de pnpm, y falla si no la encuentra.
         fallas.extend(versiones_package(superficie, datos, deps))
-        if (superficie / "svelte.config.js").exists():
-            fallas.append(
-                f"plataformas/sveltekit.md: {superficie.name}/ tiene svelte.config.js, que SvelteKit 3 rechaza"
-            )
+        fallas.extend(scripts_package(superficie, datos))
+        eslint = superficie / "eslint.config.js"
+        if not eslint.exists() or "includeIgnoreFile(" not in eslint.read_text(encoding="utf-8"):
+            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/eslint.config.js no usa includeIgnoreFile")
+        ignorados = superficie / ".prettierignore"
+        if not ignorados.exists() or "pnpm-lock.yaml" not in ignorados.read_text(encoding="utf-8").split():
+            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/.prettierignore no ignora pnpm-lock.yaml")
+        for svelte in sorted((superficie / "src").rglob("*.svelte")):
+            if re.search(r"svelte-ignore[^>]*\ba11y_", svelte.read_text(encoding="utf-8")):
+                relativo = svelte.relative_to(superficie.parent).as_posix()
+                fallas.append(f"plataformas/sveltekit.md: {relativo} apaga una advertencia a11y_ con svelte-ignore")
         if "@sveltejs/adapter-static" not in deps:
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no usa adapter-static")
-        if not (superficie / "uno.config.ts").exists():
+        uno = superficie / "uno.config.ts"
+        if not uno.exists():
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no tiene uno.config.ts")
+        elif not re.search(r"separators:\s*\[\s*['\"]:['\"]\s*\]", uno.read_text(encoding="utf-8")):
+            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/uno.config.ts no fija separators: [':']")
         fallas.extend(
             comparar(
                 superficie / ".prettierrc",

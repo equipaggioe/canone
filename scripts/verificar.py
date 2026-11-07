@@ -749,6 +749,10 @@ def revisar(repo: Path) -> list[str]:
             if re.search(r"svelte-ignore[^>]*\ba11y_", svelte.read_text(encoding="utf-8")):
                 relativo = svelte.relative_to(superficie.parent).as_posix()
                 fallas.append(f"plataformas/sveltekit.md: {relativo} apaga una advertencia a11y_ con svelte-ignore")
+        vite = superficie / "vite.config.ts"
+        proxy = r"['\"]/api['\"]\s*:\s*\{\s*target:\s*['\"]http://localhost:8000['\"],\s*ws:\s*true\s*\}"
+        if not vite.exists() or not re.search(proxy, vite.read_text(encoding="utf-8")):
+            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/vite.config.ts no manda /api al servidor")
         if "@sveltejs/adapter-static" not in deps:
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no usa adapter-static")
         uno = superficie / "uno.config.ts"

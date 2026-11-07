@@ -13,5 +13,6 @@ export default defineConfig({
 				directives: { 'default-src': ['self'] }
 			}
 		})
-	]
+	],
+	server: { proxy: { '/api': { target: 'http://localhost:8000', ws: true } } }
 });

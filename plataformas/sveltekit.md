@@ -62,6 +62,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - Una página prerenderizada no carga datos de la API en su `load`: el build llama a la API y falla si no responde, y el HTML muestra el dato del momento del build hasta que el navegador vuelve a correr el `load`.
 - Los tipos de la API se generan con `openapi-typescript` en `src/lib/api/schema.d.ts`, que no se versiona: generados, no pasan `prettier --check`. El script `api` de `package.json` es `openapi-typescript ../server/openapi.json -o src/lib/api/schema.d.ts`, y `dev` y `check` empiezan por `pnpm api && `. CI lo corre antes de `svelte-check`.
 - Las llamadas se hacen con `openapi-fetch`, sin una función por ruta escrita a mano. En un `load`, el cliente recibe el `fetch` del evento: con el `fetch` global, `invalidate(url)` no vuelve a correr ese `load`.
+- El cliente no lleva `baseUrl`: las rutas del OpenAPI ya empiezan por `/api`, en el mismo origen que la web ([despliegue.md](despliegue.md#caddy)). En desarrollo, `server.proxy` de `vite.config.ts` manda `/api` a `http://localhost:8000` con `ws: true`, para que también pase el WebSocket.
 
 ## Opciones de página
 
@@ -168,4 +169,5 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | Los tipos de la API salen de `server/openapi.json` | `pnpm api` en CI, antes de `svelte-check` |
 | El script `api`, y que `dev` y `check` lo corran primero | [scripts/verificar.py](../scripts/verificar.py) |
 | `includeIgnoreFile` en `eslint.config.js` y `pnpm-lock.yaml` en `.prettierignore` | [scripts/verificar.py](../scripts/verificar.py) |
+| El proxy de `/api` en `vite.config.ts` | [scripts/verificar.py](../scripts/verificar.py) |
 | `separators: [':']` en `uno.config.ts` | [scripts/verificar.py](../scripts/verificar.py) |

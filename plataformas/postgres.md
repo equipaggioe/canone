@@ -2,21 +2,25 @@
 
 La base de datos.
 
+## Proyecto
+
+- PostgreSQL 17 y PostGIS 3.5, los de Debian 13.
+
 ## Nombres
 
-Estándar: la entrada *Identifiers and Key Words* de [*SQL Syntax*](../fuentes/postgresql/syntax.sgml) de PostgreSQL.
-
-- Los nombres van en snake_case y sin comillas, las tablas en singular y las claves foráneas como `<tabla>_id`.
-- Una columna que guarda una magnitud lleva de sufijo el símbolo del SI de su unidad: `distance_m`, `weight_g`. El nombre dice en qué unidad está el valor.
-- Las duraciones son segundos enteros, `_s`, y no `interval`. Todos los clientes leen un entero, y Dart no trae con qué leer la duración ISO 8601 en que Pydantic serializa un `timedelta`.
+- Los nombres van en snake_case y sin comillas, y las tablas en singular.
+- La clave primaria de una sola columna se llama `id`.
+- Las claves foráneas son `<tabla>_id`, o `<rol>_id` si hay más de una hacia la misma tabla o apunta a la propia.
+- Una columna que guarda una magnitud lleva de sufijo, en minúsculas, la abreviatura oficial de su unidad: `distance_m`, `weight_g`.
+- Las columnas `timestamptz` terminan en `_at`.
 
 ## Clave primaria
 
-Estándares: de PostgreSQL 17, la versión de Debian 13, las entradas de los tipos numéricos y de `uuid` de [*Data Types*](../fuentes/postgresql/datatype.sgml) y la sección *Identity Columns* de [*Data Definition*](../fuentes/postgresql/ddl.sgml).
+Estándar: la sección *Primary Keys* de [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
 
 - `text` con un `CHECK` de su formato: en una tabla de valores que codifica un estándar, como los países de ISO 3166-1, con su código como clave. Es el mismo en todos los entornos y se lee sin unir tablas.
-- `smallint` identity: en una lista propia del equipo, igual para todos los usuarios, cuyo tope cabe en `smallint`.
-- `bigint` identity: en una lista propia del equipo cuyo tope no cabe en `smallint`.
+- `integer` identity: en una lista propia del equipo, igual para todos los usuarios, cuyo tope cabe en `integer`.
+- `bigint` identity: en una tabla cuyas filas crea el propio servidor, como el registro de eventos.
 - `uuid` con `gen_random_uuid()`: en una tabla cuyas filas crea el cliente, que genera el id para crear por `PUT`, como fija [transversal.md](transversal.md#reintentos), o cuyas filas pertenecen a un usuario y no deben poder enumerarse.
 - Una tabla particionada lleva como clave su id, de una de las convenciones anteriores, y las columnas de partición, como `(id, created_at)`: PostgreSQL exige que la clave las incluya.
 - Una tabla cuyas filas se identifican por un par de valores, como `(role, permission)`, lleva ese par como clave, sin id propio. Cada columna es una clave foránea o un `text`.
@@ -25,7 +29,7 @@ Estándares: de PostgreSQL 17, la versión de Debian 13, las entradas de los tip
 
 ## Definición de datos
 
-Estándar: [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL, salvo *Identity Columns*, que rige en «Clave primaria», y el párrafo de *Foreign Keys* sobre indexar las columnas que referencian, que rige en «Índices».
+Estándar: [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL, salvo *Primary Keys*, que rige en «Clave primaria», y el párrafo de *Foreign Keys* sobre indexar las columnas que referencian, que rige en «Índices».
 
 - Toda clave foránea declara `ON DELETE`: `CASCADE` si el hijo pertenece al padre, `RESTRICT` si no. Qué pasa al borrar queda escrito en el modelo.
 
@@ -47,12 +51,14 @@ Estándares: [*Indexes*](../fuentes/postgresql/indices.sgml), entero, y el párr
 
 ## Tipos
 
-Estándares: las entradas de [*Data Types*](../fuentes/postgresql/datatype.sgml) de los tipos que nombra esta sección, salvo los de «Clave primaria», y [*JSON Types*](../fuentes/postgresql/json.sgml), entero, de PostgreSQL.
+Estándares: las entradas *Character Types*, *Date/Time Types*, *Integer Types*, *Arbitrary Precision Numbers* y *Network Address Types* de [*Data Types*](../fuentes/postgresql/datatype.sgml) y [*JSON Types*](../fuentes/postgresql/json.sgml), entero, de PostgreSQL.
 
 - Las cadenas son `text`. Un largo máximo que pida el dominio va en un `CHECK`: la restricción tiene nombre, admite también un mínimo y nunca recorta, como `varchar(n)` al convertir.
 - Las fechas con hora son `timestamptz`, y no `timestamp`: es el par de las `datetime` aware de [python.md](python.md), y `timestamp` descartaría la zona sin avisar.
+- Las duraciones son segundos enteros, y no `interval`, que guarda meses y días aparte y no equivale a una cantidad fija de segundos.
 - Un valor enumerado es `text` con un `CHECK` que lista los valores. Quitar un valor de un `enum` obliga a recrear el tipo; un `CHECK` se reemplaza en una migración.
-- Un monto es `numeric` sin precisión ni escala, junto al código de su moneda en `text`. Con escala declarada, `numeric` redondea sin avisar lo que la excede.
+- Un `numeric` va sin precisión ni escala. Con escala declarada, redondea sin avisar lo que la excede.
+- Un monto es `numeric`, junto al código de su moneda en `text`.
 
 ## Cumplimiento
 
@@ -60,9 +66,11 @@ Con las pruebas de `tests/test_conventions.py` de [fastapi.md](fastapi.md):
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Clave `text`, identity `ALWAYS` o `uuid` con `gen_random_uuid()`, la de una tabla particionada y la de un par de valores | `test_primary_key_is_allowed` y `test_primary_key_rules` |
+| Clave `text` con `CHECK`, identity `integer` o `bigint` `ALWAYS` o `uuid` con `gen_random_uuid()`, la de una tabla particionada y la de un par de valores | `test_primary_key_is_allowed` y `test_primary_key_rules` |
+| Una clave foránea tiene el tipo de la clave que apunta | `test_foreign_keys_match_key_type` y `test_foreign_key_type_mismatch` |
 | Cadenas `text` | `test_strings_are_text` |
 | `timestamptz` | `test_datetimes_are_aware` |
-| Enumerados como `text` con `CHECK` | `test_enums_are_checked_text` |
+| Duraciones sin `interval` | `test_durations_are_seconds` |
+| `numeric` sin precisión ni escala | `test_numerics_are_unscaled` || Enumerados como `text` con `CHECK` | `test_enums_are_checked_text` |
 | `ON DELETE` en toda clave foránea | `test_foreign_keys_declare_on_delete` |
 | Índice en toda clave foránea | `test_foreign_keys_are_indexed` |

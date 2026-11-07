@@ -45,7 +45,7 @@ class Base(DeclarativeBase):
 
 
 UuidPk = Annotated[UUID, mapped_column(primary_key=True, server_default=sa.text("gen_random_uuid()"))]
-SmallIntPk = Annotated[int, mapped_column(sa.SmallInteger, sa.Identity(always=True), primary_key=True)]
+IntPk = Annotated[int, mapped_column(sa.Integer, sa.Identity(always=True), primary_key=True)]
 BigIntPk = Annotated[int, mapped_column(sa.BigInteger, sa.Identity(always=True), primary_key=True)]
 CreatedAt = Annotated[datetime, mapped_column(server_default=sa.text("now()"))]
 UpdatedAt = Annotated[datetime, mapped_column(server_default=sa.text("now()"), onupdate=sa.text("now()"))]

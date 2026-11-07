@@ -18,6 +18,7 @@ import sqlalchemy as sa
 from fastapi import FastAPI, Query
 from httpx import ASGITransport, AsyncClient
 from pydantic import AwareDatetime, BaseModel, ValidationError
+from sqlalchemy.dialects import postgresql
 
 import app.models
 import app.routers
@@ -47,11 +48,20 @@ COLUMNS = [column for table in TABLES for column in table.columns]
 MODEL_FILES = sorted(Path(app.models.__path__[0]).glob("*/*.py"))
 
 
+def is_checked(column: sa.Column[Any]) -> bool:
+    """Tell whether a CHECK of its table names the column."""
+    return any(
+        isinstance(constraint, sa.CheckConstraint)
+        and re.search(rf"\b{column.name}\b", str(constraint.sqltext))
+        for constraint in column.table.constraints
+    )
+
+
 def is_allowed_key(column: sa.Column[Any]) -> bool:
     """Tell whether a key follows one of the rules of postgres.md."""
     if isinstance(column.type, sa.Text):
-        return column.server_default is None and column.identity is None
-    if isinstance(column.type, (sa.SmallInteger, sa.BigInteger)):
+        return column.server_default is None and column.identity is None and is_checked(column)
+    if isinstance(column.type, sa.Integer) and not isinstance(column.type, sa.SmallInteger):
         return column.identity is not None and bool(column.identity.always)
     if isinstance(column.type, sa.Uuid):
         return str(getattr(column.server_default, "arg", "")) == "gen_random_uuid()"
@@ -83,11 +93,11 @@ def test_primary_key_is_allowed() -> None:
     assert not offenders
 
 
-def key_table(name: str, *columns: sa.Column[Any], **options: Any) -> sa.Table:
+def key_table(name: str, *items: sa.schema.SchemaItem, **options: Any) -> sa.Table:
     """Build a table apart from the models, to try a key on it."""
     metadata = sa.MetaData()
     sa.Table("account", metadata, sa.Column("id", sa.Uuid, primary_key=True))
-    return sa.Table(name, metadata, *columns, **options)
+    return sa.Table(name, metadata, *items, **options)
 
 
 @pytest.mark.parametrize(
@@ -113,6 +123,28 @@ def key_table(name: str, *columns: sa.Column[Any], **options: Any) -> sa.Table:
         ),
         (
             key_table(
+                "unit",
+                sa.Column("id", sa.SmallInteger, sa.Identity(always=True), primary_key=True),
+            ),
+            False,
+        ),
+        (
+            key_table(
+                "unit", sa.Column("id", sa.Integer, sa.Identity(always=True), primary_key=True)
+            ),
+            True,
+        ),
+        (
+            key_table(
+                "country",
+                sa.Column("code", sa.Text, primary_key=True),
+                sa.CheckConstraint("code ~ '^[A-Z]{2}$'", name="code"),
+            ),
+            True,
+        ),
+        (key_table("country", sa.Column("code", sa.Text, primary_key=True)), False),
+        (
+            key_table(
                 "role_permission",
                 sa.Column("role", sa.Text, primary_key=True),
                 sa.Column("permission", sa.Text, primary_key=True),
@@ -130,8 +162,31 @@ def key_table(name: str, *columns: sa.Column[Any], **options: Any) -> sa.Table:
     ],
 )
 def test_primary_key_rules(table: sa.Table, allowed: bool) -> None:
-    """Check partitioned keys and natural keys."""
+    """Check widths, codes, partitioned keys and natural keys."""
     assert is_allowed_primary_key(table) is allowed
+
+
+def type_mismatches(tables: list[sa.Table]) -> list[str]:
+    """Return the foreign keys of another type than their key."""
+    dialect = postgresql.dialect()
+    return [
+        f"{key.parent.table.name}.{key.parent.name}"
+        for table in tables
+        for key in table.foreign_keys
+        if key.parent.type.compile(dialect=dialect) != key.column.type.compile(dialect=dialect)
+    ]
+
+
+def test_foreign_keys_match_key_type() -> None:
+    """Every foreign key has the type of the key it points to."""
+    assert not type_mismatches(TABLES)
+
+
+def test_foreign_key_type_mismatch() -> None:
+    """A foreign key of another type is caught."""
+    column = sa.Column("account_id", sa.Integer, sa.ForeignKey("account.id"))
+    table = key_table("membership", column)
+    assert type_mismatches([table]) == ["membership.account_id"]
 
 
 def test_foreign_keys_declare_on_delete() -> None:
@@ -177,12 +232,34 @@ def test_datetimes_are_aware() -> None:
     assert not offenders
 
 
-def test_enums_are_checked_text() -> None:
-    """No column uses a native PostgreSQL enum."""
+def test_durations_are_seconds() -> None:
+    """No column is an interval."""
     offenders = [
         f"{column.table.name}.{column.name}"
         for column in COLUMNS
-        if isinstance(column.type, sa.Enum) and column.type.native_enum
+        if isinstance(column.type, (sa.Interval, postgresql.INTERVAL))
+    ]
+    assert not offenders
+
+
+def test_numerics_are_unscaled() -> None:
+    """Every numeric has no precision and no scale."""
+    offenders = [
+        f"{column.table.name}.{column.name}"
+        for column in COLUMNS
+        if isinstance(column.type, sa.Numeric)
+        and (column.type.precision is not None or column.type.scale is not None)
+    ]
+    assert not offenders
+
+
+def test_enums_are_checked_text() -> None:
+    """Every enum is text with a CHECK, not a native PostgreSQL enum."""
+    offenders = [
+        f"{column.table.name}.{column.name}"
+        for column in COLUMNS
+        if isinstance(column.type, sa.Enum)
+        and (column.type.native_enum or not column.type.create_constraint)
     ]
     assert not offenders
 

@@ -1,6 +1,9 @@
 # ADR-0024 · La clave primaria se elige por lo que guarda la tabla: un código estándar, una identity o un uuid
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El `smallint` de la segunda viñeta de la decisión lo reemplaza el
+  [ADR-0122](0122-una-lista-del-equipo-lleva-una-identity-integer-y-no-smallint.md), y su
+  `bigint` y la tercera viñeta, en lo que toca a las tablas cuyas filas crea el servidor, el
+  [ADR-0124](0124-una-tabla-cuyas-filas-crea-el-servidor-lleva-una-identity-bigint.md)
 - **Fecha:** 2026-09-29
 - **Alcance:** [plataformas/postgres.md](../plataformas/postgres.md), `plantilla/server/src/app/models/base.py`
   y `plantilla/server/tests/test_conventions.py`

@@ -128,3 +128,5 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0120](0120-una-convencion-propia-puede-enlazar-el-documento-en-el-que-se-basa.md) | Una convención propia puede enlazar el documento en el que se basa | `plataformas/README.md`, `plataformas/` y `fuentes/` |
 | [0121](0121-una-fuente-citada-solo-en-algunas-secciones-se-marca-por-partes.md) | Una fuente citada solo en algunas secciones se marca «por partes» | `plataformas/README.md`, `fuentes/README.md` y `scripts/verificar.py` |
 | [0123](0123-deploy-py-vuelve-a-una-version-guardada-y-borra-la-que-no-arranco.md) | `deploy.py` vuelve a una versión guardada con sus mismas migraciones, y borra la nueva que no arrancó | Con `server/` | Aceptada |
+| [0126](0126-database-py-vacia-la-base-solo-en-desarrollo-y-quien-administra-la-lee-como-app-read.md) | `database.py` vacía la base solo en una máquina en desarrollo, y quien administra la lee como `<app>_read` | Con `server/` | Aceptada |
+| [0127](0127-los-seeders-corren-en-cada-despliegue-en-la-transaccion-de-las-migraciones.md) | Los seeders corren en cada despliegue, en la transacción de las migraciones | Con `server/` | Aceptada |

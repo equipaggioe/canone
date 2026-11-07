@@ -4,10 +4,16 @@
 # an unhealthy version goes back to the previous and leaves nothing, a failed migration leaves
 # nothing, a checksum signed by a key outside allowed_signers or of another version installs
 # nothing, releases/ keeps the five newest, and a kept version goes live again with its installers
-# only if its migrations are those of the active one. A private repository deploys only with --private and its token, which does not follow
-# the redirect of a download to another host. The server reads the credentials of credentials.py,
-# and the daily purge and sweep run on what goes live. uv finds every package in UV_CACHE_DIR,
-# filled before the machine lost its network.
+# only if its migrations are those of the active one. A private repository deploys only with
+# --private and its token, which does not follow the redirect of a download to another host. The
+# server reads the credentials of credentials.py, and the daily purge and sweep run on what goes
+# live. The database.py that install.py installs empties the database only on a machine set up with
+# --development, with the extensions of install.py, and migrate runs the migrations of the active
+# version. The account that administers reads as <app>_read, also over a tunnel to the socket, and
+# changes nothing. Each deployment runs the seeders after the migrations without duplicating a row,
+# a seeder that fails undoes the migrations and leaves the previous version, and the example data
+# loads only on a machine in development. uv finds every package in UV_CACHE_DIR, filled before the
+# machine lost its network.
 #
 #     sh deploy.sh <canone>
 set -eu
@@ -103,6 +109,59 @@ def upgrade() -> None:
 def downgrade() -> None:
     pass
 EOF
+}
+# seeding <tree>: a seeder and an example that each write one event, once.
+seeding() {
+    for kind in seeders mock_data; do
+        cat > "$1/server/src/app/$kind/events.py" <<EOF2
+"""Write the event $kind, once."""
+
+import sqlalchemy as sa
+from sqlalchemy.ext.asyncio import AsyncSession
+
+
+async def seed_event(session: AsyncSession) -> None:
+    """Write the event if it is missing."""
+    await session.execute(
+        sa.text(
+            "INSERT INTO event_log (action, level, trace_id) SELECT '$kind', 'info', 't' "
+            "WHERE NOT EXISTS (SELECT FROM event_log WHERE action = '$kind')"
+        )
+    )
+EOF2
+    done
+}
+# breaking <tree>: a new migration, and a seeder that fails after it.
+breaking() {
+    migrating "$1"
+    cat > "$1/server/alembic/versions/dddddddddddd_table.py" <<'EOF2'
+"""A table, which the failing seeder undoes."""
+
+from alembic import op
+
+revision = "dddddddddddd"
+down_revision = "eeeeeeeeeeee"
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    op.execute("CREATE TABLE undone (id int)")
+
+
+def downgrade() -> None:
+    op.execute("DROP TABLE undone")
+EOF2
+    cat > "$1/server/src/app/seeders/broken.py" <<'EOF2'
+"""A seeder that fails."""
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
+
+async def seed_broken(session: AsyncSession) -> None:
+    """Fail."""
+    raise RuntimeError("the seeder fails")
+EOF2
 }
 migrating() {
     cat > "$1/server/alembic/versions/eeeeeeeeeeee_noop.py" <<'EOF'
@@ -291,3 +350,87 @@ deploy v1.2.0
 test "$(current)" = v1.2.0
 healthy
 test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.2.0"
+
+sleep 10
+step "Without the mark of development, database.py empty changes nothing"
+database() { python3 /usr/local/lib/demo/database.py "$@"; }
+fails database empty
+grep -qF '/etc/demo/development does not exist' "$work/error"
+healthy
+test "$(runuser -u postgres -- psql -XAt --dbname=demo -c "SELECT to_regclass('event_log')")" = event_log
+
+step "With --development, empty stops the server and leaves the database and the files empty, with the extensions of install.py"
+setup --private --development --extension pgcrypto
+test -e /etc/demo/development
+echo photo > /var/lib/demo/files/photo
+mkdir -p /var/lib/demo/files/album
+database empty
+fails systemctl is-active --quiet demo.service
+test "$(runuser -u postgres -- psql -XAt --dbname=demo -c "SELECT count(*) FROM pg_tables WHERE schemaname = 'public'")" = 0
+test "$(runuser -u postgres -- psql -XAt --dbname=demo -c "SELECT extname FROM pg_extension WHERE extname = 'pgcrypto'")" = pgcrypto
+test -d /var/lib/demo/files
+test -z "$(ls -A /var/lib/demo/files)"
+
+step "migrate runs the migrations of the active version and starts the server"
+database migrate
+test "$(current)" = v1.2.0
+healthy
+test "$(runuser -u postgres -- psql -XAt --dbname=demo -c "SELECT to_regclass('event_log')")" = event_log
+
+step "The account that administers reads as demo_read, over a tunnel to the socket, and changes nothing"
+read_as() { runuser -u "$1" -- psql -XAt --dbname=demo --username=demo_read -c "$2"; }
+read_as operador "SELECT version_num FROM alembic_version" > /dev/null
+fails read_as operador "UPDATE alembic_version SET version_num = 'x'"
+fails read_as operador "SELECT count(*) FROM event_log"
+fails read_as operador "CREATE TABLE other (id int)"
+fails read_as nobody "SELECT 1"
+fails runuser -u operador -- psql -XAt --dbname=demo --username=demo_owner -c "SELECT 1"
+# PostgreSQL sees the account that sshd runs the tunnel with.
+mkdir "$work/tunnel"
+ssh -i "$work/a" -o BatchMode=yes -o StrictHostKeyChecking=accept-new \
+    -o UserKnownHostsFile="$work/known_hosts" -N \
+    -L "$work/tunnel/.s.PGSQL.5432:/run/postgresql/.s.PGSQL.5432" operador@127.0.0.1 &
+pids="$pids $!"
+until [ -S "$work/tunnel/.s.PGSQL.5432" ]; do sleep 0.2; done
+tunnel() { psql -XAt --host="$work/tunnel" --dbname=demo --username="$1" -c "$2"; }
+test "$(tunnel demo_read "SELECT current_user")" = demo_read
+fails tunnel demo_read "DELETE FROM alembic_version"
+fails tunnel demo_owner "SELECT 1"
+
+step "install.py without --development deletes the mark, and empty fails again"
+setup --private
+test ! -e /etc/demo/development
+fails database empty
+healthy
+
+sleep 10
+step "Each deployment runs the seeders after the migrations, and they write each row once"
+events() { runuser -u postgres -- psql -XAt --dbname=demo -c "SELECT count(*) FROM event_log WHERE action = '$1'"; }
+seeded() { migrating "$1"; seeding "$1"; }
+release v1.3.0 s1 seeded
+deploy v1.3.0
+test "$(events seeders)" = 1
+release v1.3.1 s1 seeded
+deploy v1.3.1
+test "$(events seeders)" = 1
+database seed
+test "$(events seeders)" = 1
+test "$(events mock_data)" = 0
+healthy
+
+step "A seeder that fails undoes the migrations, and the previous version runs again"
+release v1.3.2 s1 breaking
+fails deploy v1.3.2
+test ! -e /srv/demo/releases/v1.3.2
+test "$(current)" = v1.3.1
+test -z "$(runuser -u postgres -- psql -XAt --dbname=demo -c "SELECT to_regclass('undone')")"
+test "$(runuser -u postgres -- psql -XAt --dbname=demo -c "SELECT version_num FROM alembic_version")" = eeeeeeeeeeee
+healthy
+
+step "The example data loads only with the mark of development"
+fails database seed --mock
+grep -qF '/etc/demo/development does not exist' "$work/error"
+test "$(events mock_data)" = 0
+setup --private --development
+database seed --mock
+test "$(events mock_data)" = 1

@@ -47,6 +47,9 @@ def upgrade() -> None:
     op.create_index("ix_event_log_xid", "event_log", ["xid", "id"])
     # The server cannot change or delete the trail.
     op.execute(f"GRANT INSERT, SELECT ON event_log TO {ROLE}")
+    # Only the server and the owner read it, not the reader of the
+    # account that administers.
+    op.execute(f"REVOKE SELECT ON event_log FROM {ROLE}_read")
 
 
 def downgrade() -> None:

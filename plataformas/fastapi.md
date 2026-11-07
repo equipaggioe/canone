@@ -29,6 +29,12 @@ server/
     tracing.py
     enums.py
     tasks.py
+    seeders/
+      __init__.py
+      <datos>.py
+    mock_data/
+      __init__.py
+      <datos>.py
     models/
       __init__.py
       base.py
@@ -101,6 +107,15 @@ Estándar: la [autogeneración](../fuentes/alembic/autogenerate.rst) de Alembic,
 
 - `alembic/` sale de la plantilla `async` de Alembic: las migraciones corren con asyncpg, como la app.
 - La `MetaData` de la `Base` lleva una `naming_convention`: una migración no puede borrar ni cambiar una restricción sin nombre.
+- Las migraciones corren con `python -m app.tasks migrate`, que aplica las de Alembic y después los seeders, en una sola transacción: un seeder que falla deshace las migraciones, y `deploy.py` vuelve a la versión anterior.
+
+## Seeders
+
+- `seeders/` lleva los datos que tiene que haber en todo entorno, producción incluida: catálogos, roles, listas. `mock_data/` lleva los datos de ejemplo, solo para una máquina en desarrollo.
+- Cada módulo trae funciones `async def seed_<nombre>(session: AsyncSession) -> None`. Corren en el orden de los nombres del módulo y de la función.
+- Un seeder es idempotente: escribe lo que falta y nunca duplica una fila, porque corre en cada despliegue, después de las migraciones.
+- Los datos no van en una migración, como en los *seeds* de Rails y los *seeders* de Laravel: juntar el historial en una inicial los borraría.
+- `mock_data/` corre con `python -m app.tasks mock`, que `database.py seed --mock` lanza solo en una máquina en desarrollo ([despliegue.md](despliegue.md#postgresql)).
 
 ## Inyección de dependencias
 
@@ -334,7 +349,7 @@ Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) de OWASP, y
 - La retención de `event_log` es una constante en días, mayor que cero, en `services/events.py`: la IP y el user agent son datos personales. La plantilla guarda 365.
 - Un evento se escribe en su propia transacción, salvo el de un cambio de fila, que va en la del cambio: un fallo queda aunque la petición se deshaga, y un cambio deshecho no queda.
 - El rol de la app solo tiene `INSERT` y `SELECT` sobre `event_log`: un error o una inyección en la app no cambian ni borran el rastro. El rol no es el dueño de la tabla.
-- Solo el rol de la app y el dueño leen `event_log`, y ningún rol es miembro de ellos: la revisión periódica de quién lee que pide *Protection* corre en cada CI.
+- Solo el rol de la app y el dueño leen `event_log`, y ningún rol es miembro de ellos. La migración de `event_log` se lo quita a `<app>_read`, que lee el resto de la base ([despliegue.md](despliegue.md#postgresql)): la revisión periódica de quién lee que pide *Protection* corre en cada CI.
 - La copia en solo lectura que pide *Protection* es el respaldo de [despliegue.md](despliegue.md#respaldos), en cada corrida.
 - Detectar que un registro se cambió o se borró, como pide *Protection*, le toca a quien copia `event_log` fuera de la máquina por la ruta de [Salud](#salud): en la máquina, solo el dueño y `root` pueden cambiarlo, y `root` también cambia lo que lo detectaría.
 - *Protection* queda sin efecto en registrar y vigilar cada acceso: solo leen la app y quien opera el servidor, y vigilar es un proceso de operación.
@@ -422,7 +437,7 @@ Contrato: [transversal.md](transversal.md#websocket).
 
 - Las pruebas asíncronas corren con el plugin de pytest de AnyIO, con `anyio_mode = "auto"`, y `anyio_backend` es `asyncio`: asyncpg y la app solo corren en asyncio.
 - Las pruebas corren contra PostgreSQL. Ven los mismos tipos y restricciones que producción.
-- La base de prueba se arma con `alembic upgrade head` antes de pytest: las pruebas ven el esquema de las migraciones, no el de los modelos.
+- La base de prueba se arma con `python -m app.tasks migrate` antes de pytest: las pruebas ven el esquema de las migraciones, no el de los modelos, y los datos de los seeders.
 - Las migraciones de prueba entran como el rol dueño del esquema, y cada conexión de las pruebas toma el rol del servidor con `SET ROLE`: una prueba tiene los permisos del servidor en producción, y una tabla sin su `GRANT` falla en el CI. Lo que corre el dueño, como la purga, se prueba con el fixture `owner`.
 - Las pruebas corren contra Valkey, que se vacía en cada prueba: un conteo de intentos no pasa de una prueba a la siguiente.
 - Cada prueba corre en una transacción que se deshace al terminar, y las sesiones de la app se unen a ella con `join_transaction_mode="create_savepoint"`: un commit de la app no sale de la prueba.
@@ -454,8 +469,10 @@ Contrato: [transversal.md](transversal.md#websocket).
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | La versión mínima de cliente, en tres enteros | `test_outdated_client_is_rejected` |
-| La base de prueba con las migraciones | `uv run alembic upgrade head` antes de pytest en el job `server` de CI |
-| Las migraciones de prueba como el dueño, y las pruebas con los permisos del servidor | `alembic upgrade head` con la credencial del dueño en el job `server` de CI, y `run_as_server` de `tests/conftest.py` |
+| La base de prueba con las migraciones y los seeders | `uv run python -m app.tasks migrate` antes de pytest en el job `server` de CI |
+| Las migraciones de prueba como el dueño, y las pruebas con los permisos del servidor | `python -m app.tasks migrate` con la credencial del dueño en el job `server` de CI, y `run_as_server` de `tests/conftest.py` |
+| Que los seeders corren por módulo y por nombre, y solo las funciones `seed_` asíncronas del módulo | `test_seeders_run_by_module_and_name` |
+| Que un seeder que falla deshace las migraciones, que cada despliegue corre los seeders sin duplicar filas, y que `mock_data/` corre solo en desarrollo | [scripts/infra/deploy.sh](../scripts/infra/deploy.sh) de Canone, como dice [despliegue.md](despliegue.md#cumplimiento) |
 | Las pruebas nunca llaman a la app con `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
 | Un `pageToken` ilegible o con otros parámetros responde 422 | `test_invalid_page_token_points_to_the_parameter` |
 | El rol de la app no cambia ni borra `event_log`, y la purga respeta la retención | `test_server_cannot_change_events` y `test_purge_deletes_only_expired_events` |

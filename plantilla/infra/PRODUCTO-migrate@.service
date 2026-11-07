@@ -10,7 +10,8 @@ WorkingDirectory=/srv/PRODUCTO/releases/%i/server
 LoadCredentialEncrypted=app:/etc/credstore.encrypted/PRODUCTO
 # ADR-0070: the owner of the schema, over the server one in the folder.
 LoadCredentialEncrypted=app_database_url:/etc/credstore.encrypted/PRODUCTO-migrate/database_url
-ExecStart=/srv/PRODUCTO/releases/%i/server/.venv/bin/alembic upgrade head
+# The migrations and the seeders, in one transaction.
+ExecStart=/srv/PRODUCTO/releases/%i/server/.venv/bin/python -m app.tasks migrate
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes

@@ -68,10 +68,12 @@ jobs:
       # The roles, the database and the extensions install.py creates.
       - run: |
           psql postgresql://postgres:postgres@localhost:5432/postgres -c "CREATE ROLE PRODUCTO" \
-            -c "CREATE ROLE PRODUCTO_owner LOGIN PASSWORD 'owner'" \
+            -c "CREATE ROLE PRODUCTO_owner LOGIN PASSWORD 'owner'" -c "CREATE ROLE PRODUCTO_read" \
             -c "CREATE DATABASE PRODUCTO OWNER PRODUCTO_owner"
-          psql postgresql://postgres:postgres@localhost:5432/PRODUCTO -c "CREATE EXTENSION postgis"
-      - run: uv run alembic upgrade head
+          psql postgresql://postgres:postgres@localhost:5432/PRODUCTO -c "CREATE EXTENSION postgis" \
+            -c "ALTER DEFAULT PRIVILEGES FOR ROLE PRODUCTO_owner IN SCHEMA public GRANT SELECT ON TABLES TO PRODUCTO_read"
+      # The migrations and the seeders, as deploy.py runs them.
+      - run: uv run python -m app.tasks migrate
         env:
           CREDENTIALS_DIRECTORY: ${{ runner.temp }}/owner
       - run: uv run pytest

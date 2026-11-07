@@ -195,8 +195,8 @@ def migrate(version: str, target: Path, previous: Path | None, migrates: bool) -
     try:
         run("systemctl", "start", MIGRATE.format(version))
     except subprocess.CalledProcessError:
-        # env.py runs every migration in one transaction: the
-        # schema did not change.
+        # app.tasks migrate runs every migration and the seeders in
+        # one transaction: the database did not change.
         shutil.rmtree(target)
         if migrates and previous is not None:
             restart()

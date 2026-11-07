@@ -4,11 +4,14 @@ r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn
         --signer <key> --signer <key> --owner <owner> [--private] [--desktop linux|windows|macos] \
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
         [--turn [--turn-ip <public ipv4>]] \
-        [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>]
+        [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>] \
+        [--development]
 
 The first time it runs as root, and creates the account that administers the machine with its
 keys and the password it asks for. Afterwards ssh only takes keys and root does not log in, so it
 runs with sudo from that account, and --admin, --key and --signer only add keys.
+
+--development marks a machine whose database database.py may empty; without it, the mark goes.
 
 From canone: plataformas/despliegue.md.
 """
@@ -23,6 +26,8 @@ import secrets
 import shutil
 import subprocess
 from pathlib import Path
+
+from database import create_database
 
 HERE = Path(__file__).parent
 UNITS = Path("/etc/systemd/system")
@@ -39,6 +44,7 @@ TARGETS = {
     "sshd-receiver.conf": "/etc/ssh/sshd_config.d/PRODUCTO-receiver.conf",
     "backup-request": "/usr/local/lib/PRODUCTO/backup-request",
     "deploy.py": "/usr/local/lib/PRODUCTO/deploy.py",
+    "database.py": "/usr/local/lib/PRODUCTO/database.py",
     "Caddyfile": "/etc/caddy/Caddyfile",
     "nftables.conf": "/etc/nftables.conf",
     "20auto-upgrades": "/etc/apt/apt.conf.d/20auto-upgrades",
@@ -51,6 +57,11 @@ TARGETS = {
 EXECUTABLES = ("backup-request",)
 RECEIVERS = "/etc/PRODUCTO/receivers"
 SIGNERS = "/etc/PRODUCTO/allowed_signers"
+# The mark of a machine in development, which database.py asks for.
+DEVELOPMENT = "/etc/PRODUCTO/development"
+# Where the account that administers logs in as the reader.
+HBA = Path("/etc/postgresql/17/main/pg_hba.conf")
+IDENT = Path("/etc/postgresql/17/main/pg_ident.conf")
 # The files of coturn and its ports, only with --turn.
 TURN = {"turnserver.conf": "/etc/turnserver.conf", "turn.nft": "/etc/nftables.d/turn.nft"}
 # The tunnel to equipaggio and its uploader, only with --logs.
@@ -169,6 +180,9 @@ def parse() -> argparse.Namespace:
     parser.add_argument(
         "--logs-ip", type=ipaddress.IPv4Address, help="the address equipaggio gave the machine"
     )
+    parser.add_argument(
+        "--development", action="store_true", help="database.py may empty the database"
+    )
     return parser.parse_args()
 
 
@@ -244,30 +258,18 @@ def add_signers(app: str, keys: list[str]) -> None:
     target.write_text("".join(f"{line}\n" for line in lines), encoding="utf-8")
 
 
-def create_database(app: str, extensions: list[str]) -> None:
-    """Create the database, its two roles and its extensions."""
-    owner = f"{app}_owner"
-    script = [
-        f"SELECT 'CREATE ROLE {role} LOGIN' WHERE NOT EXISTS "
-        f"(SELECT FROM pg_roles WHERE rolname = '{role}') \\gexec"
-        for role in (app, owner)
-    ]
-    script += [
-        (
-            f"SELECT 'CREATE DATABASE {app} OWNER {owner}' WHERE NOT EXISTS "
-            f"(SELECT FROM pg_database WHERE datname = '{app}') \\gexec"
-        ),
-        f"\\connect {app}",
-        # An extension that is not trusted, like postgis, needs a superuser.
-        *(f"CREATE EXTENSION IF NOT EXISTS {name};" for name in extensions),
-    ]
-    subprocess.run(
-        ["runuser", "-u", "postgres", "--", "psql", "-X", "-q", "-v", "ON_ERROR_STOP=1"],
-        input="\n".join(script),
-        text=True,
-        cwd="/",
-        check=True,
-    )
+def allow_reader(app: str, admin: str) -> None:
+    """Let the account that administers log in as the reader, by peer."""
+    rule = f"local {app} {app}_read peer map={app}_read"
+    lines = HBA.read_text(encoding="utf-8").splitlines()
+    # PostgreSQL takes the first line that matches, and the one of Debian for every local user
+    # has no map.
+    if rule not in lines:
+        HBA.write_text("".join(f"{line}\n" for line in [rule, *lines]), encoding="utf-8")
+    entry = f"{app}_read {admin} {app}_read"
+    lines = IDENT.read_text(encoding="utf-8").splitlines()
+    if entry not in lines:
+        IDENT.write_text("".join(f"{line}\n" for line in [*lines, entry]), encoding="utf-8")
 
 
 def encrypt(folder: str, name: str, value: str) -> None:
@@ -420,6 +422,11 @@ def main() -> None:
     receivers = Path(RECEIVERS.replace("PRODUCTO", app))
     receivers.parent.mkdir(parents=True, exist_ok=True)
     receivers.touch(exist_ok=True)
+    development = Path(DEVELOPMENT.replace("PRODUCTO", app))
+    if arguments.development:
+        development.touch()
+    else:
+        development.unlink(missing_ok=True)
     skipped = tuple(f"PRODUCTO-{name}." for name in arguments.without)
     triggers = []
     for source in sorted(HERE.glob("PRODUCTO*")):
@@ -438,6 +445,7 @@ def main() -> None:
     subprocess.run(["systemctl", "reload-or-restart", "nftables.service"], check=True)
     # ADR-0085: each role logs in by peer, from the account of its name.
     create_database(app, arguments.extension)
+    allow_reader(app, admin)
     for folder, role in ((app, app), (f"{app}-migrate", f"{app}_owner")):
         encrypt(folder, "database_url", f"postgresql+asyncpg://{role}@/{app}?host=/run/postgresql")
     subprocess.run(["systemctl", "daemon-reload"], check=True)

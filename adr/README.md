@@ -132,3 +132,5 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0124](0124-una-tabla-cuyas-filas-crea-el-servidor-lleva-una-identity-bigint.md) | Una tabla cuyas filas crea el servidor lleva una identity `bigint` | Con base de datos | Aceptada |
 | [0125](0125-un-numeric-va-sin-precision-ni-escala.md) | Un `numeric` va sin precisión ni escala | Con base de datos | Aceptada |
 | [0126](0126-el-indice-gist-lo-crea-geoalchemy2-con-sus-alembic-helpers.md) | El índice GiST lo crea GeoAlchemy2, con sus `alembic_helpers` | Con PostGIS | Aceptada |
+| [0127](0127-database-py-vacia-la-base-solo-en-desarrollo-y-quien-administra-la-lee-como-app-read.md) | `database.py` vacía la base solo en una máquina en desarrollo, y quien administra la lee como `<app>_read` | Con `server/` | Aceptada |
+| [0128](0128-los-seeders-corren-en-cada-despliegue-en-la-transaccion-de-las-migraciones.md) | Los seeders corren en cada despliegue, en la transacción de las migraciones | Con `server/` | Aceptada |

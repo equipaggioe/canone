@@ -192,6 +192,10 @@ jobs:
           query app_owner -c "CREATE TABLE place (id int PRIMARY KEY, spot geography(Point, 4326))" -c "GRANT SELECT, INSERT ON place TO app"
           query app -c "INSERT INTO place VALUES (1, ST_MakePoint(-70.6, -33.4))"
           fails query app -c "CREATE TABLE other (id int)"
+          # The reader sees what the owner creates, and changes nothing.
+          query postgres -c "SET ROLE app_read" -c "SELECT * FROM place"
+          fails query postgres -c "SET ROLE app_read" -c "INSERT INTO place VALUES (2, NULL)"
+          test "$(query postgres -Atc "SELECT rolsuper FROM pg_roles WHERE rolname = 'app_read'")" = f
           # The dump of the unit, restored by the owner on the database install.py creates again.
           set -f
           dump=$(sed -n '/^ExecStart=/{s/^ExecStart=//;s/PRODUCTO/app/g;p}' plantilla/infra/PRODUCTO-dump.service)

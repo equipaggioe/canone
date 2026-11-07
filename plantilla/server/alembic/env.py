@@ -97,8 +97,16 @@ async def run_async_migrations() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode."""
-    asyncio.run(run_async_migrations())
+    """Run migrations in 'online' mode.
+
+    python -m app.tasks migrate passes its connection, to run the
+    seeders in the same transaction.
+    """
+    connection = config.attributes.get("connection")
+    if connection is None:
+        asyncio.run(run_async_migrations())
+    else:
+        do_run_migrations(connection)
 
 
 if context.is_offline_mode():

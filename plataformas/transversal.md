@@ -67,7 +67,9 @@ Estándar: la sección *RTCIceServer Dictionary* de [WebRTC](../fuentes/w3c/webr
 
 ## Mapas
 
-Estándar: la [guía de atribución](../fuentes/osm/attribution-guidelines.md) de OpenStreetMap.
+Estándares: la [guía de atribución](../fuentes/osm/attribution-guidelines.md) de OpenStreetMap, y las secciones *Geometry Object*, *Coordinate Reference System* y *GeoJSON Types Are Not Extensible* del [RFC 7946](../fuentes/rfc/rfc7946.txt).
+
+- Toda posición o trazado en la API es una geometría GeoJSON.
 
 - Las teselas son raster, con URL `{z}/{x}/{y}`.
 - Las teselas son las de `tile.openstreetmap.org`.

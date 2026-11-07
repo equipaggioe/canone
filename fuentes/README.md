@@ -37,6 +37,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc7493.txt](rfc/rfc7493.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7493.txt) | por partes |  |
 | [rfc/rfc7519.txt](rfc/rfc7519.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7519.txt) | entera |  |
 | [rfc/rfc7636.txt](rfc/rfc7636.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7636.txt) | entera |  |
+| [rfc/rfc7946.txt](rfc/rfc7946.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7946.txt) | por partes |  |
 | [rfc/rfc8030.txt](rfc/rfc8030.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8030.txt) | por partes |  |
 | [rfc/rfc8252.txt](rfc/rfc8252.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8252.txt) | entera |  |
 | [rfc/rfc8292.txt](rfc/rfc8292.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8292.txt) | por partes |  |

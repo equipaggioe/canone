@@ -55,7 +55,7 @@ Una fuente debe cumplir los siete requisitos siguientes:
 4. **De la versión en uso:** corresponde a la versión de la tecnología utilizada. La copia conservada en `fuentes/` fija el texto del que salen las convenciones adoptadas.
 5. **Independiente:** las convenciones adoptadas no dependen de la infraestructura de quien publica la fuente.
 6. **Cubre:** resuelve la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente todas las páginas, para que esos asuntos sigan su enfoque. En esos asuntos, lo no cubierto debe quedar en minoría. Lo que se contradice o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no es fuente, y las convenciones que se aprovechen de ella se establecen como convenciones propias.
-7. **Aporta:** es el origen de al menos tres convenciones, contando todas las páginas. No cuenta una elección propia ni lo que se dirige a otro actor. Si no llega a tres, no es fuente, y sus convenciones se escriben como propias.
+7. **Aporta:** es el origen de al menos tres convenciones, contando todas las páginas. Cuentan también las elecciones y los endurecimientos que la tienen como origen. No cuenta lo que se dirige a otro actor. Si no llega a tres, no es fuente, y sus convenciones se escriben como propias.
 
 Si varias fuentes que cumplen los siete requisitos regulan el mismo asunto, se prefiere la que tenga mayor prioridad en la tabla. A igual prioridad, se elige la que cubra una parte mayor del asunto.
 
@@ -81,15 +81,16 @@ Adoptar una fuente es escribir sus convenciones en la página, cada una con su o
 
 - Una convención adoptada termina con su origen: un enlace a la copia de su fuente en `fuentes/`, con el nombre de la fuente y la sección de la que sale. La sección se nombra por su número, si la fuente las numera, o por su título en cursiva. Por ejemplo: `([RFC 6749 §4.1.3](../fuentes/rfc/rfc6749.txt))` o `([PEP 8, *Imports*](../fuentes/python/pep-0008.rst))`.
 - Una convención que sale de varias fuentes lleva todos sus orígenes.
-- Una convención propia no lleva origen.
+- Una convención propia no lleva origen, salvo una elección o un endurecimiento, que llevan el de la regla de la que salen.
+- Una sección con convenciones adoptadas empieza por un párrafo `Estándar:` o `Estándares:` que nombra, con su enlace, los documentos que son su origen. Es informativo: no adopta nada por sí mismo, y no nombra secciones ni lleva «salvo».
 
 #### Qué no se escribe
 
-- **Lo que hace cumplir una herramienta:** si una herramienta de «Cumplimiento» hace cumplir entera una parte de una fuente, la página no escribe sus convenciones. Escribe una sola convención que nombra esa parte, con su origen, y la herramienta va en «Cumplimiento». Lo que la herramienta no cubre se escribe convención por convención.
+- **Lo que hace cumplir una herramienta:** si una herramienta de «Cumplimiento» hace cumplir entera una parte de una fuente, la página no escribe sus convenciones. Escribe una sola convención que nombra esa parte, con su origen, y dice qué reglas de esa parte no sigue, con su razón. La herramienta va en «Cumplimiento». Lo que la herramienta no cubre se escribe convención por convención.
 - **Lo dirigido a otro actor:** no se escriben las obligaciones dirigidas a quienes desarrollan una herramienta que el producto utiliza, como coturn, Uvicorn o un navegador, ni las dirigidas a la otra parte de un protocolo, como el servicio de push de Web Push. Sí se escriben las opciones que la herramienta deja a quien la configura, como los destinos a los que coturn niega relevar.
 - **Lo de una función que no se ofrece:** una línea dice que la función no se ofrece. Agregarla obliga a volver a la fuente.
 - **Lo repetido:** lo que dicen varias fuentes, o varias partes de una fuente, se escribe una sola vez, con todos sus orígenes.
-- **Lo que no se sigue:** no se escribe. Si la página hace otra cosa, escribe lo que hace como convención propia.
+- **Lo que no se sigue:** no se escribe, salvo en una parte que nombra una convención de herramienta: ahí se dice qué se contradice y por qué. Si la página hace otra cosa, escribe lo que hace como convención propia.
 
 #### Una convención, una sección
 
@@ -108,7 +109,7 @@ Adoptar una fuente es escribir sus convenciones en la página, cada una con su o
   - Cada enlace a `fuentes/` apunte a un archivo que existe.
   - Cada sección que nombra un origen exista en su archivo.
   - Cada archivo de `fuentes/` sea el origen de alguna convención, salvo una lista de la que un programa de Canone toma valores.
-- Una sección que todavía tiene un párrafo `Estándar:` o `Estándares:` adopta las convenciones explícitas de lo que cita, hasta que se reescriba con sus convenciones y sus orígenes.
+  - El párrafo `Estándar:` de una sección nombre los mismos documentos que son origen de sus convenciones.
 
 ## Convenciones de la página
 
@@ -116,8 +117,8 @@ La página escribe cada convención que rige, adoptada o propia, salvo lo que de
 
 Las convenciones propias se establecen en tres casos:
 
-1. **Elecciones:** se selecciona una opción cuando una fuente permite varias.
-2. **Excepciones:** se hace algo distinto de lo que establece una fuente, o se endurece lo que establece. Endurecer significa convertir en obligatorio lo que la fuente recomienda como preferencia o condiciona a que sea posible. Se escribe lo que se hace.
+1. **Elecciones:** se selecciona una opción cuando una fuente permite varias. Se escribe solo la opción elegida, con el origen de la regla.
+2. **Excepciones:** se hace algo distinto de lo que establece una fuente, o se endurece lo que establece. Endurecer significa convertir en obligatorio lo que la fuente recomienda como preferencia o condiciona a que sea posible. Se escribe lo que se hace; un endurecimiento se escribe solo en su forma endurecida, con el origen de la regla que endurece.
 3. **Decisiones no cubiertas:** se establecen convenciones sobre asuntos que ninguna fuente resuelve.
 
 ### Versiones

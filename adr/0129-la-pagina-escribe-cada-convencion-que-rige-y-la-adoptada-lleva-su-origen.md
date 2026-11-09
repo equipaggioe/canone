@@ -1,6 +1,6 @@
 # ADR-0129 · La página escribe cada convención que rige, y la adoptada lleva su origen
 
-- **Estado:** Aceptada, salvo el punto 9, que es propuesta
+- **Estado:** Aceptada. El punto 3, en lo que saca el párrafo `Estándar:`, lo reemplaza, y el punto 9, que era propuesta, lo descarta, el [ADR-0130](0130-estandar-solo-nombra-los-documentos-de-origen-y-una-eleccion-lleva-el-origen-de-su-regla.md)
 - **Fecha:** 2026-11-09
 - **Alcance:** `plataformas/`, `fuentes/README.md`, `principios.md` y `scripts/verificar.py`
 

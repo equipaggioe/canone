@@ -606,12 +606,43 @@ def origenes() -> list[str]:
             for titulo in TITULO.findall(nombre):
                 if not tiene_titulo(texto, titulo):
                     fallas.append(f"ADR-0129: {pagina.name} cita *{titulo}*, que no está en fuentes/{fuente}")
+    listas = set()
     for linea in (CANONE / "fuentes/README.md").read_text(encoding="utf-8").splitlines():
         celdas = [celda.strip() for celda in linea.split("|")]
         if len(celdas) == 5 and celdas[1].startswith("["):
             fuente = celdas[1][1 : celdas[1].index("]")]
-            if fuente not in enlazados and "no fuente" not in celdas[3]:
+            if "no fuente" in celdas[3]:
+                listas.add(fuente)
+            elif fuente not in enlazados:
                 fallas.append(f"ADR-0129: fuentes/{fuente} no es el origen de ninguna convención")
+    return fallas + estandar_de_secciones(listas)
+
+
+# ADR-0130: el párrafo «Estándar:» de una sección nombra los documentos que son origen de sus
+# convenciones. Una sección sin ningún origen no se compara: es de una página sin reescribir.
+def estandar_de_secciones(listas: set[str]) -> list[str]:
+    fallas: list[str] = []
+    for pagina in sorted((CANONE / "plataformas").glob("*.md")):
+        if pagina.name == "README.md":
+            continue
+        for seccion in re.split(r"(?m)^## ", pagina.read_text(encoding="utf-8"))[1:]:
+            titulo, _, cuerpo = seccion.partition("\n")
+            nombrados: set[str] = set()
+            origenes: set[str] = set()
+            for bloque in cuerpo.split("\n\n"):
+                enlaces = [(n, f) for n, f in FUENTE.findall(bloque) if f not in listas]
+                if bloque.strip().startswith("Estándar"):
+                    nombrados.update(f for _, f in enlaces)
+                else:
+                    # Un origen nombra su sección; un enlace sin sección es solo una referencia.
+                    origenes.update(f for n, f in enlaces if NUMERO.search(n) or TITULO.search(n))
+            if origenes and origenes != nombrados:
+                faltan = ", ".join(sorted(origenes - nombrados)) or "nada"
+                sobran = ", ".join(sorted(nombrados - origenes)) or "nada"
+                fallas.append(
+                    f"ADR-0130: {pagina.name} «{titulo.strip()}»: a «Estándar:» le falta {faltan}"
+                    f" y le sobra {sobran}"
+                )
     return fallas
 
 

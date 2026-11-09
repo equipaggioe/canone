@@ -27,9 +27,7 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 
 ## Leer las fuentes
 
-Al escribir código basta la página de [plataformas/](plataformas/): escribe cada convención que rige. El texto en [fuentes/](fuentes/) se lee para revisar una convención contra su origen o para agregar una función que la página dice que no se ofrece.
-
-Una sección que todavía tiene un párrafo `Estándar:` no escribe sus convenciones: al escribir código que cae en ella, se lee el texto en [fuentes/](fuentes/) de lo que cita, salvo que la fuente sea de conocimiento general, como PEP 8 o SemVer, o que una herramienta de «Cumplimiento» la verifique. Ante la duda, se lee.
+Al escribir código basta la página de [plataformas/](plataformas/): escribe cada convención que rige.
 
 ## Sin fallbacks
 

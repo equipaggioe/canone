@@ -109,6 +109,14 @@ jobs:
       - run: apt-get update && apt-get install --yes --no-install-recommends python3
       - run: sh scripts/infra/packages.sh "$PWD"
 
+  swap:
+    runs-on: ubuntu-latest
+    # On the runner and not in a container: swapon needs the kernel of a machine. The runner has
+    # less swap than memory.
+    steps:
+      - uses: actions/checkout@v7
+      - run: sudo sh scripts/infra/swap.sh "$PWD"
+
   install:
     runs-on: ubuntu-latest
     # install.py on a Debian 13 booted by systemd-nspawn, with systemd running, and each script on

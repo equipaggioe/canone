@@ -72,7 +72,7 @@ Estándar: [*Page options*](../fuentes/sveltekit/page-options.md) de SvelteKit.
 
 ## Componentes
 
-Estándar: [*Best practices*](../fuentes/svelte/best-practices.md) de Svelte, salvo *$state*, *$derived*, *$effect*, *$props* y *Context*, que rigen en «Estado», y *Using JavaScript variables in CSS* y *Styling child components*, en «Estilos».
+Estándares: [*Best practices*](../fuentes/svelte/best-practices.md) de Svelte, salvo *$state*, *$derived*, *$effect*, *$props* y *Context*, que rigen en «Estado», y *Using JavaScript variables in CSS* y *Styling child components*, en «Estilos»; y el requisito V3.2.2 de [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md) de OWASP.
 
 ## Estado
 
@@ -96,14 +96,18 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 
 - El campo del código lleva `autocomplete="one-time-code"`: Safari no implementa WebOTP y llena el código por ese atributo.
 - Donde el navegador implementa WebOTP, el código se pide con `navigator.credentials.get` y `otp: { transport: ['sms'] }`. [WebOTP](https://raw.githubusercontent.com/WICG/web-otp/7c4a606a085b44d9de75001f7e801f07a4d85f8c/index.bs)
+- La llamada a `navigator.credentials.get` lleva un `AbortSignal`, y el componente la cancela al desmontarse: SvelteKit navega sin recargar, y la petición seguiría pidiendo permiso fuera del flujo. [WebOTP](https://raw.githubusercontent.com/WICG/web-otp/7c4a606a085b44d9de75001f7e801f07a4d85f8c/index.bs)
 
 ## CSP
 
-Estándares: de OWASP, el [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md) y el párrafo sobre la CSP de *X-XSS-Protection* del [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), y el requisito V3.2.2 de [ASVS 5.0](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md); y la sección *Authoring Considerations* de [CSP Level 3](../fuentes/w3c/csp3.bs) de W3C.
+Estándares: de OWASP, el [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md) y el párrafo sobre la CSP de *X-XSS-Protection* del [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md).
 
-- La CSP la genera SvelteKit con la opción `csp` de `sveltekit()` en modo `hash`, sobre `default-src 'self'`. El script de arranque de SvelteKit va en línea y necesita su hash.
-- La CSP lleva el host de las teselas en `img-src`.
-- Con un formulario de pago incrustado, la CSP lleva los dominios que documenta su pasarela en `script-src`, `frame-src` y `connect-src`.
+- La CSP es la *Hash-based Strict Policy* del cheat sheet, con `default-src 'self'` y `form-action 'self'`, que no cae en `default-src`. La genera SvelteKit con la opción `csp` de `sveltekit()` en modo `hash`, y va en una etiqueta `meta` de cada página. Contradice *Policy Delivery*, que prefiere la cabecera: el hash cambia en cada página y en cada build.
+- `'strict-dynamic'` va solo en el build, con `command === 'build'` en `vite.config.ts`, y en `vite dev` `script-src` es `'self'`: SvelteKit no lo quita en desarrollo, y la página no hidrata.
+- `style-src-attr` lleva `'unsafe-inline'`: SvelteKit solo lo agrega en desarrollo, y sin él los atributos `style` y la directiva `style:` no se aplican en una página prerenderizada.
+- `vite.config.ts` fija `build.assetsInlineLimit: 0`: Vite incrusta como `data:` los archivos de menos de 4 KB, y la CSP los bloquea.
+- El script de una pasarela de pago se carga desde el código: con `'strict-dynamic'`, el navegador bloquea un `<script>` escrito en el HTML aunque su dominio esté en `script-src`. [CSP Level 3](https://raw.githubusercontent.com/w3c/webappsec-csp/251d288dad4d6166e73541877ca2073864edeb8f/index.bs)
+- La prueba de Playwright de cada página falla también con un evento `securitypolicyviolation`, y corre sobre el build, con `vite preview`: en desarrollo SvelteKit afloja la CSP, y lo que la CSP bloquea no da error.
 
 ## Estilos
 
@@ -170,4 +174,5 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | El script `api`, y que `dev` y `check` lo corran primero | [scripts/verificar.py](../scripts/verificar.py) |
 | `includeIgnoreFile` en `eslint.config.js` y `pnpm-lock.yaml` en `.prettierignore` | [scripts/verificar.py](../scripts/verificar.py) |
 | El proxy de `/api` en `vite.config.ts` | [scripts/verificar.py](../scripts/verificar.py) |
+| El modo `hash`, `'strict-dynamic'`, `object-src 'none'`, `base-uri 'none'`, `form-action 'self'`, `style-src-attr 'unsafe-inline'` y `assetsInlineLimit: 0` en `vite.config.ts` | [scripts/verificar.py](../scripts/verificar.py) |
 | `separators: [':']` en `uno.config.ts` | [scripts/verificar.py](../scripts/verificar.py) |

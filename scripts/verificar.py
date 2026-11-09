@@ -324,6 +324,18 @@ def versiones_gradle(proyecto: Path, nombre: str, declarados: dict[str, str]) ->
 # del repositorio, porque cada versión descarga sus propios navegadores.
 PLAYWRIGHT = "1.65.0"
 
+# plataformas/sveltekit.md, «CSP»: lo que vite.config.ts fija de la CSP.
+Q = r"['\"]"
+CSP = {
+    "mode: 'hash'": rf"mode:\s*{Q}hash{Q}",
+    "'strict-dynamic' en el build": rf"command\s*===\s*{Q}build{Q}\s*\?\s*\[\s*{Q}strict-dynamic{Q}\s*\]",
+    "object-src 'none'": rf"{Q}object-src{Q}\s*:\s*\[\s*{Q}none{Q}\s*\]",
+    "base-uri 'none'": rf"{Q}base-uri{Q}\s*:\s*\[\s*{Q}none{Q}\s*\]",
+    "form-action 'self'": rf"{Q}form-action{Q}\s*:\s*\[\s*{Q}self{Q}\s*\]",
+    "style-src-attr 'unsafe-inline'": rf"{Q}style-src-attr{Q}\s*:\s*\[\s*{Q}unsafe-inline{Q}\s*\]",
+    "assetsInlineLimit: 0": r"assetsInlineLimit:\s*0\b",
+}
+
 
 def versiones_playwright(repo: Path) -> list[str]:
     fallas = []
@@ -753,6 +765,10 @@ def revisar(repo: Path) -> list[str]:
         proxy = r"['\"]/api['\"]\s*:\s*\{\s*target:\s*['\"]http://localhost:8000['\"],\s*ws:\s*true\s*\}"
         if not vite.exists() or not re.search(proxy, vite.read_text(encoding="utf-8")):
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/vite.config.ts no manda /api al servidor")
+        configuracion = vite.read_text(encoding="utf-8") if vite.exists() else ""
+        for nombre, patron in CSP.items():
+            if not re.search(patron, configuracion):
+                fallas.append(f"plataformas/sveltekit.md: {superficie.name}/vite.config.ts no fija {nombre}")
         if "@sveltejs/adapter-static" not in deps:
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no usa adapter-static")
         uno = superficie / "uno.config.ts"

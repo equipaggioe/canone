@@ -48,7 +48,6 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [rfc/rfc9700.txt](rfc/rfc9700.txt) | [origen](https://www.rfc-editor.org/rfc/rfc9700.txt) | entera |  |
 | [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | [origen](https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md) | por entradas | Línea 3.1, la versión que genera FastAPI |
 | [google-aip/aip-0158.md](google-aip/aip-0158.md) | [origen](https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0158.md) | entera |  |
-| [w3c/csp3.bs](w3c/csp3.bs) | [origen](https://raw.githubusercontent.com/w3c/webappsec-csp/b1bad631b091cdca904138d6947a16b89edfd2b4/index.bs) | por partes |  |
 | [w3c/webauthn-3.html](w3c/webauthn-3.html) | [origen](https://www.w3.org/TR/2026/REC-webauthn-3-20260825/) | por partes | Recomendación del 2026-08-25 |
 | [w3c/webrtc.html](w3c/webrtc.html) | [origen](https://www.w3.org/TR/2025/REC-webrtc-20250313/) | por entradas | Recomendación del 2025-03-13 |
 | [w3c/push-api.html](w3c/push-api.html) | [origen](https://www.w3.org/TR/2026/WD-push-api-20261005/) | por entradas | Borrador de trabajo del 2026-10-05 |
@@ -67,7 +66,7 @@ Copia de los textos de las fuentes que citan las páginas de [plataformas/](../p
 | [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | [origen](https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md) | entera | Versión 5.0.0 |
 | [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | [origen](https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md) | entera | Versión 5.0.0 |
 | [owasp/Authorization.md](owasp/Authorization.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Authorization_Cheat_Sheet.md) | entera |  |
-| [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/1eacf6cb9bfcba006ca972a804c5faace8c2758a/cheatsheets/Content_Security_Policy_Cheat_Sheet.md) | entera |  |
+| [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/eaa71fb4a421dc057bf03a3856d0d34967299ff1/cheatsheets/Content_Security_Policy_Cheat_Sheet.md) | entera |  |
 | [owasp/Password_Storage.md](owasp/Password_Storage.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Password_Storage_Cheat_Sheet.md) | entera |  |
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/HTTP_Headers_Cheat_Sheet.md) | entera |  |
 | [owasp/Logging.md](owasp/Logging.md) | [origen](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Cheat_Sheet.md) | entera |  |

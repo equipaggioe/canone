@@ -1,10 +1,11 @@
 r"""Install the packages of the machine, before install.py.
 
-    sudo python3 packages.py [--extension <name>]... [--turn] [--logs]
-    python3 packages.py --list [--extension <name>]... [--turn] [--logs]
+    sudo python3 packages.py [--extension <name>]... [--turn] [--logs] [--all]
+    python3 packages.py --list [--extension <name>]... [--turn] [--logs] [--all]
 
---extension, --turn and --logs say what install.py receives with the same names. --list prints the
-packages, one per line, and installs nothing: it runs on any system, also outside the machine.
+--extension, --turn and --logs say what install.py receives with the same names, and --all stands
+for all of them: every package this program can install. --list prints the packages, one per
+line, and installs nothing: it runs on any system, also outside the machine.
 
 From canone: plataformas/despliegue.md, «Máquina».
 """
@@ -50,9 +51,13 @@ def main() -> None:
     parser.add_argument("--extension", action="append", default=[], help="like postgis")
     parser.add_argument("--turn", action="store_true", help="the app relays calls with coturn")
     parser.add_argument("--logs", action="store_true", help="the machine sends its journal")
+    parser.add_argument("--all", action="store_true", help="every package it can install")
     parser.add_argument("--list", action="store_true", help="print them and install nothing")
     arguments = parser.parse_args()
-    names = packages(arguments.extension, arguments.turn, arguments.logs)
+    if arguments.all:
+        names = packages(list(EXTENSIONS), turn=True, logs=True)
+    else:
+        names = packages(arguments.extension, arguments.turn, arguments.logs)
     if arguments.list:
         print("\n".join(names))
         return

@@ -22,6 +22,7 @@ programas son sus argumentos y `stdin` ([ADR-0107](0107-canone-fija-la-interfaz-
    extensión que el paquete `postgresql` ya trae no agrega ninguno.
 4. `packages.py --list` imprime los paquetes, uno por línea, sin instalar nada, y corre en
    cualquier sistema: quien despliega muestra qué se va a instalar antes de entrar a la máquina.
+   `--all` vale por todas las opciones, así que `--list --all` nombra todo lo que puede instalar.
 5. El CI instala con `packages.py` todos los paquetes en un Debian 13, así que un nombre que
    Debian 13 no tiene falla ahí.
 

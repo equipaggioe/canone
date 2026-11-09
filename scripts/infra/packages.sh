@@ -1,6 +1,7 @@
 #!/bin/sh
 # Runs packages.py on a Debian 13: --list names the packages of each option and installs nothing,
-# and without --list it installs all of them, so each name exists in Debian 13.
+# --all names those of every option, and without --list it installs all of them, so each name
+# exists in Debian 13.
 #
 #     sh packages.sh <canone>
 set -eu
@@ -26,8 +27,12 @@ grep -qx systemd-journal-remote "$work/all"
 grep -qx wireguard-tools "$work/all"
 test "$(wc -l < "$work/all")" -eq "$(($(wc -l < "$work/base") + 4))"
 
+step "--all names the packages of every option"
+python3 "$program" --list --all > "$work/every"
+cmp "$work/all" "$work/every"
+
 step "without --list it installs each package"
-python3 "$program" --extension postgis --turn --logs
+python3 "$program" --all
 while read -r name; do
     installed "$name" || { echo "$name is not installed"; exit 1; }
 done < "$work/all"

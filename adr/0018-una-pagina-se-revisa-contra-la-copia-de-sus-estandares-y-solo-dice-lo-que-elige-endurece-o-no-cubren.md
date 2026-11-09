@@ -1,6 +1,6 @@
 # ADR-0018 · Una página se revisa contra la copia de sus estándares y solo dice lo que elige, endurece o no cubren
 
-- **Estado:** Aceptada. Los puntos 2, 3, 4, 5 y 9 los reemplaza el [ADR-0030](0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md), y el punto 6, en lo que deja sin efecto, el [ADR-0056](0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md)
+- **Estado:** Aceptada. Los puntos 2, 3, 4, 5 y 9 los reemplaza el [ADR-0030](0030-una-pagina-cita-lo-que-adopta-en-su-mayoria-y-lo-demas-es-regla-propia.md), y el punto 6, en lo que deja sin efecto, el [ADR-0056](0056-una-regla-es-lo-que-escribe-la-pagina-y-lo-que-adopta-una-fuente-es-una-convencion.md); el punto 7, el [ADR-0129](0129-la-pagina-escribe-cada-convencion-que-rige-y-la-adoptada-lleva-su-origen.md)
 - **Fecha:** 2026-09-27
 - **Alcance:** `plataformas/`, `fuentes/` y los archivos de `plantilla/` que rige cada página
 

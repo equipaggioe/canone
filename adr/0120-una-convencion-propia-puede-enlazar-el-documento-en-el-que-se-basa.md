@@ -1,6 +1,6 @@
 # ADR-0120 · Una convención propia puede enlazar el documento en el que se basa
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0129](0129-la-pagina-escribe-cada-convencion-que-rige-y-la-adoptada-lleva-su-origen.md)
 - **Fecha:** 2026-11-05
 - **Alcance:** `plataformas/README.md`, `plataformas/` y `fuentes/`
 

@@ -1,6 +1,6 @@
 # ADR-0117 · Una fuente se cita si evita escribir al menos tres convenciones
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0129](0129-la-pagina-escribe-cada-convencion-que-rige-y-la-adoptada-lleva-su-origen.md)
 - **Fecha:** 2026-11-03
 - **Alcance:** `plataformas/` y `fuentes/`
 

@@ -1,6 +1,6 @@
 # ADR-0121 · Una fuente citada solo en algunas secciones se marca «por partes»
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0129](0129-la-pagina-escribe-cada-convencion-que-rige-y-la-adoptada-lleva-su-origen.md)
 - **Fecha:** 2026-11-05
 - **Alcance:** `plataformas/README.md`, `fuentes/README.md` y `scripts/verificar.py`
 

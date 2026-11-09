@@ -5,7 +5,7 @@
     python scripts/verificar.py --todos ..
     python scripts/verificar.py --canone
 
-Con --canone revisa las citas de plataformas/ contra fuentes/README.md.
+Con --canone revisa los enlaces de plataformas/ a fuentes/.
 
 Cada comprobación cita el ADR que la fija. Falla con código 1 y la lista de incumplimientos: una
 regla que no rompe CI es una sugerencia, no una regla.
@@ -570,114 +570,48 @@ def metaspace_lint(proyecto: Path, nombre: str) -> list[str]:
     return [f"plataformas/android.md: {nombre}/gradle.properties no lleva {METASPACE}"]
 
 
-# ADR-0108, ADR-0109 y ADR-0121: una fuente se cita entera, por partes o por entradas, cada parte
-# rige en una sola sección, y una lista de nombres no se cita (ADR-0095). Una cita nombra sus
-# partes antes del enlace, como «las secciones *A* y *B* de [X]», o después, como «[X], la sección
-# *A*»; sin partes, la cita es de la fuente entera, y «salvo» nombra lo que rige en otro lado.
-FUENTE = re.compile(r"\[[^\]]*\]\(\.\./fuentes/([^)#]+)[^)]*\)")
-ENLACE = re.compile(r"\[[^\]]*\]\([^)]*\)")
-PARTES = re.compile(
-    r"\b(secci[oó]n|secciones|p[aá]rrafos?|requisitos?|entradas?|opci[oó]n|propiedad|regla"
-    r"|preguntas|ap[eé]ndice|lo que)\b",
-    re.IGNORECASE,
-)
-NOMBRES = re.compile(r"`[^`]+`|\*[^*]+\*")
-SALVEDAD = re.compile(r"\b(salvo|sin su)\b.*", re.IGNORECASE)
-DE_LA_SIGUIENTE = re.compile(r"\b(de|del|de la|de las|de los|en)\s*$")
-# «las entradas de [A] y de [B]»: un enlace que se coordina con el anterior comparte sus partes.
-COORDINADO = re.compile(r"^\W*(y|e)?\s*(de|del|de la|de las|de los)\s*$")
+# ADR-0129: cada enlace a fuentes/ apunta a un archivo que existe, la sección que nombra un origen,
+# como «[RFC 6749 §4.1.3](...)» o «[PEP 8, *Imports*](...)», existe en su archivo, y cada archivo de
+# fuentes/ es el origen de alguna convención, salvo una lista de la que un programa toma valores.
+FUENTE = re.compile(r"\[([^\]]*)\]\(\.\./fuentes/([^)#]+)[^)]*\)")
+NUMERO = re.compile(r"§\s*([0-9A-Z](?:[0-9A-Za-z.]*[0-9A-Za-z])?)")
+TITULO = re.compile(r",\s*\*([^*]+)\*")
+ETIQUETA = re.compile(r"<[^>]+>")
 
 
-def citas_por_fuente() -> dict[str, list[tuple[str, str, str]]]:
-    """Devuelve, por fuente, cada cita: su sección, el texto de sus partes y el de su salvedad."""
-    citas: dict[str, list[tuple[str, str, str]]] = {}
+def tiene_numero(texto: str, numero: str) -> bool:
+    return bool(re.search(rf"(?m)(?:^|>)\s*{re.escape(numero)}\.?(?=\s|<)", texto))
+
+
+def tiene_titulo(texto: str, titulo: str) -> bool:
+    plano = " ".join(ETIQUETA.sub(" ", texto).split()).casefold()
+    return " ".join(titulo.split()).casefold() in plano
+
+
+def origenes() -> list[str]:
+    fallas: list[str] = []
+    enlazados: set[str] = set()
     for pagina in sorted((CANONE / "plataformas").glob("*.md")):
-        seccion = ""
-        for bloque in pagina.read_text(encoding="utf-8").split("\n\n"):
-            if bloque.startswith("## "):
-                seccion = bloque.splitlines()[0][3:]
-                bloque = "\n".join(bloque.splitlines()[1:]).strip()
-            if not bloque.startswith("Estándar"):
+        for enlace in FUENTE.finditer(pagina.read_text(encoding="utf-8")):
+            nombre, fuente = enlace.groups()
+            archivo = CANONE / "fuentes" / fuente
+            if not archivo.is_file():
+                fallas.append(f"ADR-0129: {pagina.name} enlaza fuentes/{fuente}, que no existe")
                 continue
-            texto = " ".join(bloque.split())
-            enlaces = list(FUENTE.finditer(texto))
-            tramos = [texto[a.end() : b.start()] for a, b in zip(enlaces, enlaces[1:])]
-            tramos.append(texto[enlaces[-1].end() :] if enlaces else "")
-            antes = texto[: enlaces[0].start()] if enlaces else ""
-            anteriores = ""
-            for enlace, tramo in zip(enlaces, tramos):
-                if DE_LA_SIGUIENTE.search(tramo):
-                    despues, siguiente = tramo.rsplit(";", 1) if ";" in tramo else ("", tramo)
-                else:
-                    despues, siguiente = tramo, tramo.rsplit(";", 1)[1] if ";" in tramo else ""
-                propio = ENLACE.sub("", antes + " " + despues)
-                coordinado = antes.strip() and COORDINADO.match(antes)
-                if anteriores and coordinado and not nombra_partes(despues):
-                    propio = anteriores
-                anteriores = propio
-                salvedad = " ".join(m.group(0) for m in SALVEDAD.finditer(propio))
-                lugar = f"{pagina.name} «{seccion}»"
-                citas.setdefault(enlace.group(1), []).append(
-                    (lugar, SALVEDAD.sub("", propio), salvedad)
-                )
-                antes = siguiente
-    return citas
-
-
-def nombra_partes(partes: str) -> bool:
-    return bool(PARTES.search(partes) or NOMBRES.search(partes))
-
-
-def cita_de_fuentes() -> dict[str, str]:
-    """Devuelve la columna «Cita» de cada fuente, o su nota si es una lista de nombres."""
-    columnas: dict[str, str] = {}
+            enlazados.add(fuente)
+            texto = archivo.read_text(encoding="utf-8", errors="replace")
+            for numero in NUMERO.findall(nombre):
+                if not tiene_numero(texto, numero):
+                    fallas.append(f"ADR-0129: {pagina.name} cita §{numero}, que no está en fuentes/{fuente}")
+            for titulo in TITULO.findall(nombre):
+                if not tiene_titulo(texto, titulo):
+                    fallas.append(f"ADR-0129: {pagina.name} cita *{titulo}*, que no está en fuentes/{fuente}")
     for linea in (CANONE / "fuentes/README.md").read_text(encoding="utf-8").splitlines():
         celdas = [celda.strip() for celda in linea.split("|")]
-        if len(celdas) == 6 and celdas[1].startswith("["):
-            archivo = celdas[1][1 : celdas[1].index("]")]
-            columnas[archivo] = celdas[3] or celdas[4]
-    return columnas
-
-
-def reparto_de_fuentes() -> list[str]:
-    fallas: list[str] = []
-    columnas = cita_de_fuentes()
-    for fuente, citas in sorted(citas_por_fuente().items()):
-        cita = columnas.get(fuente, "")
-        if cita not in ("entera", "por partes", "por entradas"):
-            motivo = "es una lista de nombres" if "no fuente" in cita else "no tiene «Cita»"
-            fallas.extend(f"ADR-0108: {lugar} cita {fuente}, que {motivo}" for lugar, _, _ in citas)
-            continue
-        enteras = [lugar for lugar, partes, _ in citas if not nombra_partes(partes)]
-        if cita == "por entradas":
-            fallas.extend(
-                f"ADR-0108: {lugar} cita {fuente} sin sus entradas" for lugar in enteras
-            )
-            continue
-        if cita == "por partes":
-            fallas.extend(f"ADR-0121: {lugar} cita {fuente} sin sus partes" for lugar in enteras)
-        elif not enteras:
-            fallas.append(f"ADR-0121: {fuente} es `entera`, y solo se cita por partes")
-        if cita == "entera" and len(enteras) > 1:
-            fallas.append(f"ADR-0108: {fuente} se cita entera en {' y '.join(enteras)}")
-        sin_salvedad = [
-            lugar for lugar, partes, salvedad in citas if not nombra_partes(partes) and not salvedad
-        ]
-        if cita == "entera" and sin_salvedad and len(citas) > len(enteras):
-            fallas.append(
-                f"ADR-0108: {fuente} se cita entera en {sin_salvedad[0]} sin decir qué rige"
-                " en otra sección"
-            )
-        vistas: dict[str, str] = {}
-        for lugar, partes, _ in citas:
-            nombres = NOMBRES.findall(partes)
-            if re.search(r"p[aá]rrafo", partes, re.IGNORECASE):
-                nombres = ["párrafo " + " ".join(sorted(nombres))]
-            for nombre in nombres:
-                if vistas.setdefault(nombre, lugar) != lugar:
-                    fallas.append(
-                        f"ADR-0108: {nombre} de {fuente} rige en {vistas[nombre]} y en {lugar}"
-                    )
+        if len(celdas) == 5 and celdas[1].startswith("["):
+            fuente = celdas[1][1 : celdas[1].index("]")]
+            if fuente not in enlazados and "no fuente" not in celdas[3]:
+                fallas.append(f"ADR-0129: fuentes/{fuente} no es el origen de ninguna convención")
     return fallas
 
 
@@ -841,14 +775,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", type=Path)
     parser.add_argument("--todos", type=Path, help="directorio que contiene los repositorios")
-    parser.add_argument("--canone", action="store_true", help="revisa las citas de plataformas/")
+    parser.add_argument("--canone", action="store_true", help="revisa los enlaces de plataformas/ a fuentes/")
     args = parser.parse_args()
 
     # La consola de Windows no es UTF-8 y los nombres de archivo llevan acentos.
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
     if args.canone:
-        fallas = reparto_de_fuentes()
+        fallas = origenes()
         # La plantilla sigue todas las páginas, también las que están en desarrollo.
         fallas += versiones_pyproject(PLANTILLA, PAGINAS)
         fallas += versiones_workflows(PLANTILLA, PAGINAS)

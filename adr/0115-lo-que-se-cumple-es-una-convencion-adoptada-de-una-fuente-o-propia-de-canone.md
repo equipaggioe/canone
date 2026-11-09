@@ -1,6 +1,6 @@
 # ADR-0115 · Lo que se cumple es una convención, adoptada de una fuente o propia de Canone
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 2, en que lo que escribe la página es propia, lo reemplaza el [ADR-0129](0129-la-pagina-escribe-cada-convencion-que-rige-y-la-adoptada-lleva-su-origen.md)
 - **Fecha:** 2026-11-03
 - **Alcance:** `plataformas/` y `fuentes/`
 

@@ -1,6 +1,6 @@
 # ADR-0109 · Lo que una fuente le pide a otro no se reparte, y su unidad es lo que tiene URL propia
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0129](0129-la-pagina-escribe-cada-convencion-que-rige-y-la-adoptada-lleva-su-origen.md)
 - **Fecha:** 2026-10-30
 - **Alcance:** `plataformas/` y `fuentes/`
 

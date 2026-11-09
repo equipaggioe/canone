@@ -1,6 +1,6 @@
 # ADR-0108 · Una fuente se cita entera o por entradas, y cada parte de una fuente entera rige en una sola sección
 
-- **Estado:** Aceptada. El punto 2 lo reemplaza el [ADR-0109](0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md). El [ADR-0121](0121-una-fuente-citada-solo-en-algunas-secciones-se-marca-por-partes.md) agrega el valor `por partes`.
+- **Estado:** Aceptada. El punto 2 lo reemplaza el [ADR-0109](0109-lo-que-una-fuente-le-pide-a-otro-no-se-reparte-y-su-unidad-es-lo-que-tiene-url-propia.md). El [ADR-0121](0121-una-fuente-citada-solo-en-algunas-secciones-se-marca-por-partes.md) agrega el valor `por partes`; los puntos 1, 3, 4, 5, 7 y 8, el [ADR-0129](0129-la-pagina-escribe-cada-convencion-que-rige-y-la-adoptada-lleva-su-origen.md)
 - **Fecha:** 2026-10-30
 - **Alcance:** `plataformas/` y `fuentes/`
 

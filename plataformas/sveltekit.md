@@ -106,7 +106,8 @@ Estándares: de OWASP, el [*Content Security Policy Cheat Sheet*](../fuentes/owa
 - `'strict-dynamic'` va solo en el build, con `command === 'build'` en `vite.config.ts`, y en `vite dev` `script-src` es `'self'`: SvelteKit no lo quita en desarrollo, y la página no hidrata.
 - `style-src-attr` lleva `'unsafe-inline'`: SvelteKit solo lo agrega en desarrollo, y sin él los atributos `style` y la directiva `style:` no se aplican en una página prerenderizada.
 - `vite.config.ts` fija `build.assetsInlineLimit: 0`: Vite incrusta como `data:` los archivos de menos de 4 KB, y la CSP los bloquea.
-- El script de una pasarela de pago se carga desde el código: con `'strict-dynamic'`, el navegador bloquea un `<script>` escrito en el HTML aunque su dominio esté en `script-src`. [CSP Level 3](https://raw.githubusercontent.com/w3c/webappsec-csp/251d288dad4d6166e73541877ca2073864edeb8f/index.bs)
+- La CSP lleva el host de las teselas en `img-src`.
+- Con un formulario de pago incrustado, los dominios que documenta su pasarela van en `frame-src` y `connect-src`, y su script se carga desde el código: con `'strict-dynamic'`, el navegador bloquea un `<script>` escrito en el HTML aunque su dominio esté en `script-src`. [CSP Level 3](https://raw.githubusercontent.com/w3c/webappsec-csp/251d288dad4d6166e73541877ca2073864edeb8f/index.bs)
 - La prueba de Playwright de cada página falla también con un evento `securitypolicyviolation`, y corre sobre el build, con `vite preview`: en desarrollo SvelteKit afloja la CSP, y lo que la CSP bloquea no da error.
 
 ## Estilos

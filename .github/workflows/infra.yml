@@ -100,6 +100,15 @@ jobs:
       - run: apt-get update && apt-get install --yes --no-install-recommends ca-certificates curl python3
       - run: sh scripts/infra/uv.sh "$PWD"
 
+  packages:
+    runs-on: ubuntu-latest
+    # The apt of Debian 13 installs each package packages.py names.
+    container: debian:trixie
+    steps:
+      - uses: actions/checkout@v7
+      - run: apt-get update && apt-get install --yes --no-install-recommends python3
+      - run: sh scripts/infra/packages.sh "$PWD"
+
   install:
     runs-on: ubuntu-latest
     # install.py on a Debian 13 booted by systemd-nspawn, with systemd running, and each script on

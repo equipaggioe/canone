@@ -14,7 +14,7 @@ Las 13 apps Android y Flutter usaban cinco versiones de Gradle, de la 8.12 a la 
 
 ## Decisión
 
-1. Las apps Android y las Flutter usan la misma versión de Gradle, AGP y Kotlin, y canone la fija
+1. Las apps Android y las Flutter usan la misma versión de Gradle, AGP y Kotlin, y Canone la fija
    en `android.md`.
 2. Gradle corre con el wrapper y su distribución `-bin`.
 3. *(propuesta)* `gradle-wrapper.properties` es canónico: el que genera `gradle wrapper`.

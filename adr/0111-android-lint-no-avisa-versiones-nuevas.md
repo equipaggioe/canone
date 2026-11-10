@@ -11,7 +11,7 @@
 falla con otras. «Estilo» pide `warningsAsErrors = true` en Android Lint, que trae tres chequeos
 que avisan cuando hay una versión más nueva publicada. El 2026-11-01, en el CI de `equipaggio`,
 Lint dio nueve errores por versiones nuevas (Gradle 9.8.2, AGP 9.5.0, Kotlin 2.4.21 y seis
-bibliotecas). Con las versiones de canone falla Lint, y con las nuevas falla `verificar.py`. En
+bibliotecas). Con las versiones de Canone falla Lint, y con las nuevas falla `verificar.py`. En
 local pasaba, porque Lint usaba un índice de versiones guardado en `build/`.
 
 ## Decisión

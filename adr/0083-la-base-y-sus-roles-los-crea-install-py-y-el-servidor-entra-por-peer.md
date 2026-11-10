@@ -8,7 +8,7 @@
 
 ## Contexto
 
-canone pedía dos roles, el del servidor sin DDL y el dueño del esquema
+Canone pedía dos roles, el del servidor sin DDL y el dueño del esquema
 ([ADR-0080](0080-la-purga-de-event-log-es-una-funcion-y-una-ruta-de-salud-dice-que-alertar.md),
 [ADR-0081](0081-la-purga-de-event-log-la-corre-el-dueno-del-esquema.md)), pero ninguna plantilla
 los creaba, y el

@@ -1,4 +1,4 @@
-# ADR-0113 · En `fuentes/` solo queda la lista de la que un programa de canone toma valores
+# ADR-0113 · En `fuentes/` solo queda la lista de la que un programa de Canone toma valores
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-11-03
@@ -16,7 +16,7 @@ copia.
 
 ## Decisión
 
-1. Una lista queda en `fuentes/` solo si un programa de canone toma valores de ella: hoy, los
+1. Una lista queda en `fuentes/` solo si un programa de Canone toma valores de ella: hoy, los
    registros de IANA, de los que sale `turnserver.conf`, y el del W3C, del que sale `FEATURES` en
    `install.py`.
 2. Una convención que usa otra lista la enlaza por su URL pública. Reemplaza el punto 1 del ADR-0095

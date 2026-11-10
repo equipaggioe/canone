@@ -10,7 +10,7 @@ Canone es una guía, no un reglamento: sus convenciones se siguen por defecto.
 
 Cada proyecto elige las tecnologías que utiliza y consulta únicamente las convenciones correspondientes. Canone responde a la pregunta «si se usa X, ¿cómo se usa?», sin convertir su catálogo en una lista de requisitos universales.
 
-Al definir las convenciones de cada tecnología o ámbito, prioriza la adopción de fuentes normativas externas que ya establecen convenciones adecuadas, evitando volver a redactarlas y mantenerlas. Cuando esas fuentes no cubren una decisión, dejan opciones abiertas o requieren excepciones, Canone establece convenciones propias. Los criterios están en [plataformas/README.md](plataformas/README.md).
+Al definir las convenciones de cada tecnología o ámbito, prioriza adoptarlas de fuentes normativas externas que ya establecen convenciones adecuadas, en vez de inventarlas: la página las escribe, cada una con su origen. Cuando esas fuentes no cubren una decisión, dejan opciones abiertas o requieren excepciones, Canone establece convenciones propias. Los criterios están en [plataformas/README.md](plataformas/README.md).
 
 Además de documentar las convenciones, proporciona plantillas y herramientas para incorporarlas a los repositorios y comprobar su cumplimiento. Cuando una convención exige una configuración o un mecanismo en una máquina, Canone proporciona también el programa que lo implementa. Las convenciones, sus plantillas y sus programas se mantienen sincronizados; solo instalándolos se prueba su funcionamiento en conjunto.
 
@@ -69,11 +69,11 @@ El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herr
 | [fuentes/](fuentes/) | Copias de las fuentes normativas adoptadas por Canone y de las listas de las que sus programas toman valores. |
 | [adr/](adr/) | Registro de las decisiones de Canone, con su alcance y estado. |
 | [plantilla/](plantilla/) | Plantillas que se copian a los repositorios o se instalan desde Canone: qué es cada tipo y cómo se mantiene. |
-| [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables y las citas de `plataformas/` contra `fuentes/`. |
+| [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables y los orígenes de `plataformas/` contra `fuentes/`. |
 
 ## Verificación
 
-`scripts/verificar.py` comprueba que los repositorios cumplan las convenciones verificables automáticamente y, con `--canone`, las citas de `plataformas/` contra `fuentes/`, y falla si encuentra un incumplimiento.
+`scripts/verificar.py` comprueba que los repositorios cumplan las convenciones verificables automáticamente y, con `--canone`, los orígenes de `plataformas/` contra `fuentes/`, y falla si encuentra un incumplimiento.
 
 Para comprobar un repositorio:
 
@@ -87,7 +87,7 @@ Para comprobar todos los repositorios dentro de un directorio:
 python scripts/verificar.py --todos ..
 ```
 
-Para comprobar las citas de `plataformas/` contra `fuentes/`:
+Para comprobar los orígenes de `plataformas/` contra `fuentes/`:
 
 ```bash
 python scripts/verificar.py --canone

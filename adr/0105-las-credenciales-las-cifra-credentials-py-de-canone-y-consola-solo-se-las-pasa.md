@@ -1,4 +1,4 @@
-# ADR-0105 · Las credenciales las cifra credentials.py de canone, y consola solo se las pasa
+# ADR-0105 · Las credenciales las cifra credentials.py de Canone, y consola solo se las pasa
 
 - **Estado:** Aceptada. El punto 2 lo reemplaza el
   [ADR-0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md)
@@ -9,9 +9,9 @@
 ## Contexto
 
 El punto 3 del ADR-0076 le daba a consola cifrar cada valor en el servidor. Chocaba con el
-ADR-0075: consola no escribe nada propio, y lo que no tiene plantilla se agrega primero a canone.
+ADR-0075: consola no escribe nada propio, y lo que no tiene plantilla se agrega primero a Canone.
 consola tenía que copiar la regla de nombres de `despliegue.md`, como `--name=app_<campo>` y la
-carpeta de cada credencial, y una máquina instalada solo con canone dejaba el servidor sin arrancar,
+carpeta de cada credencial, y una máquina instalada solo con Canone dejaba el servidor sin arrancar,
 porque a `Settings` le faltaban sus campos, y el respaldo sin contraseña.
 
 ## Decisión
@@ -38,5 +38,5 @@ porque a `Settings` le faltaban sus campos, y el respaldo sin contraseña.
 
 - **Que `install.py` lea las credenciales por stdin:** cambiar un secreto volvería a correr toda la
   instalación.
-- **Que consola siga cifrando, punto 3 del ADR-0076:** copia una regla de canone sin plantilla.
+- **Que consola siga cifrando, punto 3 del ADR-0076:** copia una regla de Canone sin plantilla.
 - **Los valores como argumentos:** quedan en el historial de la shell y en la lista de procesos.

@@ -6,7 +6,7 @@
 
 ## Contexto
 
-Al escribir las unidades de systemd como archivos de canone aparecieron cuatro reglas que impedían
+Al escribir las unidades de systemd como archivos de Canone aparecieron cuatro reglas que impedían
 la mejor solución: las cabeceras de OWASP apagaban WebRTC, los mapas y el pago incrustado;
 compilar los catálogos en `ExecStartPre=` obligaba al servidor a escribir en su propio código, y el
 respaldo no decía cómo salía de la máquina.
@@ -22,7 +22,7 @@ respaldo no decía cómo salía de la máquina.
 
 ## Consecuencias
 
-- Un cambio en las unidades se hace una vez en canone y llega a cada app al reinstalar.
+- Un cambio en las unidades se hace una vez en Canone y llega a cada app al reinstalar.
 - El código de una versión es de solo lectura para el servidor y no cambia entre arranques.
 - Una app que use la cámara, el micrófono o la ubicación lo declara al instalarse.
 - Restaurar pide `restic restore` y `pg_restore`.

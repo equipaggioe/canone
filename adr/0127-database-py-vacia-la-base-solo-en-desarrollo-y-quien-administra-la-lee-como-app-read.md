@@ -11,7 +11,7 @@ En desarrollo, el esquema cambia mucho y las migraciones se acumulan. De vez en 
 todas en una inicial, también en el VPS de desarrollo, y producción arranca con una sola. Para eso,
 la base del VPS tiene que poder vaciarse. Canone solo traía `install.py`, que crea la base, y
 `deploy.py`, que la migra. Los botones de base de Consola, que vaciaban y exploraban la base por SSH
-con `sudo -n` o por un túnel con contraseña, no funcionan contra una máquina de canone: `sudo` pide
+con `sudo -n` o por un túnel con contraseña, no funcionan contra una máquina de Canone: `sudo` pide
 la contraseña y los roles entran por `peer`. Lo vio Consola el 2026-11-02.
 
 ## Decisión
@@ -51,4 +51,4 @@ la contraseña y los roles entran por `peer`. Lo vio Consola el 2026-11-02.
 - **Solo el seguro de quien llama, como el de Consola:** es por repositorio, y una vez abierto no
   distingue la máquina de desarrollo de la de producción, ni cubre a quien entra por `ssh`.
 - **Que `empty` migre:** ver el punto 3.
-- **Una contraseña para `<app>_read` y un túnel TCP:** canone no da contraseña a ningún rol.
+- **Una contraseña para `<app>_read` y un túnel TCP:** Canone no da contraseña a ningún rol.

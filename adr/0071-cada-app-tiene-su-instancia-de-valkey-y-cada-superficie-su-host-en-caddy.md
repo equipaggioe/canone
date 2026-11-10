@@ -1,6 +1,6 @@
 # ADR-0071 · Cada app tiene su instancia de Valkey, y cada superficie, su host en Caddy
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El motivo del punto 1 lo reemplaza el [ADR-0077](0077-un-vps-aloja-un-solo-producto.md)
 - **Fecha:** 2026-10-23
 - **Alcance:** «Caddy» y «Valkey» de [`plataformas/despliegue.md`](../plataformas/despliegue.md) y
   `plantilla/infra/`
@@ -16,7 +16,7 @@ era uno solo, y Caddy tenía reglas sin un archivo que las aplicara ni algo que 
    un socket unix que solo abre el grupo de la app. La instancia del paquete queda apagada.
 2. Cada superficie tiene su host: `landing` en `<dominio>`, `web` en `app.<dominio>` y `panel` en
    `panel.<dominio>`. En cada host, `/api/*` va al servidor de la app.
-3. Los sitios de Caddy viven en `plantilla/infra/`, `install.py` los instala y el CI de canone los
+3. Los sitios de Caddy viven en `plantilla/infra/`, `install.py` los instala y el CI de Canone los
    valida con `caddy validate`.
 4. Caddy es el 2.6.2 de Debian 13. En `/api/*`, una petición cuyo `Content-Length` pasa el límite
    recibe 413 de Caddy antes de `request_body`, y el CI valida con ese mismo Caddy.

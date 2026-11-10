@@ -1,4 +1,4 @@
-# ADR-0040 · `~/.claude/CLAUDE.md` guarda solo lo que es para Claude, y enlaza canone para el método
+# ADR-0040 · `~/.claude/CLAUDE.md` guarda solo lo que es para Claude, y enlaza Canone para el método
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-10-08

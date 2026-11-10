@@ -10,7 +10,7 @@
 
 La plantilla no tenía dónde poner los datos que una app necesita para funcionar, ni los de ejemplo.
 Consola los sembraba con una convención propia, los paquetes `seeders` y `mock_data`, que no llegaba
-a una máquina de canone. Además, en desarrollo las migraciones se juntan de vez en cuando en una
+a una máquina de Canone. Además, en desarrollo las migraciones se juntan de vez en cuando en una
 inicial ([ADR-0127](0127-database-py-vacia-la-base-solo-en-desarrollo-y-quien-administra-la-lee-como-app-read.md)).
 Juntarlas con `alembic revision --autogenerate` escribe solo el esquema, nunca datos.
 

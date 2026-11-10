@@ -39,7 +39,7 @@ tiene `current`, y el script se copia a mano desde el tag.
 ## Descartado
 
 - **Seguir copiándolo como punto de partida:** deja una copia por repositorio que puede separarse
-  de las demás, y ninguna prueba de canone corre esas copias.
+  de las demás, y ninguna prueba de Canone corre esas copias.
 - **Copiarlo como canónico y que `verificar.py` compare la copia:** los datos de la app seguirían
   en el código, y una corrección no llegaría a un servidor hasta que cada repositorio la copie y
   publique un tag.

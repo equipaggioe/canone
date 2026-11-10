@@ -15,7 +15,7 @@ tenía su propia prueba de contraste: una diferencia entre clientes no se notaba
 
 1. Los colores de un producto van en `brand/tokens/`, en el formato de DTCG 2025.10, con su
    módulo de color y su resolver. Es la única fuente de los colores de todos sus clientes. Lo que
-   canone comparte entre repositorios es el mecanismo, no la paleta.
+   Canone comparte entre repositorios es el mecanismo, no la paleta.
 2. Los tokens tienen dos niveles: `palette` guarda los colores y `color` asigna cada rol con un
    alias. Claro y oscuro son los contextos `light` y `dark` del modificador `theme` del resolver.
 3. Los roles se nombran como los de color de `ColorScheme` de Flutter sin los obsoletos, y cada
@@ -40,7 +40,7 @@ tenía su propia prueba de contraste: una diferencia entre clientes no se notaba
 - Un cliente compila sin Python: el generador corre solo al cambiar `brand/tokens/`.
 - Todo repositorio con clientes falla en `verificar.py` hasta tener `brand/tokens/` y
   `scripts/tokens.py`.
-- El generador es código propio que se mantiene en canone. Lee solo color sRGB opaco, alias a
+- El generador es código propio que se mantiene en Canone. Lee solo color sRGB opaco, alias a
   `palette` y un modificador `theme`; ampliar el subconjunto es cambiar el script.
 - `tests/test_theme.py` de Flet y de Qt pasa a exigir los colores solo en `colors.py`.
 
@@ -51,7 +51,7 @@ tenía su propia prueba de contraste: una diferencia entre clientes no se notaba
 - **Style Dictionary:** no trae salida para Python, la de Compose y la de Flutter son constantes
   sueltas y no un esquema, y su documentación da el soporte de DTCG 2025.10 como en progreso. Habría
   que escribir todas las salidas igual, en JavaScript, y sumar Node a todo producto.
-- **Un JSON propio:** canone tendría que definir, documentar y mantener otro formato.
+- **Un JSON propio:** Canone tendría que definir, documentar y mantener otro formato.
 - **Los modos como grupos propios dentro de un archivo:** el resolver de DTCG ya define los modos.
 - **El evento `ApplicationPaletteChange` en Qt:** la app lo provoca al aplicar su paleta.
   Comprobado con PySide6 6.12 en Windows: `setPalette()` lo emite, y `colorSchemeChanged` llega

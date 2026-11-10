@@ -28,5 +28,5 @@ Una superficie nueva no podía usar la plantilla.
 
 ## Descartado
 
-- **Quedarse en SvelteKit 2 con una versión fija de `sv`.** Deja a canone en una versión que ya no es
+- **Quedarse en SvelteKit 2 con una versión fija de `sv`.** Deja a Canone en una versión que ya no es
   la que documenta su fuente.

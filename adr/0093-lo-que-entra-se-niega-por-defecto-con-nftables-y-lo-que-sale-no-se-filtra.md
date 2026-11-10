@@ -38,4 +38,4 @@ escuchara en todas las direcciones quedaba abierto a internet.
   pero no decide cuál ni cómo, y remite a la SP 800-41.
 - **La sección 21.2 del RFC 8656:** trata del firewall entre el cliente y TURN, no del de la
   máquina.
-- **Solo el firewall del proveedor:** queda fuera de lo que instala canone, y nada lo prueba.
+- **Solo el firewall del proveedor:** queda fuera de lo que instala Canone, y nada lo prueba.

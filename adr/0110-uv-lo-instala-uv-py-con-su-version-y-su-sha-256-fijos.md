@@ -9,9 +9,9 @@
 
 El [ADR-0090](0090-la-maquina-es-debian-13-sus-programas-salen-de-sus-paquetes-y-uv-tiene-una-sola-version-exacta.md)
 fija una sola versión de uv, que en el servidor sale del release de GitHub con su SHA-256
-comprobado, pero ningún programa de canone la instalaba. Los paquetes y el swap los pone quien
+comprobado, pero ningún programa de Canone la instalaba. Los paquetes y el swap los pone quien
 prepara la máquina, con lo que trae Debian 13; uv no está en Debian 13, y su versión y su SHA-256
-son reglas de canone. `deploy.py` corre `uv sync` en cada versión, y sin uv no despliega.
+son reglas de Canone. `deploy.py` corre `uv sync` en cada versión, y sin uv no despliega.
 
 ## Decisión
 
@@ -43,4 +43,4 @@ son reglas de canone. `deploy.py` corre `uv sync` en cada versión, y sin uv no 
 - **Comprobar contra el `.sha256` del mismo release:** sale del mismo lugar que el archivo, y quien
   cambie uno puede cambiar el otro.
 - **El instalador de astral.sh:** corre un script que se descarga en el momento, sin un SHA-256
-  fijo en canone.
+  fijo en Canone.

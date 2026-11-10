@@ -1,6 +1,6 @@
 # Plataformas
 
-Cada página reúne las convenciones de una tecnología o ámbito de implementación. `transversal.md` reúne las que deben cumplir conjuntamente varias piezas de un sistema.
+Cada página reúne las convenciones de una tecnología o ámbito de implementación. `transversal.md` reúne las que deben cumplir conjuntamente varias piezas de un sistema, y `autenticacion.md`, las del registro, la autenticación y la sesión de una cuenta, en el servidor y en sus clientes.
 
 Para trabajar en una pieza se consulta su página, su página madre si la tiene y las secciones de `transversal.md` y `autenticacion.md` que esas páginas enlazan. Las demás páginas no aplican.
 
@@ -13,6 +13,7 @@ Para trabajar en una pieza se consulta su página, su página madre si la tiene 
 - **Fuente normativa:** documento externo que establece convenciones que pueden adoptarse.
 - **Material de referencia:** lista de nombres o valores que utiliza una convención, como un registro, sin ser una fuente normativa.
 - **Origen:** la fuente y la sección de la que sale una convención adoptada.
+- **Parte:** una sección de una fuente, o el fragmento de una sección que trata un mismo asunto.
 - **Pieza:** componente identificable de un sistema que tiene una responsabilidad y puede documentarse por separado.
 - **Tecnología:** herramienta, lenguaje, framework, plataforma o sistema concreto utilizado para implementar una pieza.
 
@@ -91,7 +92,7 @@ Adoptar una fuente es escribir sus convenciones en la página, cada una con su o
 - **Lo dirigido a otro actor:** no se escriben las obligaciones dirigidas a quienes desarrollan una herramienta que el producto utiliza, como coturn, Uvicorn o un navegador, ni las dirigidas a la otra parte de un protocolo, como el servicio de push de Web Push. Sí se escriben las opciones que la herramienta deja a quien la configura, como los destinos a los que coturn niega relevar.
 - **Lo de una función que no se ofrece:** no se escribe. Agregarla obliga a volver a la fuente.
 - **Lo repetido:** lo que dicen varias fuentes, o varias partes de una fuente, se escribe una sola vez, con todos sus orígenes.
-- **Lo que no se sigue:** no se escribe, salvo en una parte que nombra una convención de herramienta: ahí se dice qué se contradice y por qué. Si la página hace otra cosa, escribe lo que hace como convención propia.
+- **Lo que no se sigue:** no se escribe, salvo en la convención que nombra una parte que hace cumplir una herramienta: ahí se dice qué reglas no se siguen y por qué. Si la página hace otra cosa, escribe lo que hace como convención propia.
 
 #### Una convención, una sección
 
@@ -138,7 +139,7 @@ Las convenciones propias se establecen en tres casos:
 
 ### Estructuras y distribución
 
-- Las estructuras, como el árbol de directorios, se muestran completas, aunque reproduzcan convenciones de sus fuentes. La estructura completa es la convención que debe seguirse.
+- Las estructuras, como el árbol de directorios, se muestran completas. La estructura completa es la convención que debe seguirse.
 - Después de una estructura solo se especifica dónde colocar los elementos que podrían ubicarse en más de un archivo.
 - No se repite información que ya queda determinada por el nombre de un archivo u otra sección.
 
@@ -182,7 +183,7 @@ Se utiliza una tabla con estas columnas:
 
 - Una página con página madre hereda sus convenciones. No debe repetirlas; únicamente documenta las particularidades de su ámbito. Por ejemplo, `fastapi.md`, `flet.md` y `qt.md` heredan de `python.md`.
 - Cada página dice solo lo que hace su pieza.
-- Las convenciones que deben cumplir conjuntamente varias piezas de un sistema se documentan en `transversal.md`. Las páginas correspondientes enlazan las secciones transversales que les aplican.
+- Las convenciones que deben cumplir conjuntamente varias piezas de un sistema se documentan en `transversal.md`, salvo las de la autenticación, que van en `autenticacion.md`. Las páginas correspondientes enlazan las secciones de esas dos páginas que les aplican.
 - Cada página identifica las plantillas de `plantilla/` que se derivan de sus convenciones.
 - Las páginas no indican qué repositorios utilizan cada tecnología ni establecen cuándo elegir una plataforma sobre otra.
 

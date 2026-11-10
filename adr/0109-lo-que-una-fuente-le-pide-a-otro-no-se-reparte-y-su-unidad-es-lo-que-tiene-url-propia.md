@@ -44,7 +44,7 @@ Cheat Sheet* de `despliegue.md`, no lo cita nadie.
 - **Citar los protocolos por entradas:** un protocolo trae un enfoque, y citarlo por entradas
   dejaría callar lo que molesta de lo que le pide al producto.
 - **Dejar fuera también lo que una fuente le pide a la organización**, como políticas,
-  planificación o respuesta a incidentes: quien despliega es una parte del producto en canone, y
+  planificación o respuesta a incidentes: quien despliega es una parte del producto en Canone, y
   dejarlo fuera volvería a callar lo que molesta.
 - **Que la unidad sea lo que el organismo llama documento**, como ASVS entero o el manual de
   PostgreSQL: habría que repartir cientos de requisitos que ninguna página usa.

@@ -1,4 +1,4 @@
-# ADR-0107 · canone fija la interfaz de sus programas, y no la herramienta que los corre
+# ADR-0107 · Canone fija la interfaz de sus programas, y no la herramienta que los corre
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-10-29
@@ -7,10 +7,10 @@
 
 ## Contexto
 
-consola es una herramienta independiente que, entre otras cosas, corre los programas de canone.
-Varias reglas de canone fijaban cómo trabaja: el
+consola es una herramienta independiente que, entre otras cosas, corre los programas de Canone.
+Varias reglas de Canone fijaban cómo trabaja: el
 [ADR-0075](0075-canone-fija-el-repositorio-declara-y-consola-dispara.md) le daba una fila en
-«Quién hace qué» y le pedía agregar a canone lo que no tuviera plantilla; el
+«Quién hace qué» y le pedía agregar a Canone lo que no tuviera plantilla; el
 [ADR-0076](0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md)
 ponía lo que cambia entre despliegues en `.consola/config.env`, como única fuente, y le dejaba
 resolver un gestor de contraseñas; el
@@ -24,15 +24,15 @@ argumentos, dentro de `systemd-nspawn`.
 
 ## Decisión
 
-1. canone fija cada programa por su interfaz: los argumentos de `install.py`, `deploy.py`,
+1. Canone fija cada programa por su interfaz: los argumentos de `install.py`, `deploy.py`,
    `backup.sh` y `backup.ps1`, y el stdin de `credentials.py`, que documenta `despliegue.md`. No
    nombra la herramienta que los corre ni fija cómo guarda sus datos. Reemplaza el punto 3 del
    ADR-0075.
 2. Lo que cambia entre despliegues, secreto o no, no se commitea: el repositorio declara el campo, y
-   el valor llega al servidor como argumento de `install.py` o por `credentials.py`. canone no fija
+   el valor llega al servidor como argumento de `install.py` o por `credentials.py`. Canone no fija
    dónde lo guarda quien despliega. Reemplaza el punto 4 del ADR-0075, los puntos 2 y 4 del
    ADR-0076 y el punto 2 del ADR-0105.
-3. Lo que instalan los programas de canone en una máquina no lo escribe nadie más: ni
+3. Lo que instalan los programas de Canone en una máquina no lo escribe nadie más: ni
    unidades, ni configuración, ni scripts propios.
 4. `sudo` pide la contraseña de la cuenta. Reemplaza el punto 4 del ADR-0084, que además decía
    cuándo la pide consola.
@@ -43,21 +43,21 @@ argumentos, dentro de `systemd-nspawn`.
 
 ## Consecuencias
 
-- canone no menciona a consola en sus reglas vigentes. Los ADR viejos la siguen nombrando en su
+- Canone no menciona a consola en sus reglas vigentes. Los ADR viejos la siguen nombrando en su
   contexto y sus consecuencias, que son historia.
 - Una herramienta que guarda datos dentro del repositorio los ignora ella misma, por ejemplo con
   un `.gitignore` dentro de su carpeta. Un repositorio armado desde la plantilla ya no ignora
   `.consola/`.
-- Que lo que no tiene plantilla se agregue primero a canone pasa a ser una regla de consola, si la
-  quiere. Del lado de canone ya lo dice el `README.md`: lo que una convención exige en una máquina,
-  canone lo da como el programa que la deja así.
+- Que lo que no tiene plantilla se agregue primero a Canone pasa a ser una regla de consola, si la
+  quiere. Del lado de Canone ya lo dice el `README.md`: lo que una convención exige en una máquina,
+  Canone lo da como el programa que la deja así.
 - Dónde se guarda una copia de lo que cambia entre despliegues fuera de la máquina de quien
-  despliega deja de ser una pregunta de canone, salvo `restic_password`
+  despliega deja de ser una pregunta de Canone, salvo `restic_password`
   ([ADR-0074](0074-las-credenciales-del-respaldo-tienen-una-copia-fuera-del-servidor.md)).
 
 ## Descartado
 
 - **Dejar `.consola/config.env` como única fuente:** ata la norma a una herramienta, y quien
   despliega a mano o con otra no tiene cómo cumplirla.
-- **Fijar el formato de los datos de quien despliega:** canone ya recibe los valores por la
+- **Fijar el formato de los datos de quien despliega:** Canone ya recibe los valores por la
   interfaz de cada programa; cómo los junta una herramienta antes no cambia la máquina.

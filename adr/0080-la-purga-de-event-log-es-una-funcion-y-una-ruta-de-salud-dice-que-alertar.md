@@ -11,7 +11,7 @@
 
 Nadie se enteraba de un evento grave ni de un respaldo que dejó de correr. El registro de eventos
 era solo una regla: la plantilla no traía `event_log`. La purga usaba un rol aparte, con una
-segunda credencial de base, y canone no decía quién da los permisos de una tabla.
+segunda credencial de base, y Canone no decía quién da los permisos de una tabla.
 
 Comprobado en PostgreSQL 17, en Debian 13: el rol de la app con solo `INSERT` y `SELECT` recibe
 `permission denied` al cambiar, borrar o vaciar `event_log`. Una función `SECURITY DEFINER` del

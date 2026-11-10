@@ -10,7 +10,7 @@
 
 Los puntos 3 y 4 del
 [ADR-0080](0080-la-purga-de-event-log-es-una-funcion-y-una-ruta-de-salud-dice-que-alertar.md)
-ponían la purga en una función `SECURITY DEFINER` de la base. canone no escribe código dentro de
+ponían la purga en una función `SECURITY DEFINER` de la base. Canone no escribe código dentro de
 PostgreSQL: el resto de la lógica vive en Python, y la función era la única pieza en SQL.
 
 La credencial del dueño del esquema ya existe: `<app>-migrate/database_url`, que el servidor no

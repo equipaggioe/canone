@@ -1,4 +1,4 @@
-# ADR-0075 · canone fija, el repositorio declara y consola dispara
+# ADR-0075 · Canone fija, el repositorio declara y consola dispara
 
 - **Estado:** Aceptada. Los puntos 3 y 4 los reemplaza el
   [ADR-0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md)
@@ -16,25 +16,25 @@ decía cuál de los tres decidía, así que la duda volvía en cada cambio.
 
 ## Decisión
 
-1. canone fija las reglas y da las plantillas. No guarda datos de ninguna app ni corre nada.
+1. Canone fija las reglas y da las plantillas. No guarda datos de ninguna app ni corre nada.
 2. El repositorio sigue las reglas, copia las plantillas que se copian y declara sus datos.
 3. consola lee los datos del repositorio y dispara lo que dan las plantillas: las que se copian las
-   toma del repositorio, y las que se instalan, de canone. No escribe unidades, configuración ni
-   scripts propios. Lo que no tiene plantilla se agrega primero a canone.
+   toma del repositorio, y las que se instalan, de Canone. No escribe unidades, configuración ni
+   scripts propios. Lo que no tiene plantilla se agrega primero a Canone.
 4. Un secreto no se declara con su valor en el repositorio: el repositorio declara el campo, y el
    valor vive en `.consola/config.env`
    ([ADR-0076](0076-lo-que-cambia-entre-despliegues-sale-de-un-solo-archivo-y-lo-demas-es-codigo.md)).
 
 ## Consecuencias
 
-- La regla y su prueba van en el mismo commit: `infra.yml` de canone prueba las plantillas contra
+- La regla y su prueba van en el mismo commit: `infra.yml` de Canone prueba las plantillas contra
   `despliegue.md`, y falla cuando una se separa de la otra.
 - El servidor se instala sin consola, con `ssh` y `python3 install.py`.
 - La razón original, que un VPS con varias apps no dependiera de qué versión de consola instaló
   cada una, cayó con el
   [ADR-0077](0077-un-vps-aloja-un-solo-producto.md): una máquina aloja un solo producto.
-- Lo que hoy falta en canone, como la creación de los roles de Postgres o coturn, bloquea a consola
-  hasta que canone tenga su regla y su plantilla.
+- Lo que hoy falta en Canone, como la creación de los roles de Postgres o coturn, bloquea a consola
+  hasta que Canone tenga su regla y su plantilla.
 - El puerto, el dominio y la memoria van en `.consola/config.env`, junto con lo demás que cambia
   entre despliegues.
 
@@ -42,8 +42,8 @@ decía cuál de los tres decidía, así que la duda volvía en cada cambio.
 
 - **Que consola genere la configuración del servidor:** dos fuentes del mismo archivo, que se
   pisan en una máquina compartida.
-- **Que consola guarde los scripts y canone solo las reglas:** la prueba de cada regla quedaría en
-  otro repositorio, canone no fallaría cuando consola se separe de ella, y el servidor no se podría
+- **Que consola guarde los scripts y Canone solo las reglas:** la prueba de cada regla quedaría en
+  otro repositorio, Canone no fallaría cuando consola se separe de ella, y el servidor no se podría
   instalar sin consola.
 - **Que cada repositorio copie `plantilla/infra/`:** cada copia se separaría de las demás, y un
   cambio en las unidades no llegaría a todas las apps al reinstalar.

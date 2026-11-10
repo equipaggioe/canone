@@ -41,7 +41,7 @@ Plantilla: el `pyproject.toml` de cada pieza, en [plantilla/server/](../plantill
 
 ## Estilo
 
-Estándares: [PEP 8](../fuentes/python/pep-0008.rst), salvo la sección *Imports*, y [PEP 257](../fuentes/python/pep-0257.rst).
+Estándares: [PEP 8](../fuentes/python/pep-0008.rst) y [PEP 257](../fuentes/python/pep-0257.rst).
 
 - Líneas de 99 caracteres.
 - Comillas dobles.

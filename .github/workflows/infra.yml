@@ -124,7 +124,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        script: [install.sh, install-logs.sh, deploy.sh, backup.sh]
+        script: [install.sh, install-logs.sh, deploy.sh, backup.sh, uninstall.sh]
     steps:
       - uses: actions/checkout@v7
       # install.py asks for as much swap as memory, and the machine sees those of the runner.

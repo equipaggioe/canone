@@ -126,8 +126,10 @@ Las convenciones propias se establecen en tres casos:
 ### Versiones
 
 - Cada página fija en «Proyecto» las versiones de sus tecnologías. La plantilla y las fuentes dependen de la página: la plantilla no declara una versión que la página no estipule, y las fuentes se descargan de esa versión.
-- Lo que corre en el servidor usa la versión de Debian 13, también en desarrollo y en CI.
-- Lo que no corre en el servidor usa la última versión estable, o la última LTS si la tecnología las publica. Una excepción lleva su razón en la página.
+- La versión se fija por tecnología, no por pieza: una tecnología lleva la misma versión en todas las piezas que la usan.
+- Una tecnología que corre en el servidor, como Python, PostgreSQL o Valkey, usa la versión de Debian 13 en todas las piezas, también en las que no corren en el servidor, en la máquina de desarrollo y en CI: así se desarrolla y se prueba con la misma versión que corre en producción.
+- Una tecnología que no corre en el servidor, como Qt, Flet o Flutter, usa la última versión estable, o la última LTS si la tecnología las publica.
+- Una excepción lleva su razón en la página.
 
 ### Redacción
 

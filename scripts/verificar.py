@@ -591,8 +591,15 @@ def tiene_numero(texto: str, numero: str) -> bool:
     return bool(re.search(rf"(?m)(?:^|>)[\s#|*]*{re.escape(numero)}\.?(?=[\s<*])", texto))
 
 
-def tiene_titulo(texto: str, titulo: str) -> bool:
-    plano = " ".join(ETIQUETA.sub(" ", texto).split()).casefold()
+# En texto plano o en reStructuredText, un < de un ejemplo no abre una etiqueta: quitarla
+# borraba todo hasta el siguiente >, con los títulos que caían en medio.
+SIN_ETIQUETAS = {".rst", ".txt"}
+
+
+def tiene_titulo(texto: str, titulo: str, etiquetas: bool) -> bool:
+    if etiquetas:
+        texto = ETIQUETA.sub(" ", texto)
+    plano = " ".join(texto.split()).casefold()
     return " ".join(titulo.split()).casefold() in plano
 
 
@@ -612,7 +619,7 @@ def origenes() -> list[str]:
                 if not tiene_numero(texto, numero):
                     fallas.append(f"ADR-0129: {pagina.name} cita §{numero}, que no está en fuentes/{fuente}")
             for titulo in TITULO.findall(nombre):
-                if not tiene_titulo(texto, titulo):
+                if not tiene_titulo(texto, titulo, archivo.suffix not in SIN_ETIQUETAS):
                     fallas.append(f"ADR-0129: {pagina.name} cita *{titulo}*, que no está en fuentes/{fuente}")
     listas = set()
     for linea in (CANONE / "fuentes/README.md").read_text(encoding="utf-8").splitlines():
@@ -706,14 +713,14 @@ def revisar(repo: Path) -> list[str]:
     servidor = repo / "server"
     if servidor.is_dir():
         if (servidor / "requirements.txt").exists():
-            fallas.append("ADR-0006: server/requirements.txt sigue existiendo")
+            fallas.append("plataformas/python.md: server/requirements.txt sigue existiendo")
         if not (servidor / "pyproject.toml").exists():
-            fallas.append("ADR-0006: falta server/pyproject.toml")
+            fallas.append("plataformas/python.md: falta server/pyproject.toml")
         else:
             for nombre in sorted(dependencias(servidor / "pyproject.toml") & DESCARTADAS):
                 fallas.append(f"plataformas/fastapi.md: server/ declara {nombre}, que está descartada")
         if (servidor / "pytest.ini").exists():
-            fallas.append("ADR-0006: pytest.ini suelto; la configuración va en pyproject.toml")
+            fallas.append("plataformas/python.md: pytest.ini suelto; la configuración va en pyproject.toml")
         if (servidor / "app").is_dir():
             fallas.append("plataformas/fastapi.md: el paquete va en server/src/app/, no en server/app/")
         if not (servidor / ".gitignore").exists():

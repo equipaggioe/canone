@@ -14,8 +14,7 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [python/pep-0008.rst](python/pep-0008.rst) | [origen](https://raw.githubusercontent.com/python/peps/5514795ade79a5bf6f3c08c562b02689d0a9feb2/peps/pep-0008.rst) |  |
 | [python/pep-0257.rst](python/pep-0257.rst) | [origen](https://raw.githubusercontent.com/python/peps/f22614f903cd50d19e5463913fde6d4a17109de0/peps/pep-0257.rst) |  |
 | [python/asyncio-dev.rst](python/asyncio-dev.rst) | [origen](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/asyncio-dev.rst) | Rama 3.13, la versión que usan las piezas: la de `main` nombra `InterpreterPoolExecutor`, que no existe en 3.13. |
-| [pypa/pyproject-toml.rst](pypa/pyproject-toml.rst) | [origen](https://raw.githubusercontent.com/pypa/packaging.python.org/3b98ceeae062e84ae5527f850622b057878aa11e/source/specifications/pyproject-toml.rst) |  |
-| [pypa/dependency-groups.rst](pypa/dependency-groups.rst) | [origen](https://raw.githubusercontent.com/pypa/packaging.python.org/cdb4bf7ce8de9263fc3ec9e4c46117f49c4f72c5/source/specifications/dependency-groups.rst) |  |
+| [python/asyncio-task.rst](python/asyncio-task.rst) | [origen](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/asyncio-task.rst) | Rama 3.13, la versión que usan las piezas |
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | [origen](https://raw.githubusercontent.com/pytest-dev/pytest/9.2.0/doc/en/explanation/goodpractices.rst) |  |
 | [typing/best_practices.rst](typing/best_practices.rst) | [origen](https://raw.githubusercontent.com/python/typing/953e24d71aa6ea97f58852046fc355d11b564333/docs/reference/best_practices.rst) |  |
 | [typing/modernizing.rst](typing/modernizing.rst) | [origen](https://raw.githubusercontent.com/python/typing/39164cd2c5b4e2608cb8b5d2fc8af9ae6f0c0fe8/docs/guides/modernizing.rst) |  |

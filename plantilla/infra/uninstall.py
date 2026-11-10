@@ -4,14 +4,13 @@ r"""Undo what install.py, credentials.py, deploy.py, packages.py, swap.py and uv
 
 database drops the database, its roles, their credentials and the files of the users, and stops
 what uses them: install.py creates them again. app also takes every file, unit, account and
-folder of the app. machine also takes the swap, uv, what install.py writes for the whole machine,
-and the packages of packages.py but sudo, with those of their families, like postgresql-17, and
-leaves a Debian that runs install.py again from the start. --dry-run prints what it would do,
-and does nothing.
+folder of the app. machine also takes the swap, uv, the files install.py writes for the whole
+machine and the journal tunnel. --dry-run prints what it would do, and does nothing.
 
-Each level keeps the account that administers, its keys and 00-<app>.conf of ssh, and root stays
-locked: they are the way in. A package of packages.py whose purge would take one someone installed
-by hand stays, with its data, and machine says so.
+The packages stay, with the files install.py overwrote in them, like the Caddyfile or
+nftables.conf: what the image brought is not known. To leave the machine as the provider delivers
+it, the provider reinstalls it. Each level keeps the account that administers, its keys and
+00-<app>.conf of ssh, and root stays locked: they are the way in.
 
 From canone: plataformas/despliegue.md, «Desinstalar».
 """
@@ -23,7 +22,6 @@ import subprocess
 from pathlib import Path
 
 from database import psql
-from packages import packages
 from swap import FSTAB, SWAPFILE
 
 UNITS = Path("/etc/systemd/system")
@@ -52,9 +50,9 @@ FILES = (
     "/var/cache/private/PRODUCTO-backup",
     "/run/PRODUCTO-receiver",
 )
-# What install.py writes for the whole machine and no package removes.
+# The files install.py writes for the whole machine that no package brings. What it overwrote of a
+# package, like the Caddyfile, nftables.conf or 20auto-upgrades, stays.
 MACHINE = (
-    "/etc/apt/apt.conf.d/20auto-upgrades",
     "/etc/apt/apt.conf.d/52automatic-reboot",
     "/etc/sysctl.d/valkey.conf",
     "/etc/nftables.d/turn.nft",
@@ -62,22 +60,8 @@ MACHINE = (
     "/usr/local/bin/uv",
     "/root/.cache/uv",
 )
-# The data and configuration the packages keep after a purge.
-LEFTOVERS = (
-    "/etc/caddy",
-    "/var/lib/caddy",
-    "/etc/postgresql",
-    "/var/lib/postgresql",
-    "/var/log/postgresql",
-    "/etc/valkey",
-    "/var/lib/valkey",
-    "/var/log/valkey",
-)
-# The way in: packages.py installs it, and root does not log in.
-KEPT = ("sudo",)
-# The packages that come with those of packages.py under the same name, like postgresql-17,
-# postgresql-postgis-scripts or valkey-tools: they go too, even if someone installed one by hand.
-FAMILIES = ("postgresql", "valkey", "caddy", "coturn", "restic", "wireguard")
+# The tunnel of --logs, which install.py enables.
+TUNNEL = ("wg-quick@logs.service", "systemd-journal-upload.service")
 
 
 class Plan:
@@ -181,93 +165,15 @@ def remove_app(app: str) -> None:
     systemctl("reload", "caddy.service", "ssh.service", "postgresql@17-main.service")
 
 
-def purged() -> list[str]:
-    """Return the installed packages of packages.py and of their families, but the way in."""
-    listed = set(packages(["postgis"], turn=True, logs=True))
-    query = ["dpkg-query", "--show", "--showformat", "${Package} ${db:Status-Status}\n"]
-    shown = subprocess.run(query, capture_output=True, text=True, check=True).stdout
-    installed = [line.split()[0] for line in shown.splitlines() if line.endswith(" installed")]
-    return sorted(
-        name
-        for name in installed
-        if name not in KEPT and (name in listed or name.startswith(FAMILIES))
-    )
-
-
-def simulate(names: list[str]) -> list[str]:
-    """Return every package apt purges along with names."""
-    simulation = subprocess.run(
-        ["apt-get", "purge", "--autoremove", "--simulate", *names],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout
-    return sorted(line.split()[1] for line in simulation.splitlines() if line.startswith("Purg "))
-
-
-def by_hand(names: list[str], manual: set[str], ours: set[str]) -> list[str]:
-    """Return what purging names takes that someone installed by hand and is not ours."""
-    return sorted(set(simulate(names)).intersection(manual) - ours)
-
-
-def plan_purge(names: list[str]) -> tuple[list[str], list[str]]:
-    """Return the packages to purge and all that goes with them.
-
-    A package whose purge takes one installed by hand stays, like python3 when the image runs
-    cloud-init with it. If the rest together still take one, it fails before touching anything.
-    """
-    manual = set(
-        subprocess.run(
-            ["apt-mark", "showmanual"], capture_output=True, text=True, check=True
-        ).stdout.split()
-    )
-    ours = set(names)
-    taken = {name: by_hand([name], manual, ours) for name in names}
-    for name, others in taken.items():
-        if others:
-            print(f"{name} stays: apt would also remove {', '.join(others)}.")
-    names = [name for name in names if not taken[name]]
-    others = by_hand(names, manual, ours) if names else []
-    if others:
-        raise SystemExit(
-            f"apt would also remove {', '.join(others)}, which are not of packages.py: "
-            "nothing was removed."
-        )
-    return names, simulate(names) if names else []
-
-
-def orphaned(path: Path, removed: list[str]) -> bool:
-    """Return whether no package that stays owns path."""
-    # dpkg-query fails when no package owns it.
-    search = subprocess.run(
-        ["dpkg-query", "--search", str(path)], capture_output=True, text=True, check=False
-    )
-    owners = {
-        owner.strip()
-        for line in search.stdout.splitlines()
-        if line.endswith(f": {path}")
-        for owner in line.rpartition(": ")[0].split(",")
-    }
-    return owners <= set(removed)
-
-
-def remove_machine(names: list[str], removed: list[str]) -> None:
-    """Delete the swap, what install.py writes for the machine, uv and the packages."""
-    systemctl("stop", "wg-quick@logs.service", "systemd-journal-upload.service")
+def remove_machine() -> None:
+    """Delete the swap, the journal tunnel, uv and the files install.py writes for the machine."""
+    systemctl("disable", "--now", *TUNNEL)
     if SWAPFILE.exists():
         run("swapoff", str(SWAPFILE), check=False)
     delete(SWAPFILE)
     remove_lines(FSTAB, f"{SWAPFILE} ")
     for name in MACHINE:
         delete(Path(name))
-    if names:
-        if not Plan.dry:
-            os.environ["DEBIAN_FRONTEND"] = "noninteractive"
-        run("apt-get", "purge", "--autoremove", "--yes", *names)
-    # A package that stays, like a server another package kept, keeps its data.
-    for name in LEFTOVERS:
-        if orphaned(Path(name), removed):
-            delete(Path(name))
     # The default of the kernel, which sysctl.d/valkey.conf changed.
     run("sysctl", "--quiet", "vm.overcommit_memory=0")
 
@@ -283,17 +189,13 @@ def main() -> None:
         raise SystemExit("uninstall.py runs as root: run it with sudo.")
     app, level = arguments.app, arguments.level
     Plan.dry = arguments.dry_run
-    # Before anything goes: a machine left halfway is worse than one untouched.
-    names, removed = plan_purge(purged()) if level == "machine" else ([], [])
     drop_database(app)
     if level in ("app", "machine"):
         remove_app(app)
     if level == "machine":
-        remove_machine(names, removed)
+        remove_machine()
     if Plan.dry:
         print("\n".join(Plan.steps))
-        if removed:
-            print(f"apt purges: {' '.join(removed)}")
         return
     print(f"{app}: {level} uninstalled.")
 

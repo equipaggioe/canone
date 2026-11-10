@@ -2,9 +2,9 @@
 # Runs uninstall.py on a Debian 13 that install.py set up, one level at a time and installing again
 # after each: database drops the database, its roles, their credentials and its line of pg_hba, and
 # keeps the rest of the app; app takes every unit, site, credential, account and folder of the app;
-# machine purges the packages of packages.py but sudo and those of their families, with their data,
-# and keeps one whose purge would take a package someone installed by hand. Every level keeps the
-# account that administers, its keys and 00-<app>.conf, and root locked.
+# machine takes the swap, uv and the files install.py writes for the whole machine, keeps the
+# packages and what install.py overwrote in them, and install.py runs again on it. Every level
+# keeps the account that administers, its keys and 00-<app>.conf, and root locked.
 #
 #     sh uninstall.sh <canone>
 set -eu
@@ -78,33 +78,25 @@ test -z "$(sql "SELECT 1 FROM pg_database WHERE datname = 'demo'")"
 kept
 sshd -t
 
-step "machine purges the packages of packages.py but sudo, with their data"
+step "machine takes uv and the files of install.py for the machine, and keeps the packages"
 install
-# As on a machine of a provider: by hand, what the image brings by priority, ssh, and what
-# packages.py installs; the rest, pulled by them. debootstrap marks every package by hand.
-apt-mark auto $(dpkg-query --show --showformat '${Package}\n') > /dev/null
-image=$(dpkg-query --show --showformat '${Package} ${Priority}\n' |
-    awk '$2 == "required" || $2 == "important" {print $1}')
-asked=$(for name in $(python3 "$infra/packages.py" --list --all); do
-    if installed "$name"; then echo "$name"; fi
-done)
-apt-mark manual $image openssh-server $asked > /dev/null
-mkdir -p "$work/keeper/DEBIAN"
-printf 'Package: keeper\nVersion: 1\nArchitecture: all\nMaintainer: ci\nDepends: restic\nDescription: ci\n' \
-    > "$work/keeper/DEBIAN/control"
-dpkg-deb --build "$work/keeper" "$work/keeper.deb" > /dev/null
-dpkg --install "$work/keeper.deb" > /dev/null
-uninstall machine > "$work/output"
-grep -qxF 'restic stays: apt would also remove keeper.' "$work/output"
-installed restic
-installed keeper
-for name in caddy postgresql postgresql-17 valkey-server valkey-tools nftables unattended-upgrades; do
-    ! installed "$name"
-done
-installed sudo
-for path in /etc/caddy /var/lib/postgresql /etc/postgresql /var/lib/valkey /usr/local/bin/uv \
-    /etc/apt/apt.conf.d/20auto-upgrades /etc/sysctl.d/valkey.conf /etc/demo; do
+# What uv.py leaves; this machine has no network to download it.
+touch /usr/local/bin/uv
+uninstall machine
+for path in /usr/local/bin/uv /etc/apt/apt.conf.d/52automatic-reboot /etc/sysctl.d/valkey.conf \
+    /etc/demo /srv/demo; do
     test ! -e "$path"
+done
+for name in caddy postgresql valkey-server nftables unattended-upgrades python3 sudo; do
+    installed "$name"
+done
+for path in /etc/caddy/Caddyfile /etc/nftables.conf /etc/apt/apt.conf.d/20auto-upgrades; do
+    test -f "$path"
 done
 test "$(sysctl -n vm.overcommit_memory)" = 0
 kept
+
+step "and install.py installs the app again on it"
+install
+test "$(sql "SELECT 1 FROM pg_database WHERE datname = 'demo'")" = 1
+test "$(sysctl -n vm.overcommit_memory)" = 1

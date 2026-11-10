@@ -1,6 +1,6 @@
 # ADR-0129 · La página escribe cada convención que rige, y la adoptada lleva su origen
 
-- **Estado:** Aceptada. El punto 3, en lo que saca el párrafo `Estándar:`, lo reemplaza, y el punto 9, que era propuesta, lo descarta, el [ADR-0130](0130-estandar-solo-nombra-los-documentos-de-origen-y-una-eleccion-lleva-el-origen-de-su-regla.md)
+- **Estado:** Aceptada. El punto 3, en lo que saca el párrafo `Estándar:`, lo reemplaza, y el punto 9, que era propuesta, lo descarta, el [ADR-0130](0130-estandar-solo-nombra-los-documentos-de-origen-y-una-eleccion-lleva-el-origen-de-su-regla.md). El punto 4, en la línea que dice que una función no se ofrece, lo reemplaza el [ADR-0133](0133-la-autenticacion-tiene-su-pagina-y-el-servidor-comprueba-aparte-lo-que-sus-bibliotecas-no-miran.md)
 - **Fecha:** 2026-11-09
 - **Alcance:** `plataformas/`, `fuentes/README.md`, `principios.md` y `scripts/verificar.py`
 

@@ -2,7 +2,7 @@
 
 Cada página reúne las convenciones de una tecnología o ámbito de implementación. `transversal.md` reúne las que deben cumplir conjuntamente varias piezas de un sistema.
 
-Para trabajar en una pieza se consulta su página, su página madre si la tiene y las secciones de `transversal.md` que esas páginas enlazan. Las demás páginas no aplican.
+Para trabajar en una pieza se consulta su página, su página madre si la tiene y las secciones de `transversal.md` y `autenticacion.md` que esas páginas enlazan. Las demás páginas no aplican.
 
 ## Terminología
 
@@ -21,6 +21,7 @@ Para trabajar en una pieza se consulta su página, su página madre si la tiene 
 | Página | Cubre |
 | :--- | :--- |
 | [transversal.md](transversal.md) | Lo que deben cumplir conjuntamente varias piezas |
+| [autenticacion.md](autenticacion.md) | El registro, la autenticación y la sesión de una cuenta, en el servidor y en sus clientes |
 | [python.md](python.md) | Lo común a todas las piezas implementadas en Python |
 | [fastapi.md](fastapi.md) | Un servidor en FastAPI |
 | [postgres.md](postgres.md) | La base de datos |
@@ -88,7 +89,7 @@ Adoptar una fuente es escribir sus convenciones en la página, cada una con su o
 
 - **Lo que hace cumplir una herramienta:** si una herramienta de «Cumplimiento» hace cumplir entera una parte de una fuente, la página no escribe sus convenciones. Escribe una sola convención que nombra esa parte, con su origen, y dice qué reglas de esa parte no sigue, con su razón. La herramienta va en «Cumplimiento». Lo que la herramienta no cubre se escribe convención por convención.
 - **Lo dirigido a otro actor:** no se escriben las obligaciones dirigidas a quienes desarrollan una herramienta que el producto utiliza, como coturn, Uvicorn o un navegador, ni las dirigidas a la otra parte de un protocolo, como el servicio de push de Web Push. Sí se escriben las opciones que la herramienta deja a quien la configura, como los destinos a los que coturn niega relevar.
-- **Lo de una función que no se ofrece:** una línea dice que la función no se ofrece. Agregarla obliga a volver a la fuente.
+- **Lo de una función que no se ofrece:** no se escribe. Agregarla obliga a volver a la fuente.
 - **Lo repetido:** lo que dicen varias fuentes, o varias partes de una fuente, se escribe una sola vez, con todos sus orígenes.
 - **Lo que no se sigue:** no se escribe, salvo en una parte que nombra una convención de herramienta: ahí se dice qué se contradice y por qué. Si la página hace otra cosa, escribe lo que hace como convención propia.
 
@@ -133,6 +134,7 @@ Las convenciones propias se establecen en tres casos:
 - Las convenciones de una misma página no deben contradecirse. Si una convención modifica el alcance de otra, debe indicar expresamente qué casos quedan fuera.
 - Una convención incluye una justificación breve únicamente cuando se aparta de una fuente o la endurece, o cuando explica una elección cuyo motivo no resulta evidente. Las preferencias triviales, como un color o el largo de línea, no llevan justificación.
 - No se añaden comentarios, explicaciones ni ejemplos que no sean necesarios para entender o aplicar la convención.
+- En cada sección van primero las convenciones propias, y después las adoptadas. De las propias, primero las que no llevan origen, y después las elecciones y los endurecimientos.
 
 ### Estructuras y distribución
 

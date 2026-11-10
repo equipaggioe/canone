@@ -82,7 +82,14 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 Estándar: las entradas que se usan de [QSettings](../fuentes/qt/qsettings.qdoc) de Qt.
 
 - `QSettings` usa `IniFormat`: el mismo archivo legible en todos los sistemas.
-- El token de refresco que pide [transversal.md](transversal.md#sesión) va en keyring, que usa el almacén de credenciales del sistema.
+- El token de refresco que pide [autenticacion.md](autenticacion.md#sesión) va en keyring, que usa el almacén de credenciales del sistema.
+
+## Autenticación
+
+Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
+
+- La app hace el flujo del código de autorización con `QOAuth2AuthorizationCodeFlow` de QtNetworkAuth, con PKCE S256, y abre la autorización con `QDesktopServices.openUrl` desde `authorizeWithBrowser`.
+- La vuelta la recibe `QOAuthHttpServerReplyHandler`, que escucha en `127.0.0.1` con el puerto que le da el sistema.
 
 ## Idiomas
 

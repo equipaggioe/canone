@@ -15,6 +15,10 @@ Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 
 - Un archivo se sube como `multipart/form-data`, en su propia petición, nunca en base64 dentro de un JSON: base64 agranda el archivo un tercio y el servidor lee el JSON entero en memoria.
 
+## Autenticación
+
+Rige [autenticacion.md](autenticacion.md).
+
 ## Código por SMS
 
 Estándar: [*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG.
@@ -23,16 +27,12 @@ Estándar: [*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms
 - El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el mismo número crearía otra cuenta.
 - Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el formato de WICG reserva el final de la última para sintaxis futura.
 
-## Contraseñas
-
-Estándar: de la sección 3.1.1.2 *Password Verifiers* de [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), los párrafos sobre la guía para elegir una contraseña, los gestores de contraseñas y mostrar la contraseña mientras se escribe.
-
 ## Errores
 
-Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt), [RFC 6901](../fuentes/rfc/rfc6901.txt) y la sección 15 *Status Codes* de [RFC 9110](../fuentes/rfc/rfc9110.txt), salvo 15.5.1, 15.5.2, 15.5.4 y 15.5.5, que rigen en «Versión mínima de cliente», «Sesión» y [fastapi.md](fastapi.md#permisos).
+Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt), [RFC 6901](../fuentes/rfc/rfc6901.txt) y la sección 15 *Status Codes* de [RFC 9110](../fuentes/rfc/rfc9110.txt), salvo 15.5.1, 15.5.2, 15.5.4 y 15.5.5, que rigen en «Versión mínima de cliente», [autenticacion.md](autenticacion.md#sesión) y [fastapi.md](fastapi.md#permisos).
 
 - `type` es `about:blank` o una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio en todos los entornos: un mismo error tiene un solo `type`.
-- Todo error que genera el servidor es problem+json, salvo los del endpoint de token de [Passkeys](#passkeys), que siguen RFC 6749.
+- Todo error que genera el servidor es problem+json, salvo los del endpoint de token de [autenticacion.md](autenticacion.md#código-de-autorización), que siguen RFC 6749.
 - El cliente toma una respuesta de error sin problem+json, o con un `type` que su catálogo no conoce, como de tipo `about:blank`, con su `status`, y su catálogo tiene un texto por `status` para ese tipo.
 - Todo problem+json lleva `traceId`, el trace-id de la petición.
 - Todo problem+json lleva `status`, y ninguno lleva `instance`: `traceId` ya identifica la ocurrencia.
@@ -107,16 +107,6 @@ Estándar: [*Pagination*](../fuentes/google-aip/aip-0158.md), la AIP-158 de Goog
 
 - El cliente cobra con el componente que la pasarela integra en él: la hoja de pago nativa en las apps y el formulario incrustado en la web, porque salir de la app para pagar se ve poco profesional. Si la pasarela no tiene uno para ese cliente, manda a su página.
 
-## Passkeys
-
-Estándares: las secciones 5.4 *Options for Credential Creation* y 5.5 *Options for Assertion Generation* de [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C; de [RFC 6749](../fuentes/rfc/rfc6749.txt), las secciones 2 *Client Registration*, 3 *Protocol Endpoints*, 4.1 *Authorization Code Grant* y 5 *Issuing an Access Token*; [RFC 7636](../fuentes/rfc/rfc7636.txt); [RFC 8252](../fuentes/rfc/rfc8252.txt), y [RFC 9700](../fuentes/rfc/rfc9700.txt), salvo 2.2, 4.10 y 4.14, que rigen en [fastapi.md](fastapi.md#sesión).
-
-- Una app usa la passkey con la API de su sistema operativo cuando su framework la ofrece de forma oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización según RFC 8252.
-- La app canjea el código en el endpoint de token con el formato de RFC 6749: la petición en `application/x-www-form-urlencoded`, y la respuesta y sus errores con los campos de su sección 5. Así la app usa AppAuth, que ya comprueba el `state` y la URI de retorno.
-- El servidor solo acepta la URI `https` reclamada de la app. Contradice RFC 8252, que pide aceptar también un esquema propio y la interfaz de loopback: el único cliente nativo es la app del producto.
-- El servidor no publica los metadatos de RFC 8414. Contradice RFC 9700, que los recomienda: el único cliente es la app del producto, que ya conoce sus rutas.
-- Las secciones 9 *Native Applications* y 10 *Security Considerations* de RFC 6749 quedan sin efecto: las reemplazan RFC 8252 y RFC 9700.
-
 ## Push
 
 Estándares: las secciones *Push subscription*, *Declarative push message*, *PushSubscriptionOptions Interface*, *PushSubscription interface* y *PushEncryptionKeyName enumeration* de la [*Push API*](../fuentes/w3c/push-api.html) de W3C, la sección 5.3 *Push Message Urgency* de [RFC 8030](../fuentes/rfc/rfc8030.txt), y la sección 2 *Application Server Self-Identification* de [RFC 8292](../fuentes/rfc/rfc8292.txt).
@@ -136,17 +126,6 @@ Estándar: las secciones 9.2 *Common Method Properties* y 9.3 *Method Definition
 
 - Un recurso que el usuario crea desde un cliente se crea por `PUT /<recurso>/{id}`, con un uuid v4 que genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez de crear otra.
 - El cliente reintenta solo una petición idempotente ante un fallo de red, un 502, un 503 o un 504, hasta 3 veces, con espera exponencial y jitter: un reinicio del servidor no le muestra un error al usuario.
-
-## Sesión
-
-Estándares: la sección *Access-Control-Allow-Origin* del [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md) de OWASP, y las secciones 3.3 *Connections, Clients, and Servers*, 11 *HTTP Authentication* y 15.5.2 *401 Unauthorized* de [RFC 9110](../fuentes/rfc/rfc9110.txt).
-
-- La API se sirve en el mismo origen que la web, bajo `/api`. No hace falta CORS, y la cookie de sesión es de primera parte.
-- La web presenta su sesión con una cookie, y una app, con un token de acceso que renueva con un token de refresco. En la web, ningún token queda al alcance de un script.
-- En una app, el token de acceso vive solo en memoria, y el de refresco, en el almacenamiento seguro del sistema: ningún almacenamiento guarda un token que da acceso directo a la API.
-- Una app hace un solo refresco a la vez, y las peticiones que reciben un 401 mientras tanto lo esperan. Con la rotación, dos refrescos simultáneos presentan tokens ya rotados.
-- Ante un 401, una app refresca la sesión una sola vez y reintenta una sola vez.
-- Un 401 a un token en `Authorization` lleva `WWW-Authenticate: Bearer`, y uno a la cookie de la web no lleva desafío. Contradice RFC 9110, que lo pide en todo 401: la cookie no es un esquema de autenticación de HTTP.
 
 ## Tema
 
@@ -180,7 +159,7 @@ Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de [RFC 
 
 ## WebSocket
 
-Estándar: del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP, las secciones *Always Use WSS* y *Session Management*, sin su párrafo de `SameSite`, que rige en [fastapi.md](fastapi.md#sesión).
+Estándar: del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP, las secciones *Always Use WSS* y *Session Management*, sin su párrafo de `SameSite`, que rige en [autenticacion.md](autenticacion.md#sesión).
 
 - La web se autentica con la cookie de sesión del handshake, y una app, con `Authorization: Bearer` en el handshake, como en REST.
 - Una sesión que no vale o un token vencido cierran la conexión con 4401, del rango privado de los [códigos de cierre](https://www.rfc-editor.org/rfc/rfc6455.txt) de RFC 6455, en su sección 7.4: un código propio separa la sesión de cualquier otro cierre. En el handshake, el servidor acepta la conexión para cerrarla: un rechazo con 401 Uvicorn lo registra como error, y uno con 403 no dice que el problema es la sesión.

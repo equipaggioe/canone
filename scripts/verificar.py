@@ -376,6 +376,12 @@ def versiones_uv(repo: Path) -> list[str]:
 # plataformas/README.md, «Versiones»: cada página fija las versiones, y los manifiestos y los
 # workflows de cada repositorio las siguen. Van por página, para saltar las que están en desarrollo.
 PYPROJECT = {
+    "autenticacion.md": {
+        "phonenumbers": ">=9.0.43",
+        "pwdlib": ">=0.3.1",
+        "pyjwt": ">=2.15.1",
+        "webauthn": ">=3.0.1",
+    },
     "fastapi.md": {
         "alembic": ">=1.20.1",
         "anyio": ">=4.16.0",
@@ -437,6 +443,7 @@ NPM = {
 }
 PNPM = "12.18.0"
 PUB = {
+    "flutter_appauth": "13.0.0",
     "flutter_lints": "6.0.0",
     "flutter_secure_storage": "11.2.0",
     "provider": "6.1.5+1",
@@ -579,8 +586,9 @@ TITULO = re.compile(r",\s*\*([^*]+)\*")
 ETIQUETA = re.compile(r"<[^>]+>")
 
 
+# El número abre una línea, una etiqueta, un título de Markdown o una celda, como «| **7.2.4** |» de ASVS.
 def tiene_numero(texto: str, numero: str) -> bool:
-    return bool(re.search(rf"(?m)(?:^|>)\s*{re.escape(numero)}\.?(?=\s|<)", texto))
+    return bool(re.search(rf"(?m)(?:^|>)[\s#|*]*{re.escape(numero)}\.?(?=[\s<*])", texto))
 
 
 def tiene_titulo(texto: str, titulo: str) -> bool:

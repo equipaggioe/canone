@@ -89,10 +89,10 @@ Plantilla: [plantilla/infra/](../plantilla/infra/), con las unidades, los sitios
 
 ## Caddy
 
-Estándares: de OWASP, el [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), salvo *Access-Control-Allow-Origin*, que rige en [transversal.md](transversal.md#sesión); *Secure File Download Headers*, en [fastapi.md](fastapi.md#archivos), y los párrafos sobre la CSP de *X-XSS-Protection* y sobre la Cache API de *Cache-Control*, en «CSP» y «Push» de [sveltekit.md](sveltekit.md); y la sección *Infrastructure Configuration* del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
+Estándares: de OWASP, el [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md), salvo *Access-Control-Allow-Origin*, que rige en [autenticacion.md](autenticacion.md#sesión); *Secure File Download Headers*, en [fastapi.md](fastapi.md#archivos), y los párrafos sobre la CSP de *X-XSS-Protection* y sobre la Cache API de *Cache-Control*, en «CSP» y «Push» de [sveltekit.md](sveltekit.md); y la sección *Infrastructure Configuration* del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md).
 
 - Caddy es el 2.6.2 de Debian 13.
-- Cada superficie tiene su host: `landing` en `<dominio>`, `web` en `app.<dominio>` y `panel` en `panel.<dominio>`. En cada uno, `/api/*` va al servidor de la app, en el mismo origen que la web ([transversal.md](transversal.md#sesión)), y `/downloads/*`, a `/srv/<app>/downloads/`.
+- Cada superficie tiene su host: `landing` en `<dominio>`, `web` en `app.<dominio>` y `panel` en `panel.<dominio>`. En cada uno, `/api/*` va al servidor de la app, en el mismo origen que la web ([autenticacion.md](autenticacion.md#sesión)), y `/downloads/*`, a `/srv/<app>/downloads/`.
 - Caddy pone las cabeceras con la directiva `header`, para la web y para la API.
 - `Permissions-Policy` nombra cada función de *Standardized Features* del [registro del W3C](../fuentes/w3c/permissions-policy-features.md), y `publickey-credentials-create` de Web Authentication Level 3: niega las que la app no usa, y permite con `(self)` las que declara con `install.py --allow`.
 - Caddy envía también `Content-Security-Policy: frame-ancestors 'none'`: la CSP de SvelteKit va en una etiqueta `meta`, que no admite `frame-ancestors`.

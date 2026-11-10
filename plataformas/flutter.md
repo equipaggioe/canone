@@ -7,7 +7,7 @@ Una app en Flutter.
 ## Proyecto
 
 - Flutter 3.47.9, con Dart 3.13.7.
-- shared_preferences 2.5.6, flutter_secure_storage 11.2.0, provider 6.1.5+1 y flutter_lints 6.0.0: `pubspec.yaml` los declara exactos o con `^`.
+- shared_preferences 2.5.6, flutter_secure_storage 11.2.0, flutter_appauth 13.0.0, provider 6.1.5+1 y flutter_lints 6.0.0: `pubspec.yaml` los declara exactos o con `^`.
 - Gradle, AGP y Kotlin son los de [android.md](android.md#proyecto), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
 
 ## Estilo
@@ -72,7 +72,13 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 Estándares: [shared_preferences](../fuentes/pub/shared_preferences/README.md) y [flutter_secure_storage](../fuentes/pub/flutter_secure_storage/README.md).
 
 - Las preferencias usan `SharedPreferencesAsync`. Sin caché, cada lectura trae el valor actual.
-- El token de refresco que pide [transversal.md](transversal.md#sesión) va en flutter_secure_storage.
+- El token de refresco que pide [autenticacion.md](autenticacion.md#sesión) va en flutter_secure_storage.
+
+## Autenticación
+
+Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
+
+- La app hace el flujo del código de autorización con flutter_appauth, que usa AppAuth.
 
 ## Código por SMS
 

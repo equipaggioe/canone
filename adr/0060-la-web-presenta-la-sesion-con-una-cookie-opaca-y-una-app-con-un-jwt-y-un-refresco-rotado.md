@@ -1,6 +1,6 @@
 # ADR-0060 · La web presenta la sesión con una cookie opaca, y una app con un JWT y un refresco rotado
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0133](0133-la-autenticacion-tiene-su-pagina-y-el-servidor-comprueba-aparte-lo-que-sus-bibliotecas-no-miran.md)
 - **Fecha:** 2026-10-16
 - **Alcance:** las secciones «Sesión» de
   [plataformas/transversal.md](../plataformas/transversal.md#sesión) y de

@@ -53,7 +53,7 @@ mobile/
 ```
 
 - Todo va en un solo módulo `app`.
-- HTTP va por Retrofit con OkHttp. El `Authenticator` de OkHttp hace el único reintento tras refrescar la sesión que pide [transversal.md](transversal.md#sesión).
+- HTTP va por Retrofit con OkHttp. El `Authenticator` de OkHttp hace el único reintento tras refrescar la sesión que pide [autenticacion.md](autenticacion.md#sesión).
 - El JSON se lee con kotlinx.serialization. Las propiedades de Kotlin ya están en camelCase, como el cable.
 
 ## Compose
@@ -73,7 +73,7 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 Estándares: [DataStore](../fuentes/android/datastore.md) y el [Keystore de Android](../fuentes/android/keystore.md).
 
 - Las preferencias van en Preferences DataStore.
-- Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en DataStore, cifrado con una clave AES-GCM del Keystore. La clave no sale del dispositivo, así que lo cifrado no sirve fuera de él.
+- Lo sensible, como el token de refresco que pide [autenticacion.md](autenticacion.md#sesión), va en DataStore, cifrado con una clave AES-GCM del Keystore. La clave no sale del dispositivo, así que lo cifrado no sirve fuera de él.
 
 ## Código por SMS
 
@@ -105,7 +105,7 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 Estándares: los [requisitos de Credential Manager](../fuentes/android/credential-manager-prerequisites.md), [*Create a passkey*](../fuentes/android/create-passkeys.md) y [*Sign in with a passkey*](../fuentes/android/sign-in-with-passkeys.md) de Android.
 
-Contrato: [transversal.md](transversal.md#passkeys).
+Contrato: [autenticacion.md](autenticacion.md#passkeys).
 
 ## Push
 

@@ -38,8 +38,12 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-- Lo sensible, como el token de refresco que pide [transversal.md](transversal.md#sesión), va en `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén cifrado del sistema; cifrar a mano obliga a guardar la clave en algún lado. [Flet 1.1.0](https://raw.githubusercontent.com/flet-dev/flet/v1.1.0/website/docs/services/securestorage/index.md)
+- Lo sensible, como el token de refresco que pide [autenticacion.md](autenticacion.md#sesión), va en `SecureStorage`, y `SharedPreferences` guarda solo preferencias. `SecureStorage` usa el almacén cifrado del sistema; cifrar a mano obliga a guardar la clave en algún lado. [Flet 1.1.0](https://raw.githubusercontent.com/flet-dev/flet/v1.1.0/website/docs/services/securestorage/index.md)
 - Un secreto no va en el código fuente. [Flet 1.1.0](https://raw.githubusercontent.com/flet-dev/flet/v1.1.0/website/docs/cookbook/encrypting-sensitive-data.md)
+
+## Autenticación
+
+Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
 ## Idiomas
 

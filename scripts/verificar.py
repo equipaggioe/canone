@@ -676,6 +676,29 @@ def estandar_de_secciones(listas: set[str]) -> list[str]:
     return fallas
 
 
+# ADR-0136: cada línea de permissions es una función que install.py --allow acepta.
+def funciones_permitidas() -> set[str]:
+    arbol = ast.parse((PLANTILLA / "infra" / "install.py").read_text(encoding="utf-8"))
+    for nodo in arbol.body:
+        if isinstance(nodo, ast.Assign) and any(
+            isinstance(destino, ast.Name) and destino.id == "FEATURES" for destino in nodo.targets
+        ):
+            return set(ast.literal_eval(nodo.value))
+    raise SystemExit("plantilla/infra/install.py no declara FEATURES")
+
+
+def permisos(repo: Path) -> list[str]:
+    archivo = repo / "permissions"
+    if not archivo.exists():
+        return []
+    validas = funciones_permitidas()
+    return [
+        f"ADR-0136: permissions, línea {numero}: {linea!r} no es una función de Permissions-Policy"
+        for numero, linea in enumerate(archivo.read_text(encoding="utf-8").splitlines(), start=1)
+        if linea not in validas
+    ]
+
+
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
     paginas = vigentes()
@@ -703,6 +726,8 @@ def revisar(repo: Path) -> list[str]:
         r"^Estado: en (desarrollo|producción)$", readme.read_text(encoding="utf-8"), re.M
     ):
         fallas.append("repositorio.md: README.md no declara si está en desarrollo o en producción")
+
+    fallas.extend(permisos(repo))
 
     ci = repo / ".github/workflows/ci.yml"
     if not ci.exists():

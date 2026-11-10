@@ -44,6 +44,7 @@ Cómo queda el servidor y cómo llega una versión a él está en [plataformas/d
 | `.gitattributes` | Se copia sin editar |
 | `.github/workflows/ci.yml` | Un job por pieza que el repositorio tenga |
 | `.github/workflows/release.yml` | Con cada tag, un job para el artefacto del servidor y la web, y uno por cada instalable ([despliegue.md](plataformas/despliegue.md#versiones)) |
+| `permissions` | Las funciones de `Permissions-Policy` que usa la app, una por línea, con el nombre que acepta `install.py --allow` ([despliegue.md](plataformas/despliegue.md#caddy)). Sin el archivo, la app no permite ninguna |
 
 El estado va en una línea sola, `Estado: en desarrollo` o `Estado: en producción`, y es el único lugar donde se declara. De él depende qué compatibilidad se permite ([principios.md](principios.md#compatibilidad)).
 

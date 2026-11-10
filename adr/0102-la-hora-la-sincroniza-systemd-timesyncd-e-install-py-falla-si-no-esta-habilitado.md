@@ -1,4 +1,4 @@
-# ADR-0102 · La hora la sincroniza systemd-timesyncd, e install.py falla si no está habilitado
+# ADR-0102 · La hora la sincroniza systemd-timesyncd, e `install.py` falla si no está habilitado
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-10-28

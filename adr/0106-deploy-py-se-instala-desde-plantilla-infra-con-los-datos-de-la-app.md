@@ -1,4 +1,4 @@
-# ADR-0106 · deploy.py se instala desde `plantilla/infra/` con los datos de la app, y no se copia al repositorio
+# ADR-0106 · `deploy.py` se instala desde `plantilla/infra/` con los datos de la app, y no se copia al repositorio
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-10-28

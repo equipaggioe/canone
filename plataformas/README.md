@@ -111,7 +111,7 @@ Adoptar una fuente es escribir sus convenciones en la página, cada una con su o
   - Cada enlace a `fuentes/` apunte a un archivo que existe.
   - Cada sección que nombra un origen exista en su archivo.
   - Cada archivo de `fuentes/` sea el origen de alguna convención, salvo una lista de la que un programa de Canone toma valores.
-  - El párrafo `Estándar:` de una sección nombre los mismos documentos que son origen de sus convenciones.
+  - El párrafo `Estándar:` de una sección nombre los mismos documentos que son origen de sus convenciones, y nada más que esos documentos.
 
 ## Convenciones de la página
 

@@ -1,4 +1,4 @@
-# ADR-0104 · Las llaves que firman los releases las agrega install.py, dos en una máquina nueva
+# ADR-0104 · Las llaves que firman los releases las agrega `install.py`, dos en una máquina nueva
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-10-28

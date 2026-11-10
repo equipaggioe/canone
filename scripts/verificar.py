@@ -627,7 +627,15 @@ def origenes() -> list[str]:
 
 
 # ADR-0130: el párrafo «Estándar:» de una sección nombra los documentos que son origen de sus
-# convenciones. Una sección sin ningún origen no se compara: es de una página sin reescribir.
+# convenciones, y nada más: fuera del texto de sus enlaces no hay secciones, entradas ni «salvo».
+# Una sección sin ningún origen no se compara: es de una página sin reescribir.
+ENLACE = re.compile(r"\[[^\]]*\]\([^)]*\)")
+MAS_QUE_DOCUMENTOS = re.compile(
+    r"\bsalvo\b|\*[^*]+\*|`[^`]+`|\bsecci(?:ón|ones)\b|\bentradas?\b|\bpárrafos?\b|\benter[oa]s?\b",
+    re.IGNORECASE,
+)
+
+
 def estandar_de_secciones(listas: set[str]) -> list[str]:
     fallas: list[str] = []
     for pagina in sorted((CANONE / "plataformas").glob("*.md")):
@@ -637,10 +645,12 @@ def estandar_de_secciones(listas: set[str]) -> list[str]:
             titulo, _, cuerpo = seccion.partition("\n")
             nombrados: set[str] = set()
             origenes: set[str] = set()
+            de_mas: list[str] = []
             for bloque in cuerpo.split("\n\n"):
                 enlaces = [(n, f) for n, f in FUENTE.findall(bloque) if f not in listas]
                 if bloque.strip().startswith("Estándar"):
                     nombrados.update(f for _, f in enlaces)
+                    de_mas.extend(m.group() for m in MAS_QUE_DOCUMENTOS.finditer(ENLACE.sub("", bloque)))
                 else:
                     # Un origen nombra su sección; un enlace sin sección es solo una referencia.
                     origenes.update(f for n, f in enlaces if NUMERO.search(n) or TITULO.search(n))
@@ -650,6 +660,11 @@ def estandar_de_secciones(listas: set[str]) -> list[str]:
                 fallas.append(
                     f"ADR-0130: {pagina.name} «{titulo.strip()}»: a «Estándar:» le falta {faltan}"
                     f" y le sobra {sobran}"
+                )
+            if origenes and de_mas:
+                fallas.append(
+                    f"ADR-0130: {pagina.name} «{titulo.strip()}»: «Estándar:» nombra más que"
+                    f" documentos: {', '.join(sorted(set(de_mas)))}"
                 )
     return fallas
 

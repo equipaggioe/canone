@@ -1,4 +1,4 @@
-# ADR-0105 · Las credenciales las cifra credentials.py de Canone, y consola solo se las pasa
+# ADR-0105 · Las credenciales las cifra `credentials.py` de Canone, y consola solo se las pasa
 
 - **Estado:** Aceptada. El punto 2 lo reemplaza el
   [ADR-0107](0107-canone-fija-la-interfaz-de-sus-programas-y-no-la-herramienta-que-los-corre.md)

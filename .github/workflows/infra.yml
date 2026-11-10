@@ -31,6 +31,15 @@ jobs:
       - run: apt-get update && apt-get install --yes --no-install-recommends caddy curl python3
       - run: sh scripts/infra/caddy.sh "$PWD"
 
+  authorize:
+    runs-on: ubuntu-latest
+    # The OpenSSH and the Python of Debian 13, as root.
+    container: debian:trixie
+    steps:
+      - uses: actions/checkout@v7
+      - run: apt-get update && apt-get install --yes --no-install-recommends openssh-client python3
+      - run: sh scripts/infra/authorize.sh "$PWD"
+
   sshd:
     runs-on: ubuntu-latest
     # The OpenSSH of Debian 13, which reads the receiver's Match block.

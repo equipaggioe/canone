@@ -140,3 +140,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0132](0132-el-swap-lo-crea-swap-py.md) | El swap de la máquina lo crea `swap.py` | Con `server/` | Aceptada |
 | [0133](0133-la-autenticacion-tiene-su-pagina-y-el-servidor-comprueba-aparte-lo-que-sus-bibliotecas-no-miran.md) | La autenticación tiene su página, y el servidor comprueba aparte lo que sus bibliotecas no miran | `plataformas/` y `scripts/verificar.py`, con `server/` y sus clientes | Aceptada; el punto 6 es propuesta |
 | [0134](0134-uninstall-py-deshace-la-maquina-en-tres-niveles.md) | `uninstall.py` deshace la máquina en tres niveles: la base, la app y la máquina | Con `server/` | Aceptada; los puntos 4, 5 y 6 son propuesta |
+| [0135](0135-authorize-py-deja-entrar-a-root-con-una-llave.md) | `authorize.py` deja entrar a `root` con una llave antes de `install.py` | Con `server/` | Aceptada |

@@ -9,7 +9,9 @@ import pytest
 import sqlalchemy as sa
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
+from valkey.asyncio import Valkey
 
+from app import store
 from app.config import settings
 from app.database import engine
 from app.enums import EventLevel
@@ -119,3 +121,26 @@ async def test_event_log_waits_for_an_open_transaction(
         assert await read_event_log(client) == []
         await transaction.commit()
     assert await read_event_log(client) == committed
+
+
+async def test_health_answers_with_its_dependencies(client: AsyncClient) -> None:
+    """The check answers 204 while the database and Valkey answer."""
+    assert (await client.get("/api/health")).status_code == 204
+
+
+async def test_health_needs_valkey(client: AsyncClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Without Valkey the check answers 503, though the process does."""
+    unreachable = Valkey.from_url("valkey://127.0.0.1:1/0")
+    monkeypatch.setattr(store, "client", unreachable)
+    try:
+        assert (await client.get("/api/health")).status_code == 503
+    finally:
+        await unreachable.aclose()
+
+
+async def test_wrong_token_is_an_event(
+    client: AsyncClient, session: AsyncSession, app_folder: Path
+) -> None:
+    """A request without the token leaves authn_login_fail."""
+    await client.get("/api/health/events", headers={"Authorization": "Bearer wrong"})
+    assert await session.scalar(sa.select(EventLog.action)) == "authn_login_fail"

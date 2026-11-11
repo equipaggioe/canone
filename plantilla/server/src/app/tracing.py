@@ -49,11 +49,22 @@ class TraceFilter(logging.Filter):
         return True
 
 
+class OneLineFormatter(logging.Formatter):
+    """Write each record on one line, with its breaks escaped.
+
+    A value from the client cannot pass for another line of the log.
+    """
+
+    def format(self, record: logging.LogRecord) -> str:
+        """Escape the carriage returns and line feeds."""
+        return super().format(record).replace("\r", "\\r").replace("\n", "\\n")
+
+
 def install() -> None:
     """Set the tracer provider and log the trace-id."""
     propagate.set_global_textmap(IgnoreTraceparent())
     trace.set_tracer_provider(TracerProvider())
     handler = logging.StreamHandler()
     handler.addFilter(TraceFilter())
-    handler.setFormatter(logging.Formatter("%(levelname)s %(name)s %(trace_id)s %(message)s"))
+    handler.setFormatter(OneLineFormatter("%(levelname)s %(name)s %(trace_id)s %(message)s"))
     logging.basicConfig(level=logging.INFO, handlers=[handler])

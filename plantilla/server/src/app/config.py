@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     health_token: str
     min_client_versions: dict[str, Annotated[str, StringConstraints(pattern=f"^{VERSION}$")]]
     page_token_key: str
+    valkey_url: str
 
     @classmethod
     def settings_customise_sources(

@@ -1,7 +1,7 @@
 """The app error, its problem types and their problem+json handlers."""
 
 import logging
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from http import HTTPStatus
 from typing import Any
@@ -9,9 +9,12 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from pydantic.json_schema import models_json_schema
 from starlette.exceptions import HTTPException
 
+from app.enums import EventLevel
 from app.schemas.base import Schema
+from app.services import events
 from app.tracing import trace_id
 
 logger = logging.getLogger(__name__)
@@ -67,8 +70,29 @@ class Problem(Schema):
     title: str
     status: int
     detail: str | None = None
-    errors: list[FieldError] | None = None
     trace_id: str
+
+
+class ValidationProblem(Problem):
+    """A problem of type validation, with one entry per field."""
+
+    errors: list[FieldError]
+
+
+def described(description: str, schema: str) -> dict[str, Any]:
+    """Describe an error response whose body is a problem schema."""
+    return {
+        "description": description,
+        "content": {PROBLEM_JSON: {"schema": {"$ref": f"#/components/schemas/{schema}"}}},
+    }
+
+
+# Every operation declares its errors as problem+json.
+RESPONSES: dict[int | str, dict[str, Any]] = {
+    HTTPStatus.UNPROCESSABLE_CONTENT.value: described("Validation error", "ValidationProblem"),
+    "4XX": described("Client error", "Problem"),
+    "5XX": described("Server error", "Problem"),
+}
 
 
 class AppError(Exception):
@@ -135,15 +159,41 @@ async def http_error(_: Request, exc: Exception) -> JSONResponse:
     return respond(blank(exc.status_code, detail), exc.headers)
 
 
-async def validation_error(_: Request, exc: Exception) -> JSONResponse:
-    """Answer a validation error with one entry per field."""
+def validation_event(found: list[Mapping[str, Any]]) -> tuple[str, EventLevel]:
+    """Name the event of a validation error in the OWASP vocabulary.
+
+    A field the server does not expect is probing; a value outside its
+    list means a client that was tampered with.
+    """
+    kinds = {error["type"] for error in found}
+    if "extra_forbidden" in kinds:
+        return "malicious_extraneous", EventLevel.CRITICAL
+    if kinds & {"enum", "literal_error"}:
+        return "input_validation_discrete_fail", EventLevel.WARN
+    return "input_validation_fail", EventLevel.WARN
+
+
+async def validation_error(request: Request, exc: Exception) -> JSONResponse:
+    """Answer a validation error, one entry per field, and log it."""
     assert isinstance(exc, RequestValidationError)
+    found = list(exc.errors())
+    fields = [field_error(error) for error in found]
+    action, level = validation_event(found)
+    await events.record(
+        events.event(
+            action,
+            level,
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
+            details={"fields": sorted(field.pointer or field.parameter or "" for field in fields)},
+        )
+    )
     return respond(
-        Problem(
+        ValidationProblem(
             type=VALIDATION.uri,
             title=VALIDATION.title,
             status=VALIDATION.status,
-            errors=[field_error(error) for error in exc.errors()],
+            errors=fields,
             traceId=trace_id(),
         )
     )
@@ -155,9 +205,27 @@ async def server_error(_: Request, exc: Exception) -> JSONResponse:
     return respond(blank(HTTPStatus.INTERNAL_SERVER_ERROR))
 
 
+def with_problems(build: Callable[[], dict[str, Any]]) -> Callable[[], dict[str, Any]]:
+    """Add to the OpenAPI the problem schemas of RESPONSES."""
+
+    def openapi() -> dict[str, Any]:
+        """Build the OpenAPI once, with the problem schemas."""
+        document = build()
+        _, schemas = models_json_schema(
+            [(Problem, "serialization"), (ValidationProblem, "serialization")],
+            ref_template="#/components/schemas/{model}",
+        )
+        document.setdefault("components", {}).setdefault("schemas", {}).update(schemas["$defs"])
+        return document
+
+    return openapi
+
+
 def install(app: FastAPI) -> None:
-    """Register the handlers."""
+    """Register the handlers, and the schemas of the problems."""
     app.add_exception_handler(AppError, app_error)
     app.add_exception_handler(HTTPException, http_error)
     app.add_exception_handler(RequestValidationError, validation_error)
     app.add_exception_handler(Exception, server_error)
+    # FastAPI documents this way to extend the OpenAPI of an app.
+    app.openapi = with_problems(app.openapi)  # pyrefly: ignore[method-assign]

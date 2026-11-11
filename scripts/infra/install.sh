@@ -93,7 +93,7 @@ for input in 'health_token=t-3\nnot a field' 'Health=x' 'health_token=' 'a=1\na=
     printf '%b\n' "$input" | fails credentials
 done
 test "$(decrypt app_health_token demo/health_token)" = t-2
-for field in database_url turn_secret; do
+for field in database_url turn_secret valkey_url; do
     echo "$field=x" | fails credentials
     grep -qxF "install.py writes $field." "$work/error"
 done
@@ -102,6 +102,7 @@ step "Valkey listens only on its socket, which only the group of the app opens, 
 socket=/run/valkey-demo/valkey-server.sock
 test "$(stat -c '%G %a' "$socket")" = "demo 770"
 test "$(runuser -u demo -- valkey-cli -s "$socket" ping)" = PONG
+test "$(decrypt app_valkey_url demo/valkey_url)" = "unix://$socket"
 fails runuser -u nobody -- valkey-cli -s "$socket" ping
 setting() { runuser -u demo -- valkey-cli -s "$socket" --raw config get "$1" | tail -n 1; }
 test "$(setting port)" = 0

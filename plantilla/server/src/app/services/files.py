@@ -2,9 +2,14 @@
 
 import os
 import time
+import warnings
+from collections.abc import Collection
+from io import BytesIO
 from pathlib import Path
 
 import sqlalchemy as sa
+from PIL import Image, ImageOps
+from starlette.responses import FileResponse
 
 from app import models
 from app.database import SessionFactory
@@ -16,6 +21,31 @@ MARGIN_SECONDS = 3600
 def folder() -> Path:
     """Return the folder of the files: the StateDirectory=."""
     return Path(os.environ["STATE_DIRECTORY"])
+
+
+def reencode(data: bytes, formats: Collection[str]) -> bytes:
+    """Decode an image and encode it again, upright, without metadata.
+
+    It opens only the formats of the resource, and an image past the
+    pixel limit of Pillow fails. It blocks: run it in a thread.
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", Image.DecompressionBombWarning)
+        with Image.open(BytesIO(data), formats=list(formats)) as image:
+            upright = ImageOps.exif_transpose(image)
+            output = BytesIO()
+            upright.save(output, format=image.format)
+    return output.getvalue()
+
+
+def download(path: Path, media_type: str | None, name: str) -> FileResponse:
+    """Answer a file as an attachment, never shown in place."""
+    return FileResponse(
+        path,
+        media_type=media_type or "application/octet-stream",
+        filename=name,
+        content_disposition_type="attachment",
+    )
 
 
 def file_tables() -> list[sa.Table]:

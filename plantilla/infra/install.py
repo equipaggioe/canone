@@ -448,6 +448,7 @@ def main() -> None:
     allow_reader(app, admin)
     for folder, role in ((app, app), (f"{app}-migrate", f"{app}_owner")):
         encrypt(folder, "database_url", f"postgresql+asyncpg://{role}@/{app}?host=/run/postgresql")
+    encrypt(app, "valkey_url", f"unix:///run/valkey-{app}/valkey-server.sock")
     subprocess.run(["systemctl", "daemon-reload"], check=True)
     subprocess.run(["systemctl", "restart", "systemd-journald.service"], check=True)
     subprocess.run(["systemctl", "reload", "postgresql@17-main.service"], check=True)

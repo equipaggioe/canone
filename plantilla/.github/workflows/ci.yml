@@ -38,6 +38,12 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+      valkey:
+        image: valkey/valkey:8.1
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping" --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v7
       - run: |
@@ -47,6 +53,7 @@ jobs:
           printf %s test-health-token > "$folder/app_health_token"
           printf %s "{}" > "$folder/app_min_client_versions"
           printf %s 0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY= > "$folder/app_page_token_key"
+          printf %s valkey://localhost:6379/0 > "$folder/app_valkey_url"
           echo "CREDENTIALS_DIRECTORY=$folder" >> "$GITHUB_ENV"
           # The migrations log in as the owner of the schema, as in production.
           cp -r "$folder" "$RUNNER_TEMP/owner"
@@ -74,6 +81,10 @@ jobs:
             -c "ALTER DEFAULT PRIVILEGES FOR ROLE PRODUCTO_owner IN SCHEMA public GRANT SELECT ON TABLES TO PRODUCTO_read"
       # The migrations and the seeders, as deploy.py runs them.
       - run: uv run python -m app.tasks migrate
+        env:
+          CREDENTIALS_DIRECTORY: ${{ runner.temp }}/owner
+      # A model without its migration fails here.
+      - run: uv run alembic check
         env:
           CREDENTIALS_DIRECTORY: ${{ runner.temp }}/owner
       - run: uv run pytest

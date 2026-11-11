@@ -45,16 +45,29 @@ CANONICOS = [
     Path("server/alembic/README"),
     Path("server/alembic/env.py"),
     Path("server/alembic/script.py.mako"),
+    Path("server/src/app/__init__.py"),
     Path("server/src/app/database.py"),
     Path("server/src/app/tracing.py"),
     Path("server/src/app/openapi.py"),
     Path("server/src/app/models/__init__.py"),
     Path("server/src/app/models/base.py"),
+    Path("server/src/app/models/event/__init__.py"),
     Path("server/src/app/models/ruff.toml"),
+    Path("server/src/app/mock_data/__init__.py"),
+    Path("server/src/app/routers/__init__.py"),
     Path("server/src/app/routers/problems.py"),
+    Path("server/src/app/schemas/__init__.py"),
     Path("server/src/app/schemas/base.py"),
     Path("server/src/app/schemas/page.py"),
+    Path("server/src/app/seeders/__init__.py"),
+    Path("server/src/app/services/__init__.py"),
+    Path("server/src/app/services/files.py"),
+    Path("server/src/app/store.py"),
+    Path("server/tests/__init__.py"),
     Path("server/tests/test_conventions.py"),
+    Path("server/tests/test_events.py"),
+    Path("server/tests/test_files.py"),
+    Path("server/tests/test_tasks.py"),
 ]
 
 # plataformas/fastapi.md: el driver es asyncpg y las pruebas async corren con AnyIO. Se revisa la
@@ -383,17 +396,24 @@ PYPROJECT = {
         "webauthn": ">=3.0.1",
     },
     "fastapi.md": {
+        "aiohttp": ">=3.14.5",
         "alembic": ">=1.20.1",
         "anyio": ">=4.16.0",
         "asyncpg": ">=0.32.0",
         "babel": ">=2.18.0",
         "cryptography": ">=50.0.2",
         "fastapi": ">=0.162.0",
+        "firebase-admin": ">=7.7.0",
+        "httpx-ws": ">=0.9.0",
         "opentelemetry-api": ">=1.45.2",
         "opentelemetry-sdk": ">=1.45.2",
+        "pillow": ">=13.0.0",
         "pydantic-settings": ">=2.16.2",
+        "pywebpush": ">=2.5.0",
         "sqlalchemy": ">=2.1.8",
         "starlette": ">=1.10.0",
+        "uvicorn": ">=0.54.0",
+        "valkey": ">=6.2.0",
     },
     "flet.md": {"flet": ">=1.1.0"},
     "python.md": {
@@ -467,6 +487,8 @@ ENTRADAS = {
 }
 # plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de python.md.
 FLET = {"pydantic": "==2.13.4"}
+# plataformas/despliegue.md, «Valkey»: la de Debian 13, también en el CI.
+VALKEY = "8.1"
 POSTGIS = "17-3.5"
 METASPACE = "-XX:MaxMetaspaceSize=2g"
 
@@ -566,6 +588,9 @@ def versiones_workflows(repo: Path, paginas: set[str]) -> list[str]:
         for imagen in re.findall(r"postgis/postgis:(\S+)", texto):
             if imagen != POSTGIS:
                 fallas.append(f"repositorio.md: {relativo} usa postgis/postgis:{imagen}, no {POSTGIS}")
+        for imagen in re.findall(r"valkey/valkey:(\S+)", texto):
+            if imagen != VALKEY:
+                fallas.append(f"plataformas/despliegue.md: {relativo} usa valkey/valkey:{imagen}, no {VALKEY}")
     return fallas
 
 

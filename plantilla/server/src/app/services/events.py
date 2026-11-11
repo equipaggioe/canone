@@ -1,5 +1,6 @@
 """Write the events of event_log, and purge the expired ones."""
 
+import ipaddress
 from collections.abc import Mapping
 from datetime import timedelta
 from typing import Any
@@ -32,7 +33,15 @@ def event(
     user_agent: str | None = None,
     details: Mapping[str, Any] | None = None,
 ) -> EventLog:
-    """Build an event in the current trace."""
+    """Build an event in the current trace.
+
+    A malformed address is left out and named in details: the event is
+    kept with the failure.
+    """
+    kept = dict(details or {})
+    address = valid_address(ip_address)
+    if ip_address is not None and address is None:
+        kept["malformed"] = ["ip_address"]
     return EventLog(
         action=action,
         level=level,
@@ -40,11 +49,19 @@ def event(
         actor_label=actor_label,
         target_type=target_type,
         target_id=target_id,
-        ip_address=ip_address,
+        ip_address=address,
         user_agent=user_agent,
         trace_id=trace_id(),
-        details=dict(details or {}),
+        details=kept,
     )
+
+
+def valid_address(value: str | None) -> str | None:
+    """Return the IP address written by its standard, or none."""
+    try:
+        return str(ipaddress.ip_address(value)) if value is not None else None
+    except ValueError:
+        return None
 
 
 async def record(row: EventLog) -> None:

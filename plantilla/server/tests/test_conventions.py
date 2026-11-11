@@ -2,6 +2,7 @@
 
 import ast
 import importlib
+import logging
 import os
 import pkgutil
 import re
@@ -23,7 +24,7 @@ from sqlalchemy.dialects import postgresql
 import app.models
 import app.routers
 import app.schemas
-from app import errors, openapi
+from app import errors, openapi, tracing
 from app.config import Settings, settings
 from app.database import engine
 from app.dependencies import SessionDep
@@ -362,6 +363,27 @@ def test_relationships_raise() -> None:
     assert not offenders
 
 
+def deletes_by_database(relationship: sa.orm.RelationshipProperty[Any]) -> bool:
+    """Tell whether a one-to-many leaves the delete to its ON DELETE."""
+    child_columns = [remote for _, remote in relationship.local_remote_pairs or []]
+    rules = {key.ondelete for column in child_columns for key in column.foreign_keys}
+    if rules == {"CASCADE"}:
+        owned = {"save-update", "merge", "delete", "delete-orphan"}
+        return set(relationship.cascade) == owned and relationship.passive_deletes is True
+    return relationship.passive_deletes == "all" and "delete" not in relationship.cascade
+
+
+def test_one_to_many_leaves_deletes_to_the_database() -> None:
+    """A one-to-many lets ON DELETE cascade or restrict, not the ORM."""
+    offenders = [
+        str(relationship)
+        for mapper in Base.registry.mappers
+        for relationship in mapper.relationships
+        if relationship.direction is sa.orm.ONETOMANY and not deletes_by_database(relationship)
+    ]
+    assert not offenders
+
+
 def is_mapped(node: ast.AST) -> TypeIs[ast.AnnAssign]:
     """Tell whether a statement declares a column or a relationship."""
     return (
@@ -463,6 +485,27 @@ def test_operation_ids() -> None:
     assert not offenders
 
 
+def test_errors_are_problems() -> None:
+    """Every operation declares its errors, and only as problem+json."""
+    document = main_app.openapi()
+    offenders = [
+        f"{method.upper()} {path} {status}"
+        for path, operations in document["paths"].items()
+        for method, operation in operations.items()
+        for status in {"4XX", "5XX"} | set(operation["responses"])
+        if status[0] in "45"
+        and set(operation["responses"].get(status, {}).get("content", {})) != {errors.PROBLEM_JSON}
+    ]
+    assert not offenders
+
+
+def test_log_lines_have_no_line_breaks() -> None:
+    """A value with a line break stays on one line of the log."""
+    record = logging.LogRecord("app", logging.INFO, __file__, 1, "got %s", ("a\r\nb",), None)
+    line = tracing.OneLineFormatter("%(message)s").format(record)
+    assert line == "got a\\r\\nb"
+
+
 def test_openapi_file_is_current() -> None:
     """openapi.json matches the app: python -m app.openapi."""
     assert openapi.FILE.read_text(encoding="utf-8") == openapi.render()
@@ -500,6 +543,10 @@ from opentelemetry.sdk.trace import TracerProvider
 added = []
 TracerProvider.add_span_processor = lambda _, processor: added.append(processor)
 from app.main import app
+from app.services import events
+async def skip(row):
+    pass
+events.record = skip
 messages = iter([{"type": "lifespan.startup"}, {"type": "lifespan.shutdown"}])
 async def receive():
     return next(messages)
@@ -532,6 +579,7 @@ class Item(InputSchema):
     item_name: str
 
 
+@pytest.mark.usefixtures("database")
 async def test_validation_error_points_to_the_field() -> None:
     """A 422 points to the body field and the query parameter."""
     probe = FastAPI()
@@ -588,6 +636,7 @@ async def test_problem_types_are_documented() -> None:
             assert problem.title in response.text
 
 
+@pytest.mark.usefixtures("database")
 async def test_invalid_page_token_points_to_the_parameter() -> None:
     """A bad page token, or one with other filters, is a 422."""
     probe = FastAPI()

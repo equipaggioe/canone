@@ -6,10 +6,12 @@ from contextlib import asynccontextmanager
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.routing import APIRoute
 
-from app import errors, tracing
+from app import errors, store, tracing
 from app.database import engine
 from app.dependencies import check_client_version
+from app.enums import EventLevel
 from app.routers import health, problems
+from app.services import events
 
 
 def operation_id(route: APIRoute) -> str:
@@ -20,12 +22,19 @@ def operation_id(route: APIRoute) -> str:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
-    """Close the pooled connections when the server stops."""
+    """Log the start and the stop, and close the connections."""
+    await events.record(events.event("sys_startup", EventLevel.WARN))
     yield
-    await engine.dispose()
+    try:
+        await events.record(events.event("sys_shutdown", EventLevel.WARN))
+    finally:
+        await engine.dispose()
+        await store.client.aclose()
 
 
-api = APIRouter(prefix="/api", dependencies=[Depends(check_client_version)])
+api = APIRouter(
+    prefix="/api", dependencies=[Depends(check_client_version)], responses=errors.RESPONSES
+)
 api.include_router(health.router)
 api.include_router(problems.router)
 

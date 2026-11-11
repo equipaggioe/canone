@@ -113,7 +113,7 @@ Estándar: de systemd 257, la versión de Debian 13, la entrada `LoadCredentialE
 - Las unidades cargan entera la carpeta `/etc/credstore.encrypted/<app>/` con el prefijo `app`: un campo nuevo de `Settings` no cambia las unidades. Cada archivo se llama como su campo y se cifra con `--name=app_<campo>`, el nombre con que lo carga systemd.
 - Las credenciales que el servidor no usa, como las de las migraciones, el respaldo y el despliegue, van en otra carpeta: el servidor no las recibe. `<app>-migrate/database_url` también se cifra con `--name=app_database_url`, porque reemplaza al de la carpeta de la app.
 - `credentials.py <app>` cifra las credenciales que lee por stdin, una línea `campo=valor` por credencial y el valor sin comillas: cada campo de `Settings` en `<app>/`, `restic_password` en `<app>-backup/` y `github_token` en `<app>-deploy/`, estas dos con su propio nombre en `--name`. Escribe solo los campos que recibe y reinicia el servidor si corre, así que cambiar un secreto no pasa por `install.py`.
-- `credentials.py` falla sin escribir nada si una línea no es `campo=valor`, si un valor está vacío o un campo repetido, o si recibe `database_url` o `turn_secret`, que escribe `install.py`. Su mensaje nunca lleva el valor.
+- `credentials.py` falla sin escribir nada si una línea no es `campo=valor`, si un valor está vacío o un campo repetido, o si recibe `database_url`, `turn_secret` o `valkey_url`, que escribe `install.py`. Su mensaje nunca lleva el valor.
 
 ## Coturn
 
@@ -244,6 +244,7 @@ Estándares: de Valkey 8.1, la versión de Debian 13, [*Administration*](../fuen
 
 - El almacén en memoria de todas las piezas es Valkey.
 - La app tiene su instancia, `valkey-server@<app>`, sin TCP y con el socket `/run/valkey-<app>/valkey-server.sock`, que solo abre el grupo de la app: el resto de los procesos de la máquina no lee sus claves. La instancia `valkey-server` del paquete queda apagada.
+- `install.py` escribe en `<app>/` la `valkey_url` de ese socket, `unix:///run/valkey-<app>/valkey-server.sock`.
 - Cada instancia tiene el `maxmemory` que recibe `install.py`, y la política `noeviction`, su valor por defecto: al llenarse, una escritura falla en vez de borrar un código o un contador.
 - `vm.overcommit_memory = 1` va en `/etc/sysctl.d/valkey.conf`: Debian 13 no trae `/etc/sysctl.conf`.
 - `install.py` falla si la máquina tiene menos swap que memoria, como pide *Valkey setup tips*.

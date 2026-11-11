@@ -10,6 +10,7 @@ from sqlalchemy.engine import AdaptedConnection
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
 from sqlalchemy.pool import ConnectionPoolEntry
 
+from app import store
 from app.database import SessionFactory, engine
 from app.main import app
 from app.models.event.event_log import EventLog
@@ -37,7 +38,12 @@ def anyio_backend() -> str:
 
 @pytest.fixture
 async def database(monkeypatch: pytest.MonkeyPatch) -> AsyncIterator[AsyncConnection]:
-    """Bind the session factory to a transaction that is rolled back."""
+    """Bind the session factory to a transaction that is rolled back.
+
+    Valkey starts empty: a count does not pass from a test to the next.
+    """
+    valkey = store.client
+    await valkey.flushdb()
     async with engine.connect() as connection:
         transaction = await connection.begin()
         monkeypatch.setitem(SessionFactory.kw, "bind", connection)
@@ -47,6 +53,7 @@ async def database(monkeypatch: pytest.MonkeyPatch) -> AsyncIterator[AsyncConnec
     # Each test runs in its own event loop, and a pooled
     # connection belongs to the old one.
     await engine.dispose()
+    await valkey.connection_pool.disconnect()
 
 
 @pytest.fixture

@@ -48,7 +48,7 @@ setup() {
         > "$work/deploy.py"
 }
 setup
-# The fields of Settings besides the database_url of install.py.
+# The fields of Settings besides the database_url and valkey_url of install.py.
 python3 "$canone/plantilla/infra/credentials.py" demo <<'EOF'
 health_token=test-health-token
 min_client_versions={}

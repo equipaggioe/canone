@@ -1,11 +1,13 @@
-"""Whether the server reaches its database, and what to alert on."""
+"""Whether the server reaches the database and Valkey, and alerts."""
 
 import shutil
 from datetime import UTC, datetime
 
 import sqlalchemy as sa
 from sqlalchemy.exc import SQLAlchemyError
+from valkey.exceptions import ValkeyError
 
+from app import store
 from app.database import SessionFactory, engine
 from app.enums import EventLevel
 from app.models.event.event_log import EventLog
@@ -20,6 +22,14 @@ async def database_answers() -> bool:
     except (SQLAlchemyError, OSError):
         return False
     return True
+
+
+async def valkey_answers() -> bool:
+    """Run PING on Valkey."""
+    try:
+        return bool(await store.client.ping())
+    except (ValkeyError, OSError):
+        return False
 
 
 async def last_event() -> datetime | None:

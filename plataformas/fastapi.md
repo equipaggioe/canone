@@ -191,7 +191,8 @@ Contrato: [transversal.md](transversal.md#archivos).
 - Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`.
 - La fila de un archivo guarda su tipo, su tamaño y su nombre original.
 - Un barrido borra los archivos con más de una hora en disco y sin fila en ninguna tabla `_file`. El margen deja terminar la subida que todavía no confirmó su fila.
-- Toda imagen se vuelve a codificar con Pillow antes de guardarse, aplicando antes la orientación EXIF: borra los metadatos de la foto, y sin aplicar antes la orientación queda girada ([File Upload, *File Content Validation*](../fuentes/owasp/File_Upload.md)).
+- Antes de volver a codificar una imagen se aplica su orientación EXIF: sin eso queda girada.
+- Toda imagen se vuelve a codificar con Pillow antes de guardarse, sin sus metadatos ([File Upload, *File Content Validation*](../fuentes/owasp/File_Upload.md)).
 - Cada recurso acepta solo los tipos de archivo que necesita, de una lista, y ninguno acepta ZIP ([File Upload, *List Allowed Extensions*](../fuentes/owasp/File_Upload.md) y [*File Content Validation*](../fuentes/owasp/File_Upload.md)).
 - El servidor comprueba el tipo de un archivo por su contenido: el `Content-Type` y la extensión que manda el cliente no lo deciden ([File Upload, *Content-Type Validation*](../fuentes/owasp/File_Upload.md) y [*File Signature Validation*](../fuentes/owasp/File_Upload.md)).
 - Pillow decodifica una imagen solo en los formatos de la lista del recurso y con su límite de píxeles, `Image.MAX_IMAGE_PIXELS` ([File Upload, *File Content Validation*](../fuentes/owasp/File_Upload.md) y [*Upload and Download Limits*](../fuentes/owasp/File_Upload.md)).
@@ -348,9 +349,10 @@ Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) y el [*Appl
 - `actor_id` es un `uuid` sin clave foránea, y `ip_address`, un `inet`: el rastro sobrevive a la cuenta, e `inet` rechaza una dirección malformada.
 - La purga es una tarea periódica que borra lo que pasó la retención con la credencial del dueño del esquema, la de las migraciones: el servidor no la recibe.
 - Un evento que no se puede escribir hace fallar la operación que lo registra: un rastro incompleto no pasa en silencio.
+- La retención de `event_log` es una constante en días en `services/events.py`, y la plantilla guarda 365.
 - `action` es el nombre del vocabulario sin sus parámetros, como `authn_login_fail`. Los parámetros van en sus columnas: así se consultan ([Logging Vocabulary, *The Vocabulary*](../fuentes/owasp/Logging_Vocabulary.md)).
 - `level` es `info`, `warn` o `critical`, el nivel que el vocabulario da al evento ([Logging Vocabulary, *The Vocabulary*](../fuentes/owasp/Logging_Vocabulary.md)).
-- La retención de `event_log` es una constante en días, mayor que cero, en `services/events.py`: la IP y el user agent son datos personales. La plantilla guarda 365 ([Logging Cheat Sheet, *Disposal of logs*](../fuentes/owasp/Logging.md)).
+- `event_log` se retiene un plazo fijo, mayor que cero: la IP y el user agent son datos personales ([Logging Cheat Sheet, *Disposal of logs*](../fuentes/owasp/Logging.md)).
 - Solo el rol de la app y el dueño leen `event_log`, y ningún rol es miembro de ellos. La migración de `event_log` se lo quita a `<app>_read`, que lee el resto de la base ([despliegue.md](despliegue.md#postgresql)), y cada CI revisa quién lo lee ([Logging Cheat Sheet, *Protection*](../fuentes/owasp/Logging.md)).
 - La copia en solo lectura de `event_log` es el respaldo de [despliegue.md](despliegue.md#respaldos), en cada corrida ([Logging Cheat Sheet, *Protection*](../fuentes/owasp/Logging.md)).
 - Detectar que una fila de `event_log` se cambió o se borró le toca a quien la copia fuera de la máquina por la ruta de [Salud](#salud): en la máquina, solo el dueño y `root` pueden cambiarla, y `root` también cambia lo que lo detectaría ([Logging Cheat Sheet, *Protection*](../fuentes/owasp/Logging.md)).
@@ -413,8 +415,9 @@ Contrato: [transversal.md](transversal.md#websocket).
 - Un handshake con la cookie exige un `Origin` igual al de la web, y uno con `Authorization` no lo revisa: una app nativa no manda `Origin`, y el secuestro entre sitios solo existe con la credencial que el navegador agrega por su cuenta.
 - Una conexión sin mensajes no se cierra: la conexión existe para esperar eventos del servidor, y el ping de Uvicorn ya cierra la que se cayó.
 - Los mensajes no llevan nonce: WSS ya impide que alguien fuera de la conexión repita un mensaje.
+- Los contadores de los límites del WebSocket viven en Valkey, compartidos por todos los procesos.
 - Un usuario tiene a lo sumo 10 conexiones abiertas, y la siguiente se rechaza en el handshake: alcanza para varias pestañas y dispositivos ([WebSocket Security, *Denial-of-Service Protection*](../fuentes/owasp/WebSocket_Security.md)).
-- Un usuario manda a lo sumo 100 mensajes por minuto, y la conexión que se pasa se cierra con 1008. Los contadores viven en Valkey, compartidos por todos los procesos ([WebSocket Security, *Denial-of-Service Protection*](../fuentes/owasp/WebSocket_Security.md) y [*Input Validation*](../fuentes/owasp/WebSocket_Security.md)).
+- Un usuario manda a lo sumo 100 mensajes por minuto, y la conexión que se pasa se cierra con 1008 ([WebSocket Security, *Denial-of-Service Protection*](../fuentes/owasp/WebSocket_Security.md) y [*Input Validation*](../fuentes/owasp/WebSocket_Security.md)).
 - Cada mensaje que pide una acción comprueba su permiso, como la ruta que haría lo mismo ([WebSocket Security, *Message-Level Authorization*](../fuentes/owasp/WebSocket_Security.md)).
 - Cada mensaje que llega se valida con su esquema ([WebSocket Security, *Input Validation*](../fuentes/owasp/WebSocket_Security.md)).
 - La lectura de cada mensaje atrapa su excepción: un mensaje malformado no tumba la app ([WebSocket Security, *Framework-Specific Best Practices*](../fuentes/owasp/WebSocket_Security.md)).

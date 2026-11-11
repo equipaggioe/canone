@@ -49,7 +49,8 @@ Contrato: [transversal.md](transversal.md#código-por-sms).
 - Un código nuevo reemplaza al anterior: solo vale el último.
 - Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta 10 por hora.
 - Un código se invalida al tercer intento fallido.
-- El código vive en Valkey, con un TTL de 10 minutos ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
+- El código vive en Valkey.
+- Un código vence a los 10 minutos ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
 - Un código vale una sola vez ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
 - Cada fallo cuenta entre los fallos consecutivos del teléfono, y un código nuevo no los reinicia ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
 - Un código por correo solo verifica la dirección o recupera la cuenta: el correo no sirve para entrar ([NIST SP 800-63B-4 §3.1.3.1](../fuentes/nist/sp800-63b-4.txt)).
@@ -62,11 +63,12 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), el [*Password
 - Toda contraseña tiene al menos 8 caracteres, aunque sea el único factor: una de 15 aleja al usuario.
 - El login con contraseña responde el mismo error exista o no la cuenta.
 - Cambiar la contraseña renueva los tokens de la sesión que hizo el cambio.
+- La lista de bloqueo es un archivo del servidor.
 - La contraseña la elige el titular ([NIST SP 800-63B-4 §3.1.1.1](../fuentes/nist/sp800-63b-4.txt)).
 - El servidor no limita el largo de una contraseña por debajo de 64 caracteres ([NIST SP 800-63B-4 §3.1.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una contraseña admite todo carácter ASCII imprimible, el espacio y cualquier carácter Unicode, y cada punto de código cuenta como un carácter ([NIST SP 800-63B-4 §3.1.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - La contraseña se normaliza a NFC antes del hash ([NIST SP 800-63B-4 §3.1.1.2](../fuentes/nist/sp800-63b-4.txt)).
-- La lista de bloqueo es un archivo del servidor, con las contraseñas comunes, esperadas o filtradas que un atacante probaría antes del límite de fallos ([NIST SP 800-63B-4 §3.1.1.2](../fuentes/nist/sp800-63b-4.txt)).
+- La lista de bloqueo tiene las contraseñas comunes, esperadas o filtradas que un atacante probaría antes del límite de fallos ([NIST SP 800-63B-4 §3.1.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una contraseña se guarda con `PasswordHash.recommended()` de pwdlib: Argon2id con 64 MiB y 3 pasadas, por encima de los mínimos de OWASP ([Password Storage Cheat Sheet, *Argon2id*](../fuentes/owasp/Password_Storage.md)).
 - El hash se guarda en el formato PHC, con el algoritmo y sus parámetros ([Password Storage Cheat Sheet, *Upgrading Legacy Hashes*](../fuentes/owasp/Password_Storage.md)).
 - Cambiar la contraseña cierra las demás sesiones, y restablecerla, todas ([ASVS 5.0 §7.4.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
@@ -91,12 +93,12 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el viejo recibe un aviso.
 - El titular ve en la app cada intento fallido y cada autenticador deshabilitado.
 - Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
+- Los fallos consecutivos y la hora del siguiente intento viven en la base: sin ventana de tiempo, perderlos le regala al atacante 100 intentos nuevos.
 - Una cuenta de usuario entra con un solo factor: una contraseña, un código por SMS o una passkey ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta de administración entra solo con passkeys que verifican al usuario: dos factores en un autenticador resistente al phishing ([NIST SP 800-63B-4 §2.2.1](../fuentes/nist/sp800-63b-4.txt) y [§2.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - Las direcciones de aviso son el correo, el teléfono y el push a las apps con sesión abierta: una cuenta con un solo medio también tiene dos ([NIST SP 800-63B-4 §4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Cada autenticador guarda cuándo se vinculó y cuándo cambió, y cada uno de esos eventos va al registro de eventos con su IP y su user agent ([NIST SP 800-63B-4 §4.1](../fuentes/nist/sp800-63b-4.txt)).
 - Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429: llegar a los 100 fallos lleva unos cuatro días, y el titular lo ve antes ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
-- Los fallos consecutivos y la hora del siguiente intento viven en la base: sin ventana de tiempo, perderlos le regala al atacante 100 intentos nuevos ([NIST SP 800-63B-4 §4.1](../fuentes/nist/sp800-63b-4.txt)).
 - Un inicio de sesión exitoso pone en cero los fallos de los autenticadores que usó ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta se registra con un correo o con un teléfono, verificado con un código como el de [Recuperación](#recuperación) ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta puede tener un correo, un teléfono y varias passkeys, y una de usuario, también una contraseña ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
@@ -148,9 +150,10 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 - Cada correo y cada número reciben un código por minuto, y hasta 5 por hora.
 - Un código se invalida al tercer intento fallido.
 - Con el código, una cuenta con contraseña la restablece.
+- El código vive en Valkey, y uno nuevo reemplaza al anterior.
+- Una cuenta con passkey se recupera con el mismo código, que se aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela desde la app: quien roba el correo no entra antes de que el dueño la vea.
 - Una cuenta de usuario se recupera con un código que recibe, a su elección, en el correo o en el teléfono que registró ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt) y [§4.2.2.1](../fuentes/nist/sp800-63b-4.txt)).
-- El código vive en Valkey con un TTL de 10 minutos, también el que va al correo, y uno nuevo reemplaza al anterior ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
-- Una cuenta con passkey se recupera con el mismo código, que se aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela desde la app: quien roba el correo no entra antes de que el dueño la vea ([NIST SP 800-63B-4 §4.2](../fuentes/nist/sp800-63b-4.txt)).
+- El código vence a los 10 minutos, también el que va al correo ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta de administración la recupera otro administrador, nunca un código: quien roba el correo o el teléfono no se lleva la administración ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - Quien perdió su número y no tiene otra forma de entrar recupera la cuenta con un administrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - El código tiene 6 dígitos ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
@@ -175,15 +178,18 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt); de ASVS 5.0, 
 - Presentar el anterior reemplaza el vigente, y el anterior no cambia. Si el vigente pasara a ser el anterior, un dueño y un ladrón que refrescan por turnos nunca presentarían un reúso.
 - Un token de refresco con la firma inválida o de una sesión que no existe responde `invalid_grant`, sin aviso.
 - Un 401 a la cookie de la web no lleva `WWW-Authenticate`: la cookie no es un esquema de autenticación de HTTP.
+- La fila de la sesión guarda el SHA-256 del token de la web: quien lee la base no se lleva ninguna sesión.
+- El token de refresco es el id de su sesión y un secreto aleatorio de 256 bits, firmados con HMAC.
+- Iniciar sesión o volver a autenticarse crea o renueva la fila de sesión, con su creación y su último uso.
 - La API se sirve en el mismo origen que la web, bajo `/api`, sin `Access-Control-Allow-Origin`: la cookie de sesión es de primera parte ([HTTP Security Response Headers Cheat Sheet, *Access-Control-Allow-Origin*](../fuentes/owasp/HTTP_Headers.md)).
 - Cerrar sesión borra la fila ([RFC 9700 §4.14.2](../fuentes/rfc/rfc9700.txt)).
 - Una sesión de una cuenta de administración vence a las 24 horas de iniciarse o tras 1 hora sin uso, y volver a autenticarse reinicia los dos plazos ([NIST SP 800-63B-4 §2.2.3](../fuentes/nist/sp800-63b-4.txt) y [§5.2](../fuentes/nist/sp800-63b-4.txt)).
-- El token de la web es un valor aleatorio de 256 bits, y la fila guarda su SHA-256: quien lee la base no se lleva ninguna sesión ([ASVS 5.0 §7.2.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+- El token de la web es un valor aleatorio de 256 bits ([ASVS 5.0 §7.2.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - La cookie de la web es `__Host-session`, `Secure`, `HttpOnly` y `SameSite=Strict`, con `Path=/`: ningún script la lee, ninguna petición de otro sitio la lleva y ningún subdominio la reemplaza ([ASVS 5.0 §3.3.1](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), [§3.3.2](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), [§3.3.3](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md) y [§3.3.4](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md)).
 - Una petición con la cookie y un método que no es seguro responde 403 si su `Origin` falta o no es el del servidor: no le pide nada a la web ([ASVS 5.0 §3.5.2](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md)).
-- El token de refresco es el id de su sesión y un secreto aleatorio de 256 bits, firmados con HMAC, y el secreto rota en cada uso ([RFC 9700 §2.2.2](../fuentes/rfc/rfc9700.txt) y [§4.14.2](../fuentes/rfc/rfc9700.txt)).
+- El secreto del token de refresco rota en cada uso ([RFC 9700 §2.2.2](../fuentes/rfc/rfc9700.txt) y [§4.14.2](../fuentes/rfc/rfc9700.txt)).
 - Cualquier otro secreto de la sesión es un reúso: borra la sesión, y el titular lo ve en la app. Un token robado se descubre cuando el dueño vuelve a refrescar ([RFC 9700 §4.14.2](../fuentes/rfc/rfc9700.txt)).
-- Iniciar sesión o volver a autenticarse crea o renueva la fila de sesión, con su creación y su último uso, emite tokens nuevos y deja sin efecto los que el cliente traía ([ASVS 5.0 §7.2.4](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+- Iniciar sesión o volver a autenticarse emite tokens nuevos y deja sin efecto los que el cliente traía ([ASVS 5.0 §7.2.4](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - El refresco va al endpoint de token con `grant_type=refresh_token` y el `refresh_token`, y responde como el canje del código, con el `refresh_token` nuevo ([RFC 6749 §5.1](../fuentes/rfc/rfc6749.txt) y [§6](../fuentes/rfc/rfc6749.txt)).
 - Una operación que cambia algo no usa `GET`, `HEAD` ni `OPTIONS` ([ASVS 5.0 §3.5.3](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md)).
 - Un 401 a un token en `Authorization` lleva `WWW-Authenticate: Bearer` ([RFC 9110 §11.6.1](../fuentes/rfc/rfc9110.txt) y [§15.5.2](../fuentes/rfc/rfc9110.txt)).

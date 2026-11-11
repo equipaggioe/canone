@@ -225,8 +225,6 @@ UNIDADES = [
  ('rfc/rfc8030.txt', ['5'], [], 'up'),
  ('owasp/Logging.md', None, [], 'low'),
  ('owasp/Logging_Vocabulary.md', None, [], 'vocab'),
- ('rfc/rfc7519.txt', None, [], 'up'),
- ('rfc/rfc8725.txt', None, [], 'up'),
  ('rfc/rfc9700.txt', None, [], 'up'),
  ('owasp/ASVS_V7_Session_Management.md', None, [], 'asvs'),
  ('owasp/ASVS_V3_Web_Frontend_Security.md', None, [], 'asvs'),

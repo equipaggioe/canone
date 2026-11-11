@@ -75,9 +75,9 @@ Estándares: [PEP 8](../fuentes/python/pep-0008.rst) y [PEP 257](../fuentes/pyth
 
 - Un docstring es prosa que resume qué hace o qué es su objeto: no lista lo que exporta un módulo ni lo que tiene una clase, y nombra un argumento solo cuando la firma no basta. La firma ya da el nombre, el tipo y el valor por defecto.
 - Un docstring no está vacío y empieza con mayúscula, y una función con `@overload` no lleva docstring.
-- Los docstrings cumplen *What is a Docstring?*, y el `__init__.py` de cada paquete también lleva el suyo ([PEP 257, *What is a Docstring?*](../fuentes/python/pep-0257.rst); [PEP 8, *Documentation Strings*](../fuentes/python/pep-0008.rst)).
-- Los docstrings cumplen *One-line Docstrings*, salvo decir la naturaleza del valor de retorno: la anotación ya la da ([PEP 257, *One-line Docstrings*](../fuentes/python/pep-0257.rst); [PEP 8, *Documentation Strings*](../fuentes/python/pep-0008.rst)).
-- Los docstrings cumplen la forma de *Multi-line Docstrings*: la línea de resumen, la línea en blanco, la sangría y las comillas de cierre ([PEP 257, *Multi-line Docstrings*](../fuentes/python/pep-0257.rst); [PEP 8, *Documentation Strings*](../fuentes/python/pep-0008.rst)).
+- Los docstrings cumplen *What is a Docstring?*, y el `__init__.py` de cada paquete también lleva el suyo ([PEP 257, *What is a Docstring?*](../fuentes/python/pep-0257.rst)).
+- Los docstrings cumplen *One-line Docstrings*, salvo decir la naturaleza del valor de retorno: la anotación ya la da ([PEP 257, *One-line Docstrings*](../fuentes/python/pep-0257.rst)).
+- Los docstrings cumplen la forma de *Multi-line Docstrings*: la línea de resumen, la línea en blanco, la sangría y las comillas de cierre ([PEP 257, *Multi-line Docstrings*](../fuentes/python/pep-0257.rst)).
 - Un método no público sin docstring lleva, después de la línea `def`, un comentario que dice qué hace ([PEP 8, *Documentation Strings*](../fuentes/python/pep-0008.rst)).
 - Ningún comentario contradice el código: cambia en el mismo commit que el código que describe ([PEP 8, *Comments*](../fuentes/python/pep-0008.rst)).
 - Un comentario es claro y se escribe en oraciones completas, cada una terminada en punto. Empieza con mayúscula, salvo que su primera palabra sea un identificador en minúscula ([PEP 8, *Comments*](../fuentes/python/pep-0008.rst)).
@@ -93,8 +93,8 @@ Estándares: [*Typing Best Practices*](../fuentes/typing/best_practices.rst), [*
 - Un error de tipos se ignora con `# pyrefly: ignore[<código>]`: Pyrefly aplica `# type: ignore` a toda la línea sin mirar el código.
 - Todo ignore y todo `# noqa` llevan el código del error. Uno sin código también tapa los errores futuros de esa línea.
 - Lo que el `typing` de Python 3.13 trae no se importa de `typing_extensions`.
-- Las uniones cumplen *Shorthand Syntax* y *``typing.Union`` and ``typing.Optional``* ([Typing Best Practices, *Shorthand Syntax*](../fuentes/typing/best_practices.rst); [Modernizing, *``typing.Union`` and ``typing.Optional``*](../fuentes/typing/modernizing.rst)).
-- Los genéricos cumplen *Built-in Generics* y *Generics in the ``typing`` Module* ([Typing Best Practices, *Built-in Generics*](../fuentes/typing/best_practices.rst); [Modernizing, *Generics in the ``typing`` Module*](../fuentes/typing/modernizing.rst)).
+- Las uniones cumplen *Shorthand Syntax* ([Typing Best Practices, *Shorthand Syntax*](../fuentes/typing/best_practices.rst)).
+- Los genéricos cumplen *Generics in the ``typing`` Module* ([Modernizing, *Generics in the ``typing`` Module*](../fuentes/typing/modernizing.rst)).
 - Las anotaciones cumplen *``typing.Text``* ([Modernizing, *``typing.Text``*](../fuentes/typing/modernizing.rst)).
 - Las anotaciones cumplen *``typing.TypedDict`` Legacy Forms* ([Modernizing, *``typing.TypedDict`` Legacy Forms*](../fuentes/typing/modernizing.rst)).
 - Las anotaciones cumplen *Type Aliases*: un alias de tipo se declara con `type` ([Modernizing, *Type Aliases*](../fuentes/typing/modernizing.rst)).
@@ -158,8 +158,8 @@ Estándares: [*Developing with asyncio*](../fuentes/python/asyncio-dev.rst) y [*
 - Una tarea creada fuera de un `TaskGroup` guarda su referencia: el bucle de eventos solo guarda una referencia débil, y la tarea puede desaparecer antes de terminar ([Coroutines and tasks, *Creating tasks*](../fuentes/python/asyncio-task.rst); [Coroutines and tasks, *Shielding from cancellation*](../fuentes/python/asyncio-task.rst)).
 - `add_done_callback()` se usa solo en código de bajo nivel basado en callbacks, y para que una tarea quite su referencia de la colección que la guarda ([Coroutines and tasks, *Task object*](../fuentes/python/asyncio-task.rst); [Coroutines and tasks, *Creating tasks*](../fuentes/python/asyncio-task.rst)).
 - Un plazo se pone con `asyncio.timeout()` o `asyncio.timeout_at()`, no creando un `Timeout` ([Coroutines and tasks, *Timeouts*](../fuentes/python/asyncio-task.rst)).
-- Desde otro hilo, el código llega al bucle de eventos solo con `loop.call_soon_threadsafe` o `asyncio.run_coroutine_threadsafe` ([Developing with asyncio, *Concurrency and Multithreading*](../fuentes/python/asyncio-dev.rst); [Coroutines and tasks, *Scheduling from other threads*](../fuentes/python/asyncio-task.rst)).
-- Una corrutina no llama directamente código que bloquea, como una E/S síncrona o un cálculo largo: lo corre en un executor ([Developing with asyncio, *Running Blocking Code*](../fuentes/python/asyncio-dev.rst); [Coroutines and tasks, *Running in threads*](../fuentes/python/asyncio-task.rst)).
+- Desde otro hilo, el código llega al bucle de eventos solo con `loop.call_soon_threadsafe` o `asyncio.run_coroutine_threadsafe` ([Developing with asyncio, *Concurrency and Multithreading*](../fuentes/python/asyncio-dev.rst)).
+- Una corrutina no llama directamente código que bloquea, como una E/S síncrona o un cálculo largo: lo corre en un executor ([Developing with asyncio, *Running Blocking Code*](../fuentes/python/asyncio-dev.rst)).
 - Toda corrutina que se llama se espera con `await` o se lanza como tarea ([Developing with asyncio, *Detect never-awaited coroutines*](../fuentes/python/asyncio-dev.rst)).
 - Un generador asíncrono se recorre dentro de `contextlib.aclosing`, o se cierra con `aclose()` ([Developing with asyncio, *Close asynchronous generators explicitly*](../fuentes/python/asyncio-dev.rst)).
 - Un generador asíncrono se crea con el bucle de eventos ya en marcha ([Developing with asyncio, *Create asynchronous generators only when the event loop is running*](../fuentes/python/asyncio-dev.rst)).

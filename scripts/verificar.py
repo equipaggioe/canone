@@ -656,7 +656,27 @@ def origenes() -> list[str]:
                 listas.add(fuente)
             elif fuente not in enlazados:
                 fallas.append(f"ADR-0129: fuentes/{fuente} no es el origen de ninguna convención")
-    return fallas + estandar_de_secciones(listas)
+    return fallas + estandar_de_secciones(listas) + un_origen(listas)
+
+
+# plataformas/README.md, «Origen»: una convención tiene como origen una sola fuente, aunque nombre
+# varias de sus secciones.
+def un_origen(listas: set[str]) -> list[str]:
+    fallas: list[str] = []
+    for pagina in sorted((CANONE / "plataformas").glob("*.md")):
+        if pagina.name == "README.md":
+            continue
+        lineas = pagina.read_text(encoding="utf-8").splitlines()
+        for numero, linea in enumerate(lineas, start=1):
+            fuentes = {
+                f for n, f in FUENTE.findall(linea) if f not in listas and (NUMERO.search(n) or TITULO.search(n))
+            }
+            if len(fuentes) > 1:
+                fallas.append(
+                    f"plataformas/README.md: {pagina.name}, línea {numero}, toma su origen de"
+                    f" {len(fuentes)} fuentes: {', '.join(sorted(fuentes))}"
+                )
+    return fallas
 
 
 # ADR-0130: el párrafo «Estándar:» de una sección nombra los documentos que son origen de sus

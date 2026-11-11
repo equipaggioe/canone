@@ -60,7 +60,7 @@ Una fuente debe cumplir además los siete requisitos siguientes:
 6. **Cubre:** resuelve la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente todas las páginas, para que esos asuntos sigan su enfoque. En esos asuntos, lo no cubierto debe quedar en minoría. Lo que se contradice o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no es fuente, y las convenciones que se aprovechen de ella se establecen como convenciones propias.
 7. **Aporta:** es el origen de al menos tres convenciones, contando todas las páginas. Cuentan también las elecciones y los endurecimientos que la tienen como origen. No cuenta lo que se dirige a otro actor. Si no llega a tres, no es fuente, y sus convenciones se escriben como propias.
 
-Entre las fuentes que cumplen los siete requisitos y se acomodan a un asunto, se elige la que se acomoda a más asuntos, contando todas las páginas, siempre que resuelva la mayoría de las decisiones de ese asunto. Para contar, los documentos de un mismo publicador que no se contradicen valen como uno, aunque cada uno sigue siendo una fuente aparte. Si aun así empatan, se elige la de mayor prioridad en la tabla. El asunto sigue solo a la fuente elegida: las demás no se citan en él, aunque digan lo mismo.
+Entre las fuentes que cumplen los siete requisitos y se acomodan a un asunto, se elige la que se acomoda a más asuntos, contando todas las páginas, siempre que resuelva la mayoría de las decisiones de ese asunto. Para contar, los documentos de un mismo publicador que no se contradicen valen como uno, aunque cada uno sigue siendo una fuente aparte. Si aun así empatan, se elige la de mayor prioridad en la tabla y, a igual prioridad, la que resuelve más decisiones del asunto. El asunto sigue solo a la fuente elegida: las demás no se citan en él, aunque digan lo mismo.
 
 | Orden | Fuente |
 | :--- | :--- |
@@ -116,6 +116,7 @@ Adoptar una fuente es escribir sus convenciones en la página, cada una con su o
   - Cada sección que nombra un origen exista en su archivo.
   - Cada archivo de `fuentes/` sea el origen de alguna convención, salvo una lista de la que un programa de Canone toma valores.
   - El párrafo `Estándar:` de una sección nombre los mismos documentos que son origen de sus convenciones, y nada más que esos documentos.
+  - Cada convención tome su origen de un solo documento de `fuentes/`.
 
 ## Convenciones de la página
 

@@ -33,14 +33,12 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [rfc/rfc6585.txt](rfc/rfc6585.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6585.txt) |  |
 | [rfc/rfc6901.txt](rfc/rfc6901.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6901.txt) |  |
 | [rfc/rfc7493.txt](rfc/rfc7493.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7493.txt) |  |
-| [rfc/rfc7519.txt](rfc/rfc7519.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7519.txt) |  |
 | [rfc/rfc7636.txt](rfc/rfc7636.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7636.txt) |  |
 | [rfc/rfc7946.txt](rfc/rfc7946.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7946.txt) |  |
 | [rfc/rfc8030.txt](rfc/rfc8030.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8030.txt) |  |
 | [rfc/rfc8252.txt](rfc/rfc8252.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8252.txt) |  |
 | [rfc/rfc8292.txt](rfc/rfc8292.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8292.txt) |  |
 | [rfc/rfc8656.txt](rfc/rfc8656.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8656.txt) |  |
-| [rfc/rfc8725.txt](rfc/rfc8725.txt) | [origen](https://www.rfc-editor.org/rfc/rfc8725.txt) |  |
 | [rfc/rfc9110.txt](rfc/rfc9110.txt) | [origen](https://www.rfc-editor.org/rfc/rfc9110.txt) |  |
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | [origen](https://www.rfc-editor.org/rfc/rfc9457.txt) |  |
 | [rfc/rfc9700.txt](rfc/rfc9700.txt) | [origen](https://www.rfc-editor.org/rfc/rfc9700.txt) |  |

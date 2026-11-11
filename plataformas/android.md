@@ -79,7 +79,7 @@ Estándares: [DataStore](../fuentes/android/datastore.md) y el [Keystore de Andr
 
 Estándar: las secciones *Start the SMS retriever*, *Receive verification messages* y *Send the one-time code from the verification message to your server* de [*Request SMS Verification in an Android App*](../fuentes/android/sms-retriever-request.md) de Google.
 
-Contrato: [transversal.md](transversal.md#código-por-sms).
+Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
 
 - El `BroadcastReceiver` se registra en tiempo de ejecución, mientras la pantalla del código está abierta: solo esa pantalla espera el SMS.
 

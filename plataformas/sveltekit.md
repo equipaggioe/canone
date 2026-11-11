@@ -92,7 +92,7 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Código por SMS
 
-Contrato: [transversal.md](transversal.md#código-por-sms).
+Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
 
 - El campo del código lleva `autocomplete="one-time-code"`: Safari no implementa WebOTP y llena el código por ese atributo.
 - Donde el navegador implementa WebOTP, el código se pide con `navigator.credentials.get` y `otp: { transport: ['sms'] }`. [WebOTP](https://raw.githubusercontent.com/WICG/web-otp/7c4a606a085b44d9de75001f7e801f07a4d85f8c/index.bs)

@@ -40,16 +40,20 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 
 ## Código por SMS
 
-Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
+Estándares: [*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG y [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
-Contrato: [transversal.md](transversal.md#código-por-sms).
-
+- El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el mismo número crearía otra cuenta.
 - El servidor valida el número con `phonenumbers`.
+- Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el final de la última queda para la sintaxis futura del formato.
 - Verificar el primer código de un número sin cuenta crea la cuenta.
 - Un código nuevo reemplaza al anterior: solo vale el último.
 - Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta 10 por hora.
 - Un código se invalida al tercer intento fallido.
 - El código vive en Valkey.
+- El código tiene 6 dígitos ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
+- El host de la última línea es el de la web donde se escribe el código ([SMS one-time codes, *Usage*](../fuentes/wicg/sms-one-time-codes.bs)).
+- La última línea del SMS es `@<host> #<código>`, con un solo espacio en medio ([SMS one-time codes, *Parsing*](../fuentes/wicg/sms-one-time-codes.bs)).
+- El SMS no termina en un salto de línea: su última línea es la del código ([SMS one-time codes, *Parsing*](../fuentes/wicg/sms-one-time-codes.bs)).
 - Un código vence a los 10 minutos ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
 - Un código vale una sola vez ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
 - Cada fallo cuenta entre los fallos consecutivos del teléfono, y un código nuevo no los reinicia ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
@@ -207,6 +211,17 @@ Estándar: el capítulo [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Sessi
 - El servidor rechaza el JWT entero si no es un JWS compacto, si su cabecera no es esa, si la firma no vale o si `exp` ya pasó, e ignora una claim que no conoce.
 - La lista de sesiones cerradas vive en Valkey, y cada id queda en ella 15 minutos, lo que dura el último token de acceso de su sesión.
 - El servidor rechaza el JWT de una sesión de una app que se cerró o se borró: su id va a una lista de sesiones cerradas ([ASVS 5.0 §7.4.1](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+
+## WebSocket
+
+Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
+
+- La web se autentica con la cookie de sesión del handshake, y una app, con `Authorization: Bearer` en el handshake, como en REST.
+- Una sesión que no vale o un token vencido cierran la conexión con 4401, del rango de códigos de cierre privados: un código propio separa la sesión de cualquier otro cierre. En el handshake, el servidor acepta la conexión para cerrarla: el navegador no le muestra a la web el código de un rechazo, que ve como un cierre 1006, igual que una caída de la red. [RFC 6455 §7.4.2](https://www.rfc-editor.org/rfc/rfc6455.txt), [WHATWG WebSockets](https://raw.githubusercontent.com/whatwg/websockets/7f25d7dc8c2598ebca795ce4af68909d913a3888/index.bs)
+- Ante un 4401, una app refresca la sesión una sola vez y reconecta, y la web vuelve al inicio de sesión.
+- El servidor no revalida cada cierto tiempo la sesión de una conexión abierta: el cierre llega con el borrado de la sesión, no en la siguiente revisión.
+- Al refrescar la sesión, una app manda el token nuevo por la misma conexión ([WebSocket Security, *Session Management*](../fuentes/owasp/WebSocket_Security.md)).
+- Cerrar o borrar una sesión cierra en el momento sus conexiones, y una sesión que vence también las cierra ([WebSocket Security, *Session Management*](../fuentes/owasp/WebSocket_Security.md)).
 
 ## Cumplimiento
 

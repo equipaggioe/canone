@@ -6,102 +6,181 @@ Lo que tienen que cumplir juntas varias piezas. Lo que hace una sola pieza va en
 
 Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 
-- Todos los clientes cumplen el nivel AA, también las apps: una sola vara para todos los clientes.
-- Cada objetivo táctil mide al menos 48 × 48: dp en las apps y px de CSS en la web. Endurece los 24 px del criterio 2.5.8: la web también se usa en el teléfono.
-- Los colores de `brand/tokens/` cumplen los criterios 1.4.3 y 1.4.11 en los dos modos: cada rol de texto contra los fondos en que va, y `outline` contra cada superficie.
-- El texto grande también pide 4.5:1. Endurece el criterio 1.4.3, que le pide 3:1: un rol no sabe el tamaño del texto que lleva.
+- Las convenciones de esta sección rigen en todos los clientes, también en las apps, donde cada pantalla cuenta como una página web: una sola vara para todos los clientes.
+- Cada objetivo táctil mide al menos 48 × 48, salvo un enlace dentro de una frase: dp en las apps y px de CSS en la web, que también se usa en el teléfono.
+- Una llamada entre usuarios no lleva subtítulos en vivo: el criterio de los subtítulos en vivo apunta a las transmisiones, no a las llamadas entre personas. [WCAG 2.2](https://raw.githubusercontent.com/w3c/wcag/807a6c24c58526d017da5a32ea630ac31e850b71/understanding/20/captions-live.html)
+- Cada rol de texto de `brand/tokens/` cumple el contraste del texto contra cada fondo en que va, y `outline`, el de los componentes contra cada superficie, en los dos modos.
+- Todos los clientes cumplen el nivel AA ([WCAG 2.2 §5.2.1](../fuentes/w3c/wcag22.html)).
+- El texto contrasta al menos 4.5:1 con su fondo, también el grande, salvo el de un componente inactivo, el decorativo, el que no se ve, el de una imagen con otro contenido importante y el de un logo: un rol de color no sabe el tamaño del texto que lleva ([WCAG 2.2 §1.4.3](../fuentes/w3c/wcag22.html) y [§1.4.6](../fuentes/w3c/wcag22.html)).
+- Todo contenido que no es texto tiene una alternativa de texto con el mismo propósito; un control, un nombre que dice para qué sirve, y lo decorativo queda oculto a las tecnologías de apoyo ([WCAG 2.2 §1.1.1](../fuentes/w3c/wcag22.html)).
+- La información, la estructura y las relaciones que muestra la presentación se pueden determinar por programa o están en el texto ([WCAG 2.2 §1.3.1](../fuentes/w3c/wcag22.html)).
+- Cuando el orden del contenido cambia su sentido, el orden de lectura correcto se puede determinar por programa ([WCAG 2.2 §1.3.2](../fuentes/w3c/wcag22.html)).
+- Una instrucción no depende solo de la forma, el color, el tamaño, la ubicación, la orientación o el sonido ([WCAG 2.2 §1.3.3](../fuentes/w3c/wcag22.html)).
+- Una pantalla no se limita a la orientación vertical o a la horizontal, salvo que la orientación sea esencial ([WCAG 2.2 §1.3.4](../fuentes/w3c/wcag22.html)).
+- El propósito de cada campo que pide un dato del usuario de la lista de propósitos de entrada de WCAG se puede determinar por programa ([WCAG 2.2 §1.3.5](../fuentes/w3c/wcag22.html)).
+- El color no es el único medio de transmitir información, indicar una acción, pedir una respuesta ni distinguir un elemento ([WCAG 2.2 §1.4.1](../fuentes/w3c/wcag22.html)).
+- Un sonido que empieza solo y dura más de 3 segundos, como el timbre de una llamada, se puede pausar o detener, o tiene un volumen propio, aparte del del sistema ([WCAG 2.2 §1.4.2](../fuentes/w3c/wcag22.html)).
+- El texto crece hasta el 200 % sin tecnologías de apoyo y sin perder contenido ni funciones ([WCAG 2.2 §1.4.4](../fuentes/w3c/wcag22.html)).
+- La información va en texto, no en imágenes de texto, salvo un logo o una presentación del texto que sea esencial ([WCAG 2.2 §1.4.5](../fuentes/w3c/wcag22.html)).
+- El contenido se lee sin desplazarse en dos dimensiones con un ancho de 320 px de CSS, salvo lo que necesita dos dimensiones, como un mapa ([WCAG 2.2 §1.4.10](../fuentes/w3c/wcag22.html)).
+- Lo que identifica un componente y su estado, y las partes de un gráfico que hacen falta para entenderlo, contrastan al menos 3:1 con lo que tienen al lado, salvo un componente inactivo ([WCAG 2.2 §1.4.11](../fuentes/w3c/wcag22.html)).
+- En la web, llevar el interlineado a 1.5 veces el tamaño de la letra, el espacio después de un párrafo a 2 veces, el espacio entre letras a 0.12 veces y el espacio entre palabras a 0.16 veces no hace perder contenido ni funciones ([WCAG 2.2 §1.4.12](../fuentes/w3c/wcag22.html)).
+- El contenido que aparece al pasar el puntero o al recibir el foco se puede cerrar sin moverlos, deja pasar el puntero por encima sin desaparecer y queda visible hasta que se quita el puntero o el foco, se cierra o deja de valer ([WCAG 2.2 §1.4.13](../fuentes/w3c/wcag22.html)).
+- Toda función se puede usar con el teclado, sin tiempos para cada tecla, salvo la que depende del recorrido del movimiento ([WCAG 2.2 §2.1.1](../fuentes/w3c/wcag22.html)).
+- El foco que entra a un componente con el teclado puede salir de él con el teclado ([WCAG 2.2 §2.1.2](../fuentes/w3c/wcag22.html)).
+- Un atajo de una sola tecla de carácter se puede apagar o reasignar, o solo actúa cuando su componente tiene el foco ([WCAG 2.2 §2.1.4](../fuentes/w3c/wcag22.html)).
+- Un plazo que impone el cliente se puede apagar o ampliar al menos diez veces antes de llegar a él, o se avisa antes de que venza y se extiende con una acción simple, salvo que sea parte de un evento en tiempo real, sea esencial o pase de 20 horas ([WCAG 2.2 §2.2.1](../fuentes/w3c/wcag22.html)).
+- Lo que se mueve, parpadea o se desplaza solo durante más de 5 segundos junto a otro contenido, y lo que se actualiza solo, se puede pausar, detener u ocultar, salvo que sea esencial ([WCAG 2.2 §2.2.2](../fuentes/w3c/wcag22.html)).
+- Nada destella más de tres veces por segundo, salvo por debajo de los umbrales de destello ([WCAG 2.2 §2.3.1](../fuentes/w3c/wcag22.html)).
+- Un bloque que se repite en varias pantallas se puede saltar ([WCAG 2.2 §2.4.1](../fuentes/w3c/wcag22.html)).
+- Cada pantalla tiene un título que describe su tema o su propósito ([WCAG 2.2 §2.4.2](../fuentes/w3c/wcag22.html)).
+- El foco recorre los componentes en un orden que conserva su sentido y su uso ([WCAG 2.2 §2.4.3](../fuentes/w3c/wcag22.html)).
+- El propósito de cada enlace se entiende por su texto o por su contexto ([WCAG 2.2 §2.4.4](../fuentes/w3c/wcag22.html)).
+- A cada pantalla se llega por más de un camino, salvo a un paso de un proceso ([WCAG 2.2 §2.4.5](../fuentes/w3c/wcag22.html)).
+- Los títulos y las etiquetas describen su tema o su propósito ([WCAG 2.2 §2.4.6](../fuentes/w3c/wcag22.html)).
+- El foco del teclado se ve ([WCAG 2.2 §2.4.7](../fuentes/w3c/wcag22.html)).
+- Un componente que recibe el foco no queda tapado entero por otro contenido del cliente ([WCAG 2.2 §2.4.11](../fuentes/w3c/wcag22.html)).
+- Lo que se hace con un gesto de varios puntos o de recorrido también se hace con un solo puntero sin recorrido, salvo que el gesto sea esencial ([WCAG 2.2 §2.5.1](../fuentes/w3c/wcag22.html)).
+- Una función de un solo puntero no actúa al bajar el puntero, o actúa al soltarlo y se puede abortar o deshacer ([WCAG 2.2 §2.5.2](../fuentes/w3c/wcag22.html)).
+- El nombre de un componente con una etiqueta visible contiene el texto de esa etiqueta ([WCAG 2.2 §2.5.3](../fuentes/w3c/wcag22.html)).
+- Lo que se acciona moviendo el dispositivo también se acciona con un componente, y la respuesta al movimiento se puede apagar ([WCAG 2.2 §2.5.4](../fuentes/w3c/wcag22.html)).
+- Lo que se hace arrastrando también se hace con un solo puntero sin arrastrar, salvo que arrastrar sea esencial ([WCAG 2.2 §2.5.7](../fuentes/w3c/wcag22.html)).
+- El idioma de cada pantalla se puede determinar por programa ([WCAG 2.2 §3.1.1](../fuentes/w3c/wcag22.html)).
+- El idioma de cada fragmento en otro idioma se puede determinar por programa, salvo los nombres propios y los términos técnicos ([WCAG 2.2 §3.1.2](../fuentes/w3c/wcag22.html)).
+- Recibir el foco no cambia el contexto ([WCAG 2.2 §3.2.1](../fuentes/w3c/wcag22.html)).
+- Cambiar el valor de un componente no cambia el contexto sin haberlo avisado antes ([WCAG 2.2 §3.2.2](../fuentes/w3c/wcag22.html)).
+- La navegación que se repite en varias pantallas va siempre en el mismo orden ([WCAG 2.2 §3.2.3](../fuentes/w3c/wcag22.html)).
+- Los componentes con la misma función se identifican igual en todas las pantallas ([WCAG 2.2 §3.2.4](../fuentes/w3c/wcag22.html)).
+- La ayuda que se repite en varias pantallas va siempre en el mismo orden ([WCAG 2.2 §3.2.6](../fuentes/w3c/wcag22.html)).
+- Un error de entrada que se detecta solo señala el campo y se describe en texto ([WCAG 2.2 §3.3.1](../fuentes/w3c/wcag22.html)).
+- Todo lo que pide una entrada tiene una etiqueta o instrucciones ([WCAG 2.2 §3.3.2](../fuentes/w3c/wcag22.html)).
+- Ante un error de entrada con una corrección conocida, el cliente la sugiere, salvo que eso comprometa la seguridad ([WCAG 2.2 §3.3.3](../fuentes/w3c/wcag22.html)).
+- Un pago, un compromiso legal y un cambio o un borrado de datos del usuario se pueden revertir, se revisan en busca de errores con la oportunidad de corregirlos, o se confirman antes de enviarse ([WCAG 2.2 §3.3.4](../fuentes/w3c/wcag22.html)).
+- Un dato que el usuario ya dio en un proceso se completa solo o se ofrece para elegir cuando se vuelve a pedir, salvo que volver a darlo sea esencial, lo pida la seguridad o ya no valga ([WCAG 2.2 §3.3.7](../fuentes/w3c/wcag22.html)).
+- Ningún paso de una autenticación exige una prueba cognitiva, como recordar una contraseña, sin otro método que no la exija o un mecanismo que ayude a resolverla ([WCAG 2.2 §3.3.8](../fuentes/w3c/wcag22.html)).
+- Cada componente tiene un nombre y un rol que se pueden determinar por programa, sus estados y valores se pueden fijar por programa, y sus cambios llegan a las tecnologías de apoyo ([WCAG 2.2 §4.1.2](../fuentes/w3c/wcag22.html)).
+- Un mensaje de estado llega a las tecnologías de apoyo sin mover el foco ([WCAG 2.2 §4.1.3](../fuentes/w3c/wcag22.html)).
+- Cada pantalla cumple entera, en cada variante que presenta según el tamaño, y un proceso cumple en todos sus pasos ([WCAG 2.2 §5.2.2](../fuentes/w3c/wcag22.html) y [§5.2.3](../fuentes/w3c/wcag22.html)).
+- Se cumple solo con formas de usar la tecnología que las tecnologías de apoyo soportan, y lo que no cumple no impide usar el resto de la pantalla ([WCAG 2.2 §5.2.4](../fuentes/w3c/wcag22.html) y [§5.2.5](../fuentes/w3c/wcag22.html)).
 
 ## Archivos
 
 - Un archivo se sube como `multipart/form-data`, en su propia petición, nunca en base64 dentro de un JSON: base64 agranda el archivo un tercio y el servidor lee el JSON entero en memoria.
 
-## Autenticación
-
-Rige [autenticacion.md](autenticacion.md).
-
-## Código por SMS
-
-Estándar: [*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG.
-
-- El código tiene 6 dígitos.
-- El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el mismo número crearía otra cuenta.
-- Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el formato de WICG reserva el final de la última para sintaxis futura.
-
 ## Errores
 
-Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt), [RFC 6901](../fuentes/rfc/rfc6901.txt) y la sección 15 *Status Codes* de [RFC 9110](../fuentes/rfc/rfc9110.txt), salvo 15.5.1, 15.5.2, 15.5.4 y 15.5.5, que rigen en «Versión mínima de cliente», [autenticacion.md](autenticacion.md#sesión) y [fastapi.md](fastapi.md#permisos).
+Estándar: [RFC 9457](../fuentes/rfc/rfc9457.txt).
 
-- `type` es `about:blank` o una URI `https://<dominio>/api/problems/<nombre>`, con el mismo dominio en todos los entornos: un mismo error tiene un solo `type`.
-- Todo error que genera el servidor es problem+json, salvo los del endpoint de token de [autenticacion.md](autenticacion.md#código-de-autorización), que siguen RFC 6749.
-- El cliente toma una respuesta de error sin problem+json, o con un `type` que su catálogo no conoce, como de tipo `about:blank`, con su `status`, y su catálogo tiene un texto por `status` para ese tipo.
+- Todo error que genera el servidor es `application/problem+json`, salvo los del endpoint de token, que siguen [autenticacion.md](autenticacion.md#código-de-autorización).
+- Un error que su código de estado ya explica no tiene tipo propio: es de tipo `about:blank`.
+- La URI de un tipo propio es `https://<dominio>/api/problems/<nombre>`, con el mismo dominio en todos los entornos: un mismo error tiene un solo `type`.
 - Todo problem+json lleva `traceId`, el trace-id de la petición.
-- Todo problem+json lleva `status`, y ninguno lleva `instance`: `traceId` ya identifica la ocurrencia.
-- Ante un 5xx o un `type` que su catálogo no conoce, el cliente muestra el `traceId` junto al texto, para que el usuario lo copie.
 - Un error de validación es de tipo `https://<dominio>/api/problems/validation`, con la extensión `errors`: una lista de `{detail, pointer}`, o de `{detail, parameter}` para un parámetro que no viene en el cuerpo.
-- `pointer` usa la representación de cadena de RFC 6901. La de fragmento suma la codificación de URI.
+- `pointer` es un JSON Pointer en su forma de cadena JSON, sin `#` ni la codificación de URI del fragmento.
+- El cliente toma una respuesta de error sin problem+json, o con un `type` que su catálogo no conoce, como de tipo `about:blank`, con su `status`, y su catálogo tiene un texto por `status` para ese tipo.
+- Ante un 5xx o un `type` que su catálogo no conoce, el cliente muestra el `traceId` junto al texto, para que el usuario lo copie.
 - Cada cliente traduce el sobre a un error tipado con los mismos campos.
+- Todo problem+json lleva `status`, y ninguno lleva `instance`: `traceId` ya identifica la ocurrencia ([RFC 9457 §3.1.2](../fuentes/rfc/rfc9457.txt) y [§3.1.5](../fuentes/rfc/rfc9457.txt)).
+- `status` es el código de estado de la respuesta ([RFC 9457 §3.1.2](../fuentes/rfc/rfc9457.txt)).
+- El `title` de un tipo no cambia de una ocurrencia a otra, salvo por el idioma, y el de `about:blank` es la frase de su código de estado ([RFC 9457 §3.1.3](../fuentes/rfc/rfc9457.txt) y [§4.2.1](../fuentes/rfc/rfc9457.txt)).
+- `detail` ayuda al cliente a corregir el problema, sin datos de depuración ni de la implementación ([RFC 9457 §3.1.4](../fuentes/rfc/rfc9457.txt), [§4](../fuentes/rfc/rfc9457.txt) y [§5](../fuentes/rfc/rfc9457.txt)).
+- Un tipo propio documenta su URI, su `title` y su código de estado, y su URI responde esa documentación en HTML ([RFC 9457 §3.1.1](../fuentes/rfc/rfc9457.txt) y [§4](../fuentes/rfc/rfc9457.txt)).
+- El nombre de una extensión empieza con una letra, lleva solo letras, dígitos y `_`, y tiene al menos tres caracteres ([RFC 9457 §4](../fuentes/rfc/rfc9457.txt)).
+- Ante varios problemas de tipos distintos, la respuesta lleva el más relevante ([RFC 9457 §3](../fuentes/rfc/rfc9457.txt)).
+- El cliente identifica el problema por su `type`, y uno sin `type` es de tipo `about:blank` ([RFC 9457 §3.1.1](../fuentes/rfc/rfc9457.txt)).
+- El cliente no descarga la URI de un tipo ([RFC 9457 §3.1.1](../fuentes/rfc/rfc9457.txt)).
+- El cliente no extrae datos de `detail`: lo que necesita leer va en una extensión ([RFC 9457 §3.1.4](../fuentes/rfc/rfc9457.txt)).
+- El cliente ignora un miembro cuyo valor no tiene el tipo que le corresponde, y una extensión que no conoce ([RFC 9457 §3.1](../fuentes/rfc/rfc9457.txt) y [§3.2](../fuentes/rfc/rfc9457.txt)).
 
 ## Fechas
 
-Estándares: [RFC 3339](../fuentes/rfc/rfc3339.txt) y la sección 4.3 *Time and Date Handling* de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
+Estándar: [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
+
+- Una duración viaja como un entero de segundos: una duración en meses o en días no equivale a una cantidad fija de segundos.
+- Una fecha con hora viaja como una cadena de RFC 3339, con las letras en mayúsculas, con su desfase y con los segundos aunque valgan `00` ([I-JSON §4.3](../fuentes/rfc/rfc7493.txt)).
 
 ## Idiomas
 
-Estándares: las secciones 2 *The Language Tag* y 4 *Formation and Processing of Language Tags* de [RFC 5646](../fuentes/rfc/rfc5646.txt) y la sección 12.5.4 de [RFC 9110](../fuentes/rfc/rfc9110.txt), *Accept-Language*.
+Estándares: [RFC 5646](../fuentes/rfc/rfc5646.txt) y [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 - Todo producto se diseña multilingüe.
 - El idioma base es `es`.
 - La base guarda códigos, nunca textos traducidos, y cada cliente los traduce con su catálogo.
 - El cliente muestra el texto de su catálogo para el `type` de un error, en vez de `detail`.
-- El cliente manda en `Accept-Language` el idioma que eligió el usuario.
+- El cliente manda en `Accept-Language` el idioma que eligió el usuario ([RFC 9110 §12.5.4](../fuentes/rfc/rfc9110.txt)).
+- Un idioma se nombra con una etiqueta válida, en su forma canónica y con solo las subetiquetas que distinguen el texto ([RFC 5646 §2](../fuentes/rfc/rfc5646.txt), [§4.1](../fuentes/rfc/rfc5646.txt) y [§4.5](../fuentes/rfc/rfc5646.txt)).
+- Una etiqueta se escribe como en el registro: el idioma en minúsculas, el script con la inicial en mayúscula y la región en mayúsculas ([RFC 5646 §2.1.1](../fuentes/rfc/rfc5646.txt)).
+- Dos etiquetas se comparan sin distinguir mayúsculas de minúsculas ([RFC 5646 §2.1.1](../fuentes/rfc/rfc5646.txt)).
 
 ## Llamadas de voz y video
 
-Estándar: la sección *RTCIceServer Dictionary* de [WebRTC](../fuentes/w3c/webrtc.html) de W3C.
-
 - La señalización va por el WebSocket de la app.
 - coturn usa credenciales temporales (`use-auth-secret`), que el servidor entrega por la API.
-- El cliente pide una credencial al iniciar o al atender cada llamada, y antes de cada reinicio de ICE: con una credencial vencida, coturn no abre un relay nuevo.
+- El cliente pide una credencial al iniciar o al atender cada llamada, y antes de cada reinicio de ICE: con una credencial vencida, coturn no abre un relay nuevo. [coturn 4.6.1](https://raw.githubusercontent.com/coturn/coturn/4.6.1/README.turnserver)
 - Mientras suena, el servidor guarda la llamada con su oferta, y quien la recibe la pide por REST al conectarse o al despertar por el push. El resto de la señalización no se guarda.
 - Cualquiera de los dos puede mandar una oferta. Si dos se cruzan, el que atiende descarta la suya con *rollback* y acepta la del que llama.
 
 ## Mapas
 
-Estándares: la [guía de atribución](../fuentes/osm/attribution-guidelines.md) de OpenStreetMap, y las secciones *Geometry Object*, *Coordinate Reference System* y *GeoJSON Types Are Not Extensible* del [RFC 7946](../fuentes/rfc/rfc7946.txt).
+Estándares: la [guía de atribución](../fuentes/osm/attribution-guidelines.md) de OpenStreetMap y [RFC 7946](../fuentes/rfc/rfc7946.txt).
 
 - Toda posición o trazado en la API es una geometría GeoJSON.
-
 - Las teselas son raster, con URL `{z}/{x}/{y}`.
 - Las teselas son las de `tile.openstreetmap.org`.
 - La URL de las teselas y su atribución las entrega el servidor en su configuración pública: cambiar de proveedor no exige publicar otra versión de las apps.
-- Los clientes buscan direcciones en el servidor, que consulta a Nominatim: su límite es por aplicación, y solo el servidor ve el total.
+- Los clientes buscan direcciones en el servidor, que consulta a Nominatim: su límite es por aplicación, y solo el servidor ve el total. [Nominatim](https://raw.githubusercontent.com/openstreetmap/owg-website/fd6937012a5b2d8f4c0255148342b97191c840e7/policies/nominatim.md)
+- Una posición lleva solo la longitud y la latitud, sin altitud ([RFC 7946 §3.1.1](../fuentes/rfc/rfc7946.txt)).
+- Las coordenadas van en WGS 84, en grados decimales, primero la longitud y después la latitud ([RFC 7946 §3.1.1](../fuentes/rfc/rfc7946.txt) y [§4](../fuentes/rfc/rfc7946.txt)).
+- Un trazado que cruza el antimeridiano se corta en dos y viaja como un `MultiLineString` ([RFC 7946 §3.1.9](../fuentes/rfc/rfc7946.txt)).
+- No se agregan tipos a GeoJSON ni se cambia el sentido de sus miembros ([RFC 7946 §7](../fuentes/rfc/rfc7946.txt) y [§7.1](../fuentes/rfc/rfc7946.txt)).
+- El cliente no toma la cantidad de decimales de una coordenada como su precisión ([RFC 7946 §3.1.10](../fuentes/rfc/rfc7946.txt)).
+- La atribución va en una esquina del mapa, legible y a la vista sin tocar el mapa ([OSM, *Requirements to fit within OSMF’s safe harbour*](../fuentes/osm/attribution-guidelines.md) y [*Interactive maps*](../fuentes/osm/attribution-guidelines.md)).
+- La atribución dice «OpenStreetMap» y lleva a `openstreetmap.org/copyright` ([OSM, *Attribution text*](../fuentes/osm/attribution-guidelines.md)).
+- Ninguna otra atribución hace creer que los datos no son de OpenStreetMap ([OSM, *Requirements to fit within OSMF’s safe harbour*](../fuentes/osm/attribution-guidelines.md)).
+- Un cliente que busca direcciones con Nominatim atribuye a OpenStreetMap ([OSM, *Geocoding (search)*](../fuentes/osm/attribution-guidelines.md)).
 
 ## Montos
 
-Estándar: la sección 2.2 *Numbers* de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
+Estándar: [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
 
-- Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: el monto en una cadena decimal, sin exponente, y la moneda en su código de la [lista de monedas](https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml) de ISO 4217.
+- Un monto viaja como `{"amount": "10.50", "currency": "USD"}`: `amount` sin exponente, y `currency`, el código de la moneda en la [lista de monedas](https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml) de ISO 4217.
 - Un monto no se formatea sin su moneda.
 - Cada cliente lo conserva como cadena o como el decimal de su lenguaje, nunca como `double`, y no calcula con él: los totales, impuestos y descuentos llegan calculados del servidor. Así ningún cliente necesita una biblioteca decimal.
+- `amount` es una cadena decimal: un monto pide un valor exacto ([I-JSON §2.2](../fuentes/rfc/rfc7493.txt)).
 
 ## OpenAPI y clientes
 
-Estándar: de [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493, las secciones 2.1 *Encoding and Characters*, 2.3 *Object Constraints*, 3 *Software Behavior*, 4.1 *Top-Level Constructs*, 4.2 *Must-Ignore Policy* y 4.4 *Binary Data*.
+Estándar: [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
 
 - La API habla en camelCase.
 - Cada cliente genera del `openapi.json` del servidor los modelos del cable, en la convención de su lenguaje, y ninguno los escribe a mano: copiado a mano en varios lenguajes, el contrato diverge sin que nadie lo note.
+- Un cliente falla ante un campo que no conoce en una respuesta: como en el servidor, un campo desconocido es un error del contrato que tiene que verse.
 - Los valores de un enum van en snake_case.
-- El servidor responde 422 a un campo o un parámetro que no conoce. Contradice la *Must-Ignore Policy*, que pide ignorarlo: el cliente y el servidor salen del mismo contrato, y un campo desconocido es un error del cliente que tiene que verse.
+- El servidor responde 422 a un campo o un parámetro que no conoce: el cliente y el servidor salen del mismo contrato, y un campo desconocido es un error del cliente que tiene que verse.
+- El servidor rechaza con un error un mensaje que no cumple las reglas de esta sección ([I-JSON §3](../fuentes/rfc/rfc7493.txt)).
+- Un mensaje va en UTF-8, y ni sus nombres ni sus cadenas llevan sustitutos sueltos ni no-caracteres de Unicode ([I-JSON §2.1](../fuentes/rfc/rfc7493.txt)).
+- Ningún número pasa la magnitud o la precisión de un `double`, ni un entero pasa de 2⁵³ − 1 en valor absoluto ([I-JSON §2.2](../fuentes/rfc/rfc7493.txt)).
+- Un objeto no repite el nombre de un miembro ([I-JSON §2.3](../fuentes/rfc/rfc7493.txt)).
+- Un mensaje es un objeto o un arreglo ([I-JSON §4.1](../fuentes/rfc/rfc7493.txt)).
+- Un dato binario va en una cadena en base64url, salvo un archivo, que se sube como fija [Archivos](#archivos) ([I-JSON §4.4](../fuentes/rfc/rfc7493.txt)).
 
 ## Paginación
 
 Estándar: [*Pagination*](../fuentes/google-aip/aip-0158.md), la AIP-158 de Google.
 
 - La respuesta es `{"items": [...], "nextPageToken": "..."}`, y el campo `nextPageToken` siempre está.
-- `pageSize` vale 50 por defecto y 100 como máximo.
-- Una lista que muestra números de página acepta `skip` y devuelve `totalSize`. Las demás no.
-- Con `skip`, un `pageSize` mayor que 100 responde 422. Contradice AIP-158, que lo recorta: el cliente calcula `skip` con el tamaño que pidió, y un recorte se saltaría filas.
-- Un `pageToken` ilegible o con otros parámetros que los de su petición responde 422 de tipo `validation`, con `parameter: "pageToken"`.
+- Con `skip`, un `pageSize` mayor que 100 responde 422: el cliente calcula `skip` con el tamaño que pidió, y un recorte se saltaría filas.
+- Un error de paginación, o un `pageToken` ilegible, responde 422 de tipo `validation`, con `parameter` en el parámetro que falla.
+- `pageSize` vale 50 si no viene o vale 0, y 100 como máximo. Sin `skip`, uno mayor se recorta a 100 ([AIP-158, *Guidance*](../fuentes/google-aip/aip-0158.md)).
+- Una lista que muestra números de página acepta `skip` y devuelve `totalSize`, el total exacto. Las demás no ([AIP-158, *Guidance*](../fuentes/google-aip/aip-0158.md) y [*Skipping results*](../fuentes/google-aip/aip-0158.md)).
+- Toda lista se pagina desde su primera versión ([AIP-158, *Guidance*](../fuentes/google-aip/aip-0158.md)).
+- `pageSize` y `pageToken` son opcionales, y un `pageSize` negativo es un error ([AIP-158, *Guidance*](../fuentes/google-aip/aip-0158.md)).
+- Un `pageToken` con otros parámetros que los de la petición que lo dio es un error, y un `pageSize` distinto se respeta ([AIP-158, *Guidance*](../fuentes/google-aip/aip-0158.md)).
+- Una página puede traer menos elementos que `pageSize` aunque no sea la última. Solo la última trae `nextPageToken` vacío ([AIP-158, *Guidance*](../fuentes/google-aip/aip-0158.md)).
+- La respuesta no es un stream ([AIP-158, *Guidance*](../fuentes/google-aip/aip-0158.md)).
+- `skip` cuenta elementos, no páginas, y se suma a la posición del `pageToken`. Uno que pasa del total responde 200 con `items` vacío y `nextPageToken` vacío ([AIP-158, *Skipping results*](../fuentes/google-aip/aip-0158.md)).
+- El `pageToken` es opaco y apto para una URL, y el cliente no lo interpreta: codificarlo en base64 no lo vuelve opaco ([AIP-158, *Opacity*](../fuentes/google-aip/aip-0158.md)).
+- El `pageToken` solo dice dónde seguir: no da acceso a nada, y cada petición comprueba sus permisos como cualquier otra ([AIP-158, *Opacity*](../fuentes/google-aip/aip-0158.md)).
 
 ## Pagos
 
@@ -109,23 +188,33 @@ Estándar: [*Pagination*](../fuentes/google-aip/aip-0158.md), la AIP-158 de Goog
 
 ## Push
 
-Estándares: las secciones *Push subscription*, *Declarative push message*, *PushSubscriptionOptions Interface*, *PushSubscription interface* y *PushEncryptionKeyName enumeration* de la [*Push API*](../fuentes/w3c/push-api.html) de W3C, la sección 5.3 *Push Message Urgency* de [RFC 8030](../fuentes/rfc/rfc8030.txt), y la sección 2 *Application Server Self-Identification* de [RFC 8292](../fuentes/rfc/rfc8292.txt).
+Estándares: la [*Push API*](../fuentes/w3c/push-api.html) de W3C, [RFC 8030](../fuentes/rfc/rfc8030.txt) y [RFC 8292](../fuentes/rfc/rfc8292.txt).
 
 - Android y Flutter reciben push por FCM.
 - Un mensaje de FCM lleva `notification` y, en `data`, la ruta que abre al tocarlo, salvo el de una llamada entrante.
-- Un Web Push es un mensaje declarativo, con la ruta que abre en `navigate`.
 - Una llamada entrante llega por un mensaje de FCM solo de datos y de prioridad alta.
 - Un push vence cuando caduca lo que avisa; el de una llamada entrante, cuando deja de sonar.
-- En la web, el push de una llamada entrante lleva `Urgency: high`.
 - El FID y la suscripción web pertenecen a la sesión: se borran cuando la sesión se cierra o vence.
 - La web recibe push con la Push API, sin el SDK de FCM: la CSP queda en `'self'`.
+- Un Web Push es un mensaje declarativo: `web_push` vale 8030, y `notification` lleva `title` y, en `navigate`, la ruta que abre ([Push API, *Declarative push message*](../fuentes/w3c/push-api.html)).
+- La web le manda al servidor su suscripción como la serializa `toJSON()`: `endpoint`, `expirationTime` y, en `keys`, `p256dh` y `auth` en base64url ([Push API, *PushSubscription interface*](../fuentes/w3c/push-api.html) y [*PushEncryptionKeyName enumeration*](../fuentes/w3c/push-api.html)).
+- En la web, el push de una llamada entrante lleva `Urgency: high` ([RFC 8030 §5.3](../fuentes/rfc/rfc8030.txt)).
+- Cada Web Push lleva el JWT de VAPID del servidor ([RFC 8292 §2](../fuentes/rfc/rfc8292.txt)).
+- El JWT lleva en `sub` un `mailto:` de contacto del producto ([RFC 8292 §2.1](../fuentes/rfc/rfc8292.txt)).
+- La web se suscribe con `applicationServerKey`, la clave pública de VAPID del servidor: un punto de P-256 sin comprimir, en base64url ([Push API, *PushSubscriptionOptions Interface*](../fuentes/w3c/push-api.html)).
+- La clave de VAPID es un par de ECDSA sobre P-256, y el JWT se firma con ES256 ([RFC 8292 §2](../fuentes/rfc/rfc8292.txt)).
+- El JWT lleva en `aud` el origen del endpoint, y en `exp`, un vencimiento a lo sumo 24 horas después de la petición ([RFC 8292 §2](../fuentes/rfc/rfc8292.txt)).
+- La clave de VAPID no es la del cifrado del mensaje ([RFC 8292 §3.2](../fuentes/rfc/rfc8292.txt)).
 
 ## Reintentos
 
-Estándar: las secciones 9.2 *Common Method Properties* y 9.3 *Method Definitions* de [RFC 9110](../fuentes/rfc/rfc9110.txt).
+Estándar: [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 - Un recurso que el usuario crea desde un cliente se crea por `PUT /<recurso>/{id}`, con un uuid v4 que genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez de crear otra.
-- El cliente reintenta solo una petición idempotente ante un fallo de red, un 502, un 503 o un 504, hasta 3 veces, con espera exponencial y jitter: un reinicio del servidor no le muestra un error al usuario.
+- El cliente reintenta ante un fallo de red, un 502, un 503 o un 504, hasta 3 veces, con espera exponencial y jitter: un reinicio del servidor no le muestra un error al usuario.
+- El cliente reintenta solo una petición idempotente ([RFC 9110 §9.2.2](../fuentes/rfc/rfc9110.txt)).
+- Un `PUT` o un `DELETE` repetido tiene el mismo efecto que uno solo ([RFC 9110 §9.2.2](../fuentes/rfc/rfc9110.txt)).
+- Un `PUT` que crea el recurso responde 201, y uno que lo reemplaza, 200 o 204 ([RFC 9110 §9.3.4](../fuentes/rfc/rfc9110.txt)).
 
 ## Tema
 
@@ -137,45 +226,49 @@ Estándar: las secciones 9.2 *Common Method Properties* y 9.3 *Method Definition
 > `scripts/tokens.py` y `brand/tokens/`. Se revisan y se desarrollan como cualquier otra parte de
 > Canone.
 
-Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el [módulo de color](../fuentes/dtcg/color.html) y el [resolver](../fuentes/dtcg/resolver.html), enteros.
+Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el [módulo de color](../fuentes/dtcg/color.html) y el [resolver](../fuentes/dtcg/resolver.html).
 
 - Los colores de un producto van en `brand/tokens/`: `colors.resolver.json` y los `.tokens.json` que cita. Son la única fuente de los colores de todos sus clientes.
-- `colors.resolver.json` tiene un solo modificador, `theme`, con los contextos `light` y `dark`.
 - Los tokens tienen dos niveles: el grupo `palette` guarda los colores, en sRGB y opacos, y el grupo `color` asigna cada rol a un color de `palette` con un alias. Cambiar un color de la marca toca un solo token.
 - Los roles son las 46 propiedades de color no obsoletas del `ColorScheme` de Flutter, y cada modo las asigna todas. Compose, Flutter y Flet arman su esquema con esos roles, y uno sin asignar tomaría en silencio el color por defecto del framework.
-- `scripts/tokens.py` genera en cada cliente su esquema claro y su esquema oscuro, ya armados. Implementa del formato las secciones 5.1 *Name and value*, 5.2.1 *Description*, 5.2.2 *Type*, 6.1 *Group Structure*, 7.1.1 *Curly Brace Syntax*, 7.2.2 *Chained References* y 7.2.3 *Circular References*; del módulo de color, 4.1 *Format* y 4.2.1 *sRGB*, y del resolver, 4.1 *Root level properties*, 4.2 *Reference objects*, 6.1 *Input validation*, 6.2 *Ordering* y 6.3 *Aliases*. Falla ante lo demás, que queda sin efecto porque un producto solo usa colores sRGB opacos en dos modos, y ante un color que no cumpla el contraste de [Accesibilidad](#accesibilidad).
+- `scripts/tokens.py` genera en cada cliente su esquema claro y su esquema oscuro, ya armados.
+- `scripts/tokens.py` falla ante lo que DTCG define fuera de las partes que siguen y ante un color que no cumpla el contraste de [Accesibilidad](#accesibilidad): un producto solo usa colores sRGB opacos en dos modos.
 - Lo generado se commitea: un cliente compila sin correr el generador.
 - Cada cliente sigue el modo claro u oscuro del sistema.
+- `colors.resolver.json` tiene un solo modificador, `theme`, con los contextos `light` y `dark` ([DTCG Resolver §4.1.5](../fuentes/dtcg/resolver.html)).
+- `brand/tokens/` sigue del formato las partes *Name and value*, *Description*, *Type*, *Group Structure*, *Curly Brace Syntax*, *Chained References* y *Circular References*, que hace cumplir `scripts/tokens.py` ([DTCG Format §5.1](../fuentes/dtcg/format.html), [§5.2.1](../fuentes/dtcg/format.html), [§5.2.2](../fuentes/dtcg/format.html), [§6.1](../fuentes/dtcg/format.html), [§7.1.1](../fuentes/dtcg/format.html), [§7.2.2](../fuentes/dtcg/format.html) y [§7.2.3](../fuentes/dtcg/format.html)).
+- `brand/tokens/` sigue del módulo de color las partes *Format* y *sRGB*, que hace cumplir `scripts/tokens.py` ([DTCG Color §4.1](../fuentes/dtcg/color.html) y [§4.2.1](../fuentes/dtcg/color.html)).
+- `brand/tokens/` sigue del resolver las partes *Root level properties*, *Reference objects*, *Input validation*, *Ordering* y *Aliases*, que hace cumplir `scripts/tokens.py` ([DTCG Resolver §4.1](../fuentes/dtcg/resolver.html), [§4.2](../fuentes/dtcg/resolver.html), [§6.1](../fuentes/dtcg/resolver.html), [§6.2](../fuentes/dtcg/resolver.html) y [§6.3](../fuentes/dtcg/resolver.html)).
 
 Plantilla: `scripts/tokens.py` es canónico y se copia sin editar; `brand/tokens/` es un punto de partida.
 
 ## Versión mínima de cliente
 
-Estándar: las secciones 10.1.5 *User-Agent* y 15.5.1 *400 Bad Request* de [RFC 9110](../fuentes/rfc/rfc9110.txt).
+Estándar: [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
-- Cada cliente instalable manda `User-Agent: <pieza>/<versión>`. La versión son tres enteros, `MAJOR.MINOR.PATCH`, y se compara número por número.
-- Una versión menor que la mínima de su pieza recibe un 400 de tipo `https://<dominio>/api/problems/client-outdated`, y el cliente pide actualizar la app. Lo mismo recibe una petición con un token de app sin un `User-Agent` de pieza: el olvido falla en desarrollo.
-- Las dos cosas van desde la primera versión que se publica: a una app instalada sin ellas nunca se le puede obligar a actualizar.
+- La versión son tres enteros, `MAJOR.MINOR.PATCH`, y se compara número por número.
+- Una versión menor que la mínima de su pieza recibe un error de tipo `https://<dominio>/api/problems/client-outdated`, y el cliente pide actualizar la app. Lo mismo recibe una petición con un token de app sin un `User-Agent` de pieza, o con una versión mal formada: el olvido falla en desarrollo.
+- El `User-Agent` de pieza y la versión mínima van desde la primera versión que se publica: a una app instalada sin ellos nunca se le puede obligar a actualizar.
+- `client-outdated` es un 400 ([RFC 9110 §15.5.1](../fuentes/rfc/rfc9110.txt)).
+- Cada cliente instalable manda en cada petición `User-Agent: <pieza>/<versión>`, sin otros productos ni comentarios ([RFC 9110 §10.1.5](../fuentes/rfc/rfc9110.txt)).
 
 ## WebSocket
 
-Estándar: del [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP, las secciones *Always Use WSS* y *Session Management*, sin su párrafo de `SameSite`, que rige en [autenticacion.md](autenticacion.md#sesión).
+Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
-- La web se autentica con la cookie de sesión del handshake, y una app, con `Authorization: Bearer` en el handshake, como en REST.
-- Una sesión que no vale o un token vencido cierran la conexión con 4401, del rango privado de los [códigos de cierre](https://www.rfc-editor.org/rfc/rfc6455.txt) de RFC 6455, en su sección 7.4: un código propio separa la sesión de cualquier otro cierre. En el handshake, el servidor acepta la conexión para cerrarla: un rechazo con 401 Uvicorn lo registra como error, y uno con 403 no dice que el problema es la sesión.
-- Ante un 4401, una app refresca la sesión una sola vez y reconecta, y la web vuelve al inicio de sesión.
-- Al refrescar la sesión, una app manda el token nuevo por la misma conexión.
-- Borrar una sesión cierra sus conexiones en el momento. Deja sin efecto la revalidación periódica de *Session Management*: el cierre llega con el borrado, no en la siguiente revisión.
 - Los mensajes son JSON `{type, data}`, en camelCase como la API.
 - Al perder la conexión, el cliente reconecta con espera exponencial y jitter, con hasta 30 segundos entre intentos, y vuelve a pedir el estado por REST. Lo que se envió mientras estaba desconectado no se repite.
+- Un cliente se conecta solo por `wss://` ([WebSocket Security, *Always Use WSS (WebSocket Secure)*](../fuentes/owasp/WebSocket_Security.md)).
 
 ## Cumplimiento
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Contraste de `brand/tokens/` | `scripts/tokens.py`, que corre `verificar.py` |
-| DTCG: el subconjunto de `brand/tokens/` | `scripts/tokens.py`, que corre `verificar.py` |
-| Lo generado, al día con `brand/tokens/` | `verificar.py` |
-| Todo error del servidor en problem+json | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
-| RFC 9457: la URI de cada tipo sirve su documentación | `test_problem_types_are_documented`, del servidor |
-| El `traceId` en todo problem+json | `test_unknown_route_is_a_problem`, del servidor |
+| El contraste de los roles de `brand/tokens/` | `scripts/tokens.py --check` |
+| Las partes de DTCG que sigue `brand/tokens/` | `scripts/tokens.py --check` |
+| Lo generado, al día con `brand/tokens/` | `scripts/tokens.py --check` |
+| problem+json en una ruta que no existe y en un error de validación | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
+| La URI de cada tipo propio responde HTML con su `title` | `test_problem_types_are_documented`, del servidor |
+| El `traceId` en el problem+json de una ruta que no existe | `test_unknown_route_is_a_problem`, del servidor |
+| Una versión menor que la mínima, o mal formada, recibe un 400 de tipo `client-outdated` | `test_outdated_client_is_rejected`, del servidor |
+| Un `pageToken` ilegible o con otros parámetros que los de su petición responde 422 con `parameter` en `pageToken` | `test_invalid_page_token_points_to_the_parameter`, del servidor |

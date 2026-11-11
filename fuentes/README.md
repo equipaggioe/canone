@@ -27,11 +27,9 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [postgresql/indices.sgml](postgresql/indices.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml) |  |
 | [postgresql/backup.sgml](postgresql/backup.sgml) | [origen](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml) |  |
 | [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | [origen](https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml) |  |
-| [rfc/rfc3339.txt](rfc/rfc3339.txt) | [origen](https://www.rfc-editor.org/rfc/rfc3339.txt) |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | [origen](https://www.rfc-editor.org/rfc/rfc5646.txt) |  |
 | [rfc/rfc6749.txt](rfc/rfc6749.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6749.txt) |  |
 | [rfc/rfc6585.txt](rfc/rfc6585.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6585.txt) |  |
-| [rfc/rfc6901.txt](rfc/rfc6901.txt) | [origen](https://www.rfc-editor.org/rfc/rfc6901.txt) |  |
 | [rfc/rfc7493.txt](rfc/rfc7493.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7493.txt) |  |
 | [rfc/rfc7636.txt](rfc/rfc7636.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7636.txt) |  |
 | [rfc/rfc7946.txt](rfc/rfc7946.txt) | [origen](https://www.rfc-editor.org/rfc/rfc7946.txt) |  |
@@ -45,7 +43,6 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | [origen](https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md) | Línea 3.1, la versión que genera FastAPI |
 | [google-aip/aip-0158.md](google-aip/aip-0158.md) | [origen](https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0158.md) |  |
 | [w3c/webauthn-3.html](w3c/webauthn-3.html) | [origen](https://www.w3.org/TR/2026/REC-webauthn-3-20260825/) | Recomendación del 2026-08-25 |
-| [w3c/webrtc.html](w3c/webrtc.html) | [origen](https://www.w3.org/TR/2025/REC-webrtc-20250313/) | Recomendación del 2025-03-13 |
 | [w3c/push-api.html](w3c/push-api.html) | [origen](https://www.w3.org/TR/2026/WD-push-api-20261005/) | Borrador de trabajo del 2026-10-05 |
 | [w3c/wcag22.html](w3c/wcag22.html) | [origen](https://www.w3.org/TR/2024/REC-WCAG22-20241212/) |  |
 | [w3c/permissions-policy-features.md](w3c/permissions-policy-features.md) | [origen](https://raw.githubusercontent.com/w3c/webappsec-permissions-policy/29398046f1e0cb45c091adda853df74925dc740a/features.md) | Commit 2939804. Lista de nombres, no fuente |

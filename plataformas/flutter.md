@@ -82,7 +82,7 @@ Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
 ## Código por SMS
 
-Contrato: [transversal.md](transversal.md#código-por-sms).
+Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
 
 - El campo del código es `TextFieldPinAutoFill`: lleva una `InputDecoration`, y se ve como los demás campos del tema.
 

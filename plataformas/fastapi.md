@@ -409,7 +409,7 @@ Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
 
 Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
-Contrato: [transversal.md](transversal.md#websocket).
+Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autenticacion.md#websocket).
 
 - Cada proceso se suscribe a Valkey y reenvía a sus conexiones, con un canal por usuario.
 - Un handshake con la cookie exige un `Origin` igual al de la web, y uno con `Authorization` no lo revisa: una app nativa no manda `Origin`, y el secuestro entre sitios solo existe con la credencial que el navegador agrega por su cuenta.

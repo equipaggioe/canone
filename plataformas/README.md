@@ -7,12 +7,13 @@ Para trabajar en una pieza se consulta su página, su página madre si la tiene 
 ## Terminología
 
 - **Ámbito:** área de implementación que agrupa convenciones aplicables a distintas tecnologías o piezas.
+- **Asunto:** grupo de decisiones que se responden juntas, como el vencimiento de la sesión o los atributos de su cookie. Una sección de una página reúne uno o varios asuntos.
 - **Convención:** criterio que determina cómo se construyen, organizan o integran las piezas de un sistema.
 - **Convención adoptada:** convención establecida por una fuente normativa externa, que la página escribe con su origen.
-- **Convención propia:** convención establecida directamente por Canone porque ninguna fuente adoptada resuelve esa decisión, o porque es necesario elegir o modificar lo que establecen las fuentes.
+- **Convención propia:** convención establecida directamente por Canone porque la fuente de su asunto no resuelve esa decisión o el asunto no tiene fuente, o porque es necesario elegir o modificar lo que establece la fuente.
 - **Fuente normativa:** documento externo que establece convenciones que pueden adoptarse.
 - **Material de referencia:** lista de nombres o valores que utiliza una convención, como un registro, sin ser una fuente normativa.
-- **Origen:** la fuente y la sección de la que sale una convención adoptada.
+- **Origen:** la fuente, y la sección o las secciones de ella, de la que sale una convención adoptada.
 - **Parte:** una sección de una fuente, o el fragmento de una sección que trata un mismo asunto.
 - **Pieza:** componente identificable de un sistema que tiene una responsabilidad y puede documentarse por separado.
 - **Tecnología:** herramienta, lenguaje, framework, plataforma o sistema concreto utilizado para implementar una pieza.
@@ -47,9 +48,9 @@ Una convención que no contribuye a ninguno de estos propósitos no se incluye. 
 
 ### Selección de fuentes
 
-La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Cada punto se resuelve adoptando una convención de una fuente normativa o, si ninguna fuente adecuada lo cubre, estableciendo una convención propia.
+La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Una fuente se adopta para un asunto porque sus convenciones se acomodan a lo que el producto necesita, no para cubrir decisiones sueltas. Cada decisión se resuelve con una convención de la fuente de su asunto o, si esa fuente no la resuelve o el asunto no tiene fuente, con una convención propia.
 
-Una fuente debe cumplir los siete requisitos siguientes:
+Una fuente debe cumplir además los siete requisitos siguientes:
 
 1. **Normativa:** establece qué se debe, se debería o no se debe hacer. Cada convención que se toma de ella debe poder expresarse como «se usa X» o «no se hace Y». Los procedimientos, ejemplos y explicaciones no cuentan, aunque aparezcan en la documentación oficial.
 2. **Decide algo:** responde a uno de los puntos que deben resolverse para la tecnología o ámbito.
@@ -59,7 +60,7 @@ Una fuente debe cumplir los siete requisitos siguientes:
 6. **Cubre:** resuelve la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente todas las páginas, para que esos asuntos sigan su enfoque. En esos asuntos, lo no cubierto debe quedar en minoría. Lo que se contradice o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no es fuente, y las convenciones que se aprovechen de ella se establecen como convenciones propias.
 7. **Aporta:** es el origen de al menos tres convenciones, contando todas las páginas. Cuentan también las elecciones y los endurecimientos que la tienen como origen. No cuenta lo que se dirige a otro actor. Si no llega a tres, no es fuente, y sus convenciones se escriben como propias.
 
-Si varias fuentes que cumplen los siete requisitos regulan el mismo asunto, se prefiere la que tenga mayor prioridad en la tabla. A igual prioridad, se elige la que cubra una parte mayor del asunto.
+Entre las fuentes que cumplen los siete requisitos y se acomodan a un asunto, se elige la que se acomoda a más asuntos, contando todas las páginas, siempre que resuelva la mayoría de las decisiones de ese asunto. Para contar, los documentos de un mismo publicador que no se contradicen valen como uno, aunque cada uno sigue siendo una fuente aparte. Si aun así empatan, se elige la de mayor prioridad en la tabla. El asunto sigue solo a la fuente elegida: las demás no se citan en él, aunque digan lo mismo.
 
 | Orden | Fuente |
 | :--- | :--- |
@@ -82,7 +83,8 @@ Adoptar una fuente es escribir sus convenciones en la página, cada una con su o
 #### Origen
 
 - Una convención adoptada termina con su origen: un enlace a la copia de su fuente en `fuentes/`, con el nombre de la fuente y la sección de la que sale. La sección se nombra por su número, si la fuente las numera, o por su título en cursiva. Por ejemplo: `([RFC 6749 §4.1.3](../fuentes/rfc/rfc6749.txt))` o `([PEP 8, *Imports*](../fuentes/python/pep-0008.rst))`.
-- Una convención que sale de varias fuentes lleva todos sus orígenes.
+- Una convención tiene como origen una sola fuente, y puede nombrar varias de sus secciones.
+- Una convención con origen solo dice lo que su origen establece, con su razón cuando la lleva, o la opción que elige o la forma que endurece. Un valor o un comportamiento que la fuente no fija va en otra convención, propia y sin origen.
 - Una convención propia no lleva origen, salvo una elección o un endurecimiento, que llevan el de la regla de la que salen.
 - Una sección con convenciones adoptadas empieza por un párrafo `Estándar:` o `Estándares:` que nombra, con su enlace, los documentos que son su origen. Es informativo: no adopta nada por sí mismo, y no nombra secciones ni lleva «salvo».
 
@@ -91,17 +93,19 @@ Adoptar una fuente es escribir sus convenciones en la página, cada una con su o
 - **Lo que hace cumplir una herramienta:** si una herramienta de «Cumplimiento» hace cumplir entera una parte de una fuente, la página no escribe sus convenciones. Escribe una sola convención que nombra esa parte, con su origen, y dice qué reglas de esa parte no sigue, con su razón. La herramienta va en «Cumplimiento». Lo que la herramienta no cubre se escribe convención por convención.
 - **Lo dirigido a otro actor:** no se escriben las obligaciones dirigidas a quienes desarrollan una herramienta que el producto utiliza, como coturn, Uvicorn o un navegador, ni las dirigidas a la otra parte de un protocolo, como el servicio de push de Web Push. Sí se escriben las opciones que la herramienta deja a quien la configura, como los destinos a los que coturn niega relevar.
 - **Lo de una función que no se ofrece:** no se escribe. Agregarla obliga a volver a la fuente.
-- **Lo repetido:** lo que dicen varias fuentes, o varias partes de una fuente, se escribe una sola vez, con todos sus orígenes.
+- **Lo de un asunto que sigue a otra fuente:** no se escribe con el origen de esta. Si la fuente de ese asunto no lo resuelve, se escribe como convención propia.
+- **Lo repetido:** lo que dicen varias partes de la fuente de un asunto se escribe una sola vez, con todas esas partes.
 - **Lo que no se sigue:** no se escribe, salvo en la convención que nombra una parte que hace cumplir una herramienta: ahí se dice qué reglas no se siguen y por qué. Si la página hace otra cosa, escribe lo que hace como convención propia.
 
 #### Una convención, una sección
 
 - Cada convención se escribe en una sola sección, de cualquier página.
-- Dos convenciones no deben regular lo mismo. Si dos fuentes entran en conflicto sobre un asunto, se escribe la que mejor se adapta.
+- Dos convenciones no deben regular lo mismo.
 
 #### Convenciones propias y valores predeterminados
 
-- Los valores predeterminados de una herramienta no proceden de una fuente, pero rigen mientras la página no establezca otra cosa. Cambiarlos constituye una convención propia, salvo que una fuente exija el cambio.
+- Los valores predeterminados de una herramienta que ninguna fuente exige rigen mientras la página no establezca otra cosa. Cambiarlos constituye una convención propia, salvo que la fuente de su asunto exija el cambio.
+- Un valor predeterminado que exige la fuente de su asunto es una convención adoptada, y se escribe.
 - Una convención propia que se apoya en un hecho que no es evidente, como el comportamiento de un navegador, enlaza el documento que lo prueba, en su versión fija. Si es una elección, no lleva enlace. El enlace no adopta el resto del documento, y ese documento no se copia en `fuentes/`. La convención no menciona otros documentos, ni siquiera para contradecirlos. Incluye únicamente la convención, cuando corresponda su razón, y ese enlace.
 - Una convención que utiliza material de referencia indica de dónde lo obtiene. Enlaza su copia en `fuentes/` si un programa de Canone toma valores de él, y su URL pública si no.
 
@@ -119,9 +123,9 @@ La página escribe cada convención que rige, adoptada o propia, salvo lo que de
 
 Las convenciones propias se establecen en tres casos:
 
-1. **Elecciones:** se selecciona una opción cuando una fuente permite varias. Se escribe solo la opción elegida, con el origen de la regla.
-2. **Excepciones:** se hace algo distinto de lo que establece una fuente, o se endurece lo que establece. Endurecer significa convertir en obligatorio lo que la fuente recomienda como preferencia o condiciona a que sea posible. Se escribe lo que se hace; un endurecimiento se escribe solo en su forma endurecida, con el origen de la regla que endurece.
-3. **Decisiones no cubiertas:** se establecen convenciones sobre asuntos que ninguna fuente resuelve.
+1. **Elecciones:** se selecciona una opción o un valor que la fuente permite, como un plazo menor que su máximo. Se escribe solo la opción elegida, con el origen de la regla.
+2. **Excepciones:** se hace algo distinto de lo que establece una fuente, o se endurece lo que establece. Endurecer significa convertir en obligatorio lo que la fuente recomienda como preferencia, ofrece como opción o condiciona a que sea posible. Se escribe lo que se hace; un endurecimiento se escribe solo en su forma endurecida, con el origen de la regla que endurece.
+3. **Decisiones no cubiertas:** se establecen convenciones sobre las decisiones que la fuente de su asunto no resuelve, o sobre asuntos sin fuente.
 
 ### Versiones
 
@@ -154,7 +158,7 @@ Las secciones de una página siguen este orden. Se incluyen únicamente los bloq
 1. **Proyecto:** la sección `Proyecto`, con versión, sistema de construcción, estructura de directorios y plantillas, y después las dependencias.
 2. **Código:** formato, análisis estático, tipado, organización de paquetes y convenciones de nombres.
 3. **Arquitectura:** organización interna de la aplicación y uso de las estructuras o mecanismos propios de la tecnología.
-4. **Temas:** convenciones agrupadas por asunto, con los temas en orden alfabético.
+4. **Temas:** convenciones agrupadas por tema, con los temas en orden alfabético.
 5. **Pruebas:** la sección `Pruebas`, con herramientas, organización y convenciones de pruebas.
 6. **Entrega:** construcción, ejecución y preparación para el despliegue.
 7. **Cumplimiento:** herramientas que verifican o imponen las convenciones documentadas.
@@ -163,7 +167,7 @@ Las secciones de una página siguen este orden. Se incluyen únicamente los bloq
 
 - En **Código** y **Arquitectura**, las secciones se ordenan según sus dependencias: primero se describe lo necesario para comprender las secciones posteriores.
 - Los temas de **Temas** se presentan en orden alfabético.
-- Cuando un mismo asunto aparece en distintas páginas, conserva el mismo título y ubicación relativa siempre que corresponda al mismo bloque.
+- Cuando un mismo tema aparece en distintas páginas, conserva el mismo título y ubicación relativa siempre que corresponda al mismo bloque.
 
 ## Cumplimiento
 

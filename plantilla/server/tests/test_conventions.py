@@ -85,7 +85,9 @@ def is_allowed_primary_key(table: sa.Table) -> bool:
         return partition <= names and len(own) == 1 and is_allowed_key(own[0])
     if len(columns) == 1:
         return is_allowed_key(columns[0])
-    return all(column.foreign_keys or isinstance(column.type, sa.Text) for column in columns)
+    return bool(columns) and all(
+        column.foreign_keys or isinstance(column.type, sa.Text) for column in columns
+    )
 
 
 def test_primary_key_is_allowed() -> None:
@@ -144,6 +146,7 @@ def key_table(name: str, *items: sa.schema.SchemaItem, **options: Any) -> sa.Tab
             True,
         ),
         (key_table("country", sa.Column("code", sa.Text, primary_key=True)), False),
+        (key_table("country", sa.Column("code", sa.Text)), False),
         (
             key_table(
                 "role_permission",

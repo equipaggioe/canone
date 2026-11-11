@@ -416,6 +416,7 @@ PYPROJECT = {
         "valkey": ">=6.2.0",
     },
     "flet.md": {"flet": ">=1.1.0"},
+    "postgres.md": {"geoalchemy2": ">=0.21.0"},
     "python.md": {
         "deptry": ">=0.25.1",
         "httpx": ">=0.28.1",

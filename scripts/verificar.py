@@ -487,7 +487,7 @@ ENTRADAS = {
 }
 # plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de python.md.
 FLET = {"pydantic": "==2.13.4"}
-# plataformas/despliegue.md, «Valkey»: la de Debian 13, también en el CI.
+# plataformas/despliegue.md, «Valkey»: la versión de la página, también en el CI.
 VALKEY = "8.1"
 POSTGIS = "17-3.5"
 METASPACE = "-XX:MaxMetaspaceSize=2g"

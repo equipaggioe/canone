@@ -107,7 +107,7 @@ for pair in example.com:landing app.example.com:web panel.example.com:panel; do
     headers "$work/clean"
     grep -qix 'content-type: text/html; charset=utf-8' "$work/clean"
     if [ "${pair#*:}" = landing ]; then
-        if grep -qi '^x-robots-tag:' "$work/clean"; then exit 1; fi
+        grep -qix 'x-robots-tag: index, follow' "$work/clean"
     else
         grep -qix 'x-robots-tag: noindex, nofollow' "$work/clean"
     fi

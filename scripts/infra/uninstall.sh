@@ -68,7 +68,7 @@ test "$(sql "SELECT 1 FROM pg_database WHERE datname = 'demo'")" = 1
 step "app takes every unit, site, credential, account and folder of the app"
 uninstall app
 test -z "$(find /etc/systemd/system /etc/caddy/sites /etc/credstore.encrypted -name 'demo*')"
-for path in /etc/demo /srv/demo /var/lib/demo /usr/local/lib/demo /etc/sysusers.d/demo.conf \
+for path in /etc/demo /srv/demo /var/lib/demo /usr/local/lib/demo /usr/local/sbin/demo-deploy /usr/local/sbin/demo-database /etc/sysusers.d/demo.conf \
     /etc/valkey/valkey-demo.conf /etc/ssh/sshd_config.d/demo-receiver.conf; do
     test ! -e "$path"
 done

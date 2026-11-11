@@ -1,6 +1,7 @@
+#!/usr/bin/python3
 r"""Install a version of the server and the web on this machine.
 
-    sudo python3 /usr/local/lib/PRODUCTO/deploy.py v1.4.0
+    sudo PRODUCTO-deploy v1.4.0
 
 A version that releases/ keeps goes live again without installing it,
 if its migrations are those of the active one.

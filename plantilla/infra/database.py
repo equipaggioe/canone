@@ -1,8 +1,9 @@
+#!/usr/bin/python3
 r"""Empty, migrate or seed the database of the app on this machine.
 
-    sudo python3 /usr/local/lib/PRODUCTO/database.py empty
-    sudo python3 /usr/local/lib/PRODUCTO/database.py migrate
-    sudo python3 /usr/local/lib/PRODUCTO/database.py seed [--mock]
+    sudo PRODUCTO-database empty
+    sudo PRODUCTO-database migrate
+    sudo PRODUCTO-database seed [--mock]
 
 empty stops the server, deletes the database and the files of the
 users, and creates the database again as install.py does: empty and

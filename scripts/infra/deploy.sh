@@ -44,7 +44,7 @@ setup() {
     python3 "$canone/plantilla/infra/install.py" demo demo.example 64mb --admin operador \
         --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)" \
         --owner owner --desktop linux --desktop windows --desktop macos "$@"
-    sed 's#https://api.github.com#http://127.0.0.1:9000#' /usr/local/lib/demo/deploy.py \
+    sed 's#https://api.github.com#http://127.0.0.1:9000#' /usr/local/sbin/demo-deploy \
         > "$work/deploy.py"
 }
 setup
@@ -353,7 +353,7 @@ test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.2.0"
 
 sleep 10
 step "Without the mark of development, database.py empty changes nothing"
-database() { python3 /usr/local/lib/demo/database.py "$@"; }
+database() { python3 /usr/local/sbin/demo-database "$@"; }
 fails database empty
 grep -qF '/etc/demo/development does not exist' "$work/error"
 healthy

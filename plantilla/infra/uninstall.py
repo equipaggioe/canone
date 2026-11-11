@@ -43,6 +43,8 @@ FILES = (
     "/etc/systemd/journal-upload.conf.d/00-PRODUCTO.conf",
     f"{UNITS}/systemd-journal-upload.service.d/PRODUCTO.conf",
     "/usr/local/lib/PRODUCTO",
+    "/usr/local/sbin/PRODUCTO-deploy",
+    "/usr/local/sbin/PRODUCTO-database",
     "/srv/PRODUCTO",
     "/var/lib/PRODUCTO",
     "/var/lib/PRODUCTO-dump",

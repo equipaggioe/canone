@@ -3,7 +3,8 @@
 # go to allowed_signers for the namespace deploy.py checks and are only added afterwards; it fails
 # without systemd-timesyncd enabled or without ca-certificates; apt reads the automatic reboot at 04:00; credentials.py
 # encrypts each field where its unit loads it; Valkey opens only its socket, for the group of the
-# app, with its maxmemory; and root has no password, and an account of the app does not administer.
+# app, with its maxmemory; root has no password, and an account of the app does not administer; and
+# a name of the app that would make an account systemd does not take fails.
 # install.py runs as root, with an account that already administers, so it asks no password.
 #
 #     sh install.sh <canone>
@@ -31,6 +32,13 @@ run() {
 }
 # An account that already administers: install.py only adds its keys, and asks no password.
 id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
+
+step "The name of the app makes accounts systemd takes"
+for app in abcdefghijklmnopqrstuvw 1demo 'de mo'; do
+    fails python3 "$install" "$app" demo.example 64mb --admin operador --key "$(key a)" \
+        --key "$(key b)" --owner owner
+    grep -qF "is not a name for the accounts of the app" "$work/error"
+done
 
 step "A new machine needs two --signer, and each must be a key"
 fails run --signer "$(key s1)"

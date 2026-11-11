@@ -347,13 +347,6 @@ def entradas():
             m = re.match(r'^(\w+)=', l)
             if m and m.group(1) in doc: usadas.add(m.group(1))
     res['systemd/systemd.exec.xml'] = sorted(usadas)
-    doc = set(re.findall(r'^\.It Cm (\w+)', open(F + 'openssh/sshd_config.5', encoding='utf8').read(), flags=re.M))
-    usadas = set()
-    for f in ['sshd.conf', 'sshd-receiver.conf']:
-        for l in open(PLANTILLA / 'infra' / f, encoding='utf8'):
-            m = re.match(r'^\s*(\w+)\s', l)
-            if m and m.group(1) in doc: usadas.add(m.group(1))
-    res['openssh/sshd_config.5'] = sorted(usadas)
     claves, grupos, flet = set(), set(), set()
     def recorrer(d, prefijo):
         for k, v in d.items():
@@ -370,7 +363,6 @@ def entradas():
     res['flet/publish.md'] = sorted(flet)
     spec = open(PLANTILLA / 'qt' / 'pysidedeploy.spec', encoding='utf8').read()
     res['pyside6/deployment-pyside6-deploy.rst'] = re.findall(r'^(\w+)\s*=', spec, flags=re.M)
-    res['wireguard/wg.8'] = ['PrivateKey', 'PublicKey', 'Endpoint', 'AllowedIPs']
     return res
 
 

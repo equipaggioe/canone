@@ -135,5 +135,3 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [qt/qnetworkaccessmanager.qdoc](qt/qnetworkaccessmanager.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/network/access/qnetworkaccessmanager.cpp) | Comentarios `/*! */` del código fuente |
 | [qt/accessible.qdoc](qt/accessible.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtdoc/v6.12.0/doc/src/frameworks-technologies/accessible.qdoc) |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | [origen](https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.exec.xml) | systemd 257, la versión de Debian 13 |
-| [wireguard/wg.8](wireguard/wg.8) | [origen](https://git.zx2c4.com/wireguard-tools/plain/src/man/wg.8?h=v1.0.20210914) | wireguard-tools 1.0.20210914, la versión de Debian 13 |
-| [openssh/sshd_config.5](openssh/sshd_config.5) | [origen](https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/sshd_config.5) | OpenSSH 10.0, la versión de Debian 13 |

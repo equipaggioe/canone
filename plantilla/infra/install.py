@@ -22,6 +22,7 @@ import ipaddress
 import json
 import os
 import pwd
+import re
 import secrets
 import shutil
 import subprocess
@@ -43,8 +44,8 @@ TARGETS = {
     "sshd.conf": "/etc/ssh/sshd_config.d/00-PRODUCTO.conf",
     "sshd-receiver.conf": "/etc/ssh/sshd_config.d/PRODUCTO-receiver.conf",
     "backup-request": "/usr/local/lib/PRODUCTO/backup-request",
-    "deploy.py": "/usr/local/lib/PRODUCTO/deploy.py",
-    "database.py": "/usr/local/lib/PRODUCTO/database.py",
+    "deploy.py": "/usr/local/sbin/PRODUCTO-deploy",
+    "database.py": "/usr/local/sbin/PRODUCTO-database",
     "Caddyfile": "/etc/caddy/Caddyfile",
     "nftables.conf": "/etc/nftables.conf",
     "20auto-upgrades": "/etc/apt/apt.conf.d/20auto-upgrades",
@@ -54,7 +55,7 @@ TARGETS = {
 }
 # The files that run, the file that holds the keys of the receivers, and the one that holds the
 # keys that sign the releases.
-EXECUTABLES = ("backup-request",)
+EXECUTABLES = ("backup-request", "deploy.py", "database.py")
 RECEIVERS = "/etc/PRODUCTO/receivers"
 SIGNERS = "/etc/PRODUCTO/allowed_signers"
 # The mark of a machine in development, which database.py asks for.
@@ -184,6 +185,16 @@ def parse() -> argparse.Namespace:
         "--development", action="store_true", help="database.py may empty the database"
     )
     return parser.parse_args()
+
+
+def check_app(app: str) -> None:
+    """Fail on a name that would make an account systemd does not take, like <app>-receiver."""
+    # systemd.exec, User=: at most 31 characters, and <app>-receiver adds 9.
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_-]{0,21}", app):
+        raise SystemExit(
+            f"{app} is not a name for the accounts of the app: up to 22 ASCII letters, digits,"
+            " _ and -, starting with a letter or _."
+        )
 
 
 def find_admin(arguments: argparse.Namespace) -> str:
@@ -355,6 +366,7 @@ def main() -> None:
     # Each service reads its files as its own account, whatever the umask of whoever deploys.
     os.umask(0o022)
     arguments = parse()
+    check_app(arguments.app)
     check_swap()
     # ADR-0092: without it, 20auto-upgrades turns on nothing and nothing says so.
     if shutil.which("unattended-upgrade") is None:

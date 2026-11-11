@@ -14,6 +14,8 @@ ProtectSystem=strict
 ProtectHome=yes
 PrivateTmp=yes
 PrivateDevices=yes
+# pg_dump reaches the database through its socket only.
+PrivateNetwork=yes
 PrivateUsers=yes
 ProtectKernelTunables=yes
 ProtectKernelModules=yes

@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.routing import APIRoute
 
-from app import errors, store, tracing
+from app import errors, ijson, store, tracing
 from app.database import engine
 from app.dependencies import check_client_version
 from app.enums import EventLevel
@@ -46,5 +46,6 @@ app = FastAPI(
     telemetry={"auto_configure": False},
 )
 errors.install(app)
+ijson.install(app)
 tracing.install()
 app.include_router(api)

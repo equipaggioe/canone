@@ -164,6 +164,8 @@ Estándar: [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
 - Un mensaje es un objeto o un arreglo ([I-JSON §4.1](../fuentes/rfc/rfc7493.txt)).
 - Un dato binario va en una cadena en base64url, salvo un archivo, que se sube como fija [Archivos](#archivos) ([I-JSON §4.4](../fuentes/rfc/rfc7493.txt)).
 
+Plantilla: [ijson.py](../plantilla/server/src/app/ijson.py), del servidor de [fastapi.md](fastapi.md), rechaza el cuerpo que no es I-JSON.
+
 ## Paginación
 
 Estándar: [*Pagination*](../fuentes/google-aip/aip-0158.md), la AIP-158 de Google.
@@ -270,5 +272,6 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | problem+json en una ruta que no existe y en un error de validación | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
 | La URI de cada tipo propio responde HTML con su `title` | `test_problem_types_are_documented`, del servidor |
 | El `traceId` en el problem+json de una ruta que no existe | `test_unknown_route_is_a_problem`, del servidor |
+| El servidor responde 422 a un cuerpo JSON con un nombre repetido, un número fuera de un `double`, un sustituto suelto, un no-carácter, otra codificación que UTF-8 o un nivel superior que no es objeto ni arreglo | `test_body_that_is_not_ijson`, `test_body_that_is_ijson_or_not_json` y `test_repeated_member_is_a_validation_error`, del servidor |
 | Una versión menor que la mínima, o mal formada, recibe un 400 de tipo `client-outdated` | `test_outdated_client_is_rejected`, del servidor |
 | Un `pageToken` ilegible o con otros parámetros que los de su petición responde 422 con `parameter` en `pageToken` | `test_invalid_page_token_points_to_the_parameter`, del servidor |

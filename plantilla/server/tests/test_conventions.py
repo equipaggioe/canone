@@ -24,7 +24,7 @@ from sqlalchemy.dialects import postgresql
 import app.models
 import app.routers
 import app.schemas
-from app import errors, openapi, tracing
+from app import errors, ijson, openapi, tracing
 from app.config import Settings, settings
 from app.database import engine
 from app.dependencies import SessionDep
@@ -603,6 +603,52 @@ async def test_validation_error_points_to_the_field() -> None:
         "/itemName",
         "limit",
     }
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        b'{"a": 1, "a": 2}',
+        b'{"a": {"b": 1, "b": 2}}',
+        b'{"a": 9007199254740992}',
+        b'{"a": 1E400}',
+        b'{"a": 3.141592653589793238462643383279}',
+        b'{"a": NaN}',
+        b'{"a": "\\uDEAD"}',
+        b'{"\\uFFFF": 1}',
+        b'"text"',
+        '{"a": 1}'.encode("utf-16"),
+    ],
+)
+def test_body_that_is_not_ijson(body: bytes) -> None:
+    """Each way of breaking I-JSON is caught."""
+    assert ijson.problem(body) is not None
+
+
+@pytest.mark.parametrize(
+    "body",
+    [b'{"a": 9007199254740991, "b": 0.1, "c": 1.50, "d": "\\uD800\\uDEAD"}', b"[]", b"{"],
+)
+def test_body_that_is_ijson_or_not_json(body: bytes) -> None:
+    """I-JSON passes, and a body that is not JSON is left to FastAPI."""
+    assert ijson.problem(body) is None
+
+
+@pytest.mark.usefixtures("database")
+async def test_repeated_member_is_a_validation_error() -> None:
+    """The app answers a member name twice with a 422 on the body."""
+    transport = ASGITransport(app=main_app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post(
+            "/api/health",
+            content=b'{"itemName": "a", "itemName": "b"}',
+            headers={"content-type": "application/json"},
+        )
+    assert response.status_code == 422
+    assert response.headers["content-type"] == errors.PROBLEM_JSON
+    assert response.json()["errors"] == [
+        {"detail": "Duplicate member name: itemName", "pointer": ""}
+    ]
 
 
 @pytest.mark.parametrize(

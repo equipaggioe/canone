@@ -27,3 +27,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .gradle/
+
+*.g.dart
+*.freezed.dart

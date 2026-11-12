@@ -464,12 +464,27 @@ NPM = {
 }
 PNPM = "12.18.0"
 PUB = {
+    "build_runner": "2.17.1",
     "flutter_appauth": "13.0.0",
     "flutter_lints": "6.0.0",
+    "flutter_riverpod": "3.5.0",
     "flutter_secure_storage": "11.2.0",
-    "provider": "6.1.5+1",
+    "flutter_stripe": "14.2.0",
+    "freezed": "4.0.3",
+    "freezed_annotation": "3.1.0",
+    "go_router": "18.1.4",
+    "http": "1.6.0",
+    "json_annotation": "4.12.0",
+    "json_serializable": "6.15.2",
+    "riverpod": "3.5.0",
+    "riverpod_annotation": "4.0.8",
+    "riverpod_generator": "4.0.10",
     "shared_preferences": "2.5.6",
+    "sms_autofill": "2.6.1",
 }
+# plataformas/flutter.md, «Proyecto»: las mutations de Riverpod son experimentales y pueden cambiar
+# sin una versión mayor, así que sus paquetes van sin ^.
+EXACTOS = {"flutter_riverpod", "riverpod", "riverpod_annotation", "riverpod_generator"}
 ACCIONES = {
     "actions/checkout": "v7",
     "actions/setup-java": "v6",
@@ -565,7 +580,7 @@ def versiones_pubspec(repo: Path) -> list[str]:
         texto = (repo / relativo).read_text(encoding="utf-8")
         for paquete, version in PUB.items():
             for declarada in re.findall(rf"^\s+{paquete}:[ \t]*[\"']?([^\"'\s#]+)", texto, re.M):
-                if declarada.lstrip("^") != version:
+                if (declarada if paquete in EXACTOS else declarada.lstrip("^")) != version:
                     fallas.append(
                         f"plataformas/flutter.md: {relativo.as_posix()} declara {paquete} {declarada}, no {version}"
                     )
@@ -622,9 +637,14 @@ def tiene_numero(texto: str, numero: str) -> bool:
 SIN_ETIQUETAS = {".rst", ".txt"}
 
 
+# Lo que va entre acentos graves es código, no una etiqueta: el < de `Future<T>` no abre nada.
+CODIGO = re.compile(r"(`[^`\n]*`)")
+
+
 def tiene_titulo(texto: str, titulo: str, etiquetas: bool) -> bool:
     if etiquetas:
-        texto = ETIQUETA.sub(" ", texto)
+        partes = CODIGO.split(texto)
+        texto = "".join(p if p.startswith("`") else ETIQUETA.sub(" ", p) for p in partes)
     plano = " ".join(texto.split()).casefold()
     return " ".join(titulo.split()).casefold() in plano
 

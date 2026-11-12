@@ -154,7 +154,8 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 - `alias_generator=to_camel` y `serialize_by_alias=True` en el esquema base.
 - `validate_by_name=True` en el esquema base: el código y las filas usan los nombres de Python, en snake_case. Sin él, `from_attributes` busca en una fila el alias, `createdAt`, y no encuentra `created_at`.
-- `extra="forbid"` y `validate_by_name=False` en los esquemas de entrada: el cliente escribe solo en camelCase, y un campo en snake_case responde 422 en vez de aceptarse con dos nombres.
+- `extra="forbid"` en el esquema base: el OpenAPI declara `additionalProperties: false` en cada esquema, también en los de respuesta, y con eso el cliente generado falla ante un campo que no conoce.
+- `validate_by_name=False` en los esquemas de entrada: el cliente escribe solo en camelCase, y un campo en snake_case responde 422 en vez de aceptarse con dos nombres.
 - Los parámetros de query se declaran en un esquema de entrada. Un parámetro desconocido responde 422 en vez de ignorarse.
 
 ## Inyección de dependencias

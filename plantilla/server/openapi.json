@@ -281,6 +281,7 @@
             "title": "Disktotalbytes"
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "lastEventAt",
@@ -392,6 +393,7 @@
             "title": "Details"
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "id",
@@ -424,6 +426,7 @@
             "title": "Nextpagetoken"
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "items",
@@ -432,6 +435,7 @@
         "title": "Page[LoggedEvent]"
       },
       "FieldError": {
+        "additionalProperties": false,
         "description": "One invalid field or parameter.",
         "properties": {
           "detail": {
@@ -470,6 +474,7 @@
         "type": "object"
       },
       "Problem": {
+        "additionalProperties": false,
         "description": "An RFC 9457 problem details object.",
         "properties": {
           "type": {
@@ -511,6 +516,7 @@
         "type": "object"
       },
       "ValidationProblem": {
+        "additionalProperties": false,
         "description": "A problem of type validation, with one entry per field.",
         "properties": {
           "type": {

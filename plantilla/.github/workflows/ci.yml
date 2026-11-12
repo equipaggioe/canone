@@ -183,10 +183,27 @@ jobs:
           channel: stable
           flutter-version: 3.47.9
       - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
+      # plataformas/flutter.md: generated code is not committed, and riverpod_generator ignores page_width.
       - run: dart format --output=none --set-exit-if-changed lib test
-      - run: flutter analyze --fatal-infos
+      - run: dart run build_runner build --delete-conflicting-outputs
+      # plataformas/flutter.md: flutter analyze does not run analyzer plugins such as riverpod_lint.
+      - run: dart analyze --fatal-infos
       - run: flutter test
+
+  ios:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: PIEZA
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter build ios --no-codesign
 
   android:
     runs-on: ubuntu-latest

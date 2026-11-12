@@ -38,10 +38,11 @@ class Schema(BaseModel):
         serialize_by_alias=True,
         validate_by_name=True,
         from_attributes=True,
+        extra="forbid",
     )
 
 
 class InputSchema(Schema):
     """A request body or a set of query parameters, read by alias."""
 
-    model_config = ConfigDict(extra="forbid", from_attributes=False, validate_by_name=False)
+    model_config = ConfigDict(from_attributes=False, validate_by_name=False)

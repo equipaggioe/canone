@@ -331,6 +331,7 @@ Estándar: [RFC 8030](../fuentes/rfc/rfc8030.txt).
 Contrato: [transversal.md](transversal.md#push).
 
 - El servidor envía a FCM con `messaging.send_each_async` del Admin SDK, con el FID en `fid`.
+- Un FID al que FCM responde `UNREGISTERED` se borra: FCM ya no le entrega nada. [FCM](https://firebase.google.com/docs/cloud-messaging/manage-tokens)
 - El servidor envía Web Push con `webpush_async` de pywebpush y una sola `aiohttp.ClientSession` para toda la app: sin ella, cada envío abre una sesión nueva.
 - El endpoint de una suscripción web lo elige el cliente, y el servidor le hace un `POST`. Por eso la suscripción se rechaza con 422 si el host de su endpoint es una dirección IP, y la `ClientSession` de Web Push resuelve cada nombre con un resolver que descarta las direcciones que `ipaddress` no marca como globales y se conecta a la que resolvió: un endpoint no lleva al servidor a su propia red, a la máquina ni a los metadatos del proveedor. aiohttp no pasa por el resolver una dirección IP escrita en la URL. [aiohttp 3.14.5](https://raw.githubusercontent.com/aio-libs/aiohttp/v3.14.5/aiohttp/connector.py)
 - Una suscripción web se rechaza con 422 si su endpoint no es una URL `https` ([RFC 8030 §8](../fuentes/rfc/rfc8030.txt)).

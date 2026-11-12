@@ -143,3 +143,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0135](0135-authorize-py-deja-entrar-a-root-con-una-llave.md) | `authorize.py` deja entrar a `root` con una llave antes de `install.py` | Con `server/` | Aceptada |
 | [0136](0136-el-repositorio-declara-sus-permisos-del-navegador-en-permissions.md) | El repositorio declara las funciones de `Permissions-Policy` que usa en `permissions` | Con `server/` | Aceptada |
 | [0137](0137-la-camara-de-capturas-va-en-scripts-screenshots.md) | La cámara de capturas va en `scripts/screenshots/`, y lo que genera no se versiona | Todos | Aceptada |
+| [0138](0138-un-fid-que-fcm-da-por-ausente-se-borra.md) | Un FID al que FCM responde `UNREGISTERED` se borra | Con `server/` | Aceptada |

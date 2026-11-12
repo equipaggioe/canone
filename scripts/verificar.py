@@ -754,6 +754,18 @@ def funciones_permitidas() -> set[str]:
     raise SystemExit("plantilla/infra/install.py no declara FEATURES")
 
 
+# repositorio.md, «Carpetas de primer nivel»: lo que genera la cámara se vuelve a sacar con ella.
+IMAGENES = {".png", ".webp", ".jpg", ".jpeg"}
+
+
+def capturas_versionadas(repo: Path) -> list[str]:
+    return [
+        f"ADR-0137: {ruta} es una captura generada y no se versiona"
+        for ruta in sorted(listar(repo))
+        if ruta.startswith("scripts/screenshots/") and Path(ruta).suffix.lower() in IMAGENES
+    ]
+
+
 def permisos(repo: Path) -> list[str]:
     archivo = repo / "permissions"
     if not archivo.exists():
@@ -795,6 +807,7 @@ def revisar(repo: Path) -> list[str]:
         fallas.append("repositorio.md: README.md no declara si está en desarrollo o en producción")
 
     fallas.extend(permisos(repo))
+    fallas.extend(capturas_versionadas(repo))
 
     ci = repo / ".github/workflows/ci.yml"
     if not ci.exists():

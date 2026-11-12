@@ -33,6 +33,8 @@ Lo que necesita canal nativo va en un plugin local bajo `plugins/`.
 
 Lo de una sola pieza va dentro de ella, no en `scripts/`.
 
+La cámara que saca las capturas de las piezas va en `scripts/screenshots/`, con su escenario de datos de ejemplo: recorre varias piezas. Lo que genera no se versiona, porque se vuelve a sacar con ella, salvo lo que publica una pieza, que va dentro de esa pieza.
+
 Cómo queda el servidor y cómo llega una versión a él está en [plataformas/despliegue.md](plataformas/despliegue.md).
 
 ## Archivos del raíz

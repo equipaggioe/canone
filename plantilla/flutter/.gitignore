@@ -30,3 +30,4 @@ app.*.map.json
 
 *.g.dart
 *.freezed.dart
+/lib/data/services/api/

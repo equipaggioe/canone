@@ -481,6 +481,7 @@ PUB = {
     "riverpod_generator": "4.0.10",
     "shared_preferences": "2.5.6",
     "sms_autofill": "2.6.1",
+    "swagger_parser": "2.1.1",
 }
 # plataformas/flutter.md, «Proyecto»: las mutations de Riverpod son experimentales y pueden cambiar
 # sin una versión mayor, así que sus paquetes van sin ^.

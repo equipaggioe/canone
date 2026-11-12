@@ -185,11 +185,13 @@ jobs:
       - run: flutter pub get
       # plataformas/flutter.md: generated code is not committed, and riverpod_generator ignores page_width.
       - run: dart format --output=none --set-exit-if-changed lib test
+      - run: dart run swagger_parser
       - run: dart run build_runner build --delete-conflicting-outputs
       # plataformas/flutter.md: flutter analyze does not run analyzer plugins such as riverpod_lint.
       - run: dart analyze --fatal-infos
       - run: flutter test
 
+  # Not run yet: check it the first time a repository runs it on GitHub Actions.
   ios:
     runs-on: macos-latest
     defaults:
@@ -202,6 +204,7 @@ jobs:
           channel: stable
           flutter-version: 3.47.9
       - run: flutter pub get
+      - run: dart run swagger_parser
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter build ios --no-codesign
 

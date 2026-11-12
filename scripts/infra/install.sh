@@ -4,7 +4,8 @@
 # without systemd-timesyncd enabled or without ca-certificates; apt reads the automatic reboot at 04:00; credentials.py
 # encrypts each field where its unit loads it; Valkey opens only its socket, for the group of the
 # app, with its maxmemory; root has no password, and an account of the app does not administer; and
-# a name of the app that would make an account systemd does not take fails.
+# a name of the app that would make an account systemd does not take fails; the keys of the
+# account live in a file of root, and a weak key fails.
 # install.py runs as root, with an account that already administers, so it asks no password.
 #
 #     sh install.sh <canone>
@@ -25,6 +26,7 @@ trap cleanup EXIT
 step() { printf '\n== %s\n' "$*"; }
 fails() { if "$@" 2> "$work/error"; then exit 1; fi; }
 for name in a b s1 s2 s3 x; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
+ssh-keygen -q -t rsa -b 1024 -N '' -f "$work/weak"
 key() { cat "$work/$1.pub"; }
 run() {
     python3 "$install" demo demo.example 64mb --admin operador --key "$(key a)" --key "$(key b)" \
@@ -118,6 +120,13 @@ test "$(setting maxmemory)" = 67108864
 test "$(setting maxmemory-policy)" = noeviction
 test "$(systemctl is-enabled valkey-server.service || true)" = disabled
 test "$(sysctl -n vm.overcommit_memory)" = 1
+
+step "The keys of the account live in a file of root, and a weak key fails"
+test "$(stat -c '%U %a' /etc/ssh/authorized_keys/operador)" = "root 644"
+grep -qF "$(key a)" /etc/ssh/authorized_keys/operador
+fails run --key "$(key weak)"
+grep -qF 'A 1024 bit RSA key is weak' "$work/error"
+fails grep -qF "$(key weak)" /etc/ssh/authorized_keys/operador
 
 step "root has no password, and the account that administers is not one of the app"
 test "$(passwd --status root | cut -d ' ' -f 2)" = L

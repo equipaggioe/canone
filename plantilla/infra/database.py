@@ -17,6 +17,8 @@ plataformas/despliegue.md, «PostgreSQL».
 """
 
 import argparse
+import importlib.machinery
+import importlib.util
 import shutil
 import subprocess
 import sys
@@ -110,9 +112,13 @@ def empty() -> None:
 def migrate() -> None:
     """Run the migrations and the seeders, and start the server."""
     seed(mock=False)
-    # install.py imports this file from the template, where deploy.py
-    # does not run until it writes the data of the app.
-    import deploy
+    # install.py imports this file from the template, where deploy.py does not run until it writes
+    # the data of the app. Installed, it lies next to this file as <app>-deploy, without the .py
+    # that import needs.
+    path = Path(__file__).with_name(f"{APP}-deploy")
+    loader = importlib.machinery.SourceFileLoader("deploy", str(path))
+    deploy = importlib.util.module_from_spec(importlib.util.spec_from_loader("deploy", loader))
+    loader.exec_module(deploy)
 
     try:
         deploy.restart()

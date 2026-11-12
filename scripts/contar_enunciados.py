@@ -205,6 +205,7 @@ UNIDADES = [
  ('owasp/WebSocket_Security.md', ['Infrastructure Configuration', 'WebSocket Protocol Configuration', 'Origin Header Validation', 'Additional CSWSH Protections', 'Message-Level Authorization', 'Input Validation', 'Service Tunneling Risks', 'Denial-of-Service Protection', 'Framework-Specific Best Practices', 'Always Use WSS', 'Session Management'], ['Security Monitoring and Logging'], 'low'),
  ('rfc/rfc8656.txt', ['3.1', '7.2', '21.1.1', '21.1.6', '21.1.7', '21.2', '21.3', '21.4'], [], 'up'),
  ('nist/sp800-41r1.txt', ['4'], [], 'low'),
+ ('nist/ir7966.txt', ['3.4', '5.1'], [], 'low'),
  ('postgresql/backup.sgml', ['SQL Dump'], [], 'low'),
  ('valkey/admin.md', None, [], 'low'),
  ('valkey/security.md', None, [], 'low'),

@@ -3,13 +3,18 @@
 #
 #     ./backup.sh <app> <host> <folder>
 #
-# rest-server, ssh and curl are on the PATH. From canone: plataformas/despliegue.md.
+# rest-server 0.14.0, from its release on GitHub, ssh and curl are on the PATH. From canone:
+# plataformas/despliegue.md.
 set -eu
-# Debian names the binary of rest-server after its package, restic-rest-server.
-if ! server=$(command -v rest-server || command -v restic-rest-server); then
+version=0.14.0
+if ! server=$(command -v rest-server); then
     echo "rest-server is not installed" >&2
     exit 1
 fi
+case "$("$server" --version)" in
+    *" rest-server $version "*) ;;
+    *) echo "rest-server is not $version" >&2; exit 1 ;;
+esac
 # The server adds backups, but cannot delete or rewrite them.
 "$server" --path "$3" --listen 127.0.0.1:8001 --append-only --no-auth &
 rest=$!

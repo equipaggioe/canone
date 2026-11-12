@@ -57,6 +57,8 @@ TARGETS = {
 # keys that sign the releases.
 EXECUTABLES = ("backup-request", "deploy.py", "database.py")
 RECEIVERS = "/etc/PRODUCTO/receivers"
+# The keys of each account that logs in, which sshd.conf names.
+KEYS = Path("/etc/ssh/authorized_keys")
 SIGNERS = "/etc/PRODUCTO/allowed_signers"
 # The mark of a machine in development, which database.py asks for.
 DEVELOPMENT = "/etc/PRODUCTO/development"
@@ -221,9 +223,16 @@ def find_admin(arguments: argparse.Namespace) -> str:
 
 
 def check_keys(keys: list[str]) -> None:
-    """Fail on a key that ssh-keygen cannot read."""
+    """Fail on a key that ssh-keygen cannot read, or on a weak one."""
     for key in keys:
-        subprocess.run(["ssh-keygen", "-l", "-f", "-"], input=key, text=True, check=True)
+        found = subprocess.run(
+            ["ssh-keygen", "-l", "-f", "-"], input=key, capture_output=True, text=True, check=True
+        )
+        # NIST IR 7966, 5.1.2: Ed25519, ECDSA or RSA of 2048 bits or more, as in NIST SP 800-131A.
+        fields = found.stdout.split()
+        bits, kind = fields[0], fields[-1].strip("()")
+        if not (kind.startswith(("ED25519", "ECDSA")) or (kind == "RSA" and int(bits) >= 2048)):
+            raise SystemExit(f"A {bits} bit {kind} key is weak: use Ed25519, ECDSA or RSA of 2048.")
 
 
 def create_admin(name: str, keys: list[str]) -> None:
@@ -242,18 +251,15 @@ def create_admin(name: str, keys: list[str]) -> None:
             check=True,
         )
         subprocess.run(["chpasswd"], input=f"{name}:{password}", text=True, check=True)
-    account = pwd.getpwnam(name)
-    folder = Path(account.pw_dir) / ".ssh"
-    target = folder / "authorized_keys"
-    folder.mkdir(mode=0o700, exist_ok=True)
+    # NIST IR 7966, 5.1.2: a file of root, which the account cannot change to add a key.
+    target = KEYS / name
+    KEYS.mkdir(mode=0o755, exist_ok=True)
     present = target.read_text(encoding="utf-8").splitlines() if target.is_file() else []
     lines = present + [key for key in keys if key not in present]
     if not any(line.strip() for line in lines):
-        raise SystemExit(f"{target} has no key, and ssh will only take keys.")
+        raise SystemExit(f"{target} has no key, and ssh will only take keys: pass --key.")
     target.write_text("".join(f"{line}\n" for line in lines), encoding="utf-8")
-    target.chmod(0o600)
-    for path in (folder, target):
-        os.chown(path, account.pw_uid, account.pw_gid)
+    target.chmod(0o644)
 
 
 def add_signers(app: str, keys: list[str]) -> None:

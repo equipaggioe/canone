@@ -3,7 +3,8 @@ ADR-0078: the receiver asks the server of a product for its backup, and keeps it
 
     .\backup.ps1 -Product <app> -Server <host> -Repos <folder>
 
-rest-server and ssh are on the PATH. From canone: plataformas/despliegue.md.
+rest-server 0.14.0, from its release on GitHub, and ssh are on the PATH. From canone:
+plataformas/despliegue.md.
 #>
 param(
     [Parameter(Mandatory)] [string] $Product,
@@ -11,6 +12,10 @@ param(
     [Parameter(Mandatory)] [string] $Repos
 )
 $ErrorActionPreference = "Stop"
+$version = "0.14.0"
+if ((& rest-server --version) -notmatch " rest-server $([regex]::Escape($version)) ") {
+    throw "rest-server is not $version"
+}
 # The server adds backups, but cannot delete or rewrite them.
 $rest = Start-Process rest-server -NoNewWindow -PassThru -ArgumentList @(
     "--path", "`"$Repos`"", "--listen", "127.0.0.1:8001", "--append-only", "--no-auth"

@@ -32,7 +32,7 @@ installed() { dpkg-query --show --showformat '${db:Status-Status}' "$1" 2>/dev/n
 # The way in that every level keeps.
 kept() {
     id operador > /dev/null
-    grep -qF "$(key a)" ~operador/.ssh/authorized_keys
+    grep -qF "$(key a)" /etc/ssh/authorized_keys/operador
     test -f /etc/ssh/sshd_config.d/00-demo.conf
     test "$(passwd --status root | cut -d ' ' -f 2)" = L
 }
@@ -43,10 +43,10 @@ install
 step "--dry-run prints what it would do, and does nothing"
 python3 "$infra/uninstall.py" demo app --dry-run > "$work/plan"
 grep -qxF 'DROP DATABASE demo WITH (FORCE);' "$work/plan"
-grep -qxF 'rm -r /srv/demo' "$work/plan"
+grep -qxF 'rm -r /etc/demo' "$work/plan"
 grep -qxF 'userdel demo' "$work/plan"
 test "$(sql "SELECT 1 FROM pg_database WHERE datname = 'demo'")" = 1
-test -d /srv/demo
+test -d /etc/demo
 id demo > /dev/null
 
 step "database drops the database, its roles, their credentials and its line of pg_hba"

@@ -4,7 +4,7 @@
 # and the files and the server cannot delete them, the key of the receiver opens no shell nor
 # another tunnel, a backup cut in the middle does not stop the next, a backup cut by its time limit
 # fails, and what restic restores goes back on the database install.py creates. The receiver logs
-# in as the account receptora, with the restic-rest-server of Debian 13, and the server is 192.0.2.2.
+# in as the account receptora, with the rest-server 0.14.0 of its release, and the server is 192.0.2.2.
 #
 #     sh backup.sh <canone>
 set -eu
@@ -87,7 +87,7 @@ test -n "$flags"
 # setpriv execs rest-server, so kill reaches it, and the repository stays the one of receptora.
 # shellcheck disable=SC2086
 ip netns exec receiver setpriv --reuid=receptora --regid=receptora --init-groups \
-    restic-rest-server $flags > /dev/null 2>&1 &
+    rest-server $flags > /dev/null 2>&1 &
 rest=$!
 pids="$pids $rest"
 until receptora curl -s -o /dev/null http://127.0.0.1:8001/; do sleep 0.2; done

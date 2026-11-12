@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import paraglide from '@inlang/paraglide-js/eslint';
 import prettier from 'eslint-config-prettier';
 import svelte from 'eslint-plugin-svelte';
 import { defineConfig, includeIgnoreFile } from 'eslint/config';
@@ -17,6 +18,10 @@ export default defineConfig(
 		languageOptions: { globals: { ...globals.browser, ...globals.node } },
 		// typescript-eslint asks to turn it off for TypeScript: the compiler already checks names.
 		rules: { 'no-undef': 'off' }
+	},
+	{
+		plugins: { paraglide },
+		rules: { 'paraglide/no-dynamic-message-access': 'error' }
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts'],

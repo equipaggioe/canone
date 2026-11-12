@@ -199,6 +199,7 @@ Estándares: la [*Push API*](../fuentes/w3c/push-api.html) de W3C, [RFC 8030](..
 - Una llamada entrante llega por un mensaje de FCM solo de datos y de prioridad alta.
 - Un push vence cuando caduca lo que avisa; el de una llamada entrante, cuando deja de sonar.
 - El FID y la suscripción web pertenecen a la sesión: se borran cuando la sesión se cierra o vence.
+- Registrar una suscripción web reemplaza la que tenía la sesión, y registrar la misma otra vez no cambia nada: la web la vuelve a mandar al abrir y cuando el navegador la renueva, y no sabe cuál tenía antes.
 - La web recibe push con la Push API, sin el SDK de FCM: la CSP queda en `'self'`.
 - Un Web Push es un mensaje declarativo: `web_push` vale 8030, y `notification` lleva `title` y, en `navigate`, la ruta que abre ([Push API, *Declarative push message*](../fuentes/w3c/push-api.html)).
 - La web le manda al servidor su suscripción como la serializa `toJSON()`: `endpoint`, `expirationTime` y, en `keys`, `p256dh` y `auth` en base64url ([Push API, *PushSubscription interface*](../fuentes/w3c/push-api.html) y [*PushEncryptionKeyName enumeration*](../fuentes/w3c/push-api.html)).

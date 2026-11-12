@@ -49,7 +49,6 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [dtcg/format.html](dtcg/format.html) | [origen](https://www.designtokens.org/tr/2025.10/format/) |  |
 | [dtcg/color.html](dtcg/color.html) | [origen](https://www.designtokens.org/tr/2025.10/color/) |  |
 | [dtcg/resolver.html](dtcg/resolver.html) | [origen](https://www.designtokens.org/tr/2025.10/resolver/) |  |
-| [whatwg/notifications.bs](whatwg/notifications.bs) | [origen](https://raw.githubusercontent.com/whatwg/notifications/7dc3884173370fe9385d538de299e415a2b9613a/notifications.bs) |  |
 | [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | [origen](https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs) |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | [origen](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf) | Texto extraído del PDF |
 | [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | [origen](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf) | Texto extraído del PDF |
@@ -79,12 +78,10 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [sveltekit/accessibility.md](sveltekit/accessibility.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/40-best-practices/10-accessibility.md) |  |
 | [svelte/best-practices.md](svelte/best-practices.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/07-misc/01-best-practices.md) |  |
 | [svelte/props.md](svelte/props.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/05-$props.md) |  |
-| [svelte/state.md](svelte/state.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/02-$state.md) |  |
 | [unocss/presets-wind4.md](unocss/presets-wind4.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/presets/wind4.md) |  |
 | [unocss/integrations-vite.md](unocss/integrations-vite.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/integrations/vite.md) |  |
 | [paraglide/basics.md](paraglide/basics.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/a2a2f0ea6990fb6c57e0d25ac2c24e58e3d4ee4a/docs/basics.md) | Commit de la versión 3.2.1 |
 | [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/a2a2f0ea6990fb6c57e0d25ac2c24e58e3d4ee4a/docs/compiling-messages.md) | Commit de la versión 3.2.1 |
-| [paraglide/strategy.md](paraglide/strategy.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/a2a2f0ea6990fb6c57e0d25ac2c24e58e3d4ee4a/docs/strategy.md) | Commit de la versión 3.2.1 |
 | [dart/effective-dart-index.md](dart/effective-dart-index.md) | [origen](https://raw.githubusercontent.com/dart-lang/site-www/fd943b8add36fe5eaa55b594ea6a8501ae667407/src/content/effective-dart/index.md) |  |
 | [dart/effective-dart-style.md](dart/effective-dart-style.md) | [origen](https://raw.githubusercontent.com/dart-lang/site-www/d7879f023185039ecceecca635d6ce9d182b5d87/src/content/effective-dart/style.md) |  |
 | [dart/effective-dart-documentation.md](dart/effective-dart-documentation.md) | [origen](https://raw.githubusercontent.com/dart-lang/site-www/83ebb33f4768c0b568d2d07541328785aeee2199/src/content/effective-dart/documentation.md) |  |

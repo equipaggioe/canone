@@ -270,7 +270,6 @@ UNIDADES = [
  ('sveltekit/page-options.md', None, [], 'low'),
  ('svelte/best-practices.md', None, [], 'low'),
  ('sveltekit/state-management.md', None, [], 'low'),
- ('svelte/state.md', None, [], 'low'),
  ('svelte/props.md', None, [], 'low'),
  ('sveltekit/accessibility.md', None, [], 'low'),
  ('owasp/Content_Security_Policy.md', None, [], 'low'),
@@ -278,9 +277,7 @@ UNIDADES = [
  ('unocss/integrations-vite.md', ['`global`', 'Svelte', 'Sveltekit'], ['svelte-scoped'], 'low'),
  ('paraglide/basics.md', None, [], 'low'),
  ('paraglide/compiling-messages.md', None, [], 'low'),
- ('paraglide/strategy.md', None, [], 'low'),
  ('w3c/push-api.html', ['Permission', 'PushManager interface', 'PushMessageData interface', 'Events', 'Push subscription', 'Declarative push message', 'PushSubscriptionOptions Interface', 'PushSubscription interface', 'PushEncryptionKeyName enumeration'], [], 'up'),
- ('whatwg/notifications.bs', None, [], 'bs'),
  ('sveltekit/adapter-static.md', None, [], 'low'),
  # transversal
  ('w3c/wcag22.html', None, [], 'wcag'),

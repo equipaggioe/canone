@@ -68,6 +68,7 @@ El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herr
 | [plataformas/](plataformas/) | Metodología y catálogo de convenciones específicas de cada tecnología o ámbito, con las fuentes que adoptan. |
 | [fuentes/](fuentes/) | Copias de las fuentes normativas adoptadas por Canone y de las listas de las que sus programas toman valores. |
 | [adr/](adr/) | Registro de las decisiones de Canone, con su alcance y estado. |
+| [pendientes/](pendientes/) | Temas de Canone documentados para retomarlos después, con su estado verificado; cada uno se borra cuando se cierra. |
 | [plantilla/](plantilla/) | Plantillas que se copian a los repositorios o se instalan desde Canone: qué es cada tipo y cómo se mantiene. |
 | [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables y los orígenes de `plataformas/` contra `fuentes/`. |
 

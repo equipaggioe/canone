@@ -128,6 +128,12 @@ Estándar: los [fundamentos de pruebas](../fuentes/android/testing-fundamentals.
 
 - Las llamadas HTTP se prueban contra MockWebServer.
 
+## Entrega
+
+Contrato: [transversal.md](transversal.md#distribución).
+
+- La versión se compila con `./gradlew bundleRelease` y se firma con la llave de subida que nombra `key.properties`, que git ignora. [Sign your app](https://developer.android.com/studio/publish/app-signing)
+
 ## Cumplimiento
 
 | Convención | Herramienta |

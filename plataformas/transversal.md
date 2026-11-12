@@ -67,6 +67,11 @@ Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 
 - Un archivo se sube como `multipart/form-data`, en su propia petición, nunca en base64 dentro de un JSON: base64 agranda el archivo un tercio y el servidor lee el JSON entero en memoria.
 
+## Distribución
+
+- Una app de Android se publica en Google Play con Play App Signing: la llave que firma la app la genera y la guarda Play, y cada versión llega a Play firmada con la llave de subida. [Play App Signing](https://support.google.com/googleplay/android-developer/answer/9842756)
+- La descarga directa de una app de Android, si la tiene, es el APK universal que Play genera de esa misma versión: la tienda y la descarga llevan la misma firma, y una app instalada por una se actualiza por la otra. [Download generated APKs](https://developers.google.com/android-publisher/download-apks)
+
 ## Errores
 
 Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt) y [RFC 9110](../fuentes/rfc/rfc9110.txt).

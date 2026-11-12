@@ -20,7 +20,7 @@ set -eu
 canone=$1
 work=$(mktemp -d)
 api=$work/api
-desktop="desktop-linux.bin desktop-windows.exe desktop-macos.zip"
+desktop="desktop-linux.bin desktop-windows.exe desktop-macos.zip mobile-customer.apk"
 pids=
 cleanup() {
     status=$?
@@ -43,7 +43,7 @@ id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
 setup() {
     python3 "$canone/plantilla/infra/install.py" demo demo.example 64mb --admin operador \
         --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)" \
-        --owner owner --desktop linux --desktop windows --desktop macos "$@"
+        --owner owner --desktop linux --desktop windows --desktop macos --mobile mobile-customer "$@"
     sed 's#https://api.github.com#http://127.0.0.1:9000#' /usr/local/sbin/demo-deploy \
         > "$work/deploy.py"
 }
@@ -255,6 +255,7 @@ test "$(current)" = v1.0.0
 healthy
 test "$(runuser -u postgres -- psql -XAt --dbname=demo -c "SELECT to_regclass('event_log')")" = event_log
 test "$(cat /srv/demo/downloads/desktop-linux.bin)" = "desktop-linux.bin v1.0.0"
+test "$(cat /srv/demo/downloads/mobile-customer.apk)" = "mobile-customer.apk v1.0.0"
 
 step "The purge and the sweep run every day, and each ends well"
 for task in purge sweep; do

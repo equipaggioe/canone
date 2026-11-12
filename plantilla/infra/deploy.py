@@ -32,7 +32,8 @@ import urllib.request
 from pathlib import Path
 
 # install.py writes the owner of the repository on GitHub, whether it
-# is private, and the desktop installers that each release brings.
+# is private, and the installers of desktop/ and mobile/ that each
+# release brings.
 APP = "PRODUCTO"
 REPO = "DUENO/PRODUCTO"
 PRIVATE: bool = PRIVADO
@@ -149,7 +150,7 @@ def install(archive: Path, target: Path) -> None:
 
 
 def stage(assets: dict[str, str], sums: dict[str, str], target: Path, token: str | None) -> None:
-    """Download and check the desktop installers into the release."""
+    """Download and check the installers into the release."""
     folder = target / "downloads"
     folder.mkdir()
     for name in DESKTOP:

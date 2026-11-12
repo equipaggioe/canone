@@ -789,6 +789,11 @@ def revisar(repo: Path) -> list[str]:
 
     fallas.extend(comparar(repo / ".gitattributes", PLANTILLA / ".gitattributes", ".gitattributes"))
 
+    # despliegue.md, «Versiones»: the script that uploads each app of mobile/ to Play.
+    play = Path("scripts/play.py")
+    if (repo / play).exists():
+        fallas.extend(comparar(repo / play, PLANTILLA / play, play.as_posix()))
+
     for carpeta in sorted(p for p in repo.iterdir() if p.is_dir()):
         if carpeta.name.startswith("."):
             continue

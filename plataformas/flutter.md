@@ -333,7 +333,10 @@ Estándares: las [recomendaciones de arquitectura](../fuentes/flutter/architectu
 
 ## Entrega
 
+Contrato: [transversal.md](transversal.md#distribución).
+
 - CI construye la app de iOS en macOS con `flutter build ios --no-codesign`: sin una Mac, es la única revisión del proyecto de Xcode.
+- La versión de Android se compila con `flutter build appbundle --release` y se firma con la llave de subida que nombra `android/key.properties`, que git ignora. [Build and release an Android app](https://docs.flutter.dev/deployment/android)
 
 ## Cumplimiento
 

@@ -1,7 +1,7 @@
 r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn and ssh of an app.
 
     python3 install.py <app> <domain> <memory> --admin <name> --key <key> --key <key> \
-        --signer <key> --signer <key> --owner <owner> [--private] [--desktop linux|windows|macos] \
+        --signer <key> --signer <key> --owner <owner> [--private] [--desktop linux|windows|macos] [--mobile <piece>] \
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
         [--turn [--turn-ip <public ipv4>]] \
         [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>] \
@@ -82,6 +82,17 @@ INSTALLERS = {
     "windows": "desktop-windows.exe",
     "macos": "desktop-macos.zip",
 }
+
+
+# transversal.md, «Distribución»: the universal APK that Play builds, named after its piece.
+MOBILE = re.compile(r"mobile(-[a-z]+)?")
+
+
+def mobile_piece(name: str) -> str:
+    """Return name if it is a piece of mobile/, as repositorio.md names them."""
+    if not MOBILE.fullmatch(name):
+        raise argparse.ArgumentTypeError(f"{name} is not a piece of mobile/")
+    return name
 # Units and sites of a piece the app may not have.
 OPTIONAL = ("sweep", "web", "panel", "landing")
 # ADR-0070: the standardized features of the W3C registry, at commit 2939804, and
@@ -171,6 +182,13 @@ def parse() -> argparse.Namespace:
     )
     parser.add_argument(
         "--desktop", action="append", default=[], choices=INSTALLERS, help="a desktop installer"
+    )
+    parser.add_argument(
+        "--mobile",
+        action="append",
+        default=[],
+        type=mobile_piece,
+        help="an app of mobile/ also downloaded outside the store, like mobile-customer",
     )
     parser.add_argument("--turn", action="store_true", help="the app relays calls with coturn")
     parser.add_argument(
@@ -411,6 +429,7 @@ def main() -> None:
         "PRIVADO": repr(arguments.private),
         "INSTALABLES": repr(
             tuple(name for system, name in INSTALLERS.items() if system in arguments.desktop)
+            + tuple(f"{piece}.apk" for piece in arguments.mobile)
         ),
     }
     for name, target in TARGETS.items():

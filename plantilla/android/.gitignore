@@ -8,3 +8,7 @@ build/
 .externalNativeBuild/
 .cxx/
 .kotlin/
+
+# android.md, «Entrega»: the upload key never enters git.
+/key.properties
+*.jks

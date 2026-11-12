@@ -174,7 +174,10 @@ def validation_event(found: list[Mapping[str, Any]]) -> tuple[str, EventLevel]:
 
 
 async def validation_error(request: Request, exc: Exception) -> JSONResponse:
-    """Answer a validation error, one entry per field, and log it."""
+    """Answer a validation error, one entry per field, and log it.
+
+    A body that is not JSON is a 400, with no entries.
+    """
     assert isinstance(exc, RequestValidationError)
     found = list(exc.errors())
     fields = [field_error(error) for error in found]
@@ -188,6 +191,9 @@ async def validation_error(request: Request, exc: Exception) -> JSONResponse:
             details={"fields": sorted(field.pointer or field.parameter or "" for field in fields)},
         )
     )
+    # RFC 9110: a 422 says the syntax is right, so not JSON is a 400.
+    if {error["type"] for error in found} == {"json_invalid"}:
+        return respond(blank(HTTPStatus.BAD_REQUEST, "The body is not JSON"))
     return respond(
         ValidationProblem(
             type=VALIDATION.uri,

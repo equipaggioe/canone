@@ -69,7 +69,7 @@ Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 
 ## Errores
 
-Estándar: [RFC 9457](../fuentes/rfc/rfc9457.txt).
+Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt) y [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 - Todo error que genera el servidor es `application/problem+json`, salvo los del endpoint de token, que siguen [autenticacion.md](autenticacion.md#código-de-autorización).
 - Un error que su código de estado ya explica no tiene tipo propio: es de tipo `about:blank`.
@@ -91,6 +91,8 @@ Estándar: [RFC 9457](../fuentes/rfc/rfc9457.txt).
 - El cliente no descarga la URI de un tipo ([RFC 9457 §3.1.1](../fuentes/rfc/rfc9457.txt)).
 - El cliente no extrae datos de `detail`: lo que necesita leer va en una extensión ([RFC 9457 §3.1.4](../fuentes/rfc/rfc9457.txt)).
 - El cliente ignora un miembro cuyo valor no tiene el tipo que le corresponde, y una extensión que no conoce ([RFC 9457 §3.1](../fuentes/rfc/rfc9457.txt) y [§3.2](../fuentes/rfc/rfc9457.txt)).
+- Un cuerpo que no es JSON responde 400, y uno que es JSON pero no se puede procesar, 422 ([RFC 9110 §15.5.1](../fuentes/rfc/rfc9110.txt) y [§15.5.21](../fuentes/rfc/rfc9110.txt)).
+- El cliente trata un código de estado que no conoce como el x00 de su clase, y uno fuera de 100 a 599 como un 5xx ([RFC 9110 §15](../fuentes/rfc/rfc9110.txt)).
 
 ## Fechas
 
@@ -106,7 +108,7 @@ Estándares: [RFC 5646](../fuentes/rfc/rfc5646.txt) y [RFC 9110](../fuentes/rfc/
 - Todo producto se diseña multilingüe.
 - El idioma base es `es`.
 - La base guarda códigos, nunca textos traducidos, y cada cliente los traduce con su catálogo.
-- El cliente muestra el texto de su catálogo para el `type` de un error, en vez de `detail`.
+- El cliente muestra el texto de su catálogo para el `type` de un error, en vez de `detail`: el texto que ve el usuario sale del mismo catálogo que traduce el resto del cliente.
 - El cliente manda en `Accept-Language` el idioma que eligió el usuario ([RFC 9110 §12.5.4](../fuentes/rfc/rfc9110.txt)).
 - Un idioma se nombra con una etiqueta válida, en su forma canónica y con solo las subetiquetas que distinguen el texto ([RFC 5646 §2](../fuentes/rfc/rfc5646.txt), [§4.1](../fuentes/rfc/rfc5646.txt) y [§4.5](../fuentes/rfc/rfc5646.txt)).
 - Una etiqueta se escribe como en el registro: el idioma en minúsculas, el script con la inicial en mayúscula y la región en mayúsculas ([RFC 5646 §2.1.1](../fuentes/rfc/rfc5646.txt)).
@@ -272,6 +274,7 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | problem+json en una ruta que no existe y en un error de validación | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
 | La URI de cada tipo propio responde HTML con su `title` | `test_problem_types_are_documented`, del servidor |
 | El `traceId` en el problem+json de una ruta que no existe | `test_unknown_route_is_a_problem`, del servidor |
-| El servidor responde 422 a un cuerpo JSON con un nombre repetido, un número fuera de un `double`, un sustituto suelto, un no-carácter, otra codificación que UTF-8 o un nivel superior que no es objeto ni arreglo | `test_body_that_is_not_ijson`, `test_body_that_is_ijson_or_not_json` y `test_repeated_member_is_a_validation_error`, del servidor |
+| El servidor rechaza un cuerpo JSON con un nombre repetido, un número fuera de un `double`, un sustituto suelto, un no-carácter, otra codificación que UTF-8 o un nivel superior que no es objeto ni arreglo | `test_body_that_is_not_ijson`, `test_body_that_is_ijson_or_not_json` y `test_repeated_member_is_a_validation_error`, del servidor |
+| Un cuerpo que no es JSON responde 400 | `test_body_that_is_not_json_is_a_bad_request`, del servidor |
 | Una versión menor que la mínima, o mal formada, recibe un 400 de tipo `client-outdated` | `test_outdated_client_is_rejected`, del servidor |
 | Un `pageToken` ilegible o con otros parámetros que los de su petición responde 422 con `parameter` en `pageToken` | `test_invalid_page_token_points_to_the_parameter`, del servidor |

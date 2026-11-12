@@ -651,6 +651,28 @@ async def test_repeated_member_is_a_validation_error() -> None:
     ]
 
 
+@pytest.mark.usefixtures("database")
+@pytest.mark.parametrize("body", [b"{", b'{"itemName": NaN}', '{"a": 1}'.encode("utf-16")])
+async def test_body_that_is_not_json_is_a_bad_request(body: bytes) -> None:
+    """A body that is not JSON is a 400, not a 422."""
+    probe = FastAPI()
+    errors.install(probe)
+    ijson.install(probe)
+
+    @probe.post("/items")
+    async def create_item(item: Item) -> None:
+        """Accept an item."""
+
+    transport = ASGITransport(app=probe)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post(
+            "/items", content=body, headers={"content-type": "application/json"}
+        )
+    assert response.status_code == 400
+    assert response.headers["content-type"] == errors.PROBLEM_JSON
+    assert response.json()["type"] == "about:blank"
+
+
 @pytest.mark.parametrize(
     ("minimum", "user_agent"),
     [

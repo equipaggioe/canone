@@ -2,7 +2,9 @@
 
 plataformas/transversal.md, «OpenAPI y clientes»: UTF-8, no unpaired
 surrogate or noncharacter, no number beyond a double, no member name
-twice, and an object or an array at the top.
+twice, and an object or an array at the top. A body that is not JSON,
+like NaN or UTF-16, is a json_invalid error, as FastAPI names it; one
+that is JSON but not I-JSON, an ijson_invalid one.
 """
 
 import email.message
@@ -17,10 +19,16 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from app import errors
 
 LARGEST = 2**53 - 1
+NOT_JSON = "json_invalid"
+NOT_IJSON = "ijson_invalid"
 
 
 class NotIJson(ValueError):
     """A body that is JSON but not I-JSON."""
+
+
+class NotJson(ValueError):
+    """A body that json.loads reads but that is not JSON."""
 
 
 def members(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -51,7 +59,7 @@ def number(text: str) -> float:
 
 def constant(text: str) -> float:
     """Refuse NaN and Infinity, which are not JSON."""
-    raise NotIJson(f"Not a JSON value: {text}")
+    raise NotJson(f"Not a JSON value: {text}")
 
 
 def plain(text: str) -> bool:
@@ -75,15 +83,16 @@ def strings(value: Any) -> bool:
     return True
 
 
-def problem(body: bytes) -> str | None:
-    """Say why a JSON body is not I-JSON, or None if it is.
+def problem(body: bytes) -> tuple[str, str] | None:
+    """Give the error type and the reason of a body that is not I-JSON.
 
-    A body that is not JSON at all is left to FastAPI, which answers it.
+    A body that json.loads cannot read is left to FastAPI, which answers
+    it with its own json_invalid error.
     """
     try:
         text = body.decode("utf-8")
     except UnicodeDecodeError:
-        return "Not UTF-8"
+        return NOT_JSON, "Not UTF-8"
     try:
         value = json.loads(
             text,
@@ -92,14 +101,16 @@ def problem(body: bytes) -> str | None:
             parse_float=number,
             parse_constant=constant,
         )
+    except NotJson as error:
+        return NOT_JSON, str(error)
     except NotIJson as error:
-        return str(error)
+        return NOT_IJSON, str(error)
     except json.JSONDecodeError:
         return None
     if not isinstance(value, (dict, list)):
-        return "The top level is neither an object nor an array"
+        return NOT_IJSON, "The top level is neither an object nor an array"
     if not strings(value):
-        return "Unpaired surrogate or noncharacter"
+        return NOT_IJSON, "Unpaired surrogate or noncharacter"
     return None
 
 
@@ -117,7 +128,7 @@ def is_json(scope: Scope) -> bool:
 
 
 class Checked:
-    """Answer 422 to a JSON body that is not I-JSON."""
+    """Answer a JSON body that is not I-JSON before any route."""
 
     def __init__(self, app: ASGIApp) -> None:
         """Wrap the app."""
@@ -137,10 +148,11 @@ class Checked:
             chunks.append(message.get("body", b""))
             more = message.get("more_body", False)
         body = b"".join(chunks)
-        reason = problem(body) if body else None
-        if reason is not None:
+        found = problem(body) if body else None
+        if found is not None:
+            kind, reason = found
             error = RequestValidationError(
-                [{"type": "json_invalid", "loc": ("body",), "msg": reason, "input": {}}]
+                [{"type": kind, "loc": ("body",), "msg": reason, "input": {}}]
             )
             response = await errors.validation_error(Request(scope), error)
             await response(scope, receive, send)

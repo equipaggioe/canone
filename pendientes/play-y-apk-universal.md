@@ -12,6 +12,7 @@ contra Google Play**.
 | `scripts/verificar.py`: `scripts/play.py` igual al de la plantilla | Hecho |
 | `plantilla/scripts/play.py` | Escrito; `uv run --script` resuelve sus dependencias. **Nunca corrió contra Play** |
 | Jobs `mobile` y `android` de `release.yml` | Escritos; **nunca corrieron** |
+| Job `flet-mobile` de `release.yml` | El AAB y su firma corrieron en GitHub Actions (2026-11-13); la subida con `play.py`, **nunca** |
 
 ## Qué falta comprobar
 

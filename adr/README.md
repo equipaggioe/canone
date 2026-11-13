@@ -146,3 +146,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0138](0138-un-fid-que-fcm-da-por-ausente-se-borra.md) | Un FID al que FCM responde `UNREGISTERED` se borra | Con `server/` | Aceptada |
 | [0139](0139-la-app-de-android-va-a-play-y-la-descarga-directa-es-su-apk-universal.md) | La app de Android va a Play, y la descarga directa es el APK universal que Play genera | Con `mobile/` | Aceptada |
 | [0140](0140-la-camara-de-capturas-es-de-la-herramienta-que-la-corre.md) | La cámara de capturas es de la herramienta que la corre, y canone no fija dónde va | Todos | Aceptada |
+| [0141](0141-la-app-de-flet-genera-sus-modelos-y-se-entrega-con-los-scripts-de-flet.md) | La app de Flet genera sus modelos con datamodel-code-generator y se entrega como AAB, `setup.exe` y AppImage | Con Flet | Aceptada |

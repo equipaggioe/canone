@@ -181,9 +181,103 @@ jobs:
           app/build/outputs/bundle/release/app-release.aab mobile.apk
       - run: gh release upload "$GITHUB_REF_NAME" mobile.apk
 
+  # The same for an app of mobile/ in Flet. flet build reads the upload key from its FLET_ variables.
+  # Not run yet: check it the first time a repository runs it on GitHub Actions.
+  flet-mobile:
+    needs: artifact
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: PIEZA
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version-file: PIEZA/pyproject.toml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+      - run: uv sync --locked
+      - env:
+          KEYSTORE: ${{ secrets.UPLOAD_KEYSTORE }}
+        run: echo "$KEYSTORE" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+      - env:
+          FLET_ANDROID_SIGNING_KEY_STORE: ${{ runner.temp }}/upload.jks
+          FLET_ANDROID_SIGNING_KEY_STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
+          FLET_ANDROID_SIGNING_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          FLET_ANDROID_SIGNING_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: uv run flet build aab --build-number ${{ github.run_number }} --yes
+      - env:
+          ACCOUNT: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
+        run: >-
+          printf '%s' "$ACCOUNT" | uv run --script ../scripts/play.py PAQUETE
+          build/aab/*.aab PIEZA.apk
+      - run: gh release upload "$GITHUB_REF_NAME" PIEZA.apk
+
+  # The installers of an app of desktop/ in Flet: a repository keeps the desktop job of the
+  # technology of its desktop/. macOS waits for the Apple Developer account.
+  # Not run yet: check it the first time a repository runs it on GitHub Actions.
+  flet-desktop:
+    needs: artifact
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux
+            archivo: desktop-linux.bin
+          - os: windows-latest
+            target: windows
+            archivo: desktop-windows.exe
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+        working-directory: desktop
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version-file: desktop/pyproject.toml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+      - run: uv sync --locked
+      - if: runner.os == 'Linux'
+        run: >-
+          sudo apt-get update && sudo apt-get install -y
+          $(uv run flet --version --json | jq -r '.linux_dependencies | join(" ")')
+      - run: uv run flet build ${{ matrix.target }} --build-number ${{ github.run_number }} --yes
+      # The runner has no FUSE 2, which appimagetool needs. The AppImage keeps the .bin name of
+      # install.py: it is an executable like any other.
+      - if: runner.os == 'Linux'
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+        run: VERSION="${GITHUB_REF_NAME#v}" bash build-appimage.sh && mv build/*.AppImage "${{ matrix.archivo }}"
+      # The Windows runner has Inno Setup 6, with iscc on the PATH.
+      - if: runner.os == 'Windows'
+        run: iscc installer.iss && mv build/installer/setup.exe "${{ matrix.archivo }}"
+      - run: gh release upload "$GITHUB_REF_NAME" "${{ matrix.archivo }}"
+
   # One .sha256 for every file of the release: the signature covers them all.
   checksums:
-    needs: [artifact, desktop, mobile, android]
+    needs: [artifact, desktop, mobile, android, flet-mobile, flet-desktop]
     runs-on: ubuntu-latest
     permissions:
       contents: write

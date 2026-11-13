@@ -118,7 +118,17 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [android/notification-channels.md](android/notification-channels.md) | [origen](https://developer.android.com/develop/ui/compose/notifications/channels) | Página web convertida a Markdown |
 | [compose/state.md](compose/state.md) | [origen](https://developer.android.com/develop/ui/compose/state) | Página web convertida a Markdown |
 | [compose/architecture.md](compose/architecture.md) | [origen](https://developer.android.com/develop/ui/compose/architecture) | Página web convertida a Markdown |
-| [flet/publish.md](flet/publish.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.0/website/docs/publish/index.md) |  |
+| [flet/publish.md](flet/publish.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/index.md) |  |
+| [flet/publish-android.md](flet/publish-android.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/android.md) |  |
+| [flet/publish-windows.md](flet/publish-windows.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/windows.md) |  |
+| [flet/publish-linux.md](flet/publish-linux.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/linux.md) |  |
+| [flet/integration-testing.md](flet/integration-testing.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/getting-started/integration-testing.md) |  |
+| [flet/async-apps.md](flet/async-apps.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/async-apps.md) |  |
+| [flet/custom-controls.md](flet/custom-controls.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/custom-controls.md) |  |
+| [flet/large-lists.md](flet/large-lists.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/large-lists.md) |  |
+| [flet/navigation-and-routing.md](flet/navigation-and-routing.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/navigation-and-routing.md) |  |
+| [flet/accessibility.md](flet/accessibility.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/accessibility.md) |  |
+| [flet/client-storage.md](flet/client-storage.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md) |  |
 | [pyside6/considerations.rst](pyside6/considerations.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/considerations.rst) |  |
 | [pyside6/deployment-pyside6-deploy.rst](pyside6/deployment-pyside6-deploy.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/deployment/deployment-pyside6-deploy.rst) |  |
 | [qt/layout.qdoc](qt/layout.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/layout.qdoc) |  |

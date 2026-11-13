@@ -428,7 +428,12 @@ PYPROJECT = {
         "uvicorn": ">=0.54.0",
         "valkey": ">=6.2.0",
     },
-    "flet.md": {"flet": ">=1.1.0"},
+    "flet.md": {
+        "datamodel-code-generator": ">=0.95.0",
+        "flet": ">=1.1.2",
+        "flet-secure-storage": ">=1.1.2",
+        "httpx-ws": ">=0.9.0",
+    },
     "postgres.md": {"geoalchemy2": ">=0.21.0"},
     "python.md": {
         "deptry": ">=0.25.1",

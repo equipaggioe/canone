@@ -3,19 +3,29 @@ name = "PRODUCTO-PIEZA"
 version = "0.1.0"
 requires-python = "==3.13.*"
 dependencies = [
-  "flet==1.1.0",
+  "flet==1.1.2",
+  "flet-secure-storage==1.1.2",
   "httpx==0.28.1",
+  "httpx-ws==0.9.0",
   "pydantic==2.13.4",
 ]
 
 [dependency-groups]
 dev = [
+  "datamodel-code-generator[ruff]>=0.95.0",
+  "flet[cli,test]>=1.1.2",
   "deptry>=0.25.1",
   "pip-audit>=2.10.1",
   "pyrefly>=1.4.0",
   "pytest>=9.2.0",
   "ruff>=0.17.3",
 ]
+
+[tool.flet]
+bundle_id = "DOMINIO-INVERSO.PIEZA"
+product = "PRODUCTO"
+company = "EMPRESA"
+artifact = "PIEZA"
 
 [tool.flet.app]
 path = "src"
@@ -49,6 +59,8 @@ ban-relative-imports = "all"
 [tool.ruff.lint.per-file-ignores]
 # flet build packages src/ itself, so its top-level modules have no package.
 "src/*.py" = ["INP001"]
+# Generated: the docstrings are the descriptions of the server's schemas.
+"src/api/models.py" = ["D1"]
 
 [tool.pyrefly]
 preset = "strict"
@@ -64,8 +76,24 @@ unannotated-return = "error"
 known_first_party = ["api", "colors", "theme", "views"]
 
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 addopts = ["--import-mode=importlib"]
 strict = true
 filterwarnings = ["error::EncodingWarning"]
 pythonpath = ["src"]
 testpaths = ["tests"]
+
+[tool.datamodel-codegen]
+input = "../server/openapi.json"
+input-file-type = "openapi"
+output = "src/api/models.py"
+output-model-type = "pydantic_v2.BaseModel"
+target-python-version = "3.13"
+snake-case-field = true
+use-annotated = true
+use-double-quotes = true
+use-schema-description = true
+use-field-description = true
+disable-timestamp = true
+formatters = ["ruff-format", "ruff-check"]

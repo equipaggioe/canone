@@ -80,10 +80,10 @@ jobs:
       - uses: astral-sh/setup-uv@v10.3.3
         with:
           version-file: desktop/pyproject.toml
-      - run: uv sync --locked --group deploy
+      # Installed, not editable: Nuitka finds the package of the distribution in its RECORD.
+      - run: uv sync --locked --group deploy --no-editable
       # pyside6-deploy finds the Qt modules the app needs with dumpbin, which is not on the PATH:
       # without it, it only warns and skips them.
-      # Not run yet: check it the first time a repository runs it on GitHub Actions.
       - if: runner.os == 'Windows'
         run: |
           vs=$(cygpath -u "$("/c/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe" -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)")
@@ -92,7 +92,7 @@ jobs:
           cygpath -w "$(dirname "$dumpbin")" >> "$GITHUB_PATH"
       # pyside6-deploy does not create exec_directory on Linux or Windows.
       - run: mkdir -p dist
-      - run: uv run pyside6-deploy -c pysidedeploy.spec --force --no-install
+      - run: uv run --no-editable pyside6-deploy -c pysidedeploy.spec --force --no-install
       - run: mv dist/*.${{ matrix.ext }} "${{ matrix.archivo }}"
       - run: gh release upload "$GITHUB_REF_NAME" "${{ matrix.archivo }}"
 
@@ -186,7 +186,7 @@ jobs:
       - run: gh release upload "$GITHUB_REF_NAME" mobile.apk
 
   # The same for an app of mobile/ in Flet. flet build reads the upload key from its FLET_ variables.
-  # Not run yet: check it the first time a repository runs it on GitHub Actions.
+  # The build and its signature ran on GitHub Actions; the upload to Play and to the release, not yet.
   flet-mobile:
     needs: artifact
     runs-on: ubuntu-latest
@@ -228,7 +228,7 @@ jobs:
 
   # The installers of an app of desktop/ in Flet: a repository keeps the desktop job of the
   # technology of its desktop/. macOS waits for the Apple Developer account.
-  # Not run yet: check it the first time a repository runs it on GitHub Actions.
+  # The builds ran on GitHub Actions; the upload to the release, not yet.
   flet-desktop:
     needs: artifact
     strategy:
@@ -273,7 +273,7 @@ jobs:
       - if: runner.os == 'Linux'
         env:
           APPIMAGE_EXTRACT_AND_RUN: "1"
-        run: VERSION="${GITHUB_REF_NAME#v}" bash build-appimage.sh && mv build/*.AppImage "${{ matrix.archivo }}"
+        run: VERSION="${GITHUB_REF_NAME#v}" bash build-appimage.sh && mv build/PIEZA.AppImage "${{ matrix.archivo }}"
       # The Windows runner has Inno Setup 6, with iscc on the PATH.
       - if: runner.os == 'Windows'
         run: iscc installer.iss && mv build/installer/setup.exe "${{ matrix.archivo }}"

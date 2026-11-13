@@ -80,7 +80,7 @@ asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 addopts = ["--import-mode=importlib"]
 strict = true
-filterwarnings = ["error::EncodingWarning"]
+filterwarnings = ["error::EncodingWarning", "ignore::EncodingWarning:lazy_loader"]
 pythonpath = ["src"]
 testpaths = ["tests"]
 

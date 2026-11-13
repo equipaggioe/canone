@@ -6,7 +6,7 @@ Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](py
 
 ## Proyecto
 
-- PySide6 y Qt 6.12.0, la última estable, y no la última LTS: una LTS recibe versiones abiertas solo unos meses, y la 6.8.3, la última de la 6.8 en PyPI, es de marzo de 2025. [PySide6](https://pypi.org/project/PySide6/#history)
+- PySide6 y Qt 6.12.0, la última LTS: desde la 6.8, una de cada cuatro versiones menores es LTS. [Qt 6.12](https://doc.qt.io/qt-6.12/qt-releases.html)
 - keyring 25.7.0, pytest-qt 4.5.0, Nuitka 4.3.5, imageio 2.38.1, patchelf 0.19.3.0 y datamodel-code-generator 0.95.0, la de [flet.md](flet.md), con el extra `ruff`.
 
 ```text
@@ -138,6 +138,7 @@ Estándar: [QSettings](../fuentes/qt/qsettings.qdoc) de Qt.
 
 Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
+- La app entra solo por el navegador del sistema, sin pantallas propias de contraseña ni de código por SMS: el login es el de la web, que cumple [Contraseñas](autenticacion.md#contraseñas), [Código por SMS](autenticacion.md#código-por-sms) y [Recuperación](autenticacion.md#recuperación), ofrece la passkey y lo completa el gestor de contraseñas del navegador.
 - La app hace el flujo del código de autorización con `QOAuth2AuthorizationCodeFlow` de QtNetworkAuth, con PKCE S256, y abre la autorización con `QDesktopServices.openUrl` desde `authorizeWithBrowser`.
 - La vuelta la recibe `QOAuthHttpServerReplyHandler`, que escucha en `127.0.0.1` con el puerto que le da el sistema.
 
@@ -243,6 +244,7 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 - La carpeta `dist/`, el `exec_directory` del `.spec`, existe antes de ejecutar `pyside6-deploy`: no la crea, y al copiar el binario falla con `FileNotFoundError`. En CI, `mkdir -p dist`.
 - Nuitka con el extra `onefile`, imageio y, en Linux, patchelf van en el grupo `deploy`.
 - En CI de Windows, el job agrega al `PATH` la carpeta del `dumpbin` de MSVC que encuentra `vswhere`, y falla si no lo encuentra: sin él, `pyside6-deploy` solo avisa y no busca los módulos de Qt de los que dependen los que usa la app. [PySide6 6.12.0](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside-tools/deploy_lib/config.py)
+- El job que empaqueta instala la app sin modo editable, con `--no-editable` en `uv sync` y en `uv run`: Nuitka busca en el `RECORD` de la distribución el paquete al que pertenecen sus metadatos, y una instalación editable no lo lista. [Nuitka 4.3.5](https://raw.githubusercontent.com/Nuitka/Nuitka/4.3.5/nuitka/utils/Distributions.py)
 - macOS no se construye hasta que haya cuenta de Apple Developer: sin firma ni notarización, macOS 15 no abre la app.
 - El `mode` del `.spec` es `onefile`: cada sistema recibe un solo archivo, que [despliegue.md](despliegue.md#versiones) publica ([pyside6-deploy, *pysidedeploy.spec parameters*](../fuentes/pyside6/deployment-pyside6-deploy.rst)).
 - `pyside6-deploy` corre con `--no-install`, y el `packages` del `.spec` lista `Nuitka` e `imageio`: comprueba que el grupo `deploy` los trajo, y no instala nada con pip, que un venv de uv no tiene ([pyside6-deploy, *Command Line Options*](../fuentes/pyside6/deployment-pyside6-deploy.rst) y [*What pyside6-deploy runs*](../fuentes/pyside6/deployment-pyside6-deploy.rst)).
@@ -256,6 +258,7 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 | Las versiones de «Proyecto» | [scripts/verificar.py](../scripts/verificar.py) |
 | `@override` | Pyrefly `missing-override-decorator` |
 | Los nombres originales de Qt | ruff `TID251` sobre `__feature__` |
+| Un enum con su clase | Pyrefly `missing-attribute` |
 | La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools` |
 | HTTP por `QNetworkAccessManager` | ruff `TID251` sobre httpx, requests y `urllib.request` |
 | Pruebas sin pantalla | `QT_QPA_PLATFORM=offscreen` en el job de CI |

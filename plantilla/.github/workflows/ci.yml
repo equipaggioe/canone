@@ -139,7 +139,6 @@ jobs:
         with:
           version-file: PIEZA/pyproject.toml
       # The integration tests build the app as a Linux desktop app, which draws on a display.
-      # Not run yet: check it the first time a repository runs it on GitHub Actions.
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -158,7 +157,10 @@ jobs:
       - run: |
           uv export --locked --no-emit-project --format requirements.txt -o "$RUNNER_TEMP/req.txt"
           uv run pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/req.txt"
-      - run: xvfb-run uv run pytest
+      # flet test builds the integration test app before pytest starts: built inside pytest,
+      # flet-cli writes files without an encoding. With the LD_LIBRARY_PATH of setup-python, the
+      # Python that the app embeds never starts.
+      - run: env -u LD_LIBRARY_PATH xvfb-run uv run flet test
         env:
           PYTHONDEVMODE: "1"
           PYTHONWARNDEFAULTENCODING: "1"

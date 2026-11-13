@@ -215,7 +215,9 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 
 Estándar: [*Integration testing*](../fuentes/flet/integration-testing.md) de Flet.
 
-- CI corre las pruebas en Linux con `xvfb-run uv run pytest`, con el Flutter de [Proyecto](#proyecto) y los paquetes que lista `flet --version --json`: el plugin de Flet construye la app de escritorio de las pruebas de integración, que necesita una pantalla.
+- CI corre las pruebas en Linux con `flet test`, bajo `xvfb-run`, con el Flutter de [Proyecto](#proyecto) y los paquetes que lista `flet --version --json`: `flet test` construye la app de escritorio de las pruebas de integración antes de que arranque pytest, y esa app necesita una pantalla. Construida dentro de pytest, `flet-cli` escribe archivos sin `encoding` y el `error::EncodingWarning` de [python.md](python.md#cumplimiento) detiene la prueba.
+- `flet test` corre sin el `LD_LIBRARY_PATH` que deja `setup-python`: con él, el Python que embebe la app no arranca.
+- pytest ignora el `EncodingWarning` de `lazy_loader`, que scikit-image importa desde `flet.testing`: es código de terceros, y el aviso detiene la recolección de las pruebas.
 - pytest lleva `asyncio_default_fixture_loop_scope = "function"`: sin él, pytest-asyncio avisa en cada corrida.
 - El grupo `dev` lleva `flet` con el extra `test` ([Integration testing, *Enabling tests in an existing app*](../fuentes/flet/integration-testing.md)).
 - pytest lleva `asyncio_mode = "auto"` ([Integration testing, *Enabling tests in an existing app*](../fuentes/flet/integration-testing.md)).

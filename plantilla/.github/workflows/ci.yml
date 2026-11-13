@@ -221,3 +221,11 @@ jobs:
           java-version: "25.0.5"
       - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew ktlintCheck lint testDebugUnitTest
+      # plataformas/android.md, «Pruebas»: the managed device needs KVM.
+      - run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - run: ./gradlew pixel6Api37DebugAndroidTest -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
+      # An emulator that dies mid-run leaves the task green, with "No test results" in the report.
+      - run: "! grep -q testRunFailed app/build/outputs/androidTest-results/managedDevice/debug/pixel6Api37/TEST-pixel6Api37.xml"

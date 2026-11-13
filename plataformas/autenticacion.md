@@ -116,12 +116,16 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 
 ## Passkeys
 
-Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C y [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
+Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C, [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y los [requisitos de Credential Manager](../fuentes/android/credential-manager-prerequisites.md) de Android.
 
 - El servidor verifica las passkeys con `verify_registration_response` y `verify_authentication_response` de `webauthn`, de Duo, con `supported_pub_key_algs` igual a `pubKeyCredParams` y `require_user_verification` en una cuenta de administración. La biblioteca no mira el largo del credential ID, `crossOrigin`, `topOrigin`, las extensiones, la atestación que se acepta ni que BE sea el guardado: lo comprueba el servidor. [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/registration/verify_registration_response.py)
 - El servidor no pide extensiones.
 - El cliente le manda al servidor la respuesta de `create()` o de `get()` entera, con `clientExtensionResults` y `transports`.
 - El challenge vive en Valkey 10 minutos.
+- La landing sirve `https://<dominio>/.well-known/assetlinks.json` como archivo estático, desde `static/.well-known/assetlinks.json`.
+- `assetlinks.json` declara para la app de Android la relación `delegate_permission/common.get_login_creds`, con el `namespace` `android_app`, su `package_name` y la huella SHA-256 del certificado con que Play la firma ([Prerequisites, *Create the Digital Asset Links JSON file*](../fuentes/android/credential-manager-prerequisites.md)).
+- Esa URL responde 200, con `Content-Type: application/json` y sin redirecciones ([Prerequisites, *Host the Digital Asset Links JSON file*](../fuentes/android/credential-manager-prerequisites.md) y [*Configure Digital Asset Links for passwords*](../fuentes/android/credential-manager-prerequisites.md)).
+- Si `<dominio>` sirve un `robots.txt`, este permite `/.well-known/` ([Prerequisites, *Allow retrieval of the Digital Asset Links file*](../fuentes/android/credential-manager-prerequisites.md)).
 - El RP ID es `<dominio>`: una misma passkey sirve en `app.<dominio>` y en `panel.<dominio>` ([WebAuthn §5.4.2](../fuentes/w3c/webauthn-3.html)).
 - Toda passkey es descubrible, con `residentKey` `required` y `requireResidentKey` `true`: el usuario entra sin escribir su correo ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html)).
 - `userVerification` es `preferred` en una cuenta de usuario y `required` en una de administración ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html) y [§5.5](../fuentes/w3c/webauthn-3.html)).

@@ -250,6 +250,16 @@ Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
 
 - El campo del código es `TextFieldPinAutoFill`: lleva una `InputDecoration`, y se ve como los demás campos del tema.
 
+## Contraseñas
+
+Contrato: [autenticacion.md](autenticacion.md#contraseñas).
+
+- Los campos para entrar y para elegir una contraseña van en un `AutofillGroup`, y los gestores de contraseñas los completan por sus `autofillHints`: al entrar, `AutofillHints.username` en el del correo o el teléfono y `AutofillHints.password` en el de la contraseña, y al elegir una contraseña, `AutofillHints.newPassword`. [Flutter 3.47.9](https://github.com/flutter/flutter/blob/3.47.9/packages/flutter/lib/src/widgets/autofill.dart)
+
+## Cuentas
+
+Contrato: [autenticacion.md](autenticacion.md#cuentas).
+
 ## Errores
 
 Contrato: [transversal.md](transversal.md#errores).
@@ -296,6 +306,10 @@ Contrato: [transversal.md](transversal.md#pagos).
 ## Push
 
 Contrato: [transversal.md](transversal.md#push).
+
+## Recuperación
+
+Contrato: [autenticacion.md](autenticacion.md#recuperación).
 
 ## Reintentos
 

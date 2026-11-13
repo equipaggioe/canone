@@ -2,3 +2,7 @@ root = true
 
 [*.{kt,kts}]
 ktlint_code_style = android_studio
+# android.md, «Estilo»: no import uses a wildcard; an empty value keeps java.util.* allowed.
+ij_kotlin_packages_to_use_import_on_demand = -
+# android.md, «Nombres»: a @Composable that returns Unit is named in PascalCase.
+ktlint_function_naming_ignore_when_annotated_with = Composable

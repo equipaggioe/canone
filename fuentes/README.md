@@ -109,11 +109,7 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [android/coroutines-best-practices.md](android/coroutines-best-practices.md) | [origen](https://developer.android.com/kotlin/coroutines/coroutines-best-practices) | Página web convertida a Markdown |
 | [android/hilt.md](android/hilt.md) | [origen](https://developer.android.com/training/dependency-injection/hilt-android) | Página web convertida a Markdown |
 | [android/datastore.md](android/datastore.md) | [origen](https://developer.android.com/topic/libraries/architecture/datastore) | Página web convertida a Markdown |
-| [android/keystore.md](android/keystore.md) | [origen](https://developer.android.com/privacy-and-security/keystore) | Página web convertida a Markdown |
-| [android/testing-fundamentals.md](android/testing-fundamentals.md) | [origen](https://developer.android.com/training/testing/fundamentals) | Página web convertida a Markdown |
 | [android/localization.md](android/localization.md) | [origen](https://developer.android.com/guide/topics/resources/localization) | Página web convertida a Markdown |
-| [android/accessibility-apps.md](android/accessibility-apps.md) | [origen](https://developer.android.com/guide/topics/ui/accessibility/apps) | Página web convertida a Markdown |
-| [android/accessibility-principles.md](android/accessibility-principles.md) | [origen](https://developer.android.com/guide/topics/ui/accessibility/principles) | Página web convertida a Markdown |
 | [android/sms-retriever-request.md](android/sms-retriever-request.md) | [origen](https://developers.google.com/identity/sms-retriever/request) | Página web convertida a Markdown |
 | [android/credential-manager-prerequisites.md](android/credential-manager-prerequisites.md) | [origen](https://developer.android.com/identity/credential-manager/prerequisites) | Página web convertida a Markdown |
 | [android/create-passkeys.md](android/create-passkeys.md) | [origen](https://developer.android.com/identity/passkeys/create-passkeys) | Página web convertida a Markdown |

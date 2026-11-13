@@ -1,6 +1,6 @@
 # ADR-0137 · La cámara de capturas va en `scripts/screenshots/`, y lo que genera no se versiona
 
-- **Estado:** Aceptada
+- **Estado:** Reemplazada por [ADR-0140](0140-la-camara-de-capturas-es-de-la-herramienta-que-la-corre.md)
 - **Fecha:** 2026-11-12
 - **Alcance:** «Carpetas de primer nivel» de [`repositorio.md`](../repositorio.md) y
   `scripts/verificar.py`

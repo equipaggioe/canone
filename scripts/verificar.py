@@ -446,8 +446,10 @@ PYPROJECT = {
         "uv-build": ">=0.13.7,<0.14",
     },
     "qt.md": {
+        "datamodel-code-generator": ">=0.95.0",
         "imageio": ">=2.38.1",
-        "nuitka": ">=4.3.4",
+        "keyring": ">=25.7.0",
+        "nuitka": ">=4.3.5",
         "patchelf": ">=0.19.3.0",
         "pyside6": ">=6.12.0",
         "pytest-qt": ">=4.5.0",

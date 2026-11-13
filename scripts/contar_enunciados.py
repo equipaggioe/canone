@@ -259,7 +259,6 @@ UNIDADES = [
  ('typing/modernizing.rst', None, [], 'low'),
  ('python/asyncio-dev.rst', None, [], 'low'),
  # qt
- ('pyside6/considerations.rst', None, [], 'low'),
  ('qt/layout.qdoc', None, [], 'low'),
  ('qt/model-view-programming.qdoc', None, [], 'low'),
  ('qt/accessible.qdoc', None, ['Accessibility for Qt Quick Applications'], 'low'),

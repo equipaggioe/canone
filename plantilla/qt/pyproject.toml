@@ -3,12 +3,14 @@ name = "PRODUCTO-desktop"
 version = "0.1.0"
 requires-python = "==3.13.*"
 dependencies = [
+  "keyring>=25.7.0",
   "pydantic>=2.14.3",
   "pyside6>=6.12.0",
 ]
 
 [dependency-groups]
 dev = [
+  "datamodel-code-generator[ruff]>=0.95.0",
   "deptry>=0.25.1",
   "pip-audit>=2.10.1",
   "pyrefly>=1.4.0",
@@ -18,7 +20,7 @@ dev = [
 ]
 deploy = [
   "imageio>=2.38.1",
-  "nuitka[onefile]>=4.3.4",
+  "nuitka[onefile]>=4.3.5",
   "patchelf>=0.19.3.0; sys_platform == 'linux'",
 ]
 
@@ -52,6 +54,10 @@ max-doc-length = 72
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"
 
+[tool.ruff.lint.per-file-ignores]
+# Generated: the docstrings are the descriptions of the server's schemas.
+"src/app/api/models.py" = ["D1"]
+
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
@@ -78,3 +84,17 @@ testpaths = ["tests"]
 
 [tool.deptry]
 known_first_party = ["app"]
+
+[tool.datamodel-codegen]
+input = "../server/openapi.json"
+input-file-type = "openapi"
+output = "src/app/api/models.py"
+output-model-type = "pydantic_v2.BaseModel"
+target-python-version = "3.13"
+snake-case-field = true
+use-annotated = true
+use-double-quotes = true
+use-schema-description = true
+use-field-description = true
+disable-timestamp = true
+formatters = ["ruff-format", "ruff-check"]

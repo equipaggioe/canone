@@ -129,11 +129,9 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [flet/navigation-and-routing.md](flet/navigation-and-routing.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/navigation-and-routing.md) |  |
 | [flet/accessibility.md](flet/accessibility.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/accessibility.md) |  |
 | [flet/client-storage.md](flet/client-storage.md) | [origen](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md) |  |
-| [pyside6/considerations.rst](pyside6/considerations.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/considerations.rst) |  |
 | [pyside6/deployment-pyside6-deploy.rst](pyside6/deployment-pyside6-deploy.rst) | [origen](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/deployment/deployment-pyside6-deploy.rst) |  |
 | [qt/layout.qdoc](qt/layout.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/layout.qdoc) |  |
 | [qt/model-view-programming.qdoc](qt/model-view-programming.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/model-view-programming.qdoc) |  |
-| [qt/stylesheet-reference.qdoc](qt/stylesheet-reference.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet-reference.qdoc) |  |
 | [qt/threads.qdoc](qt/threads.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtdoc/v6.12.0/doc/src/frameworks-technologies/threads.qdoc) |  |
 | [qt/qwidget.qdoc](qt/qwidget.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/kernel/qwidget.cpp) | Comentarios `/*! */` del código fuente |
 | [qt/qdialog.qdoc](qt/qdialog.qdoc) | [origen](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/dialogs/qdialog.cpp) | Comentarios `/*! */` del código fuente |

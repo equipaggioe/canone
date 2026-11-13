@@ -8,7 +8,7 @@ icon = src/app/icon.png
 
 [python]
 python_path =
-packages =
+packages = Nuitka,imageio
 
 [qt]
 qml_files =
@@ -19,4 +19,4 @@ plugins =
 [nuitka]
 macos.permissions =
 mode = onefile
-extra_args = --quiet --noinclude-qt-translations --assume-yes-for-downloads
+extra_args = --quiet --noinclude-qt-translations --assume-yes-for-downloads --include-distribution-metadata=PRODUCTO-desktop

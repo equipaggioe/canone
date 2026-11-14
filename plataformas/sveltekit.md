@@ -241,7 +241,8 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 
 - El adaptador es `adapter-static`: Caddy sirve la web como archivos estáticos.
 - `adapter-static` lleva un `fallback`, que sirve las páginas con `ssr = false` de [Opciones de página](#opciones-de-página): no tienen HTML prerenderizado.
-- El `fallback` es `200.html`, y no `index.html`, que chocaría con la portada prerenderizada ([Static site generation, *fallback*](../fuentes/sveltekit/adapter-static.md)).
+- Una pieza con páginas `ssr = false` lleva el `fallback` `200.html`, y no `index.html`, que chocaría con la portada prerenderizada ([Static site generation, *fallback*](../fuentes/sveltekit/adapter-static.md)).
+- Una pieza sin páginas `ssr = false`, toda prerenderizada como una landing, lleva el `fallback` `404.html`: Caddy lo sirve con un 404 a una ruta que no existe, y SvelteKit dibuja en él la página de error ([Static site generation, *GitHub Pages*](../fuentes/sveltekit/adapter-static.md), [ADR-0142](../adr/0142-una-pieza-prerenderizada-responde-404-con-su-pagina.md)).
 - El layout raíz exporta `prerender = true`, y se prerenderizan todas las páginas que pueden prerenderizarse ([Static site generation, *Usage*](../fuentes/sveltekit/adapter-static.md)).
 - Una página prerenderizada no lleva `ssr = false`: se guardaría vacía ([Static site generation, *Usage*](../fuentes/sveltekit/adapter-static.md)).
 

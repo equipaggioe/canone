@@ -51,7 +51,23 @@
 			not file /index.html
 		}
 		rewrite @spa_root /200.html
-		try_files {path} {path}/ {path}.html /200.html
+		# ADR-0142: a prerendered page with data is page.html next to a page/
+		# folder with its __data.json: the folder is not the page.
+		try_files {path} {path}.html {path}/index.html /200.html
+		# ADR-0142: a piece without 200.html, all of it prerendered, answers
+		# a route that does not exist with its 404.html and a 404. Not
+		# handle_errors: an error route does not carry the headers. A
+		# directory, like /, is a page with its index.html.
+		@missing {
+			not file {path} {path}index.html
+			file /404.html
+		}
+		handle @missing {
+			rewrite * /404.html
+			file_server {
+				status 404
+			}
+		}
 		file_server
 	}
 }

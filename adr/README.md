@@ -44,7 +44,7 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0036](0036-el-almacen-en-memoria-es-valkey.md) | El almacén en memoria de todas las piezas es Valkey | Con un almacén en memoria | Aceptada |
 | [0037](0037-la-uri-de-cada-tipo-de-problema-sirve-su-documentacion-bajo-api.md) | La URI de cada tipo de problema sirve su documentación, bajo `/api` | Con `server/` y sus clientes | Aceptada |
 | [0038](0038-el-login-sigue-a-owasp-y-el-conteo-de-intentos-fallidos-vive-en-valkey.md) | El login sigue a OWASP, y el conteo de intentos fallidos vive en Valkey | Con autenticación | Reemplazada por ADR-0044 |
-| [0039](0039-las-paginas-publicas-se-prerenderizan-y-las-que-piden-sesion-salen-del-fallback.md) | Las páginas públicas se prerenderizan, y las que piden sesión salen del `fallback` | Con SvelteKit | Aceptada |
+| [0039](0039-las-paginas-publicas-se-prerenderizan-y-las-que-piden-sesion-salen-del-fallback.md) | Las páginas públicas se prerenderizan, y las que piden sesión salen del `fallback` | Con SvelteKit | Aceptada; ADR-0142 limita el `fallback` `200.html` a las piezas con páginas `ssr = false` |
 | [0040](0040-el-claude-md-global-guarda-solo-lo-que-es-para-claude.md) | `~/.claude/CLAUDE.md` guarda solo lo que es para Claude, y enlaza Canone para el método | Todos | Aceptada |
 | [0041](0041-una-tarea-periodica-se-dispara-desde-la-pieza-y-su-interruptor-es-obligatorio.md) | Una tarea periódica se dispara desde la pieza, y su interruptor es un campo obligatorio | Con `server/` | Reemplazada por ADR-0043 |
 | [0042](0042-una-sesion-vencida-se-borra-sin-gracia.md) | Una sesión vencida se borra sin gracia | Con autenticación | Aceptada |
@@ -147,3 +147,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0139](0139-la-app-de-android-va-a-play-y-la-descarga-directa-es-su-apk-universal.md) | La app de Android va a Play, y la descarga directa es el APK universal que Play genera | Con `mobile/` | Aceptada |
 | [0140](0140-la-camara-de-capturas-es-de-la-herramienta-que-la-corre.md) | La cámara de capturas es de la herramienta que la corre, y canone no fija dónde va | Todos | Aceptada |
 | [0141](0141-la-app-de-flet-genera-sus-modelos-y-se-entrega-con-los-scripts-de-flet.md) | La app de Flet genera sus modelos con datamodel-code-generator y se entrega como AAB, `setup.exe` y AppImage | Con Flet | Aceptada |
+| [0142](0142-una-pieza-prerenderizada-responde-404-con-su-pagina.md) | Una pieza toda prerenderizada responde 404 con su página, y una carpeta sin `index.html` no es una página | Con SvelteKit | Aceptada |

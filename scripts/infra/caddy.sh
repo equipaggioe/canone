@@ -1,7 +1,8 @@
 #!/bin/sh
 # Runs the Caddyfile and the sites of plantilla/infra in Caddy, with a server on 8000 that counts
 # what reaches it: each host serves its piece with the headers and its charset, only the landing is
-# indexed, a piece without index.html serves 200.html at its root and at any other route, /api/*
+# indexed, a piece without index.html serves 200.html at its root and at any other route, one
+# without 200.html answers a route that does not exist with its 404.html and a 404, /api/*
 # carries the headers too and is not cached, a body over its limit gets 413, by its
 # Content-Length or cut by request_body, and never reaches the server whole, and /downloads/ serves
 # the installers. Caddy signs its own certificates.
@@ -119,6 +120,31 @@ echo fallback > /srv/app/current/panel/200.html
 test "$(https panel.example.com https://panel.example.com/)" = fallback
 test "$(https panel.example.com https://panel.example.com/login)" = fallback
 test "$(https example.com https://example.com/)" = landing
+
+step "A piece without 200.html answers a route that does not exist with its 404.html, a 404 and the headers"
+echo missing > /srv/app/current/landing/404.html
+code=$(https example.com -D "$work/headers" -o "$work/body" -w '%{http_code}' https://example.com/nothing)
+test "$code" = 404
+test "$(cat "$work/body")" = missing
+tr -d '\r' < "$work/headers" > "$work/clean"
+headers "$work/clean"
+grep -qix 'content-type: text/html; charset=utf-8' "$work/clean"
+grep -qix 'x-robots-tag: index, follow' "$work/clean"
+test "$(https example.com https://example.com/)" = landing
+# A prerendered page with data: page.html, and page/ with its __data.json.
+echo privacy > /srv/app/current/landing/privacy.html
+mkdir /srv/app/current/landing/privacy
+echo '{}' > /srv/app/current/landing/privacy/__data.json
+test "$(https example.com https://example.com/privacy)" = privacy
+test "$(https example.com https://example.com/privacy/__data.json)" = '{}'
+# A page built as a folder with its index.html.
+mkdir /srv/app/current/landing/help
+echo help > /srv/app/current/landing/help/index.html
+test "$(https example.com https://example.com/help)" = help
+# Without 404.html either, Caddy answers 404 with no page.
+test "$(status https://app.example.com/nothing)" = 404
+# With 200.html, a route that does not exist is still the fallback's.
+test "$(https panel.example.com https://panel.example.com/nothing)" = fallback
 
 step "HTTP goes to HTTPS"
 test "$(https app.example.com -o /dev/null -w '%{http_code} %{redirect_url}' http://app.example.com/)" = "308 https://app.example.com/"

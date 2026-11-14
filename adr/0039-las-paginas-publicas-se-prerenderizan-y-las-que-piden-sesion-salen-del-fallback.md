@@ -1,6 +1,6 @@
 # ADR-0039 · Las páginas públicas se prerenderizan, y las que piden sesión salen del `fallback`
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El [ADR-0142](0142-una-pieza-prerenderizada-responde-404-con-su-pagina.md) limita el `fallback` `200.html` a las piezas con páginas `ssr = false`
 - **Fecha:** 2026-10-08
 - **Alcance:** la sección «Adaptador» de [`plataformas/sveltekit.md`](../plataformas/sveltekit.md)
 

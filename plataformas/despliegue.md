@@ -6,8 +6,6 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 
 Estándar: el [*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt) 3.0.
 
-Plantilla: [plantilla/infra/](../plantilla/infra/), con las unidades, los sitios de Caddy, la configuración de Valkey, `install.py`, que los instala, `credentials.py`, que cifra las credenciales, `deploy.py`, que instala cada versión, `database.py`, que vacía la base de una máquina en desarrollo, `packages.py`, que instala los paquetes de la máquina, `swap.py`, que le da tanto swap como memoria, `uv.py`, que instala uv, `authorize.py`, que deja entrar a `root` con una llave antes de `install.py`, y `uninstall.py`, que deshace todo eso; [plantilla/receiver/](../plantilla/receiver/), que corre en la receptora, [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml) y [plantilla/scripts/play.py](../plantilla/scripts/play.py), que sube cada app de `mobile/` a Play y baja su APK universal.
-
 - Debian 13, con los programas de sus paquetes: Caddy 2.6.2, Valkey 8.1, coturn 4.6.1, restic 0.18.0, nftables 1.1.3, systemd 257, OpenSSH 10.0 y WireGuard 1.0.20210914.
 - rest-server 0.14.0, de su release de GitHub, en la receptora y en el CI: no es un paquete del servidor.
 - La máquina queda así:
@@ -116,6 +114,8 @@ Plantilla: [plantilla/infra/](../plantilla/infra/), con las unidades, los sitios
 - Lo que se instala fuera de los paquetes de Debian, como uv y los programas de la app, va en `/usr/local` ([FHS §4.9.1](../fuentes/fhs/fhs-3.0.txt)).
 - Una caché que se puede rehacer, como la de restic, va en `/var/cache` ([FHS §5.5.1](../fuentes/fhs/fhs-3.0.txt)).
 - El estado de la app va en sus carpetas de `/var/lib`, y nadie lo edita para configurarla ([FHS §5.8.1](../fuentes/fhs/fhs-3.0.txt)).
+
+Plantilla: [plantilla/infra/](../plantilla/infra/), con las unidades, los sitios de Caddy, la configuración de Valkey, `install.py`, que los instala, `credentials.py`, que cifra las credenciales, `deploy.py`, que instala cada versión, `database.py`, que vacía la base de una máquina en desarrollo, `packages.py`, que instala los paquetes de la máquina, `swap.py`, que le da tanto swap como memoria, `uv.py`, que instala uv, `authorize.py`, que deja entrar a `root` con una llave antes de `install.py`, y `uninstall.py`, que deshace todo eso; [plantilla/receiver/](../plantilla/receiver/), que corre en la receptora, [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml) y [plantilla/scripts/play.py](../plantilla/scripts/play.py), que sube cada app de `mobile/` a Play y baja su APK universal.
 
 ## Caddy
 

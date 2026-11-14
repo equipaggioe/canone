@@ -38,6 +38,8 @@ APP = "PRODUCTO"
 REPO = "DUENO/PRODUCTO"
 PRIVATE: bool = PRIVADO
 DESKTOP: tuple[str, ...] = INSTALABLES
+# java.md: the pieces in Java, each with its unit, which run the current version too.
+JAVA: tuple[str, ...] = PIEZAS_JAVA
 # A private repository downloads with a read-only token, which
 # credentials.py encrypts.
 TOKEN = Path("/etc/credstore.encrypted") / f"{APP}-deploy" / "github_token"
@@ -175,6 +177,9 @@ def point(target: Path) -> None:
 def restart() -> None:
     """Restart the units and wait for the health check."""
     url = HEALTH
+    # Before the server, which calls them.
+    for piece in JAVA:
+        run("systemctl", "restart", f"{APP}-java@{piece}.service")
     run("systemctl", "restart", SERVICE)
     problem = "no answer"
     for _ in range(HEALTH_SECONDS):

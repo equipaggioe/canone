@@ -5,7 +5,7 @@ r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
         [--turn [--turn-ip <public ipv4>]] \
         [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>] \
-        [--development]
+        [--java <piece>] [--development]
 
 The first time it runs as root, and creates the account that administers the machine with its
 keys and the password it asks for. Afterwards ssh only takes keys and root does not log in, so it
@@ -93,6 +93,19 @@ def mobile_piece(name: str) -> str:
     if not MOBILE.fullmatch(name):
         raise argparse.ArgumentTypeError(f"{name} is not a piece of mobile/")
     return name
+# java.md: a piece in Java is a folder at the root of the repository, and its unit is an
+# instance of PRODUCTO-java@.
+JAVA_PIECE = re.compile(r"[a-z][a-z0-9-]{0,30}")
+JAVA_UNIT = "PRODUCTO-java@"
+
+
+def java_piece(name: str) -> str:
+    """Return name if it can name a piece in Java and its unit."""
+    if not JAVA_PIECE.fullmatch(name):
+        raise argparse.ArgumentTypeError(f"{name} is not a piece in Java, like fingerprint")
+    return name
+
+
 # Units and sites of a piece the app may not have.
 OPTIONAL = ("sweep", "web", "panel", "landing")
 # ADR-0070: the standardized features of the W3C registry, at commit 2939804, and
@@ -200,6 +213,13 @@ def parse() -> argparse.Namespace:
     parser.add_argument("--logs-key", help="the WireGuard public key of equipaggio")
     parser.add_argument(
         "--logs-ip", type=ipaddress.IPv4Address, help="the address equipaggio gave the machine"
+    )
+    parser.add_argument(
+        "--java",
+        action="append",
+        default=[],
+        type=java_piece,
+        help="a piece in Java that only the server calls, like fingerprint",
     )
     parser.add_argument(
         "--development", action="store_true", help="database.py may empty the database"
@@ -405,6 +425,8 @@ def main() -> None:
         raise SystemExit("coturn is not installed, and --turn needs it.")
     if arguments.turn_ip is not None and not arguments.turn:
         raise SystemExit("--turn-ip needs --turn.")
+    if arguments.java and shutil.which("java") is None:
+        raise SystemExit("openjdk-21-jre-headless is not installed, and --java needs it.")
     check_logs(arguments)
     admin = find_admin(arguments)
     check_keys(arguments.key + arguments.signer)
@@ -431,6 +453,7 @@ def main() -> None:
             tuple(name for system, name in INSTALLERS.items() if system in arguments.desktop)
             + tuple(f"{piece}.apk" for piece in arguments.mobile)
         ),
+        "PIEZAS_JAVA": repr(tuple(arguments.java)),
     }
     for name, target in TARGETS.items():
         path = Path(target.replace("PRODUCTO", app))
@@ -465,6 +488,8 @@ def main() -> None:
     else:
         development.unlink(missing_ok=True)
     skipped = tuple(f"PRODUCTO-{name}." for name in arguments.without)
+    if not arguments.java:
+        skipped += (JAVA_UNIT,)
     triggers = []
     for source in sorted(HERE.glob("PRODUCTO*")):
         if source.name.startswith(skipped):
@@ -492,8 +517,11 @@ def main() -> None:
     # ADR-0077: the app has its own instance, apart from the one of the package.
     subprocess.run(["systemctl", "disable", "--now", "valkey-server.service"], check=True)
     subprocess.run(["systemctl", "enable", "--now", f"valkey-server@{app}.service"], check=True)
-    # deploy.py starts the server once there is a current version.
+    # deploy.py starts the server and the pieces in Java once there is a current version.
     subprocess.run(["systemctl", "enable", f"{app}.service"], check=True)
+    for piece in arguments.java:
+        unit = f"{JAVA_UNIT.replace('PRODUCTO', app)}{piece}.service"
+        subprocess.run(["systemctl", "enable", unit], check=True)
     subprocess.run(["systemctl", "enable", "--now", *triggers], check=True)
     subprocess.run(["systemctl", "reload", "caddy.service"], check=True)
     if arguments.turn:

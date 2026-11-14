@@ -41,6 +41,14 @@ jobs:
           version-file: server/pyproject.toml
       - run: uv run --locked pybabel compile -d src/app/locale
         working-directory: server
+      # java.md: each piece in Java, built with the JDK of Debian 13, whose JRE runs it. dist/
+      # comes first: the container writes as root.
+      - run: mkdir -p dist
+      - run: >-
+          docker run --rm --volume "$PWD:/repo" --workdir /repo debian:trixie sh -c
+          "apt-get update -qq && apt-get install --yes -qq --no-install-recommends
+          openjdk-21-jdk-headless python3 ca-certificates > /dev/null
+          && python3 scripts/java.py PIEZA_JAVA CLASE dist"
       - run: |
           mkdir -p dist/PIEZA
           cp -r PIEZA/build/. dist/PIEZA

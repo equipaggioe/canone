@@ -3,11 +3,11 @@ name: Infra
 on:
   push:
     branches: [main]
-    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/server/**", "scripts/infra/**",
-      "fuentes/iana/**", ".github/workflows/infra.yml"]
+    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/server/**", "plantilla/scripts/java.py",
+      "scripts/infra/**", "fuentes/iana/**", ".github/workflows/infra.yml"]
   pull_request:
-    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/server/**", "scripts/infra/**",
-      "fuentes/iana/**", ".github/workflows/infra.yml"]
+    paths: ["plantilla/infra/**", "plantilla/receiver/**", "plantilla/server/**", "plantilla/scripts/java.py",
+      "scripts/infra/**", "fuentes/iana/**", ".github/workflows/infra.yml"]
 
 jobs:
   exposure:
@@ -21,6 +21,17 @@ jobs:
           for unit in plantilla/infra/*.service; do
             systemd-analyze security --offline=yes --threshold=20 "$unit"
           done
+
+  # java.md: java.py builds a piece with the JDK of Debian 13 and checks each dependency.
+  java-build:
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - uses: actions/checkout@v7
+      - run: >-
+          apt-get update && apt-get install --yes --no-install-recommends
+          openjdk-21-jdk-headless python3 ca-certificates
+      - run: sh scripts/infra/java-build.sh "$PWD"
 
   caddy:
     runs-on: ubuntu-latest
@@ -149,7 +160,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        script: [install.sh, install-logs.sh, deploy.sh, backup.sh, uninstall.sh]
+        script: [install.sh, install-logs.sh, deploy.sh, backup.sh, uninstall.sh, java.sh]
     steps:
       - uses: actions/checkout@v7
       # install.py asks for as much swap as memory, and the machine sees those of the runner.
@@ -168,7 +179,7 @@ jobs:
           debootstrap systemd-container debian-archive-keyring
       - run: >-
           sudo debootstrap --variant=minbase
-          --include=systemd,systemd-sysv,dbus,sudo,ca-certificates,unattended-upgrades,systemd-timesyncd,openssh-server,postgresql,caddy,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2,restic,curl
+          --include=systemd,systemd-sysv,dbus,sudo,ca-certificates,unattended-upgrades,systemd-timesyncd,openssh-server,postgresql,caddy,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2,restic,curl${{ matrix.script == 'java.sh' && ',openjdk-21-jdk-headless' || '' }}
           trixie /var/lib/machines/machine http://deb.debian.org/debian
       # The receiver runs rest-server 0.14.0 from its release, the version despliegue.md fixes.
       - if: matrix.script == 'backup.sh'

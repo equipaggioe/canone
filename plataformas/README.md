@@ -32,6 +32,7 @@ Para trabajar en una pieza se consulta su página, su página madre si la tiene 
 | [android.md](android.md) | Una aplicación de Android con Kotlin y Jetpack Compose |
 | [flet.md](flet.md) | Una aplicación en Flet |
 | [qt.md](qt.md) | Una aplicación de escritorio con Qt Widgets y PySide6 |
+| [java.md](java.md) | Una pieza en Java que solo llama el servidor, en la misma máquina |
 | [despliegue.md](despliegue.md) | La configuración del servidor |
 
 ## Función de las páginas

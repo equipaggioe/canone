@@ -148,3 +148,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0140](0140-la-camara-de-capturas-es-de-la-herramienta-que-la-corre.md) | La cámara de capturas es de la herramienta que la corre, y canone no fija dónde va | Todos | Aceptada |
 | [0141](0141-la-app-de-flet-genera-sus-modelos-y-se-entrega-con-los-scripts-de-flet.md) | La app de Flet genera sus modelos con datamodel-code-generator y se entrega como AAB, `setup.exe` y AppImage | Con Flet | Aceptada |
 | [0142](0142-una-pieza-prerenderizada-responde-404-con-su-pagina.md) | Una pieza toda prerenderizada responde 404 con su página, y una carpeta sin `index.html` no es una página | Con SvelteKit | Aceptada |
+| [0143](0143-una-pieza-en-java-corre-en-su-unidad-con-el-jre-de-debian.md) | Una pieza en Java corre en su unidad, con el JRE de Debian 13, y se compila con sus dependencias fijadas por SHA-256 | Con una pieza en Java | Aceptada en parte |

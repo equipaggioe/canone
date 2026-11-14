@@ -6,7 +6,7 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 
 Estándar: el [*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt) 3.0.
 
-Plantilla: [plantilla/infra/](../plantilla/infra/), con las unidades, los sitios de Caddy, la configuración de Valkey, `install.py`, que los instala, `credentials.py`, que cifra las credenciales, `deploy.py`, que instala cada versión, `database.py`, que vacía la base de una máquina en desarrollo, `packages.py`, que instala los paquetes de la máquina, `swap.py`, que le da tanto swap como memoria, `uv.py`, que instala uv, `authorize.py`, que deja entrar a `root` con una llave antes de `install.py`, y `uninstall.py`, que deshace todo eso; [plantilla/receiver/](../plantilla/receiver/), que corre en la receptora, [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml) y [plantilla/scripts/play.py](../plantilla/scripts/play.py), que sube cada app de `mobile/` a Play y baja su APK universal.
+Plantilla: [plantilla/infra/](../plantilla/infra/), con las unidades, los sitios de Caddy, la configuración de Valkey, `install.py`, que los instala, `credentials.py`, que cifra las credenciales, `deploy.py`, que instala cada versión, `database.py`, que vacía la base de una máquina en desarrollo, `packages.py`, que instala los paquetes de la máquina, `swap.py`, que le da tanto swap como memoria, `uv.py`, que instala uv, `authorize.py`, que deja entrar a `root` con una llave antes de `install.py`, y `uninstall.py`, que deshace todo eso; [plantilla/receiver/](../plantilla/receiver/), que corre en la receptora, [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml), [plantilla/scripts/play.py](../plantilla/scripts/play.py), que sube cada app de `mobile/` a Play y baja su APK universal, y [plantilla/scripts/java.py](../plantilla/scripts/java.py), que compila cada pieza en Java de [java.md](java.md).
 
 - Debian 13, con los programas de sus paquetes: Caddy 2.6.2, Valkey 8.1, coturn 4.6.1, restic 0.18.0, nftables 1.1.3, systemd 257, OpenSSH 10.0 y WireGuard 1.0.20210914.
 - rest-server 0.14.0, de su release de GitHub, en la receptora y en el CI: no es un paquete del servidor.
@@ -85,7 +85,8 @@ Plantilla: [plantilla/infra/](../plantilla/infra/), con las unidades, los sitios
 └── releases/
     └── <versión>/
         ├── server/
-        └── web/, panel/, landing/
+        ├── web/, panel/, landing/
+        └── <pieza>/                cada pieza en Java
 /swapfile                           si la máquina tenía menos swap que memoria
 /usr/local/
 ├── bin/
@@ -201,8 +202,8 @@ Estándar: NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*
 
 ## Máquina
 
-- Cada programa sale de los paquetes de Debian: `caddy`, `postgresql`, `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`, `nftables`, `unattended-upgrades`, `systemd-timesyncd` y `ca-certificates`, con el que `deploy.py` comprueba el certificado de GitHub; `coturn` si usa TURN, y `systemd-journal-remote` y `wireguard-tools` si envía su journal con `--logs`.
-- `sudo python3 packages.py` instala esos paquetes antes de `install.py`, con las mismas `--extension`, `--turn` y `--logs` que recibe `install.py`. `packages.py --list` los nombra sin instalarlos, en cualquier sistema: quien despliega ve qué instala antes de entrar a la máquina. `--all` vale por todas las opciones: con `--list`, nombra todo lo que `packages.py` puede instalar.
+- Cada programa sale de los paquetes de Debian: `caddy`, `postgresql`, `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`, `nftables`, `unattended-upgrades`, `systemd-timesyncd` y `ca-certificates`, con el que `deploy.py` comprueba el certificado de GitHub; `coturn` si usa TURN, `systemd-journal-remote` y `wireguard-tools` si envía su journal con `--logs`, y `openjdk-21-jre-headless` si tiene una pieza en Java ([java.md](java.md)).
+- `sudo python3 packages.py` instala esos paquetes antes de `install.py`, con las mismas `--extension`, `--turn`, `--logs` y `--java` que recibe `install.py`. `packages.py --list` los nombra sin instalarlos, en cualquier sistema: quien despliega ve qué instala antes de entrar a la máquina. `--all` vale por todas las opciones: con `--list`, nombra todo lo que `packages.py` puede instalar.
 - `sudo python3 swap.py` crea `/swapfile` con lo que le falta al swap para llegar a la memoria, como pide «Valkey», y lo agrega a `/etc/fstab`. Un `/swapfile` que no alcanza lo vuelve a crear, y con tanto swap como memoria no cambia nada.
 - La máquina llega a `install.py` con los paquetes de `packages.py` y el swap de `swap.py`, e `install.py` falla si faltan.
 - El host de cada superficie que la app tiene, `<dominio>`, `app.<dominio>` y `panel.<dominio>`, apunta a la máquina antes de `install.py`: Caddy obtiene el certificado de cada host por ACME, y reintenta mientras el host no la alcanza.
@@ -227,6 +228,7 @@ Estándar: NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*
 Estándares: [systemd.exec](../fuentes/systemd/systemd.exec.xml) de systemd y el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
 - Las unidades son las de `plantilla/infra/`, que `install.py` instala con el nombre y el dominio de la app, sin las de las piezas que no tiene.
+- Cada pieza en Java corre en `<app>-java@<pieza>.service`, que `install.py --java <pieza>` habilita y `deploy.py` reinicia antes que el servidor ([java.md](java.md)).
 - `install.py` escribe con la umask 022, sea cual sea la de quien despliega: cada servicio lee su configuración con su propia cuenta, y con la 077 Valkey no lee la suya y no arranca. Lo secreto lleva sus propios permisos, como `logs.conf` con 600 y `turnserver.conf` con 640.
 - El servidor arranca con `uvicorn app.main:app --port 8000 --ws-max-size 65536 --ws-per-message-deflate false`: `fastapi run` no le pasa a Uvicorn las opciones de WebSocket. [fastapi-cli 0.0.32](https://raw.githubusercontent.com/fastapi/fastapi-cli/0.0.32/src/fastapi_cli/cli.py)
 - `--port` es 8000 en todo producto: la máquina no aloja otro servidor.
@@ -332,7 +334,7 @@ Estándares: de Valkey, [*Administration*](../fuentes/valkey/admin.md) y [*Secur
 
 ## Versiones
 
-- Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI corre en ese tag los jobs de `ci.yml`, y solo si pasan construye un artefacto con el servidor, sus catálogos compilados y el build de la web, y lo publica en un release de GitHub. El `.sha256` del release lleva el SHA-256 de cada archivo, con los instalables.
+- Se despliega un tag `vMAJOR.MINOR.PATCH`. El CI corre en ese tag los jobs de `ci.yml`, y solo si pasan construye un artefacto con el servidor, sus catálogos compilados, el build de la web y el jar de cada pieza en Java, y lo publica en un release de GitHub. El `.sha256` del release lleva el SHA-256 de cada archivo, con los instalables.
 - El release es un borrador hasta que tiene el `.sha256`: un job que falla no deja publicado un release a medias.
 - Cada versión queda en `/srv/<app>/releases/<versión>/`, y el enlace `/srv/<app>/current` apunta a la activa. Los datos quedan fuera de las versiones, en `/var/lib/<app>/`.
 - El artefacto no lleva el entorno del servidor: cada versión lo crea en la máquina con `uv sync --locked --no-dev`, con el Python 3.13 de Debian 13.

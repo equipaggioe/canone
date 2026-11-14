@@ -802,6 +802,11 @@ def revisar(repo: Path) -> list[str]:
     if (repo / play).exists():
         fallas.extend(comparar(repo / play, PLANTILLA / play, play.as_posix()))
 
+    # java.md: the script that builds each piece in Java.
+    java = Path("scripts/java.py")
+    if (repo / java).exists():
+        fallas.extend(comparar(repo / java, PLANTILLA / java, java.as_posix()))
+
     for carpeta in sorted(p for p in repo.iterdir() if p.is_dir()):
         if carpeta.name.startswith("."):
             continue

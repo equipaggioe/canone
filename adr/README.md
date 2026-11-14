@@ -148,4 +148,8 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0140](0140-la-camara-de-capturas-es-de-la-herramienta-que-la-corre.md) | La cámara de capturas es de la herramienta que la corre, y canone no fija dónde va | Todos | Aceptada |
 | [0141](0141-la-app-de-flet-genera-sus-modelos-y-se-entrega-con-los-scripts-de-flet.md) | La app de Flet genera sus modelos con datamodel-code-generator y se entrega como AAB, `setup.exe` y AppImage | Con Flet | Aceptada |
 | [0142](0142-una-pieza-prerenderizada-responde-404-con-su-pagina.md) | Una pieza toda prerenderizada responde 404 con su página, y una carpeta sin `index.html` no es una página | Con SvelteKit | Aceptada |
-| [0143](0143-una-pieza-en-java-corre-en-su-unidad-con-el-jre-de-debian.md) | Una pieza en Java corre en su unidad, con el JRE de Debian 13, y se compila con sus dependencias fijadas por SHA-256 | Con una pieza en Java | Aceptada en parte |
+| [0143](0143-script-src-es-self-con-los-hashes-de-sveltekit-sin-strict-dynamic.md) | `script-src` es `'self'` con los hashes de SvelteKit, sin `'strict-dynamic'` | Con SvelteKit | Aceptada |
+| [0144](0144-vitest-corre-src-playwright-corre-tests-y-ci-corre-los-dos.md) | Vitest corre solo `src/`, Playwright solo `tests/`, y CI corre los dos | Con SvelteKit | Aceptada |
+| [0145](0145-una-convencion-entra-por-lo-que-empeora-sin-ella.md) | Una convención entra por lo que empeora sin ella, y una revisión la rehace desde la causa | `plataformas/` | Aceptada |
+| [0146](0146-lo-comprobado-se-registra-con-su-resultado-y-no-se-vuelve-a-probar.md) | Lo comprobado se registra con su resultado y sus versiones, y no se vuelve a probar | Todos | Aceptada |
+| [0147](0147-una-pieza-en-java-corre-en-su-unidad-con-el-jre-de-debian.md) | Una pieza en Java corre en su unidad, con el JRE de Debian 13, y se compila con sus dependencias fijadas por SHA-256 | Con una pieza en Java | Aceptada en parte |

@@ -70,18 +70,18 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [valkey/admin.md](valkey/admin.md) | [origen](https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md) | Valkey 8.1, la versión de Debian 13 |
 | [valkey/security.md](valkey/security.md) | [origen](https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md) | Valkey 8.1, la versión de Debian 13 |
 | [standard-webhooks/standard-webhooks.md](standard-webhooks/standard-webhooks.md) | [origen](https://raw.githubusercontent.com/standard-webhooks/standard-webhooks/v1.0.2/spec/standard-webhooks.md) |  |
-| [sveltekit/project-structure.md](sveltekit/project-structure.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/10-getting-started/30-project-structure.md) |  |
-| [sveltekit/load.md](sveltekit/load.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/20-core-concepts/20-load.md) |  |
-| [sveltekit/page-options.md](sveltekit/page-options.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/20-core-concepts/40-page-options.md) |  |
-| [sveltekit/state-management.md](sveltekit/state-management.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/20-core-concepts/50-state-management.md) |  |
-| [sveltekit/adapter-static.md](sveltekit/adapter-static.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/25-build-and-deploy/50-adapter-static.md) |  |
-| [sveltekit/accessibility.md](sveltekit/accessibility.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/documentation/docs/40-best-practices/10-accessibility.md) |  |
+| [sveltekit/project-structure.md](sveltekit/project-structure.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/10-getting-started/30-project-structure.md) |  |
+| [sveltekit/load.md](sveltekit/load.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/20-core-concepts/20-load.md) |  |
+| [sveltekit/page-options.md](sveltekit/page-options.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/20-core-concepts/40-page-options.md) |  |
+| [sveltekit/state-management.md](sveltekit/state-management.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/20-core-concepts/50-state-management.md) |  |
+| [sveltekit/adapter-static.md](sveltekit/adapter-static.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/25-build-and-deploy/50-adapter-static.md) |  |
+| [sveltekit/accessibility.md](sveltekit/accessibility.md) | [origen](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/40-best-practices/10-accessibility.md) |  |
 | [svelte/best-practices.md](svelte/best-practices.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/07-misc/01-best-practices.md) |  |
 | [svelte/props.md](svelte/props.md) | [origen](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/05-$props.md) |  |
-| [unocss/presets-wind4.md](unocss/presets-wind4.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/presets/wind4.md) |  |
-| [unocss/integrations-vite.md](unocss/integrations-vite.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/integrations/vite.md) |  |
-| [paraglide/basics.md](paraglide/basics.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/a2a2f0ea6990fb6c57e0d25ac2c24e58e3d4ee4a/docs/basics.md) | Commit de la versión 3.2.1 |
-| [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | [origen](https://raw.githubusercontent.com/opral/paraglide-js/a2a2f0ea6990fb6c57e0d25ac2c24e58e3d4ee4a/docs/compiling-messages.md) | Commit de la versión 3.2.1 |
+| [unocss/presets-wind4.md](unocss/presets-wind4.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/presets/wind4.md) |  |
+| [unocss/integrations-vite.md](unocss/integrations-vite.md) | [origen](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/integrations/vite.md) |  |
+| [paraglide/basics.md](paraglide/basics.md) | [origen](https://raw.githubusercontent.com/generaltranslation/paraglide-js/7d207f935af539ad1113d4f00563258caf5dc040/docs/basics.md) | Commit de la versión 3.2.2 |
+| [paraglide/compiling-messages.md](paraglide/compiling-messages.md) | [origen](https://raw.githubusercontent.com/generaltranslation/paraglide-js/7d207f935af539ad1113d4f00563258caf5dc040/docs/compiling-messages.md) | Commit de la versión 3.2.2 |
 | [dart/effective-dart-style.md](dart/effective-dart-style.md) | [origen](https://raw.githubusercontent.com/dart-lang/site-www/d7879f023185039ecceecca635d6ce9d182b5d87/src/content/effective-dart/style.md) |  |
 | [dart/effective-dart-documentation.md](dart/effective-dart-documentation.md) | [origen](https://raw.githubusercontent.com/dart-lang/site-www/83ebb33f4768c0b568d2d07541328785aeee2199/src/content/effective-dart/documentation.md) |  |
 | [dart/effective-dart-usage.md](dart/effective-dart-usage.md) | [origen](https://raw.githubusercontent.com/dart-lang/site-www/f751f882acad62538b7356cc90ab13c25ec5b4a4/src/content/effective-dart/usage.md) |  |

@@ -32,7 +32,7 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `flet/theme.py` | `src/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
 | `flet/tests/test_theme.py` | `tests/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
 | `sveltekit/.prettierrc` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
-| `sveltekit/.gitignore`<br>`vite.config.ts`<br>`uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |
+| `sveltekit/.gitignore`<br>`.prettierignore`<br>`eslint.config.js`<br>`vite.config.ts`<br>`playwright.config.ts`<br>`uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |
 | `flutter/analysis_options.yaml` | Cada app Flutter | Canónico | [flutter.md](../plataformas/flutter.md) |
 | `flutter/.gitignore` | Cada app Flutter | Punto de partida | [repositorio.md](../repositorio.md) |
 | `android/.editorconfig` | `mobile/` | Canónico | [android.md](../plataformas/android.md) |

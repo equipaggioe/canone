@@ -1,4 +1,4 @@
-# ADR-0143 · Una pieza en Java corre en su unidad, con el JRE de Debian 13, y se compila con sus dependencias fijadas por SHA-256
+# ADR-0147 · Una pieza en Java corre en su unidad, con el JRE de Debian 13, y se compila con sus dependencias fijadas por SHA-256
 
 - **Estado:** Aceptada en los puntos 1 a 4, que pidió el usuario (2026-11-13). Los puntos 5 a 8 son *(propuesta)*: se eligieron al construir
 - **Fecha:** 2026-11-13
@@ -10,6 +10,20 @@ presenze compara huellas con SourceAFIS, una biblioteca de la JVM, en un servici
 solo llama su servidor por loopback. canone solo sabía correr el servidor de Python: el servicio
 no tenía unidad, paquete ni lugar en el artefacto, y en la máquina el enrolamiento y el login con
 imagen de huella respondían 503.
+
+Comprobado el 2026-11-13 y el 2026-11-14, con systemd 257, `openjdk-21-jre-headless` y
+`openjdk-21-jdk-headless` 21.0.13+9-1~deb13u2 de Debian 13:
+
+- La unidad de la pieza queda con una exposición de 0.9 en `systemd-analyze security`. Con
+  `MemoryDenyWriteExecute=yes`, la JVM no arranca: termina con 1.
+- Con `IPAddressDeny=any` e `IPAddressAllow=localhost`, la pieza responde en loopback y una conexión
+  suya a 1.1.1.1:80 no sale.
+- Sin `SuccessExitStatus=143`, detener la unidad la deja `failed`, porque la JVM termina con 143.
+- `scripts/infra/java.sh` pasa entero en una Debian 13 arrancada con `systemd-nspawn`, y
+  `scripts/infra/java-build.sh` en Debian 13.
+- presenze `v0.0.4` corre su comparador en `presenze-java@server-fingerprint.service` en un VPS
+  con Debian 13: responde en `127.0.0.1:8091` y SourceAFIS 3.18.1 saca la plantilla de una
+  captura real.
 
 ## Decisión
 

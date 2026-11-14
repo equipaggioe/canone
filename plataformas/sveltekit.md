@@ -8,22 +8,27 @@ Una superficie web con SvelteKit y UnoCSS.
 
 Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de SvelteKit.
 
-- Node es el 26.13.0, la última LTS, y solo se usa para construir.
+- Node es el 26.13.1, la última LTS, y solo se usa para construir.
 - `package.json` declara estas versiones exactas, sin `^` ni `~`:
-  - SvelteKit 3.1.1, `@sveltejs/adapter-static` 4.0.1, Svelte 5.57.3, Vite 8.3.6 y `@sveltejs/vite-plugin-svelte` 7.3.1.
+  - SvelteKit 3.2.0, `@sveltejs/adapter-static` 4.0.1, Svelte 5.57.3, Vite 8.3.8 y `@sveltejs/vite-plugin-svelte` 7.3.1.
   - TypeScript 6.0.3, `svelte-check` 4.7.8 y `@types/node` 26.6.6.
-  - Prettier 3.9.10, `prettier-plugin-svelte` 4.1.1, ESLint 10.14.0, `eslint-plugin-svelte` 3.24.1, `typescript-eslint` 8.72.1, `@eslint/js` 10.0.1, `globals` 17.14.0 y `eslint-config-prettier` 10.1.8.
-  - UnoCSS 66.12.0, Paraglide 3.2.1, `openapi-typescript` 7.13.0, `openapi-fetch` 0.17.0, Leaflet 1.9.4 y `@types/leaflet` 1.9.22.
-  - Vitest 5.1.0, Playwright 1.65.0 y `@axe-core/playwright` 4.14.0.
-- TypeScript es la 6 y no la 7: SvelteKit 3.1.1 y `svelte-check` 4.7.8 piden `^6`.
-- `@types/node` va en `devDependencies`: el `tsconfig.json` que genera sv declara los tipos de `node`, y sin ellos `svelte-check` avisa.
-- pnpm maneja las dependencias. No deja importar un paquete que no esté declarado.
-- `package.json` declara la versión exacta de pnpm en `packageManager`, `pnpm@12.18.0`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra.
-- `package.json` declara en `imports` `"#lib/*": "./src/lib/*"`, y el código importa de `src/lib/` con `#lib/` y la extensión `.js`, como `#lib/api/client.js`: SvelteKit 3 quitó `$lib`, y sin la extensión TypeScript no encuentra el módulo. [SvelteKit 3.1.1](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs/kit%403.1.1/documentation/docs/98-reference/26-%24lib.md)- En `static/` va solo lo que se sirve con su nombre sin cambios, como `robots.txt`. Lo demás se importa, y Vite le pone un nombre con el hash de su contenido ([Project structure, *static*](../fuentes/sveltekit/project-structure.md)).
+  - Prettier 3.10.1, `prettier-plugin-svelte` 4.1.1, ESLint 10.15.0, `eslint-plugin-svelte` 3.24.1, `typescript-eslint` 8.72.2, `@eslint/js` 10.0.1, `globals` 17.14.0 y `eslint-config-prettier` 10.1.8.
+  - UnoCSS 66.13.0, Paraglide 3.2.2, `openapi-typescript` 7.13.0, `openapi-fetch` 0.17.0, Leaflet 1.9.4 y `@types/leaflet` 1.9.22.
+  - Vitest 5.1.0, Playwright 1.65.1 y `@axe-core/playwright` 4.14.0.
+- TypeScript es la 6 y no la 7: SvelteKit 3.2.0 y `svelte-check` 4.7.8 piden `^6`.
+- `@types/node` va en `devDependencies`: el `tsconfig.json` que genera sv declara los tipos de `node`, y sin ellos `svelte-check` avisa. [sv 1.3.0](https://raw.githubusercontent.com/sveltejs/cli/sv%401.3.0/packages/sv/src/addons/eslint.ts)
+- pnpm maneja las dependencias. No deja importar un paquete que no esté declarado. [pnpm](https://raw.githubusercontent.com/pnpm/pnpm.io/19a2f01816126e8c1140f262674ef9be213ffef1/docs/motivation.md)
+- `package.json` declara la versión exacta de pnpm en `packageManager`, `pnpm@12.18.0`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra. [pnpm/action-setup 6.1.1](https://raw.githubusercontent.com/pnpm/action-setup/v6.1.1/README.md)
+- `package.json` declara en `imports` `"#lib/*": "./src/lib/*"`: SvelteKit 3 quitó `$lib`. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs/kit%403.2.0/documentation/docs/98-reference/26-%24lib.md)
+- Un import de `#lib/` lleva la extensión `.js`, como `#lib/api/client.js`: TypeScript resuelve `imports` como Node, que no completa la extensión. [TypeScript](https://raw.githubusercontent.com/microsoft/TypeScript-Website/4ec663ac4412c3a7086401bd5a8811565589b11d/packages/documentation/copy/en/modules-reference/Reference.md)
+- Las pruebas de Vitest van en `src/`, con `.test.ts`, y las de Playwright, en `tests/`.
+- `vite.config.ts` limita Vitest a `src/**/*.test.ts`: sin eso toma también las pruebas de Playwright de `tests/`, y falla al cargarlas. [Vitest 5.1.0](https://raw.githubusercontent.com/vitest-dev/vitest/v5.1.0/docs/config/include.md)
+- `playwright.config.ts` limita Playwright a `tests/`: sin eso toma también las pruebas de Vitest de `src/`, y falla al cargarlas. [Playwright 1.65.1](https://raw.githubusercontent.com/microsoft/playwright/v1.65.1/docs/src/test-api/class-testconfig.md)
+- El código importa de `src/lib/` con `#lib/` ([Project structure, *src*](../fuentes/sveltekit/project-structure.md)).
+- En `static/` va solo lo que se sirve con su nombre sin cambios, como `robots.txt`. Lo demás se importa, y Vite le pone un nombre con el hash de su contenido ([Project structure, *static*](../fuentes/sveltekit/project-structure.md)).
+- `%sveltekit.body%` va dentro de un `<div>` de `app.html`, y no directo en `<body>`: la hidratación destruye lo que las extensiones del navegador insertan ahí ([Project structure, *src*](../fuentes/sveltekit/project-structure.md)).
 - `package.json` declara `@sveltejs/kit`, `svelte` y `vite` en `devDependencies` ([Project structure, *package.json*](../fuentes/sveltekit/project-structure.md)).
 - `tsconfig.json` extiende `$app/tsconfig`, la configuración que genera SvelteKit ([Project structure, *tsconfig.json*](../fuentes/sveltekit/project-structure.md)).
-- `%sveltekit.body%` va dentro de un `<div>` de `app.html`, y no directo en `<body>`: la hidratación destruye lo que las extensiones del navegador insertan ahí ([Project structure, *src*](../fuentes/sveltekit/project-structure.md)).
-- Las pruebas de Vitest van en `src/`, con `.test.ts`, y las de Playwright, en `tests/` ([Project structure, *src*](../fuentes/sveltekit/project-structure.md) y [*tests*](../fuentes/sveltekit/project-structure.md)).
 
 ```text
 <pieza>/
@@ -32,6 +37,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
   .prettierrc
   eslint.config.js
   package.json
+  playwright.config.ts
   pnpm-lock.yaml
   tsconfig.json
   uno.config.ts       el preset y los tokens
@@ -53,7 +59,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
   tests/
 ```
 
-Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, que se copia sin editar, y `vite.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore` y `.prettierignore`, puntos de partida.
+Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, que se copia sin editar, y `vite.config.ts`, `playwright.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore` y `.prettierignore`, puntos de partida.
 
 ## Estilo
 
@@ -151,16 +157,16 @@ Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
 
 Estándar: el [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_Security_Policy.md) de OWASP.
 
-- SvelteKit genera la CSP con la opción `csp` de `sveltekit()` en modo `hash`.
+- SvelteKit genera la CSP con la opción `csp` de `sveltekit()` en modo `hash`: los nonces piden un HTML que cambie en cada respuesta, y las páginas son estáticas.
 - La CSP va en una etiqueta `meta` de cada página: el hash cambia en cada página y en cada build. `frame-ancestors`, que una `meta` no admite, va en la cabecera que pone Caddy ([despliegue.md](despliegue.md#caddy)).
 - La CSP lleva además `default-src 'self'` y `form-action 'self'`, que no cae en `default-src`. [CSP Level 3](https://raw.githubusercontent.com/w3c/webappsec-csp/251d288dad4d6166e73541877ca2073864edeb8f/index.bs)
-- `'strict-dynamic'` va solo en el build, con `command === 'build'` en `vite.config.ts`, y en `vite dev` `script-src` es `'self'`: SvelteKit no lo quita en desarrollo, y la página no hidrata. [SvelteKit 3.1.1](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/packages/kit/src/runtime/server/page/csp.js)
-- `style-src-attr` lleva `'unsafe-inline'`: SvelteKit solo lo agrega en desarrollo, y sin él los atributos `style` y la directiva `style:` no se aplican en una página prerenderizada. [SvelteKit 3.1.1](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.1.1/packages/kit/src/runtime/server/page/csp.js)
-- `vite.config.ts` fija `build.assetsInlineLimit: 0`: Vite incrusta como `data:` los archivos de menos de 4 KiB, y la CSP los bloquea. [Vite 8.3.6](https://raw.githubusercontent.com/vitejs/vite/v8.3.6/docs/config/build-options.md)
+- `script-src` es `'self'`, con los hashes que agrega SvelteKit, y no lleva `'strict-dynamic'`: SvelteKit carga su código con `import()`, `'strict-dynamic'` solo deja pasar lo que carga un `<script>` creado desde el código, y la página no hidrata. Las demás respuestas del origen, JSON e imágenes, no corren como script porque Caddy las sirve con `nosniff` ([despliegue.md](despliegue.md#caddy)). [CSP Level 3](https://raw.githubusercontent.com/w3c/webappsec-csp/251d288dad4d6166e73541877ca2073864edeb8f/index.bs)
+- `style-src-attr` lleva `'unsafe-inline'`: SvelteKit solo lo agrega en desarrollo, y sin él los atributos `style` y la directiva `style:` no se aplican en una página prerenderizada. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/packages/kit/src/runtime/server/page/csp.js)
+- `vite.config.ts` fija `build.assetsInlineLimit: 0`: Vite incrusta como `data:` los archivos de menos de 4 KiB, y la CSP los bloquea. [Vite 8.3.8](https://raw.githubusercontent.com/vitejs/vite/v8.3.8/docs/config/build-options.md)
 - La CSP lleva el host de las teselas en `img-src`.
-- Con un formulario de pago incrustado, los dominios que documenta su pasarela van en `frame-src` y `connect-src`, y su script se carga desde el código: con `'strict-dynamic'`, el navegador bloquea un `<script>` escrito en el HTML aunque su dominio esté en `script-src`. [CSP Level 3](https://raw.githubusercontent.com/w3c/webappsec-csp/251d288dad4d6166e73541877ca2073864edeb8f/index.bs)
+- Con un formulario de pago incrustado, los dominios que documenta su pasarela van en `script-src`, `frame-src` y `connect-src`.
 - La prueba de Playwright de cada página falla también con un evento `securitypolicyviolation`, y corre sobre el build, con `vite preview`: en desarrollo SvelteKit afloja la CSP, y lo que la CSP bloquea no da error.
-- La CSP es la *Hash-based Strict Policy*: `script-src` con los hashes y `'strict-dynamic'`, `object-src 'none'` y `base-uri 'none'`. La de nonces pide un HTML que cambie en cada respuesta, y las páginas son estáticas ([CSP Cheat Sheet, *Strict CSP*](../fuentes/owasp/Content_Security_Policy.md) y [*Hash-based Strict Policy*](../fuentes/owasp/Content_Security_Policy.md)).
+- La CSP lleva `object-src 'none'` y `base-uri 'none'` ([CSP Cheat Sheet, *Hash-based Strict Policy*](../fuentes/owasp/Content_Security_Policy.md)).
 - Ningún script ni manejador de eventos va escrito en el HTML: van en el código ([CSP Cheat Sheet, *Refactoring inline code*](../fuentes/owasp/Content_Security_Policy.md)).
 - No se usa `X-Content-Security-Policy` ni `X-WebKit-CSP` ([CSP Cheat Sheet, *WARNING*](../fuentes/owasp/Content_Security_Policy.md)).
 
@@ -171,10 +177,10 @@ Estándares: de UnoCSS, el [preset Wind4](../fuentes/unocss/presets-wind4.md) y 
 Contrato: [transversal.md](transversal.md#tema).
 
 - El preset es Wind4: trae el reset y genera las variables CSS del tema.
-- La configuración va en `uno.config.ts`, y no en `vite.config.ts`: funciona mejor con el editor y las integraciones. [UnoCSS 66.12.0](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/guide/config-file.md)
+- La configuración va en `uno.config.ts`, y no en `vite.config.ts`: funciona mejor con el editor y las integraciones. [UnoCSS 66.13.0](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/guide/config-file.md)
 - Los tokens van en el `theme` de `uno.config.ts`, sin tamaños literales fuera de él. Los colores son `colors`, generado en `src/lib/colors.ts`, y sus variables CSS entran como preflight desde `colorsCss`, con el modo oscuro de `prefers-color-scheme`.
-- `uno.config.ts` fija `separators: [':']`. Con los separadores por defecto, `:` y `-`, un atajo como `link-primary` u `open-panel` se lee como una variante seguida de una clase, y no se genera, sin error. [UnoCSS 66.12.0](https://raw.githubusercontent.com/unocss/unocss/v66.12.0/docs/config/index.md)
-- `app.html` no lleva clases de utilidad: SvelteKit 3 no le pasa `app.html` a UnoCSS, que no las genera, sin error, ni en el build ni en `vite dev`. Por eso el build avisa `transform_index_html_unsupported` con los plugins de UnoCSS. [SvelteKit 3.1.1](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs/kit%403.1.1/packages/kit/src/messages/build-warnings.js)
+- `uno.config.ts` fija `separators: [':']`. Con los separadores por defecto, `:` y `-`, un atajo como `link-primary` u `open-panel` se lee como una variante seguida de una clase, y no se genera, sin error. [UnoCSS 66.13.0](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/config/index.md)
+- `app.html` no lleva clases de utilidad: SvelteKit 3 no le pasa `app.html` a UnoCSS, que no las genera, sin error, ni en el build ni en `vite dev`. Por eso el build avisa `transform_index_html_unsupported` con los plugins de UnoCSS. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs/kit%403.2.0/packages/kit/src/messages/build-warnings.js)
 - Las clases de utilidad no van en archivos `.ts`: UnoCSS no los lee por defecto ([UnoCSS Vite Plugin, *VanillaJS / TypeScript*](../fuentes/unocss/integrations-vite.md)).
 - Un padre cambia el estilo de un hijo con propiedades personalizadas de CSS, como `<Child --color="red" />`, y usa `:global` solo con un hijo de una biblioteca ([Best practices, *Styling child components*](../fuentes/svelte/best-practices.md)).
 - Un valor de JavaScript que usa el `<style>` de un componente entra como propiedad personalizada con la directiva `style:`, como `style:--columns={columns}` ([Best practices, *Using JavaScript variables in CSS*](../fuentes/svelte/best-practices.md)).
@@ -258,7 +264,8 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | El script `api`, y que `dev` y `check` lo corran primero | [scripts/verificar.py](../scripts/verificar.py) |
 | `includeIgnoreFile` en `eslint.config.js` y `pnpm-lock.yaml` en `.prettierignore` | [scripts/verificar.py](../scripts/verificar.py) |
 | El proxy de `/api` en `vite.config.ts` | [scripts/verificar.py](../scripts/verificar.py) |
-| El modo `hash`, `'strict-dynamic'`, `object-src 'none'`, `base-uri 'none'`, `form-action 'self'`, `style-src-attr 'unsafe-inline'` y `assetsInlineLimit: 0` en `vite.config.ts` | [scripts/verificar.py](../scripts/verificar.py) |
+| El modo `hash`, `script-src 'self'`, `object-src 'none'`, `base-uri 'none'`, `form-action 'self'`, `style-src-attr 'unsafe-inline'` y `assetsInlineLimit: 0` en `vite.config.ts` | [scripts/verificar.py](../scripts/verificar.py) |
+| `script-src` sin `'strict-dynamic'` | La prueba de Playwright de cada página en CI, que falla con el `securitypolicyviolation` del `import()` bloqueado |
 | `separators: [':']` en `uno.config.ts` | [scripts/verificar.py](../scripts/verificar.py) |
 | Ni `$:`, `export let`, `$$props`, `$$restProps`, `on:`, `<slot>`, `<svelte:component>` ni `<svelte:self>` | `compilerOptions: { runes: true }` y `svelte-check --fail-on-warnings` en CI |
 | Ningún acceso dinámico al catálogo de mensajes, como `m[name]()` | `paraglide/no-dynamic-message-access` de ESLint en CI |

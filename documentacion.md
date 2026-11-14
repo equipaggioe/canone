@@ -101,7 +101,7 @@ Un pendiente se **borra** de aquí en el commit que lo resuelve. No se tacha ni 
 - **Alcance:** piezas afectadas
 
 ## Contexto
-Solo si hace falta: qué problema había y qué se sabía. Las decisiones viejas que esta reemplazó se resumen aquí.
+Solo si hace falta: qué problema había, qué se sabía y qué se comprobó, con su resultado y las versiones de las que depende. Las decisiones viejas que esta reemplazó se resumen aquí.
 
 ## Decisión
 Lista numerada. Cada punto es una regla que se puede verificar en el código.

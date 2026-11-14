@@ -39,13 +39,14 @@ Para trabajar en una pieza se consulta su página, su página madre si la tiene 
 
 Una página es un catálogo de convenciones de una tecnología o ámbito. Cada convención está escrita en la página: la adoptada, con su origen en una fuente, y la propia, establecida directamente por Canone.
 
-Las convenciones sirven para tres propósitos:
+Una convención entra solo si se puede nombrar qué empeora sin ella, aunque todavía no haya pasado ([principios.md](../principios.md#poder-nombrar-el-síntoma)):
 
-- **Uniformidad:** que los repositorios se organicen y se lean de la misma manera, con los mismos nombres y estructuras.
-- **Decisiones comunes:** que las elecciones sobre tecnologías, bibliotecas, versiones y configuraciones se tomen una sola vez.
-- **Contratos entre piezas:** que los componentes de un sistema se entiendan y cumplan las mismas condiciones, como el formato de error, la paginación o la sesión.
+- **Eficacia:** el programa falla, da un resultado incorrecto sin que nadie lo note, queda expuesto a un ataque o pierde datos.
+- **Eficiencia:** el programa usa más tiempo, memoria o red de lo necesario.
+- **Uso:** la interfaz no se ve ni se comporta igual en todo el producto, o deja a un usuario sin poder usarlo.
+- **Estructura:** dos piezas no se entienden, un repositorio no se lee como los demás, una decisión se vuelve a tomar en cada repositorio, o un cambio o una actualización cuesta más de lo necesario.
 
-Una convención que no contribuye a ninguno de estos propósitos no se incluye. Su utilidad no depende de que alguna herramienta pueda hacerla cumplir.
+En una regla de estilo se pregunta qué empeora si no hubiera regla, no si otro valor sería peor. No justifica una convención que una fuente la establezca, que una herramienta pueda comprobarla ni que complete una lista.
 
 ### Selección de fuentes
 
@@ -90,6 +91,8 @@ Adoptar una fuente es escribir sus convenciones en la página, cada una con su o
 - Una sección con convenciones adoptadas empieza por un párrafo `Estándar:` o `Estándares:` que nombra, con su enlace, los documentos que son su origen. Es informativo: no adopta nada por sí mismo, y no nombra secciones ni lleva «salvo».
 
 #### Qué no se escribe
+
+No se escribe lo que no cumple el criterio de [Función de las páginas](#función-de-las-páginas), ni lo siguiente:
 
 - **Lo que hace cumplir una herramienta:** si una herramienta de «Cumplimiento» hace cumplir entera una parte de una fuente, la página no escribe sus convenciones. Escribe una sola convención que nombra esa parte, con su origen, y dice qué reglas de esa parte no sigue, con su razón. La herramienta va en «Cumplimiento». Lo que la herramienta no cubre se escribe convención por convención.
 - **Lo dirigido a otro actor:** no se escriben las obligaciones dirigidas a quienes desarrollan una herramienta que el producto utiliza, como coturn, Uvicorn o un navegador, ni las dirigidas a la otra parte de un protocolo, como el servicio de push de Web Push. Sí se escriben las opciones que la herramienta deja a quien la configura, como los destinos a los que coturn niega relevar.
@@ -143,7 +146,7 @@ Las convenciones propias se establecen en tres casos:
 - Las convenciones de una misma página no deben contradecirse. Si una convención modifica el alcance de otra, debe indicar expresamente qué casos quedan fuera.
 - Una convención incluye una justificación breve únicamente cuando se aparta de una fuente o la endurece, o cuando explica una elección cuyo motivo no resulta evidente. Las preferencias triviales, como un color o el largo de línea, no llevan justificación.
 - No se añaden comentarios, explicaciones ni ejemplos que no sean necesarios para entender o aplicar la convención.
-- En cada sección van primero las convenciones propias, y después las adoptadas. De las propias, primero las que no llevan origen, y después las elecciones y los endurecimientos.
+- En cada sección van primero las convenciones propias, y después las adoptadas. De las propias, primero las que no llevan origen, y después las elecciones y los endurecimientos. Una estructura va después de esas convenciones, y la línea `Plantilla:` cierra la sección.
 
 ### Estructuras y distribución
 
@@ -157,7 +160,7 @@ Estos mismos criterios de redacción se aplican a los comentarios incluidos en `
 
 Las secciones de una página siguen este orden. Se incluyen únicamente los bloques que correspondan a la tecnología o ámbito documentado.
 
-1. **Proyecto:** la sección `Proyecto`, con versión, sistema de construcción, estructura de directorios y plantillas, y después las dependencias.
+1. **Proyecto:** la sección `Proyecto`, con las versiones, el sistema de construcción, las dependencias, la estructura de directorios y las plantillas.
 2. **Código:** formato, análisis estático, tipado, organización de paquetes y convenciones de nombres.
 3. **Arquitectura:** organización interna de la aplicación y uso de las estructuras o mecanismos propios de la tecnología.
 4. **Temas:** convenciones agrupadas por tema, con los temas en orden alfabético.
@@ -186,6 +189,7 @@ Se utiliza una tabla con estas columnas:
 - Cada fila debe referirse a una convención escrita en la página. La tabla no introduce convenciones nuevas.
 - La herramienta debe hacer cumplir todo lo indicado en la primera columna.
 - Una herramienta que imponga convenciones adicionales a las documentadas en esa fila no se incluye. No debe introducir requisitos que la página no haya establecido.
+- Si romper una convención ya hace fallar un paso de CI, como el build o `svelte-check`, ese paso es su herramienta: no se agrega un chequeo aparte.
 
 ## Alcance
 
@@ -203,6 +207,8 @@ Una página que empieza con la nota «En desarrollo; no se implementa» no se ap
 
 Una revisión evalúa cada fuente, cada convención y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. Una convención adoptada se compara con su origen. En cada fuente, lo que la página no escribe tiene que caer en un caso de «Qué no se escribe». No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.
 
+Una revisión llega a la página que se escribiría de cero desde sus fuentes con los criterios de este documento: la página revisada no es punto de partida ni argumento. Lo que está mal se corrige en su causa: se rediseña la convención o la sección de la que sale, aunque eso cambie o saque otras partes de la página, y no se le agrega una excepción ni se retoca la redacción para que siga. Si la causa es un criterio de este documento, la revisión propone cambiar el criterio. Una fuente o una convención nueva solo se propone si cumple el criterio de [Función de las páginas](#función-de-las-páginas), con su efecto comprobado; sin la comprobación, queda como candidata sin confirmar.
+
 El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
 
 | Elemento evaluado | Alternativa | Veredicto |
@@ -216,6 +222,8 @@ El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
 - **Sin confirmar:** no fue posible verificarlo. Se identifica expresamente como tal; no se presenta como un hecho.
 
 Las herramientas que hacen cumplir las convenciones se comprueban mediante experimentos, no de memoria ni por lo que aparentan hacer según su documentación.
+
+Antes de comprobar algo, se busca si ya está comprobado en las pruebas de CI de Canone o en un ADR. Si lo está, se cita y no se repite, salvo que haya cambiado una versión de la que depende.
 
 Ningún elemento queda fuera de la revisión sin que conste que no fue evaluado.
 

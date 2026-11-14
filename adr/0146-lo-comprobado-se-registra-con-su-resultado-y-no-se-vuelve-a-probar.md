@@ -23,7 +23,8 @@ versiones.
 
 - Una comprobación vale mientras no cambien sus versiones. Al subir una versión, se sabe qué hay que
   volver a comprobar.
-- Los ADR anteriores no se editan, así que lo que comprobaron sin registrarlo sigue fuera.
+- A un ADR anterior se le puede agregar lo que comprobó y no registró: completar su «Contexto» no
+  cambia su decisión.
 
 ## Descartado
 

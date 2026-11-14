@@ -4,7 +4,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import UnoCSS from 'unocss/vite';
 import { defineConfig } from 'vite';
 
-export default defineConfig(({ command }) => ({
+export default defineConfig({
 	build: { assetsInlineLimit: 0 },
 	plugins: [
 		paraglideVitePlugin({
@@ -22,7 +22,7 @@ export default defineConfig(({ command }) => ({
 				mode: 'hash',
 				directives: {
 					'default-src': ['self'],
-					'script-src': command === 'build' ? ['strict-dynamic'] : ['self'],
+					'script-src': ['self'],
 					'style-src-attr': ['unsafe-inline'],
 					'object-src': ['none'],
 					'base-uri': ['none'],
@@ -31,5 +31,6 @@ export default defineConfig(({ command }) => ({
 			}
 		})
 	],
-	server: { proxy: { '/api': { target: 'http://localhost:8000', ws: true } } }
-}));
+	server: { proxy: { '/api': { target: 'http://localhost:8000', ws: true } } },
+	test: { include: ['src/**/*.test.ts'] }
+});

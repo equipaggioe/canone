@@ -348,13 +348,13 @@ def versiones_gradle(
 
 # plataformas/sveltekit.md, «Pruebas»: la versión de Playwright de «Proyecto» en todo package.json
 # del repositorio, porque cada versión descarga sus propios navegadores.
-PLAYWRIGHT = "1.65.0"
+PLAYWRIGHT = "1.65.1"
 
 # plataformas/sveltekit.md, «CSP»: lo que vite.config.ts fija de la CSP.
 Q = r"['\"]"
 CSP = {
     "mode: 'hash'": rf"mode:\s*{Q}hash{Q}",
-    "'strict-dynamic' en el build": rf"command\s*===\s*{Q}build{Q}\s*\?\s*\[\s*{Q}strict-dynamic{Q}\s*\]",
+    "script-src 'self'": rf"{Q}script-src{Q}\s*:\s*\[\s*{Q}self{Q}\s*\]",
     "object-src 'none'": rf"{Q}object-src{Q}\s*:\s*\[\s*{Q}none{Q}\s*\]",
     "base-uri 'none'": rf"{Q}base-uri{Q}\s*:\s*\[\s*{Q}none{Q}\s*\]",
     "form-action 'self'": rf"{Q}form-action{Q}\s*:\s*\[\s*{Q}self{Q}\s*\]",
@@ -458,28 +458,28 @@ PYPROJECT = {
 REQUISITO = re.compile(r"^\s*([A-Za-z0-9._-]+)\s*(?:\[[^\]]*\])?\s*([^;]*)")
 NPM = {
     "@axe-core/playwright": "4.14.0",
-    "@inlang/paraglide-js": "3.2.1",
+    "@inlang/paraglide-js": "3.2.2",
     "@sveltejs/adapter-static": "4.0.1",
-    "@sveltejs/kit": "3.1.1",
+    "@sveltejs/kit": "3.2.0",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
     "@types/leaflet": "1.9.22",
     "@eslint/js": "10.0.1",
     "@types/node": "26.6.6",
-    "eslint": "10.14.0",
+    "eslint": "10.15.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-svelte": "3.24.1",
     "globals": "17.14.0",
     "leaflet": "1.9.4",
     "openapi-fetch": "0.17.0",
     "openapi-typescript": "7.13.0",
-    "prettier": "3.9.10",
+    "prettier": "3.10.1",
     "prettier-plugin-svelte": "4.1.1",
     "svelte": "5.57.3",
     "svelte-check": "4.7.8",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.72.1",
-    "unocss": "66.12.0",
-    "vite": "8.3.6",
+    "typescript-eslint": "8.72.2",
+    "unocss": "66.13.0",
+    "vite": "8.3.8",
     "vitest": "5.1.0",
 }
 PNPM = "12.18.0"
@@ -518,7 +518,7 @@ ACCIONES = {
 }
 ENTRADAS = {
     "actions/setup-java": ("android.md", "java-version", "25.0.5"),
-    "actions/setup-node": ("sveltekit.md", "node-version", "26.13.0"),
+    "actions/setup-node": ("sveltekit.md", "node-version", "26.13.1"),
     "actions/setup-python": ("python.md", "python-version", "3.13"),
     "subosito/flutter-action": ("flutter.md", "flutter-version", "3.47.9"),
 }

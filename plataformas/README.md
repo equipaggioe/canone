@@ -39,18 +39,18 @@ Para trabajar en una pieza se consulta su página, su página madre si la tiene 
 
 Una página es un catálogo de convenciones de una tecnología o ámbito. Cada convención está escrita en la página: la adoptada, con su origen en una fuente, y la propia, establecida directamente por Canone.
 
-Una convención entra solo si se puede nombrar qué empeora sin ella, aunque todavía no haya pasado ([principios.md](../principios.md#poder-nombrar-el-síntoma)):
+Una convención entra solo si se puede nombrar qué empeora sin ella, aunque todavía no haya pasado, en el producto tal como es y no en una escala que no tiene ([principios.md](../principios.md#poder-nombrar-el-síntoma)):
 
 - **Eficacia:** el programa falla, da un resultado incorrecto sin que nadie lo note, queda expuesto a un ataque o pierde datos.
 - **Eficiencia:** el programa usa más tiempo, memoria o red de lo necesario.
-- **Uso:** la interfaz no se ve ni se comporta igual en todo el producto, o deja a un usuario sin poder usarlo.
+- **Uso:** la interfaz se ve o se comporta distinto según la parte del producto, o deja a un usuario sin poder usarlo.
 - **Estructura:** dos piezas no se entienden, un repositorio no se lee como los demás, una decisión se vuelve a tomar en cada repositorio, o un cambio o una actualización cuesta más de lo necesario.
 
 En una regla de estilo se pregunta qué empeora si no hubiera regla, no si otro valor sería peor. No justifica una convención que una fuente la establezca, que una herramienta pueda comprobarla ni que complete una lista.
 
 ### Selección de fuentes
 
-La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Una fuente se adopta para un asunto porque sus convenciones se acomodan a lo que el producto necesita, no para cubrir decisiones sueltas. Cada decisión se resuelve con una convención de la fuente de su asunto o, si esa fuente no la resuelve o el asunto no tiene fuente, con una convención propia.
+La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Una decisión cuenta solo si dejarla sin resolver empeora algo según el criterio de [Función de las páginas](#función-de-las-páginas). Una fuente se adopta para un asunto porque sus convenciones se acomodan a lo que el producto necesita, no para cubrir decisiones sueltas. Cada decisión se resuelve con una convención de la fuente de su asunto o, si esa fuente no la resuelve o el asunto no tiene fuente, con una convención propia.
 
 Una fuente debe cumplir además los siete requisitos siguientes:
 
@@ -217,7 +217,7 @@ El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
 
 ### Evidencia
 
-- **Comprobado:** se verificó mediante una herramienta o un comando reproducible. Se indica cómo repetir la comprobación.
+- **Comprobado:** se verificó mediante una herramienta o un comando reproducible. Si se comprobó en la revisión, se indica cómo repetir la comprobación; si ya estaba comprobado, dónde consta: la prueba de CI o el ADR.
 - **Leído:** se verificó directamente en una fuente. Se indica la sección o el fragmento que lo respalda.
 - **Sin confirmar:** no fue posible verificarlo. Se identifica expresamente como tal; no se presenta como un hecho.
 

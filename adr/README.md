@@ -153,3 +153,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0145](0145-una-convencion-entra-por-lo-que-empeora-sin-ella.md) | Una convención entra por lo que empeora sin ella, y una revisión la rehace desde la causa | `plataformas/` | Aceptada |
 | [0146](0146-lo-comprobado-se-registra-con-su-resultado-y-no-se-vuelve-a-probar.md) | Lo comprobado se registra con su resultado y sus versiones, y no se vuelve a probar | Todos | Aceptada |
 | [0147](0147-una-pieza-en-java-corre-en-su-unidad-con-el-jre-de-debian.md) | Una pieza en Java corre en su unidad, con el JRE de Debian 13, y se compila con sus dependencias fijadas por SHA-256 | Con una pieza en Java | Aceptada en parte |
+| [0149](0149-las-unidades-de-la-app-permiten-mbind.md) | Las unidades que corren la app permiten `mbind`, la llamada con que el OpenBLAS de numpy fija la memoria de sus hilos | Con servidor | Propuesta |

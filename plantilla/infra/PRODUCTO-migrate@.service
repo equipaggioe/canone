@@ -35,6 +35,9 @@ MemoryDenyWriteExecute=yes
 SystemCallArchitectures=native
 SystemCallFilter=@system-service
 SystemCallFilter=~@privileged @resources
+# ADR-0149: the OpenBLAS of numpy sets the memory policy of its threads with mbind, and a
+# denied syscall kills the process.
+SystemCallFilter=mbind
 CapabilityBoundingSet=
 AmbientCapabilities=
 DevicePolicy=closed

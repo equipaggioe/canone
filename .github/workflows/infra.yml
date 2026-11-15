@@ -22,6 +22,14 @@ jobs:
             systemd-analyze security --offline=yes --threshold=20 "$unit"
           done
 
+  # ADR-0149: the units that run the app let numpy import. systemd-run needs the runner's systemd,
+  # not a container.
+  seccomp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: sudo sh scripts/infra/seccomp.sh "$PWD"
+
   # java.md: java.py builds a piece with the JDK of Debian 13 and checks each dependency.
   java-build:
     runs-on: ubuntu-latest

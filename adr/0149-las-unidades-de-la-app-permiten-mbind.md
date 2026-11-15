@@ -1,6 +1,6 @@
 # ADR-0149 · Las unidades que corren la app permiten `mbind`, la llamada con que el OpenBLAS de numpy fija la memoria de sus hilos
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-11-14
 - **Alcance:** [`plataformas/despliegue.md`](../plataformas/despliegue.md), «Procesos»; `PRODUCTO.service`, `PRODUCTO-migrate@.service`, `PRODUCTO-mock@.service`, `PRODUCTO-purge.service` y `PRODUCTO-sweep.service` de `plantilla/infra/`
 

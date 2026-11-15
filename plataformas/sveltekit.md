@@ -8,17 +8,12 @@ Una superficie web con SvelteKit y UnoCSS.
 
 Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de SvelteKit.
 
-- Node es el 26.13.1, la última LTS, y solo se usa para construir.
-- `package.json` declara estas versiones exactas, sin `^` ni `~`:
-  - SvelteKit 3.2.0, `@sveltejs/adapter-static` 4.0.1, Svelte 5.57.3, Vite 8.3.8 y `@sveltejs/vite-plugin-svelte` 7.3.1.
-  - TypeScript 6.0.3, `svelte-check` 4.7.8 y `@types/node` 26.6.6.
-  - Prettier 3.10.1, `prettier-plugin-svelte` 4.1.1, ESLint 10.15.0, `eslint-plugin-svelte` 3.24.1, `typescript-eslint` 8.72.2, `@eslint/js` 10.0.1, `globals` 17.14.0 y `eslint-config-prettier` 10.1.8.
-  - UnoCSS 66.13.0, Paraglide 3.2.2, `openapi-typescript` 7.13.0, `openapi-fetch` 0.17.0, Leaflet 1.9.4 y `@types/leaflet` 1.9.22.
-  - Vitest 5.1.0, Playwright 1.65.1 y `@axe-core/playwright` 4.14.0.
+- Node solo se usa para construir.
+- `package.json` declara las versiones exactas, sin `^` ni `~`.
 - TypeScript es la 6 y no la 7: SvelteKit 3.2.0 y `svelte-check` 4.7.8 piden `^6`.
 - `@types/node` va en `devDependencies`: el `tsconfig.json` que genera sv declara los tipos de `node`, y sin ellos `svelte-check` avisa. [sv 1.3.0](https://raw.githubusercontent.com/sveltejs/cli/sv%401.3.0/packages/sv/src/addons/eslint.ts)
 - pnpm maneja las dependencias. No deja importar un paquete que no esté declarado. [pnpm](https://raw.githubusercontent.com/pnpm/pnpm.io/19a2f01816126e8c1140f262674ef9be213ffef1/docs/motivation.md)
-- `package.json` declara la versión exacta de pnpm en `packageManager`, `pnpm@12.18.0`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra. [pnpm/action-setup 6.1.1](https://raw.githubusercontent.com/pnpm/action-setup/v6.1.1/README.md)
+- `package.json` declara la versión exacta de pnpm en `packageManager`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra. [pnpm/action-setup 6.1.1](https://raw.githubusercontent.com/pnpm/action-setup/v6.1.1/README.md)
 - `package.json` declara en `imports` `"#lib/*": "./src/lib/*"`: SvelteKit 3 quitó `$lib`. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs/kit%403.2.0/documentation/docs/98-reference/26-%24lib.md)
 - Un import de `#lib/` lleva la extensión `.js`, como `#lib/api/client.js`: TypeScript resuelve `imports` como Node, que no completa la extensión. [TypeScript](https://raw.githubusercontent.com/microsoft/TypeScript-Website/4ec663ac4412c3a7086401bd5a8811565589b11d/packages/documentation/copy/en/modules-reference/Reference.md)
 - Las pruebas de Vitest van en `src/`, con `.test.ts`, y las de Playwright, en `tests/`.
@@ -259,7 +254,7 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |
 | Ningún `svelte-ignore` de una advertencia `a11y_*` | [scripts/verificar.py](../scripts/verificar.py) |
 | La misma versión de Playwright en todo `package.json` | [scripts/verificar.py](../scripts/verificar.py) |
-| Node en CI, pnpm en `packageManager` y las versiones exactas de «Proyecto» | [scripts/verificar.py](../scripts/verificar.py) |
+| pnpm en `packageManager`, y las versiones de [stack.md](../stack.md), exactas | [scripts/verificar.py](../scripts/verificar.py) |
 | Los tipos de la API salen de `server/openapi.json` | `pnpm api` en CI, antes de `svelte-check` |
 | El script `api`, y que `dev` y `check` lo corran primero | [scripts/verificar.py](../scripts/verificar.py) |
 | `includeIgnoreFile` en `eslint.config.js` y `pnpm-lock.yaml` en `.prettierignore` | [scripts/verificar.py](../scripts/verificar.py) |

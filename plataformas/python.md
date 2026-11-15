@@ -6,12 +6,11 @@ Lo común a toda pieza en Python. Lo propio de cada una va en su página y se su
 
 Estándar: las [*Good Integration Practices*](../fuentes/pytest/goodpractices.rst) de pytest.
 
-- Python 3.13, el de Debian 13: `requires-python = "==3.13.*"`, y uv usa solo el Python del sistema, con `python-preference = "only-system"`. Toda herramienta que elige la versión más alta permitida, como `flet build`, toma 3.13.
-- uv es la 0.13.7 en toda pieza, en el CI, en la máquina de quien desarrolla y en el servidor: `required-version = "==0.13.7"` en `[tool.uv]`. El CI la instala con `setup-uv` y `version-file`, y el servidor, con `uv.py` de [despliegue.md](despliegue.md#máquina).
+- Python se declara con `requires-python = "==3.13.*"`, y uv usa solo el Python del sistema, con `python-preference = "only-system"`. Toda herramienta que elige la versión más alta permitida, como `flet build`, toma 3.13.
+- uv es la misma versión en toda pieza, en el CI, en la máquina de quien desarrolla y en el servidor: `required-version = "==0.13.7"` en `[tool.uv]`. El CI la instala con `setup-uv` y `version-file`, y el servidor, con `uv.py` de [despliegue.md](despliegue.md#máquina).
 - El bloqueo es `uv.lock`, en git, y se instala con `uv sync --locked`.
-- El backend de construcción es `uv_build` 0.13.7, con `<0.14` como tope.
-- pytest 9.2.0, ruff 0.17.3, Pyrefly 1.4.0, deptry 0.25.1, pip-audit 2.10.1, Pydantic 2.14.3 y httpx 0.28.1.
-- `pyproject.toml` declara con `>=` la versión que fija cada página, y `uv.lock` fija la exacta.
+- El backend de construcción es `uv_build`, con `<0.14` como tope.
+- `pyproject.toml` declara con `>=` la versión que fija [stack.md](../stack.md), y `uv.lock` fija la exacta.
 - Las herramientas de desarrollo van en el grupo `dev` de `[dependency-groups]`.
 - Las dependencias y la configuración de pytest van en el `pyproject.toml` de la pieza: no hay `requirements.txt` ni `pytest.ini`.
 - El paquete se llama `app` en toda pieza, con `module-name = "app"` en `[tool.uv.build-backend]`. Los archivos canónicos lo nombran y se copian sin editar.
@@ -210,8 +209,8 @@ Estándar: las [*Good Integration Practices*](../fuentes/pytest/goodpractices.rs
 | Convención | Herramienta |
 | :--- | :--- |
 | Python 3.13, y solo el del sistema | `requires-python` y uv con `python-preference = "only-system"` |
-| uv 0.13.7 | uv con `required-version`, y [scripts/verificar.py](../scripts/verificar.py), que comprueba que cada `pyproject.toml` la declare |
-| Python 3.13 en CI, y las versiones de «Proyecto» con `>=` | [scripts/verificar.py](../scripts/verificar.py) |
+| La misma versión de uv en toda pieza | uv con `required-version`, y [scripts/verificar.py](../scripts/verificar.py), que comprueba que cada `pyproject.toml` la declare |
+| Las versiones de [stack.md](../stack.md), declaradas con `>=` | [scripts/verificar.py](../scripts/verificar.py) |
 | El bloqueo | `uv sync --locked` en CI |
 | Sin `requirements.txt` ni `pytest.ini`, en `server/` | [scripts/verificar.py](../scripts/verificar.py) |
 | Vulnerabilidades | pip-audit |

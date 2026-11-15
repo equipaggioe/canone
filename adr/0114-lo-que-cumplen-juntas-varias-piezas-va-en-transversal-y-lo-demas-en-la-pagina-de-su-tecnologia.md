@@ -1,6 +1,6 @@
 # ADR-0114 · Lo que cumplen juntas varias piezas va en `transversal.md`, y lo demás en la página de su tecnología
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 2, en que la sección de cada pieza enlaza su contrato, lo reemplaza el [ADR-0148](0148-el-stack-se-fija-en-stack-md-y-la-ruta-de-lectura-va-por-pagina.md)
 - **Fecha:** 2026-11-03
 - **Alcance:** «Alcance» de [`plataformas/README.md`](../plataformas/README.md) y
   [`plataformas/transversal.md`](../plataformas/transversal.md)

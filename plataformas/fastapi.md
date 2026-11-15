@@ -4,8 +4,6 @@ Un servidor en FastAPI. Se suma a [python.md](python.md).
 
 ## Proyecto
 
-- FastAPI 0.162.0, Starlette 1.10.0, pydantic-settings 2.16.2, SQLAlchemy 2.1.8, Alembic 1.20.1, asyncpg 0.32.0, cryptography 50.0.2, OpenTelemetry 1.45.2, AnyIO 4.16.0, Babel 2.18.0, valkey-py 6.2.0, Uvicorn 0.54.0, Pillow 13.0.0, pywebpush 2.5.0, aiohttp 3.14.5, firebase-admin 7.7.0 y httpx-ws 0.9.0.
-
 ```text
 server/
   .gitignore
@@ -203,10 +201,6 @@ Contrato: [transversal.md](transversal.md#archivos).
 - Un usuario descarga a lo sumo 300 archivos por minuto: una pantalla llena de imágenes pide unas 50 ([File Upload, *Upload and Download Limits*](../fuentes/owasp/File_Upload.md)).
 - Un archivo se responde con `Content-Disposition: attachment`, y con `application/octet-stream` si su tipo es desconocido o binario ([HTTP Security Response Headers Cheat Sheet, *Secure File Download Headers*](../fuentes/owasp/HTTP_Headers.md)).
 
-## Autenticación
-
-Rige [autenticacion.md](autenticacion.md).
-
 ## Correo y SMS
 
 Estándar: [Standard Webhooks](../fuentes/standard-webhooks/standard-webhooks.md).
@@ -376,10 +370,6 @@ Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) y el [*Appl
 - Un valor que llega de afuera entra al log sin retornos de carro ni saltos de línea: una línea no se hace pasar por otra ([Logging Cheat Sheet, *Event collection*](../fuentes/owasp/Logging.md)).
 - Un dato de un evento que llega de afuera se valida antes de registrarlo: un campo malformado se omite, y el evento se registra igual, con el fallo de validación ([Logging Cheat Sheet, *Event collection*](../fuentes/owasp/Logging.md)).
 
-## Reintentos
-
-Contrato: [transversal.md](transversal.md#reintentos).
-
 ## Salud
 
 - `GET /api/health` responde 204, o 503 si la base o Valkey no contestan: un servidor con una dependencia caída no está vivo aunque el proceso responda.
@@ -441,7 +431,6 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Las versiones de «Proyecto» | [scripts/verificar.py](../scripts/verificar.py) |
 | Todo campo de `Settings` es obligatorio | `test_settings_are_required` |
 | Las dependencias y los parámetros con `Depends`, `Query`, `Path`, `Header`, `Cookie`, `Body`, `Form` o `File` se declaran con `Annotated` | ruff `FAST002` |
 | El commit corre antes de enviar la respuesta | `test_failed_commit_is_a_server_error` |

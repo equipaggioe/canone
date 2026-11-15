@@ -25,9 +25,9 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
   - El sufijo que distingue los esquemas de un mismo recurso, como `Create` o `Update`: no cuenta como palabra.
 - [scripts/verificar.py](scripts/verificar.py) revisa el largo de las funciones, los métodos y las clases, y que la configuración no repita el nombre del repositorio.
 
-## Leer las fuentes
+## Qué se lee al escribir código
 
-Al escribir código basta la página de [plataformas/](plataformas/): escribe cada convención que rige.
+Al escribir código bastan [stack.md](stack.md) y las páginas de [plataformas/](plataformas/) de la pieza: escriben cada convención que rige.
 
 ## Sin fallbacks
 

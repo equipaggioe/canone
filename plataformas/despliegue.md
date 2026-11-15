@@ -6,8 +6,6 @@ Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus 
 
 Estándar: el [*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt) 3.0.
 
-- Debian 13, con los programas de sus paquetes: Caddy 2.6.2, Valkey 8.1, coturn 4.6.1, restic 0.18.0, nftables 1.1.3, systemd 257, OpenSSH 10.0 y WireGuard 1.0.20210914.
-- rest-server 0.14.0, de su release de GitHub, en la receptora y en el CI: no es un paquete del servidor.
 - La máquina queda así:
 
 ```
@@ -208,7 +206,7 @@ Estándar: NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*
 - La máquina llega a `install.py` con los paquetes de `packages.py` y el swap de `swap.py`, e `install.py` falla si faltan.
 - El host de cada superficie que la app tiene, `<dominio>`, `app.<dominio>` y `panel.<dominio>`, apunta a la máquina antes de `install.py`: Caddy obtiene el certificado de cada host por ACME, y reintenta mientras el host no la alcanza.
 - `systemd-timesyncd` sincroniza la hora, e `install.py` falla si no está habilitado: las credenciales temporales de TURN, las sesiones y las fechas del journal dependen del reloj. `systemd-timesyncd` choca con cualquier otro paquete de hora, como `chrony`, y lo reemplaza.
-- uv no está en Debian 13: `sudo python3 uv.py` lo instala en `/usr/local/bin/uv`, desde el release de GitHub de la versión de [python.md](python.md#proyecto), y falla sin instalar nada si el archivo no tiene el SHA-256 que `uv.py` fija para el procesador, `x86_64` o `aarch64`. Lo corre quien prepara la máquina, antes del primer `deploy.py`, y otra vez cuando cambia la versión: `deploy.py` crea el entorno de cada versión con `uv sync`, y otra versión de uv falla por el `required-version` del `pyproject.toml`.
+- uv no está en Debian 13: `sudo python3 uv.py` lo instala en `/usr/local/bin/uv`, desde el release de GitHub de la versión de [stack.md](../stack.md#python), y falla sin instalar nada si el archivo no tiene el SHA-256 que `uv.py` fija para el procesador, `x86_64` o `aarch64`. Lo corre quien prepara la máquina, antes del primer `deploy.py`, y otra vez cuando cambia la versión: `deploy.py` crea el entorno de cada versión con `uv sync`, y otra versión de uv falla por el `required-version` del `pyproject.toml`.
 - `unattended-upgrades` instala solo, cada día, las actualizaciones de Debian 13, y `install.py` lo enciende con `/etc/apt/apt.conf.d/20auto-upgrades`: una actualización de seguridad que espera a alguien deja la máquina expuesta mientras tanto.
 - Un kernel nuevo corre solo después de reiniciar, y `unattended-upgrades` reinicia la máquina a las 04:00, en la hora de la máquina, cuando una actualización lo pide, con `Automatic-Reboot` y `Automatic-Reboot-Time` en `/etc/apt/apt.conf.d/52automatic-reboot`. El gancho del kernel de `unattended-upgrades` lo pide con `/var/run/reboot-required`. La app cae alrededor de un minuto y corta las llamadas y el respaldo en curso, y el siguiente respaldo corre igual.
 

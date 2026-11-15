@@ -8,9 +8,8 @@ Una aplicación en Flet. Se suma a [python.md](python.md).
 
 Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md) de Flet.
 
-- Flet 1.1.2, flet-secure-storage 1.1.2, httpx-ws 0.9.0, la de [fastapi.md](fastapi.md), y datamodel-code-generator 0.95.0, con el extra `ruff`.
-- Flutter 3.47.9, el de [flutter.md](flutter.md) y el que pide Flet 1.1.2: `flet build` usa el del `PATH` si tiene la misma versión mayor y menor, y si no, instala ese. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet-cli/src/flet_cli/commands/flutter_base.py)
-- Pydantic es la 2.13.4, y no la de [python.md](python.md): `flet build apk` instala desde el índice de Flet para Android, que tiene `pydantic-core` 2.46.4 y 2.47.0, y la 2.13.4 es la última Pydantic que pide una de ellas. [Índice de Flet](https://pypi.flet.dev/pydantic-core/)
+- Flutter es el de [stack.md](../stack.md#flutter), el que pide Flet: `flet build` usa el del `PATH` si tiene la misma versión mayor y menor, y si no, instala ese. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet-cli/src/flet_cli/commands/flutter_base.py)
+- Pydantic es la 2.13.4, y no la del bloque de Python de [stack.md](../stack.md#python): `flet build apk` instala desde el índice de Flet para Android, que tiene `pydantic-core` 2.46.4 y 2.47.0, y la 2.13.4 es la última Pydantic que pide una de ellas. [Índice de Flet](https://pypi.flet.dev/pydantic-core/)
 - Las dependencias de `[project]` van exactas, con `==`, en lugar del `>=` de [python.md](python.md): `flet build` no lee `uv.lock` y le pasa a pip las dependencias tal como están escritas. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet-cli/src/flet_cli/commands/build_base.py)
 - El grupo `dev` lleva también `flet`, con el extra `cli`, que trae `flet build`, y el extra `test` de [Pruebas](#pruebas). [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/getting-started/installation.md)
 - El proyecto no lleva `[build-system]`, en lugar del `uv_build` de [python.md](python.md): sin `src/app/`, no hay paquete que construir.
@@ -116,44 +115,12 @@ Estándares: [*Client Storage*](../fuentes/flet/client-storage.md) y [*Packaging
 - Un servicio, como `SharedPreferences` o `SecureStorage`, se crea una vez, y la app guarda su referencia mientras lo usa: Flet lo da de baja cuando no queda ninguna ([Client Storage, *Client Storage*](../fuentes/flet/client-storage.md)).
 - La app guarda sus archivos en `FLET_APP_STORAGE_DATA`, nunca junto a `__file__`: la carpeta donde se instala la app puede no admitir escritura ([Packaging app for Windows, *Distributing*](../fuentes/flet/publish-windows.md)).
 
-## Autenticación
-
-Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
-
-## Código por SMS
-
-Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
-
-## Contraseñas
-
-Contrato: [autenticacion.md](autenticacion.md#contraseñas).
-
-## Cuentas
-
-Contrato: [autenticacion.md](autenticacion.md#cuentas).
-
-## Errores
-
-Contrato: [transversal.md](transversal.md#errores).
-
-## Fechas
-
-Contrato: [transversal.md](transversal.md#fechas).
-
 ## Idiomas
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
 - Los textos usan `gettext` de la biblioteca estándar de Python, con catálogos `.po`. Flet no trae un sistema de traducción.
 - `page.locale_configuration` declara en `supported_locales` los idiomas de la app, con el base primero, y en `current_locale`, el que eligió el usuario: sin ella, los controles de Flutter quedan en `en-US`, y un idioma que no está en la lista cae en el primero. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/types.py)
-
-## Mapas
-
-Contrato: [transversal.md](transversal.md#mapas).
-
-## Montos
-
-Contrato: [transversal.md](transversal.md#montos).
 
 ## OpenAPI y clientes
 
@@ -164,29 +131,9 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - `src/api/models.py` no lleva docstrings propios: los suyos son las descripciones de los esquemas del servidor, y ruff no le exige las reglas `D1`.
 - Las llamadas a la API se escriben a mano en `api/`, con el `httpx.AsyncClient` de [Red](#red): datamodel-code-generator genera solo los modelos.
 
-## Paginación
-
-Contrato: [transversal.md](transversal.md#paginación).
-
-## Pagos
-
-Contrato: [transversal.md](transversal.md#pagos).
-
-## Recuperación
-
-Contrato: [autenticacion.md](autenticacion.md#recuperación).
-
 ## Red
 
 - HTTP va por un solo `httpx.AsyncClient`, con `await` desde handlers async, y las respuestas se leen con los modelos de `api/models.py`: no bloquea el bucle de eventos y reutiliza las conexiones.
-
-## Reintentos
-
-Contrato: [transversal.md](transversal.md#reintentos).
-
-## Sesión
-
-Contrato: [autenticacion.md](autenticacion.md#sesión).
 
 ## Tema
 
@@ -261,5 +208,5 @@ Contrato: [transversal.md](transversal.md#distribución).
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Las versiones de «Proyecto» y de [python.md](python.md), exactas en `[project]` | [scripts/verificar.py](../scripts/verificar.py) |
+| Las versiones de [stack.md](../stack.md), exactas en `[project]` | [scripts/verificar.py](../scripts/verificar.py) |
 | `src/api/models.py` al día con `../server/openapi.json` | `uv run datamodel-codegen` y `git diff --exit-code src/api/models.py` en CI |

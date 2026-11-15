@@ -7,11 +7,10 @@ Una app en Flutter.
 ## Proyecto
 
 - La app sale en Android y en iOS.
-- Flutter 3.47.9, con Dart 3.13.7.
-- `pubspec.yaml` declara exactos flutter_riverpod 3.5.0, riverpod 3.5.0 y riverpod_annotation 4.0.8, y en `dev_dependencies`, riverpod_generator 4.0.10: las mutations de Riverpod son experimentales y pueden cambiar sin una versión mayor. [Riverpod 3.5.0](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/mutations.mdx)
-- `pubspec.yaml` declara exactos o con `^` shared_preferences 2.5.6, flutter_secure_storage 11.2.0, flutter_appauth 13.0.0, go_router 18.1.4, http 1.6.0, freezed_annotation 3.1.0, json_annotation 4.12.0, sms_autofill 2.6.1 y, con Stripe, flutter_stripe 14.2.0, y en `dev_dependencies`, flutter_lints 6.0.0, freezed 4.0.3, json_serializable 6.15.2, build_runner 2.17.1 y swagger_parser 2.1.1.
-- Gradle, AGP y Kotlin son los de [android.md](android.md#proyecto), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
-- `analysis_options.yaml` declara el plugin riverpod_lint 3.2.0.
+- `pubspec.yaml` declara exactos flutter_riverpod, riverpod y riverpod_annotation, y en `dev_dependencies`, riverpod_generator: las mutations de Riverpod son experimentales y pueden cambiar sin una versión mayor. [Riverpod 3.5.0](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/mutations.mdx)
+- `pubspec.yaml` declara exactos o con `^` shared_preferences, flutter_secure_storage, flutter_appauth, go_router, http, freezed_annotation, json_annotation, sms_autofill y, con Stripe, flutter_stripe, y en `dev_dependencies`, flutter_lints, freezed, json_serializable, build_runner y swagger_parser.
+- Gradle, AGP y Kotlin son los de Android en [stack.md](../stack.md#android), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
+- `analysis_options.yaml` declara el plugin riverpod_lint.
 - Lo que genera build_runner, `*.g.dart` y `*.freezed.dart`, y lo que genera swagger_parser, en `lib/data/services/api/`, no se versiona, y CI revisa el formato antes de generarlo: riverpod_generator no escribe con líneas de 99.
 - `analysis_options.yaml` excluye del análisis `lib/data/services/api/`: lo que genera swagger_parser no pasa las reglas de «Nombres» ni de «Estilo».
 - `analysis_options.yaml` excluye del análisis `build/`, `android/` e `ios/`: si falta la exclusión, `flutter pub get` y `flutter analyze` la agregan, y la copia deja de ser la canónica. [Flutter 3.47.9](https://raw.githubusercontent.com/flutter/flutter/3.47.9/packages/flutter_tools/lib/src/migrations/analysis_options_migration.dart)
@@ -256,18 +255,6 @@ Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
 - Los campos para entrar y para elegir una contraseña van en un `AutofillGroup`, y los gestores de contraseñas los completan por sus `autofillHints`: al entrar, `AutofillHints.username` en el del correo o el teléfono y `AutofillHints.password` en el de la contraseña, y al elegir una contraseña, `AutofillHints.newPassword`. [Flutter 3.47.9](https://github.com/flutter/flutter/blob/3.47.9/packages/flutter/lib/src/widgets/autofill.dart)
 
-## Cuentas
-
-Contrato: [autenticacion.md](autenticacion.md#cuentas).
-
-## Errores
-
-Contrato: [transversal.md](transversal.md#errores).
-
-## Fechas
-
-Contrato: [transversal.md](transversal.md#fechas).
-
 ## Idiomas
 
 Estándar: [*Internationalizing Flutter apps*](../fuentes/flutter/internationalization.md).
@@ -278,14 +265,6 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - `MaterialApp` declara los `localizationsDelegates` de `flutter_localizations` y sus `supportedLocales` ([Internationalizing Flutter apps, *Set up an internationalized app with `flutter_localizations`*](../fuentes/flutter/internationalization.md)).
 - El proyecto de Xcode declara en *Localizations* los idiomas de la app: la App Store los muestra desde ahí ([Internationalizing Flutter apps, *Localizing for iOS: Updating the iOS app bundle*](../fuentes/flutter/internationalization.md)).
 
-## Mapas
-
-Contrato: [transversal.md](transversal.md#mapas).
-
-## Montos
-
-Contrato: [transversal.md](transversal.md#montos).
-
 ## OpenAPI y clientes
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
@@ -293,31 +272,11 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - swagger_parser genera los modelos del cable y el cliente de la API desde `../server/openapi.json`, en `lib/data/services/api/`. `swagger_parser.yaml` lleva `serializer: freezed`, `http_client: http` y `page_width: 99`.
 - Un modelo generado rechaza un campo y un valor de enum que no conoce: el OpenAPI del servidor declara `additionalProperties: false` en cada esquema ([fastapi.md](fastapi.md#esquemas)).
 
-## Paginación
-
-Contrato: [transversal.md](transversal.md#paginación).
-
 ## Pagos
 
 Contrato: [transversal.md](transversal.md#pagos).
 
 - Con Stripe, la hoja de pago es `PaymentSheet` de `flutter_stripe`.
-
-## Push
-
-Contrato: [transversal.md](transversal.md#push).
-
-## Recuperación
-
-Contrato: [autenticacion.md](autenticacion.md#recuperación).
-
-## Reintentos
-
-Contrato: [transversal.md](transversal.md#reintentos).
-
-## Sesión
-
-Contrato: [autenticacion.md](autenticacion.md#sesión).
 
 ## Tema
 
@@ -327,14 +286,6 @@ Contrato: [transversal.md](transversal.md#tema).
 
 - El tema claro y el oscuro usan `lightColorScheme` y `darkColorScheme`, generados en `ui/core/themes/colors.dart`, y `themeMode` es `ThemeMode.system`.
 - Los tamaños van en `ui/core/themes/`, sin tamaños literales fuera de él.
-
-## Versión mínima de cliente
-
-Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
-
-## WebSocket
-
-Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autenticacion.md#websocket).
 
 ## Pruebas
 
@@ -356,8 +307,6 @@ Contrato: [transversal.md](transversal.md#distribución).
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Gradle, AGP y Kotlin | [scripts/verificar.py](../scripts/verificar.py) |
-| Flutter en CI y los paquetes de «Proyecto» | [scripts/verificar.py](../scripts/verificar.py) |
 | `analysis_options.yaml` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
 | La lista de flutter_lints, riverpod_lint y los tipos estrictos | `dart analyze --fatal-infos` en CI |
 | Las versiones exactas de Riverpod | [scripts/verificar.py](../scripts/verificar.py) |

@@ -6,8 +6,7 @@ Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](py
 
 ## Proyecto
 
-- PySide6 y Qt 6.12.0, la última LTS: desde la 6.8, una de cada cuatro versiones menores es LTS. [Qt 6.12](https://doc.qt.io/qt-6.12/qt-releases.html)
-- keyring 25.7.0, pytest-qt 4.5.0, Nuitka 4.3.5, imageio 2.38.1, patchelf 0.19.3.0 y datamodel-code-generator 0.95.0, la de [flet.md](flet.md), con el extra `ruff`.
+- PySide6 y Qt son la última LTS: desde la 6.8, una de cada cuatro versiones menores es LTS. [Qt 6.12](https://doc.qt.io/qt-6.12/qt-releases.html)
 
 ```text
 desktop/
@@ -142,18 +141,6 @@ Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 - La app hace el flujo del código de autorización con `QOAuth2AuthorizationCodeFlow` de QtNetworkAuth, con PKCE S256, y abre la autorización con `QDesktopServices.openUrl` desde `authorizeWithBrowser`.
 - La vuelta la recibe `QOAuthHttpServerReplyHandler`, que escucha en `127.0.0.1` con el puerto que le da el sistema.
 
-## Cuentas
-
-Contrato: [autenticacion.md](autenticacion.md#cuentas).
-
-## Errores
-
-Contrato: [transversal.md](transversal.md#errores).
-
-## Fechas
-
-Contrato: [transversal.md](transversal.md#fechas).
-
 ## Idiomas
 
 Contrato: [transversal.md](transversal.md#idiomas).
@@ -162,10 +149,6 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - Los `.qm` van en `resources.qrc`: no se distribuyen aparte. [PySide6 6.12.0](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/tutorials/basictutorial/translations.rst)
 - Los textos se extraen con `pyside6-lupdate -extensions py src/app`, que recorre todo el paquete. `pyside6-project lupdate` solo lee los archivos que se listan a mano, y uno que falte se queda sin traducir.
 - Los `.qm` y `rc_resources.py` se generan y no van en git. Salen de los `.ts` y del `.qrc`; en git quedarían desfasados.
-
-## Montos
-
-Contrato: [transversal.md](transversal.md#montos).
 
 ## OpenAPI y clientes
 
@@ -176,14 +159,6 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - `src/app/api/models.py` no lleva docstrings propios: los suyos son las descripciones de los esquemas del servidor, y ruff no le exige las reglas `D1`.
 - Las llamadas a la API se escriben a mano en `api/client.py`, con el `QNetworkAccessManager` de [Red](#red): datamodel-code-generator genera solo los modelos.
 
-## Paginación
-
-Contrato: [transversal.md](transversal.md#paginación).
-
-## Pagos
-
-Contrato: [transversal.md](transversal.md#pagos).
-
 ## Red
 
 Estándar: [QNetworkAccessManager](../fuentes/qt/qnetworkaccessmanager.qdoc) de Qt.
@@ -193,14 +168,6 @@ Estándar: [QNetworkAccessManager](../fuentes/qt/qnetworkaccessmanager.qdoc) de 
 - La app tiene un solo `QNetworkAccessManager`, que usa desde el hilo principal ([QNetworkAccessManager, *QNetworkAccessManager*](../fuentes/qt/qnetworkaccessmanager.qdoc)).
 - Un `QNetworkReply` terminado se libera con `deleteLater()`, nunca borrándolo en el slot de `finished()` ([QNetworkAccessManager, *QNetworkAccessManager*](../fuentes/qt/qnetworkaccessmanager.qdoc)).
 - El `QIODevice` que sube un `post()` o un `put()` queda abierto y vivo hasta `finished()` ([QNetworkAccessManager, *post()*](../fuentes/qt/qnetworkaccessmanager.qdoc)).
-
-## Reintentos
-
-Contrato: [transversal.md](transversal.md#reintentos).
-
-## Sesión
-
-Contrato: [autenticacion.md](autenticacion.md#sesión).
 
 ## Tema
 
@@ -256,7 +223,6 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Las versiones de «Proyecto» | [scripts/verificar.py](../scripts/verificar.py) |
 | `@override` | Pyrefly `missing-override-decorator` |
 | Los nombres originales de Qt | ruff `TID251` sobre `__feature__` |
 | Un enum con su clase | Pyrefly `missing-attribute` |

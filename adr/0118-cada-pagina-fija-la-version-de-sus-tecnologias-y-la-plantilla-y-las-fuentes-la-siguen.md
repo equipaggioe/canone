@@ -1,6 +1,6 @@
 # ADR-0118 · Cada página fija la versión de sus tecnologías, y la plantilla y las fuentes la siguen
 
-- **Estado:** Aceptada. El punto 2 lo reemplaza el [ADR-0119](0119-lo-que-corre-en-el-servidor-usa-la-version-de-debian-13-y-lo-demas-la-ultima-estable.md)
+- **Estado:** Aceptada. El punto 2 lo reemplaza el [ADR-0119](0119-lo-que-corre-en-el-servidor-usa-la-version-de-debian-13-y-lo-demas-la-ultima-estable.md), y los puntos 1 y 5, y el punto 6 en «la versión que fija la página», el [ADR-0148](0148-el-stack-se-fija-en-stack-md-y-la-ruta-de-lectura-va-por-pagina.md)
 - **Fecha:** 2026-11-04
 - **Alcance:** `plataformas/`, `repositorio.md`, `plantilla/` y `fuentes/`
 

@@ -2,7 +2,7 @@
 
 Cada página reúne las convenciones de una tecnología o ámbito de implementación. `transversal.md` reúne las que deben cumplir conjuntamente varias piezas de un sistema, y `autenticacion.md`, las del registro, la autenticación y la sesión de una cuenta, en el servidor y en sus clientes.
 
-Para trabajar en una pieza se consulta su página, su página madre si la tiene y las secciones de `transversal.md` y `autenticacion.md` que esas páginas enlazan. Las demás páginas no aplican.
+Para trabajar en una pieza se leen enteras su página y las que nombra «Se lee con» en [Páginas](#páginas), y de [stack.md](../stack.md), el bloque de cada una. Las demás páginas no aplican.
 
 ## Terminología
 
@@ -20,20 +20,20 @@ Para trabajar en una pieza se consulta su página, su página madre si la tiene 
 
 ## Páginas
 
-| Página | Cubre |
-| :--- | :--- |
-| [transversal.md](transversal.md) | Lo que deben cumplir conjuntamente varias piezas |
-| [autenticacion.md](autenticacion.md) | El registro, la autenticación y la sesión de una cuenta, en el servidor y en sus clientes |
-| [python.md](python.md) | Lo común a todas las piezas implementadas en Python |
-| [fastapi.md](fastapi.md) | Un servidor en FastAPI |
-| [postgres.md](postgres.md) | La base de datos |
-| [sveltekit.md](sveltekit.md) | Una superficie web con SvelteKit y UnoCSS |
-| [flutter.md](flutter.md) | Una aplicación en Flutter |
-| [android.md](android.md) | Una aplicación de Android con Kotlin y Jetpack Compose |
-| [flet.md](flet.md) | Una aplicación en Flet |
-| [qt.md](qt.md) | Una aplicación de escritorio con Qt Widgets y PySide6 |
-| [java.md](java.md) | Una pieza en Java que solo llama el servidor, en la misma máquina |
-| [despliegue.md](despliegue.md) | La configuración del servidor |
+| Página | Cubre | Se lee con |
+| :--- | :--- | :--- |
+| [transversal.md](transversal.md) | Lo que deben cumplir conjuntamente varias piezas | — |
+| [autenticacion.md](autenticacion.md) | El registro, la autenticación y la sesión de una cuenta, en el servidor y en sus clientes | — |
+| [python.md](python.md) | Lo común a todas las piezas implementadas en Python | — |
+| [fastapi.md](fastapi.md) | Un servidor en FastAPI | `python.md`, `postgres.md`, `transversal.md` y `autenticacion.md` |
+| [postgres.md](postgres.md) | La base de datos | — |
+| [sveltekit.md](sveltekit.md) | Una superficie web con SvelteKit y UnoCSS | `transversal.md` y `autenticacion.md` |
+| [flutter.md](flutter.md) | Una aplicación en Flutter | `transversal.md` y `autenticacion.md` |
+| [android.md](android.md) | Una aplicación de Android con Kotlin y Jetpack Compose | `transversal.md` y `autenticacion.md` |
+| [flet.md](flet.md) | Una aplicación en Flet | `python.md`, `transversal.md` y `autenticacion.md` |
+| [qt.md](qt.md) | Una aplicación de escritorio con Qt Widgets y PySide6 | `python.md`, `transversal.md` y `autenticacion.md` |
+| [java.md](java.md) | Una pieza en Java que solo llama el servidor, en la misma máquina | — |
+| [despliegue.md](despliegue.md) | La configuración del servidor | — |
 
 ## Función de las páginas
 
@@ -49,6 +49,8 @@ Una convención entra solo si se puede nombrar qué empeora sin ella, aunque tod
 En una regla de estilo se pregunta qué empeora si no hubiera regla, no si otro valor sería peor. No justifica una convención que una fuente la establezca, que una herramienta pueda comprobarla ni que complete una lista.
 
 ### Selección de fuentes
+
+Una fuente se usa como guía, para que un asunto siga un mismo enfoque: por eso se prefieren pocas fuentes que cubran muchos asuntos. No se busca una fuente para cada convención, ni se recorren las fuentes disponibles para incorporar lo que digan. Una convención no necesita una fuente que la justifique: el origen registra de dónde salió, para ver su coherencia con las demás.
 
 La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Una decisión cuenta solo si dejarla sin resolver empeora algo según el criterio de [Función de las páginas](#función-de-las-páginas). Una fuente se adopta para un asunto porque sus convenciones se acomodan a lo que el producto necesita, no para cubrir decisiones sueltas. Cada decisión se resuelve con una convención de la fuente de su asunto o, si esa fuente no la resuelve o el asunto no tiene fuente, con una convención propia.
 
@@ -80,7 +82,7 @@ Este orden da preferencia a lo que publica quien define la tecnología:
 
 ### Adopción de fuentes
 
-Adoptar una fuente es escribir sus convenciones en la página, cada una con su origen. Se aplican como obligatorias, incluso cuando ninguna herramienta las hace cumplir. Lo que la página no escribe no rige.
+Adoptar una fuente es escribir sus convenciones en la página, cada una con su origen. Lo que la página no escribe no rige.
 
 #### Origen
 
@@ -132,14 +134,6 @@ Las convenciones propias se establecen en tres casos:
 2. **Excepciones:** se hace algo distinto de lo que establece una fuente, o se endurece lo que establece. Endurecer significa convertir en obligatorio lo que la fuente recomienda como preferencia, ofrece como opción o condiciona a que sea posible. Se escribe lo que se hace; un endurecimiento se escribe solo en su forma endurecida, con el origen de la regla que endurece.
 3. **Decisiones no cubiertas:** se establecen convenciones sobre las decisiones que la fuente de su asunto no resuelve, o sobre asuntos sin fuente.
 
-### Versiones
-
-- Cada página fija en «Proyecto» las versiones de sus tecnologías. La plantilla y las fuentes dependen de la página: la plantilla no declara una versión que la página no estipule, y las fuentes se descargan de esa versión.
-- La versión se fija por tecnología, no por pieza: una tecnología lleva la misma versión en todas las piezas que la usan.
-- Lo que el servidor instala desde los paquetes de su sistema, como Python, PostgreSQL o Valkey, usa la versión de esos paquetes en todas las piezas, también en las que no corren en el servidor, en la máquina de desarrollo y en CI: así se desarrolla y se prueba con la misma versión que corre en producción.
-- Lo demás usa la última versión estable, o la última LTS si la tecnología las publica.
-- Una excepción lleva su razón en la página.
-
 ### Redacción
 
 - Cada convención expresa qué se utiliza y cómo queda. No describe procedimientos ni explica cómo hacerlo.
@@ -160,7 +154,7 @@ Estos mismos criterios de redacción se aplican a los comentarios incluidos en `
 
 Las secciones de una página siguen este orden. Se incluyen únicamente los bloques que correspondan a la tecnología o ámbito documentado.
 
-1. **Proyecto:** la sección `Proyecto`, con las versiones, el sistema de construcción, las dependencias, la estructura de directorios y las plantillas.
+1. **Proyecto:** la sección `Proyecto`, con el sistema de construcción, las dependencias, la estructura de directorios y las plantillas.
 2. **Código:** formato, análisis estático, tipado, organización de paquetes y convenciones de nombres.
 3. **Arquitectura:** organización interna de la aplicación y uso de las estructuras o mecanismos propios de la tecnología.
 4. **Temas:** convenciones agrupadas por tema, con los temas en orden alfabético.
@@ -195,8 +189,9 @@ Se utiliza una tabla con estas columnas:
 
 - Una página con página madre hereda sus convenciones. No debe repetirlas; únicamente documenta las particularidades de su ámbito. Por ejemplo, `fastapi.md`, `flet.md` y `qt.md` heredan de `python.md`.
 - Cada página dice solo lo que hace su pieza, salvo `autenticacion.md`, que reúne todo el registro, la autenticación y la sesión de una cuenta, también lo que hace una sola pieza.
-- Las convenciones que deben cumplir conjuntamente varias piezas de un sistema se documentan en `transversal.md`, salvo las de la cuenta, que van en `autenticacion.md`: `transversal.md` no trata el registro, la autenticación ni la sesión. Las páginas correspondientes enlazan las secciones de esas dos páginas que les aplican.
+- Las convenciones que deben cumplir conjuntamente varias piezas de un sistema se documentan en `transversal.md`, salvo las de la cuenta, que van en `autenticacion.md`: `transversal.md` no trata el registro, la autenticación ni la sesión. Una sección de esas dos páginas que no obliga a todas las piezas dice a cuáles.
 - Cada página identifica las plantillas de `plantilla/` que se derivan de sus convenciones.
+- Las páginas no fijan qué se usa en cada plataforma ni en qué versión: eso está en [stack.md](../stack.md), y cada página escribe cómo se usa.
 - Las páginas no indican qué repositorios utilizan cada tecnología ni establecen cuándo elegir una plataforma sobre otra.
 
 ## En desarrollo
@@ -207,7 +202,7 @@ Una página que empieza con la nota «En desarrollo; no se implementa» no se ap
 
 Una revisión evalúa cada fuente, cada convención y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. Una convención adoptada se compara con su origen. En cada fuente, lo que la página no escribe tiene que caer en un caso de «Qué no se escribe». No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.
 
-Una revisión llega a la página que se escribiría de cero desde sus fuentes con los criterios de este documento: la página revisada no es punto de partida ni argumento. Lo que está mal se corrige en su causa: se rediseña la convención o la sección de la que sale, aunque eso cambie o saque otras partes de la página, y no se le agrega una excepción ni se retoca la redacción para que siga. Si la causa es un criterio de este documento, la revisión propone cambiar el criterio. Una fuente o una convención nueva solo se propone si cumple el criterio de [Función de las páginas](#función-de-las-páginas), con su efecto comprobado; sin la comprobación, queda como candidata sin confirmar.
+Una revisión llega a la página que se escribiría de cero con los criterios de este documento, desde las decisiones que hay que tomar y con sus fuentes como guía: la página revisada no es punto de partida ni argumento. Lo que está mal se corrige en su causa: se rediseña la convención o la sección de la que sale, aunque eso cambie o saque otras partes de la página, y no se le agrega una excepción ni se retoca la redacción para que siga. Si la causa es un criterio de este documento, la revisión propone cambiar el criterio. Una fuente o una convención nueva solo se propone si cumple el criterio de [Función de las páginas](#función-de-las-páginas), con su efecto comprobado; sin la comprobación, queda como candidata sin confirmar.
 
 El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
 
@@ -229,4 +224,4 @@ Ningún elemento queda fuera de la revisión sin que conste que no fue evaluado.
 
 ## Base de las convenciones
 
-Ni el código de los proyectos, ni una página anterior, ni los ADR son fuente, ni justifican recomendar una fuente o una convención propia. El código solo sirve para identificar necesidades y casos de uso. Una página se escribe de cero desde sus fuentes.
+Ni el código de los proyectos, ni una página anterior, ni los ADR son fuente, ni justifican recomendar una fuente o una convención propia. El código solo sirve para identificar necesidades y casos de uso. Una página se escribe de cero desde las decisiones que hay que tomar, con sus fuentes como guía.

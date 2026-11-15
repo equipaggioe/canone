@@ -6,14 +6,14 @@ Una app de Android en Kotlin y Jetpack Compose.
 
 ## Proyecto
 
-- Gradle usa Kotlin DSL y corre con el JDK 25.0.5, la última LTS.
-- Gradle 9.9.1, AGP 9.5.1 y Kotlin 2.4.21.
+- Gradle usa Kotlin DSL.
 - `compileSdk` es la API 37.2, con `release(37) { minorApiLevel = 2 }`, y `targetSdk`, la 37.
 - Kotlin es el que integra AGP, sin el plugin `org.jetbrains.kotlin.android`. Su versión la fijan `org.jetbrains.kotlin.plugin.compose` y `org.jetbrains.kotlin.plugin.serialization`, declarados con `apply false` en el `build.gradle.kts` raíz: AGP 9.5.1 trae Kotlin 2.2.10, y Gradle usa la versión más alta de las que ve el build raíz. [Built-in Kotlin](https://developer.android.com/build/migrate-to-built-in-kotlin)
 - Gradle corre con el wrapper y su distribución `-bin`: `-all` solo agrega las fuentes y la documentación de Gradle.
 - `gradle.properties` lleva `org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=2g`: con los valores por defecto de Gradle, 512 MiB de heap y 384 MiB de Metaspace, el build de una app con Compose y Hilt se detiene porque el recolector de basura no da abasto. [Gradle 9.9.1](https://docs.gradle.org/9.9.1/userguide/build_environment.html#sec:configuring_jvm_memory)
 - Las dependencias y los plugins se declaran en el catálogo `gradle/libs.versions.toml`, con nombres en kebab-case, como `androidx-ktx`: una sola lista de versiones, y el autocompletado del IDE los encuentra.
-- El catálogo declara el plugin de ktlint `org.jlleitschuh.gradle.ktlint` 14.2.0, con ktlint 1.8.0, que fija el bloque `ktlint` de `app/build.gradle.kts`; el plugin `org.openapi.generator` 7.27.0; KSP 2.3.13; Hilt 2.60.1 y `androidx.hilt:hilt-lifecycle-viewmodel-compose` 1.4.0; el BOM de Compose 2026.09.00; `activity-compose` 1.13.0; Lifecycle 2.11.0; Navigation 3 1.2.1; Retrofit 3.0.0, con `converter-kotlinx-serialization` 3.0.0; OkHttp 5.5.1; para lo que genera openapi-generator, `logging-interceptor` 5.5.1 y `converter-scalars` 3.0.0; `kotlinx-serialization-json` 1.13.0; DataStore 1.3.0; WorkManager 2.12.0; `androidx.credentials` 1.6.0, con `credentials-play-services-auth`; `play-services-auth-api-phone` 18.3.1; el BOM de Firebase 35.2.0, con el plugin `com.google.gms.google-services` 4.6.0; MapLibre Android 13.7.1; con Stripe, `stripe-android` 23.26.0, y en las pruebas, JUnit 4.13.2, `kotlinx-coroutines-test` 1.11.0, `mockwebserver3` 5.5.1, `androidx.test:runner` 1.7.0, `androidx.test.ext:junit` 1.3.0 y `espresso-core` 3.7.0, que se declara aunque lo traiga `ui-test-junit4`: el 3.5.0 que trae no corre en la API 37.
+- La versión de ktlint la fija el bloque `ktlint` de `app/build.gradle.kts`.
+- El catálogo declara `espresso-core` aunque lo traiga `ui-test-junit4`: el 3.5.0 que trae no corre en la API 37.
 - Todo va en un solo módulo `app`, sin módulo de benchmark: sin un arranque lento medido, Macrobenchmark y los Baseline Profiles no tienen un síntoma que corregir.
 
 ```text
@@ -59,7 +59,7 @@ Estándar: la [guía de estilo de Kotlin](../fuentes/android/kotlin-style-guide.
 
 - ktlint formatea y revisa el código con `ktlint_code_style = android_studio` en `.editorconfig`, el estilo de la guía de Android, y CI corre `./gradlew ktlintCheck`.
 - Android Lint trata las advertencias como errores, con `warningsAsErrors = true` en el bloque `lint` de `app/build.gradle.kts`: una advertencia no pasa CI.
-- El mismo bloque apaga `AndroidGradlePluginVersion`, `GradleDependency` y `NewerVersionAvailable`, que avisan cuando sale una versión más nueva: «Proyecto» fija las versiones, y con esos avisos el CI fallaría cada vez que se publica una, sin que cambie el repositorio.
+- El mismo bloque apaga `AndroidGradlePluginVersion`, `GradleDependency` y `NewerVersionAvailable`, que avisan cuando sale una versión más nueva: [stack.md](../stack.md#android) fija las versiones, y con esos avisos el CI fallaría cada vez que se publica una, sin que cambie el repositorio.
 - Un archivo con una sola clase de nivel superior se llama como ella, con `.kt`, y uno con varias declaraciones, con un nombre en PascalCase que describe su contenido, también en plural: ktlint no admite camelCase ([Kotlin style guide, *Source files*](../fuentes/android/kotlin-style-guide.md)).
 - Un carácter imprimible que no es ASCII se escribe tal cual, y un escape Unicode solo va para uno que no se imprime ([Kotlin style guide, *Non-ASCII characters*](../fuentes/android/kotlin-style-guide.md)).
 - Nunca van dos líneas en blanco seguidas: ktlint no las admite ([Kotlin style guide, *Vertical*](../fuentes/android/kotlin-style-guide.md)).
@@ -243,18 +243,6 @@ Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
 - Los gestores de contraseñas completan los campos por el `contentType` de su semántica: al entrar, `ContentType.Username` en el del correo o el teléfono y `ContentType.Password` en el de la contraseña, y al elegir una contraseña, `ContentType.NewPassword`. [Autofill in Compose](https://developer.android.com/develop/ui/compose/text/autofill)
 
-## Cuentas
-
-Contrato: [autenticacion.md](autenticacion.md#cuentas).
-
-## Errores
-
-Contrato: [transversal.md](transversal.md#errores).
-
-## Fechas
-
-Contrato: [transversal.md](transversal.md#fechas).
-
 ## Idiomas
 
 Estándar: [*Localize your app*](../fuentes/android/localization.md) de Android.
@@ -274,10 +262,6 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 - El mapa usa MapLibre Android, con un estilo de una sola capa raster que arma la app con la configuración del servidor. Va dentro de Compose con `AndroidView`.
 
-## Montos
-
-Contrato: [transversal.md](transversal.md#montos).
-
 ## OpenAPI y clientes
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
@@ -285,10 +269,6 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - openapi-generator genera desde `../server/openapi.json` los modelos del cable y las interfaces de Retrofit, con el generador `kotlin`, `library = "jvm-retrofit2"` y `serializationLibrary = "kotlinx_serialization"`, en `app/build/generated/openapi/`, que no se versiona. `preBuild` depende de `openApiGenerate`.
 - Un esquema libre, como el de un objeto con `additionalProperties`, se genera como `JsonElement`, con `typeMappings` y su `importMappings`: con `Any`, el plugin de kotlinx.serialization hace fallar al compilador.
 - El `Json` del convertidor de Retrofit suma los serializadores de `Serializer.kotlinxSerializationAdapters`, de lo generado, y deja `ignoreUnknownKeys` e `isLenient` en `false`, sus valores por defecto: el `Json` que genera openapi-generator los activa, y un campo desconocido tiene que fallar.
-
-## Paginación
-
-Contrato: [transversal.md](transversal.md#paginación).
 
 ## Pagos
 
@@ -323,18 +303,6 @@ Contrato: [transversal.md](transversal.md#push).
 - Toda notificación va en un canal, y hay un canal por cada tipo de notificación ([Notification channels, *Create and manage notification channels*](../fuentes/android/notification-channels.md)).
 - Los ajustes de la app tienen una entrada que abre los ajustes del sistema de cada canal, con `Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS` ([Notification channels, *Open the notification channel settings*](../fuentes/android/notification-channels.md)).
 
-## Recuperación
-
-Contrato: [autenticacion.md](autenticacion.md#recuperación).
-
-## Reintentos
-
-Contrato: [transversal.md](transversal.md#reintentos).
-
-## Sesión
-
-Contrato: [autenticacion.md](autenticacion.md#sesión).
-
 ## Tema
 
 > **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
@@ -343,14 +311,6 @@ Contrato: [transversal.md](transversal.md#tema).
 
 - El `ColorScheme` claro y el oscuro son `LightColorScheme` y `DarkColorScheme`, generados en `ui/theme/Colors.kt`, sin color dinámico, y el modo sigue al sistema. El color dinámico reemplazaría la paleta del producto, que es la misma en todas las superficies.
 - Los tamaños van en `ui/theme/`, sin tamaños literales fuera de él.
-
-## Versión mínima de cliente
-
-Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
-
-## WebSocket
-
-Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autenticacion.md#websocket).
 
 ## Pruebas
 
@@ -377,7 +337,6 @@ Contrato: [transversal.md](transversal.md#distribución).
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Gradle, AGP, Kotlin y el JDK | [scripts/verificar.py](../scripts/verificar.py) |
 | `MaxMetaspaceSize=2g` | [scripts/verificar.py](../scripts/verificar.py) |
 | `.editorconfig` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
 | El plugin de ktlint 14.2.0 | [scripts/verificar.py](../scripts/verificar.py) |

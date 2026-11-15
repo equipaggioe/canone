@@ -71,12 +71,12 @@ Lo propio del repositorio se agrega al archivo de su pieza, con un comentario qu
 
 ## CI
 
-Un job por pieza, y solo por las piezas que existen. Lo que corre cada job está solo en la plantilla del workflow; la página de cada plataforma nombra las comprobaciones en su tabla «Cómo se hace cumplir».
+Un job por pieza, y solo por las piezas que existen. Lo que corre cada job está solo en la plantilla del workflow; la página de cada plataforma nombra las comprobaciones en su tabla «Cumplimiento».
 
 El workflow corre con cada push a `main`, con cada pull request y una vez por semana, aunque no haya commits, para que una vulnerabilidad publicada después del último commit no pase sin verse ([ADR-0019](adr/0019-el-ci-corre-cada-semana-aunque-no-haya-commits.md)). La plantilla es [plantilla/.github/workflows/ci.yml](plantilla/.github/workflows/ci.yml).
 
 Cada workflow da al token `contents: read`, y solo el job que sube archivos a un release pide `contents: write`: `ci.yml`, llamado desde `release.yml`, hereda sus permisos.
 
-Los workflows usan `actions/checkout@v7`, `actions/setup-python@v7`, `actions/setup-node@v7`, `actions/setup-java@v6`, `astral-sh/setup-uv@v10.3.3`, `pnpm/action-setup@v6`, `gradle/actions/setup-gradle@v6` y `subosito/flutter-action@v2`, y los contenedores `postgis/postgis:17-3.5` y `debian:trixie`, que corresponden a Debian 13. `verificar.py` lo comprueba.
+Los workflows usan las acciones y los contenedores de [stack.md](stack.md#ci).
 
-**Una regla de Canone que no rompe CI no es una regla, es una sugerencia.** Una convención nueva se agrega junto con lo que la verifica.
+Una convención que puede verificarse automáticamente se agrega junto con lo que la verifica ([README.md](README.md#principios)).

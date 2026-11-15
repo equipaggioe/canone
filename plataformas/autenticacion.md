@@ -2,10 +2,6 @@
 
 Cómo se registra una cuenta, cómo entra y cómo mantiene su sesión: lo que hace el servidor y lo que cumplen con él sus clientes. Lo propio de cada cliente va en su página.
 
-## Proyecto
-
-- pwdlib 0.3.1, phonenumbers 9.0.43, webauthn 3.0.1 y PyJWT 2.15.1.
-
 ## Código de autorización
 
 Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y [RFC 9700](../fuentes/rfc/rfc9700.txt).
@@ -226,9 +222,3 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 - El servidor no revalida cada cierto tiempo la sesión de una conexión abierta: el cierre llega con el borrado de la sesión, no en la siguiente revisión.
 - Al refrescar la sesión, una app manda el token nuevo por la misma conexión ([WebSocket Security, *Session Management*](../fuentes/owasp/WebSocket_Security.md)).
 - Cerrar o borrar una sesión cierra en el momento sus conexiones, y una sesión que vence también las cierra ([WebSocket Security, *Session Management*](../fuentes/owasp/WebSocket_Security.md)).
-
-## Cumplimiento
-
-| Convención | Herramienta |
-| :--- | :--- |
-| Las versiones de «Proyecto» | [scripts/verificar.py](../scripts/verificar.py) |

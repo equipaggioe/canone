@@ -4,7 +4,7 @@ Una pieza en Java que acompaña al servidor en la máquina: un servicio que solo
 
 ## Proyecto
 
-- Java 21: la pieza corre con `openjdk-21-jre-headless`, el JRE de Debian 13 que instala `packages.py --java`, y se compila con `javac --release 21`. Compilada para otra versión, la pieza no arranca o usa una API que el JRE de la máquina no tiene.
+- La pieza corre con `openjdk-21-jre-headless`, el JRE de Debian 13 que instala `packages.py --java`, y se compila con `javac --release 21`. Compilada para otra versión, la pieza no arranca o usa una API que el JRE de la máquina no tiene.
 - La pieza es una carpeta en la raíz del repositorio, y su nombre es el de su unidad, `<app>-java@<pieza>.service`, y el de su jar: `install.py`, `deploy.py` y Consola la encuentran por ese nombre, sin otra configuración.
 - `dependencies.txt` lleva cada dependencia de ejecución en una línea, `grupo:artefacto:versión` y el SHA-256 de su jar de Maven Central: un jar cambiado en el camino entraría a la máquina sin que nadie lo note. La pieza no tiene Gradle ni Maven, y las dependencias transitivas se escriben a mano.
 - `scripts/java.py <pieza> <clase> <salida>` baja cada dependencia a `<salida>/<pieza>/lib/` y falla, sin escribirla, si su SHA-256 es otro; compila `src/` y escribe `<salida>/<pieza>/<pieza>.jar`, con `Main-Class` y el `Class-Path` de `lib/`. Lo corren el `release.yml` del repositorio y quien desarrolla, con el mismo resultado.

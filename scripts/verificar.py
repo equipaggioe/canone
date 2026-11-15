@@ -300,7 +300,7 @@ def comparar(copia: Path, canonico: Path, nombre: str) -> list[str]:
     return []
 
 
-# plataformas/android.md, «Proyecto»: una sola versión de Gradle, AGP y Kotlin en Android y en
+# stack.md, «Android»: una sola versión de Gradle, AGP y Kotlin en Android y en
 # Flutter. Gradle sale del wrapper canónico; AGP y Kotlin, de los plugins que declara el proyecto:
 # el catálogo de versiones en Android y settings.gradle.kts en Flutter. Kotlin va en el plugin que
 # declara cada pieza: Android usa el Kotlin integrado en AGP, que no admite kotlin.android, y la
@@ -314,7 +314,7 @@ PLUGINS_ANDROID = {
     "org.jetbrains.kotlin.plugin.serialization": KOTLIN,
 }
 PLUGINS_FLUTTER = {"com.android.application": AGP, "org.jetbrains.kotlin.android": KOTLIN}
-# plataformas/android.md, «Proyecto»: el plugin de ktlint, solo en las apps de Android.
+# stack.md, «Android»: el plugin de ktlint, solo en las apps de Android.
 KTLINT = {"org.jlleitschuh.gradle.ktlint": "14.2.0"}
 PLUGIN_KTS = re.compile(r'id\("([\w.]+)"\)\s+version\s+"([^"]+)"')
 
@@ -341,12 +341,12 @@ def versiones_gradle(
     for plugin, version in plugins.items():
         if declarados.get(plugin) != version:
             fallas.append(
-                f"plataformas/android.md: {nombre} declara {plugin} {declarados.get(plugin, 'sin versión')}, no {version}"
+                f"stack.md: {nombre} declara {plugin} {declarados.get(plugin, 'sin versión')}, no {version}"
             )
     return fallas
 
 
-# plataformas/sveltekit.md, «Pruebas»: la versión de Playwright de «Proyecto» en todo package.json
+# plataformas/sveltekit.md, «Pruebas»: la versión de Playwright de stack.md en todo package.json
 # del repositorio, porque cada versión descarga sus propios navegadores.
 PLAYWRIGHT = "1.65.1"
 
@@ -374,13 +374,13 @@ def versiones_playwright(repo: Path) -> list[str]:
         for paquete in ("playwright", "@playwright/test"):
             if paquete in deps and deps[paquete] != PLAYWRIGHT:
                 fallas.append(
-                    f"plataformas/sveltekit.md: {relativo.as_posix()} declara {paquete} {deps[paquete]}, no {PLAYWRIGHT}"
+                    f"stack.md: {relativo.as_posix()} declara {paquete} {deps[paquete]}, no {PLAYWRIGHT}"
                 )
     return fallas
 
 
-# plataformas/python.md, «Proyecto»: una sola versión exacta de uv en todo pyproject.toml, la misma
-# con que el servidor crea el entorno.
+# plataformas/python.md, «Proyecto», y stack.md: una sola versión exacta de uv en todo
+# pyproject.toml, la misma con que el servidor crea el entorno.
 UV = "0.13.7"
 
 
@@ -395,12 +395,12 @@ def versiones_uv(repo: Path) -> list[str]:
         if declarada is None:
             fallas.append(f"plataformas/python.md: {relativo.as_posix()} no declara required-version")
         elif declarada != f"=={UV}":
-            fallas.append(f"plataformas/python.md: {relativo.as_posix()} declara uv {declarada}, no =={UV}")
+            fallas.append(f"stack.md: {relativo.as_posix()} declara uv {declarada}, no =={UV}")
     return fallas
 
 
-# plataformas/README.md, «Versiones»: cada página fija las versiones, y los manifiestos y los
-# workflows de cada repositorio las siguen. Van por página, para saltar las que están en desarrollo.
+# stack.md: fija las versiones, y los manifiestos y los workflows de cada repositorio las siguen.
+# Van por página, para saltar las de las páginas que están en desarrollo.
 PYPROJECT = {
     "autenticacion.md": {
         "phonenumbers": ">=9.0.43",
@@ -522,9 +522,10 @@ ENTRADAS = {
     "actions/setup-python": ("python.md", "python-version", "3.13"),
     "subosito/flutter-action": ("flutter.md", "flutter-version", "3.47.9"),
 }
-# plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de python.md.
+# plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de la Pydantic del
+# bloque de Python de stack.md.
 FLET = {"pydantic": "==2.13.4"}
-# plataformas/despliegue.md, «Proyecto»: la versión de la página, también en el CI.
+# stack.md, «Despliegue» y «PostgreSQL»: la misma versión, también en el CI.
 VALKEY = "8.1"
 POSTGIS = "17-3.5"
 METASPACE = "-XX:MaxMetaspaceSize=2g"
@@ -560,7 +561,7 @@ def versiones_pyproject(repo: Path, paginas: set[str]) -> list[str]:
                 esperado = FLET.get(nombre, "==" + esperado.removeprefix(">="))
             if declarado != esperado:
                 fallas.append(
-                    f"plataformas/: {relativo.as_posix()} declara {nombre}{declarado}, no {esperado}"
+                    f"stack.md: {relativo.as_posix()} declara {nombre}{declarado}, no {esperado}"
                 )
     return fallas
 
@@ -568,11 +569,11 @@ def versiones_pyproject(repo: Path, paginas: set[str]) -> list[str]:
 def versiones_package(superficie: Path, datos: dict, deps: dict[str, str]) -> list[str]:
     fallas = []
     if not re.fullmatch(rf"pnpm@{re.escape(PNPM)}(\+\S+)?", datos.get("packageManager", "")):
-        fallas.append(f"plataformas/sveltekit.md: {superficie.name}/package.json no declara pnpm@{PNPM}")
+        fallas.append(f"stack.md: {superficie.name}/package.json no declara pnpm@{PNPM}")
     for paquete, version in NPM.items():
         if paquete in deps and deps[paquete] != version:
             fallas.append(
-                f"plataformas/sveltekit.md: {superficie.name}/ declara {paquete} {deps[paquete]}, no {version}"
+                f"stack.md: {superficie.name}/ declara {paquete} {deps[paquete]}, no {version}"
             )
     return fallas
 
@@ -603,7 +604,7 @@ def versiones_pubspec(repo: Path) -> list[str]:
             for declarada in re.findall(rf"^\s+{paquete}:[ \t]*[\"']?([^\"'\s#]+)", texto, re.M):
                 if (declarada if paquete in EXACTOS else declarada.lstrip("^")) != version:
                     fallas.append(
-                        f"plataformas/flutter.md: {relativo.as_posix()} declara {paquete} {declarada}, no {version}"
+                        f"stack.md: {relativo.as_posix()} declara {paquete} {declarada}, no {version}"
                     )
     return fallas
 
@@ -617,17 +618,17 @@ def versiones_workflows(repo: Path, paginas: set[str]) -> list[str]:
         usadas = {accion for accion, _ in pares}
         for accion, declarada in pares:
             if accion in ACCIONES and declarada != ACCIONES[accion]:
-                fallas.append(f"repositorio.md: {relativo} usa {accion}@{declarada}, no @{ACCIONES[accion]}")
+                fallas.append(f"stack.md: {relativo} usa {accion}@{declarada}, no @{ACCIONES[accion]}")
         for accion, (pagina, entrada, version) in ENTRADAS.items():
             valores = re.findall(rf"{entrada}:\s*[\"']?([^\"'\s]+)", texto)
             if pagina in paginas and accion in usadas and set(valores) != {version}:
-                fallas.append(f"plataformas/: {relativo} no declara {entrada} {version}")
+                fallas.append(f"stack.md: {relativo} no declara {entrada} {version}")
         for imagen in re.findall(r"postgis/postgis:(\S+)", texto):
             if imagen != POSTGIS:
-                fallas.append(f"repositorio.md: {relativo} usa postgis/postgis:{imagen}, no {POSTGIS}")
+                fallas.append(f"stack.md: {relativo} usa postgis/postgis:{imagen}, no {POSTGIS}")
         for imagen in re.findall(r"valkey/valkey:(\S+)", texto):
             if imagen != VALKEY:
-                fallas.append(f"plataformas/despliegue.md: {relativo} usa valkey/valkey:{imagen}, no {VALKEY}")
+                fallas.append(f"stack.md: {relativo} usa valkey/valkey:{imagen}, no {VALKEY}")
     return fallas
 
 
@@ -931,7 +932,7 @@ def revisar(repo: Path) -> list[str]:
         for plugin, version in KTLINT.items():
             if declarados.get(plugin) != version:
                 fallas.append(
-                    f"plataformas/android.md: {app.name} declara {plugin} {declarados.get(plugin, 'sin versión')}, no {version}"
+                    f"stack.md: {app.name} declara {plugin} {declarados.get(plugin, 'sin versión')}, no {version}"
                 )
         fallas.extend(metaspace_lint(app, app.name))
 

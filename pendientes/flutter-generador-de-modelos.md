@@ -10,7 +10,7 @@ La convención está escrita en [plataformas/flutter.md](../plataformas/flutter.
 | :--- | :--- |
 | `flutter.md`, «OpenAPI y clientes»: swagger_parser 2.1.1 genera desde `../server/openapi.json` los modelos con freezed y el cliente con `package:http`, en `lib/data/services/api/`; `swagger_parser.yaml` lleva `serializer: freezed`, `http_client: http` y `page_width: 99` | Escrito |
 | `flutter.md`, «OpenAPI y clientes»: un modelo generado rechaza un campo y un valor de enum que no conoce, porque el servidor declara `additionalProperties: false` | Escrito |
-| `flutter.md`, «Proyecto»: swagger_parser 2.1.1 en `dev_dependencies`; `swagger_parser.yaml` y `lib/data/services/api/` en el árbol; lo generado no se versiona y el analizador lo excluye | Escrito |
+| `stack.md`: swagger_parser 2.1.1; `flutter.md`, «Proyecto»: swagger_parser en `dev_dependencies`; `swagger_parser.yaml` y `lib/data/services/api/` en el árbol; lo generado no se versiona y el analizador lo excluye | Escrito |
 | `plantilla/flutter/analysis_options.yaml`: excluye `lib/data/services/api/**` | Hecho |
 | `plantilla/flutter/.gitignore`: ignora `/lib/data/services/api/` | Hecho |
 | `plantilla/.github/workflows/ci.yml`: `dart run swagger_parser` después de revisar el formato y antes de build_runner, en los jobs `flutter` e `ios` | Hecho; **falla** mientras siga el #489 |
@@ -188,7 +188,7 @@ Es una **propuesta**: no está decidido.
 ## Para cerrar el tema
 
 1. Cuando salga una versión que arregle el #489: generar con el `openapi.json` de la plantilla y comprobar que no aborta, que un campo opcional sale como `T?` y que se rechazan el campo y el valor de enum desconocidos.
-2. Fijar esa versión en «Proyecto» de flutter.md y en `PUB` de `scripts/verificar.py`.
+2. Fijar esa versión en el bloque de Flutter de `stack.md` y en `PUB` de `scripts/verificar.py`.
 3. Si se aplicó la opción 1, decidir si se queda o se quita, y escribirlo en fastapi.md.
 4. Borrar este documento en el mismo commit.
 

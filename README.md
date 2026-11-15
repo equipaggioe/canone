@@ -6,7 +6,9 @@ Convenciones, plantillas y herramientas compartidas para construir, organizar y 
 
 Los proyectos que usan Canone comparten sus convenciones y decisiones en un solo lugar para leerse, construirse, organizarse y mantenerse de la misma manera.
 
-Canone es una guía, no un reglamento: sus convenciones se siguen por defecto.
+Canone está escrito para un asistente de IA: le dice con qué y cómo se construye cada proyecto, para no explicárselo en cada sesión. El desarrollador revisa aquí lo que el asistente va a leer.
+
+Lo que Canone escribe rige: una herramienta lo comprueba cuando puede, y apartarse requiere un ADR del repositorio.
 
 Cada proyecto elige las tecnologías que utiliza y consulta únicamente las convenciones correspondientes. Canone responde a la pregunta «si se usa X, ¿cómo se usa?», sin convertir su catálogo en una lista de requisitos universales.
 
@@ -24,7 +26,7 @@ Las siguientes convenciones aplican a todos los repositorios:
 - [repositorio.md](repositorio.md)
 - [documentacion.md](documentacion.md)
 
-Las convenciones de `plataformas/` dependen de las tecnologías utilizadas por cada proyecto. Qué páginas se consultan para trabajar en una pieza y cómo se heredan entre ellas está en [plataformas/README.md](plataformas/README.md).
+Las convenciones de `plataformas/` dependen de las tecnologías utilizadas por cada proyecto. Qué páginas se leen para trabajar en una pieza está en [plataformas/README.md](plataformas/README.md), y qué se usa en cada plataforma y en qué versión, en [stack.md](stack.md).
 
 Un repositorio puede apartarse de una convención cuando exista un motivo justificado. La desviación se registra en un ADR propio, dentro de `docs/adr/`, que identifica la convención afectada y explica la decisión.
 
@@ -36,7 +38,7 @@ Cada convención es adoptada de una fuente normativa o establecida como convenci
 
 **Toda convención que pueda verificarse automáticamente debe tener una herramienta que la verifique o la imponga.**
 
-La sección «Cumplimiento» de cada página registra las herramientas que verifican o imponen sus convenciones. Las convenciones que no pueden verificarse automáticamente rigen igual.
+La sección «Cumplimiento» de cada página registra las herramientas que verifican o imponen sus convenciones.
 
 ## Responsabilidades
 
@@ -65,6 +67,7 @@ El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herr
 | [principios.md](principios.md) | Método de trabajo, independiente de las tecnologías utilizadas. |
 | [repositorio.md](repositorio.md) | Convenciones de Git, estructura de carpetas, README y CI. |
 | [documentacion.md](documentacion.md) | Estructura y mantenimiento de la documentación de cada repositorio. |
+| [stack.md](stack.md) | Qué se usa en cada plataforma y en qué versión. Lo decide el desarrollador. |
 | [plataformas/](plataformas/) | Metodología y catálogo de convenciones específicas de cada tecnología o ámbito, con las fuentes que adoptan. |
 | [fuentes/](fuentes/) | Copias de las fuentes normativas adoptadas por Canone y de las listas de las que sus programas toman valores. |
 | [adr/](adr/) | Registro de las decisiones de Canone, con su alcance y estado. |

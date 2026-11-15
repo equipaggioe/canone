@@ -4,9 +4,6 @@ La base de datos.
 
 ## Proyecto
 
-- PostgreSQL 17 y PostGIS 3.5, los de los paquetes del servidor ([despliegue.md](despliegue.md#máquina)).
-- GeoAlchemy2 0.21.0, en el servidor que guarda geografía.
-
 Plantilla: [models/base.py](../plantilla/server/src/app/models/base.py), con los tipos, las claves y las columnas espaciales, y [tests/test_conventions.py](../plantilla/server/tests/test_conventions.py), con las pruebas de «Cumplimiento», del servidor de [fastapi.md](fastapi.md).
 
 ## Nombres

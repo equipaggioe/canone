@@ -118,10 +118,22 @@ def owned(folder: Path, app: str) -> list[Path]:
     )
 
 
+def instances(app: str) -> list[str]:
+    """Return the timer of each task of install.py --task, from the folder of its calendar."""
+    return [
+        path.name.removesuffix(".d") for path in owned(UNITS, app) if path.name.endswith(".timer.d")
+    ]
+
+
 def triggers(app: str) -> list[str]:
     """Return the server, and the timers and path units that start the others."""
-    found = [path.name for path in owned(UNITS, app) if path.suffix in (".timer", ".path")]
-    return [f"{app}.service", *found]
+    # A template is no unit that runs: systemctl takes its instances.
+    found = [
+        path.name
+        for path in owned(UNITS, app)
+        if path.suffix in (".timer", ".path") and "@." not in path.name
+    ]
+    return [f"{app}.service", *found, *instances(app)]
 
 
 def drop(kind: str, names: tuple[str, ...], catalog: str, column: str) -> None:
@@ -153,7 +165,7 @@ def drop_database(app: str) -> None:
 
 def remove_app(app: str) -> None:
     """Disable and delete the units, sites, files, credentials and accounts of the app."""
-    units = [path.name for path in owned(UNITS, app) if path.is_file()]
+    units = [path.name for path in owned(UNITS, app) if path.is_file()] + instances(app)
     systemctl("disable", "--now", f"valkey-server@{app}.service", *units)
     for path in [*owned(UNITS, app), *owned(SITES, app), *owned(CREDENTIALS, app)]:
         delete(path)

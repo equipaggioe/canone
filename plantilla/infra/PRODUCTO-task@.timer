@@ -1,0 +1,9 @@
+[Unit]
+Description=PRODUCTO task %i, on the calendar of install.py --task
+
+# install.py writes the OnCalendar= of each task in PRODUCTO-task@<task>.timer.d/calendar.conf.
+[Timer]
+Persistent=yes
+
+[Install]
+WantedBy=timers.target

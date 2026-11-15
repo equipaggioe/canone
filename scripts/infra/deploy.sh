@@ -7,7 +7,8 @@
 # only if its migrations are those of the active one. A private repository deploys only with
 # --private and its token, which does not follow the redirect of a download to another host. The
 # server reads the credentials of credentials.py, and the daily purge and sweep run on what goes
-# live. The database.py that install.py installs empties the database only on a machine set up with
+# live. A task of --task runs on its calendar as the server, and a reinstall without it takes its
+# timer, and a task with a unit of its own or a calendar that systemd does not read fails. The database.py that install.py installs empties the database only on a machine set up with
 # --development, with the extensions of install.py, and migrate runs the migrations of the active
 # version. The account that administers reads as <app>_read, also over a tunnel to the socket, and
 # changes nothing. Each deployment runs the seeders after the migrations without duplicating a row,
@@ -39,11 +40,15 @@ for name in a b s1 s2 x; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; don
 key() { cat "$work/$1.pub"; }
 # An account that already administers: install.py only adds its keys, and asks no password.
 id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
-# setup [<flag>]: install.py, and its deploy.py with GitHub answering from this machine.
-setup() {
+# install [<flag>]: install.py with the keys and installers of demo.
+install() {
     python3 "$canone/plantilla/infra/install.py" demo demo.example 64mb --admin operador \
         --key "$(key a)" --key "$(key b)" --signer "$(key s1)" --signer "$(key s2)" \
         --owner owner --desktop linux --desktop windows --desktop macos --mobile mobile-customer "$@"
+}
+# setup [<flag>]: install.py, and its deploy.py with GitHub answering from this machine.
+setup() {
+    install "$@"
     sed 's#https://api.github.com#http://127.0.0.1:9000#' /usr/local/sbin/demo-deploy \
         > "$work/deploy.py"
 }
@@ -92,6 +97,28 @@ tags.mkdir(parents=True, exist_ok=True)
 EOF
 }
 broken() { echo 'raise RuntimeError("broken")' >> "$1/server/src/app/main.py"; }
+# ticking <tree>: a task for --task, which writes the account it runs as.
+ticking() {
+    python3 - "$1/server/src/app/tasks.py" <<'EOF'
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+task = '''async def tick() -> None:
+    """Write the account the task runs as."""
+    print(f"tick as {getpass.getuser()}")
+
+
+TASKS["tick"] = tick
+
+
+'''
+text = path.read_text(encoding="utf-8")
+text = text.replace("import argparse\n", "import argparse\nimport getpass\n", 1)
+text = text.replace("async def run(task: str)", task + "async def run(task: str)", 1)
+path.write_text(text, encoding="utf-8")
+EOF
+}
 failing() {
     cat > "$1/server/alembic/versions/ffffffffffff_fail.py" <<'EOF'
 """A migration that fails."""
@@ -249,7 +276,7 @@ pids="$pids $!"
 until curl -s -o /dev/null http://127.0.0.1:9000/; do sleep 0.2; done
 
 step "The first version migrates, goes live and publishes its installers"
-release v1.0.0 s1
+release v1.0.0 s1 ticking
 deploy v1.0.0
 test "$(current)" = v1.0.0
 healthy
@@ -263,6 +290,23 @@ for task in purge sweep; do
     systemctl show --property=TimersCalendar --value "demo-$task.timer" | grep -qF 'OnCalendar=*-*-* 00:00:00 ;'
     systemctl start "demo-$task.service"
 done
+
+step "A task of --task runs on its calendar as the server, and loses its timer when no --task names it"
+fails install --task purge=daily
+grep -qF "purge has its own unit" "$work/error"
+fails install --task tick=whenever
+grep -qF "is not an OnCalendar=" "$work/error"
+setup --task tick=minutely
+systemctl is-active --quiet demo-task@tick.timer
+systemctl show --property=TimersCalendar --value demo-task@tick.timer | grep -qF 'OnCalendar=*-*-* *:*:00 ;'
+systemctl start demo-task@tick.service
+test "$(systemctl show --property=Result --value demo-task@tick.service)" = success
+journalctl --unit=demo-task@tick.service --output=cat | grep -qx 'tick as demo'
+setup
+test ! -e /etc/systemd/system/demo-task@tick.timer.d
+test ! -e /etc/systemd/system/demo-task@.service
+test ! -e /etc/systemd/system/timers.target.wants/demo-task@tick.timer
+test "$(systemctl is-active demo-task@tick.timer)" != active
 
 step "The live tag does not go in again"
 fails deploy v1.0.0

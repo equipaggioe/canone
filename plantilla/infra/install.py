@@ -5,11 +5,14 @@ r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
         [--turn [--turn-ip <public ipv4>]] \
         [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>] \
-        [--java <piece>] [--development]
+        [--java <piece>] [--task <task>=<OnCalendar>] [--development]
 
 The first time it runs as root, and creates the account that administers the machine with its
 keys and the password it asks for. Afterwards ssh only takes keys and root does not log in, so it
 runs with sudo from that account, and --admin, --key and --signer only add keys.
+
+--task runs python -m app.tasks <task> on its own calendar, like --task alert=minutely; a task
+that no --task names any more loses its timer.
 
 --development marks a machine whose database database.py may empty; without it, the mark goes.
 
@@ -104,6 +107,54 @@ def java_piece(name: str) -> str:
     if not JAVA_PIECE.fullmatch(name):
         raise argparse.ArgumentTypeError(f"{name} is not a piece in Java, like fingerprint")
     return name
+
+
+# fastapi.md, «Tareas periódicas»: a task of the app with its own timer is an instance of
+# PRODUCTO-task@, and its calendar goes in a drop-in of its timer. The tasks with units of their
+# own do not take one.
+TASK = re.compile(r"[a-z][a-z0-9_]{0,30}")
+TASK_UNIT = "PRODUCTO-task@"
+OWN_UNITS = ("migrate", "mock", "purge", "sweep")
+
+
+def task_timer(spec: str) -> tuple[str, str]:
+    """Return the task and the calendar of <task>=<OnCalendar>."""
+    name, _, calendar = spec.partition("=")
+    if not TASK.fullmatch(name) or not calendar:
+        raise argparse.ArgumentTypeError(f"{spec} is not <task>=<OnCalendar>, like alert=minutely")
+    if name in OWN_UNITS:
+        raise argparse.ArgumentTypeError(f"{name} has its own unit, and takes no --task")
+    return name, calendar
+
+
+def check_tasks(tasks: list[tuple[str, str]]) -> None:
+    """Fail on a task named twice, or on a calendar that systemd does not read."""
+    names = [name for name, _ in tasks]
+    if len(set(names)) != len(names):
+        raise SystemExit(f"A task goes in one --task: {', '.join(names)}.")
+    for _, calendar in tasks:
+        check = ["systemd-analyze", "calendar", calendar]
+        if subprocess.run(check, capture_output=True, check=False).returncode != 0:
+            raise SystemExit(f"{calendar} is not an OnCalendar= that systemd reads.")
+
+
+def install_tasks(app: str, tasks: list[tuple[str, str]]) -> list[str]:
+    """Write the calendar of each task, take the timers of the others, and return the timers."""
+    names = [name for name, _ in tasks]
+    prefix = TASK_UNIT.replace("PRODUCTO", app)
+    for folder in sorted(UNITS.glob(f"{prefix}*.timer.d")):
+        timer = folder.name.removesuffix(".d")
+        if timer.removeprefix(prefix).removesuffix(".timer") not in names:
+            subprocess.run(["systemctl", "disable", "--now", timer], check=True)
+            shutil.rmtree(folder)
+    if not tasks:
+        for suffix in (".service", ".timer"):
+            (UNITS / f"{prefix}{suffix}").unlink(missing_ok=True)
+    for name, calendar in tasks:
+        drop_in = UNITS / f"{prefix}{name}.timer.d" / "calendar.conf"
+        drop_in.parent.mkdir(parents=True, exist_ok=True)
+        drop_in.write_text(f"[Timer]\nOnCalendar={calendar}\n", encoding="utf-8")
+    return [f"{prefix}{name}.timer" for name in names]
 
 
 # Units and sites of a piece the app may not have.
@@ -220,6 +271,13 @@ def parse() -> argparse.Namespace:
         default=[],
         type=java_piece,
         help="a piece in Java that only the server calls, like fingerprint",
+    )
+    parser.add_argument(
+        "--task",
+        action="append",
+        default=[],
+        type=task_timer,
+        help="a task of python -m app.tasks with its own timer, like alert=minutely",
     )
     parser.add_argument(
         "--development", action="store_true", help="database.py may empty the database"
@@ -428,6 +486,7 @@ def main() -> None:
     if arguments.java and shutil.which("java") is None:
         raise SystemExit("openjdk-21-jre-headless is not installed, and --java needs it.")
     check_logs(arguments)
+    check_tasks(arguments.task)
     admin = find_admin(arguments)
     check_keys(arguments.key + arguments.signer)
     create_admin(admin, arguments.key)
@@ -490,6 +549,8 @@ def main() -> None:
     skipped = tuple(f"PRODUCTO-{name}." for name in arguments.without)
     if not arguments.java:
         skipped += (JAVA_UNIT,)
+    if not arguments.task:
+        skipped += (TASK_UNIT,)
     triggers = []
     for source in sorted(HERE.glob("PRODUCTO*")):
         if source.name.startswith(skipped):
@@ -497,8 +558,10 @@ def main() -> None:
         folder = SITES if source.suffix == ".caddy" else UNITS
         target = folder / source.name.replace("PRODUCTO", app)
         write(source, target, values)
-        if target.suffix in (".timer", ".path"):
+        # A template is enabled by its instances.
+        if target.suffix in (".timer", ".path") and "@." not in target.name:
             triggers.append(target.name)
+    triggers += install_tasks(app, arguments.task)
     subprocess.run(["systemd-sysusers"], check=True)
     subprocess.run(["systemd-tmpfiles", "--create", f"/etc/tmpfiles.d/{app}.conf"], check=True)
     subprocess.run(["sysctl", "--system"], check=True)

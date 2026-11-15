@@ -30,12 +30,13 @@ LINES
   systemd-run "$@" "$venv/bin/python" -c "import numpy" > /dev/null 2>&1
 }
 for unit in PRODUCTO.service PRODUCTO-migrate@.service PRODUCTO-mock@.service \
-    PRODUCTO-purge.service PRODUCTO-sweep.service; do
+    PRODUCTO-purge.service PRODUCTO-sweep.service PRODUCTO-task@.service; do
   step "$unit imports numpy"
   # The filter is there, with its exception: without them the check proves nothing.
   sandboxing "$infra/$unit" | grep -qx 'SystemCallFilter=~@privileged @resources'
   sandboxing "$infra/$unit" | grep -qx 'SystemCallFilter=mbind'
   imports "$infra/$unit"
   step "$unit without the mbind exception does not"
-  ! imports "$infra/$unit" drop
+  # Under set -e, a command after ! never stops the script: the if does.
+  if imports "$infra/$unit" drop; then exit 1; fi
 done

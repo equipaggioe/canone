@@ -179,6 +179,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - Una tarea periódica es una función en `services/`.
 - La tarea trabaja sobre lo que encuentra en la base, no sobre lo que pasó desde la vuelta anterior: una vuelta perdida la recupera la siguiente.
 - La dispara un timer de systemd con `python -m app.tasks <tarea>`: systemd no arranca una vuelta si la anterior sigue corriendo.
+- La purga y el barrido corren cada día, en sus unidades de [despliegue.md](despliegue.md#procesos). Cualquier otra tarea declara su calendario en `TIMERS` de `tasks.py`, como `{"alert": "minutely"}`, el `OnCalendar=` que recibe `install.py --task`: el calendario queda en el código, junto a la tarea.
 
 ## Archivos
 

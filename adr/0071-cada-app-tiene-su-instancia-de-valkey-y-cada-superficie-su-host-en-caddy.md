@@ -1,6 +1,6 @@
 # ADR-0071 · Cada app tiene su instancia de Valkey, y cada superficie, su host en Caddy
 
-- **Estado:** Aceptada. El motivo del punto 1 lo reemplaza el [ADR-0077](0077-un-vps-aloja-un-solo-producto.md)
+- **Estado:** Aceptada. El motivo del punto 1 lo reemplaza el [ADR-0077](0077-un-vps-aloja-un-solo-producto.md), y el punto 4, el [ADR-0155](0155-caddy-sale-de-su-repositorio-apt.md)
 - **Fecha:** 2026-10-23
 - **Alcance:** «Caddy» y «Valkey» de [`plataformas/despliegue.md`](../plataformas/despliegue.md) y
   `plantilla/infra/`

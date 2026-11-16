@@ -1,7 +1,8 @@
 #!/bin/sh
 # Runs install.py on a Debian 13 with systemd running: a new machine needs two --signer, which
 # go to allowed_signers for the namespace deploy.py checks and are only added afterwards; it fails
-# without systemd-timesyncd enabled or without ca-certificates; apt reads the automatic reboot at 04:00; credentials.py
+# without systemd-timesyncd enabled, without ca-certificates or with a Caddy of another series; apt
+# reads the automatic reboot at 04:00; credentials.py
 # encrypts each field where its unit loads it; Valkey opens only its socket, for the group of the
 # app, with its maxmemory; root has no password, and an account of the app does not administer; and
 # a name of the app that would make an account systemd does not take fails; the keys of the
@@ -82,6 +83,13 @@ mv "$certificates" "$work/certificates"
 fails run
 grep -qxF 'ca-certificates is not installed, and deploy.py would not reach GitHub.' "$work/error"
 mv "$work/certificates" "$certificates"
+
+step "With a Caddy of another series, like the one of Debian 13, it fails"
+mkdir "$work/bin"
+printf '#!/bin/sh\nprintf 2.6.2-12+deb13u1\n' > "$work/bin/dpkg-query"
+chmod +x "$work/bin/dpkg-query"
+(PATH="$work/bin:$PATH" && fails run)
+grep -qF 'Caddy is 2.6.2-12+deb13u1, not of the series ' "$work/error"
 
 step "apt reboots by itself at 04:00 when a package asks for it"
 test "$(apt-config dump --format '%v%n' Unattended-Upgrade::Automatic-Reboot)" = true

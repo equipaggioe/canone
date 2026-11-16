@@ -463,6 +463,18 @@ def check_swap() -> None:
         raise SystemExit(f"The machine has {swap} kB of swap and {memory} kB of memory.")
 
 
+def check_caddy() -> None:
+    """Fail unless Caddy is of the series of caddy.pref, the one packages.py installs."""
+    # ADR-0155: a machine that did not run this packages.py keeps another Caddy, and says nothing.
+    preferences = (HERE / "caddy.pref").read_text(encoding="utf-8")
+    series = re.search(r"^Pin: version (.+)\*$", preferences, re.M).group(1)
+    query = ["dpkg-query", "-W", "-f", "${Version}", "caddy"]
+    version = subprocess.run(query, capture_output=True, text=True, check=False).stdout
+    if not version.startswith(series):
+        found = version or "not installed"
+        raise SystemExit(f"Caddy is {found}, not of the series {series}*: run packages.py.")
+
+
 def main() -> None:
     """Write the files of the app, and enable its services."""
     # Each service reads its files as its own account, whatever the umask of whoever deploys.
@@ -470,6 +482,7 @@ def main() -> None:
     arguments = parse()
     check_app(arguments.app)
     check_swap()
+    check_caddy()
     # ADR-0092: without it, 20auto-upgrades turns on nothing and nothing says so.
     if shutil.which("unattended-upgrade") is None:
         raise SystemExit("unattended-upgrades is not installed, and Debian would not update.")

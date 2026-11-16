@@ -1,0 +1,11 @@
+Explanation: ADR-0155: the series of stack.md. unattended-upgrades installs each version of it, and
+Explanation: a new series waits until stack.md fixes it.
+Package: caddy
+Pin: version 2.11.*
+Pin-Priority: 990
+
+Explanation: ADR-0155: no other version, neither another series nor the caddy of Debian 13. The
+Explanation: first record that matches a version gives its priority: without the series, apt fails.
+Package: caddy
+Pin: version *
+Pin-Priority: -1

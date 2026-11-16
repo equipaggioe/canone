@@ -7,12 +7,26 @@ r"""Install the packages of the machine, before install.py.
 for all of them: every package this program can install. --list prints the packages, one per
 line, and installs nothing: it runs on any system, also outside the machine.
 
+Caddy comes from its own repository: packages.py writes it to apt, with its key, the series of
+stack.md and its origin for unattended-upgrades, before it installs.
+
 From canone: plataformas/despliegue.md, «Máquina».
 """
 
 import argparse
 import os
+import shutil
 import subprocess
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+# ADR-0155: the repository of Caddy, its key, its series and its origin for unattended-upgrades.
+CADDY = {
+    "caddy.asc": Path("/etc/apt/keyrings/caddy.asc"),
+    "caddy.sources": Path("/etc/apt/sources.list.d/caddy.sources"),
+    "caddy.pref": Path("/etc/apt/preferences.d/caddy.pref"),
+    "51caddy-upgrades": Path("/etc/apt/apt.conf.d/51caddy-upgrades"),
+}
 
 # What every machine needs: the programs of install.py and deploy.py, and what install.py checks.
 BASE = (
@@ -49,6 +63,20 @@ def packages(extensions: list[str], turn: bool, logs: bool, java: bool) -> list[
     return names
 
 
+def install(names: list[str]) -> None:
+    """Write the repository of Caddy to apt, and install the packages."""
+    environment = {**os.environ, "DEBIAN_FRONTEND": "noninteractive"}
+    # apt reaches the repository of Caddy by HTTPS, with the certificates of Debian.
+    subprocess.run(["apt-get", "update"], check=True, env=environment)
+    subprocess.run(["apt-get", "install", "--yes", "ca-certificates"], check=True, env=environment)
+    for name, target in CADDY.items():
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(HERE / name, target)
+        target.chmod(0o644)
+    subprocess.run(["apt-get", "update"], check=True, env=environment)
+    subprocess.run(["apt-get", "install", "--yes", *names], check=True, env=environment)
+
+
 def main() -> None:
     """Install the packages, or print them with --list."""
     parser = argparse.ArgumentParser(description="Install the packages of the machine.")
@@ -68,9 +96,7 @@ def main() -> None:
         return
     if os.geteuid() != 0:
         raise SystemExit("packages.py installs as root: run it with sudo.")
-    environment = {**os.environ, "DEBIAN_FRONTEND": "noninteractive"}
-    subprocess.run(["apt-get", "update"], check=True, env=environment)
-    subprocess.run(["apt-get", "install", "--yes", *names], check=True, env=environment)
+    install(names)
 
 
 if __name__ == "__main__":

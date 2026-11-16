@@ -43,11 +43,12 @@ jobs:
 
   caddy:
     runs-on: ubuntu-latest
-    # The Caddy of Debian 13, the one the server installs.
+    # The Caddy that packages.py installs on the server, from its repository.
     container: debian:trixie
     steps:
       - uses: actions/checkout@v7
-      - run: apt-get update && apt-get install --yes --no-install-recommends caddy curl python3
+      - run: apt-get update && apt-get install --yes --no-install-recommends curl python3
+      - run: python3 plantilla/infra/packages.py
       - run: sh scripts/infra/caddy.sh "$PWD"
 
   authorize:
@@ -187,8 +188,13 @@ jobs:
           debootstrap systemd-container debian-archive-keyring
       - run: >-
           sudo debootstrap --variant=minbase
-          --include=systemd,systemd-sysv,dbus,sudo,ca-certificates,unattended-upgrades,systemd-timesyncd,openssh-server,postgresql,caddy,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2,restic,curl${{ matrix.script == 'java.sh' && ',openjdk-21-jdk-headless' || '' }}
+          --include=systemd,systemd-sysv,dbus,sudo,ca-certificates,unattended-upgrades,systemd-timesyncd,openssh-server,postgresql,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2,restic,curl${{ matrix.script == 'java.sh' && ',openjdk-21-jdk-headless' || '' }}
           trixie /var/lib/machines/machine http://deb.debian.org/debian
+      # Caddy comes from its repository, as packages.py installs it: before the machine boots,
+      # while it still has the network of the runner.
+      - run: >-
+          sudo systemd-nspawn --directory=/var/lib/machines/machine --bind-ro="$PWD:/canone"
+          python3 /canone/plantilla/infra/packages.py
       # The receiver runs rest-server 0.14.0 from its release, the version despliegue.md fixes.
       - if: matrix.script == 'backup.sh'
         run: |

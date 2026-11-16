@@ -33,7 +33,7 @@ Página: [python.md](plataformas/python.md). Vale para toda pieza en Python.
 | deptry | 0.25.1 | [Cumplimiento](plataformas/python.md#cumplimiento) |
 | pip-audit | 2.10.1 | [Cumplimiento](plataformas/python.md#cumplimiento) |
 | Pydantic | 2.14.3 | [Esquemas](plataformas/fastapi.md#esquemas) |
-| httpx | 0.28.1 | [Pruebas](plataformas/fastapi.md#pruebas) del servidor y [Red](plataformas/flet.md#red) de Flet |
+| httpx | 0.28.1, la que fija firebase-admin | [Pruebas](plataformas/fastapi.md#pruebas) del servidor y [Red](plataformas/flet.md#red) de Flet |
 
 ## FastAPI
 
@@ -82,12 +82,12 @@ Página: [postgres.md](plataformas/postgres.md). PostgreSQL y PostGIS son los de
 
 ## Despliegue
 
-Página: [despliegue.md](plataformas/despliegue.md). Cada programa es el de los paquetes de Debian 13, salvo rest-server, que sale de su release de GitHub y corre en la receptora y en el CI.
+Página: [despliegue.md](plataformas/despliegue.md). Cada programa es el de los paquetes de Debian 13, salvo Caddy, que sale de su repositorio APT, y rest-server, que sale de su release de GitHub y corre en la receptora y en el CI.
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | Debian | 13 | [Máquina](plataformas/despliegue.md#máquina) |
-| Caddy | 2.6.2 | [Caddy](plataformas/despliegue.md#caddy) |
+| Caddy | 2.11 | [Caddy](plataformas/despliegue.md#caddy) y [Máquina](plataformas/despliegue.md#máquina) |
 | Valkey | 8.1 | [Valkey](plataformas/despliegue.md#valkey) |
 | coturn | 4.6.1 | [Coturn](plataformas/despliegue.md#coturn) |
 | nftables | 1.1.3 | [Firewall](plataformas/despliegue.md#firewall) |
@@ -150,9 +150,8 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | Flutter | 3.47.9 | — |
-| Dart | 3.13.7 | — |
+| Dart | 3.13.7, el de Flutter 3.47.9 | [Proyecto](plataformas/flutter.md#proyecto) |
 | flutter_riverpod | 3.5.0 | [Estado](plataformas/flutter.md#estado) |
-| riverpod | 3.5.0 | [Estado](plataformas/flutter.md#estado) |
 | riverpod_annotation | 4.0.8 | [Estado](plataformas/flutter.md#estado) |
 | riverpod_generator | 4.0.10 | [Estado](plataformas/flutter.md#estado) |
 | riverpod_lint | 3.2.0 | [Estado](plataformas/flutter.md#estado) |

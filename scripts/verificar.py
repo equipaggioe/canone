@@ -518,7 +518,6 @@ PUB = {
     "http": "1.6.0",
     "json_annotation": "4.12.0",
     "json_serializable": "6.15.2",
-    "riverpod": "3.5.0",
     "riverpod_annotation": "4.0.8",
     "riverpod_generator": "4.0.10",
     "shared_preferences": "2.5.6",
@@ -527,7 +526,7 @@ PUB = {
 }
 # plataformas/flutter.md, «Proyecto»: las mutations de Riverpod son experimentales y pueden cambiar
 # sin una versión mayor, así que sus paquetes van sin ^.
-EXACTOS = {"flutter_riverpod", "riverpod", "riverpod_annotation", "riverpod_generator"}
+EXACTOS = {"flutter_riverpod", "riverpod_annotation", "riverpod_generator"}
 ACCIONES = {
     "actions/checkout": "v7",
     "actions/setup-java": "v6",

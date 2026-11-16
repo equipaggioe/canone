@@ -1,6 +1,6 @@
 # ADR-0090 · La máquina es Debian 13, sus programas salen de sus paquetes, y uv tiene una sola versión exacta
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1, para `caddy`, lo reemplaza el [ADR-0155](0155-caddy-sale-de-su-repositorio-apt.md)
 - **Fecha:** 2026-10-26
 - **Alcance:** «Máquina» de [`plataformas/despliegue.md`](../plataformas/despliegue.md), «Proyecto»
   de [`plataformas/python.md`](../plataformas/python.md), los `pyproject.toml` y los workflows de

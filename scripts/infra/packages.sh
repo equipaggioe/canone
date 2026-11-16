@@ -1,7 +1,7 @@
 #!/bin/sh
 # Runs packages.py on a Debian 13: --list names the packages of each option and installs nothing,
 # --all names those of every option, and without --list it installs all of them, so each name
-# exists in Debian 13.
+# exists in Debian 13, and Caddy comes from its repository, in the series of caddy.pref.
 #
 #     sh packages.sh <canone>
 set -eu
@@ -40,3 +40,9 @@ python3 "$program" --all
 while read -r name; do
     installed "$name" || { echo "$name is not installed"; exit 1; }
 done < "$work/all"
+
+step "Caddy comes from its repository, in the series of caddy.pref, and unattended-upgrades updates it"
+series=$(sed -n 's/^Pin: version \(..*\)\*$/\1/p' "$canone/plantilla/infra/caddy.pref")
+version=$(dpkg-query -W -f '${Version}' caddy)
+case "$version" in "$series"*) ;; *) echo "caddy $version is not of the series $series"; exit 1 ;; esac
+apt-config dump | grep -qF 'Unattended-Upgrade::Origins-Pattern:: "origin=cloudsmith/caddy/stable";'

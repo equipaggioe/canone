@@ -1,0 +1,7 @@
+# ADR-0155: Caddy comes from its own repository, signed with its key: the one of Debian 13 is 2.6.2,
+# and Debian gives its packages in Go limited security support.
+Types: deb
+URIs: https://dl.cloudsmith.io/public/caddy/stable/deb/debian
+Suites: any-version
+Components: main
+Signed-By: /etc/apt/keyrings/caddy.asc

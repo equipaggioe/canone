@@ -17,18 +17,8 @@
 	handle /api/* {
 		@upload header Content-Type multipart/form-data*
 		@other not header Content-Type multipart/form-data*
-		# ADR-0071: when request_body cuts a body with a Content-Length,
-		# Caddy 2.6.2 answers 502, and the client retries a 502.
-		@upload_too_big {
-			header Content-Type multipart/form-data*
-			expression `{http.request.header.Content-Length}.matches("^[0-9]+$") && int({http.request.header.Content-Length}) > 10000000`
-		}
-		@other_too_big {
-			not header Content-Type multipart/form-data*
-			expression `{http.request.header.Content-Length}.matches("^[0-9]+$") && int({http.request.header.Content-Length}) > 1000000`
-		}
-		respond @upload_too_big 413
-		respond @other_too_big 413
+		# ADR-0155: request_body answers 413 to a Content-Length over its
+		# limit, before the body reaches the server.
 		request_body @upload {
 			max_size 10MB
 		}
@@ -45,7 +35,7 @@
 	}
 	handle {
 		root * /srv/{args.0}/current/{args.1}
-		# To try_files, / is a directory: without index.html, Caddy 2.6.2 answers 404.
+		# To try_files, / is a directory: without index.html, Caddy answers 404.
 		@spa_root {
 			path /
 			not file /index.html

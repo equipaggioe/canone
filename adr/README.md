@@ -157,7 +157,8 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0149](0149-las-unidades-de-la-app-permiten-mbind.md) | Las unidades que corren la app permiten `mbind`, la llamada con que el OpenBLAS de numpy fija la memoria de sus hilos | Con servidor |
 | [0150](0150-el-indice-de-adr-lleva-numero-y-titulo-y-aplica-a-cuando-hace-falta.md) | El índice de ADR lleva número y título, y «Aplica a» cuando hay decisiones que tocan solo algunas piezas | Todos |
 | [0151](0151-una-tarea-con-otro-calendario-corre-en-su-instancia-de-task.md) | Una tarea con otro calendario corre en su instancia de `PRODUCTO-task@`, y la app lo declara en `TIMERS` | Con servidor |
-| [0152](0152-el-entorno-del-servidor-se-instala-compilado-y-sin-modo-editable.md) | El entorno del servidor se instala con el bytecode compilado y sin modo editable | Con servidor | Aceptada |
-| [0153](0153-un-script-de-sh-con-set-e-no-niega-con-exclamacion.md) | Un script de `sh` con `set -e` no niega un comando con `!` | Todos | Aceptada |
-| [0154](0154-las-particiones-por-delante-las-crea-el-dueno-en-migrate-y-la-purga.md) | Las particiones por delante las crea el dueño del esquema, en `migrate` y en la purga | Con servidor | Aceptada |
-| [0156](0156-una-imagen-con-varios-tamanos-es-una-carpeta-de-su-fila.md) | Una imagen que se muestra en varios tamaños se guarda una vez por tamaño, en la carpeta de su fila | Con servidor | Aceptada |
+| [0152](0152-el-entorno-del-servidor-se-instala-compilado-y-sin-modo-editable.md) | El entorno del servidor se instala con el bytecode compilado y sin modo editable | Con servidor |
+| [0153](0153-un-script-de-sh-con-set-e-no-niega-con-exclamacion.md) | Un script de `sh` con `set -e` no niega un comando con `!` | Todos |
+| [0154](0154-las-particiones-por-delante-las-crea-el-dueno-en-migrate-y-la-purga.md) | Las particiones por delante las crea el dueño del esquema, en `migrate` y en la purga | Con servidor |
+| [0155](0155-caddy-sale-de-su-repositorio-apt.md) | Caddy sale de su repositorio APT, y no de los paquetes de Debian 13 | Con servidor |
+| [0156](0156-una-imagen-con-varios-tamanos-es-una-carpeta-de-su-fila.md) | Una imagen que se muestra en varios tamaños se guarda una vez por tamaño, en la carpeta de su fila | Con servidor |

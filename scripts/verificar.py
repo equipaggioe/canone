@@ -332,6 +332,7 @@ AGP = "9.5.1"
 KOTLIN = "2.4.21"
 PLUGINS_ANDROID = {
     "com.android.application": AGP,
+    "com.autonomousapps.dependency-analysis": "3.20.3",
     "org.jetbrains.kotlin.plugin.compose": KOTLIN,
     "org.jetbrains.kotlin.plugin.serialization": KOTLIN,
 }
@@ -484,14 +485,14 @@ NPM = {
     "@sveltejs/adapter-static": "4.0.1",
     "@sveltejs/kit": "3.2.0",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
-    "@types/leaflet": "1.9.22",
     "@eslint/js": "10.0.1",
     "@types/node": "26.6.6",
     "eslint": "10.15.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-svelte": "3.24.1",
     "globals": "17.14.0",
-    "leaflet": "1.9.4",
+    "knip": "6.45.1",
+    "maplibre-gl": "6.18.0",
     "openapi-fetch": "0.17.0",
     "openapi-typescript": "7.13.0",
     "prettier": "3.10.1",
@@ -507,6 +508,7 @@ NPM = {
 PNPM = "12.18.0"
 PUB = {
     "build_runner": "2.17.1",
+    "dependency_validator": "5.1.0",
     "flutter_appauth": "13.0.0",
     "flutter_lints": "6.0.0",
     "flutter_riverpod": "3.5.0",
@@ -518,6 +520,7 @@ PUB = {
     "http": "1.6.0",
     "json_annotation": "4.12.0",
     "json_serializable": "6.15.2",
+    "maplibre_gl": "0.28.0",
     "riverpod_annotation": "4.0.8",
     "riverpod_generator": "4.0.10",
     "shared_preferences": "2.5.6",
@@ -916,13 +919,10 @@ def revisar(repo: Path) -> list[str]:
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no tiene uno.config.ts")
         elif not re.search(r"separators:\s*\[\s*['\"]:['\"]\s*\]", uno.read_text(encoding="utf-8")):
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/uno.config.ts no fija separators: [':']")
-        fallas.extend(
-            comparar(
-                superficie / ".prettierrc",
-                PLANTILLA / "sveltekit/.prettierrc",
-                f"{superficie.name}/.prettierrc",
+        for nombre in (".prettierrc", "knip.json"):
+            fallas.extend(
+                comparar(superficie / nombre, PLANTILLA / "sveltekit" / nombre, f"{superficie.name}/{nombre}")
             )
-        )
 
     # Flutter: solo para las apps que existan.
     for pubspec in repo.glob("*/pubspec.yaml") if "flutter.md" in paginas else []:

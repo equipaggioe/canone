@@ -163,3 +163,6 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0155](0155-caddy-sale-de-su-repositorio-apt.md) | Caddy sale de su repositorio APT, y no de los paquetes de Debian 13 | Con servidor |
 | [0156](0156-una-imagen-con-varios-tamanos-es-una-carpeta-de-su-fila.md) | Una imagen que se muestra en varios tamaños se guarda una vez por tamaño, en la carpeta de su fila | Con servidor |
 | [0157](0157-los-datos-de-ejemplo-entran-como-el-servidor.md) | Los datos de ejemplo entran con la cuenta del servidor y su carpeta de archivos | Con servidor |
+| [0158](0158-las-teselas-son-vectoriales-de-openfreemap-y-cada-cliente-las-dibuja-con-maplibre.md) | Las teselas son vectoriales, de OpenFreeMap, y cada cliente las dibuja con MapLibre | Con mapas |
+| [0159](0159-cada-cliente-comprueba-en-ci-que-declara-lo-que-importa-y-usa-lo-que-declara.md) | Cada cliente comprueba en CI que declara lo que importa y usa lo que declara | Con clientes |
+| [0160](0160-el-usuario-elige-el-modo-claro-u-oscuro-en-cada-dispositivo.md) | El usuario elige el modo claro u oscuro en cada dispositivo, y «sistema» es el inicial | Con clientes |

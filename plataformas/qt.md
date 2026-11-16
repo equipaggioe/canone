@@ -178,7 +178,7 @@ Estándar: [QWidget](../fuentes/qt/qwidget.qdoc) de Qt.
 Contrato: [transversal.md](transversal.md#tema).
 
 - La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada desde `theme.py`. Lo que la hoja no define lo dibuja el estilo de cada sistema; Fusion lo iguala.
-- La paleta de la `QApplication` sale de `palette()` con `LIGHT` o `DARK`, generados en `colors.py`, según `QStyleHints.colorScheme()`, y se vuelve a aplicar con `colorSchemeChanged`. El evento `ApplicationPaletteChange` no sirve: la app lo provoca al aplicar su paleta.
+- La paleta de la `QApplication` sale de `palette()` con `LIGHT` o `DARK`, generados en `colors.py`, según la elección del usuario, guardada en `QSettings`. Con «sistema», sigue `QStyleHints.colorScheme()` y se vuelve a aplicar con `colorSchemeChanged`. El evento `ApplicationPaletteChange` no sirve: la app lo provoca al aplicar su paleta.
 - Los tamaños van en `theme.py`, sin tamaños literales fuera de él.
 - Una hoja de estilo que incluye datos que la app no controla se trata como una ruta no confiable: `url()` puede leer cualquier archivo local. [Qt 6.12.0](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet.qdoc)
 - En un widget complejo, como `QComboBox` o `QScrollBar`, personalizar una propiedad o un sub-control obliga a personalizar todos. [Qt 6.12.0](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet-customizing.qdoc)

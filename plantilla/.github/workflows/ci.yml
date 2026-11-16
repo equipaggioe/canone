@@ -185,6 +185,8 @@ jobs:
       - run: pnpm exec eslint .
       - run: pnpm api
       - run: pnpm build
+      # plataformas/sveltekit.md, «Proyecto»: after build, which writes the types of .svelte-kit/.
+      - run: pnpm exec knip --dependencies
       - run: pnpm exec svelte-check --fail-on-warnings
       - run: pnpm exec vitest run
       - run: pnpm exec playwright install --with-deps chromium
@@ -202,6 +204,7 @@ jobs:
           channel: stable
           flutter-version: 3.47.9
       - run: flutter pub get
+      - run: dart run dependency_validator
       # plataformas/flutter.md: generated code is not committed, and riverpod_generator ignores page_width.
       - run: dart format --output=none --set-exit-if-changed lib test
       - run: dart run swagger_parser
@@ -239,7 +242,7 @@ jobs:
           distribution: temurin
           java-version: "25.0.5"
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew ktlintCheck lint testDebugUnitTest
+      - run: ./gradlew ktlintCheck lint testDebugUnitTest buildHealth
       # plataformas/android.md, «Pruebas»: the managed device needs KVM.
       - run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules

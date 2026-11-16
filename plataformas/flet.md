@@ -141,7 +141,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 Contrato: [transversal.md](transversal.md#tema).
 
-- `page.theme` y `page.dark_theme` se arman en `theme.py` con `LIGHT` y `DARK`, generados en `colors.py`, y `page.theme_mode` es `ThemeMode.SYSTEM`.
+- `page.theme` y `page.dark_theme` se arman en `theme.py` con `LIGHT` y `DARK`, generados en `colors.py`, y `page.theme_mode` sale de la elección del usuario, guardada en `SharedPreferences`: `ThemeMode.SYSTEM` mientras no elija otro.
 - Los tamaños van en `theme.py`, sin tamaños literales fuera de él.
 
 ## Versión mínima de cliente

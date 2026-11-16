@@ -123,7 +123,7 @@ Estándares: de OWASP, el [*HTTP Security Response Headers Cheat Sheet*](../fuen
 - Cada superficie tiene su host: `landing` en `<dominio>`, `web` en `app.<dominio>` y `panel` en `panel.<dominio>`. En cada uno, `/api/*` va al servidor de la app, en el mismo origen que la web ([autenticacion.md](autenticacion.md#sesión)), y `/downloads/*`, a `/srv/<app>/downloads/`.
 - Una petición por HTTP recibe un 308 hacia la misma URL por HTTPS, la redirección de Caddy por defecto.
 - Caddy pone las cabeceras con la directiva `header`, para la web y para la API.
-- No se envía `Cross-Origin-Embedder-Policy`: solo habilita el aislamiento entre orígenes, que ninguna pieza usa, y bloquea las teselas de OSM y el formulario de pago incrustado.
+- No se envía `Cross-Origin-Embedder-Policy`: solo habilita el aislamiento entre orígenes, que ninguna pieza usa, y bloquea las teselas de OpenFreeMap y el formulario de pago incrustado.
 - Caddy corta el cuerpo de `/api/*` con `request_body`: 10 MB en una petición `multipart/form-data`, la forma en que se sube un archivo ([transversal.md](transversal.md#archivos)), y 1 MB en las demás. Lo que pasa del límite no llega a Python.
 - Una petición que pasa el límite recibe 413 de `request_body`, por su `Content-Length` antes de leer el cuerpo, o al cortarlo si no lo declara: un 413 no se reintenta ([transversal.md](transversal.md#reintentos)). [Caddy 2.11.9](https://raw.githubusercontent.com/caddyserver/caddy/v2.11.9/modules/caddyhttp/requestbody/requestbody.go)
 - Caddy nunca sirve el directorio de los archivos de los usuarios: cada archivo pasa por el servidor, que aplica los permisos de su recurso.

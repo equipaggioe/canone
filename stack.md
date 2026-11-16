@@ -8,6 +8,12 @@ Qué se usa en cada plataforma y en qué versión. Es el único lugar donde se f
 - La plataforma de cada pieza la elige cada repositorio. Aquí está lo que se usa dentro de cada plataforma, y a un repositorio solo le aplican los bloques de las plataformas que usa.
 - El bloque de una página en desarrollo lleva su misma nota, y no se aplica mientras la tenga ([plataformas/README.md](plataformas/README.md#en-desarrollo)).
 
+## Qué entra
+
+- Entra lo que una pieza declara en su manifiesto o instala, con su versión.
+- Lo que una pieza usa, pero cuya versión fija otra tecnología, entra con una nota que dice cuál, como «3.13.7, el de Flutter 3.47.9» o «0.28.1, la que fija firebase-admin»: su versión no se elige, se sigue.
+- Lo que llega dentro de otro paquete y el código no importa no entra ni se nombra en ningún lado: no se declara, porque toda dependencia declarada se usa ([python.md](plataformas/python.md#dependencias), [flutter.md](plataformas/flutter.md#proyecto), [sveltekit.md](plataformas/sveltekit.md#proyecto) y [android.md](plataformas/android.md#proyecto)).
+
 ## Versiones
 
 - La versión se fija por tecnología, no por pieza: una tecnología lleva la misma versión en todas las piezas que la usan.
@@ -123,6 +129,7 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | TypeScript | 6.0.3 | [Tipos](plataformas/sveltekit.md#tipos) |
 | `svelte-check` | 4.7.8 | [Tipos](plataformas/sveltekit.md#tipos) |
 | `@types/node` | 26.6.6 | [Proyecto](plataformas/sveltekit.md#proyecto) |
+| knip | 6.45.1 | [Proyecto](plataformas/sveltekit.md#proyecto) |
 | Prettier | 3.10.1 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `prettier-plugin-svelte` | 4.1.1 | [Estilo](plataformas/sveltekit.md#estilo) |
 | ESLint | 10.15.0 | [Estilo](plataformas/sveltekit.md#estilo) |
@@ -135,8 +142,7 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | Paraglide | 3.2.2 | [Idiomas](plataformas/sveltekit.md#idiomas) |
 | `openapi-typescript` | 7.13.0 | [Carga de datos](plataformas/sveltekit.md#carga-de-datos) |
 | `openapi-fetch` | 0.17.0 | [Carga de datos](plataformas/sveltekit.md#carga-de-datos) |
-| Leaflet | 1.9.4 | [Mapas](plataformas/sveltekit.md#mapas) |
-| `@types/leaflet` | 1.9.22 | [Mapas](plataformas/sveltekit.md#mapas) |
+| MapLibre GL JS, `maplibre-gl` | 6.18.0 | [Mapas](plataformas/sveltekit.md#mapas) |
 | Vitest | 5.1.0 | [Pruebas](plataformas/sveltekit.md#pruebas) |
 | Playwright | 1.65.1 | [Pruebas](plataformas/sveltekit.md#pruebas) |
 | `@axe-core/playwright` | 4.14.0 | [Accesibilidad](plataformas/sveltekit.md#accesibilidad) |
@@ -157,11 +163,13 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | riverpod_lint | 3.2.0 | [Estado](plataformas/flutter.md#estado) |
 | go_router | 18.1.4 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | http | 1.6.0 | [Arquitectura](plataformas/flutter.md#arquitectura) |
+| maplibre_gl | 0.28.0 | [Mapas](plataformas/flutter.md#mapas) |
 | freezed_annotation | 3.1.0 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | freezed | 4.0.3 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | json_annotation | 4.12.0 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | json_serializable | 6.15.2 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | build_runner | 2.17.1 | [Proyecto](plataformas/flutter.md#proyecto) |
+| dependency_validator | 5.1.0 | [Proyecto](plataformas/flutter.md#proyecto) |
 | swagger_parser | 2.1.1 | [OpenAPI y clientes](plataformas/flutter.md#openapi-y-clientes) |
 | shared_preferences | 2.5.6 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
 | flutter_secure_storage | 11.2.0 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
@@ -184,6 +192,7 @@ Página: [android.md](plataformas/android.md).
 | Kotlin | 2.4.21 | [Proyecto](plataformas/android.md#proyecto) |
 | El plugin `org.jlleitschuh.gradle.ktlint` | 14.2.0 | [Estilo](plataformas/android.md#estilo) |
 | ktlint | 1.8.0 | [Estilo](plataformas/android.md#estilo) |
+| El plugin `com.autonomousapps.dependency-analysis` | 3.20.3 | [Proyecto](plataformas/android.md#proyecto) |
 | KSP | 2.3.13 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | Hilt | 2.60.1 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | `androidx.hilt:hilt-lifecycle-viewmodel-compose` | 1.4.0 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
@@ -269,6 +278,6 @@ Página: [repositorio.md](repositorio.md#ci). Los contenedores corresponden a De
 | Las versiones de los paquetes de Python, FastAPI, Autenticación, PostgreSQL, Flet y Qt, en cada `pyproject.toml` | [scripts/verificar.py](scripts/verificar.py) |
 | Las versiones de los paquetes de SvelteKit y la de pnpm, en cada `package.json` | [scripts/verificar.py](scripts/verificar.py) |
 | Las versiones de los paquetes de Flutter, en cada `pubspec.yaml` | [scripts/verificar.py](scripts/verificar.py) |
-| Gradle, AGP y Kotlin, en Android y en Flutter, y el plugin de ktlint | [scripts/verificar.py](scripts/verificar.py) |
+| Gradle, AGP y Kotlin, en Android y en Flutter, y los plugins de ktlint y de dependency-analysis | [scripts/verificar.py](scripts/verificar.py) |
 | La versión de uv, en cada `pyproject.toml` | [scripts/verificar.py](scripts/verificar.py) |
 | Las acciones de CI y los contenedores `postgis/postgis` y `valkey/valkey` | [scripts/verificar.py](scripts/verificar.py) |

@@ -12,7 +12,10 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
 - `package.json` declara las versiones exactas, sin `^` ni `~`.
 - TypeScript es la 6 y no la 7: SvelteKit 3.2.0 y `svelte-check` 4.7.8 piden `^6`.
 - `@types/node` va en `devDependencies`: el `tsconfig.json` que genera sv declara los tipos de `node`, y sin ellos `svelte-check` avisa. [sv 1.3.0](https://raw.githubusercontent.com/sveltejs/cli/sv%401.3.0/packages/sv/src/addons/eslint.ts)
-- pnpm maneja las dependencias. No deja importar un paquete que no esté declarado. [pnpm](https://raw.githubusercontent.com/pnpm/pnpm.io/19a2f01816126e8c1140f262674ef9be213ffef1/docs/motivation.md)
+- pnpm maneja las dependencias. No deja importar un paquete que no esté declarado, aunque otro paquete ya lo traiga: un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia. [pnpm](https://raw.githubusercontent.com/pnpm/pnpm.io/19a2f01816126e8c1140f262674ef9be213ffef1/docs/motivation.md)
+- Toda dependencia declarada se usa, en el código o en la configuración.
+- CI corre `pnpm exec knip --dependencies` después de `pnpm build`, que escribe `.svelte-kit/`: sin él, knip no resuelve los `./$types`. Falla con una dependencia que no se usa o un paquete importado sin declarar.
+- `knip.json` ignora los paquetes sin declarar que knip ve en `tsconfig.json`: toma por paquete el `$app/tsconfig` que extiende SvelteKit 3. [knip 6.45.1](https://raw.githubusercontent.com/webpro-nl/knip/knip%406.45.1/packages/docs/src/content/docs/reference/configuration.md)
 - `package.json` declara la versión exacta de pnpm en `packageManager`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra. [pnpm/action-setup 6.1.1](https://raw.githubusercontent.com/pnpm/action-setup/v6.1.1/README.md)
 - `package.json` declara en `imports` `"#lib/*": "./src/lib/*"`: SvelteKit 3 quitó `$lib`. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs/kit%403.2.0/documentation/docs/98-reference/26-%24lib.md)
 - Un import de `#lib/` lleva la extensión `.js`, como `#lib/api/client.js`: TypeScript resuelve `imports` como Node, que no completa la extensión. [TypeScript](https://raw.githubusercontent.com/microsoft/TypeScript-Website/4ec663ac4412c3a7086401bd5a8811565589b11d/packages/documentation/copy/en/modules-reference/Reference.md)
@@ -101,7 +104,7 @@ Estándares: [*Best practices*](../fuentes/svelte/best-practices.md) y [$props](
 
 - La expresión de `$derived` no tiene efectos secundarios. [Svelte 5.57.3](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/03-$derived.md)
 - Los componentes compilan en modo runas: `sveltekit()` lleva `compilerOptions: { runes: true }` ([Best practices, *Avoid legacy features*](../fuentes/svelte/best-practices.md)).
-- Una biblioteca externa, como Leaflet, se sincroniza con el estado con `{@attach}`, no con un `$effect` ([Best practices, *$effect*](../fuentes/svelte/best-practices.md)).
+- Una biblioteca externa, como MapLibre GL JS, se sincroniza con el estado con `{@attach}`, no con un `$effect` ([Best practices, *$effect*](../fuentes/svelte/best-practices.md)).
 - `{#key}` se usa solo para repetir una transición o una animación cuando cambia una expresión. Para volver a calcular una expresión de un hijo va un `$derived` ([Best practices, *`#key` block*](../fuentes/svelte/best-practices.md)).
 - Todo `{#each}` lleva una clave que identifica el elemento, y nunca es el índice ([Best practices, *Each blocks*](../fuentes/svelte/best-practices.md)).
 - `$state` va solo en una variable que actualiza un `$effect`, un `$derived` o el template ([Best practices, *$state*](../fuentes/svelte/best-practices.md)).
@@ -158,7 +161,7 @@ Estándar: el [*Content Security Policy Cheat Sheet*](../fuentes/owasp/Content_S
 - `script-src` es `'self'`, con los hashes que agrega SvelteKit, y no lleva `'strict-dynamic'`: SvelteKit carga su código con `import()`, `'strict-dynamic'` solo deja pasar lo que carga un `<script>` creado desde el código, y la página no hidrata. Las demás respuestas del origen, JSON e imágenes, no corren como script porque Caddy las sirve con `nosniff` ([despliegue.md](despliegue.md#caddy)). [CSP Level 3](https://raw.githubusercontent.com/w3c/webappsec-csp/251d288dad4d6166e73541877ca2073864edeb8f/index.bs)
 - `style-src-attr` lleva `'unsafe-inline'`: SvelteKit solo lo agrega en desarrollo, y sin él los atributos `style` y la directiva `style:` no se aplican en una página prerenderizada. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/packages/kit/src/runtime/server/page/csp.js)
 - `vite.config.ts` fija `build.assetsInlineLimit: 0`: Vite incrusta como `data:` los archivos de menos de 4 KiB, y la CSP los bloquea. [Vite 8.3.8](https://raw.githubusercontent.com/vitejs/vite/v8.3.8/docs/config/build-options.md)
-- La CSP lleva el host de las teselas en `img-src`.
+- Con un mapa, la CSP lleva en `connect-src` `https://tiles.openfreemap.org`, de donde MapLibre baja estilos, teselas, fuentes e íconos.
 - Con un formulario de pago incrustado, los dominios que documenta su pasarela van en `script-src`, `frame-src` y `connect-src`.
 - La prueba de Playwright de cada página falla también con un evento `securitypolicyviolation`, y corre sobre el build, con `vite preview`: en desarrollo SvelteKit afloja la CSP, y lo que la CSP bloquea no da error.
 - La CSP lleva `object-src 'none'` y `base-uri 'none'` ([CSP Cheat Sheet, *Hash-based Strict Policy*](../fuentes/owasp/Content_Security_Policy.md)).
@@ -173,7 +176,7 @@ Contrato: [transversal.md](transversal.md#tema).
 
 - El preset es Wind4: trae el reset y genera las variables CSS del tema.
 - La configuración va en `uno.config.ts`, y no en `vite.config.ts`: funciona mejor con el editor y las integraciones. [UnoCSS 66.13.0](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/guide/config-file.md)
-- Los tokens van en el `theme` de `uno.config.ts`, sin tamaños literales fuera de él. Los colores son `colors`, generado en `src/lib/colors.ts`, y sus variables CSS entran como preflight desde `colorsCss`, con el modo oscuro de `prefers-color-scheme`.
+- Los tokens van en el `theme` de `uno.config.ts`, sin tamaños literales fuera de él. Los colores son `colors`, generado en `src/lib/colors.ts`, y sus variables CSS entran como preflight desde `colorsCss`, con el modo oscuro de `prefers-color-scheme` cuando `<html>` no lleva `data-theme`, y con `data-theme="dark"`. La elección del usuario va en `localStorage`, y la app la escribe en `data-theme`; con «sistema», lo quita.
 - `uno.config.ts` fija `separators: [':']`. Con los separadores por defecto, `:` y `-`, un atajo como `link-primary` u `open-panel` se lee como una variante seguida de una clase, y no se genera, sin error. [UnoCSS 66.13.0](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/config/index.md)
 - `app.html` no lleva clases de utilidad: SvelteKit 3 no le pasa `app.html` a UnoCSS, que no las genera, sin error, ni en el build ni en `vite dev`. Por eso el build avisa `transform_index_html_unsupported` con los plugins de UnoCSS. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs/kit%403.2.0/packages/kit/src/messages/build-warnings.js)
 - Las clases de utilidad no van en archivos `.ts`: UnoCSS no los lee por defecto ([UnoCSS Vite Plugin, *VanillaJS / TypeScript*](../fuentes/unocss/integrations-vite.md)).
@@ -209,8 +212,10 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 Contrato: [transversal.md](transversal.md#mapas).
 
-- El mapa usa Leaflet.
-- El contenido de un popup de Leaflet es un nodo del DOM, como el que crea `createTextNode`: Leaflet inserta como HTML la cadena que recibe. [Leaflet 1.9.4](https://raw.githubusercontent.com/Leaflet/Leaflet/v1.9.4/src/layer/DivOverlay.js)
+- El mapa usa MapLibre GL JS, con el estilo del modo de la app, y lo cambia con `setStyle` cuando cambia el modo.
+- El worker de MapLibre sale del mismo origen: `setWorkerUrl` recibe el `maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url` de Vite. Sin él, MapLibre lo arranca desde una URL `blob:`, que la CSP no deja pasar. [MapLibre GL JS 6.18.0](https://raw.githubusercontent.com/maplibre/maplibre-gl-js/v6.18.0/docs/index.md)
+- El mapa se crea con `attributionControl: false`, y la página muestra la atribución de la configuración ([transversal.md](transversal.md#mapas)).
+- El contenido de un popup va con `setText` o `setDOMContent`, nunca con `setHTML`: `setHTML` lo inserta con `innerHTML`. [MapLibre GL JS 6.18.0](https://raw.githubusercontent.com/maplibre/maplibre-gl-js/v6.18.0/src/ui/popup.ts)
 
 ## Push
 
@@ -252,6 +257,8 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | Convención | Herramienta |
 | :--- | :--- |
 | Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |
+| Todo paquete que importa el código está declarado, y toda dependencia declarada se usa | `pnpm exec knip --dependencies` en CI |
+| `knip.json` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
 | Ningún `svelte-ignore` de una advertencia `a11y_*` | [scripts/verificar.py](../scripts/verificar.py) |
 | La misma versión de Playwright en todo `package.json` | [scripts/verificar.py](../scripts/verificar.py) |
 | pnpm en `packageManager`, y las versiones de [stack.md](../stack.md), exactas | [scripts/verificar.py](../scripts/verificar.py) |

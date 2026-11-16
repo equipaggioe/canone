@@ -132,9 +132,10 @@ Estándares: [RFC 5646](../fuentes/rfc/rfc5646.txt) y [RFC 9110](../fuentes/rfc/
 Estándares: la [guía de atribución](../fuentes/osm/attribution-guidelines.md) de OpenStreetMap y [RFC 7946](../fuentes/rfc/rfc7946.txt).
 
 - Toda posición o trazado en la API es una geometría GeoJSON.
-- Las teselas son raster, con URL `{z}/{x}/{y}`.
-- Las teselas son las de `tile.openstreetmap.org`.
-- La URL de las teselas y su atribución las entrega el servidor en su configuración pública: cambiar de proveedor no exige publicar otra versión de las apps.
+- Las teselas son vectoriales, de OpenFreeMap, y cada cliente las dibuja con MapLibre.
+- El mapa usa el estilo `positron` de OpenFreeMap en el modo claro, y `dark` en el oscuro: el mapa sigue el modo de la app ([Tema](#tema)), y los dos estilos comparten las teselas.
+- La URL de cada estilo y la atribución las entrega el servidor en su configuración pública: cambiar de proveedor no exige publicar otra versión de las apps.
+- Cada cliente muestra la atribución de la configuración como texto, y apaga el control de atribución de MapLibre: en un mapa angosto, MapLibre la esconde detrás de un botón.
 - Los clientes buscan direcciones en el servidor, que consulta a Nominatim: su límite es por aplicación, y solo el servidor ve el total. [Nominatim](https://raw.githubusercontent.com/openstreetmap/owg-website/fd6937012a5b2d8f4c0255148342b97191c840e7/policies/nominatim.md)
 - Una posición lleva solo la longitud y la latitud, sin altitud ([RFC 7946 §3.1.1](../fuentes/rfc/rfc7946.txt)).
 - Las coordenadas van en WGS 84, en grados decimales, primero la longitud y después la latitud ([RFC 7946 §3.1.1](../fuentes/rfc/rfc7946.txt) y [§4](../fuentes/rfc/rfc7946.txt)).
@@ -142,7 +143,7 @@ Estándares: la [guía de atribución](../fuentes/osm/attribution-guidelines.md)
 - No se agregan tipos a GeoJSON ni se cambia el sentido de sus miembros ([RFC 7946 §7](../fuentes/rfc/rfc7946.txt) y [§7.1](../fuentes/rfc/rfc7946.txt)).
 - El cliente no toma la cantidad de decimales de una coordenada como su precisión ([RFC 7946 §3.1.10](../fuentes/rfc/rfc7946.txt)).
 - La atribución va en una esquina del mapa, legible y a la vista sin tocar el mapa ([OSM, *Requirements to fit within OSMF’s safe harbour*](../fuentes/osm/attribution-guidelines.md) y [*Interactive maps*](../fuentes/osm/attribution-guidelines.md)).
-- La atribución dice «OpenStreetMap» y lleva a `openstreetmap.org/copyright` ([OSM, *Attribution text*](../fuentes/osm/attribution-guidelines.md)).
+- La atribución dice «OpenStreetMap» y lleva a `openstreetmap.org/copyright` ([OSM, *Attribution text*](../fuentes/osm/attribution-guidelines.md)). Nombra además a OpenFreeMap y a OpenMapTiles, como la que publica OpenFreeMap con sus teselas.
 - Ninguna otra atribución hace creer que los datos no son de OpenStreetMap ([OSM, *Requirements to fit within OSMF’s safe harbour*](../fuentes/osm/attribution-guidelines.md)).
 - Un cliente que busca direcciones con Nominatim atribuye a OpenStreetMap ([OSM, *Geocoding (search)*](../fuentes/osm/attribution-guidelines.md)).
 
@@ -244,7 +245,8 @@ Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el [mó
 - `scripts/tokens.py` genera en cada cliente su esquema claro y su esquema oscuro, ya armados.
 - `scripts/tokens.py` falla ante lo que DTCG define fuera de las partes que siguen y ante un color que no cumpla el contraste de [Accesibilidad](#accesibilidad): un producto solo usa colores sRGB opacos en dos modos.
 - Lo generado se commitea: un cliente compila sin correr el generador.
-- Cada cliente sigue el modo claro u oscuro del sistema.
+- El usuario elige el modo en la app: sistema, claro u oscuro. Con «sistema», con el que empieza, el cliente sigue el modo del sistema y cambia con él.
+- La elección es una preferencia de cada dispositivo: la misma cuenta puede usar el modo oscuro en el teléfono y el claro en la computadora.
 - `colors.resolver.json` tiene un solo modificador, `theme`, con los contextos `light` y `dark` ([DTCG Resolver §4.1.5](../fuentes/dtcg/resolver.html)).
 - `brand/tokens/` sigue del formato las partes *Name and value*, *Description*, *Type*, *Group Structure*, *Curly Brace Syntax*, *Chained References* y *Circular References*, que hace cumplir `scripts/tokens.py` ([DTCG Format §5.1](../fuentes/dtcg/format.html), [§5.2.1](../fuentes/dtcg/format.html), [§5.2.2](../fuentes/dtcg/format.html), [§6.1](../fuentes/dtcg/format.html), [§7.1.1](../fuentes/dtcg/format.html), [§7.2.2](../fuentes/dtcg/format.html) y [§7.2.3](../fuentes/dtcg/format.html)).
 - `brand/tokens/` sigue del módulo de color las partes *Format* y *sRGB*, que hace cumplir `scripts/tokens.py` ([DTCG Color §4.1](../fuentes/dtcg/color.html) y [§4.2.1](../fuentes/dtcg/color.html)).

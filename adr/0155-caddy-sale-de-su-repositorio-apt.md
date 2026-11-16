@@ -42,7 +42,8 @@ En el código de Caddy 2.11.9, `request_body` responde 413 a un `Content-Length`
 
 - Caddy recibe los arreglos el día que los publica upstream, sin esperar a Debian.
 - La objeción del ADR-0071 queda a medias: el CI valida la serie, pero `unattended-upgrades`
-  instala cada versión nueva de la serie sin que el CI la haya probado antes.
+  instala cada versión nueva de la serie sin que el CI la haya probado antes, como hace con cada
+  actualización de Debian.
 - Cada límite de cuerpo queda escrito una sola vez en el `Caddyfile`, en `request_body`.
 - `packages.py` necesita llegar a `dl.cloudsmith.io`, además de a Debian.
 - Pasar a otra serie es cambiar `stack.md` y `caddy.pref` a la vez.

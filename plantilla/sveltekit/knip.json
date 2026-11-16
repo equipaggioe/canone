@@ -1,0 +1,6 @@
+{
+	"$schema": "https://unpkg.com/knip@6.45.1/schema.json",
+	"ignoreIssues": {
+		"tsconfig.json": ["unlisted"]
+	}
+}

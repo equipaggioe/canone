@@ -13,6 +13,9 @@ Una app de Android en Kotlin y Jetpack Compose.
 - `gradle.properties` lleva `org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=2g`: con los valores por defecto de Gradle, 512 MiB de heap y 384 MiB de Metaspace, el build de una app con Compose y Hilt se detiene porque el recolector de basura no da abasto. [Gradle 9.9.1](https://docs.gradle.org/9.9.1/userguide/build_environment.html#sec:configuring_jvm_memory)
 - Las dependencias y los plugins se declaran en el catálogo `gradle/libs.versions.toml`, con nombres en kebab-case, como `androidx-ktx`: una sola lista de versiones, y el autocompletado del IDE los encuentra.
 - La versión de ktlint la fija el bloque `ktlint` de `app/build.gradle.kts`.
+- Todo paquete que importa el código está declarado en el catálogo, aunque otro paquete ya lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia.
+- Toda dependencia declarada se usa, salvo la que se declara para cambiar la versión que trae otra.
+- El plugin `com.autonomousapps.dependency-analysis` va en el `build.gradle.kts` raíz y en el de `app`: aplicado solo en la raíz, no analiza `app`. Su bloque `dependencyAnalysis` del raíz hace fallar cada aviso con `onAny { severity("fail") }`, y saca a `espresso-core` de los no usados con `onUnusedDependencies { exclude("androidx.test.espresso:espresso-core") }`: si no, lo marca. CI corre `./gradlew buildHealth`, que falla con una dependencia que no se usa o un paquete importado sin declarar.
 - El catálogo declara `espresso-core` aunque lo traiga `ui-test-junit4`: el 3.5.0 que trae no corre en la API 37.
 - Todo va en un solo módulo `app`, sin módulo de benchmark: sin un arranque lento medido, Macrobenchmark y los Baseline Profiles no tienen un síntoma que corregir.
 
@@ -260,7 +263,8 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 Contrato: [transversal.md](transversal.md#mapas).
 
-- El mapa usa MapLibre Android, con un estilo de una sola capa raster que arma la app con la configuración del servidor. Va dentro de Compose con `AndroidView`.
+- El mapa usa MapLibre Android, con el estilo claro o el oscuro de la configuración del servidor, según el modo de la app. Va dentro de Compose con `AndroidView`.
+- `uiSettings.isAttributionEnabled` es `false`, y la app muestra la atribución de la configuración: el botón de MapLibre la esconde detrás de un toque ([transversal.md](transversal.md#mapas)). [MapLibre Android 13.7.1](https://raw.githubusercontent.com/maplibre/maplibre-native/android-v13.7.1/platform/android/MapLibreAndroid/src/main/java/org/maplibre/android/maps/UiSettings.java)
 
 ## OpenAPI y clientes
 
@@ -309,7 +313,7 @@ Contrato: [transversal.md](transversal.md#push).
 
 Contrato: [transversal.md](transversal.md#tema).
 
-- El `ColorScheme` claro y el oscuro son `LightColorScheme` y `DarkColorScheme`, generados en `ui/theme/Colors.kt`, sin color dinámico, y el modo sigue al sistema. El color dinámico reemplazaría la paleta del producto, que es la misma en todas las superficies.
+- El `ColorScheme` claro y el oscuro son `LightColorScheme` y `DarkColorScheme`, generados en `ui/theme/Colors.kt`, sin color dinámico. El modo sale de la elección del usuario, guardada en Preferences DataStore, y con «sistema», de `isSystemInDarkTheme()`. El color dinámico reemplazaría la paleta del producto, que es la misma en todas las superficies.
 - Los tamaños van en `ui/theme/`, sin tamaños literales fuera de él.
 
 ## Pruebas
@@ -340,6 +344,8 @@ Contrato: [transversal.md](transversal.md#distribución).
 | `MaxMetaspaceSize=2g` | [scripts/verificar.py](../scripts/verificar.py) |
 | `.editorconfig` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
 | El plugin de ktlint 14.2.0 | [scripts/verificar.py](../scripts/verificar.py) |
+| Todo paquete que importa el código está declarado, y toda dependencia declarada se usa | `./gradlew buildHealth` en CI |
+| El plugin `com.autonomousapps.dependency-analysis` 3.20.3 | [scripts/verificar.py](../scripts/verificar.py) |
 | El formato de ktlint con `android_studio` | `./gradlew ktlintCheck` en CI |
 | *Non-empty blocks*, *Indentation*, *One statement per line*, *Functions* y *Horizontal* | `curly-spacing`, `keyword-spacing`, `indent`, `no-semi`, `statement-wrapping`, `function-signature`, `parameter-list-wrapping`, `op-spacing`, `comma-spacing`, `colon-spacing`, `double-colon-spacing`, `range-spacing`, `comment-spacing`, `paren-spacing` y `unary-op-spacing` de ktlint |
 | *Unit return type* | `no-unit-return` de ktlint |

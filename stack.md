@@ -178,6 +178,8 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | flutter_appauth | 13.0.0 | [Autenticación](plataformas/flutter.md#autenticación) |
 | sms_autofill | 2.6.1 | [Código por SMS](plataformas/flutter.md#código-por-sms) |
 | flutter_stripe, con Stripe | 14.2.0 | [Pagos](plataformas/flutter.md#pagos) |
+| firebase_core | 5.1.0 | [Push](plataformas/flutter.md#push) |
+| firebase_messaging | 17.0.1 | [Push](plataformas/flutter.md#push) |
 | flutter_lints | 6.0.0 | [Estilo](plataformas/flutter.md#estilo) |
 
 ## Android

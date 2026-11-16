@@ -320,7 +320,7 @@ Contrato: [transversal.md](transversal.md#tema).
 
 Estándares: las [recomendaciones de arquitectura](../fuentes/android/architecture-recommendations.md), las [buenas prácticas de corrutinas](../fuentes/android/coroutines-best-practices.md) y la [capa de datos](../fuentes/android/data-layer.md) de Android.
 
-- Las pruebas de UI son instrumentadas, y CI las corre en el dispositivo administrado por Gradle `pixel6Api37`, con `device = "Pixel 6"`, `apiLevel = 37`, `systemImageSource = "aosp-atd"` y `testedAbi = "x86_64"`. Con Robolectric, `enableAccessibilityChecks()` no rechaza un objetivo de 20 dp, y AGP 10 pasa `testedAbi` a `arm64-v8a`, que la imagen ATD no corre.
+- Las pruebas de UI son instrumentadas, y CI las corre en el dispositivo administrado por Gradle `pixel6`, con `device = "Pixel 6"`, `apiLevel` en la API de `targetSdk` de [stack.md](../stack.md#android), `systemImageSource = "aosp-atd"` y `testedAbi = "x86_64"`. Con Robolectric, `enableAccessibilityChecks()` no rechaza un objetivo de 20 dp, y AGP 10 pasa `testedAbi` a `arm64-v8a`, que la imagen ATD no corre.
 - Las llamadas HTTP se prueban contra MockWebServer ([Data layer, *Integration tests*](../fuentes/android/data-layer.md)).
 - Cada ViewModel, con sus flows, cada repositorio y cada fuente de datos tienen pruebas unitarias, y CI corre pruebas de la navegación de la UI ([Recommendations, *Testing*](../fuentes/android/architecture-recommendations.md)).
 - Las pruebas usan fakes, y no mocks ([Recommendations, *Testing*](../fuentes/android/architecture-recommendations.md)).

@@ -509,6 +509,8 @@ PNPM = "12.18.0"
 PUB = {
     "build_runner": "2.17.1",
     "dependency_validator": "5.1.0",
+    "firebase_core": "5.1.0",
+    "firebase_messaging": "17.0.1",
     "flutter_appauth": "13.0.0",
     "flutter_lints": "6.0.0",
     "flutter_riverpod": "3.5.0",

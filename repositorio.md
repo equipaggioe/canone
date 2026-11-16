@@ -29,8 +29,6 @@ El segundo término aparece solo cuando hay más de una pieza en el mismo lugar,
 
 Un cliente que se instala es `mobile/` o `desktop/` según dónde se instala, no según con qué está construido: Flet en un teléfono es `mobile/` y Flet en una computadora es `desktop/`.
 
-Lo que necesita canal nativo va en un plugin local bajo `plugins/`.
-
 Lo de una sola pieza va dentro de ella, no en `scripts/`.
 
 Cómo queda el servidor y cómo llega una versión a él está en [plataformas/despliegue.md](plataformas/despliegue.md).
@@ -70,8 +68,7 @@ Lo propio del repositorio se agrega al archivo de su pieza, con un comentario qu
 
 - Rama `main`. Los cambios grandes van en rama y se integran cuando pasan CI.
 - Un commit hace una cosa.
-- **El mensaje va en español**, en imperativo y en una línea. Cuerpo solo si hay un porqué que el diff no muestra, y son dos o tres líneas.
-- **Un cambio de comportamiento actualiza `docs/arquitectura/` en el mismo commit.**
+- El mensaje va en imperativo y en una línea. Cuerpo solo si hay un porqué que el diff no muestra, y son dos o tres líneas.
 
 ## CI
 

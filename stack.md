@@ -12,7 +12,9 @@ Qué se usa en cada plataforma y en qué versión. Es el único lugar donde se f
 
 - Entra lo que una pieza declara en su manifiesto o instala, con su versión.
 - Lo que una pieza usa, pero cuya versión fija otra tecnología, entra con una nota que dice cuál, como «3.13.7, el de Flutter 3.47.9» o «0.28.1, la que fija firebase-admin»: su versión no se elige, se sigue.
-- Lo que llega dentro de otro paquete y el código no importa no entra ni se nombra en ningún lado: no se declara, porque toda dependencia declarada se usa ([python.md](plataformas/python.md#dependencias), [flutter.md](plataformas/flutter.md#proyecto), [sveltekit.md](plataformas/sveltekit.md#proyecto) y [android.md](plataformas/android.md#proyecto)).
+- Todo paquete que importa el código de una pieza está declarado en su manifiesto, aunque otro paquete ya lo traiga: un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia.
+- Toda dependencia declarada se usa. Lo que llega dentro de otro paquete y el código no importa no entra ni se nombra en ningún lado.
+- La página de cada plataforma dice con qué herramienta lo comprueba su CI: [python.md](plataformas/python.md#dependencias), [flutter.md](plataformas/flutter.md#proyecto), [sveltekit.md](plataformas/sveltekit.md#proyecto) y [android.md](plataformas/android.md#proyecto).
 
 ## Versiones
 
@@ -36,7 +38,7 @@ Página: [python.md](plataformas/python.md). Vale para toda pieza en Python.
 | pytest | 9.2.0 | [Pruebas](plataformas/python.md#pruebas) |
 | ruff | 0.17.3 | [Estilo](plataformas/python.md#estilo) |
 | Pyrefly | 1.4.0 | [Tipos](plataformas/python.md#tipos) |
-| deptry | 0.25.1 | [Cumplimiento](plataformas/python.md#cumplimiento) |
+| deptry | 0.25.1 | [Dependencias](plataformas/python.md#dependencias) |
 | pip-audit | 2.10.1 | [Cumplimiento](plataformas/python.md#cumplimiento) |
 | Pydantic | 2.14.3 | [Esquemas](plataformas/fastapi.md#esquemas) |
 | httpx | 0.28.1, la que fija firebase-admin | [Pruebas](plataformas/fastapi.md#pruebas) del servidor y [Red](plataformas/flet.md#red) de Flet |
@@ -190,6 +192,9 @@ Página: [android.md](plataformas/android.md).
 | Gradle | 9.9.1 | [Proyecto](plataformas/android.md#proyecto) |
 | AGP | 9.5.1 | [Proyecto](plataformas/android.md#proyecto) |
 | Kotlin | 2.4.21 | [Proyecto](plataformas/android.md#proyecto) |
+| La API de Android, en `compileSdk` | 37.2 | [Proyecto](plataformas/android.md#proyecto) |
+| La API de Android, en `targetSdk` | 37 | [Proyecto](plataformas/android.md#proyecto) |
+| La API de Android, en `minSdk` | 28 | [Passkeys](plataformas/android.md#passkeys) |
 | El plugin `org.jlleitschuh.gradle.ktlint` | 14.2.0 | [Estilo](plataformas/android.md#estilo) |
 | ktlint | 1.8.0 | [Estilo](plataformas/android.md#estilo) |
 | El plugin `com.autonomousapps.dependency-analysis` | 3.20.3 | [Proyecto](plataformas/android.md#proyecto) |

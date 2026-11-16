@@ -166,3 +166,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0158](0158-las-teselas-son-vectoriales-de-openfreemap-y-cada-cliente-las-dibuja-con-maplibre.md) | Las teselas son vectoriales, de OpenFreeMap, y cada cliente las dibuja con MapLibre | Con mapas |
 | [0159](0159-cada-cliente-comprueba-en-ci-que-declara-lo-que-importa-y-usa-lo-que-declara.md) | Cada cliente comprueba en CI que declara lo que importa y usa lo que declara | Con clientes |
 | [0160](0160-el-usuario-elige-el-modo-claro-u-oscuro-en-cada-dispositivo.md) | El usuario elige el modo claro u oscuro en cada dispositivo, y «sistema» es el inicial | Con clientes |
+| [0161](0161-cada-regla-queda-en-una-sola-pagina-y-plugins-deja-de-ser-una-carpeta-de-primer-nivel.md) | Cada regla queda en una sola página, y `plugins/` deja de ser una carpeta de primer nivel | Todos |

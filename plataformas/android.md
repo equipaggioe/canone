@@ -7,15 +7,14 @@ Una app de Android en Kotlin y Jetpack Compose.
 ## Proyecto
 
 - Gradle usa Kotlin DSL.
-- `compileSdk` es la API 37.2, con `release(37) { minorApiLevel = 2 }`, y `targetSdk`, la 37.
+- `compileSdk`, `targetSdk` y `minSdk` son los de [stack.md](../stack.md#android). `compileSdk` se declara con `release(<API>) { minorApiLevel = <menor> }`.
 - Kotlin es el que integra AGP, sin el plugin `org.jetbrains.kotlin.android`. Su versión la fijan `org.jetbrains.kotlin.plugin.compose` y `org.jetbrains.kotlin.plugin.serialization`, declarados con `apply false` en el `build.gradle.kts` raíz: AGP 9.5.1 trae Kotlin 2.2.10, y Gradle usa la versión más alta de las que ve el build raíz. [Built-in Kotlin](https://developer.android.com/build/migrate-to-built-in-kotlin)
 - Gradle corre con el wrapper y su distribución `-bin`: `-all` solo agrega las fuentes y la documentación de Gradle.
 - `gradle.properties` lleva `org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=2g`: con los valores por defecto de Gradle, 512 MiB de heap y 384 MiB de Metaspace, el build de una app con Compose y Hilt se detiene porque el recolector de basura no da abasto. [Gradle 9.9.1](https://docs.gradle.org/9.9.1/userguide/build_environment.html#sec:configuring_jvm_memory)
 - Las dependencias y los plugins se declaran en el catálogo `gradle/libs.versions.toml`, con nombres en kebab-case, como `androidx-ktx`: una sola lista de versiones, y el autocompletado del IDE los encuentra.
 - La versión de ktlint la fija el bloque `ktlint` de `app/build.gradle.kts`.
-- Todo paquete que importa el código está declarado en el catálogo, aunque otro paquete ya lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia.
-- Toda dependencia declarada se usa, salvo la que se declara para cambiar la versión que trae otra.
-- El plugin `com.autonomousapps.dependency-analysis` va en el `build.gradle.kts` raíz y en el de `app`: aplicado solo en la raíz, no analiza `app`. Su bloque `dependencyAnalysis` del raíz hace fallar cada aviso con `onAny { severity("fail") }`, y saca a `espresso-core` de los no usados con `onUnusedDependencies { exclude("androidx.test.espresso:espresso-core") }`: si no, lo marca. CI corre `./gradlew buildHealth`, que falla con una dependencia que no se usa o un paquete importado sin declarar.
+- Una dependencia que se declara para cambiar la versión que trae otra queda fuera de «toda dependencia declarada se usa» de [stack.md](../stack.md#qué-entra).
+- El plugin `com.autonomousapps.dependency-analysis` va en el `build.gradle.kts` raíz y en el de `app`: aplicado solo en la raíz, no analiza `app`. Su bloque `dependencyAnalysis` del raíz hace fallar cada aviso con `onAny { severity("fail") }`, y saca a `espresso-core` de los no usados con `onUnusedDependencies { exclude("androidx.test.espresso:espresso-core") }`: si no, lo marca. CI corre `./gradlew buildHealth`, que falla con una dependencia que no se usa o un paquete importado sin declarar ([stack.md](../stack.md#qué-entra)).
 - El catálogo declara `espresso-core` aunque lo traiga `ui-test-junit4`: el 3.5.0 que trae no corre en la API 37.
 - Todo va en un solo módulo `app`, sin módulo de benchmark: sin un arranque lento medido, Macrobenchmark y los Baseline Profiles no tienen un síntoma que corregir.
 
@@ -288,7 +287,7 @@ Estándares: [*Create a passkey*](../fuentes/android/create-passkeys.md), [*Sign
 Contrato: [autenticacion.md](autenticacion.md#passkeys).
 
 - El manifiesto declara el `meta-data` `asset_statements`, y el recurso `asset_statements`, con `translatable="false"`, incluye `https://<dominio>/.well-known/assetlinks.json` ([Prerequisites, *Update the app's manifest*](../fuentes/android/credential-manager-prerequisites.md) y [*Configure Digital Asset Links for passwords*](../fuentes/android/credential-manager-prerequisites.md)).
-- `minSdk` es 28 ([Create a passkey, *Prerequisites*](../fuentes/android/create-passkeys.md)).
+- `minSdk` no baja de la API 28 ([Create a passkey, *Prerequisites*](../fuentes/android/create-passkeys.md)).
 - La app crea la passkey con un `CreatePublicKeyCredentialRequest` cuyo `requestJson` son las opciones del servidor, sin fijar `origin`. `preferImmediatelyAvailableCredentials` es `false` cuando lo pide el usuario, y `true` cuando la app lo intenta por su cuenta ([Create a passkey, *Create a passkey*](../fuentes/android/create-passkeys.md)).
 - Cada subclase de `CreateCredentialException` se maneja aparte ([Create a passkey, *Handle the response*](../fuentes/android/create-passkeys.md)).
 - El login pide en un solo `GetCredentialRequest`, sin fijar `origin`, la passkey, con un `GetPublicKeyCredentialOption`, y la contraseña guardada, con un `GetPasswordOption` ([Sign in with a passkey, *Create the object required to get the public key credential*](../fuentes/android/sign-in-with-passkeys.md)).

@@ -6,10 +6,10 @@ Lo común a toda pieza en Python. Lo propio de cada una va en su página y se su
 
 Estándar: las [*Good Integration Practices*](../fuentes/pytest/goodpractices.rst) de pytest.
 
-- Python se declara con `requires-python = "==3.13.*"`, y uv usa solo el Python del sistema, con `python-preference = "only-system"`. Toda herramienta que elige la versión más alta permitida, como `flet build`, toma 3.13.
-- uv es la misma versión en toda pieza, en el CI, en la máquina de quien desarrolla y en el servidor: `required-version = "==0.13.7"` en `[tool.uv]`. El CI la instala con `setup-uv` y `version-file`, y el servidor, con `uv.py` de [despliegue.md](despliegue.md#máquina).
+- `requires-python` fija con `==` la serie de Python de [stack.md](../stack.md#python), y uv usa solo el Python del sistema, con `python-preference = "only-system"`. Toda herramienta que elige la versión más alta permitida, como `flet build`, toma esa serie.
+- uv es la misma versión en toda pieza, en el CI, en la máquina de quien desarrolla y en el servidor: `required-version` en `[tool.uv]`, con `==` y la versión de [stack.md](../stack.md#python). El CI la instala con `setup-uv` y `version-file`, y el servidor, con `uv.py` de [despliegue.md](despliegue.md#máquina).
 - El bloqueo es `uv.lock`, en git, y se instala con `uv sync --locked`.
-- El backend de construcción es `uv_build`, con `<0.14` como tope.
+- El backend de construcción es `uv_build`, con la siguiente versión menor como tope.
 - `pyproject.toml` declara con `>=` la versión que fija [stack.md](../stack.md), y `uv.lock` fija la exacta.
 - Las herramientas de desarrollo van en el grupo `dev` de `[dependency-groups]`.
 - Las dependencias y la configuración de pytest van en el `pyproject.toml` de la pieza: no hay `requirements.txt` ni `pytest.ini`.
@@ -35,8 +35,7 @@ Plantilla: el `pyproject.toml` de cada pieza, en [plantilla/server/](../plantill
 
 - Ninguna dependencia bloqueada tiene una vulnerabilidad conocida.
 - Una vulnerabilidad se ignora solo por su identificador, con `--ignore-vuln`. Sacar el paquete del análisis también tapa sus vulnerabilidades futuras.
-- Todo paquete que importa el código de `src/` está declarado en `dependencies`, aunque otro paquete ya lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia.
-- Toda dependencia declarada se usa.
+- CI corre `deptry`, que falla con un paquete que el código de `src/` importa sin declararlo en `dependencies`, o con una dependencia que no se usa ([stack.md](../stack.md#qué-entra)).
 
 ## Estilo
 
@@ -208,7 +207,7 @@ Estándar: las [*Good Integration Practices*](../fuentes/pytest/goodpractices.rs
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Python 3.13, y solo el del sistema | `requires-python` y uv con `python-preference = "only-system"` |
+| El Python de [stack.md](../stack.md#python), y solo el del sistema | `requires-python` y uv con `python-preference = "only-system"` |
 | La misma versión de uv en toda pieza | uv con `required-version`, y [scripts/verificar.py](../scripts/verificar.py), que comprueba que cada `pyproject.toml` la declare |
 | Las versiones de [stack.md](../stack.md), declaradas con `>=` | [scripts/verificar.py](../scripts/verificar.py) |
 | El bloqueo | `uv sync --locked` en CI |

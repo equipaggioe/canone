@@ -12,8 +12,8 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
 - `package.json` declara las versiones exactas, sin `^` ni `~`.
 - TypeScript es la 6 y no la 7: SvelteKit 3.2.0 y `svelte-check` 4.7.8 piden `^6`.
 - `@types/node` va en `devDependencies`: el `tsconfig.json` que genera sv declara los tipos de `node`, y sin ellos `svelte-check` avisa. [sv 1.3.0](https://raw.githubusercontent.com/sveltejs/cli/sv%401.3.0/packages/sv/src/addons/eslint.ts)
-- pnpm maneja las dependencias. No deja importar un paquete que no esté declarado, aunque otro paquete ya lo traiga: un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia. [pnpm](https://raw.githubusercontent.com/pnpm/pnpm.io/19a2f01816126e8c1140f262674ef9be213ffef1/docs/motivation.md)
-- Toda dependencia declarada se usa, en el código o en la configuración.
+- pnpm maneja las dependencias: no deja importar un paquete que no esté declarado ([stack.md](../stack.md#qué-entra)). [pnpm](https://raw.githubusercontent.com/pnpm/pnpm.io/19a2f01816126e8c1140f262674ef9be213ffef1/docs/motivation.md)
+- Una dependencia cuenta como usada si la usa el código o la configuración.
 - CI corre `pnpm exec knip --dependencies` después de `pnpm build`, que escribe `.svelte-kit/`: sin él, knip no resuelve los `./$types`. Falla con una dependencia que no se usa o un paquete importado sin declarar.
 - `knip.json` ignora los paquetes sin declarar que knip ve en `tsconfig.json`: toma por paquete el `$app/tsconfig` que extiende SvelteKit 3. [knip 6.45.1](https://raw.githubusercontent.com/webpro-nl/knip/knip%406.45.1/packages/docs/src/content/docs/reference/configuration.md)
 - `package.json` declara la versión exacta de pnpm en `packageManager`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra. [pnpm/action-setup 6.1.1](https://raw.githubusercontent.com/pnpm/action-setup/v6.1.1/README.md)

@@ -237,7 +237,7 @@ Estándar: NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*
 
 Estándares: [systemd.exec](../fuentes/systemd/systemd.exec.xml) de systemd y el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
-- Las unidades son las de `plantilla/infra/`, que `install.py` instala con el nombre y el dominio de la app, sin las de las piezas que no tiene.
+- Las unidades son las de `plantilla/infra/`, que `sudo python3 install.py <app> <dominio> <memoria>` instala con el nombre y el dominio de la app, sin las de las piezas que no tiene: `--without` quita `sweep`, `web`, `panel` o `landing`.
 - Cada pieza en Java corre en `<app>-java@<pieza>.service`, que `install.py --java <pieza>` habilita y `deploy.py` reinicia antes que el servidor ([java.md](java.md)).
 - `install.py` escribe con la umask 022, sea cual sea la de quien despliega: cada servicio lee su configuración con su propia cuenta, y con la 077 Valkey no lee la suya y no arranca. Lo secreto lleva sus propios permisos, como `logs.conf` con 600 y `turnserver.conf` con 640.
 - El servidor arranca con `uvicorn app.main:app --port 8000 --ws-max-size 65536 --ws-per-message-deflate false`: `fastapi run` no le pasa a Uvicorn las opciones de WebSocket. [fastapi-cli 0.0.32](https://raw.githubusercontent.com/fastapi/fastapi-cli/0.0.32/src/fastapi_cli/cli.py)

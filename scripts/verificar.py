@@ -77,7 +77,7 @@ DESCARTADAS = {"psycopg", "psycopg2", "psycopg2-binary", "pytest-asyncio"}
 # Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del
 # dominio. `panel` y `landing` son las dos excepciones, con el nombre que ya usa la industria.
 PREFIJOS = ("server", "web", "mobile", "desktop")
-FIJAS = {"panel", "landing", "packages", "docs", "scripts", "infra", "plugins", "brand"}
+FIJAS = {"panel", "landing", "packages", "docs", "scripts", "brand"}
 
 
 def nombre_valido(nombre: str) -> bool:

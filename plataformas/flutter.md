@@ -9,9 +9,7 @@ Una app en Flutter.
 - La app sale en Android y en iOS.
 - `pubspec.yaml` declara exactos flutter_riverpod y riverpod_annotation, y en `dev_dependencies`, riverpod_generator: las mutations de Riverpod son experimentales y pueden cambiar sin una versión mayor. [Riverpod 3.5.0](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/mutations.mdx)
 - `pubspec.yaml` declara exactos o con `^` shared_preferences, flutter_secure_storage, flutter_appauth, go_router, http, maplibre_gl, freezed_annotation, json_annotation, sms_autofill y, con Stripe, flutter_stripe, y en `dev_dependencies`, flutter_lints, freezed, json_serializable, build_runner, swagger_parser y dependency_validator.
-- Todo paquete que importa el código está declarado en `pubspec.yaml`, aunque otro paquete ya lo traiga. Un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia.
-- Toda dependencia declarada se usa.
-- CI corre `dart run dependency_validator`, que falla con un paquete importado sin declarar o una dependencia que no se usa. `pubspec.yaml` lleva `dependency_validator:` con `allow_pins: true`: sin él, también falla con cada versión exacta, y las de Riverpod lo son.
+- CI corre `dart run dependency_validator`, que falla con un paquete importado sin declarar o una dependencia que no se usa ([stack.md](../stack.md#qué-entra)). `pubspec.yaml` lleva `dependency_validator:` con `allow_pins: true`: sin él, también falla con cada versión exacta, y las de Riverpod lo son.
 - `environment.sdk` de `pubspec.yaml` es `^` y la versión de Dart de [stack.md](../stack.md#flutter), la que trae Flutter: fija la versión del lenguaje con que se compila el código.
 - Gradle, AGP y Kotlin son los de Android en [stack.md](../stack.md#android), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
 - Lo que genera build_runner, `*.g.dart` y `*.freezed.dart`, y lo que genera swagger_parser, en `lib/data/services/api/`, no se versiona, y CI revisa el formato antes de generarlo: riverpod_generator no escribe con líneas de 99.

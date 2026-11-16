@@ -6,8 +6,6 @@ Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](py
 
 ## Proyecto
 
-- PySide6 y Qt son la última LTS: desde la 6.8, una de cada cuatro versiones menores es LTS. [Qt 6.12](https://doc.qt.io/qt-6.12/qt-releases.html)
-
 ```text
 desktop/
   .gitignore

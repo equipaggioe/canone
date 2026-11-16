@@ -190,6 +190,7 @@ Se utiliza una tabla con estas columnas:
 - Una página con página madre hereda sus convenciones. No debe repetirlas; únicamente documenta las particularidades de su ámbito. Por ejemplo, `fastapi.md`, `flet.md` y `qt.md` heredan de `python.md`.
 - Cada página dice solo lo que hace su pieza, salvo `autenticacion.md`, que reúne todo el registro, la autenticación y la sesión de una cuenta, también lo que hace una sola pieza.
 - Las convenciones que deben cumplir conjuntamente varias piezas de un sistema se documentan en `transversal.md`, salvo las de la cuenta, que van en `autenticacion.md`: `transversal.md` no trata el registro, la autenticación ni la sesión. Una sección de esas dos páginas que no obliga a todas las piezas dice a cuáles.
+- Una sección de la página de una pieza que cumple una sección de `transversal.md` o de `autenticacion.md` la enlaza en un párrafo `Contrato:`, antes de sus convenciones y después del párrafo `Estándar:`, si lo lleva.
 - Cada página identifica las plantillas de `plantilla/` que se derivan de sus convenciones.
 - Las páginas no fijan qué se usa en cada plataforma ni en qué versión: eso está en [stack.md](../stack.md), y cada página escribe cómo se usa.
 - Las páginas no indican qué repositorios utilizan cada tecnología ni establecen cuándo elegir una plataforma sobre otra.

@@ -482,3 +482,6 @@ test "$(events mock_data)" = 0
 setup --private --development
 database seed --mock
 test "$(events mock_data)" = 1
+# As the server, with its folder of files: the example data can write files like the app.
+test "$(systemctl show --property=User --value "demo-mock@$(current).service")" = demo
+systemctl show --property=StateDirectory --value "demo-mock@$(current).service" | grep -qx 'demo/files'

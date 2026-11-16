@@ -162,3 +162,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0154](0154-las-particiones-por-delante-las-crea-el-dueno-en-migrate-y-la-purga.md) | Las particiones por delante las crea el dueño del esquema, en `migrate` y en la purga | Con servidor |
 | [0155](0155-caddy-sale-de-su-repositorio-apt.md) | Caddy sale de su repositorio APT, y no de los paquetes de Debian 13 | Con servidor |
 | [0156](0156-una-imagen-con-varios-tamanos-es-una-carpeta-de-su-fila.md) | Una imagen que se muestra en varios tamaños se guarda una vez por tamaño, en la carpeta de su fila | Con servidor |
+| [0157](0157-los-datos-de-ejemplo-entran-como-el-servidor.md) | Los datos de ejemplo entran con la cuenta del servidor y su carpeta de archivos | Con servidor |

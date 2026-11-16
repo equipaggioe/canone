@@ -4,12 +4,13 @@ After=postgresql.service
 
 [Service]
 Type=oneshot
-User=PRODUCTO_owner
-Group=PRODUCTO_owner
+# The example data are rows and files like the ones the app writes: they go in as the server,
+# with its folder of files, which the owner of the schema cannot write (ADR-0157).
+User=PRODUCTO
+Group=PRODUCTO
 WorkingDirectory=/srv/PRODUCTO/releases/%i/server
 LoadCredentialEncrypted=app:/etc/credstore.encrypted/PRODUCTO
-# ADR-0070: the owner of the schema, over the server one in the folder.
-LoadCredentialEncrypted=app_database_url:/etc/credstore.encrypted/PRODUCTO-migrate/database_url
+StateDirectory=PRODUCTO/files
 # ADR-0128: only on a machine in development, which database.py checks.
 ExecStart=/srv/PRODUCTO/releases/%i/server/.venv/bin/python -m app.tasks mock
 NoNewPrivileges=yes

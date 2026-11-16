@@ -89,7 +89,7 @@ Un pendiente se **borra** de aquí en el commit que lo resuelve. No se tacha ni 
 3. **Estados:** `Propuesta` · `Aceptada` · `En evaluación` · `Reemplazada por ADR-NNNN` · `Descartada`. **El estado es de la decisión, no de la implementación.** «Aceptada y sin construir» es normal: lo que falta construir va en el 30, nunca en el ADR.
 4. **`Aceptada` solo si la persona que decide la confirmó explícitamente.** Lo que se eligió al implementar sin preguntar va como `Propuesta`, o como un punto marcado *(propuesta)* dentro de un ADR aceptado. Que algo «siga la misma lógica» que otra decisión confirmada no lo convierte en confirmado.
 5. **Numeración correlativa**, `NNNN-titulo-corto.md`. Los números no se reutilizan.
-6. El `README.md` de `adr/` es un índice: número, título y nada más.
+6. El `README.md` de `adr/` es un índice con las columnas «#» y «Título». Lleva además «Aplica a» cuando hay decisiones que tocan solo algunas piezas. El estado no va en el índice: está en cada ADR.
 
 ### Formato
 

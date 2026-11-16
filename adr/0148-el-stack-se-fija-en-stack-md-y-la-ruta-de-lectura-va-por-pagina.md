@@ -1,7 +1,8 @@
 # ADR-0148 · El stack se fija en `stack.md`, la ruta de lectura va por página, y una fuente es la guía de un asunto
 
-- **Estado:** Aceptada en los puntos 1 a 9, que confirmó el usuario (2026-11-14). Los puntos 10 a 13
-  son *(propuesta)*: se eligieron al implementar
+- **Estado:** Aceptada. Los puntos 1 a 9 los confirmó el usuario al pedirlos, y los puntos 10 a 13,
+  que se eligieron al implementar, al pedir que se aplicara la recomendación de confirmarlos
+  (2026-11-14)
 - **Fecha:** 2026-11-14
 - **Alcance:** [`stack.md`](../stack.md), [`README.md`](../README.md),
   [`plataformas/README.md`](../plataformas/README.md), «Proyecto» y «Cumplimiento» de las páginas de
@@ -54,14 +55,14 @@ Después del cambio, los 2178 enlaces relativos de `README.md`, `stack.md`, `pri
    lo comprueba cuando puede, y apartarse requiere un ADR del repositorio.
 9. **`README.md` declara que el lector es un asistente de IA**, y que el desarrollador revisa ahí
    lo que el asistente va a leer.
-10. *(propuesta)* «Se lee con» nombra las páginas cuyas convenciones cumple el código de la pieza:
+10. «Se lee con» nombra las páginas cuyas convenciones cumple el código de la pieza:
     la página madre, `postgres.md` en el servidor, `transversal.md` y `autenticacion.md`. No nombra
     `despliegue.md`, que rige la máquina y no el código de una pieza.
-11. *(propuesta)* `stack.md` lleva su tabla «Cumplimiento», con las filas de versiones que estaban
+11. `stack.md` lleva su tabla «Cumplimiento», con las filas de versiones que estaban
     en las páginas, y los mensajes de `verificar.py` sobre una versión nombran `stack.md`.
-12. *(propuesta)* El bloque «CI» de `stack.md` nombra también el contenedor `valkey/valkey`, que la
+12. El bloque «CI» de `stack.md` nombra también el contenedor `valkey/valkey`, que la
     plantilla usa y `verificar.py` ya comprobaba.
-13. *(propuesta)* Sale también «Autenticación» de `fastapi.md`, que solo decía «Rige
+13. Sale también «Autenticación» de `fastapi.md`, que solo decía «Rige
     `autenticacion.md`».
 
 Reemplaza los puntos 1 y 5 del [ADR-0118](0118-cada-pagina-fija-la-version-de-sus-tecnologias-y-la-plantilla-y-las-fuentes-la-siguen.md),

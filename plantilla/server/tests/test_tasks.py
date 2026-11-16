@@ -30,7 +30,10 @@ async def test_sweep_deletes_only_old_files_without_row(
     past = time.time() - files.MARGIN_SECONDS - 60
     for name in (kept, "orphan", "recent"):
         (folder / name).write_bytes(b"")
-    for name in (kept, "orphan"):
+    # An image in sizes is a folder with the id of its row.
+    (folder / "orphan-sizes").mkdir()
+    (folder / "orphan-sizes" / "thumb.webp").write_bytes(b"")
+    for name in (kept, "orphan", "orphan-sizes"):
         os.utime(folder / name, (past, past))
     await files.sweep()
     assert sorted(path.name for path in folder.iterdir()) == [kept, "recent"]

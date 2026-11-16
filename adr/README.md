@@ -160,3 +160,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0152](0152-el-entorno-del-servidor-se-instala-compilado-y-sin-modo-editable.md) | El entorno del servidor se instala con el bytecode compilado y sin modo editable | Con servidor | Aceptada |
 | [0153](0153-un-script-de-sh-con-set-e-no-niega-con-exclamacion.md) | Un script de `sh` con `set -e` no niega un comando con `!` | Todos | Aceptada |
 | [0154](0154-las-particiones-por-delante-las-crea-el-dueno-en-migrate-y-la-purga.md) | Las particiones por delante las crea el dueño del esquema, en `migrate` y en la purga | Con servidor | Aceptada |
+| [0156](0156-una-imagen-con-varios-tamanos-es-una-carpeta-de-su-fila.md) | Una imagen que se muestra en varios tamaños se guarda una vez por tamaño, en la carpeta de su fila | Con servidor | Aceptada |

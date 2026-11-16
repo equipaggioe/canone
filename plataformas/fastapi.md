@@ -190,13 +190,14 @@ Contrato: [transversal.md](transversal.md#archivos).
 - El servidor recibe un archivo como `UploadFile`.
 - Cada archivo es una fila de una tabla hija de su recurso, `<recurso>_file`.
 - La fila de un archivo guarda su tipo, su tamaño y su nombre original.
-- Un barrido borra los archivos con más de una hora en disco y sin fila en ninguna tabla `_file`. El margen deja terminar la subida que todavía no confirmó su fila.
+- Un barrido borra los archivos, y las carpetas de tamaños, con más de una hora en disco y sin fila en ninguna tabla `_file`. El margen deja terminar la subida que todavía no confirmó su fila.
 - Antes de volver a codificar una imagen se aplica su orientación EXIF: sin eso queda girada.
 - Toda imagen se vuelve a codificar con Pillow antes de guardarse, sin sus metadatos ([File Upload, *File Content Validation*](../fuentes/owasp/File_Upload.md)).
 - Cada recurso acepta solo los tipos de archivo que necesita, de una lista, y ninguno acepta ZIP ([File Upload, *List Allowed Extensions*](../fuentes/owasp/File_Upload.md) y [*File Content Validation*](../fuentes/owasp/File_Upload.md)).
 - El servidor comprueba el tipo de un archivo por su contenido: el `Content-Type` y la extensión que manda el cliente no lo deciden ([File Upload, *Content-Type Validation*](../fuentes/owasp/File_Upload.md) y [*File Signature Validation*](../fuentes/owasp/File_Upload.md)).
 - Pillow decodifica una imagen solo en los formatos de la lista del recurso y con su límite de píxeles, `Image.MAX_IMAGE_PIXELS` ([File Upload, *File Content Validation*](../fuentes/owasp/File_Upload.md) y [*Upload and Download Limits*](../fuentes/owasp/File_Upload.md)).
 - El archivo en disco se llama con el ID de su fila ([File Upload, *Filename Safety*](../fuentes/owasp/File_Upload.md)).
+- Una imagen que se muestra en más de un tamaño, como una tarjeta en una lista y la misma imagen en grande, se guarda una vez por tamaño, en WebP, en la carpeta del ID de su fila: `<id>/<tamaño>.webp`, con el lado mayor de una constante del recurso y sin el original. Una pantalla con muchas tarjetas baja la pequeña de cada una, no la original: servir varios tamaños de una imagen es lo que recomienda la web ([*Responsive images*](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Responsive_images)). `files.sizes` las codifica de una sola decodificación, y `files.store_sizes` las escribe.
 - El nombre original tiene a lo sumo 255 caracteres y nunca forma una ruta en disco ([File Upload, *Filename Safety*](../fuentes/owasp/File_Upload.md)).
 - Subir un archivo exige una sesión y el permiso de su recurso, y bajarlo, el permiso de su recurso ([File Upload, *User Permissions*](../fuentes/owasp/File_Upload.md)).
 - Un usuario descarga a lo sumo 300 archivos por minuto: una pantalla llena de imágenes pide unas 50 ([File Upload, *Upload and Download Limits*](../fuentes/owasp/File_Upload.md)).
@@ -468,5 +469,6 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Una dirección malformada se omite y se nombra en `details` | `test_malformed_address_is_left_out` |
 | El log no tiene retornos de carro ni saltos de línea de un valor | `test_log_lines_have_no_line_breaks` |
 | Pillow vuelve a codificar la imagen derecha y sin metadatos, solo en los formatos de la lista y bajo su límite de píxeles | `test_reencode_turns_the_image_and_drops_the_metadata`, `test_reencode_rejects_a_format_off_the_list` y `test_reencode_rejects_an_image_past_the_pixel_limit` |
+| Cada tamaño de una imagen es un WebP derecho y sin metadatos, con su lado mayor, en la carpeta de su fila, y el barrido borra la carpeta sin fila | `test_sizes_keep_the_ratio_turn_the_image_and_drop_the_metadata`, `test_sizes_reject_a_format_off_the_list` y `test_sweep_deletes_only_old_files_without_row` |
 | Un archivo se responde como `attachment`, y de tipo desconocido como `application/octet-stream` | `test_download_is_an_attachment` |
 | Las convenciones de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

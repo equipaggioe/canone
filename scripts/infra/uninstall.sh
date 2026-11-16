@@ -3,7 +3,8 @@
 # after each: database drops the database, its roles, their credentials and its line of pg_hba, and
 # keeps the rest of the app; app takes every unit, site, credential, account and folder of the app;
 # machine takes the swap, uv and the files install.py writes for the whole machine, keeps the
-# packages and what install.py overwrote in them, and install.py runs again on it. Every level
+# packages and what install.py overwrote in them, and install.py runs again on it. A reinstall that
+# does not change the configuration of journald does not restart it. Every level
 # keeps the account that administers, its keys and 00-<app>.conf, and root locked.
 #
 #     sh uninstall.sh <canone>
@@ -18,6 +19,8 @@ cleanup() {
 }
 trap cleanup EXIT
 step() { printf '\n== %s\n' "$*"; }
+# Under set -e a command after ! never stops the script: not does.
+not() { if "$@"; then echo "should have failed: $*"; exit 1; fi; }
 fails() { if "$@" > "$work/error" 2>&1; then exit 1; fi; }
 for name in a b s1 s2; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
 key() { cat "$work/$1.pub"; }
@@ -55,15 +58,18 @@ test -z "$(sql "SELECT 1 FROM pg_database WHERE datname = 'demo'")"
 test -z "$(sql "SELECT 1 FROM pg_roles WHERE rolname IN ('demo', 'demo_owner', 'demo_read')")"
 test ! -e /etc/credstore.encrypted/demo/database_url
 test ! -e /etc/credstore.encrypted/demo-migrate
-! grep -q demo_read /etc/postgresql/17/main/pg_hba.conf /etc/postgresql/17/main/pg_ident.conf
+not grep -q demo_read /etc/postgresql/17/main/pg_hba.conf /etc/postgresql/17/main/pg_ident.conf
 
 step "and keeps the rest of the app, which install.py completes again"
 test -f /etc/credstore.encrypted/demo/health_token
 test -f /etc/systemd/system/demo.service
 test "$(systemctl is-active demo.service || true)" != active
 kept
+# The configuration of journald did not change, so install.py does not restart it.
+journald=$(systemctl show --property=ExecMainStartTimestampMonotonic --value systemd-journald.service)
 install
 test "$(sql "SELECT 1 FROM pg_database WHERE datname = 'demo'")" = 1
+test "$(systemctl show --property=ExecMainStartTimestampMonotonic --value systemd-journald.service)" = "$journald"
 
 step "app takes every unit, site, credential, account and folder of the app"
 uninstall app

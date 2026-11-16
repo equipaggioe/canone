@@ -514,6 +514,8 @@ def main() -> None:
         ),
         "PIEZAS_JAVA": repr(tuple(arguments.java)),
     }
+    journal = Path(TARGETS["journald.conf"].replace("PRODUCTO", app))
+    journal_before = journal.read_bytes() if journal.is_file() else None
     for name, target in TARGETS.items():
         path = Path(target.replace("PRODUCTO", app))
         write(HERE / name, path, values)
@@ -575,7 +577,10 @@ def main() -> None:
         encrypt(folder, "database_url", f"postgresql+asyncpg://{role}@/{app}?host=/run/postgresql")
     encrypt(app, "valkey_url", f"unix:///run/valkey-{app}/valkey-server.sock")
     subprocess.run(["systemctl", "daemon-reload"], check=True)
-    subprocess.run(["systemctl", "restart", "systemd-journald.service"], check=True)
+    # journald reads its configuration only when it starts, and systemd refuses a sixth start in
+    # ten seconds: it restarts only when its file changed, not on each reinstall.
+    if journal.read_bytes() != journal_before:
+        subprocess.run(["systemctl", "restart", "systemd-journald.service"], check=True)
     subprocess.run(["systemctl", "reload", "postgresql@17-main.service"], check=True)
     # ADR-0077: the app has its own instance, apart from the one of the package.
     subprocess.run(["systemctl", "disable", "--now", "valkey-server.service"], check=True)

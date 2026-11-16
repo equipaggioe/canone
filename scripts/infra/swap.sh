@@ -8,12 +8,14 @@ set -eu
 canone=$1
 program=$canone/plantilla/infra/swap.py
 step() { printf '\n== %s\n' "$*"; }
+# Under set -e a command after ! never stops the script: not does.
+not() { if "$@"; then echo "should have failed: $*"; exit 1; fi; }
 kib() { awk -v field="$1:" '$1 == field {print $2}' /proc/meminfo; }
 enough() { test "$(kib SwapTotal)" -ge "$(kib MemTotal)"; }
 lines() { grep -c '^/swapfile ' /etc/fstab || true; }
 
 step "with less swap than memory it creates /swapfile"
-! enough
+not enough
 python3 "$program"
 enough
 test "$(stat -c '%a %U' /swapfile)" = "600 root"
@@ -31,7 +33,7 @@ fallocate -l 64M /swapfile
 chmod 600 /swapfile
 mkswap /swapfile > /dev/null
 swapon /swapfile
-! enough
+not enough
 python3 "$program"
 enough
 test "$(lines)" -eq 1

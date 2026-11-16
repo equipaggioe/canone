@@ -30,6 +30,8 @@ CREDENTIALS = Path("/etc/credstore.encrypted")
 HBA = Path("/etc/postgresql/17/main/pg_hba.conf")
 IDENT = Path("/etc/postgresql/17/main/pg_ident.conf")
 LEVELS = ("database", "app", "machine")
+# The configuration of journald that install.py writes for the app.
+JOURNAL = "/etc/systemd/journald.conf.d/00-PRODUCTO.conf"
 # The files of the app, besides its units, sites and credentials. 00-PRODUCTO.conf of ssh stays.
 FILES = (
     "/etc/PRODUCTO",
@@ -39,7 +41,7 @@ FILES = (
     f"{UNITS}/valkey-server@PRODUCTO.service.d",
     "/etc/ssh/sshd_config.d/PRODUCTO-receiver.conf",
     "/etc/postgresql/17/main/conf.d/PRODUCTO.conf",
-    "/etc/systemd/journald.conf.d/00-PRODUCTO.conf",
+    JOURNAL,
     "/etc/systemd/journal-upload.conf.d/00-PRODUCTO.conf",
     f"{UNITS}/systemd-journal-upload.service.d/PRODUCTO.conf",
     "/usr/local/lib/PRODUCTO",
@@ -169,13 +171,18 @@ def remove_app(app: str) -> None:
     systemctl("disable", "--now", f"valkey-server@{app}.service", *units)
     for path in [*owned(UNITS, app), *owned(SITES, app), *owned(CREDENTIALS, app)]:
         delete(path)
+    journal = Path(JOURNAL.replace("PRODUCTO", app))
+    # journald reads its configuration only when it starts: without the file of the app, there is
+    # nothing to apply.
+    journal_changed = journal.exists()
     for name in FILES:
         delete(Path(name.replace("PRODUCTO", app)))
     for account in (app, f"{app}_owner", f"{app}-receiver"):
         if subprocess.run(["id", account], capture_output=True, check=False).returncode == 0:
             run("userdel", account)
     systemctl("daemon-reload")
-    systemctl("restart", "systemd-journald.service")
+    if journal_changed:
+        systemctl("restart", "systemd-journald.service")
     systemctl("reload", "caddy.service", "ssh.service", "postgresql@17-main.service")
 
 

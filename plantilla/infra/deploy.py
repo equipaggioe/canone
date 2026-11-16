@@ -148,7 +148,12 @@ def install(archive: Path, target: Path) -> None:
     with tarfile.open(archive) as tar:
         tar.extractall(unpacked, filter="data")
     unpacked.rename(target)
-    run("uv", "sync", "--locked", "--no-dev", cwd=target / "server")
+    # The units cannot write the env, so Python would compile every module again in each process:
+    # the bytecode goes now, and the app too, outside of src/, where it is compiled as well.
+    run(
+        "uv", "sync", "--locked", "--no-dev", "--no-editable", "--compile-bytecode",
+        cwd=target / "server",
+    )
 
 
 def stage(assets: dict[str, str], sums: dict[str, str], target: Path, token: str | None) -> None:

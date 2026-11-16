@@ -10,15 +10,17 @@ program=$canone/plantilla/infra/packages.py
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 step() { printf '\n== %s\n' "$*"; }
+# Under set -e a command after ! never stops the script: not does.
+not() { if "$@"; then echo "should have failed: $*"; exit 1; fi; }
 installed() { dpkg-query -W -f '${Status}' "$1" 2>/dev/null | grep -qx 'install ok installed'; }
 
 step "--list names the base packages and installs nothing"
 python3 "$program" --list > "$work/base"
 grep -qx caddy "$work/base"
-! grep -qx coturn "$work/base"
-! grep -qx postgresql-17-postgis-3 "$work/base"
-! grep -qx openjdk-21-jre-headless "$work/base"
-! installed caddy
+not grep -qx coturn "$work/base"
+not grep -qx postgresql-17-postgis-3 "$work/base"
+not grep -qx openjdk-21-jre-headless "$work/base"
+not installed caddy
 
 step "--list adds the package of each option, and an extension of postgresql adds none"
 python3 "$program" --list --extension postgis --extension pg_trgm --turn --logs --java demo > "$work/all"

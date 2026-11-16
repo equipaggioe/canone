@@ -62,6 +62,10 @@ Uno por plataforma, en la carpeta de la pieza:
 
 Lo propio del repositorio se agrega al archivo de su pieza, con un comentario que diga por qué. El raíz no cubre a las piezas: `verificar.py` falla si una carpeta con `package.json` no ignora `node_modules/`.
 
+## Scripts de shell
+
+- Un script de `sh` con `set -e` no niega un comando con `!`: POSIX ignora `-e` en un comando que empieza con `!`, así que si el comando tiene éxito la línea no corta el script y la comprobación nunca falla. Se niega con `if <comando>; then exit 1; fi`. `scripts/verificar.py` lo revisa en canone y en cada repositorio. [POSIX.1-2024, *set*](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html)
+
 ## Git
 
 - Rama `main`. Los cambios grandes van en rama y se integran cuando pasan CI.

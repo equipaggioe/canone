@@ -157,3 +157,5 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0149](0149-las-unidades-de-la-app-permiten-mbind.md) | Las unidades que corren la app permiten `mbind`, la llamada con que el OpenBLAS de numpy fija la memoria de sus hilos | Con servidor |
 | [0150](0150-el-indice-de-adr-lleva-numero-y-titulo-y-aplica-a-cuando-hace-falta.md) | El índice de ADR lleva número y título, y «Aplica a» cuando hay decisiones que tocan solo algunas piezas | Todos |
 | [0151](0151-una-tarea-con-otro-calendario-corre-en-su-instancia-de-task.md) | Una tarea con otro calendario corre en su instancia de `PRODUCTO-task@`, y la app lo declara en `TIMERS` | Con servidor |
+| [0152](0152-el-entorno-del-servidor-se-instala-compilado-y-sin-modo-editable.md) | El entorno del servidor se instala con el bytecode compilado y sin modo editable | Con servidor | Aceptada |
+| [0153](0153-un-script-de-sh-con-set-e-no-niega-con-exclamacion.md) | Un script de `sh` con `set -e` no niega un comando con `!` | Todos | Aceptada |

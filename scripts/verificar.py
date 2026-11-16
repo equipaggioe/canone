@@ -199,6 +199,28 @@ def listar(repo: Path) -> list[str]:
     ).stdout.splitlines()
 
 
+# repositorio.md, «Scripts de shell»: POSIX ignora -e en un comando que empieza con !.
+NEGACION = re.compile(r"^\s*!\s")
+CON_E = re.compile(r"^\s*set\s+-[a-z]*e", re.M)
+
+
+def negaciones(raiz: Path, archivos: list[str]) -> list[str]:
+    """Las líneas que niegan un comando con ! en un script de sh con set -e: nunca lo cortan."""
+    fallas: list[str] = []
+    for rel in archivos:
+        if not rel.endswith(".sh") or not (raiz / rel).is_file():
+            continue
+        texto = (raiz / rel).read_text(encoding="utf-8", errors="replace")
+        if not CON_E.search(texto):
+            continue
+        for numero, linea in enumerate(texto.splitlines(), start=1):
+            if NEGACION.match(linea):
+                fallas.append(
+                    f"repositorio.md: {rel}:{numero} niega con ! bajo set -e, y la línea nunca corta el script"
+                )
+    return fallas
+
+
 def nombres_largos(repo: Path) -> list[str]:
     fallas = []
     for ruta in sorted(listar(repo)):
@@ -826,6 +848,7 @@ def revisar(repo: Path) -> list[str]:
         fallas.append("repositorio.md: README.md no declara si está en desarrollo o en producción")
 
     fallas.extend(permisos(repo))
+    fallas.extend(negaciones(repo, listar(repo)))
 
     ci = repo / ".github/workflows/ci.yml"
     if not ci.exists():
@@ -977,6 +1000,7 @@ def main() -> int:
         fallas += versiones_pyproject(PLANTILLA, PAGINAS)
         fallas += versiones_workflows(PLANTILLA, PAGINAS)
         fallas += versiones_workflows(CANONE, PAGINAS)
+        fallas += negaciones(CANONE, listar(CANONE))
         print(f"\ncanone: {len(fallas)} incumplimientos")
         for falla in fallas:
             print(f"  - {falla}")

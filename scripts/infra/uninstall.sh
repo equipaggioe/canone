@@ -103,6 +103,9 @@ test "$(sysctl -n vm.overcommit_memory)" = 0
 kept
 
 step "and install.py installs the app again on it"
+# Each level restarted journald, and systemd allows five starts in ten seconds: a machine is not
+# uninstalled and installed five times in that time, the test is.
+sleep 10
 install
 test "$(sql "SELECT 1 FROM pg_database WHERE datname = 'demo'")" = 1
 test "$(sysctl -n vm.overcommit_memory)" = 1

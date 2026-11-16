@@ -14,13 +14,13 @@ Una app en Flutter.
 - CI corre `dart run dependency_validator`, que falla con un paquete importado sin declarar o una dependencia que no se usa. `pubspec.yaml` lleva `dependency_validator:` con `allow_pins: true`: sin él, también falla con cada versión exacta, y las de Riverpod lo son.
 - `environment.sdk` de `pubspec.yaml` es `^` y la versión de Dart de [stack.md](../stack.md#flutter), la que trae Flutter: fija la versión del lenguaje con que se compila el código.
 - Gradle, AGP y Kotlin son los de Android en [stack.md](../stack.md#android), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
-- `analysis_options.yaml` declara el plugin riverpod_lint.
 - Lo que genera build_runner, `*.g.dart` y `*.freezed.dart`, y lo que genera swagger_parser, en `lib/data/services/api/`, no se versiona, y CI revisa el formato antes de generarlo: riverpod_generator no escribe con líneas de 99.
 - `analysis_options.yaml` excluye del análisis `lib/data/services/api/`: lo que genera swagger_parser no pasa las reglas de «Nombres» ni de «Estilo».
 - `analysis_options.yaml` excluye del análisis `build/`, `android/` e `ios/`: si falta la exclusión, `flutter pub get` y `flutter analyze` la agregan, y la copia deja de ser la canónica. [Flutter 3.47.9](https://raw.githubusercontent.com/flutter/flutter/3.47.9/packages/flutter_tools/lib/src/migrations/analysis_options_migration.dart)
 
 ```text
 <pieza>/
+  .gitignore
   pubspec.yaml
   pubspec.lock
   analysis_options.yaml
@@ -154,6 +154,7 @@ Estándar: [*Design*](../fuentes/dart/effective-dart-design.md) de Effective Dar
 - Una operación que recibe un solo argumento, no devuelve nada, cambia el estado del objeto y es idempotente es un setter ([Design, *DO use setters for operations that conceptually change properties*](../fuentes/dart/effective-dart-design.md)).
 - Un rango se recibe con un inicio inclusivo y un final exclusivo ([Design, *DO use inclusive start and exclusive end parameters to accept a range*](../fuentes/dart/effective-dart-design.md)).
 - `==` es reflexivo, simétrico y transitivo ([Design, *DO make your `==` operator obey the mathematical rules of equality*](../fuentes/dart/effective-dart-design.md)).
+
 ## Async
 
 Estándares: de Effective Dart, [*Usage*](../fuentes/dart/effective-dart-usage.md) y [*Design*](../fuentes/dart/effective-dart-design.md).
@@ -173,6 +174,7 @@ Estándar: [*Usage*](../fuentes/dart/effective-dart-usage.md) de Effective Dart.
 - El código cumple *DO use `rethrow` to rethrow a caught exception* y *DON'T explicitly catch `Error` or types that implement it* ([Usage, *DO use `rethrow` to rethrow a caught exception*](../fuentes/dart/effective-dart-usage.md) y [*DON'T explicitly catch `Error` or types that implement it*](../fuentes/dart/effective-dart-usage.md)).
 - Un `catch` que atrapa cualquier `Exception` hace algo con lo que atrapa: lo registra, lo muestra o lo relanza ([Usage, *DON'T discard errors from catches without `on` clauses*](../fuentes/dart/effective-dart-usage.md)).
 - Un `Error` se lanza solo ante un error de programación, y un fallo de ejecución lanza una `Exception` u otro tipo ([Usage, *DO throw objects that implement `Error` only for programmatic errors*](../fuentes/dart/effective-dart-usage.md)).
+
 ## Arquitectura
 
 Estándares: de Flutter, [*Common architecture concepts*](../fuentes/flutter/app-architecture-concepts.md), [*Guide to app architecture*](../fuentes/flutter/app-architecture-guide.md) y las [recomendaciones de arquitectura](../fuentes/flutter/architecture-recommendations.yml).
@@ -206,7 +208,7 @@ Estándares: de Flutter, [*Common architecture concepts*](../fuentes/flutter/app
 
 Estándares: de Riverpod, [*DO/DON'T*](../fuentes/riverpod/do_dont.mdx), [*Providers*](../fuentes/riverpod/providers.mdx), [*Refs*](../fuentes/riverpod/refs.mdx), [*Consumers*](../fuentes/riverpod/consumers.mdx), [*Automatic disposal*](../fuentes/riverpod/auto_dispose.mdx), [*ProviderContainers/ProviderScopes*](../fuentes/riverpod/containers.mdx) y [*About code generation*](../fuentes/riverpod/about_code_generation.mdx).
 
-- El analizador corre riverpod_lint.
+- El analizador corre riverpod_lint, que `analysis_options.yaml` declara como plugin.
 - El `ProviderScope` de la app y el de cada prueba llevan `retry: (_, _) => null`: Riverpod reintenta por defecto toda excepción de un provider, hasta 10 veces, y [transversal.md](transversal.md#reintentos) solo deja reintentar una petición idempotente ante un fallo de red, un 502, un 503 o un 504. [Riverpod 3.5.0](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/retry.mdx)
 - Los providers se declaran con `@riverpod`, de riverpod_generator: la app ya genera código con freezed y json_serializable ([About code generation, *Should I use code generation?*](../fuentes/riverpod/about_code_generation.mdx)).
 - Un widget que lee providers es un `ConsumerWidget`, o un `ConsumerStatefulWidget` si necesita un `State` ([Consumers, *Which one to use?*](../fuentes/riverpod/consumers.mdx)).

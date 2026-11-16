@@ -34,7 +34,7 @@ Plantilla **arc42** con diagramas al estilo **C4**, en dos niveles:
 | Nivel | Qué responde | C4 | Archivo |
 | :--- | :--- | :--- | :--- |
 | Sistema | Qué piezas lo forman, cómo se hablan, qué ve cada una, cómo se despliega | Contexto (1) y contenedores (2) | `00_sistema.md` |
-| Contenedor | Cómo está construida cada pieza por dentro | Componentes (3) | Una carpeta por pieza (`servidor/`, `app/`…) |
+| Contenedor | Cómo está construida cada pieza por dentro | Componentes (3) | Una carpeta por pieza (`server/`, `mobile/`…) |
 
 Cada carpeta de contenedor tiene un `README.md` con su índice y usa la misma numeración:
 
@@ -78,7 +78,7 @@ Un pendiente se **borra** de aquí en el commit que lo resuelve. No se tacha ni 
 - Antes de afirmar que algo está hecho o pendiente, se verifica contra el código.
 - Un cambio que altere un flujo, una tabla, un endpoint, un evento o un formato de intercambio **actualiza en el mismo commit** el documento del dominio en todas las piezas afectadas.
 - Una pieza nueva, o una forma nueva de comunicarse entre piezas, actualiza `00_sistema.md`.
-- Se cita el código por archivo y símbolo (`servicio.py`, `enviarOrden`), no por número de línea, que envejece con cualquier edición.
+- Se cita el código por archivo y símbolo (`service.py`, `sendOrder`), no por número de línea, que envejece con cualquier edición.
 
 ## `adr/`
 
@@ -125,7 +125,7 @@ Título mal: «Geocerca». Título bien: «La geocerca dispara por el estado que
 
 ## Comentarios de código
 
-- Un comentario que explica un porqué cita el ADR: `// ADR-0033: una cadena por cola de consumo`.
+- Un comentario que explica un porqué cita el ADR: `// ADR-0033: one chain per consumer queue`.
 - **Nunca cita un plan**: los planes se borran y el enlace queda roto.
 - No cita secciones de la arquitectura por número de apartado; si hace falta, cita el archivo.
 

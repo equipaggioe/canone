@@ -137,13 +137,14 @@ Estándares: la [guía de atribución](../fuentes/osm/attribution-guidelines.md)
 - La URL de cada estilo y la atribución las entrega el servidor en su configuración pública: cambiar de proveedor no exige publicar otra versión de las apps.
 - Cada cliente muestra la atribución de la configuración como texto, y apaga el control de atribución de MapLibre: en un mapa angosto, MapLibre la esconde detrás de un botón.
 - Los clientes buscan direcciones en el servidor, que consulta a Nominatim: su límite es por aplicación, y solo el servidor ve el total. [Nominatim](https://raw.githubusercontent.com/openstreetmap/owg-website/fd6937012a5b2d8f4c0255148342b97191c840e7/policies/nominatim.md)
+- La atribución nombra además a OpenFreeMap y a OpenMapTiles, como la que publica OpenFreeMap con sus teselas.
 - Una posición lleva solo la longitud y la latitud, sin altitud ([RFC 7946 §3.1.1](../fuentes/rfc/rfc7946.txt)).
 - Las coordenadas van en WGS 84, en grados decimales, primero la longitud y después la latitud ([RFC 7946 §3.1.1](../fuentes/rfc/rfc7946.txt) y [§4](../fuentes/rfc/rfc7946.txt)).
 - Un trazado que cruza el antimeridiano se corta en dos y viaja como un `MultiLineString` ([RFC 7946 §3.1.9](../fuentes/rfc/rfc7946.txt)).
 - No se agregan tipos a GeoJSON ni se cambia el sentido de sus miembros ([RFC 7946 §7](../fuentes/rfc/rfc7946.txt) y [§7.1](../fuentes/rfc/rfc7946.txt)).
 - El cliente no toma la cantidad de decimales de una coordenada como su precisión ([RFC 7946 §3.1.10](../fuentes/rfc/rfc7946.txt)).
 - La atribución va en una esquina del mapa, legible y a la vista sin tocar el mapa ([OSM, *Requirements to fit within OSMF’s safe harbour*](../fuentes/osm/attribution-guidelines.md) y [*Interactive maps*](../fuentes/osm/attribution-guidelines.md)).
-- La atribución dice «OpenStreetMap» y lleva a `openstreetmap.org/copyright` ([OSM, *Attribution text*](../fuentes/osm/attribution-guidelines.md)). Nombra además a OpenFreeMap y a OpenMapTiles, como la que publica OpenFreeMap con sus teselas.
+- La atribución dice «OpenStreetMap» y lleva a `openstreetmap.org/copyright` ([OSM, *Attribution text*](../fuentes/osm/attribution-guidelines.md)).
 - Ninguna otra atribución hace creer que los datos no son de OpenStreetMap ([OSM, *Requirements to fit within OSMF’s safe harbour*](../fuentes/osm/attribution-guidelines.md)).
 - Un cliente que busca direcciones con Nominatim atribuye a OpenStreetMap ([OSM, *Geocoding (search)*](../fuentes/osm/attribution-guidelines.md)).
 

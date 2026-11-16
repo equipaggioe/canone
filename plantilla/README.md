@@ -18,23 +18,23 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `scripts/java.py` | `scripts/` | Canónico, con una pieza en Java | [java.md](../plataformas/java.md) |
 | `scripts/tokens.py` | `scripts/` | En desarrollo; no se copia | [transversal.md](../plataformas/transversal.md) |
 | `brand/tokens/` | `brand/tokens/` | En desarrollo; no se copia | [transversal.md](../plataformas/transversal.md) |
-| `python/.gitignore` | Cada pieza Python | Punto de partida | [python.md](../plataformas/python.md) |
+| `python/.gitignore` | Cada pieza Python | Punto de partida | [repositorio.md](../repositorio.md), [python.md](../plataformas/python.md) |
 | `server/pyproject.toml` | `server/` | Punto de partida | [python.md](../plataformas/python.md), [fastapi.md](../plataformas/fastapi.md) |
 | `server/alembic.ini`<br>`alembic/README`<br>`alembic/env.py`<br>`alembic/script.py.mako` | `server/` | Canónico | [fastapi.md](../plataformas/fastapi.md) |
-| `server/src/app/database.py`<br>`tracing.py`<br>`models/__init__.py`<br>`models/base.py`<br>`models/ruff.toml`<br>`routers/problems.py`<br>`schemas/base.py`<br>`schemas/page.py` | `server/src/app/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
-| `server/src/app/` (el resto) | `server/src/app/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
-| `server/tests/test_conventions.py` | `server/tests/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
-| `server/tests/conftest.py`<br>`__init__.py` | `server/tests/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
-| `qt/pyproject.toml` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
+| `server/src/app/database.py`<br>`openapi.py`<br>`store.py`<br>`tracing.py`<br>`models/base.py`<br>`models/ruff.toml`<br>`routers/problems.py`<br>`schemas/base.py`<br>`schemas/page.py`<br>`services/files.py`<br>cada `__init__.py` | `server/src/app/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
+| `server/tests/__init__.py`<br>`test_conventions.py`<br>`test_events.py`<br>`test_files.py`<br>`test_tasks.py` | `server/tests/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
+| `server/` (el resto) | `server/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
+| `qt/pyproject.toml`<br>`pysidedeploy.spec` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
 | `qt/theme.py` | `desktop/src/app/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
 | `qt/tests/test_theme.py` | `desktop/tests/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
-| `flet/pyproject.toml` | La pieza Flet | Punto de partida | [python.md](../plataformas/python.md), [flet.md](../plataformas/flet.md) |
+| `flet/pyproject.toml`<br>`installer.iss`<br>`build-appimage.sh` | La pieza Flet | Punto de partida | [python.md](../plataformas/python.md), [flet.md](../plataformas/flet.md) |
 | `flet/theme.py` | `src/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
 | `flet/tests/test_theme.py` | `tests/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
-| `sveltekit/.prettierrc` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
-| `sveltekit/.gitignore`<br>`.prettierignore`<br>`eslint.config.js`<br>`vite.config.ts`<br>`playwright.config.ts`<br>`uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |
+| `sveltekit/.prettierrc`<br>`knip.json` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
+| `sveltekit/.gitignore` | Cada superficie SvelteKit | Punto de partida | [repositorio.md](../repositorio.md), [sveltekit.md](../plataformas/sveltekit.md) |
+| `sveltekit/.prettierignore`<br>`eslint.config.js`<br>`vite.config.ts`<br>`playwright.config.ts`<br>`uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |
 | `flutter/analysis_options.yaml` | Cada app Flutter | Canónico | [flutter.md](../plataformas/flutter.md) |
-| `flutter/.gitignore` | Cada app Flutter | Punto de partida | [repositorio.md](../repositorio.md) |
+| `flutter/.gitignore` | Cada app Flutter | Punto de partida | [repositorio.md](../repositorio.md), [flutter.md](../plataformas/flutter.md) |
 | `android/.editorconfig` | `mobile/` | Canónico | [android.md](../plataformas/android.md) |
 | `android/gradle/wrapper/gradle-wrapper.properties` | `mobile/gradle/wrapper/` y `android/gradle/wrapper/` de cada app Flutter | Canónico | [android.md](../plataformas/android.md), [flutter.md](../plataformas/flutter.md) |
-| `android/.gitignore` | `mobile/` | Punto de partida | [repositorio.md](../repositorio.md) |
+| `android/.gitignore` | `mobile/` | Punto de partida | [repositorio.md](../repositorio.md), [android.md](../plataformas/android.md) |

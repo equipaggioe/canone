@@ -27,6 +27,7 @@ server/
     store.py
     dependencies.py
     errors.py
+    ijson.py
     tracing.py
     enums.py
     tasks.py
@@ -290,7 +291,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 Contrato: [transversal.md](transversal.md#paginación).
 
 - La petición es `PageParams`, o `SkipParams` si acepta `skip`. La respuesta es `Page[T]`, o `CountedPage[T]` si devuelve `totalSize`.
-- El token guarda la columna y el `id` del último elemento, y los filtros, cifrados con Fernet y la clave `PAGE_TOKEN_KEY`.
+- El token guarda la columna y el `id` del último elemento, y los filtros, cifrados con Fernet y la clave `page_token_key` de `Settings`.
 
 ## Pagos
 
@@ -448,14 +449,12 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | Cada operación declara sus errores, y solo como problem+json | `test_errors_are_problems` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
-| La versión mínima de cliente, en tres enteros | `test_outdated_client_is_rejected` |
 | Un modelo sin su migración | `uv run alembic check` después de las migraciones, en el job `server` de CI |
 | La base de prueba con las migraciones y los seeders | `uv run python -m app.tasks migrate` antes de pytest en el job `server` de CI |
 | Las migraciones de prueba como el dueño, y las pruebas con los permisos del servidor | `python -m app.tasks migrate` con la credencial del dueño en el job `server` de CI, y `run_as_server` de `tests/conftest.py` |
 | Que los seeders corren por módulo y por nombre, y solo las funciones `seed_` asíncronas del módulo | `test_seeders_run_by_module_and_name` |
 | Que un seeder que falla deshace las migraciones, que cada despliegue corre los seeders sin duplicar filas, y que `mock_data/` corre solo en desarrollo | [scripts/infra/deploy.sh](../scripts/infra/deploy.sh) de Canone, como dice [despliegue.md](despliegue.md#cumplimiento) |
 | Las pruebas nunca llaman a la app con `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
-| Un `pageToken` ilegible o con otros parámetros responde 422 | `test_invalid_page_token_points_to_the_parameter` |
 | El rol de la app no cambia ni borra `event_log`, y la purga respeta la retención | `test_server_cannot_change_events` y `test_purge_deletes_only_expired_events` |
 | Solo el rol de la app y el dueño leen `event_log` | `test_only_the_server_and_owner_read_events` |
 | `GET /api/health/events` y `GET /api/health/event-log` exigen el token | `test_events_need_the_token` |
@@ -471,4 +470,3 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Pillow vuelve a codificar la imagen derecha y sin metadatos, solo en los formatos de la lista y bajo su límite de píxeles | `test_reencode_turns_the_image_and_drops_the_metadata`, `test_reencode_rejects_a_format_off_the_list` y `test_reencode_rejects_an_image_past_the_pixel_limit` |
 | Cada tamaño de una imagen es un WebP derecho y sin metadatos, con su lado mayor, en la carpeta de su fila, y el barrido borra la carpeta sin fila | `test_sizes_keep_the_ratio_turn_the_image_and_drop_the_metadata`, `test_sizes_reject_a_format_off_the_list` y `test_sweep_deletes_only_old_files_without_row` |
 | Un archivo se responde como `attachment`, y de tipo desconocido como `application/octet-stream` | `test_download_is_an_attachment` |
-| Las convenciones de [postgres.md](postgres.md) | Las pruebas de `tests/test_conventions.py` que nombra esa página |

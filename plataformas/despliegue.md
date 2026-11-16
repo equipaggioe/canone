@@ -14,9 +14,17 @@ Estándar: el [*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt) 3.0.
 │   ├── allowed_signers
 │   ├── development                 solo en desarrollo
 │   └── receivers                   las llaves de las receptoras
-├── apt/apt.conf.d/
-│   ├── 20auto-upgrades
-│   └── 52automatic-reboot
+├── apt/
+│   ├── apt.conf.d/
+│   │   ├── 20auto-upgrades
+│   │   ├── 51caddy-upgrades
+│   │   └── 52automatic-reboot
+│   ├── keyrings/
+│   │   └── caddy.asc
+│   ├── preferences.d/
+│   │   └── caddy.pref              la serie de Caddy
+│   └── sources.list.d/
+│       └── caddy.sources
 ├── caddy/
 │   ├── Caddyfile
 │   └── sites/
@@ -39,9 +47,12 @@ Estándar: el [*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt) 3.0.
 │   │   └── <app>.conf
 │   ├── pg_hba.conf                 la línea de <app>_read
 │   └── pg_ident.conf               la línea de la cuenta que administra
-├── ssh/sshd_config.d/
-│   ├── 00-<app>.conf               solo llaves, y root no entra
-│   └── <app>-receiver.conf
+├── ssh/
+│   ├── authorized_keys/
+│   │   └── <admin>                 las llaves de la cuenta que administra
+│   └── sshd_config.d/
+│       ├── 00-<app>.conf           solo llaves, y root no entra
+│       └── <app>-receiver.conf
 ├── sysctl.d/
 │   └── valkey.conf
 ├── sysusers.d/
@@ -64,8 +75,6 @@ Estándar: el [*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt) 3.0.
 │   └── valkey-<app>.conf
 └── wireguard/
     └── logs.conf                   solo con --logs
-/home/<admin>/.ssh/
-└── authorized_keys                 la cuenta que administra
 /root/.ssh/
 └── authorized_keys                 solo con authorize.py
 /run/
@@ -360,7 +369,6 @@ Estándares: de Valkey, [*Administration*](../fuentes/valkey/admin.md) y [*Secur
 
 | Convención | Herramienta |
 | :--- | :--- |
-| Valkey 8.1, también en el CI | [scripts/verificar.py](../scripts/verificar.py) |
 | `scripts/play.py` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
 | Que cada host sirve su pieza con `Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`, `frame-ancestors`, `Referrer-Policy`, `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy` y `Permissions-Policy`, sin `Server` ni `Cross-Origin-Embedder-Policy`, y su HTML con su charset; que HTTP redirige con 308; que solo la landing se indexa; que una pieza sin `index.html` sirve `200.html`; que una página con datos se sirve aunque tenga su carpeta, y que una pieza sin `200.html` responde con su `404.html` y un 404; que `/api/*` lleva las mismas cabeceras y `no-store`; que un cuerpo que pasa su límite recibe 413 y no llega entero al servidor, y que `/downloads/` sirve los instalables | El `Caddyfile` y los sitios en el Caddy que instala `packages.py`, con certificados propios de Caddy y un servidor en el 8000 que registra lo que le llega, con [scripts/infra/caddy.sh](../scripts/infra/caddy.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
 | Que una máquina nueva necesita dos `--signer`, que cada llave firma solo para `deploy` y que después solo se agregan; que `install.py` falla sin `systemd-timesyncd` habilitado, sin `ca-certificates` o con un Caddy de otra serie; que apt lee el reinicio automático de las 04:00; que `credentials.py` cifra cada campo en su carpeta y con el nombre que carga su unidad, escribe solo lo que recibe y no escribe nada si una línea está mal; que Valkey no abre TCP, que su socket solo lo abre el grupo de la app, que tiene su `maxmemory` con `noeviction` y `vm.overcommit_memory = 1`, y que la instancia del paquete queda apagada; que `root` no tiene contraseña y una cuenta de la app no puede ser la que administra; que `install.py` falla con un `<app>` que no da nombres de cuenta válidos; y que las llaves de la cuenta quedan en un archivo de `root` y una llave débil falla | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn`, con [scripts/infra/install.sh](../scripts/infra/install.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |

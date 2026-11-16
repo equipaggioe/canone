@@ -25,6 +25,7 @@ mobile/
   build.gradle.kts
   gradle.properties
   .editorconfig
+  .gitignore
   gradle/
     libs.versions.toml
     wrapper/
@@ -343,9 +344,7 @@ Contrato: [transversal.md](transversal.md#distribución).
 | :--- | :--- |
 | `MaxMetaspaceSize=2g` | [scripts/verificar.py](../scripts/verificar.py) |
 | `.editorconfig` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
-| El plugin de ktlint 14.2.0 | [scripts/verificar.py](../scripts/verificar.py) |
 | Todo paquete que importa el código está declarado, y toda dependencia declarada se usa | `./gradlew buildHealth` en CI |
-| El plugin `com.autonomousapps.dependency-analysis` 3.20.3 | [scripts/verificar.py](../scripts/verificar.py) |
 | El formato de ktlint con `android_studio` | `./gradlew ktlintCheck` en CI |
 | *Non-empty blocks*, *Indentation*, *One statement per line*, *Functions* y *Horizontal* | `curly-spacing`, `keyword-spacing`, `indent`, `no-semi`, `statement-wrapping`, `function-signature`, `parameter-list-wrapping`, `op-spacing`, `comma-spacing`, `colon-spacing`, `double-colon-spacing`, `range-spacing`, `comment-spacing`, `paren-spacing` y `unary-op-spacing` de ktlint |
 | *Unit return type* | `no-unit-return` de ktlint |

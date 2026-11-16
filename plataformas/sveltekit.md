@@ -34,6 +34,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
   .prettierignore
   .prettierrc
   eslint.config.js
+  knip.json
   package.json
   playwright.config.ts
   pnpm-lock.yaml
@@ -57,7 +58,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
   tests/
 ```
 
-Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, que se copia sin editar, y `vite.config.ts`, `playwright.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore` y `.prettierignore`, puntos de partida.
+Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc` y `knip.json`, que se copian sin editar, y `vite.config.ts`, `playwright.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore` y `.prettierignore`, puntos de partida.
 
 ## Estilo
 
@@ -74,7 +75,7 @@ Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, que s
 Estándar: [*Page options*](../fuentes/sveltekit/page-options.md) de SvelteKit.
 
 - Las páginas que piden sesión llevan `ssr = false` y `prerender = false`: no necesitan SEO, dependen de los datos del usuario y el servidor es FastAPI, sin Node para renderizarlas. Si heredaran el `prerender = true` del layout raíz, una ruta dinámica a la que no llega ningún enlace rompería el build.
-- `trailingSlash` es `'never'`, su valor por defecto: Caddy sirve `/a.html` para `/a` ([despliegue.md](despliegue.md#caddy)) ([Page options, *trailingSlash*](../fuentes/sveltekit/page-options.md)).
+- `trailingSlash` es `'never'`, su valor por defecto: Caddy sirve `/a.html` para `/a` ([despliegue.md](despliegue.md#versiones)) ([Page options, *trailingSlash*](../fuentes/sveltekit/page-options.md)).
 - El código que solo corre en el navegador se importa en `+page.svelte` o `+layout.svelte`, nunca en `+page.ts` ni `+layout.ts`, que el build importa en Node ([Page options, *ssr*](../fuentes/sveltekit/page-options.md)).
 - Una página se prerenderiza solo si dos usuarios que llegan a ella reciben el mismo contenido del servidor ([Page options, *When not to prerender*](../fuentes/sveltekit/page-options.md)).
 - Una página prerenderizada lee `url.searchParams` solo en el navegador, como en `onMount` ([Page options, *When not to prerender*](../fuentes/sveltekit/page-options.md)).

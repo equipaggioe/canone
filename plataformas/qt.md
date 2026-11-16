@@ -10,6 +10,7 @@ Una aplicación de escritorio con Qt Widgets y PySide6. Se suma a [python.md](py
 
 ```text
 desktop/
+  .gitignore
   pyproject.toml
   uv.lock
   pysidedeploy.spec

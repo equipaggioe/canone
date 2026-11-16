@@ -85,6 +85,7 @@ Estándar: [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
 - Una tabla se particiona con `PARTITION BY`, nunca por herencia ni con vistas `UNION ALL` ([Data Definition, *Table Partitioning*](../fuentes/postgresql/ddl.sgml)).
 - Una tabla se particiona solo si se espera que supere la memoria del servidor ([Data Definition, *Table Partitioning*](../fuentes/postgresql/ddl.sgml)).
 - La clave de partición es la columna por la que filtra la mayoría de las consultas, y lo que se borra junto, como lo vencido de una retención, cae en una misma partición ([Data Definition, *Best Practices for Declarative Partitioning*](../fuentes/postgresql/ddl.sgml)).
+- Una tabla particionada por rango de fechas tiene creadas las particiones de los próximos meses, cuántos dice una constante del módulo que las crea: lo habitual es agregar particiones nuevas para los datos nuevos ([Data Definition, *Partition Maintenance*](../fuentes/postgresql/ddl.sgml)). Las crean `python -m app.tasks migrate`, en la transacción de las migraciones, y la purga diaria, con el rol dueño del esquema: crear una partición es DDL, y el rol del servidor no tiene DDL ([despliegue.md](despliegue.md#postgresql)).
 
 ## Restricciones
 

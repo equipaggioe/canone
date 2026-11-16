@@ -344,7 +344,7 @@ Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) y el [*Appl
 - El rol de la app se llama como la app, y solo tiene `INSERT` y `SELECT` sobre `event_log`: un error o una inyección en la app no cambian ni borran el rastro. El rol no es el dueño de la tabla.
 - Los permisos de una tabla los da la migración que la crea: quedan versionados y el CI los prueba.
 - `actor_id` es un `uuid` sin clave foránea, y `ip_address`, un `inet`: el rastro sobrevive a la cuenta, e `inet` rechaza una dirección malformada.
-- La purga es una tarea periódica que borra lo que pasó la retención con la credencial del dueño del esquema, la de las migraciones: el servidor no la recibe.
+- La purga es una tarea periódica que borra lo que pasó la retención con la credencial del dueño del esquema, la de las migraciones: el servidor no la recibe. También crea las particiones por delante de [postgres.md](postgres.md#particiones), que son DDL.
 - Un evento que no se puede escribir hace fallar la operación que lo registra: un rastro incompleto no pasa en silencio.
 - La retención de `event_log` es una constante en días en `services/events.py`, y la plantilla guarda 365.
 - `action` es el nombre del vocabulario sin sus parámetros, como `authn_login_fail`. Los parámetros van en sus columnas: así se consultan ([Logging Vocabulary, *The Vocabulary*](../fuentes/owasp/Logging_Vocabulary.md)).

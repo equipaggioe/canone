@@ -14,7 +14,7 @@ ese archivo, y el primer despliegue fallaba al no encontrarlo.
 
 1. `install.py --signer <llave>` agrega a `allowed_signers` la línea
    `deploy namespaces="deploy" <llave>`, en el formato de *ALLOWED SIGNERS* de
-   [`ssh-keygen`](../fuentes/openssh/ssh-keygen.1).
+   [`ssh-keygen`](https://raw.githubusercontent.com/openssh/openssh-portable/V_10_0_P1/ssh-keygen.1).
 2. Una máquina nueva necesita dos `--signer`: la de la computadora de quien firma y una guardada
    fuera de ella, como las llaves de la cuenta que administra (ADR-0084).
 3. Después, `--signer` solo agrega llaves. Una llave se retira borrando su línea.

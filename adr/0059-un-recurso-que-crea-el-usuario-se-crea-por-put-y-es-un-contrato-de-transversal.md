@@ -4,7 +4,7 @@
 - **Fecha:** 2026-10-16
 - **Alcance:** la sección «Reintentos» de
   [plataformas/transversal.md](../plataformas/transversal.md#reintentos) y de
-  [plataformas/fastapi.md](../plataformas/fastapi.md#reintentos); el servidor y sus clientes
+  [plataformas/fastapi.md](../plataformas/fastapi.md); el servidor y sus clientes
 
 ## Contexto
 

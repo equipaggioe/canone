@@ -2,8 +2,8 @@
 
 - **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0133](0133-la-autenticacion-tiene-su-pagina-y-el-servidor-comprueba-aparte-lo-que-sus-bibliotecas-no-miran.md)
 - **Fecha:** 2026-10-15
-- **Alcance:** la sección «Passkeys» de [plataformas/transversal.md](../plataformas/transversal.md#passkeys),
-  [plataformas/fastapi.md](../plataformas/fastapi.md#passkeys) y
+- **Alcance:** la sección «Passkeys» de [plataformas/transversal.md](../plataformas/transversal.md),
+  [plataformas/fastapi.md](../plataformas/fastapi.md) y
   [plataformas/android.md](../plataformas/android.md#passkeys); el servidor y sus clientes
 
 ## Contexto

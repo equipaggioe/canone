@@ -8,7 +8,7 @@
 
 `despliegue.md` decía que el journal guarda 365 días, pero journald también borra por tamaño:
 `SystemMaxUse=` vale por defecto el 10 % del disco, y a lo sumo 4G, en
-[`journald.conf`](../fuentes/systemd/journald.conf.xml). Tampoco había una regla que dijera quién
+[`journald.conf`](https://raw.githubusercontent.com/systemd/systemd/v257.13/man/journald.conf.xml). Tampoco había una regla que dijera quién
 nota que una máquina dejó de enviar su journal: el ADR-0100 lo dejaba solo como consecuencia.
 
 ## Decisión

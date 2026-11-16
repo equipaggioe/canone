@@ -27,7 +27,7 @@ era uno solo, y Caddy tenía reglas sin un archivo que las aplicara ni algo que 
 
 - Una app no lee ni pisa las claves de otra, ni comparte memoria ni política de desalojo con otra.
 - La API queda en el mismo origen que cada superficie, como pide
-  [transversal.md](../plataformas/transversal.md#sesión): la cookie es de primera parte y no hace
+  [transversal.md](../plataformas/transversal.md): la cookie es de primera parte y no hace
   falta CORS. Cada superficie tiene su propia sesión.
 - `install.py` sobrescribe `/etc/caddy/Caddyfile`, que es igual para todas las apps e importa los
   sitios de cada una.

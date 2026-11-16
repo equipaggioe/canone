@@ -3,8 +3,8 @@
 - **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0133](0133-la-autenticacion-tiene-su-pagina-y-el-servidor-comprueba-aparte-lo-que-sus-bibliotecas-no-miran.md)
 - **Fecha:** 2026-10-16
 - **Alcance:** las secciones «Sesión» de
-  [plataformas/transversal.md](../plataformas/transversal.md#sesión) y de
-  [plataformas/fastapi.md](../plataformas/fastapi.md#sesión), y «WebSocket» de
+  [plataformas/transversal.md](../plataformas/transversal.md) y de
+  [plataformas/fastapi.md](../plataformas/fastapi.md), y «WebSocket» de
   [plataformas/transversal.md](../plataformas/transversal.md#websocket); el servidor y sus clientes
 
 ## Contexto

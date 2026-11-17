@@ -130,12 +130,8 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [flet/accessibility.md](flet/accessibility.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/accessibility.md) |  |
 | [flet/client-storage.md](flet/client-storage.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md) |  |
 | [pyside6/deployment-pyside6-deploy.rst](pyside6/deployment-pyside6-deploy.rst) | [URL](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/deployment/deployment-pyside6-deploy.rst) |  |
-| [qt/layout.qdoc](qt/layout.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/layout.qdoc) |  |
 | [qt/model-view-programming.qdoc](qt/model-view-programming.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/model-view-programming.qdoc) |  |
-| [qt/threads.qdoc](qt/threads.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtdoc/v6.12.0/doc/src/frameworks-technologies/threads.qdoc) |  |
 | [qt/qwidget.qdoc](qt/qwidget.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/kernel/qwidget.cpp) | Comentarios `/*! */` del código fuente |
-| [qt/qdialog.qdoc](qt/qdialog.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/dialogs/qdialog.cpp) | Comentarios `/*! */` del código fuente |
 | [qt/qsettings.qdoc](qt/qsettings.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/corelib/io/qsettings.cpp) | Comentarios `/*! */` del código fuente |
-| [qt/qnetworkaccessmanager.qdoc](qt/qnetworkaccessmanager.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/network/access/qnetworkaccessmanager.cpp) | Comentarios `/*! */` del código fuente |
 | [qt/accessible.qdoc](qt/accessible.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtdoc/v6.12.0/doc/src/frameworks-technologies/accessible.qdoc) |  |
 | [systemd/systemd.exec.xml](systemd/systemd.exec.xml) | [URL](https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd.exec.xml) | systemd 257, la versión de Debian 13 |

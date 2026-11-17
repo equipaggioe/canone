@@ -63,6 +63,7 @@ ban-relative-imports = "all"
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "__feature__".msg = "Qt API keeps its original names"
+"http.client".msg = "HTTP goes through QNetworkAccessManager"
 "httpx".msg = "HTTP goes through QNetworkAccessManager"
 "PySide6.QtUiTools".msg = "The interface is built in code"
 "requests".msg = "HTTP goes through QNetworkAccessManager"

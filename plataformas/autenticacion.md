@@ -8,6 +8,7 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 
 - Una app usa la passkey con la API de su sistema operativo cuando su framework la ofrece de forma oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización.
 - Una app de Flet no usa passkeys: entra con contraseña o con código por SMS. Flet no tiene una API oficial de passkeys, y no está comprobado que `page.login()` abra el navegador del sistema y no un web-view.
+- La app de escritorio entra solo por el navegador del sistema, sin pantallas propias de contraseña ni de código por SMS.
 - La URI de retorno de una app móvil es una URI `https` que reclama la app, y la de la app de escritorio, `http://127.0.0.1:{puerto}/<ruta>`, con el puerto que la app abre al pedir. El servidor no acepta otra: Windows y Linux no dejan que una app de Qt reclame una URI `https`. [Qt 6.12](https://doc.qt.io/qt-6.12/qoauthurischemereplyhandler.html)
 - El código vive en Valkey, con la cuenta.
 - La app abre la petición de autorización en el navegador del sistema, en una pestaña dentro de la app donde el sistema la ofrece, y nunca en un web-view ([RFC 8252 §5](../fuentes/rfc/rfc8252.txt), [§6](../fuentes/rfc/rfc8252.txt) y [§8.12](../fuentes/rfc/rfc8252.txt)).

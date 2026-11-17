@@ -170,3 +170,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0162](0162-una-pagina-escribe-decisiones-y-no-como-funciona-su-tecnologia.md) | Una página escribe decisiones, y no cómo funciona su tecnología | `plataformas/` |
 | [0163](0163-una-revision-recorre-el-documento-entero-y-propone-tambien-lo-que-falta.md) | Una revisión recorre el documento entero y propone también lo que falta | `plataformas/` |
 | [0164](0164-lo-que-se-instala-en-la-maquina-va-en-despliegue-tambien-la-unidad-de-una-pieza.md) | Lo que se instala en la máquina va en `despliegue.md`, también la unidad de una pieza | `plataformas/` |
+| [0165](0165-qt-escribe-solo-lo-que-elige-y-se-aplica.md) | `qt.md` escribe solo lo que elige, y se aplica a los repositorios | Con Qt |

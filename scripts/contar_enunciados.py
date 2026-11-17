@@ -259,10 +259,8 @@ UNIDADES = [
  ('typing/modernizing.rst', None, [], 'low'),
  ('python/asyncio-dev.rst', None, [], 'low'),
  # qt
- ('qt/layout.qdoc', None, [], 'low'),
  ('qt/model-view-programming.qdoc', None, [], 'low'),
  ('qt/accessible.qdoc', None, ['Accessibility for Qt Quick Applications'], 'low'),
- ('qt/threads.qdoc', None, [], 'low'),
  # sveltekit
  ('sveltekit/project-structure.md', None, [], 'low'),
  ('sveltekit/load.md', None, [], 'low'),

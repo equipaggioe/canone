@@ -188,7 +188,6 @@ Contrato: [transversal.md](transversal.md#distribución).
 - `flet build aab` recibe el keystore de subida y sus contraseñas por `FLET_ANDROID_SIGNING_KEY_STORE`, `FLET_ANDROID_SIGNING_KEY_STORE_PASSWORD`, `FLET_ANDROID_SIGNING_KEY_ALIAS` y `FLET_ANDROID_SIGNING_KEY_PASSWORD`, desde los secretos de CI ([Packaging app for Android, *Key store password*](../fuentes/flet/publish-android.md)).
 - Un permiso que trae un paquete multiplataforma de `permissions` se declara con él, y no como permiso de Android ([Packaging app for Android, *Permissions*](../fuentes/flet/publish-android.md)).
 - La versión de Windows es el `setup.exe` que compila Inno Setup desde `installer.iss`, el script de Flet, después de `flet build windows` ([Packaging app for Windows, *Distributing*](../fuentes/flet/publish-windows.md)).
-- El `setup.exe` y la app de Windows van sin firmar: firmarlos exige un certificado de una autoridad certificadora, que se paga, y uno autofirmado no quita el aviso de SmartScreen ([Packaging app for Windows, *Code signing*](../fuentes/flet/publish-windows.md)).
 - La versión de Linux es el AppImage que arma `build-appimage.sh`, el script de Flet, después de `flet build linux` ([Packaging app for Linux, *Distributing*](../fuentes/flet/publish-linux.md)).
 - En CI, `build-appimage.sh` corre con `APPIMAGE_EXTRACT_AND_RUN=1`, sin FUSE ([Packaging app for Linux, *Distributing*](../fuentes/flet/publish-linux.md)).
 - La versión es `[project].version`, en `x.y.z`, y sube en cada versión que se publica ([Publishing, *Build Version*](../fuentes/flet/publish.md)).

@@ -245,8 +245,6 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter 
 
 ## Qt
 
-> **En desarrollo; no se implementa:** [README.md](plataformas/README.md#en-desarrollo).
-
 Página: [qt.md](plataformas/qt.md). Se suma a [Python](#python).
 
 | Se usa | Versión | Para |

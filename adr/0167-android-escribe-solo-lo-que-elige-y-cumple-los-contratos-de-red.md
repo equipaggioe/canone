@@ -1,6 +1,6 @@
 # ADR-0167 · `android.md` escribe solo lo que elige, y cumple los contratos de red de `transversal.md`
 
-- **Estado:** Aceptada. El usuario pidió aplicar la revisión (2026-11-16)
+- **Estado:** Aceptada. El usuario pidió aplicar la revisión (2026-11-16). El punto 13, en lo que toca a `testedAbi` y a la razón de `jvmargs`, lo reemplaza el [ADR-0168](0168-android-traduce-errores-pagina-con-paging-y-sigue-el-idioma-por-app.md)
 - **Fecha:** 2026-11-16
 - **Alcance:** [`plataformas/android.md`](../plataformas/android.md), `fuentes/android/`,
   `fuentes/compose/`, [`stack.md`](../stack.md) y `scripts/contar_enunciados.py`

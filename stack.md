@@ -184,8 +184,6 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 
 ## Android
 
-> **En desarrollo; no se implementa:** [README.md](plataformas/README.md#en-desarrollo).
-
 Página: [android.md](plataformas/android.md).
 
 | Se usa | Versión | Para |
@@ -205,8 +203,10 @@ Página: [android.md](plataformas/android.md).
 | `androidx.hilt:hilt-lifecycle-viewmodel-compose` | 1.4.0 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | El BOM de Compose | 2026.09.00 | [Compose](plataformas/android.md#compose) |
 | `activity-compose` | 1.13.0 | [Compose](plataformas/android.md#compose) |
+| `androidx.core:core` | 1.19.1 | [Idiomas](plataformas/android.md#idiomas) |
 | Lifecycle | 2.11.0 | [Arquitectura](plataformas/android.md#arquitectura) |
 | Navigation 3 | 1.2.1 | [Arquitectura](plataformas/android.md#arquitectura) |
+| Paging, con `paging-common` y `paging-compose` | 3.5.3 | [Paginación](plataformas/android.md#paginación) |
 | WorkManager | 2.12.0 | [Arquitectura](plataformas/android.md#arquitectura) |
 | Retrofit | 3.0.0 | [Arquitectura](plataformas/android.md#arquitectura) |
 | OkHttp | 5.5.1 | [Arquitectura](plataformas/android.md#arquitectura) |

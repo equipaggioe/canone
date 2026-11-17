@@ -1,7 +1,5 @@
 # Android
 
-> **En desarrollo; no se implementa:** [README.md](README.md#en-desarrollo).
-
 Una app de Android en Kotlin y Jetpack Compose.
 
 ## Proyecto
@@ -9,7 +7,7 @@ Una app de Android en Kotlin y Jetpack Compose.
 - `compileSdk`, `targetSdk` y `minSdk` son los de [stack.md](../stack.md#android). `compileSdk` se declara con `release(<API>) { minorApiLevel = <menor> }`.
 - Kotlin es el que integra AGP, sin el plugin `org.jetbrains.kotlin.android`. Su versión la fijan `org.jetbrains.kotlin.plugin.compose` y `org.jetbrains.kotlin.plugin.serialization`, declarados con `apply false` en el `build.gradle.kts` raíz: Gradle usa la versión más alta de las que ve el build raíz, y la que trae AGP es anterior. [Built-in Kotlin](https://developer.android.com/build/migrate-to-built-in-kotlin)
 - Gradle corre con el wrapper y su distribución `-bin`.
-- `gradle.properties` lleva `org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=2g`: con los valores por defecto de Gradle, 512 MiB de heap y 384 MiB de Metaspace, Android Lint agota el Metaspace con el JDK 25. [Gradle 9.9.1](https://docs.gradle.org/9.9.1/userguide/build_environment.html#sec:configuring_jvm_memory)
+- `gradle.properties` lleva `org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=2g`: con los valores por defecto de Gradle, 512 MiB de heap y 384 MiB de Metaspace, el build de release se queda sin heap y Gradle descarta el daemon al agotarse el Metaspace. [Gradle 9.9.1](https://docs.gradle.org/9.9.1/userguide/build_environment.html#sec:configuring_jvm_memory)
 - Las dependencias y los plugins se declaran en el catálogo `gradle/libs.versions.toml`, con nombres en kebab-case, como `androidx-ktx`.
 - La versión de ktlint la fija el bloque `ktlint` de `app/build.gradle.kts`.
 - La versión que sube la que trae otra dependencia se fija en un bloque `constraints`, y no con una dependencia declarada.
@@ -45,6 +43,7 @@ mobile/
             theme/
             <función>/        la pantalla y su ViewModel
         res/
+          resources.properties
           values/
             strings.xml       los textos en el idioma base
           xml/
@@ -231,12 +230,20 @@ Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
 - Los gestores de contraseñas completan los campos por el `contentType` de su semántica: al entrar, `ContentType.Username` en el del correo o el teléfono y `ContentType.Password` en el de la contraseña, y al elegir una contraseña, `ContentType.NewPassword`. [Autofill in Compose](https://developer.android.com/develop/ui/compose/text/autofill)
 
+## Errores
+
+Contrato: [transversal.md](transversal.md#errores).
+
+- La fuente de datos de red traduce una `HttpException` a la excepción tipada del sobre que pide [transversal.md](transversal.md#errores).
+
 ## Idiomas
 
 Estándar: [*Localize your app*](../fuentes/android/localization.md) de Android.
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
+- `androidResources` lleva `generateLocaleConfig = true`, y `res/resources.properties`, `unqualifiedResLocale=es`: el usuario elige el idioma de la app en los ajustes del sistema. [Per-app language preferences](https://developer.android.com/guide/topics/resources/app-languages)
+- Un interceptor de OkHttp manda en `Accept-Language` el primer idioma de `LocaleManagerCompat.getApplicationLocales()` o, si el usuario no eligió uno para la app, el primero de `LocaleManagerCompat.getSystemLocales()`.
 - Los recursos por defecto, sin calificadores, como `res/values/` y `res/drawable/`, tienen todo lo que usa la app, y uno de un idioma puede tener solo una parte ([Localize your app, *Why default resources are important*](../fuentes/android/localization.md) y [*Design your app to work in any locale*](../fuentes/android/localization.md)).
 - Ningún texto va escrito en el código: todos son recursos de `strings.xml`, también el de una imagen con texto, y Compose los lee con `stringResource` ([Localize your app, *Move all strings into strings.xml*](../fuentes/android/localization.md)).
 - Los textos usan la terminología estándar de Android, como la barra de la app o las notificaciones ([Localize your app, *Follow Android guidelines for UI strings*](../fuentes/android/localization.md)).
@@ -256,6 +263,13 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - openapi-generator genera desde `../server/openapi.json` los modelos del cable y las interfaces de Retrofit, con el generador `kotlin`, `library = "jvm-retrofit2"` y `serializationLibrary = "kotlinx_serialization"`, en `app/build/generated/openapi/`, que no se versiona. `preBuild` depende de `openApiGenerate`.
 - Un esquema libre, como el de un objeto con `additionalProperties`, se genera como `JsonElement`, con `typeMappings` y su `importMappings`: con `Any`, el plugin de kotlinx.serialization hace fallar al compilador.
 - El `Json` del convertidor de Retrofit suma los serializadores de `Serializer.kotlinxSerializationAdapters`, de lo generado, y deja `ignoreUnknownKeys` e `isLenient` en `false`, sus valores por defecto: el `Json` que genera openapi-generator los activa, y un campo desconocido tiene que fallar.
+
+## Paginación
+
+Contrato: [transversal.md](transversal.md#paginación).
+
+- Una lista que se recorre con `nextPageToken` usa Paging 3, con un `PagingSource` que toma el `pageToken` como clave.
+- El ViewModel expone el `PagingData` en su propio flow, fuera de `uiState`: no es inmutable.
 
 ## Pagos
 
@@ -277,13 +291,6 @@ Contrato: [autenticacion.md](autenticacion.md#passkeys).
 - `getCredential` recibe un `MutableContextWrapper` de la `Activity` en primer plano ([Sign in with a passkey, *Launch the sign-in flow*](../fuentes/android/sign-in-with-passkeys.md)).
 - Cada subclase de `GetCredentialException` se maneja aparte ([Sign in with a passkey, *Handle exceptions*](../fuentes/android/sign-in-with-passkeys.md)).
 
-## Reintentos
-
-Contrato: [transversal.md](transversal.md#reintentos).
-
-- El `OkHttpClient` lleva `retryOnConnectionFailure(false)`: por defecto, OkHttp vuelve a mandar un `POST` ya enviado si se cae la conexión que tomó del pool. [OkHttp 5.5.1](https://raw.githubusercontent.com/square/okhttp/parent-5.5.1/okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http/RetryAndFollowUpInterceptor.kt)
-- Los reintentos que pide [transversal.md](transversal.md#reintentos) los hace un interceptor de OkHttp.
-
 ## Push
 
 Estándar: [*Notification runtime permission*](../fuentes/android/notification-permission.md) de Android.
@@ -297,6 +304,13 @@ Contrato: [transversal.md](transversal.md#push).
 - La app pide el permiso de notificaciones tras una acción del usuario que deja claro para qué sirven, y no al arrancar. Explica antes por qué lo pide solo si `shouldShowRequestPermissionRationale()` devuelve `true` ([Notification runtime permission, *Wait to show notification permission prompt*](../fuentes/android/notification-permission.md) y [*Request the permission in context*](../fuentes/android/notification-permission.md)).
 - El permiso se pide con `rememberLauncherForActivityResult` y el contrato `ActivityResultContracts.RequestPermission()` ([Notification runtime permission, *Request the permission*](../fuentes/android/notification-permission.md)).
 - Antes de mostrar una notificación, la app comprueba `areNotificationsEnabled()` ([Notification runtime permission, *Check whether your app can send notifications*](../fuentes/android/notification-permission.md)).
+
+## Reintentos
+
+Contrato: [transversal.md](transversal.md#reintentos).
+
+- El `OkHttpClient` lleva `retryOnConnectionFailure(false)`: por defecto, OkHttp vuelve a mandar un `POST` ya enviado si se cae la conexión que tomó del pool. [OkHttp 5.5.1](https://raw.githubusercontent.com/square/okhttp/parent-5.5.1/okhttp/src/commonJvmAndroid/kotlin/okhttp3/internal/http/RetryAndFollowUpInterceptor.kt)
+- Los reintentos que pide [transversal.md](transversal.md#reintentos) los hace un interceptor de OkHttp.
 
 ## Tema
 
@@ -324,7 +338,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 
 Estándares: las [recomendaciones de arquitectura](../fuentes/android/architecture-recommendations.md), las [buenas prácticas de corrutinas](../fuentes/android/coroutines-best-practices.md) y la [capa de datos](../fuentes/android/data-layer.md) de Android.
 
-- Las pruebas de UI son instrumentadas, y CI las corre en el dispositivo administrado por Gradle `pixel6`, con `device = "Pixel 6"`, `apiLevel` en la API de `targetSdk` de [stack.md](../stack.md#android) y `systemImageSource = "aosp-atd"`.
+- Las pruebas de UI son instrumentadas, y CI las corre en el dispositivo administrado por Gradle `pixel6`, con `device = "Pixel 6"`, `apiLevel` en la API de `targetSdk` de [stack.md](../stack.md#android), `systemImageSource = "aosp-atd"` y `testedAbi = "x86_64"`: AGP avisa que su valor por defecto pasa a `arm64-v8a`, que esa imagen no corre.
 - Las llamadas HTTP se prueban contra MockWebServer ([Data layer, *Integration tests*](../fuentes/android/data-layer.md)).
 - Cada ViewModel, con sus flows, cada repositorio y cada fuente de datos tienen pruebas unitarias, y CI corre pruebas de la navegación de la UI ([Recommendations, *Testing*](../fuentes/android/architecture-recommendations.md)).
 - Las pruebas usan fakes, y no mocks ([Recommendations, *Testing*](../fuentes/android/architecture-recommendations.md)).

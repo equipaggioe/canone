@@ -103,21 +103,16 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | [URL](https://raw.githubusercontent.com/JetBrains/kotlin-web-site/f51dacdc4420c6690ad88d513caf3c1a0a25b75f/docs/topics/coding-conventions.md) |  |
 | [android/architecture.md](android/architecture.md) | [URL](https://developer.android.com/topic/architecture) | Página web convertida a Markdown |
 | [android/architecture-recommendations.md](android/architecture-recommendations.md) | [URL](https://developer.android.com/topic/architecture/recommendations) | Página web convertida a Markdown |
-| [android/ui-layer.md](android/ui-layer.md) | [URL](https://developer.android.com/topic/architecture/ui-layer) | Página web convertida a Markdown |
 | [android/data-layer.md](android/data-layer.md) | [URL](https://developer.android.com/topic/architecture/data-layer) | Página web convertida a Markdown |
 | [android/kotlin-style-guide.md](android/kotlin-style-guide.md) | [URL](https://developer.android.com/kotlin/style-guide) | Página web convertida a Markdown |
 | [android/coroutines-best-practices.md](android/coroutines-best-practices.md) | [URL](https://developer.android.com/kotlin/coroutines/coroutines-best-practices) | Página web convertida a Markdown |
 | [android/hilt.md](android/hilt.md) | [URL](https://developer.android.com/training/dependency-injection/hilt-android) | Página web convertida a Markdown |
-| [android/datastore.md](android/datastore.md) | [URL](https://developer.android.com/topic/libraries/architecture/datastore) | Página web convertida a Markdown |
 | [android/localization.md](android/localization.md) | [URL](https://developer.android.com/guide/topics/resources/localization) | Página web convertida a Markdown |
-| [android/sms-retriever-request.md](android/sms-retriever-request.md) | [URL](https://developers.google.com/identity/sms-retriever/request) | Página web convertida a Markdown |
 | [android/credential-manager-prerequisites.md](android/credential-manager-prerequisites.md) | [URL](https://developer.android.com/identity/credential-manager/prerequisites) | Página web convertida a Markdown |
 | [android/create-passkeys.md](android/create-passkeys.md) | [URL](https://developer.android.com/identity/passkeys/create-passkeys) | Página web convertida a Markdown |
 | [android/sign-in-with-passkeys.md](android/sign-in-with-passkeys.md) | [URL](https://developer.android.com/identity/passkeys/sign-in-with-passkeys) | Página web convertida a Markdown |
 | [android/notification-permission.md](android/notification-permission.md) | [URL](https://developer.android.com/develop/ui/compose/notifications/notification-permission) | Página web convertida a Markdown |
-| [android/notification-channels.md](android/notification-channels.md) | [URL](https://developer.android.com/develop/ui/compose/notifications/channels) | Página web convertida a Markdown |
 | [compose/state.md](compose/state.md) | [URL](https://developer.android.com/develop/ui/compose/state) | Página web convertida a Markdown |
-| [compose/architecture.md](compose/architecture.md) | [URL](https://developer.android.com/develop/ui/compose/architecture) | Página web convertida a Markdown |
 | [flet/publish.md](flet/publish.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/index.md) |  |
 | [flet/publish-android.md](flet/publish-android.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/android.md) |  |
 | [flet/publish-windows.md](flet/publish-windows.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/windows.md) |  |

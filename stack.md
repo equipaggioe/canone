@@ -218,8 +218,8 @@ Página: [android.md](plataformas/android.md).
 | DataStore | 1.3.0 | [Almacenamiento](plataformas/android.md#almacenamiento) |
 | `androidx.credentials`, con `credentials-play-services-auth` | 1.6.0 | [Passkeys](plataformas/android.md#passkeys) |
 | `play-services-auth-api-phone` | 18.3.1 | [Código por SMS](plataformas/android.md#código-por-sms) |
-| El BOM de Firebase | 35.2.0 | [Push](plataformas/transversal.md#push) |
-| El plugin `com.google.gms.google-services` | 4.6.0 | [Push](plataformas/transversal.md#push) |
+| El BOM de Firebase | 35.2.0 | [Push](plataformas/android.md#push) |
+| El plugin `com.google.gms.google-services` | 4.6.0 | [Push](plataformas/android.md#push) |
 | MapLibre Android | 13.7.1 | [Mapas](plataformas/android.md#mapas) |
 | `stripe-android`, con Stripe | 23.26.0 | [Pagos](plataformas/android.md#pagos) |
 | JUnit | 4.13.2 | [Pruebas](plataformas/android.md#pruebas) |

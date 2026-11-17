@@ -121,6 +121,7 @@ Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
+- El idioma que elige el usuario se guarda en `QSettings`, y la app lo aplica con `QLocale.setDefault()` y su `QTranslator`. Hasta que elige, es el de `QLocale.system()`. `Accept-Language` lo toma de ahí.
 - Los textos usan Qt Linguist.
 - Los `.qm` van en `resources.qrc`.
 - Los textos se extraen con `pyside6-lupdate -extensions py src/app`.
@@ -130,7 +131,7 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
-- datamodel-code-generator genera desde `../server/openapi.json` los modelos del cable en `src/app/api/models.py`, con la configuración de `[tool.datamodel-codegen]`: modelos de Pydantic v2, campos en snake_case con su alias en camelCase y `extra="forbid"` en cada esquema que declara `additionalProperties: false`.
+- datamodel-code-generator genera desde `../server/openapi.json` los modelos del cable en `src/app/api/models.py`, con la configuración de `[tool.datamodel-codegen]`: modelos de Pydantic v2, campos en snake_case con su alias en camelCase, que el código llena por su nombre en snake_case, y `extra="forbid"` en cada esquema que declara `additionalProperties: false`.
 - `src/app/api/models.py` se versiona, y CI lo vuelve a generar y falla si cambia.
 - `src/app/api/models.py` no lleva docstrings propios, y ruff no le exige las reglas `D1`.
 - Las llamadas a la API se escriben a mano en `api/client.py`, con el `QNetworkAccessManager` de [Red](#red).
@@ -140,7 +141,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - HTTP va por `QNetworkAccessManager`, y las respuestas se leen con los modelos de `api/models.py`.
 - La app no llama a `ignoreSslErrors()`: un certificado que no vale termina la conexión, como fija [python.md](python.md#seguridad).
 - La app tiene un solo `QNetworkAccessManager`.
-- Un `QNetworkReply` terminado se libera con `deleteLater()`, nunca borrándolo en el slot de `finished()`.
+- El `QNetworkAccessManager` libera cada respuesta al terminar, con `setAutoDeleteReplies(True)`.
 
 ## Tema
 
@@ -194,7 +195,7 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 | `@override` | Pyrefly `missing-override-decorator` |
 | Los nombres originales de Qt | ruff `TID251` sobre `__feature__` |
 | Un enum con su clase | Pyrefly `missing-attribute` |
-| La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools` |
+| La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools`, y [scripts/verificar.py](../scripts/verificar.py), que falla con un `.ui` en `desktop/` |
 | HTTP por `QNetworkAccessManager`: sin httpx, requests, `urllib.request` ni `http.client` | ruff `TID251` sobre httpx, requests, `urllib.request` y `http.client` |
 | El estilo Fusion | `test_style_is_fusion`, de `tests/test_theme.py` |
 | Una sola hoja de estilo, armada en `theme.py` | `test_style_sheet_only_in_theme`, de `tests/test_theme.py` |

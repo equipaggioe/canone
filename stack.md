@@ -231,8 +231,6 @@ Página: [android.md](plataformas/android.md).
 
 ## Flet
 
-> **En desarrollo; no se implementa:** [README.md](plataformas/README.md#en-desarrollo).
-
 Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter es el de [Flutter](#flutter).
 
 | Se usa | Versión | Para |

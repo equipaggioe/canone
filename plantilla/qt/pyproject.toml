@@ -93,6 +93,7 @@ output = "src/app/api/models.py"
 output-model-type = "pydantic_v2.BaseModel"
 target-python-version = "3.13"
 snake-case-field = true
+allow-population-by-field-name = true
 use-annotated = true
 use-double-quotes = true
 use-schema-description = true

@@ -960,6 +960,12 @@ def revisar(repo: Path) -> list[str]:
                 )
         fallas.extend(metaspace_lint(app, app.name))
 
+    # qt.md, «Widgets»: la interfaz se construye en código, también sin un .ui que compile pyside6-uic.
+    if "qt.md" in paginas:
+        for ui in listar(repo):
+            if ui.startswith("desktop/") and ui.endswith(".ui"):
+                fallas.append(f"plataformas/qt.md: {ui} es un .ui; la interfaz se construye en código")
+
     docs = repo / "docs"
     if docs.is_dir():
         permitidos = {"README.md", "arquitectura", "adr", "planes"}

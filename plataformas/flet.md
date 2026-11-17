@@ -1,7 +1,5 @@
 # Flet
 
-> **En desarrollo; no se implementa:** [README.md](README.md#en-desarrollo).
-
 Una aplicación en Flet. Se suma a [python.md](python.md).
 
 ## Proyecto

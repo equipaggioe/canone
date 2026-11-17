@@ -109,7 +109,7 @@ def java_piece(name: str) -> str:
     return name
 
 
-# fastapi.md, «Tareas periódicas»: a task of the app with its own timer is an instance of
+# fastapi.md, «Tareas»: a task of the app with its own timer is an instance of
 # PRODUCTO-task@, and its calendar goes in a drop-in of its timer. The tasks with units of their
 # own do not take one.
 TASK = re.compile(r"[a-z][a-z0-9_]{0,30}")

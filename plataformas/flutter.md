@@ -241,7 +241,7 @@ Estándares: el README de [shared_preferences](../fuentes/pub/shared_preferences
 - La copia de seguridad de Android no incluye los datos de flutter_secure_storage: restaurados en otro dispositivo, su clave no se puede recuperar ([flutter_secure_storage, *Disabling Auto Backup*](../fuentes/pub/flutter_secure_storage/README.md)).
 - En iOS, los entitlements de debug y de release declaran `keychain-access-groups` ([flutter_secure_storage, *macOS & iOS*](../fuentes/pub/flutter_secure_storage/README.md)).
 
-## Autenticación
+## Código de autorización
 
 Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 

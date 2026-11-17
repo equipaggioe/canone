@@ -169,3 +169,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0161](0161-cada-regla-queda-en-una-sola-pagina-y-plugins-deja-de-ser-una-carpeta-de-primer-nivel.md) | Cada regla queda en una sola página, y `plugins/` deja de ser una carpeta de primer nivel | Todos |
 | [0162](0162-una-pagina-escribe-decisiones-y-no-como-funciona-su-tecnologia.md) | Una página escribe decisiones, y no cómo funciona su tecnología | `plataformas/` |
 | [0163](0163-una-revision-recorre-el-documento-entero-y-propone-tambien-lo-que-falta.md) | Una revisión recorre el documento entero y propone también lo que falta | `plataformas/` |
+| [0164](0164-lo-que-se-instala-en-la-maquina-va-en-despliegue-tambien-la-unidad-de-una-pieza.md) | Lo que se instala en la máquina va en `despliegue.md`, también la unidad de una pieza | `plataformas/` |

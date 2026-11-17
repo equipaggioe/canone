@@ -171,12 +171,9 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 - El arranque y el cierre van en el `lifespan` de la app: `on_event` está obsoleto. [FastAPI 0.162.0](https://raw.githubusercontent.com/fastapi/fastapi/0.162.0/fastapi/applications.py)
 
-## Tareas en segundo plano
+## Tareas
 
 - El trabajo que sigue a la respuesta va en `BackgroundTasks`.
-
-## Tareas periódicas
-
 - Una tarea periódica es una función en `services/`.
 - La tarea trabaja sobre lo que encuentra en la base, no sobre lo que pasó desde la vuelta anterior: una vuelta perdida la recupera la siguiente.
 - La dispara un timer de systemd con `python -m app.tasks <tarea>`: systemd no arranca una vuelta si la anterior sigue corriendo.

@@ -14,7 +14,7 @@ Qué se usa en cada plataforma y en qué versión. Es el único lugar donde se f
 - Lo que una pieza usa, pero cuya versión fija otra tecnología, entra con una nota que dice cuál, como «3.13.7, el de Flutter 3.47.9» o «0.28.1, la que fija firebase-admin»: su versión no se elige, se sigue.
 - Todo paquete que importa el código de una pieza está declarado en su manifiesto, aunque otro paquete ya lo traiga: un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia.
 - Toda dependencia declarada se usa. Lo que llega dentro de otro paquete y el código no importa no entra ni se nombra en ningún lado.
-- La página de cada plataforma dice con qué herramienta lo comprueba su CI: [python.md](plataformas/python.md#dependencias), [flutter.md](plataformas/flutter.md#proyecto), [sveltekit.md](plataformas/sveltekit.md#proyecto) y [android.md](plataformas/android.md#proyecto).
+- La página de cada plataforma dice con qué herramienta lo comprueba su CI: [python.md](plataformas/python.md#proyecto), [flutter.md](plataformas/flutter.md#proyecto), [sveltekit.md](plataformas/sveltekit.md#proyecto) y [android.md](plataformas/android.md#proyecto).
 
 ## Versiones
 
@@ -38,7 +38,7 @@ Página: [python.md](plataformas/python.md). Vale para toda pieza en Python.
 | pytest | 9.2.0 | [Pruebas](plataformas/python.md#pruebas) |
 | ruff | 0.17.3 | [Estilo](plataformas/python.md#estilo) |
 | Pyrefly | 1.4.0 | [Tipos](plataformas/python.md#tipos) |
-| deptry | 0.25.1 | [Dependencias](plataformas/python.md#dependencias) |
+| deptry | 0.25.1 | [Proyecto](plataformas/python.md#proyecto) |
 | pip-audit | 2.10.1 | [Cumplimiento](plataformas/python.md#cumplimiento) |
 | Pydantic | 2.14.3 | [Esquemas](plataformas/fastapi.md#esquemas) |
 | httpx | 0.28.1, la que fija firebase-admin | [Pruebas](plataformas/fastapi.md#pruebas) del servidor y [Red](plataformas/flet.md#red) de Flet |
@@ -127,7 +127,7 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | Svelte | 5.57.3 | — |
 | Vite | 8.3.8 | — |
 | `@sveltejs/vite-plugin-svelte` | 7.3.1 | — |
-| `@sveltejs/adapter-static` | 4.0.1 | [Adaptador](plataformas/sveltekit.md#adaptador) |
+| `@sveltejs/adapter-static` | 4.0.1 | [Entrega](plataformas/sveltekit.md#entrega) |
 | TypeScript | 6.0.3 | [Tipos](plataformas/sveltekit.md#tipos) |
 | `svelte-check` | 4.7.8 | [Tipos](plataformas/sveltekit.md#tipos) |
 | `@types/node` | 26.6.6 | [Proyecto](plataformas/sveltekit.md#proyecto) |
@@ -175,7 +175,7 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | swagger_parser | 2.1.1 | [OpenAPI y clientes](plataformas/flutter.md#openapi-y-clientes) |
 | shared_preferences | 2.5.6 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
 | flutter_secure_storage | 11.2.0 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
-| flutter_appauth | 13.0.0 | [Autenticación](plataformas/flutter.md#autenticación) |
+| flutter_appauth | 13.0.0 | [Código de autorización](plataformas/flutter.md#código-de-autorización) |
 | sms_autofill | 2.6.1 | [Código por SMS](plataformas/flutter.md#código-por-sms) |
 | flutter_stripe, con Stripe | 14.2.0 | [Pagos](plataformas/flutter.md#pagos) |
 | firebase_core | 5.1.0 | [Push](plataformas/flutter.md#push) |

@@ -132,7 +132,7 @@ Estándar: [QSettings](../fuentes/qt/qsettings.qdoc) de Qt.
 - La ventana principal lee su geometría y su estado al crearse, y los guarda en `closeEvent()` ([QSettings, *Restoring the State of a GUI Application*](../fuentes/qt/qsettings.qdoc)).
 - `QSettings` lee solo el archivo que escribió la app ([QSettings, *Security Considerations*](../fuentes/qt/qsettings.qdoc)).
 
-## Autenticación
+## Código de autorización
 
 Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 

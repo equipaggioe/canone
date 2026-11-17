@@ -38,7 +38,7 @@ APP = "PRODUCTO"
 REPO = "DUENO/PRODUCTO"
 PRIVATE: bool = PRIVADO
 DESKTOP: tuple[str, ...] = INSTALABLES
-# java.md: the pieces in Java, each with its unit, which run the current version too.
+# despliegue.md: the pieces in Java, each with its unit, which run the current version too.
 JAVA: tuple[str, ...] = PIEZAS_JAVA
 # A private repository downloads with a read-only token, which
 # credentials.py encrypts.

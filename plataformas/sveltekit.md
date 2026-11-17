@@ -242,7 +242,7 @@ Estándar: el [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HT
 - `.vitest` va en `.gitignore`: guarda artefactos generados. [Vitest 5.1.0](https://raw.githubusercontent.com/vitest-dev/vitest/v5.1.0/docs/guide/index.md)
 - En una prueba concurrente, los snapshots y las aserciones usan el `expect` de su contexto. [Vitest 5.1.0](https://raw.githubusercontent.com/vitest-dev/vitest/v5.1.0/docs/guide/features.md)
 
-## Adaptador
+## Entrega
 
 Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de SvelteKit.
 

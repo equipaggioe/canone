@@ -1,6 +1,6 @@
 # Despliegue
 
-Cómo queda el servidor. Una máquina aloja un solo producto: su servidor y sus superficies web. `<app>` es el nombre del repositorio del producto.
+Cómo se publica cada versión y cómo queda la máquina que la corre. Una máquina aloja un solo producto: su servidor y sus superficies web. `<app>` es el nombre del repositorio del producto.
 
 ## Proyecto
 
@@ -182,10 +182,6 @@ Estándar: [RFC 8656](../fuentes/rfc/rfc8656.txt).
 - Una asignación dura a lo sumo una hora sin refrescarse, el `max-allocate-lifetime` de coturn por defecto ([RFC 8656 §7.2](../fuentes/rfc/rfc8656.txt)). [coturn 4.6.1](https://raw.githubusercontent.com/coturn/coturn/4.6.1/examples/etc/turnserver.conf)
 - `turn.nft` descarta lo que llega al 3478 desde Teredo, `2001::/32`, o 6to4, `2002::/16`: coturn acepta una petición desde un túnel ([RFC 8656 §21.4](../fuentes/rfc/rfc8656.txt)).
 
-## Datos
-
-- Los archivos de los usuarios viven en la máquina, en `/var/lib/<app>/files/`, y el respaldo los cubre junto con la base.
-
 ## Desinstalar
 
 - `sudo python3 uninstall.py <app> database|app|machine` deshace lo que dejan los demás programas, y cada nivel incluye al anterior. Con `--dry-run` imprime lo que haría, sin hacerlo.
@@ -238,7 +234,12 @@ Estándar: NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*
 Estándares: [systemd.exec](../fuentes/systemd/systemd.exec.xml) de systemd y el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
 - Las unidades son las de `plantilla/infra/`, que `sudo python3 install.py <app> <dominio> <memoria>` instala con el nombre y el dominio de la app, sin las de las piezas que no tiene: `--without` quita `sweep`, `web`, `panel` o `landing`.
-- Cada pieza en Java corre en `<app>-java@<pieza>.service`, que `install.py --java <pieza>` habilita y `deploy.py` reinicia antes que el servidor ([java.md](java.md)).
+- Cada pieza en Java de [java.md](java.md) corre en `<app>-java@<pieza>.service`, que `install.py --java <pieza>` habilita.
+- La unidad de una pieza en Java corre `java -jar /srv/<app>/current/<pieza>/<pieza>.jar` con `DynamicUser=`: la pieza no guarda estado ni tiene credenciales, y una cuenta fija sería una cuenta más que mantener.
+- Esa unidad solo alcanza loopback, con `IPAddressDeny=any` e `IPAddressAllow=localhost`: una pieza comprometida no llama a otra máquina.
+- Esa unidad lleva el aislamiento de las demás salvo `MemoryDenyWriteExecute=`: con él, la JVM no arranca, porque su JIT escribe el código que corre ([ADR-0147](../adr/0147-una-pieza-en-java-corre-en-su-unidad-con-el-jre-de-debian.md)).
+- Esa unidad lleva `SuccessExitStatus=143`: la JVM termina con 128 más SIGTERM cuando systemd la detiene, y sin eso la unidad queda `failed` en cada despliegue.
+- `deploy.py` reinicia cada pieza en Java antes que el servidor, en cada versión y al volver a la anterior: el servidor nunca llama a una pieza de otra versión.
 - `install.py` escribe con la umask 022, sea cual sea la de quien despliega: cada servicio lee su configuración con su propia cuenta, y con la 077 Valkey no lee la suya y no arranca. Lo secreto lleva sus propios permisos, como `logs.conf` con 600 y `turnserver.conf` con 640.
 - El servidor arranca con `uvicorn app.main:app --port 8000 --ws-max-size 65536 --ws-per-message-deflate false`: `fastapi run` no le pasa a Uvicorn las opciones de WebSocket. [fastapi-cli 0.0.32](https://raw.githubusercontent.com/fastapi/fastapi-cli/0.0.32/src/fastapi_cli/cli.py)
 - `--port` es 8000 en todo producto: la máquina no aloja otro servidor.
@@ -248,7 +249,7 @@ Estándares: [systemd.exec](../fuentes/systemd/systemd.exec.xml) de systemd y el
 - `/run/<app>-receiver/` la crea `tmpfiles.d`: la escribe la cuenta de la receptora, que entra por `ssh`, y no una unidad.
 - El timer del barrido de archivos de [fastapi.md](fastapi.md#archivos) corre `python -m app.tasks sweep` cada día.
 - El timer de la purga de `event_log` de [fastapi.md](fastapi.md#registro-de-eventos) corre `python -m app.tasks purge` cada día. Su unidad corre con la cuenta `<app>_owner` y carga además `app_database_url` desde `<app>-migrate/`, como la de las migraciones.
-- Otra tarea de [fastapi.md](fastapi.md#tareas-periódicas) corre en `<app>-task@<tarea>.service`, con la cuenta del servidor, y su timer, con el calendario de `install.py --task <tarea>=<OnCalendar>`, que va en `<app>-task@<tarea>.timer.d/calendar.conf`. Una tarea que ya no nombra ningún `--task` pierde su timer, y una con unidad propia, como `purge`, o con un calendario que systemd no lee, hace fallar `install.py` ([ADR-0151](../adr/0151-una-tarea-con-otro-calendario-corre-en-su-instancia-de-task.md)).
+- Otra tarea de [fastapi.md](fastapi.md#tareas) corre en `<app>-task@<tarea>.service`, con la cuenta del servidor, y su timer, con el calendario de `install.py --task <tarea>=<OnCalendar>`, que va en `<app>-task@<tarea>.timer.d/calendar.conf`. Una tarea que ya no nombra ningún `--task` pierde su timer, y una con unidad propia, como `purge`, o con un calendario que systemd no lee, hace fallar `install.py` ([ADR-0151](../adr/0151-una-tarea-con-otro-calendario-corre-en-su-instancia-de-task.md)).
 - Cada unidad queda con una exposición de 2.0 o menos en `systemd-analyze security`.
 - Cada unidad activa toda opción de *Sandboxing* que no le impide funcionar ([systemd.exec, *Sandboxing*](../fuentes/systemd/systemd.exec.xml)).
 - Cada unidad lleva `ProtectSystem=strict` y `ProtectProc=invisible` ([systemd.exec, *Sandboxing*](../fuentes/systemd/systemd.exec.xml) y [*Paths*](../fuentes/systemd/systemd.exec.xml)).
@@ -283,6 +284,7 @@ Estándares: [systemd.exec](../fuentes/systemd/systemd.exec.xml) de systemd y el
 
 Estándares: [*Backup and Restore*](../fuentes/postgresql/backup.sgml) de PostgreSQL y NIST IR 7966, [*Security of Interactive and Automated Access Management Using Secure Shell (SSH)*](../fuentes/nist/ir7966.txt).
 
+- Los archivos de los usuarios viven en la máquina, en `/var/lib/<app>/files/`, y el respaldo los cubre junto con la base.
 - El respaldo lleva el dump y `/var/lib/<app>/files/`, y sale de la máquina con `restic`, cifrado, hacia una receptora con `rest-server`. El código no va: está en los releases.
 - La receptora pide el respaldo con `plantilla/receiver/`: abre `rest-server` en su puerto 8001 y un túnel `ssh -R` al 8001 del servidor, espera el resultado y cierra los dos.
 - `rest-server` corre con `--append-only` y sin contraseña, y solo escucha en el loopback de la receptora: el servidor agrega respaldos, pero no borra ni reescribe los que hay, y restic los cifra.
@@ -370,6 +372,8 @@ Estándares: de Valkey, [*Administration*](../fuentes/valkey/admin.md) y [*Secur
 | Convención | Herramienta |
 | :--- | :--- |
 | `scripts/play.py` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
+| Que una pieza en Java arranca con su jar, responde en loopback, solo alcanza localhost, se detiene sin fallar y queda con una exposición de 2.0 o menos | Una pieza de prueba en el systemd de Debian 13, con [scripts/infra/java.sh](../scripts/infra/java.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
+| Que `install.py --java` instala y habilita la unidad de una pieza en Java, que sin `--java` no la instala, que `deploy.py` la reinicia y que `uninstall.py` la borra | [scripts/infra/java.sh](../scripts/infra/java.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
 | Que cada host sirve su pieza con `Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`, `frame-ancestors`, `Referrer-Policy`, `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy` y `Permissions-Policy`, sin `Server` ni `Cross-Origin-Embedder-Policy`, y su HTML con su charset; que HTTP redirige con 308; que solo la landing se indexa; que una pieza sin `index.html` sirve `200.html`; que una página con datos se sirve aunque tenga su carpeta, y que una pieza sin `200.html` responde con su `404.html` y un 404; que `/api/*` lleva las mismas cabeceras y `no-store`; que un cuerpo que pasa su límite recibe 413 y no llega entero al servidor, y que `/downloads/` sirve los instalables | El `Caddyfile` y los sitios en el Caddy que instala `packages.py`, con certificados propios de Caddy y un servidor en el 8000 que registra lo que le llega, con [scripts/infra/caddy.sh](../scripts/infra/caddy.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
 | Que una máquina nueva necesita dos `--signer`, que cada llave firma solo para `deploy` y que después solo se agregan; que `install.py` falla sin `systemd-timesyncd` habilitado, sin `ca-certificates` o con un Caddy de otra serie; que apt lee el reinicio automático de las 04:00; que `credentials.py` cifra cada campo en su carpeta y con el nombre que carga su unidad, escribe solo lo que recibe y no escribe nada si una línea está mal; que Valkey no abre TCP, que su socket solo lo abre el grupo de la app, que tiene su `maxmemory` con `noeviction` y `vm.overcommit_memory = 1`, y que la instancia del paquete queda apagada; que `root` no tiene contraseña y una cuenta de la app no puede ser la que administra; que `install.py` falla con un `<app>` que no da nombres de cuenta válidos; y que las llaves de la cuenta quedan en un archivo de `root` y una llave débil falla | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn`, con [scripts/infra/install.sh](../scripts/infra/install.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
 | Que `packages.py --list` nombra los paquetes de cada opción sin instalarlos, que `--all` nombra los de todas, y que sin `--list` los instala, con Caddy de su repositorio, en la serie de `caddy.pref`, y su origen en `unattended-upgrades` | `packages.py` en el apt de Debian 13, con [scripts/infra/packages.sh](../scripts/infra/packages.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |

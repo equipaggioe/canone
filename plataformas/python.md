@@ -15,6 +15,9 @@ Estándar: las [*Good Integration Practices*](../fuentes/pytest/goodpractices.rs
 - Las dependencias y la configuración de pytest van en el `pyproject.toml` de la pieza: no hay `requirements.txt` ni `pytest.ini`.
 - El paquete se llama `app` en toda pieza, con `module-name = "app"` en `[tool.uv.build-backend]`. Los archivos canónicos lo nombran y se copian sin editar.
 - uv maneja el entorno, las dependencias y la ejecución: crea el entorno virtual `.venv` de la pieza, instala en él la pieza, sus dependencias y pytest, bloquea y ejecuta ([Good Integration Practices, *Install package in a virtual environment*](../fuentes/pytest/goodpractices.rst)).
+- Ninguna dependencia bloqueada tiene una vulnerabilidad conocida.
+- Una vulnerabilidad se ignora solo por su identificador, con `--ignore-vuln`. Sacar el paquete del análisis también tapa sus vulnerabilidades futuras.
+- CI corre `deptry`, que falla con un paquete que el código de `src/` importa sin declararlo en `dependencies`, o con una dependencia que no se usa ([stack.md](../stack.md#qué-entra)).
 - Las pruebas van fuera del código, y el código, en el layout `src` ([Good Integration Practices, *Choosing a test layout*](../fuentes/pytest/goodpractices.rst)):
 
 ```text
@@ -30,12 +33,6 @@ Estándar: las [*Good Integration Practices*](../fuentes/pytest/goodpractices.rs
 ```
 
 Plantilla: el `pyproject.toml` de cada pieza, en [plantilla/server/](../plantilla/server/), [plantilla/qt/](../plantilla/qt/) y [plantilla/flet/](../plantilla/flet/), [plantilla/python/.gitignore](../plantilla/python/.gitignore) y los jobs de Python de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml). Cada uno lleva la configuración de esta página más la de su plataforma.
-
-## Dependencias
-
-- Ninguna dependencia bloqueada tiene una vulnerabilidad conocida.
-- Una vulnerabilidad se ignora solo por su identificador, con `--ignore-vuln`. Sacar el paquete del análisis también tapa sus vulnerabilidades futuras.
-- CI corre `deptry`, que falla con un paquete que el código de `src/` importa sin declararlo en `dependencies`, o con una dependencia que no se usa ([stack.md](../stack.md#qué-entra)).
 
 ## Estilo
 
@@ -67,7 +64,7 @@ Estándar: [PEP 8](../fuentes/python/pep-0008.rst).
 - Un recurso que usa una sola sección del código se libera con `with`, o con `try` y `finally` ([PEP 8, *Programming Recommendations*](../fuentes/python/pep-0008.rst)).
 - Un administrador de contexto que hace algo más que tomar y liberar un recurso se obtiene de una función o un método que lo dice, como `conn.begin_transaction()` ([PEP 8, *Programming Recommendations*](../fuentes/python/pep-0008.rst)).
 
-## Comentarios y docstrings
+## Comentarios
 
 Estándares: [PEP 8](../fuentes/python/pep-0008.rst) y [PEP 257](../fuentes/python/pep-0257.rst).
 

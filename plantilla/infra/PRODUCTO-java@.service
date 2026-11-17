@@ -5,7 +5,7 @@ Wants=network-online.target
 
 [Service]
 Type=exec
-# java.md: the piece keeps no state, and only the server talks to it.
+# despliegue.md: the piece keeps no state, and only the server talks to it.
 DynamicUser=yes
 WorkingDirectory=/srv/PRODUCTO/current/%i
 ExecStart=/usr/bin/java -jar /srv/PRODUCTO/current/%i/%i.jar

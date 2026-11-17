@@ -6,12 +6,15 @@
 #     sh logs.sh <logs.conf> <journal-upload.conf>
 set -eu
 work=$(mktemp -d)
+# The keys and the configurations of WireGuard go under /etc/wireguard/: the AppArmor profiles
+# of wg and wg-quick in Ubuntu 26.04 let them read nothing else, also in a container.
+keys=/etc/wireguard/canone-logs
 pids=
 cleanup() {
     status=$?
     for pid in $pids; do kill "$pid" 2>/dev/null || true; done
     for namespace in central machine other; do ip netns del "$namespace" 2>/dev/null || true; done
-    rm -rf "$work" /etc/systemd/journal-upload.conf.d/00-app.conf
+    rm -rf "$work" "$keys" /etc/systemd/journal-upload.conf.d/00-app.conf
     exit "$status"
 }
 trap cleanup EXIT
@@ -35,15 +38,16 @@ ip -n central link set central-other up
 ip -n machine link set machine up
 ip -n other link set other up
 umask 077
+mkdir -p "$keys"
 for name in central machine other; do
-    wg genkey > "$work/$name.key"
-    wg pubkey < "$work/$name.key" > "$work/$name.pub"
+    wg genkey > "$keys/$name.key"
+    wg pubkey < "$keys/$name.key" > "$keys/$name.pub"
 done
 # The central end knows only the key of the machine, at 10.77.0.2.
 ip -n central link add wg0 type wireguard
 ip -n central addr add 10.77.0.1/24 dev wg0
-ip netns exec central wg set wg0 listen-port 51820 private-key "$work/central.key" \
-    peer "$(cat "$work/machine.pub")" allowed-ips 10.77.0.2/32
+ip netns exec central wg set wg0 listen-port 51820 private-key "$keys/central.key" \
+    peer "$(cat "$keys/machine.pub")" allowed-ips 10.77.0.2/32
 ip -n central link set wg0 up
 mkdir "$work/received"
 ip netns exec central /usr/lib/systemd/systemd-journal-remote --listen-http=10.77.0.1:19532 \
@@ -51,10 +55,10 @@ ip netns exec central /usr/lib/systemd/systemd-journal-remote --listen-http=10.7
 pids="$pids $!"
 # Each sender brings up the tunnel of the template, as install.py writes it.
 up() {
-    mkdir "$work/$1"
-    sed -e "s|LLAVE|$(cat "$work/$1.key")|" -e "s|TUNEL|10.77.0.2|" \
-        -e "s|CENTRAL|$(cat "$work/central.pub")|" -e "s|EXTREMO|$2:51820|" "$3" > "$work/$1/logs.conf"
-    ip netns exec "$1" wg-quick up "$work/$1/logs.conf"
+    mkdir "$keys/$1"
+    sed -e "s|LLAVE|$(cat "$keys/$1.key")|" -e "s|TUNEL|10.77.0.2|" \
+        -e "s|CENTRAL|$(cat "$keys/central.pub")|" -e "s|EXTREMO|$2:51820|" "$3" > "$keys/$1/logs.conf"
+    ip netns exec "$1" wg-quick up "$keys/$1/logs.conf"
 }
 up machine 192.0.2.1 "$1"
 up other 198.51.100.1 "$1"

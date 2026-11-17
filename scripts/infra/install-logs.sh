@@ -9,6 +9,9 @@
 set -eu
 install=$1/plantilla/infra/install.py
 work=$(mktemp -d)
+# The keys and the configurations of WireGuard go under /etc/wireguard/: the AppArmor profiles
+# of wg and wg-quick in Ubuntu 26.04 let them read nothing else, also in a container.
+keys=/etc/wireguard/canone-install-logs
 upload=systemd-journal-upload.service
 retry=/etc/systemd/system/systemd-journal-upload.service.d/demo.conf
 pids=
@@ -17,7 +20,7 @@ cleanup() {
     for pid in $pids; do kill "$pid" 2>/dev/null || true; done
     ip netns del central 2>/dev/null || true
     if [ -f "$work/retry.conf" ]; then mv "$work/retry.conf" "$retry"; fi
-    rm -rf "$work" /etc/systemd/journald.conf.d/99-retention.conf
+    rm -rf "$work" "$keys" /etc/systemd/journald.conf.d/99-retention.conf
     systemctl daemon-reload
     systemctl restart systemd-journald.service
     exit "$status"
@@ -50,7 +53,7 @@ run() {
         --key "$(cat "$work/a.pub")" --key "$(cat "$work/b.pub")" \
         --signer "$(cat "$work/s1.pub")" --signer "$(cat "$work/s2.pub")" --owner owner "$@"
 }
-logs() { run --logs 192.0.2.1:51820 --logs-key "$(cat "$work/central.pub")" --logs-ip 10.77.0.2; }
+logs() { run --logs 192.0.2.1:51820 --logs-key "$(cat "$keys/central.pub")" --logs-ip 10.77.0.2; }
 # An account that already administers: install.py only adds its keys, and asks no password.
 id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
 
@@ -62,11 +65,12 @@ ip addr add 192.0.2.2/24 dev to-central
 ip link set to-central up
 ip -n central addr add 192.0.2.1/24 dev central
 ip -n central link set central up
-wg genkey > "$work/central.key"
-wg pubkey < "$work/central.key" > "$work/central.pub"
+mkdir -p "$keys"
+wg genkey > "$keys/central.key"
+wg pubkey < "$keys/central.key" > "$keys/central.pub"
 ip -n central link add wg0 type wireguard
 ip -n central addr add 10.77.0.1/24 dev wg0
-ip netns exec central wg set wg0 listen-port 51820 private-key "$work/central.key"
+ip netns exec central wg set wg0 listen-port 51820 private-key "$keys/central.key"
 ip -n central link set wg0 up
 mkdir "$work/received"
 receiver

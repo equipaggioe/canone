@@ -95,7 +95,7 @@ Plantilla: [plantilla/server/](../plantilla/server/) y el job `server` de [plant
 - La configuración es una instancia de `Settings`, que hereda de `BaseSettings` de pydantic-settings.
 - `Settings` lleva solo lo que cambia entre despliegues. Lo que no cambia es una constante del módulo que lo usa: se versiona y se prueba con el código.
 - Todo campo de `Settings` es obligatorio y sin valor por defecto.
-- `Settings(_secrets_dir=os.environ["CREDENTIALS_DIRECTORY"])` lee solo los archivos de esa carpeta, sin variables de entorno: cada valor sale de un solo lugar. Cada archivo se llama como su campo con el prefijo `app_`, el que pone systemd al cargar la carpeta ([despliegue.md](despliegue.md#configuración)), y `env_prefix="app_"` lo quita. Una carpeta que no existe solo da un aviso, y cada campo falla igual por faltar. [pydantic-settings 2.16.2](https://raw.githubusercontent.com/pydantic/pydantic-settings/v2.16.2/pydantic_settings/sources/providers/secrets.py)
+- `Settings(_secrets_dir=os.environ["CREDENTIALS_DIRECTORY"])` lee solo los archivos de esa carpeta, sin variables de entorno: cada valor sale de un solo lugar. Cada archivo se llama como su campo con el prefijo `app_`, el que pone systemd al cargar la carpeta ([despliegue.md](despliegue.md#configuración)), y `env_prefix="app_"` lo quita. Una carpeta que no existe solo da un aviso, y cada campo falla igual por faltar. [pydantic-settings 2.16.3](https://raw.githubusercontent.com/pydantic/pydantic-settings/v2.16.3/pydantic_settings/sources/providers/secrets.py)
 - En desarrollo, `uv run --env-file .env` apunta `CREDENTIALS_DIRECTORY` a `credentials/`, que git ignora.
 
 ## Base de datos
@@ -106,7 +106,7 @@ Estándares: [*Session Basics*](../fuentes/sqlalchemy/session_basics.rst) y la [
 - Una relación bidireccional declara `back_populates` en los dos lados.
 - Un enum hereda de `StrEnum`. La `Base` guarda solo esos como `text` con `CHECK`; un `str, Enum` se vuelve un enum nativo de Postgres que guarda el nombre y no el valor.
 - Una columna `created_at` es `CreatedAt`, y una `updated_at` es `UpdatedAt`, de la `Base`. Las dos toman `now()`; `updated_at` lo toma en cada `UPDATE` que emite SQLAlchemy.
-- Una relación de uno a muchos deja el borrado al `ON DELETE` de la clave foránea del hijo. Si es `CASCADE`, lleva las cascadas `save-update`, `merge`, `delete` y `delete-orphan`, con `passive_deletes=True`; si es `RESTRICT`, lleva `passive_deletes="all"`. Sin eso, el ORM carga los hijos para ponerles `NULL`: un `CASCADE` falla por el `NOT NULL`, y un `RESTRICT` cambia en silencio una fila que no le pertenece al padre. [SQLAlchemy 2.1.8](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_8/doc/build/orm/cascades.rst)
+- Una relación de uno a muchos deja el borrado al `ON DELETE` de la clave foránea del hijo. Si es `CASCADE`, lleva las cascadas `save-update`, `merge`, `delete` y `delete-orphan`, con `passive_deletes=True`; si es `RESTRICT`, lleva `passive_deletes="all"`. Sin eso, el ORM carga los hijos para ponerles `NULL`: un `CASCADE` falla por el `NOT NULL`, y un `RESTRICT` cambia en silencio una fila que no le pertenece al padre. [SQLAlchemy 2.1.9](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_9/doc/build/orm/cascades.rst)
 - Toda relación lleva `lazy="raise"`: lo que se lee de ella se carga antes con una opción de carga, como `selectinload` ([asyncio, *Preventing Implicit IO when Using AsyncSession*](../fuentes/sqlalchemy/asyncio.rst)).
 - SQLAlchemy se instala con el extra `asyncio` ([asyncio, *Asyncio Platform Installation Notes*](../fuentes/sqlalchemy/asyncio.rst)).
 - El engine y `SessionFactory`, su `async_sessionmaker`, se crean una sola vez, en `database.py` ([Session Basics, *Using a sessionmaker*](../fuentes/sqlalchemy/session_basics.rst)).
@@ -169,7 +169,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 ## Ciclo de vida
 
-- El arranque y el cierre van en el `lifespan` de la app: `on_event` está obsoleto. [FastAPI 0.162.0](https://raw.githubusercontent.com/fastapi/fastapi/0.162.0/fastapi/applications.py)
+- El arranque y el cierre van en el `lifespan` de la app: `on_event` está obsoleto. [FastAPI 0.163.1](https://raw.githubusercontent.com/fastapi/fastapi/0.163.1/fastapi/applications.py)
 
 ## Tareas
 

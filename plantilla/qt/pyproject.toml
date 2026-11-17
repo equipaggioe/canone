@@ -10,16 +10,16 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-  "datamodel-code-generator[ruff]>=0.95.0",
+  "datamodel-code-generator[ruff]>=0.97.0",
   "deptry>=0.25.1",
   "pip-audit>=2.10.1",
-  "pyrefly>=1.4.0",
+  "pyrefly>=1.4.1",
   "pytest>=9.2.0",
   "pytest-qt>=4.5.0",
-  "ruff>=0.17.3",
+  "ruff>=0.17.5",
 ]
 deploy = [
-  "imageio>=2.38.1",
+  "imageio>=2.38.2",
   "nuitka[onefile]>=4.3.5",
   "patchelf>=0.19.3.0; sys_platform == 'linux'",
 ]

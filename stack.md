@@ -36,8 +36,8 @@ Página: [python.md](plataformas/python.md). Vale para toda pieza en Python.
 | uv | 0.13.7 | [Proyecto](plataformas/python.md#proyecto) |
 | `uv_build` | 0.13.7 | [Proyecto](plataformas/python.md#proyecto) |
 | pytest | 9.2.0 | [Pruebas](plataformas/python.md#pruebas) |
-| ruff | 0.17.3 | [Estilo](plataformas/python.md#estilo) |
-| Pyrefly | 1.4.0 | [Tipos](plataformas/python.md#tipos) |
+| ruff | 0.17.5 | [Estilo](plataformas/python.md#estilo) |
+| Pyrefly | 1.4.1 | [Tipos](plataformas/python.md#tipos) |
 | deptry | 0.25.1 | [Proyecto](plataformas/python.md#proyecto) |
 | pip-audit | 2.10.1 | [Cumplimiento](plataformas/python.md#cumplimiento) |
 | Pydantic | 2.14.3 | [Esquemas](plataformas/fastapi.md#esquemas) |
@@ -49,10 +49,10 @@ Página: [fastapi.md](plataformas/fastapi.md).
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
-| FastAPI | 0.162.0 | — |
+| FastAPI | 0.163.1 | — |
 | Starlette | 1.10.0 | — |
-| pydantic-settings | 2.16.2 | [Configuración](plataformas/fastapi.md#configuración) |
-| SQLAlchemy | 2.1.8 | [Base de datos](plataformas/fastapi.md#base-de-datos) |
+| pydantic-settings | 2.16.3 | [Configuración](plataformas/fastapi.md#configuración) |
+| SQLAlchemy | 2.1.9 | [Base de datos](plataformas/fastapi.md#base-de-datos) |
 | asyncpg | 0.32.0 | [Base de datos](plataformas/fastapi.md#base-de-datos) |
 | Alembic | 1.20.1 | [Migraciones](plataformas/fastapi.md#migraciones) |
 | valkey-py | 6.2.0 | [Valkey](plataformas/fastapi.md#valkey) |
@@ -67,7 +67,7 @@ Página: [fastapi.md](plataformas/fastapi.md).
 | stripe, con el extra `async`, con Stripe | 17.0.0 | [Pagos](plataformas/fastapi.md#pagos) |
 | OpenTelemetry | 1.45.2 | [Trazas](plataformas/fastapi.md#trazas) |
 | AnyIO | 4.16.0 | [Pruebas](plataformas/fastapi.md#pruebas) |
-| httpx-ws | 0.9.0 | [Pruebas](plataformas/fastapi.md#pruebas) |
+| httpx-ws | 0.10.0 | [Pruebas](plataformas/fastapi.md#pruebas) |
 
 ## Autenticación
 
@@ -75,7 +75,7 @@ Página: [autenticacion.md](plataformas/autenticacion.md). Son paquetes del serv
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
-| pwdlib | 0.3.1 | [Contraseñas](plataformas/autenticacion.md#contraseñas) |
+| pwdlib | 0.4.2 | [Contraseñas](plataformas/autenticacion.md#contraseñas) |
 | phonenumbers | 9.0.43 | [Código por SMS](plataformas/autenticacion.md#código-por-sms) |
 | webauthn | 3.0.1 | [Passkeys](plataformas/autenticacion.md#passkeys) |
 | PyJWT | 2.15.1 | [Token de acceso](plataformas/autenticacion.md#token-de-acceso) |
@@ -138,7 +138,7 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | `prettier-plugin-svelte` | 4.1.1 | [Estilo](plataformas/sveltekit.md#estilo) |
 | ESLint | 10.15.0 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `eslint-plugin-svelte` | 3.24.1 | [Estilo](plataformas/sveltekit.md#estilo) |
-| `typescript-eslint` | 8.72.2 | [Estilo](plataformas/sveltekit.md#estilo) |
+| `typescript-eslint` | 8.73.0 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `@eslint/js` | 10.0.1 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `globals` | 17.14.0 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `eslint-config-prettier` | 10.1.8 | [Estilo](plataformas/sveltekit.md#estilo) |
@@ -175,14 +175,14 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | json_serializable | 6.15.2 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | build_runner | 2.17.1 | [Proyecto](plataformas/flutter.md#proyecto) |
 | dependency_validator | 5.1.0 | [Proyecto](plataformas/flutter.md#proyecto) |
-| swagger_parser | 2.1.1 | [OpenAPI y clientes](plataformas/flutter.md#openapi-y-clientes) |
+| swagger_parser | 2.3.0 | [OpenAPI y clientes](plataformas/flutter.md#openapi-y-clientes) |
 | shared_preferences | 2.5.6 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
 | flutter_secure_storage | 11.2.0 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
 | flutter_appauth | 13.0.0 | [Código de autorización](plataformas/flutter.md#código-de-autorización) |
 | sms_autofill | 2.6.1 | [Código por SMS](plataformas/flutter.md#código-por-sms) |
-| flutter_stripe, con Stripe | 14.2.0 | [Pagos](plataformas/flutter.md#pagos) |
-| firebase_core | 5.1.0 | [Push](plataformas/flutter.md#push) |
-| firebase_messaging | 17.0.1 | [Push](plataformas/flutter.md#push) |
+| flutter_stripe, con Stripe | 15.0.0 | [Pagos](plataformas/flutter.md#pagos) |
+| firebase_core | 5.2.0 | [Push](plataformas/flutter.md#push) |
+| firebase_messaging | 17.1.0 | [Push](plataformas/flutter.md#push) |
 | flutter_localizations | el de Flutter 3.47.9 | [Idiomas](plataformas/flutter.md#idiomas) |
 | intl | 0.20.3 | [Idiomas](plataformas/flutter.md#idiomas) |
 | uuid | 4.6.0 | [Reintentos](plataformas/flutter.md#reintentos) |
@@ -204,8 +204,8 @@ Página: [android.md](plataformas/android.md).
 | La API de Android, en `minSdk` | 28 | [Passkeys](plataformas/android.md#passkeys) |
 | El plugin `org.jlleitschuh.gradle.ktlint` | 14.2.0 | [Estilo](plataformas/android.md#estilo) |
 | ktlint | 1.8.0 | [Estilo](plataformas/android.md#estilo) |
-| El plugin `com.autonomousapps.dependency-analysis` | 3.20.3 | [Proyecto](plataformas/android.md#proyecto) |
-| KSP | 2.3.13 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
+| El plugin `com.autonomousapps.dependency-analysis` | 3.20.4 | [Proyecto](plataformas/android.md#proyecto) |
+| KSP | 2.3.14 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | Hilt | 2.60.1 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | `javax.inject` | 1, la que trae Hilt | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | `androidx.hilt:hilt-lifecycle-viewmodel-compose` | 1.4.0 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
@@ -246,9 +246,9 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter 
 | :--- | :--- | :--- |
 | Flet | 1.1.2 | — |
 | flet-secure-storage | 1.1.2 | [Almacenamiento](plataformas/flet.md#almacenamiento) |
-| httpx-ws | 0.9.0 | [WebSocket](plataformas/flet.md#websocket) |
+| httpx-ws | 0.10.0 | [WebSocket](plataformas/flet.md#websocket) |
 | Babel | 2.18.0 | [Idiomas](plataformas/flet.md#idiomas) |
-| datamodel-code-generator, con el extra `ruff` | 0.95.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |
+| datamodel-code-generator, con el extra `ruff` | 0.97.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |
 | Pydantic, en lugar de la de [Python](#python) | 2.13.4 | [Proyecto](plataformas/flet.md#proyecto) |
 
 ## Qt
@@ -259,10 +259,10 @@ Página: [qt.md](plataformas/qt.md). Se suma a [Python](#python).
 | :--- | :--- | :--- |
 | PySide6 y Qt | 6.12.0 | [Proyecto](plataformas/qt.md#proyecto) |
 | keyring | 25.7.0 | [Almacenamiento](plataformas/qt.md#almacenamiento) |
-| datamodel-code-generator, con el extra `ruff` | 0.95.0 | [OpenAPI y clientes](plataformas/qt.md#openapi-y-clientes) |
+| datamodel-code-generator, con el extra `ruff` | 0.97.0 | [OpenAPI y clientes](plataformas/qt.md#openapi-y-clientes) |
 | pytest-qt | 4.5.0 | [Pruebas](plataformas/qt.md#pruebas) |
 | Nuitka | 4.3.5 | [Entrega](plataformas/qt.md#entrega) |
-| imageio | 2.38.1 | [Entrega](plataformas/qt.md#entrega) |
+| imageio | 2.38.2 | [Entrega](plataformas/qt.md#entrega) |
 | patchelf | 0.19.3.0 | [Entrega](plataformas/qt.md#entrega) |
 
 ## CI

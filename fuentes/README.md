@@ -18,8 +18,8 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [pytest/goodpractices.rst](pytest/goodpractices.rst) | [URL](https://raw.githubusercontent.com/pytest-dev/pytest/9.2.0/doc/en/explanation/goodpractices.rst) |  |
 | [typing/best_practices.rst](typing/best_practices.rst) | [URL](https://raw.githubusercontent.com/python/typing/953e24d71aa6ea97f58852046fc355d11b564333/docs/reference/best_practices.rst) |  |
 | [typing/modernizing.rst](typing/modernizing.rst) | [URL](https://raw.githubusercontent.com/python/typing/39164cd2c5b4e2608cb8b5d2fc8af9ae6f0c0fe8/docs/guides/modernizing.rst) |  |
-| [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | [URL](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_8/doc/build/orm/extensions/asyncio.rst) |  |
-| [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | [URL](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_8/doc/build/orm/session_basics.rst) |  |
+| [sqlalchemy/asyncio.rst](sqlalchemy/asyncio.rst) | [URL](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_9/doc/build/orm/extensions/asyncio.rst) |  |
+| [sqlalchemy/session_basics.rst](sqlalchemy/session_basics.rst) | [URL](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_9/doc/build/orm/session_basics.rst) |  |
 | [alembic/autogenerate.rst](alembic/autogenerate.rst) | [URL](https://raw.githubusercontent.com/sqlalchemy/alembic/rel_1_20_1/docs/build/autogenerate.rst) |  |
 | [postgresql/datatype.sgml](postgresql/datatype.sgml) | [URL](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/datatype.sgml) |  |
 | [postgresql/json.sgml](postgresql/json.sgml) | [URL](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/json.sgml) |  |

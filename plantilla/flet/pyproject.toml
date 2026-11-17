@@ -6,20 +6,20 @@ dependencies = [
   "flet==1.1.2",
   "flet-secure-storage==1.1.2",
   "httpx==0.28.1",
-  "httpx-ws==0.9.0",
+  "httpx-ws==0.10.0",
   "pydantic==2.13.4",
 ]
 
 [dependency-groups]
 dev = [
   "babel>=2.18.0",
-  "datamodel-code-generator[ruff]>=0.95.0",
+  "datamodel-code-generator[ruff]>=0.97.0",
   "flet[cli,test]>=1.1.2",
   "deptry>=0.25.1",
   "pip-audit>=2.10.1",
-  "pyrefly>=1.4.0",
+  "pyrefly>=1.4.1",
   "pytest>=9.2.0",
-  "ruff>=0.17.3",
+  "ruff>=0.17.5",
 ]
 
 [tool.flet]

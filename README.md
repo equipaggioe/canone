@@ -8,6 +8,8 @@ Los proyectos que usan Canone comparten sus convenciones y decisiones en un solo
 
 Canone está escrito para un asistente de IA: le dice con qué y cómo se construye cada proyecto, para no explicárselo en cada sesión. El desarrollador revisa aquí lo que el asistente va a leer.
 
+Canone escribe decisiones: lo que tiene más de una forma que funciona. No escribe cómo funciona una tecnología, que el asistente ya sabe.
+
 Lo que Canone escribe rige: una herramienta lo comprueba cuando puede, y apartarse requiere un ADR del repositorio.
 
 Cada proyecto elige las tecnologías que utiliza y consulta únicamente las convenciones correspondientes. Canone responde a la pregunta «si se usa X, ¿cómo se usa?», sin convertir su catálogo en una lista de requisitos universales.

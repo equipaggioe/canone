@@ -39,12 +39,18 @@ Para trabajar en una pieza se leen enteras su página y las que nombra «Se lee 
 
 Una página es un catálogo de convenciones de una tecnología o ámbito. Cada convención está escrita en la página: la adoptada, con su origen en una fuente, y la propia, establecida directamente por Canone.
 
-Una convención entra solo si se puede nombrar qué empeora sin ella, aunque todavía no haya pasado, en el producto tal como es y no en una escala que no tiene ([principios.md](../principios.md#poder-nombrar-el-síntoma)):
+Una página escribe decisiones, no cómo funciona su tecnología. Una convención entra solo si cumple las dos condiciones:
 
-- **Eficacia:** el programa falla, da un resultado incorrecto sin que nadie lo note, queda expuesto a un ataque o pierde datos.
-- **Eficiencia:** el programa usa más tiempo, memoria o red de lo necesario.
-- **Uso:** la interfaz se ve o se comporta distinto según la parte del producto, o deja a un usuario sin poder usarlo.
-- **Estructura:** dos piezas no se entienden, un repositorio no se lee como los demás, una decisión se vuelve a tomar en cada repositorio, o un cambio o una actualización cuesta más de lo necesario.
+1. **Hay elección:** existe otra forma que también funciona. Lo que tiene una sola forma correcta, como el orden en que una API exige sus llamadas, es conocimiento de la tecnología y no se escribe: quien escribe el código ya lo sabe.
+2. **Se puede nombrar qué empeora sin ella**, aunque todavía no haya pasado, en el producto tal como es y no en una escala que no tiene ([principios.md](../principios.md#poder-nombrar-el-síntoma)):
+   - **Eficacia:** el programa falla, da un resultado incorrecto sin que nadie lo note, queda expuesto a un ataque o pierde datos.
+   - **Eficiencia:** el programa usa más tiempo, memoria o red de lo necesario.
+   - **Uso:** la interfaz se ve o se comporta distinto según la parte del producto, o deja a un usuario sin poder usarlo.
+   - **Estructura:** dos piezas no se entienden, un repositorio no se lee como los demás, una decisión se vuelve a tomar en cada repositorio, o un cambio o una actualización cuesta más de lo necesario.
+
+Una preferencia cumple la segunda condición por la estructura: sin la convención, cada sesión o cada repositorio elegiría distinto.
+
+Lo que tiene una sola forma correcta se escribe solo si ya se hizo mal y está comprobado ([Evidencia](#evidencia)). Va como convención propia.
 
 En una regla de estilo se pregunta qué empeora si no hubiera regla, no si otro valor sería peor. No justifica una convención que una fuente la establezca, que una herramienta pueda comprobarla ni que complete una lista.
 
@@ -52,11 +58,11 @@ En una regla de estilo se pregunta qué empeora si no hubiera regla, no si otro 
 
 Una fuente se usa como guía, para que un asunto siga un mismo enfoque: por eso se prefieren pocas fuentes que cubran muchos asuntos. No se busca una fuente para cada convención, ni se recorren las fuentes disponibles para incorporar lo que digan. Una convención no necesita una fuente que la justifique: el origen registra de dónde salió, para ver su coherencia con las demás.
 
-La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Una decisión cuenta solo si dejarla sin resolver empeora algo según el criterio de [Función de las páginas](#función-de-las-páginas). Una fuente se adopta para un asunto porque sus convenciones se acomodan a lo que el producto necesita, no para cubrir decisiones sueltas. Cada decisión se resuelve con una convención de la fuente de su asunto o, si esa fuente no la resuelve o el asunto no tiene fuente, con una convención propia.
+La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Una decisión cuenta solo si cumple las dos condiciones de [Función de las páginas](#función-de-las-páginas). Una fuente se adopta para un asunto porque sus convenciones se acomodan a lo que el producto necesita, no para cubrir decisiones sueltas. Cada decisión se resuelve con una convención de la fuente de su asunto o, si esa fuente no la resuelve o el asunto no tiene fuente, con una convención propia.
 
 Una fuente debe cumplir además los siete requisitos siguientes:
 
-1. **Normativa:** establece qué se debe, se debería o no se debe hacer. Cada convención que se toma de ella debe poder expresarse como «se usa X» o «no se hace Y». Los procedimientos, ejemplos y explicaciones no cuentan, aunque aparezcan en la documentación oficial.
+1. **Normativa:** toma posición donde hay más de una forma que funciona: establece cuál se usa y cuál no. Cada convención que se toma de ella debe poder expresarse como «se usa X» o «no se hace Y». No es fuente un documento que explica cómo funciona o cómo se usa una tecnología, sea un manual, una visión general, un tutorial o una referencia de API, aunque sea oficial y diga «se debe». De un documento que mezcla las dos cosas cuentan solo las posiciones.
 2. **Decide algo:** responde a uno de los puntos que deben resolverse para la tecnología o ámbito.
 3. **Autoridad:** procede de quien define la tecnología o de un organismo que publica criterios para que otros los adopten: un estándar, una especificación, una guía de estilo oficial, OWASP o NIST. No cuentan los tutoriales, ejemplos de código, proyectos de muestra, blogs, cursos, foros, prácticas de la comunidad ni la popularidad.
 4. **De la versión en uso:** corresponde a la versión de la tecnología utilizada. La copia conservada en `fuentes/` fija el texto del que salen las convenciones adoptadas.
@@ -82,7 +88,7 @@ Este orden da preferencia a lo que publica quien define la tecnología:
 
 ### Adopción de fuentes
 
-Adoptar una fuente es escribir sus convenciones en la página, cada una con su origen. Lo que la página no escribe no rige.
+Adoptar una fuente es seguir su enfoque en un asunto. La página escribe, cada una con su origen, solo las posiciones de la fuente que cumplen las dos condiciones de [Función de las páginas](#función-de-las-páginas). El resto de la fuente no se escribe, y no hay que justificar por qué. Lo que la página no escribe no rige.
 
 #### Origen
 
@@ -201,7 +207,7 @@ Una página que empieza con la nota «En desarrollo; no se implementa» no se ap
 
 ## Revisión
 
-Una revisión evalúa cada fuente, cada convención y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. Una convención adoptada se compara con su origen. En cada fuente, lo que la página no escribe tiene que caer en un caso de «Qué no se escribe». No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.
+Una revisión evalúa cada fuente, cada convención y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. Una convención adoptada se compara con su origen. Lo que la página no escribe de una fuente no se evalúa: no escribir es lo normal. No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.
 
 Una revisión llega a la página que se escribiría de cero con los criterios de este documento, desde las decisiones que hay que tomar y con sus fuentes como guía: la página revisada no es punto de partida ni argumento. Lo que está mal se corrige en su causa: se rediseña la convención o la sección de la que sale, aunque eso cambie o saque otras partes de la página, y no se le agrega una excepción ni se retoca la redacción para que siga. Si la causa es un criterio de este documento, la revisión propone cambiar el criterio. Una fuente o una convención nueva solo se propone si cumple el criterio de [Función de las páginas](#función-de-las-páginas), con su efecto comprobado; sin la comprobación, queda como candidata sin confirmar.
 
@@ -209,7 +215,7 @@ El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
 
 | Elemento evaluado | Alternativa | Veredicto |
 | :--- | :--- | :--- |
-| Fuente, convención o fila de cumplimiento, con su ubicación en la página, o lo que la página no escribe de una fuente | Lo que se consideró en su lugar, o «Ninguna» | «Se queda», «Cambia» o «Sale», con la razón y la evidencia |
+| Fuente, convención o fila de cumplimiento, con su ubicación en la página | Lo que se consideró en su lugar, o «Ninguna» | «Se queda», «Cambia» o «Sale», con la razón y la evidencia |
 
 ### Evidencia
 

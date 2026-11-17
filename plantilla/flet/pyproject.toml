@@ -26,6 +26,7 @@ bundle_id = "DOMINIO-INVERSO.PIEZA"
 product = "PRODUCTO"
 company = "EMPRESA"
 artifact = "PIEZA"
+build_number = 1
 
 [tool.flet.app]
 path = "src"

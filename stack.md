@@ -205,6 +205,7 @@ Página: [android.md](plataformas/android.md).
 | `activity-compose` | 1.13.0 | [Compose](plataformas/android.md#compose) |
 | `androidx.core:core` | 1.19.1 | [Idiomas](plataformas/android.md#idiomas) |
 | Lifecycle | 2.11.0 | [Arquitectura](plataformas/android.md#arquitectura) |
+| `kotlinx-coroutines-core` | 1.11.0 | [Corrutinas](plataformas/android.md#corrutinas) |
 | Navigation 3 | 1.2.1 | [Arquitectura](plataformas/android.md#arquitectura) |
 | Paging, con `paging-common` y `paging-compose` | 3.5.3 | [Paginación](plataformas/android.md#paginación) |
 | WorkManager | 2.12.0 | [Arquitectura](plataformas/android.md#arquitectura) |

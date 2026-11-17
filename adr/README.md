@@ -173,3 +173,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0165](0165-qt-escribe-solo-lo-que-elige-y-se-aplica.md) | `qt.md` escribe solo lo que elige, y se aplica a los repositorios | Con Qt |
 | [0167](0167-android-escribe-solo-lo-que-elige-y-cumple-los-contratos-de-red.md) | `android.md` escribe solo lo que elige, y cumple los contratos de red de `transversal.md` | Con Android |
 | [0168](0168-android-traduce-errores-pagina-con-paging-y-sigue-el-idioma-por-app.md) | Android traduce los errores en la fuente de red, pagina con Paging 3 y sigue el idioma por app del sistema | Con Android |
+| [0170](0170-cada-app-guarda-su-numero-de-build-en-su-manifiesto.md) | Cada app guarda su número de build en su manifiesto | Con Android, Flutter o Flet |

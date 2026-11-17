@@ -179,7 +179,7 @@ Contrato: [transversal.md](transversal.md#distribución).
 - `[tool.flet]` declara `bundle_id`, `<dominio al revés>.<pieza>`: sin él, sale de `org`, que vale `com.flet` si falta ([Publishing, *Bundle ID*](../fuentes/flet/publish.md) y [*Organization name*](../fuentes/flet/publish.md)).
 - `[tool.flet]` declara `product`, el nombre que ve el usuario: sin él, es `[project].name` ([Publishing, *Product name*](../fuentes/flet/publish.md)).
 - `src/assets/icon.png` es un PNG cuadrado de 1024 × 1024 px, con fondo transparente y el dibujo hasta el borde: Flet genera con él los iconos de cada sistema ([Publishing, *Icons*](../fuentes/flet/publish.md)).
-- Cada versión que se publica lleva como número de build el `github.run_number` de su release, mayor que el de la anterior ([Publishing, *Build Number*](../fuentes/flet/publish.md)).
+- El número de build es `build_number`, de `[tool.flet]` ([Publishing, *Build Number*](../fuentes/flet/publish.md)).
 - `flet build` no recibe argumentos de `flutter build` ([Publishing, *Additional `flutter build` Arguments*](../fuentes/flet/publish.md)).
 - `pyproject.toml` no agrega ni reemplaza dependencias de Flutter ([Publishing, *Flutter dependencies*](../fuentes/flet/publish.md)).
 - La versión de Android que va a Google Play es un AAB, de `flet build aab` ([Packaging app for Android, *`flet build aab`*](../fuentes/flet/publish-android.md)).

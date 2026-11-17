@@ -70,6 +70,7 @@ Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 ## Distribución
 
 - Los ejecutables y los instaladores de Windows van sin firmar.
+- El número de build de una app de Android, de Flutter o de Flet es un entero que vive en su manifiesto, junto a su versión, y sube con cada versión que se publica.
 - Una app de Android se publica en Google Play con Play App Signing: la llave que firma la app la genera y la guarda Play, y cada versión llega a Play firmada con la llave de subida. [Play App Signing](https://support.google.com/googleplay/android-developer/answer/9842756)
 - La descarga directa de una app de Android, si la tiene, es el APK universal que Play genera de esa misma versión: la tienda y la descarga llevan la misma firma, y una app instalada por una se actualiza por la otra. [Download generated APKs](https://developers.google.com/android-publisher/download-apks)
 

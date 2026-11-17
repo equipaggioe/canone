@@ -235,7 +235,7 @@ jobs:
           FLET_ANDROID_SIGNING_KEY_STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
           FLET_ANDROID_SIGNING_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
           FLET_ANDROID_SIGNING_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
-        run: uv run flet build aab --build-number ${{ github.run_number }} --yes
+        run: uv run flet build aab --yes
       - env:
           ACCOUNT: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
         run: >-
@@ -284,7 +284,7 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install -y
           $(uv run flet --version --json | jq -r '.linux_dependencies | join(" ")')
-      - run: uv run flet build ${{ matrix.target }} --build-number ${{ github.run_number }} --yes
+      - run: uv run flet build ${{ matrix.target }} --yes
       # The runner has no FUSE 2, which appimagetool needs. The AppImage keeps the .bin name of
       # install.py: it is an executable like any other.
       - if: runner.os == 'Linux'

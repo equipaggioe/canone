@@ -352,6 +352,7 @@ Estándar: las [recomendaciones de arquitectura](../fuentes/android/architecture
 Contrato: [transversal.md](transversal.md#distribución).
 
 - La versión se compila con `./gradlew bundleRelease` y se firma con la llave de subida que nombra `key.properties`, que git ignora. [Sign your app](https://developer.android.com/studio/publish/app-signing)
+- El número de build es el `versionCode` de `defaultConfig`, en `app/build.gradle.kts`.
 - La versión de release lleva `isShrinkResources = true`.
 - La versión de release activa R8 en su modo completo, con `isMinifyEnabled = true` ([Recommendations, *Performance*](../fuentes/android/architecture-recommendations.md)).
 

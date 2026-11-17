@@ -4,16 +4,20 @@ Cada página reúne las convenciones de una tecnología o ámbito de implementac
 
 Para trabajar en una pieza se leen enteras su página y las que nombra «Se lee con» en [Páginas](#páginas), y de [stack.md](../stack.md), el bloque de cada una. Las demás páginas no aplican.
 
+El resto de este documento dice cómo se escribe y cómo se revisa una página.
+
 ## Terminología
 
 - **Ámbito:** área de implementación que agrupa convenciones aplicables a distintas tecnologías o piezas.
 - **Asunto:** grupo de decisiones que se responden juntas, como el vencimiento de la sesión o los atributos de su cookie. Una sección de una página reúne uno o varios asuntos.
 - **Convención:** criterio que determina cómo se construyen, organizan o integran las piezas de un sistema.
-- **Convención adoptada:** convención establecida por una fuente normativa externa, que la página escribe con su origen.
-- **Convención propia:** convención establecida directamente por Canone porque la fuente de su asunto no resuelve esa decisión o el asunto no tiene fuente, o porque es necesario elegir o modificar lo que establece la fuente.
+- **Convención adoptada:** convención que establece una fuente normativa, y que la página escribe con su origen.
+- **Convención propia:** convención que establece Canone. No lleva origen, salvo que sea una elección o un endurecimiento.
+- **Elección:** convención propia que fija una opción o un valor que una regla de una fuente permite. Lleva el origen de esa regla.
+- **Endurecimiento:** convención propia que vuelve obligatorio lo que una regla de una fuente recomienda como preferencia, ofrece como opción o condiciona a que sea posible. Lleva el origen de esa regla.
 - **Fuente normativa:** documento externo que establece convenciones que pueden adoptarse.
 - **Material de referencia:** lista de nombres o valores que utiliza una convención, como un registro, sin ser una fuente normativa.
-- **Origen:** la fuente, y la sección o las secciones de ella, de la que sale una convención adoptada.
+- **Origen:** la fuente, y la sección o las secciones de ella, de la que sale una convención.
 - **Parte:** una sección de una fuente, o el fragmento de una sección que trata un mismo asunto.
 - **Pieza:** componente identificable de un sistema que tiene una responsabilidad y puede documentarse por separado.
 - **Tecnología:** herramienta, lenguaje, framework, plataforma o sistema concreto utilizado para implementar una pieza.
@@ -35,11 +39,25 @@ Para trabajar en una pieza se leen enteras su página y las que nombra «Se lee 
 | [java.md](java.md) | Una pieza en Java que solo llama el servidor, en la misma máquina | — |
 | [despliegue.md](despliegue.md) | La configuración del servidor | — |
 
-## Función de las páginas
+### Alcance
 
-Una página es un catálogo de convenciones de una tecnología o ámbito. Cada convención está escrita en la página: la adoptada, con su origen en una fuente, y la propia, establecida directamente por Canone.
+- Una página con página madre hereda sus convenciones. No debe repetirlas; únicamente documenta las particularidades de su ámbito. Por ejemplo, `fastapi.md`, `flet.md` y `qt.md` heredan de `python.md`.
+- Cada página dice solo lo que hace su pieza, salvo `autenticacion.md`, que reúne todo el registro, la autenticación y la sesión de una cuenta, también lo que hace una sola pieza.
+- Las convenciones que deben cumplir conjuntamente varias piezas de un sistema se documentan en `transversal.md`, salvo las de la cuenta, que van en `autenticacion.md`: `transversal.md` no trata el registro, la autenticación ni la sesión. Una sección de esas dos páginas que no obliga a todas las piezas dice a cuáles.
+- Una sección de la página de una pieza que cumple una sección de `transversal.md` o de `autenticacion.md` la enlaza en un párrafo `Contrato:`, antes de sus convenciones y después del párrafo `Estándar:`, si lo lleva.
+- Cada página identifica las plantillas de `plantilla/` que se derivan de sus convenciones.
+- Las páginas no fijan qué se usa en cada plataforma ni en qué versión: eso está en [stack.md](../stack.md), y cada página escribe cómo se usa.
+- Las páginas no indican qué repositorios utilizan cada tecnología ni establecen cuándo elegir una plataforma sobre otra.
 
-Una página escribe decisiones, no cómo funciona su tecnología. Una convención entra solo si cumple las dos condiciones:
+### En desarrollo
+
+Una página que empieza con la nota «En desarrollo; no se implementa» no se aplica a ningún repositorio mientras la nota esté: no seguirla no es una desviación, y `verificar.py` no exige nada de ella. Dentro de Canone se revisa y se desarrolla como cualquier otra parte.
+
+## Qué entra en una página
+
+Una página escribe decisiones, no cómo funciona su tecnología. Se escribe desde las decisiones que la tecnología obliga a tomar, y escribe cada convención que rige, adoptada o propia.
+
+Una convención entra solo si cumple las dos condiciones:
 
 1. **Hay elección:** existe otra forma que también funciona. Lo que tiene una sola forma correcta, como el orden en que una API exige sus llamadas, es conocimiento de la tecnología y no se escribe: quien escribe el código ya lo sabe.
 2. **Se puede nombrar qué empeora sin ella**, aunque todavía no haya pasado, en el producto tal como es y no en una escala que no tiene ([principios.md](../principios.md#poder-nombrar-el-síntoma)):
@@ -48,29 +66,50 @@ Una página escribe decisiones, no cómo funciona su tecnología. Una convenció
    - **Uso:** la interfaz se ve o se comporta distinto según la parte del producto, o deja a un usuario sin poder usarlo.
    - **Estructura:** dos piezas no se entienden, un repositorio no se lee como los demás, una decisión se vuelve a tomar en cada repositorio, o un cambio o una actualización cuesta más de lo necesario.
 
-Una preferencia cumple la segunda condición por la estructura: sin la convención, cada sesión o cada repositorio elegiría distinto.
+Una preferencia cumple la segunda condición por la estructura: sin la convención, cada sesión o cada repositorio elegiría distinto. En una regla de estilo se pregunta qué empeora si no hubiera regla, no si otro valor sería peor.
 
 Lo que tiene una sola forma correcta se escribe solo si ya se hizo mal y está comprobado ([Evidencia](#evidencia)). Va como convención propia.
 
-En una regla de estilo se pregunta qué empeora si no hubiera regla, no si otro valor sería peor. No justifica una convención que una fuente la establezca, que una herramienta pueda comprobarla ni que complete una lista.
+No justifica una convención que una fuente la establezca, que una herramienta pueda comprobarla ni que complete una lista.
 
-### Selección de fuentes
+### Qué no se escribe
+
+No se escribe lo que no cumple las dos condiciones, ni lo siguiente:
+
+- **Lo que hace cumplir una herramienta:** si una herramienta de «Cumplimiento» hace cumplir entera una parte de una fuente, la página no escribe sus convenciones. Escribe una sola convención que nombra esa parte, con su origen, y dice qué reglas de esa parte no sigue, con su razón. La herramienta va en «Cumplimiento». Lo que la herramienta no cubre se escribe convención por convención.
+- **Lo dirigido a otro actor:** no se escriben las obligaciones dirigidas a quienes desarrollan una herramienta que el producto utiliza, como coturn, Uvicorn o un navegador, ni las dirigidas a la otra parte de un protocolo, como el servicio de push de Web Push. Sí se escriben las opciones que la herramienta deja a quien la configura, como los destinos a los que coturn niega relevar.
+- **Lo de una función que no se ofrece:** no se escribe. Agregarla obliga a volver a la fuente.
+- **Lo de un asunto que sigue a otra fuente:** no se escribe con el origen de esta. Si la fuente de ese asunto no lo resuelve, se escribe como convención propia.
+- **Lo repetido:** lo que dicen varias partes de la fuente de un asunto se escribe una sola vez, con todas esas partes.
+- **Lo que no se sigue:** no se escribe, salvo en la convención que nombra una parte que hace cumplir una herramienta: ahí se dice qué reglas no se siguen y por qué. Si la página hace otra cosa, escribe lo que hace como convención propia.
+
+### Una convención, una sección
+
+- Cada convención se escribe en una sola sección, de cualquier página.
+- Dos convenciones no deben regular lo mismo.
+
+## Fuentes
 
 Una fuente se usa como guía, para que un asunto siga un mismo enfoque: por eso se prefieren pocas fuentes que cubran muchos asuntos. No se busca una fuente para cada convención, ni se recorren las fuentes disponibles para incorporar lo que digan. Una convención no necesita una fuente que la justifique: el origen registra de dónde salió, para ver su coherencia con las demás.
 
-La revisión empieza por identificar qué decisiones obliga a tomar la tecnología. Una decisión cuenta solo si cumple las dos condiciones de [Función de las páginas](#función-de-las-páginas). Una fuente se adopta para un asunto porque sus convenciones se acomodan a lo que el producto necesita, no para cubrir decisiones sueltas. Cada decisión se resuelve con una convención de la fuente de su asunto o, si esa fuente no la resuelve o el asunto no tiene fuente, con una convención propia.
+Una fuente se adopta para un asunto porque sus convenciones se acomodan a lo que el producto necesita, no para cubrir decisiones sueltas. Cada decisión se resuelve con una convención de la fuente de su asunto o, si esa fuente no la resuelve o el asunto no tiene fuente, con una convención propia.
 
-Una fuente debe cumplir además los siete requisitos siguientes:
+### Requisitos
 
-1. **Normativa:** toma posición donde hay más de una forma que funciona: establece cuál se usa y cuál no. Cada convención que se toma de ella debe poder expresarse como «se usa X» o «no se hace Y». No es fuente un documento que explica cómo funciona o cómo se usa una tecnología, sea un manual, una visión general, un tutorial o una referencia de API, aunque sea oficial y diga «se debe». De un documento que mezcla las dos cosas cuentan solo las posiciones.
-2. **Decide algo:** responde a uno de los puntos que deben resolverse para la tecnología o ámbito.
-3. **Autoridad:** procede de quien define la tecnología o de un organismo que publica criterios para que otros los adopten: un estándar, una especificación, una guía de estilo oficial, OWASP o NIST. No cuentan los tutoriales, ejemplos de código, proyectos de muestra, blogs, cursos, foros, prácticas de la comunidad ni la popularidad.
-4. **De la versión en uso:** corresponde a la versión de la tecnología utilizada. La copia conservada en `fuentes/` fija el texto del que salen las convenciones adoptadas.
-5. **Independiente:** las convenciones adoptadas no dependen de la infraestructura de quien publica la fuente.
-6. **Cubre:** resuelve la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente todas las páginas, para que esos asuntos sigan su enfoque. En esos asuntos, lo no cubierto debe quedar en minoría. Lo que se contradice o se dirige a otro actor no cuenta como cubierto. Si una fuente no cumple este requisito, no es fuente, y las convenciones que se aprovechen de ella se establecen como convenciones propias.
-7. **Aporta:** es el origen de al menos tres convenciones, contando todas las páginas. Cuentan también las elecciones y los endurecimientos que la tienen como origen. No cuenta lo que se dirige a otro actor. Si no llega a tres, no es fuente, y sus convenciones se escriben como propias.
+Una fuente debe cumplir los seis requisitos siguientes:
 
-Entre las fuentes que cumplen los siete requisitos y se acomodan a un asunto, se elige la que se acomoda a más asuntos, contando todas las páginas, siempre que resuelva la mayoría de las decisiones de ese asunto. Para contar, los documentos de un mismo publicador que no se contradicen valen como uno, aunque cada uno sigue siendo una fuente aparte. Si aun así empatan, se elige la de mayor prioridad en la tabla y, a igual prioridad, la que resuelve más decisiones del asunto. El asunto sigue solo a la fuente elegida: las demás no se citan en él, aunque digan lo mismo.
+1. **Normativa:** toma posición en uno de los puntos que deben resolverse para la tecnología o ámbito, donde hay más de una forma que funciona: establece cuál se usa y cuál no. Cada convención que se toma de ella debe poder expresarse como «se usa X» o «no se hace Y». No es fuente un documento que explica cómo funciona una tecnología, sea un manual, una visión general, un tutorial o una referencia de API, aunque sea oficial y diga «se debe». De un documento que mezcla las dos cosas cuentan solo las posiciones.
+2. **Autoridad:** procede de quien define la tecnología o de un organismo que publica criterios para que otros los adopten: un estándar, una especificación, una guía de estilo oficial, OWASP o NIST. No cuentan los tutoriales, ejemplos de código, proyectos de muestra, blogs, cursos, foros, prácticas de la comunidad ni la popularidad.
+3. **De la versión en uso:** corresponde a la versión de la tecnología utilizada. La copia conservada en `fuentes/` fija el texto del que salen las convenciones adoptadas.
+4. **Independiente:** las convenciones adoptadas no dependen de la infraestructura de quien publica la fuente.
+5. **Cubre:** resuelve la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente todas las páginas, para que esos asuntos sigan su enfoque. En esos asuntos, lo no cubierto debe quedar en minoría. Lo que se contradice o se dirige a otro actor no cuenta como cubierto.
+6. **Aporta:** es el origen de al menos tres convenciones, contando todas las páginas. Cuentan también las elecciones y los endurecimientos que la tienen como origen. No cuenta lo que se dirige a otro actor.
+
+Un documento que no cumple «Cubre» o «Aporta» no es fuente, y lo que se aproveche de él se escribe como convención propia.
+
+### Elección entre fuentes
+
+Entre las fuentes que cumplen los seis requisitos y se acomodan a un asunto, se elige la que se acomoda a más asuntos, contando todas las páginas, siempre que resuelva la mayoría de las decisiones de ese asunto. Para contar, los documentos de un mismo publicador que no se contradicen valen como uno, aunque cada uno sigue siendo una fuente aparte. Si aun así empatan, se elige la de mayor prioridad en la tabla y, a igual prioridad, la que resuelve más decisiones del asunto. El asunto sigue solo a la fuente elegida: las demás no se citan en él, aunque digan lo mismo.
 
 | Orden | Fuente |
 | :--- | :--- |
@@ -86,42 +125,18 @@ Este orden da preferencia a lo que publica quien define la tecnología:
 - **Vigencia:** sus recomendaciones evolucionan junto con la tecnología, mientras que una convención propia puede quedar obsoleta sin que se advierta.
 - **Conocimiento compartido:** quienes ya conocen la tecnología, incluidas las personas que se incorporan al proyecto, suelen conocer también sus convenciones oficiales.
 
-### Adopción de fuentes
+### Adopción
 
-Adoptar una fuente es seguir su enfoque en un asunto. La página escribe, cada una con su origen, solo las posiciones de la fuente que cumplen las dos condiciones de [Función de las páginas](#función-de-las-páginas). El resto de la fuente no se escribe, y no hay que justificar por qué. Lo que la página no escribe no rige.
+Adoptar una fuente es seguir su enfoque en un asunto. La página escribe, cada una con su origen, solo las posiciones de la fuente que cumplen las dos condiciones de [Qué entra en una página](#qué-entra-en-una-página). El resto de la fuente no se escribe, y no hay que justificar por qué. De una fuente rige solo lo que la página escribe.
 
-#### Origen
+### Origen
 
 - Una convención adoptada termina con su origen: un enlace a la copia de su fuente en `fuentes/`, con el nombre de la fuente y la sección de la que sale. La sección se nombra por su número, si la fuente las numera, o por su título en cursiva. Por ejemplo: `([RFC 6749 §4.1.3](../fuentes/rfc/rfc6749.txt))` o `([PEP 8, *Imports*](../fuentes/python/pep-0008.rst))`.
 - Una convención tiene como origen una sola fuente, y puede nombrar varias de sus secciones.
 - Una convención con origen solo dice lo que su origen establece, con su razón cuando la lleva, o la opción que elige o la forma que endurece. Un valor o un comportamiento que la fuente no fija va en otra convención, propia y sin origen.
-- Una convención propia no lleva origen, salvo una elección o un endurecimiento, que llevan el de la regla de la que salen.
 - Una sección con convenciones adoptadas empieza por un párrafo `Estándar:` o `Estándares:` que nombra, con su enlace, los documentos que son su origen. Es informativo: no adopta nada por sí mismo, y no nombra secciones ni lleva «salvo».
 
-#### Qué no se escribe
-
-No se escribe lo que no cumple el criterio de [Función de las páginas](#función-de-las-páginas), ni lo siguiente:
-
-- **Lo que hace cumplir una herramienta:** si una herramienta de «Cumplimiento» hace cumplir entera una parte de una fuente, la página no escribe sus convenciones. Escribe una sola convención que nombra esa parte, con su origen, y dice qué reglas de esa parte no sigue, con su razón. La herramienta va en «Cumplimiento». Lo que la herramienta no cubre se escribe convención por convención.
-- **Lo dirigido a otro actor:** no se escriben las obligaciones dirigidas a quienes desarrollan una herramienta que el producto utiliza, como coturn, Uvicorn o un navegador, ni las dirigidas a la otra parte de un protocolo, como el servicio de push de Web Push. Sí se escriben las opciones que la herramienta deja a quien la configura, como los destinos a los que coturn niega relevar.
-- **Lo de una función que no se ofrece:** no se escribe. Agregarla obliga a volver a la fuente.
-- **Lo de un asunto que sigue a otra fuente:** no se escribe con el origen de esta. Si la fuente de ese asunto no lo resuelve, se escribe como convención propia.
-- **Lo repetido:** lo que dicen varias partes de la fuente de un asunto se escribe una sola vez, con todas esas partes.
-- **Lo que no se sigue:** no se escribe, salvo en la convención que nombra una parte que hace cumplir una herramienta: ahí se dice qué reglas no se siguen y por qué. Si la página hace otra cosa, escribe lo que hace como convención propia.
-
-#### Una convención, una sección
-
-- Cada convención se escribe en una sola sección, de cualquier página.
-- Dos convenciones no deben regular lo mismo.
-
-#### Convenciones propias y valores predeterminados
-
-- Los valores predeterminados de una herramienta que ninguna fuente exige rigen mientras la página no establezca otra cosa. Cambiarlos constituye una convención propia, salvo que la fuente de su asunto exija el cambio.
-- Un valor predeterminado que exige la fuente de su asunto es una convención adoptada, y se escribe.
-- Una convención propia que se apoya en un hecho que no es evidente, como el comportamiento de un navegador, enlaza el documento que lo prueba, en su versión fija. Si es una elección, no lleva enlace. El enlace no adopta el resto del documento, y ese documento no se copia en `fuentes/`. La convención no menciona otros documentos, ni siquiera para contradecirlos. Incluye únicamente la convención, cuando corresponda su razón, y ese enlace.
-- Una convención que utiliza material de referencia indica de dónde lo obtiene. Enlaza su copia en `fuentes/` si un programa de Canone toma valores de él, y su URL pública si no.
-
-#### Verificación
+### Verificación
 
 - `scripts/verificar.py --canone` comprueba en CI que:
   - Cada enlace a `fuentes/` apunte a un archivo que existe.
@@ -130,21 +145,26 @@ No se escribe lo que no cumple el criterio de [Función de las páginas](#funci�
   - El párrafo `Estándar:` de una sección nombre los mismos documentos que son origen de sus convenciones, y nada más que esos documentos.
   - Cada convención tome su origen de un solo documento de `fuentes/`.
 
-## Convenciones de la página
+## Convenciones propias
 
-La página escribe cada convención que rige, adoptada o propia, salvo lo que deja fuera «Qué no se escribe».
+Una convención propia se establece en tres casos:
 
-Las convenciones propias se establecen en tres casos:
+1. **Elección:** se selecciona una opción o un valor que la fuente permite, como un plazo menor que su máximo. Se escribe solo la opción elegida.
+2. **Excepción:** se hace algo distinto de lo que establece una fuente, o se endurece lo que establece. Se escribe lo que se hace; un endurecimiento se escribe solo en su forma endurecida.
+3. **Decisión no cubierta:** la fuente de su asunto no resuelve esa decisión, o el asunto no tiene fuente.
 
-1. **Elecciones:** se selecciona una opción o un valor que la fuente permite, como un plazo menor que su máximo. Se escribe solo la opción elegida, con el origen de la regla.
-2. **Excepciones:** se hace algo distinto de lo que establece una fuente, o se endurece lo que establece. Endurecer significa convertir en obligatorio lo que la fuente recomienda como preferencia, ofrece como opción o condiciona a que sea posible. Se escribe lo que se hace; un endurecimiento se escribe solo en su forma endurecida, con el origen de la regla que endurece.
-3. **Decisiones no cubiertas:** se establecen convenciones sobre las decisiones que la fuente de su asunto no resuelve, o sobre asuntos sin fuente.
+Además:
 
-### Redacción
+- Los valores predeterminados de una herramienta que ninguna fuente exige rigen mientras la página no establezca otra cosa. Cambiarlos constituye una convención propia, salvo que la fuente de su asunto exija el cambio.
+- Un valor predeterminado que exige la fuente de su asunto es una convención adoptada, y se escribe.
+- Una convención propia que se apoya en un hecho que no es evidente, como el comportamiento de un navegador, enlaza el documento que lo prueba, en su versión fija. Si es una elección, no lleva enlace. El enlace no adopta el resto del documento, y ese documento no se copia en `fuentes/`. La convención no menciona otros documentos, ni siquiera para contradecirlos. Incluye únicamente la convención, cuando corresponda su razón, y ese enlace.
+- Una convención que utiliza material de referencia indica de dónde lo obtiene. Enlaza su copia en `fuentes/` si un programa de Canone toma valores de él, y su URL pública si no.
+
+## Redacción
 
 - Cada convención expresa qué se utiliza y cómo queda. No describe procedimientos ni explica cómo hacerlo.
 - Las convenciones de una misma página no deben contradecirse. Si una convención modifica el alcance de otra, debe indicar expresamente qué casos quedan fuera.
-- Una convención incluye una justificación breve únicamente cuando se aparta de una fuente o la endurece, o cuando explica una elección cuyo motivo no resulta evidente. Las preferencias triviales, como un color o el largo de línea, no llevan justificación.
+- Una convención incluye una razón breve únicamente cuando se aparta de una fuente o de otra regla de Canone, o cuando endurece una fuente. La razón de cualquier otra decisión va en su ADR.
 - No se añaden comentarios, explicaciones ni ejemplos que no sean necesarios para entender o aplicar la convención.
 - En cada sección van primero las convenciones propias, y después las adoptadas. De las propias, primero las que no llevan origen, y después las elecciones y los endurecimientos. Una estructura va después de esas convenciones, y la línea `Plantilla:` cierra la sección.
 
@@ -171,7 +191,6 @@ Las secciones de una página siguen este orden. Se incluyen únicamente los bloq
 ### Criterios de orden
 
 - En **Código** y **Arquitectura**, las secciones se ordenan según sus dependencias: primero se describe lo necesario para comprender las secciones posteriores.
-- Los temas de **Temas** se presentan en orden alfabético.
 - Cuando un mismo tema aparece en distintas páginas, conserva el mismo título y ubicación relativa siempre que corresponda al mismo bloque.
 
 ## Cumplimiento
@@ -191,31 +210,29 @@ Se utiliza una tabla con estas columnas:
 - Una herramienta que imponga convenciones adicionales a las documentadas en esa fila no se incluye. No debe introducir requisitos que la página no haya establecido.
 - Si romper una convención ya hace fallar un paso de CI, como el build o `svelte-check`, ese paso es su herramienta: no se agrega un chequeo aparte.
 
-## Alcance
-
-- Una página con página madre hereda sus convenciones. No debe repetirlas; únicamente documenta las particularidades de su ámbito. Por ejemplo, `fastapi.md`, `flet.md` y `qt.md` heredan de `python.md`.
-- Cada página dice solo lo que hace su pieza, salvo `autenticacion.md`, que reúne todo el registro, la autenticación y la sesión de una cuenta, también lo que hace una sola pieza.
-- Las convenciones que deben cumplir conjuntamente varias piezas de un sistema se documentan en `transversal.md`, salvo las de la cuenta, que van en `autenticacion.md`: `transversal.md` no trata el registro, la autenticación ni la sesión. Una sección de esas dos páginas que no obliga a todas las piezas dice a cuáles.
-- Una sección de la página de una pieza que cumple una sección de `transversal.md` o de `autenticacion.md` la enlaza en un párrafo `Contrato:`, antes de sus convenciones y después del párrafo `Estándar:`, si lo lleva.
-- Cada página identifica las plantillas de `plantilla/` que se derivan de sus convenciones.
-- Las páginas no fijan qué se usa en cada plataforma ni en qué versión: eso está en [stack.md](../stack.md), y cada página escribe cómo se usa.
-- Las páginas no indican qué repositorios utilizan cada tecnología ni establecen cuándo elegir una plataforma sobre otra.
-
-## En desarrollo
-
-Una página que empieza con la nota «En desarrollo; no se implementa» no se aplica a ningún repositorio mientras la nota esté: no seguirla no es una desviación, y `verificar.py` no exige nada de ella. Dentro de Canone se revisa y se desarrolla como cualquier otra parte.
-
 ## Revisión
 
-Una revisión evalúa cada fuente, cada convención y cada fila de «Cumplimiento», utilizando los criterios establecidos en este documento. Una convención adoptada se compara con su origen. Lo que la página no escribe de una fuente no se evalúa: no escribir es lo normal. No se limita a señalar problemas: también deja constancia de lo que se revisó y se mantiene.
+Revisar una página, una sección o una fuente es comprobar que cumple este documento entero, y proponer lo que cambia, lo que sale y lo que falta. Se hacen los cinco pasos, aunque el pedido nombre un solo aspecto. Una revisión propone y no edita: los cambios se hacen cuando el desarrollador los aprueba.
 
-Una revisión llega a la página que se escribiría de cero con los criterios de este documento, desde las decisiones que hay que tomar y con sus fuentes como guía: la página revisada no es punto de partida ni argumento. Lo que está mal se corrige en su causa: se rediseña la convención o la sección de la que sale, aunque eso cambie o saque otras partes de la página, y no se le agrega una excepción ni se retoca la redacción para que siga. Si la causa es un criterio de este documento, la revisión propone cambiar el criterio. Una fuente o una convención nueva solo se propone si cumple el criterio de [Función de las páginas](#función-de-las-páginas), con su efecto comprobado; sin la comprobación, queda como candidata sin confirmar.
+1. **Decisiones:** qué decisiones tiene que resolver lo revisado, según las dos condiciones de [Qué entra en una página](#qué-entra-en-una-página).
+2. **Fuentes:** cada fuente, contra [Requisitos](#requisitos) y [Elección entre fuentes](#elección-entre-fuentes).
+3. **Convenciones:** cada convención, contra las dos condiciones, [Qué no se escribe](#qué-no-se-escribe), «Una convención, una sección» y [Redacción](#redacción). Una convención adoptada se compara con su origen.
+4. **Lo que falta:** para cada decisión del paso 1 que no tiene convención se propone una, de la fuente de su asunto o propia. Lo que la página no escribe de una fuente no se evalúa: no escribir es lo normal.
+5. **Cumplimiento:** cada fila, contra sus [Criterios](#criterios).
 
-El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
+Una revisión llega a la página que se escribiría de cero con los criterios de este documento: la página revisada no es punto de partida ni argumento. Ni el código de los proyectos, ni una página anterior, ni los ADR son fuente, ni justifican recomendar una fuente o una convención propia. El código solo sirve para identificar necesidades y casos de uso.
+
+Lo que está mal se corrige en su causa: se rediseña la convención o la sección de la que sale, aunque eso cambie o saque otras partes de la página, y no se le agrega una excepción ni se retoca la redacción para que siga. Si la causa es un criterio de este documento, la revisión propone cambiar el criterio.
+
+En una fuente o una convención que se propone, lo que afirma un hecho se comprueba; sin la comprobación, queda como candidata sin confirmar. Una preferencia se propone como preferencia, y la decide el desarrollador.
+
+El resultado se presenta en una tabla, con una fila por cada elemento evaluado, también los que se mantienen:
 
 | Elemento evaluado | Alternativa | Veredicto |
 | :--- | :--- | :--- |
-| Fuente, convención o fila de cumplimiento, con su ubicación en la página | Lo que se consideró en su lugar, o «Ninguna» | «Se queda», «Cambia» o «Sale», con la razón y la evidencia |
+| Fuente, convención o fila de cumplimiento, con su ubicación en la página, o decisión sin convención | Lo que se consideró en su lugar, o «Ninguna» | «Se queda», «Cambia», «Sale» o «Entra», con la razón y la evidencia |
+
+Ningún elemento queda fuera de la revisión sin que conste que no fue evaluado.
 
 ### Evidencia
 
@@ -226,9 +243,3 @@ El resultado se presenta en una tabla, con una fila por cada elemento evaluado:
 Las herramientas que hacen cumplir las convenciones se comprueban mediante experimentos, no de memoria ni por lo que aparentan hacer según su documentación.
 
 Antes de comprobar algo, se busca si ya está comprobado en las pruebas de CI de Canone o en un ADR. Si lo está, se usa su resultado, con sus versiones, y no se repite, salvo que haya cambiado una versión de la que depende. La decisión del ADR no es argumento: solo cuenta el resultado.
-
-Ningún elemento queda fuera de la revisión sin que conste que no fue evaluado.
-
-## Base de las convenciones
-
-Ni el código de los proyectos, ni una página anterior, ni los ADR son fuente, ni justifican recomendar una fuente o una convención propia. El código solo sirve para identificar necesidades y casos de uso. Una página se escribe de cero desde las decisiones que hay que tomar, con sus fuentes como guía.

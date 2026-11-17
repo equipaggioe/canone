@@ -10,11 +10,11 @@ Canone está escrito para un asistente de IA: le dice con qué y cómo se constr
 
 Canone escribe decisiones: lo que tiene más de una forma que funciona. No escribe cómo funciona una tecnología, que el asistente ya sabe.
 
-Lo que Canone escribe rige: una herramienta lo comprueba cuando puede, y apartarse requiere un ADR del repositorio.
+Lo que Canone escribe rige, y una herramienta lo comprueba cuando puede. Un repositorio se aparta de una convención solo con un ADR propio, en `docs/adr/`, que identifica la convención y explica el motivo.
 
 Cada proyecto elige las tecnologías que utiliza y consulta únicamente las convenciones correspondientes. Canone responde a la pregunta «si se usa X, ¿cómo se usa?», sin convertir su catálogo en una lista de requisitos universales.
 
-Al definir las convenciones de cada tecnología o ámbito, prioriza adoptarlas de fuentes normativas externas que ya establecen convenciones adecuadas, en vez de inventarlas: la página las escribe, cada una con su origen. Cuando esas fuentes no cubren una decisión, dejan opciones abiertas o requieren excepciones, Canone establece convenciones propias. Los criterios están en [plataformas/README.md](plataformas/README.md).
+Qué entra en una página, cómo se eligen sus fuentes y cómo se revisa está en [plataformas/README.md](plataformas/README.md).
 
 Además de documentar las convenciones, proporciona plantillas y herramientas para incorporarlas a los repositorios y comprobar su cumplimiento. Cuando una convención exige una configuración o un mecanismo en una máquina, Canone proporciona también el programa que lo implementa. Las convenciones, sus plantillas y sus programas se mantienen sincronizados; solo instalándolos se prueba su funcionamiento en conjunto.
 
@@ -29,8 +29,6 @@ Las siguientes convenciones aplican a todos los repositorios:
 - [documentacion.md](documentacion.md)
 
 Las convenciones de `plataformas/` dependen de las tecnologías utilizadas por cada proyecto. Qué páginas se leen para trabajar en una pieza está en [plataformas/README.md](plataformas/README.md), y qué se usa en cada plataforma y en qué versión, en [stack.md](stack.md).
-
-Un repositorio puede apartarse de una convención cuando exista un motivo justificado. La desviación se registra en un ADR propio, dentro de `docs/adr/`, que identifica la convención afectada y explica la decisión.
 
 ## Principios
 

@@ -17,7 +17,7 @@ Cada fuente se recorta al alcance que citan las páginas (UNIDADES) y se cuenta 
   la lista a mano.
 
 Ningún modo descuenta lo que la página escribe por su cuenta, deja sin efecto o dirige a otro actor
-(plataformas/README.md, «Selección de fuentes», requisito «Aporta»).
+(plataformas/README.md, «Requisitos», requisito «Aporta»).
 """
 from __future__ import annotations
 

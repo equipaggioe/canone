@@ -1,6 +1,6 @@
 # ADR-0145 · Una convención entra por lo que empeora sin ella, y una revisión la rehace desde la causa
 
-- **Estado:** Aceptada. El [ADR-0162](0162-una-pagina-escribe-decisiones-y-no-como-funciona-su-tecnologia.md) agrega una condición al punto 1
+- **Estado:** Aceptada. El [ADR-0162](0162-una-pagina-escribe-decisiones-y-no-como-funciona-su-tecnologia.md) agrega una condición al punto 1. El punto 3, en «con su efecto comprobado», lo reemplaza el [ADR-0163](0163-una-revision-recorre-el-documento-entero-y-propone-tambien-lo-que-falta.md)
 - **Fecha:** 2026-11-14
 - **Alcance:** [`plataformas/README.md`](../plataformas/README.md), «Función de las páginas»,
   «Qué no se escribe», «Revisión» y «Cumplimiento»

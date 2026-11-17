@@ -14,7 +14,7 @@ El resto de este documento dice cómo se escribe y cómo se revisa una página.
 - **Convención adoptada:** convención que establece una fuente normativa, y que la página escribe con su origen.
 - **Convención propia:** convención que establece Canone. No lleva origen, salvo que sea una elección o un endurecimiento.
 - **Elección:** convención propia que fija una opción o un valor que una regla de una fuente permite. Lleva el origen de esa regla.
-- **Endurecimiento:** convención propia que vuelve obligatorio lo que una regla de una fuente recomienda como preferencia, ofrece como opción o condiciona a que sea posible. Lleva el origen de esa regla.
+- **Endurecimiento:** convención propia que vuelve obligatorio lo que una regla de una fuente sugiere considerar, ofrece como opción o condiciona a que sea posible. Lleva el origen de esa regla. Una preferencia de la fuente entre dos formas, como «prefer X to Y», no es un endurecimiento: es una posición, y se adopta tal cual.
 - **Fuente normativa:** documento externo que establece convenciones que pueden adoptarse.
 - **Material de referencia:** lista de nombres o valores que utiliza una convención, como un registro, sin ser una fuente normativa.
 - **Origen:** la fuente, y la sección o las secciones de ella, de la que sale una convención.
@@ -103,7 +103,7 @@ Una fuente debe cumplir los seis requisitos siguientes:
 3. **De la versión en uso:** corresponde a la versión de la tecnología utilizada. La copia conservada en `fuentes/` fija el texto del que salen las convenciones adoptadas.
 4. **Independiente:** las convenciones adoptadas no dependen de la infraestructura de quien publica la fuente.
 5. **Cubre:** resuelve la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente todas las páginas, para que esos asuntos sigan su enfoque. En esos asuntos, lo no cubierto debe quedar en minoría. Lo que se contradice o se dirige a otro actor no cuenta como cubierto.
-6. **Aporta:** es el origen de al menos tres convenciones, contando todas las páginas. Cuentan también las elecciones y los endurecimientos que la tienen como origen. No cuenta lo que se dirige a otro actor.
+6. **Aporta:** es el origen de al menos tres convenciones, contando todas las páginas. Cuentan también las elecciones y los endurecimientos que la tienen como origen. No cuenta lo que se dirige a otro actor, ni una convención que se propone en la misma revisión.
 
 Un documento que no cumple «Cubre» o «Aporta» no es fuente, y lo que se aproveche de él se escribe como convención propia.
 
@@ -157,7 +157,7 @@ Además:
 
 - Los valores predeterminados de una herramienta que ninguna fuente exige rigen mientras la página no establezca otra cosa. Cambiarlos constituye una convención propia, salvo que la fuente de su asunto exija el cambio.
 - Un valor predeterminado que exige la fuente de su asunto es una convención adoptada, y se escribe.
-- Una convención propia que se apoya en un hecho que no es evidente, como el comportamiento de un navegador, enlaza el documento que lo prueba, en su versión fija. Si es una elección, no lleva enlace. El enlace no adopta el resto del documento, y ese documento no se copia en `fuentes/`. La convención no menciona otros documentos, ni siquiera para contradecirlos. Incluye únicamente la convención, cuando corresponda su razón, y ese enlace.
+- Una convención propia que se apoya en un hecho que no es evidente, como el comportamiento de un navegador, enlaza el documento que lo prueba, en su versión fija cuando el publicador la tiene. Si es una elección, no lleva enlace. El enlace no adopta el resto del documento, y ese documento no se copia en `fuentes/`. La convención no menciona otros documentos, ni siquiera para contradecirlos. Incluye únicamente la convención, cuando corresponda su razón, y ese enlace.
 - Una convención que utiliza material de referencia indica de dónde lo obtiene. Enlaza su copia en `fuentes/` si un programa de Canone toma valores de él, y su URL pública si no.
 
 ## Redacción
@@ -215,9 +215,9 @@ Se utiliza una tabla con estas columnas:
 Revisar una página, una sección o una fuente es comprobar que cumple este documento entero, y proponer lo que cambia, lo que sale y lo que falta. Se hacen los cinco pasos, aunque el pedido nombre un solo aspecto. Una revisión propone y no edita: los cambios se hacen cuando el desarrollador los aprueba.
 
 1. **Decisiones:** qué decisiones tiene que resolver lo revisado, según las dos condiciones de [Qué entra en una página](#qué-entra-en-una-página).
-2. **Fuentes:** cada fuente, contra [Requisitos](#requisitos) y [Elección entre fuentes](#elección-entre-fuentes).
+2. **Fuentes:** cada fuente, contra [Requisitos](#requisitos) y [Elección entre fuentes](#elección-entre-fuentes). No se propone una fuente nueva para convenciones que ya están escritas.
 3. **Convenciones:** cada convención, contra las dos condiciones, [Qué no se escribe](#qué-no-se-escribe), «Una convención, una sección» y [Redacción](#redacción). Una convención adoptada se compara con su origen.
-4. **Lo que falta:** para cada decisión del paso 1 que no tiene convención se propone una, de la fuente de su asunto o propia. Lo que la página no escribe de una fuente no se evalúa: no escribir es lo normal.
+4. **Lo que falta:** para cada decisión del paso 1 que no tiene convención se propone una, de la fuente de su asunto o propia. Lo que se propone cumple las dos condiciones igual que lo escrito. Lo que la página no escribe de una fuente no se evalúa: no escribir es lo normal.
 5. **Cumplimiento:** cada fila, contra sus [Criterios](#criterios).
 
 Una revisión llega a la página que se escribiría de cero con los criterios de este documento: la página revisada no es punto de partida ni argumento. Ni el código de los proyectos, ni una página anterior, ni los ADR son fuente, ni justifican recomendar una fuente o una convención propia. El código solo sirve para identificar necesidades y casos de uso.
@@ -226,7 +226,9 @@ Lo que está mal se corrige en su causa: se rediseña la convención o la secci�
 
 En una fuente o una convención que se propone, lo que afirma un hecho se comprueba; sin la comprobación, queda como candidata sin confirmar. Una preferencia se propone como preferencia, y la decide el desarrollador.
 
-El resultado se presenta en una tabla, con una fila por cada elemento evaluado, también los que se mantienen:
+Un defecto de `plantilla/`, del CI o de `verificar.py` que aparece al revisar se reporta aparte, después de la tabla: no es una convención.
+
+El resultado se presenta en una tabla, con una fila por cada elemento evaluado, también los que se mantienen. Los elementos seguidos que se quedan pueden ir juntos en una fila:
 
 | Elemento evaluado | Alternativa | Veredicto |
 | :--- | :--- | :--- |

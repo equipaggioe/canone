@@ -207,6 +207,7 @@ Página: [android.md](plataformas/android.md).
 | El plugin `com.autonomousapps.dependency-analysis` | 3.20.3 | [Proyecto](plataformas/android.md#proyecto) |
 | KSP | 2.3.13 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | Hilt | 2.60.1 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
+| `javax.inject` | 1, la que trae Hilt | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | `androidx.hilt:hilt-lifecycle-viewmodel-compose` | 1.4.0 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | El BOM de Compose | 2026.09.00 | [Compose](plataformas/android.md#compose) |
 | `activity-compose` | 1.13.0 | [Compose](plataformas/android.md#compose) |

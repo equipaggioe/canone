@@ -11,8 +11,9 @@ Una app de Android en Kotlin y Jetpack Compose.
 - Las dependencias y los plugins se declaran en el catálogo `gradle/libs.versions.toml`, con nombres en kebab-case, como `androidx-ktx`.
 - La versión de ktlint la fija el bloque `ktlint` de `app/build.gradle.kts`.
 - La versión que sube la que trae otra dependencia se fija en un bloque `constraints`, y no con una dependencia declarada.
-- El plugin `com.autonomousapps.dependency-analysis` va en el `build.gradle.kts` raíz y en el de `app`: aplicado solo en la raíz, no analiza `app`. Su bloque `dependencyAnalysis` del raíz hace fallar cada aviso con `onAny { severity("fail") }`. CI corre `./gradlew buildHealth`, que falla con una dependencia que no se usa o un paquete importado sin declarar ([stack.md](../stack.md#qué-entra)).
+- El plugin `com.autonomousapps.dependency-analysis` va en el `build.gradle.kts` raíz y en el de `app`: aplicado solo en la raíz, no analiza `app`. Su bloque `dependencyAnalysis` del raíz hace fallar cada aviso con `onAny { severity("fail") }`, y con `onUsedTransitiveDependencies { exclude(...) }` saca lo que solo usa el código que genera Hilt: `androidx.annotation:annotation`, `androidx.fragment:fragment`, `androidx.lifecycle:lifecycle-viewmodel-savedstate` y `org.jspecify:jspecify`: el import y el paquete los pone la misma versión de Hilt. CI corre `./gradlew buildHealth`, que falla con una dependencia que no se usa o un paquete importado sin declarar ([stack.md](../stack.md#qué-entra)).
 - `espresso-core` se fija con `constraints` en `androidTestImplementation`: el 3.5.0 que trae `ui-test-junit4` no corre en la API 37.
+- `core-ktx` se fija con `constraints` en la versión de `core`: la 1.18.0 que llega con otras dependencias repite clases de `core`.
 - Todo va en un solo módulo `app`, sin módulo de benchmark: sin un arranque lento medido, Macrobenchmark y los Baseline Profiles no tienen un síntoma que corregir.
 
 ```text

@@ -1,11 +1,13 @@
 r"""Install the packages of the machine, before install.py.
 
-    sudo python3 packages.py [--extension <name>]... [--turn] [--logs] [--java <piece>]... [--all]
-    python3 packages.py --list [--extension <name>]... [--turn] [--logs] [--java <piece>]... [--all]
+    sudo python3 packages.py [--extension <name>]... [--turn] [--logs] [--java <piece>]...
+        [--browser <task>=<OnCalendar>]... [--all]
+    python3 packages.py --list [--extension <name>]... [--turn] [--logs] [--java <piece>]...
+        [--browser <task>=<OnCalendar>]... [--all]
 
---extension, --turn, --logs and --java say what install.py receives with the same names, and --all stands
-for all of them: every package this program can install. --list prints the packages, one per
-line, and installs nothing: it runs on any system, also outside the machine.
+--extension, --turn, --logs, --java and --browser say what install.py receives with the same names,
+and --all stands for all of them: every package this program can install. --list prints the
+packages, one per line, and installs nothing: it runs on any system, also outside the machine.
 
 Caddy comes from its own repository: packages.py writes it to apt, with its key, the series of
 stack.md and its origin for unattended-upgrades, before it installs.
@@ -47,9 +49,13 @@ TURN = ("coturn",)
 LOGS = ("systemd-journal-remote", "wireguard-tools")
 # java.md: the JRE of Debian 13 that runs each piece in Java.
 JAVA = ("openjdk-21-jre-headless",)
+# ADR-0172: the Chromium of Debian 13 that a task of install.py --browser drives.
+BROWSER = ("chromium-headless-shell",)
 
 
-def packages(extensions: list[str], turn: bool, logs: bool, java: bool) -> list[str]:
+def packages(
+    extensions: list[str], turn: bool, logs: bool, java: bool, browser: bool
+) -> list[str]:
     """Return the packages of a machine with those options of install.py."""
     names = list(BASE)
     for extension in extensions:
@@ -60,6 +66,8 @@ def packages(extensions: list[str], turn: bool, logs: bool, java: bool) -> list[
         names += LOGS
     if java:
         names += JAVA
+    if browser:
+        names += BROWSER
     return names
 
 
@@ -84,13 +92,22 @@ def main() -> None:
     parser.add_argument("--turn", action="store_true", help="the app relays calls with coturn")
     parser.add_argument("--logs", action="store_true", help="the machine sends its journal")
     parser.add_argument("--java", action="append", default=[], help="a piece in Java")
+    parser.add_argument(
+        "--browser", action="append", default=[], help="a task that drives Chromium"
+    )
     parser.add_argument("--all", action="store_true", help="every package it can install")
     parser.add_argument("--list", action="store_true", help="print them and install nothing")
     arguments = parser.parse_args()
     if arguments.all:
-        names = packages(list(EXTENSIONS), turn=True, logs=True, java=True)
+        names = packages(list(EXTENSIONS), turn=True, logs=True, java=True, browser=True)
     else:
-        names = packages(arguments.extension, arguments.turn, arguments.logs, bool(arguments.java))
+        names = packages(
+            arguments.extension,
+            arguments.turn,
+            arguments.logs,
+            bool(arguments.java),
+            bool(arguments.browser),
+        )
     if arguments.list:
         print("\n".join(names))
         return

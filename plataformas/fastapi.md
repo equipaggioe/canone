@@ -178,6 +178,8 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - La tarea trabaja sobre lo que encuentra en la base, no sobre lo que pasó desde la vuelta anterior: una vuelta perdida la recupera la siguiente.
 - La dispara un timer de systemd con `python -m app.tasks <tarea>`: systemd no arranca una vuelta si la anterior sigue corriendo.
 - La purga y el barrido corren cada día, en sus unidades de [despliegue.md](despliegue.md#procesos). Cualquier otra tarea declara su calendario en `TIMERS` de `tasks.py`, como `{"alert": "minutely"}`, el `OnCalendar=` que recibe `install.py --task`: el calendario queda en el código, junto a la tarea.
+- Una tarea que maneja un navegador declara su calendario en `BROWSER_TIMERS` de `tasks.py`, con la forma de `TIMERS`, y no en `TIMERS`: corre en la unidad de [despliegue.md](despliegue.md#procesos) que deja correr a Chromium, con `install.py --browser` ([ADR-0172](../adr/0172-una-tarea-que-maneja-chromium-corre-en-su-instancia-de-browser.md)).
+- Esa tarea maneja con Playwright el Chromium de Debian, `executable_path="/usr/bin/chromium-headless-shell"`, que instala `packages.py --browser`: se actualiza con la máquina, y el que baja Playwright solo cambia con su versión.
 
 ## Archivos
 

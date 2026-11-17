@@ -5,14 +5,16 @@ r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
         [--turn [--turn-ip <public ipv4>]] \
         [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>] \
-        [--java <piece>] [--task <task>=<OnCalendar>] [--development]
+        [--java <piece>] [--task <task>=<OnCalendar>] [--browser <task>=<OnCalendar>] \
+        [--development]
 
 The first time it runs as root, and creates the account that administers the machine with its
 keys and the password it asks for. Afterwards ssh only takes keys and root does not log in, so it
 runs with sudo from that account, and --admin, --key and --signer only add keys.
 
---task runs python -m app.tasks <task> on its own calendar, like --task alert=minutely; a task
-that no --task names any more loses its timer.
+--task runs python -m app.tasks <task> on its own calendar, like --task alert=minutely, and
+--browser runs a task that drives Chromium the same way, in a unit that lets it run; a task that no
+--task or --browser names any more loses its timer.
 
 --development marks a machine whose database database.py may empty; without it, the mark goes.
 
@@ -115,6 +117,10 @@ def java_piece(name: str) -> str:
 TASK = re.compile(r"[a-z][a-z0-9_]{0,30}")
 TASK_UNIT = "PRODUCTO-task@"
 OWN_UNITS = ("migrate", "mock", "purge", "sweep")
+# ADR-0172: a task that drives Chromium runs in an instance of PRODUCTO-browser@, with the
+# Chromium of Debian that packages.py --browser installs.
+BROWSER_UNIT = "PRODUCTO-browser@"
+CHROMIUM = Path("/usr/bin/chromium-headless-shell")
 
 
 def task_timer(spec: str) -> tuple[str, str]:
@@ -123,7 +129,9 @@ def task_timer(spec: str) -> tuple[str, str]:
     if not TASK.fullmatch(name) or not calendar:
         raise argparse.ArgumentTypeError(f"{spec} is not <task>=<OnCalendar>, like alert=minutely")
     if name in OWN_UNITS:
-        raise argparse.ArgumentTypeError(f"{name} has its own unit, and takes no --task")
+        raise argparse.ArgumentTypeError(
+            f"{name} has its own unit, and takes no --task or --browser"
+        )
     return name, calendar
 
 
@@ -131,17 +139,17 @@ def check_tasks(tasks: list[tuple[str, str]]) -> None:
     """Fail on a task named twice, or on a calendar that systemd does not read."""
     names = [name for name, _ in tasks]
     if len(set(names)) != len(names):
-        raise SystemExit(f"A task goes in one --task: {', '.join(names)}.")
+        raise SystemExit(f"A task goes in one --task or --browser: {', '.join(names)}.")
     for _, calendar in tasks:
         check = ["systemd-analyze", "calendar", calendar]
         if subprocess.run(check, capture_output=True, check=False).returncode != 0:
             raise SystemExit(f"{calendar} is not an OnCalendar= that systemd reads.")
 
 
-def install_tasks(app: str, tasks: list[tuple[str, str]]) -> list[str]:
-    """Write the calendar of each task, take the timers of the others, and return the timers."""
+def install_tasks(app: str, unit: str, tasks: list[tuple[str, str]]) -> list[str]:
+    """Write the calendar of each task of unit, take the timers of the others, and return them."""
     names = [name for name, _ in tasks]
-    prefix = TASK_UNIT.replace("PRODUCTO", app)
+    prefix = unit.replace("PRODUCTO", app)
     for folder in sorted(UNITS.glob(f"{prefix}*.timer.d")):
         timer = folder.name.removesuffix(".d")
         if timer.removeprefix(prefix).removesuffix(".timer") not in names:
@@ -278,6 +286,13 @@ def parse() -> argparse.Namespace:
         default=[],
         type=task_timer,
         help="a task of python -m app.tasks with its own timer, like alert=minutely",
+    )
+    parser.add_argument(
+        "--browser",
+        action="append",
+        default=[],
+        type=task_timer,
+        help="a task like --task that drives Chromium, like attempt=minutely",
     )
     parser.add_argument(
         "--development", action="store_true", help="database.py may empty the database"
@@ -498,8 +513,10 @@ def main() -> None:
         raise SystemExit("--turn-ip needs --turn.")
     if arguments.java and shutil.which("java") is None:
         raise SystemExit("openjdk-21-jre-headless is not installed, and --java needs it.")
+    if arguments.browser and not CHROMIUM.is_file():
+        raise SystemExit("chromium-headless-shell is not installed, and --browser needs it.")
     check_logs(arguments)
-    check_tasks(arguments.task)
+    check_tasks(arguments.task + arguments.browser)
     admin = find_admin(arguments)
     check_keys(arguments.key + arguments.signer)
     create_admin(admin, arguments.key)
@@ -566,6 +583,8 @@ def main() -> None:
         skipped += (JAVA_UNIT,)
     if not arguments.task:
         skipped += (TASK_UNIT,)
+    if not arguments.browser:
+        skipped += (BROWSER_UNIT,)
     triggers = []
     for source in sorted(HERE.glob("PRODUCTO*")):
         if source.name.startswith(skipped):
@@ -576,7 +595,8 @@ def main() -> None:
         # A template is enabled by its instances.
         if target.suffix in (".timer", ".path") and "@." not in target.name:
             triggers.append(target.name)
-    triggers += install_tasks(app, arguments.task)
+    triggers += install_tasks(app, TASK_UNIT, arguments.task)
+    triggers += install_tasks(app, BROWSER_UNIT, arguments.browser)
     subprocess.run(["systemd-sysusers"], check=True)
     subprocess.run(["systemd-tmpfiles", "--create", f"/etc/tmpfiles.d/{app}.conf"], check=True)
     subprocess.run(["sysctl", "--system"], check=True)

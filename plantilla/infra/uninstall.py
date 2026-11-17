@@ -121,7 +121,7 @@ def owned(folder: Path, app: str) -> list[Path]:
 
 
 def instances(app: str) -> list[str]:
-    """Return the timer of each task of install.py --task, from the folder of its calendar."""
+    """Return the timer of each task of install.py --task or --browser, from its calendar."""
     return [
         path.name.removesuffix(".d") for path in owned(UNITS, app) if path.name.endswith(".timer.d")
     ]

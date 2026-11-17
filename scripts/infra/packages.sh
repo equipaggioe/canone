@@ -20,16 +20,19 @@ grep -qx caddy "$work/base"
 not grep -qx coturn "$work/base"
 not grep -qx postgresql-17-postgis-3 "$work/base"
 not grep -qx openjdk-21-jre-headless "$work/base"
+not grep -qx chromium-headless-shell "$work/base"
 not installed caddy
 
 step "--list adds the package of each option, and an extension of postgresql adds none"
-python3 "$program" --list --extension postgis --extension pg_trgm --turn --logs --java demo > "$work/all"
+python3 "$program" --list --extension postgis --extension pg_trgm --turn --logs --java demo \
+    --browser attempt=minutely > "$work/all"
 grep -qx postgresql-17-postgis-3 "$work/all"
 grep -qx coturn "$work/all"
 grep -qx systemd-journal-remote "$work/all"
 grep -qx wireguard-tools "$work/all"
 grep -qx openjdk-21-jre-headless "$work/all"
-test "$(wc -l < "$work/all")" -eq "$(($(wc -l < "$work/base") + 5))"
+grep -qx chromium-headless-shell "$work/all"
+test "$(wc -l < "$work/all")" -eq "$(($(wc -l < "$work/base") + 6))"
 
 step "--all names the packages of every option"
 python3 "$program" --list --all > "$work/every"

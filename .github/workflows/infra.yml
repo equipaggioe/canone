@@ -169,7 +169,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        script: [install.sh, install-logs.sh, deploy.sh, backup.sh, uninstall.sh, java.sh]
+        script: [install.sh, install-logs.sh, deploy.sh, backup.sh, uninstall.sh, java.sh, browser.sh]
     steps:
       - uses: actions/checkout@v7
       # install.py asks for as much swap as memory, and the machine sees those of the runner.
@@ -195,6 +195,7 @@ jobs:
       - run: >-
           sudo systemd-nspawn --directory=/var/lib/machines/machine --bind-ro="$PWD:/canone"
           python3 /canone/plantilla/infra/packages.py
+          ${{ matrix.script == 'browser.sh' && '--browser probe=minutely' || '' }}
       # The receiver runs rest-server 0.14.0 from its release, the version despliegue.md fixes.
       - if: matrix.script == 'backup.sh'
         run: |
@@ -204,15 +205,22 @@ jobs:
           echo "4c9c95bc079a0334e81fad379b19dc5c3353c71c2c88d652cafce2081c2b1c66  $RUNNER_TEMP/$archive.tar.gz" | sha256sum -c
           tar -xzf "$RUNNER_TEMP/$archive.tar.gz" -C "$RUNNER_TEMP"
           sudo install -m 755 "$RUNNER_TEMP/$archive/rest-server" /var/lib/machines/machine/usr/local/bin/rest-server
-      # The machine has no internet: deploy.py finds each package of the server in the cache of uv.
-      - if: matrix.script == 'deploy.sh'
+      # The machine has no internet: deploy.py finds each package of the server in the cache of uv,
+      # and browser.sh finds Playwright.
+      - if: matrix.script == 'deploy.sh' || matrix.script == 'browser.sh'
         uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - if: matrix.script == 'deploy.sh'
+      - if: matrix.script == 'deploy.sh' || matrix.script == 'browser.sh'
         uses: astral-sh/setup-uv@v10.3.3
         with:
           version-file: plantilla/server/pyproject.toml
+      - if: matrix.script == 'browser.sh'
+        run: |
+          uv venv "$RUNNER_TEMP/probe"
+          UV_CACHE_DIR="$RUNNER_TEMP/uv" uv pip install --python "$RUNNER_TEMP/probe" playwright==1.65.1
+          sudo cp -r "$RUNNER_TEMP/uv" /var/lib/machines/machine/var/cache/uv-ci
+          sudo install -m 755 "$(command -v uv)" /var/lib/machines/machine/usr/local/bin/uv
       - if: matrix.script == 'deploy.sh'
         run: |
           cp -r plantilla/server "$RUNNER_TEMP/server"

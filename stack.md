@@ -68,6 +68,7 @@ Página: [fastapi.md](plataformas/fastapi.md).
 | OpenTelemetry | 1.45.2 | [Trazas](plataformas/fastapi.md#trazas) |
 | AnyIO | 4.16.0 | [Pruebas](plataformas/fastapi.md#pruebas) |
 | httpx-ws | 0.10.0 | [Pruebas](plataformas/fastapi.md#pruebas) |
+| Playwright, en el servidor que maneja un navegador | 1.65.1, la de [SvelteKit](#sveltekit) | [Tareas](plataformas/fastapi.md#tareas) |
 
 ## Autenticación
 
@@ -106,6 +107,7 @@ Página: [despliegue.md](plataformas/despliegue.md). Cada programa es el de los 
 | WireGuard | 1.0.20210914 | [Registros](plataformas/despliegue.md#registros) |
 | restic | 0.18.0 | [Respaldos](plataformas/despliegue.md#respaldos) |
 | rest-server | 0.14.0 | [Respaldos](plataformas/despliegue.md#respaldos) |
+| Chromium, en la máquina con una tarea que maneja un navegador | 156 | [Procesos](plataformas/despliegue.md#procesos) |
 
 ## Java
 

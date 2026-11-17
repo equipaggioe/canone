@@ -1,0 +1,52 @@
+[Unit]
+Description=PRODUCTO task %i, with a browser
+After=postgresql.service
+
+[Service]
+Type=oneshot
+User=PRODUCTO
+Group=PRODUCTO
+WorkingDirectory=/srv/PRODUCTO/current/server
+LoadCredentialEncrypted=app:/etc/credstore.encrypted/PRODUCTO
+StateDirectory=PRODUCTO/files
+ExecStart=/srv/PRODUCTO/current/server/.venv/bin/python -m app.tasks %i
+# ADR-0172: a hung browser would hold the timer, and systemd starts no round while one runs. A
+# oneshot unit ends by TimeoutStartSec=, not by RuntimeMaxSec=.
+TimeoutStartSec=1h
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+PrivateUsers=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProcSubset=pid
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+# ADR-0172: without MemoryDenyWriteExecute=: the JIT of V8, in Chromium and in the Node of
+# Playwright, writes the code it runs.
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+# ADR-0149: the OpenBLAS of numpy sets the memory policy of its threads with mbind, and a
+# denied syscall kills the process.
+SystemCallFilter=mbind
+# ADR-0172: Chromium sets the priority of its threads, allocates a memory protection key and
+# drops its capabilities; each denied syscall kills it.
+SystemCallFilter=setpriority
+SystemCallFilter=pkey_alloc
+SystemCallFilter=capset
+CapabilityBoundingSet=
+AmbientCapabilities=
+DevicePolicy=closed
+RemoveIPC=yes
+UMask=0077

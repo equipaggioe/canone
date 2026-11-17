@@ -1,0 +1,9 @@
+[Unit]
+Description=PRODUCTO task %i with a browser, on the calendar of install.py --browser
+
+# install.py writes the OnCalendar= of each task in PRODUCTO-browser@<task>.timer.d/calendar.conf.
+[Timer]
+Persistent=yes
+
+[Install]
+WantedBy=timers.target

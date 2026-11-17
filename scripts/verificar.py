@@ -404,7 +404,7 @@ def versiones_playwright(repo: Path) -> list[str]:
 
 # plataformas/python.md, «Proyecto», y stack.md: una sola versión exacta de uv en todo
 # pyproject.toml, la misma con que el servidor crea el entorno.
-UV = "0.13.7"
+UV = "0.13.9"
 
 
 def versiones_uv(repo: Path) -> list[str]:
@@ -469,7 +469,7 @@ PYPROJECT = {
         "pyrefly": ">=1.4.1",
         "pytest": ">=9.2.0",
         "ruff": ">=0.17.5",
-        "uv-build": ">=0.13.7,<0.14",
+        "uv-build": ">=0.13.9,<0.14",
     },
     "qt.md": {
         "datamodel-code-generator": ">=0.97.0",

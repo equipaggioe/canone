@@ -3,7 +3,7 @@
 # dependencies = ["google-auth>=2.62.2", "requests>=2.34.2"]
 #
 # [tool.uv]
-# required-version = "==0.13.7"
+# required-version = "==0.13.9"
 # ///
 """Upload a bundle to Google Play and download its universal APK.
 

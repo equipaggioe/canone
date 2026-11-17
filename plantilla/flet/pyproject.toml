@@ -37,7 +37,7 @@ allowBackup = false
 
 [tool.uv]
 python-preference = "only-system"
-required-version = "==0.13.7"
+required-version = "==0.13.9"
 
 [tool.ruff]
 line-length = 99

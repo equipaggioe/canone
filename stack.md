@@ -33,8 +33,8 @@ Página: [python.md](plataformas/python.md). Vale para toda pieza en Python.
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | Python | 3.13, el de Debian 13 | [Proyecto](plataformas/python.md#proyecto) |
-| uv | 0.13.7 | [Proyecto](plataformas/python.md#proyecto) |
-| `uv_build` | 0.13.7 | [Proyecto](plataformas/python.md#proyecto) |
+| uv | 0.13.9 | [Proyecto](plataformas/python.md#proyecto) |
+| `uv_build` | 0.13.9 | [Proyecto](plataformas/python.md#proyecto) |
 | pytest | 9.2.0 | [Pruebas](plataformas/python.md#pruebas) |
 | ruff | 0.17.5 | [Estilo](plataformas/python.md#estilo) |
 | Pyrefly | 1.4.1 | [Tipos](plataformas/python.md#tipos) |

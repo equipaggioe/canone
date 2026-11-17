@@ -24,6 +24,11 @@ dependency-analysis 3.20.3, AGP 9.5.1 y el JDK 25.0.5, `buildHealth` pide ademá
 Comprobado: con esos cambios, `buildHealth` pasa, y también las pruebas, Android Lint, ktlint y
 `assembleRelease`.
 
+Comprobado después, con `javap` sobre el código compilado: `jspecify` no lo usa el código que
+genera Hilt, sino `GatewayService`, porque Kotlin copia en el tipo que infiere de
+`NotificationCompat` su anotación `@NonNull` de jspecify. El código fuente tampoco lo importa, y
+la página lo dice así.
+
 ## Decisión
 
 1. **dependency-analysis saca de las transitivas usadas lo que solo usa el código

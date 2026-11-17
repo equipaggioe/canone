@@ -217,6 +217,7 @@ Estándar: [Standard Webhooks](../fuentes/standard-webhooks/standard-webhooks.md
 ## Envíos al exterior
 
 - Primero la evidencia en la base, después el envío best-effort. Un fallo de entrega no tumba la operación.
+- El servidor llama a otro servicio, como Nominatim o la API de correo, con un solo `httpx.AsyncClient` para toda la app, salvo FCM y Web Push, que van por sus bibliotecas: reutiliza las conexiones, y es el cliente de las pruebas.
 
 ## Errores
 
@@ -296,6 +297,7 @@ Estándar: el [*Secure Integration of Third-Party Payment Gateways Cheat Sheet*]
 
 Contrato: [transversal.md](transversal.md#pagos).
 
+- Con Stripe, el servidor llama a su API con los métodos `_async` de `stripe`, que van por httpx, y verifica cada notificación con `construct_event`: los métodos sin el sufijo bloquean el bucle de eventos. [stripe 17.0.0](https://raw.githubusercontent.com/stripe/stripe-python/v17.0.0/README.md)
 - El servidor valida cada producto, precio y descuento del pedido y calcula el total con sus propios datos antes de crear la orden en la pasarela ([Payment Gateways, *1. Sending Order data*](../fuentes/owasp/Third_Party_Payment_Gateway_Integration.md)).
 - Solo una notificación de servidor a servidor confirma un pago: los parámetros de la redirección del usuario no ([Payment Gateways, *2. Redirect to webhook*](../fuentes/owasp/Third_Party_Payment_Gateway_Integration.md)).
 - El servidor verifica la autenticidad de cada notificación de la pasarela, con su firma ([Payment Gateways, *2. Redirect to webhook*](../fuentes/owasp/Third_Party_Payment_Gateway_Integration.md)).

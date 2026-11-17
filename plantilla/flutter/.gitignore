@@ -31,6 +31,7 @@ app.*.map.json
 *.g.dart
 *.freezed.dart
 /lib/data/services/api/
+/lib/l10n/app_localizations*.dart
 
 # flutter.md, «Entrega»: the upload key never enters git.
 /android/key.properties

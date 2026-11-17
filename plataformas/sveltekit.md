@@ -218,6 +218,12 @@ Contrato: [transversal.md](transversal.md#mapas).
 - El mapa se crea con `attributionControl: false`, y la página muestra la atribución de la configuración ([transversal.md](transversal.md#mapas)).
 - El contenido de un popup va con `setText` o `setDOMContent`, nunca con `setHTML`: `setHTML` lo inserta con `innerHTML`. [MapLibre GL JS 6.18.0](https://raw.githubusercontent.com/maplibre/maplibre-gl-js/v6.18.0/src/ui/popup.ts)
 
+## Pagos
+
+Contrato: [transversal.md](transversal.md#pagos).
+
+- Con Stripe, el formulario incrustado es el Payment Element, y Stripe.js se carga con `loadStripe` de `@stripe/stripe-js/pure`: importado de `@stripe/stripe-js`, el script se carga en cada página que lo importa, antes de llamar a `loadStripe`. [stripe-js 10.3.0](https://raw.githubusercontent.com/stripe/stripe-js/v10.3.0/README.md)
+
 ## Push
 
 Estándar: la [*Push API*](../fuentes/w3c/push-api.html) de W3C.

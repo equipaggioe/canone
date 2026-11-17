@@ -439,19 +439,22 @@ PYPROJECT = {
         "babel": ">=2.18.0",
         "cryptography": ">=50.0.2",
         "fastapi": ">=0.162.0",
-        "firebase-admin": ">=7.7.0",
+        "firebase-admin": ">=7.8.0",
         "httpx-ws": ">=0.9.0",
         "opentelemetry-api": ">=1.45.2",
         "opentelemetry-sdk": ">=1.45.2",
         "pillow": ">=13.0.0",
         "pydantic-settings": ">=2.16.2",
+        "python-multipart": ">=0.0.34",
         "pywebpush": ">=2.5.0",
         "sqlalchemy": ">=2.1.8",
         "starlette": ">=1.10.0",
+        "stripe": ">=17.0.0",
         "uvicorn": ">=0.54.0",
         "valkey": ">=6.2.0",
     },
     "flet.md": {
+        "babel": ">=2.18.0",
         "datamodel-code-generator": ">=0.95.0",
         "flet": ">=1.1.2",
         "flet-secure-storage": ">=1.1.2",
@@ -482,6 +485,7 @@ REQUISITO = re.compile(r"^\s*([A-Za-z0-9._-]+)\s*(?:\[[^\]]*\])?\s*([^;]*)")
 NPM = {
     "@axe-core/playwright": "4.14.0",
     "@inlang/paraglide-js": "3.2.2",
+    "@stripe/stripe-js": "10.3.0",
     "@sveltejs/adapter-static": "4.0.1",
     "@sveltejs/kit": "3.2.0",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
@@ -520,14 +524,17 @@ PUB = {
     "freezed_annotation": "3.1.0",
     "go_router": "18.1.4",
     "http": "1.6.0",
+    "intl": "0.20.3",
     "json_annotation": "4.12.0",
     "json_serializable": "6.15.2",
     "maplibre_gl": "0.28.0",
+    "package_info_plus": "10.2.2",
     "riverpod_annotation": "4.0.8",
     "riverpod_generator": "4.0.10",
     "shared_preferences": "2.5.6",
     "sms_autofill": "2.6.1",
     "swagger_parser": "2.1.1",
+    "uuid": "4.6.0",
 }
 # plataformas/flutter.md, «Proyecto»: las mutations de Riverpod son experimentales y pueden cambiar
 # sin una versión mayor, así que sus paquetes van sin ^.
@@ -542,11 +549,13 @@ ACCIONES = {
     "pnpm/action-setup": "v6",
     "subosito/flutter-action": "v2",
 }
+# La versión de cada acción la exigen las páginas que la usan: Flet construye con el Flutter de
+# Flutter.
 ENTRADAS = {
-    "actions/setup-java": ("android.md", "java-version", "25.0.5"),
-    "actions/setup-node": ("sveltekit.md", "node-version", "26.13.1"),
-    "actions/setup-python": ("python.md", "python-version", "3.13"),
-    "subosito/flutter-action": ("flutter.md", "flutter-version", "3.47.9"),
+    "actions/setup-java": ({"android.md"}, "java-version", "25.0.5"),
+    "actions/setup-node": ({"sveltekit.md"}, "node-version", "26.13.1"),
+    "actions/setup-python": ({"python.md"}, "python-version", "3.13"),
+    "subosito/flutter-action": ({"flutter.md", "flet.md"}, "flutter-version", "3.47.9"),
 }
 # plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de la Pydantic del
 # bloque de Python de stack.md.
@@ -645,9 +654,9 @@ def versiones_workflows(repo: Path, paginas: set[str]) -> list[str]:
         for accion, declarada in pares:
             if accion in ACCIONES and declarada != ACCIONES[accion]:
                 fallas.append(f"stack.md: {relativo} usa {accion}@{declarada}, no @{ACCIONES[accion]}")
-        for accion, (pagina, entrada, version) in ENTRADAS.items():
+        for accion, (exigen, entrada, version) in ENTRADAS.items():
             valores = re.findall(rf"{entrada}:\s*[\"']?([^\"'\s]+)", texto)
-            if pagina in paginas and accion in usadas and set(valores) != {version}:
+            if exigen & paginas and accion in usadas and set(valores) != {version}:
                 fallas.append(f"stack.md: {relativo} no declara {entrada} {version}")
         for imagen in re.findall(r"postgis/postgis:(\S+)", texto):
             if imagen != POSTGIS:

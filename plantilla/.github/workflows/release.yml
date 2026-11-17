@@ -227,6 +227,8 @@ jobs:
           channel: stable
           flutter-version: 3.47.9
       - run: uv sync --locked
+      # plataformas/flet.md, «Idiomas»: flet build packages src/ as it is, with the compiled .mo.
+      - run: uv run pybabel compile -d src/locales -D PIEZA
       - env:
           KEYSTORE: ${{ secrets.UPLOAD_KEYSTORE }}
         run: echo "$KEYSTORE" | base64 --decode > "$RUNNER_TEMP/upload.jks"
@@ -284,6 +286,8 @@ jobs:
         run: >-
           sudo apt-get update && sudo apt-get install -y
           $(uv run flet --version --json | jq -r '.linux_dependencies | join(" ")')
+      # plataformas/flet.md, «Idiomas»: flet build packages src/ as it is, with the compiled .mo.
+      - run: uv run pybabel compile -d src/locales -D desktop
       - run: uv run flet build ${{ matrix.target }} --yes
       # The runner has no FUSE 2, which appimagetool needs. The AppImage keeps the .bin name of
       # install.py: it is an executable like any other.

@@ -41,7 +41,7 @@ Página: [python.md](plataformas/python.md). Vale para toda pieza en Python.
 | deptry | 0.25.1 | [Proyecto](plataformas/python.md#proyecto) |
 | pip-audit | 2.10.1 | [Cumplimiento](plataformas/python.md#cumplimiento) |
 | Pydantic | 2.14.3 | [Esquemas](plataformas/fastapi.md#esquemas) |
-| httpx | 0.28.1, la que fija firebase-admin | [Pruebas](plataformas/fastapi.md#pruebas) del servidor y [Red](plataformas/flet.md#red) de Flet |
+| httpx | 0.28.1, la que fija firebase-admin | [Envíos al exterior](plataformas/fastapi.md#envíos-al-exterior) y [Pruebas](plataformas/fastapi.md#pruebas) del servidor, y [Red](plataformas/flet.md#red) de Flet |
 
 ## FastAPI
 
@@ -58,11 +58,13 @@ Página: [fastapi.md](plataformas/fastapi.md).
 | valkey-py | 6.2.0 | [Valkey](plataformas/fastapi.md#valkey) |
 | Uvicorn | 0.54.0 | [WebSocket](plataformas/fastapi.md#websocket) y [Procesos](plataformas/despliegue.md#procesos) |
 | Pillow | 13.0.0 | [Archivos](plataformas/fastapi.md#archivos) |
+| python-multipart | 0.0.34 | [Archivos](plataformas/fastapi.md#archivos) |
 | Babel | 2.18.0 | [Idiomas](plataformas/fastapi.md#idiomas) |
 | cryptography | 50.0.2 | [Paginación](plataformas/fastapi.md#paginación) |
 | pywebpush | 2.5.0 | [Push](plataformas/fastapi.md#push) |
 | aiohttp | 3.14.5 | [Push](plataformas/fastapi.md#push) |
-| firebase-admin | 7.7.0 | [Push](plataformas/fastapi.md#push) |
+| firebase-admin | 7.8.0 | [Push](plataformas/fastapi.md#push) |
+| stripe, con el extra `async`, con Stripe | 17.0.0 | [Pagos](plataformas/fastapi.md#pagos) |
 | OpenTelemetry | 1.45.2 | [Trazas](plataformas/fastapi.md#trazas) |
 | AnyIO | 4.16.0 | [Pruebas](plataformas/fastapi.md#pruebas) |
 | httpx-ws | 0.9.0 | [Pruebas](plataformas/fastapi.md#pruebas) |
@@ -145,6 +147,7 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | `openapi-typescript` | 7.13.0 | [Carga de datos](plataformas/sveltekit.md#carga-de-datos) |
 | `openapi-fetch` | 0.17.0 | [Carga de datos](plataformas/sveltekit.md#carga-de-datos) |
 | MapLibre GL JS, `maplibre-gl` | 6.18.0 | [Mapas](plataformas/sveltekit.md#mapas) |
+| `@stripe/stripe-js`, con Stripe | 10.3.0 | [Pagos](plataformas/sveltekit.md#pagos) |
 | Vitest | 5.1.0 | [Pruebas](plataformas/sveltekit.md#pruebas) |
 | Playwright | 1.65.1 | [Pruebas](plataformas/sveltekit.md#pruebas) |
 | `@axe-core/playwright` | 4.14.0 | [Accesibilidad](plataformas/sveltekit.md#accesibilidad) |
@@ -180,6 +183,10 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | flutter_stripe, con Stripe | 14.2.0 | [Pagos](plataformas/flutter.md#pagos) |
 | firebase_core | 5.1.0 | [Push](plataformas/flutter.md#push) |
 | firebase_messaging | 17.0.1 | [Push](plataformas/flutter.md#push) |
+| flutter_localizations | el de Flutter 3.47.9 | [Idiomas](plataformas/flutter.md#idiomas) |
+| intl | 0.20.3 | [Idiomas](plataformas/flutter.md#idiomas) |
+| uuid | 4.6.0 | [Reintentos](plataformas/flutter.md#reintentos) |
+| package_info_plus | 10.2.2 | [Versión mínima de cliente](plataformas/flutter.md#versión-mínima-de-cliente) |
 | flutter_lints | 6.0.0 | [Estilo](plataformas/flutter.md#estilo) |
 
 ## Android
@@ -239,6 +246,7 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter 
 | Flet | 1.1.2 | — |
 | flet-secure-storage | 1.1.2 | [Almacenamiento](plataformas/flet.md#almacenamiento) |
 | httpx-ws | 0.9.0 | [WebSocket](plataformas/flet.md#websocket) |
+| Babel | 2.18.0 | [Idiomas](plataformas/flet.md#idiomas) |
 | datamodel-code-generator, con el extra `ruff` | 0.95.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |
 | Pydantic, en lugar de la de [Python](#python) | 2.13.4 | [Proyecto](plataformas/flet.md#proyecto) |
 

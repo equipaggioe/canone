@@ -8,7 +8,7 @@ Una app en Flutter.
 
 - La app sale en Android y en iOS.
 - `pubspec.yaml` declara exactos flutter_riverpod y riverpod_annotation, y en `dev_dependencies`, riverpod_generator: las mutations de Riverpod son experimentales y pueden cambiar sin una versión mayor. [Riverpod 3.5.0](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/mutations.mdx)
-- `pubspec.yaml` declara exactos o con `^` shared_preferences, flutter_secure_storage, flutter_appauth, go_router, http, maplibre_gl, freezed_annotation, json_annotation, sms_autofill, firebase_core, firebase_messaging y, con Stripe, flutter_stripe, y en `dev_dependencies`, flutter_lints, freezed, json_serializable, build_runner, swagger_parser y dependency_validator.
+- `pubspec.yaml` declara exactos o con `^` shared_preferences, flutter_secure_storage, flutter_appauth, go_router, http, maplibre_gl, freezed_annotation, json_annotation, sms_autofill, firebase_core, firebase_messaging, intl, uuid, package_info_plus y, con Stripe, flutter_stripe, y en `dev_dependencies`, flutter_lints, freezed, json_serializable, build_runner, swagger_parser y dependency_validator.
 - CI corre `dart run dependency_validator`, que falla con un paquete importado sin declarar o una dependencia que no se usa ([stack.md](../stack.md#qué-entra)). `pubspec.yaml` lleva `dependency_validator:` con `allow_pins: true`: sin él, también falla con cada versión exacta, y las de Riverpod lo son.
 - `environment.sdk` de `pubspec.yaml` es `^` y la versión de Dart de [stack.md](../stack.md#flutter), la que trae Flutter: fija la versión del lenguaje con que se compila el código.
 - Gradle, AGP y Kotlin son los de Android en [stack.md](../stack.md#android), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
@@ -22,10 +22,12 @@ Una app en Flutter.
   pubspec.yaml
   pubspec.lock
   analysis_options.yaml
+  l10n.yaml
   swagger_parser.yaml
   lib/
     main.dart
     config/
+    l10n/             los textos, en archivos ARB
     routing/          el GoRouter y sus rutas
     data/
       repositories/
@@ -265,6 +267,9 @@ Estándar: [*Internationalizing Flutter apps*](../fuentes/flutter/internationali
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
+- Lo que genera `gen-l10n`, `lib/l10n/app_localizations*.dart`, no se versiona.
+- Los textos van en archivos ARB de `lib/l10n/`, y la plantilla es `app_es.arb`, la del idioma base: `l10n.yaml` lleva `arb-dir: lib/l10n`, `template-arb-file: app_es.arb` y `output-localization-file: app_localizations.dart` ([Internationalizing Flutter apps, *Add your own localized messages*](../fuentes/flutter/internationalization.md)).
+- `pubspec.yaml` declara flutter_localizations, con `sdk: flutter`, e intl, y lleva `generate: true` en `flutter:` ([Internationalizing Flutter apps, *Add your own localized messages*](../fuentes/flutter/internationalization.md)).
 - Un `Locale` se crea con `Locale.fromSubtags`, que admite el script ([Internationalizing Flutter apps, *Set up an internationalized app with `flutter_localizations`*](../fuentes/flutter/internationalization.md)).
 - `MaterialApp` declara los `localizationsDelegates` de `flutter_localizations` y sus `supportedLocales` ([Internationalizing Flutter apps, *Set up an internationalized app with `flutter_localizations`*](../fuentes/flutter/internationalization.md)).
 - El proyecto de Xcode declara en *Localizations* los idiomas de la app: la App Store los muestra desde ahí ([Internationalizing Flutter apps, *Localizing for iOS: Updating the iOS app bundle*](../fuentes/flutter/internationalization.md)).
@@ -296,6 +301,12 @@ Contrato: [transversal.md](transversal.md#push).
 
 - La app recibe push con firebase_messaging, sobre firebase_core.
 
+## Reintentos
+
+Contrato: [transversal.md](transversal.md#reintentos).
+
+- El uuid v4 de un recurso que crea la app sale de `Uuid().v4()`, de uuid.
+
 ## Tema
 
 > **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
@@ -304,6 +315,12 @@ Contrato: [transversal.md](transversal.md#tema).
 
 - El tema claro y el oscuro usan `lightColorScheme` y `darkColorScheme`, generados en `ui/core/themes/colors.dart`, y `themeMode` sale de la elección del usuario, guardada con `SharedPreferencesAsync`: `ThemeMode.system` mientras no elija otro.
 - Los tamaños van en `ui/core/themes/`, sin tamaños literales fuera de él.
+
+## Versión mínima de cliente
+
+Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
+
+- La versión del `User-Agent` sale de `PackageInfo.fromPlatform()`, de package_info_plus: la versión vive solo en `pubspec.yaml`.
 
 ## Pruebas
 

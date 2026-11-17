@@ -12,6 +12,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+  "babel>=2.18.0",
   "datamodel-code-generator[ruff]>=0.95.0",
   "flet[cli,test]>=1.1.2",
   "deptry>=0.25.1",
@@ -30,6 +31,9 @@ build_number = 1
 
 [tool.flet.app]
 path = "src"
+
+[tool.flet.android.manifest_application]
+allowBackup = false
 
 [tool.uv]
 python-preference = "only-system"

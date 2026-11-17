@@ -72,13 +72,16 @@ jobs:
       - run: |
           uv export --locked --no-emit-project --format requirements.txt -o "$RUNNER_TEMP/req.txt"
           uv run pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/req.txt"
-      # The roles, the database and the extensions install.py creates.
+      # The roles and the database install.py creates.
       - run: |
           psql postgresql://postgres:postgres@localhost:5432/postgres -c "CREATE ROLE PRODUCTO" \
             -c "CREATE ROLE PRODUCTO_owner LOGIN PASSWORD 'owner'" -c "CREATE ROLE PRODUCTO_read" \
             -c "CREATE DATABASE PRODUCTO OWNER PRODUCTO_owner"
-          psql postgresql://postgres:postgres@localhost:5432/PRODUCTO -c "CREATE EXTENSION postgis" \
+          psql postgresql://postgres:postgres@localhost:5432/PRODUCTO \
             -c "ALTER DEFAULT PRIVILEGES FOR ROLE PRODUCTO_owner IN SCHEMA public GRANT SELECT ON TABLES TO PRODUCTO_read"
+      # Only in a server that stores geography and declares geoalchemy2: without geoalchemy2,
+      # alembic check proposes to drop the tables of PostGIS.
+      - run: psql postgresql://postgres:postgres@localhost:5432/PRODUCTO -c "CREATE EXTENSION postgis"
       # The migrations and the seeders, as deploy.py runs them.
       - run: uv run python -m app.tasks migrate
         env:
@@ -159,6 +162,8 @@ jobs:
       # flet build packages src/ as it is: the generated models are committed, and must be current.
       - run: uv run datamodel-codegen
       - run: git diff --exit-code src/api/models.py
+      # plataformas/flet.md, «Idiomas»: gettext reads only the .mo, which is not committed.
+      - run: uv run pybabel compile -d src/locales -D PIEZA
       - run: uv run ruff format --check
       - run: uv run ruff check
       - run: uv run pyrefly check

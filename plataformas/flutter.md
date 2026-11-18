@@ -4,9 +4,9 @@ Una app en Flutter.
 
 ## Proyecto
 
-- La app sale en Android y en iOS.
+- La app es para Android y para iOS.
 - `pubspec.yaml` declara exactos flutter_riverpod y riverpod_annotation, y en `dev_dependencies`, riverpod_generator: las mutations de Riverpod son experimentales y pueden cambiar sin una versión mayor. [Riverpod 3.5.0](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/mutations.mdx)
-- `pubspec.yaml` declara exactos o con `^` shared_preferences, flutter_secure_storage, flutter_appauth, go_router, http, maplibre_gl, freezed_annotation, json_annotation, sms_autofill, firebase_core, firebase_messaging, intl, uuid, package_info_plus y, con Stripe, flutter_stripe, y en `dev_dependencies`, flutter_lints, freezed, json_serializable, build_runner, swagger_parser y dependency_validator.
+- Las demás dependencias van exactas o con `^`.
 - CI corre `dart run dependency_validator`, que falla con un paquete importado sin declarar o una dependencia que no se usa ([stack.md](../stack.md#qué-entra)). `pubspec.yaml` lleva `dependency_validator:` con `allow_pins: true`: sin él, también falla con cada versión exacta, y las de Riverpod lo son.
 - `environment.sdk` de `pubspec.yaml` es `^` y la versión de Dart de [stack.md](../stack.md#flutter), la que trae Flutter: fija la versión del lenguaje con que se compila el código.
 - Gradle, AGP y Kotlin son los de Android en [stack.md](../stack.md#android), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
@@ -40,6 +40,25 @@ Una app en Flutter.
         view_models/
         widgets/
   test/
+  android/
+    settings.gradle.kts
+    key.properties
+    gradle/
+      wrapper/
+        gradle-wrapper.properties
+    app/
+      build.gradle.kts
+      src/
+        main/
+          AndroidManifest.xml
+          res/
+            xml/
+              backup_rules.xml
+              data_extraction_rules.xml
+              locales_config.xml
+  ios/
+    ExportOptions.plist
+    Runner.xcodeproj/
 ```
 
 Plantilla: [plantilla/flutter/](../plantilla/flutter/): `analysis_options.yaml`, con el analizador, sus reglas y el ancho de `dart format`, que se copia sin editar, y `.gitignore`.
@@ -49,7 +68,7 @@ Plantilla: [plantilla/flutter/](../plantilla/flutter/): `analysis_options.yaml`,
 Estándares: de Effective Dart, [*Style*](../fuentes/dart/effective-dart-style.md) y [*Usage*](../fuentes/dart/effective-dart-usage.md).
 
 - El analizador incluye la [lista de flutter_lints](https://raw.githubusercontent.com/flutter/packages/flutter_lints-v6.0.0/packages/flutter_lints/lib/flutter.yaml), y CI corre `dart analyze --fatal-infos`: un aviso de nivel info también rompe CI, y `flutter analyze` no corre los plugins del analizador, como riverpod_lint.
-- Las líneas tienen hasta 99 caracteres, el `page_width` de `dart format`, salvo una URI o una ruta dentro de un comentario o de una cadena, y una cadena de varias líneas: es el ancho de las demás páginas.
+- Las líneas tienen hasta 99 caracteres, el `page_width` de `dart format`, salvo una URI o una ruta dentro de un comentario o de una cadena, y una cadena de varias líneas: es el ancho de las páginas de Python y de SvelteKit.
 - El código cumple *DO follow a consistent rule for `var` and `final` on local variables* con `final` en toda variable local que no se reasigna, también la de un `for`-`in` y la de un patrón, y `var` en la que se reasigna ([Usage, *DO follow a consistent rule for `var` and `final` on local variables*](../fuentes/dart/effective-dart-usage.md)).
 - El código cumple *PREFER using interpolation to compose strings and values*, *AVOID using curly braces in interpolation when not needed* y *AVOID using `Iterable.forEach()` with a function literal* ([Usage, *PREFER using interpolation to compose strings and values*](../fuentes/dart/effective-dart-usage.md), [*AVOID using curly braces in interpolation when not needed*](../fuentes/dart/effective-dart-usage.md) y [*AVOID using `Iterable.forEach()` with a function literal*](../fuentes/dart/effective-dart-usage.md)).
 - Una variable que necesita saber si ya se inicializó no es `late`: es nullable y se compara con `null` o, si `null` es un valor válido, lleva un booleano aparte ([Usage, *AVOID `late` variables if you need to check whether they are initialized*](../fuentes/dart/effective-dart-usage.md)).
@@ -88,7 +107,7 @@ Estándar: [*Documentation*](../fuentes/dart/effective-dart-documentation.md) de
 
 Estándar: [*Design*](../fuentes/dart/effective-dart-design.md) de Effective Dart.
 
-- El analizador activa `strict-casts`, `strict-inference` y `strict-raw-types`: los tipos se revisan como con Pyrefly en modo strict.
+- El analizador activa `strict-casts`, `strict-inference` y `strict-raw-types`.
 - El código cumple *AVOID writing incomplete generic types* y *PREFER using function type syntax for parameters* ([Design, *AVOID writing incomplete generic types*](../fuentes/dart/effective-dart-design.md) y [*PREFER using function type syntax for parameters*](../fuentes/dart/effective-dart-design.md)).
 - Un tipo de función se anota con su firma, y no con `Function`, salvo el que acepta funciones de firmas distintas ([Design, *PREFER signatures in function type annotations*](../fuentes/dart/effective-dart-design.md)).
 - Un tipo de función se escribe en línea, y un `typedef` se define solo para uno largo o que se repite ([Design, *PREFER inline function types over typedefs*](../fuentes/dart/effective-dart-design.md)).
@@ -168,7 +187,8 @@ Estándares: de Effective Dart, [*Usage*](../fuentes/dart/effective-dart-usage.m
 
 Estándar: [*Usage*](../fuentes/dart/effective-dart-usage.md) de Effective Dart.
 
-- Todo `catch` lleva `on`, salvo uno que pasa lo que atrapa con `rethrow`, `Completer.completeError`, `Future.error` o `FlutterError.reportError`: así no se traga nada. El `on` nombra los tipos de los fallos que maneja o, en el código que aísla a la app de cualquier fallo de ejecución, `Exception` ([Usage, *AVOID catches without `on` clauses*](../fuentes/dart/effective-dart-usage.md)).
+- Todo `catch` lleva `on`, salvo uno que pasa lo que atrapa con `rethrow`, `Completer.completeError`, `Future.error` o `FlutterError.reportError`: así no se traga nada.
+- El `on` de un `catch` nombra los tipos de los fallos que maneja o, en el código que aísla a la app de cualquier fallo de ejecución, `Exception` ([Usage, *AVOID catches without `on` clauses*](../fuentes/dart/effective-dart-usage.md)).
 - El código cumple *DO use `rethrow` to rethrow a caught exception* y *DON'T explicitly catch `Error` or types that implement it* ([Usage, *DO use `rethrow` to rethrow a caught exception*](../fuentes/dart/effective-dart-usage.md) y [*DON'T explicitly catch `Error` or types that implement it*](../fuentes/dart/effective-dart-usage.md)).
 - Un `catch` que atrapa cualquier `Exception` hace algo con lo que atrapa: lo registra, lo muestra o lo relanza ([Usage, *DON'T discard errors from catches without `on` clauses*](../fuentes/dart/effective-dart-usage.md)).
 - Un `Error` se lanza solo ante un error de programación, y un fallo de ejecución lanza una `Exception` u otro tipo ([Usage, *DO throw objects that implement `Error` only for programmatic errors*](../fuentes/dart/effective-dart-usage.md)).
@@ -177,23 +197,22 @@ Estándar: [*Usage*](../fuentes/dart/effective-dart-usage.md) de Effective Dart.
 
 Estándares: de Flutter, [*Common architecture concepts*](../fuentes/flutter/app-architecture-concepts.md), [*Guide to app architecture*](../fuentes/flutter/app-architecture-guide.md) y las [recomendaciones de arquitectura](../fuentes/flutter/architecture-recommendations.yml).
 
-- HTTP va por `package:http`, en el servicio del cliente de la API.
 - Los ViewModels son `AsyncNotifier` o `Notifier` de Riverpod: un provider que falta no compila, asignar `state` ya avisa a la vista, y `AsyncValue` obliga a tratar la carga y el error.
-- Las dependencias llegan por inyección, con los providers de Riverpod, y ningún objeto es accesible de forma global. Un repositorio es un provider con `keepAlive: true`: guarda el estado de la sesión.
+- Las dependencias llegan con los providers de Riverpod. Un repositorio es un provider con `keepAlive: true`: es la única fuente de su tipo de dato, y no lo pierde al cerrarse una pantalla.
 - Un Command es una `Mutation` de Riverpod, `static final` en su ViewModel: la vista la corre con `run`, que llama a un método del ViewModel, y muestra su estado con `ref.watch`.
-- Un modelo de freezed es una `sealed class`: así no se extiende ni se implementa fuera de su biblioteca.
-- freezed genera el JSON con json_serializable.
-- Los modelos inmutables se generan con freezed: da igualdad, `copyWith` y JSON con menos código que built_value ([recomendaciones, *Use freezed or built_value to generate immutable data models.*](../fuentes/flutter/architecture-recommendations.yml)).
+- Un modelo de freezed de `domain/models/` es una `sealed class`: así no se extiende ni se implementa fuera de su biblioteca.
+- Los modelos inmutables se generan con freezed ([recomendaciones, *Use freezed or built_value to generate immutable data models.*](../fuentes/flutter/architecture-recommendations.yml)).
 - Las acciones del usuario llegan al ViewModel por Commands: estandarizan cómo la UI le manda los eventos a la capa de datos ([recomendaciones, *Use `Commands` to handle events from user interaction.*](../fuentes/flutter/architecture-recommendations.yml)).
-- La navegación usa go_router, con sus rutas en `routing/` ([recomendaciones, *app-structure*](../fuentes/flutter/architecture-recommendations.yml)).
+- La navegación usa go_router ([recomendaciones, *app-structure*](../fuentes/flutter/architecture-recommendations.yml)).
 - Cada clase lleva en su nombre el componente que representa, como `HomeViewModel`, `HomeScreen`, `UserRepository` o `ClientApiService`, y cada carpeta, el de los componentes que guarda. Los widgets compartidos van en `ui/core/` ([recomendaciones, *Use standardized naming conventions for classes, files and directories.*](../fuentes/flutter/architecture-recommendations.yml)).
+- Las dependencias llegan por inyección, y ningún objeto es accesible de forma global ([recomendaciones, *Use dependency injection.*](../fuentes/flutter/architecture-recommendations.yml)).
 - La app tiene una capa de datos, que expone los datos y tiene casi toda la lógica de negocio, y una de UI, que los muestra y recibe las acciones del usuario, con la lógica de UI y los widgets en clases separadas ([recomendaciones, *Use clearly defined data and UI layers.*](../fuentes/flutter/architecture-recommendations.yml)).
 - La capa de datos se divide en repositorios y servicios ([recomendaciones, *Use the repository pattern in the data layer.*](../fuentes/flutter/architecture-recommendations.yml)).
 - La capa de UI se divide en vistas, que son widgets, y ViewModels ([recomendaciones, *Use ViewModels and Views in the UI layer. (MVVM)*](../fuentes/flutter/architecture-recommendations.yml)).
 - La única lógica de un widget son los `if` que muestran u ocultan algo según un flag o un campo nullable del ViewModel, la animación, el layout según el dispositivo y la navegación simple: lo demás es un método del ViewModel ([recomendaciones, *Do not put logic in widgets.*](../fuentes/flutter/architecture-recommendations.yml)).
 - Los datos van solo de la capa de datos a la de UI, y las interacciones, de la UI a la capa de datos, que las procesa ([recomendaciones, *Use unidirectional data flow.*](../fuentes/flutter/architecture-recommendations.yml)).
 - Los modelos de datos son inmutables ([recomendaciones, *Use immutable data models.*](../fuentes/flutter/architecture-recommendations.yml)).
-- Cada repositorio es una clase abstracta, con una implementación por entorno ([recomendaciones, *Use abstract repository classes*](../fuentes/flutter/architecture-recommendations.yml)).
+- Cada repositorio es una clase abstracta ([recomendaciones, *Use abstract repository classes*](../fuentes/flutter/architecture-recommendations.yml)).
 - Hay un repositorio por tipo de dato, y es la única clase que lo modifica ([Common architecture concepts, *Single source of truth*](../fuentes/flutter/app-architecture-concepts.md)).
 - Un ViewModel recibe solo fuentes de datos, como repositorios, y expone solo datos listos para la vista y los Commands que la vista ejecuta ante una acción del usuario ([Common architecture concepts, *Extensibility*](../fuentes/flutter/app-architecture-concepts.md)).
 - Cada vista tiene un ViewModel, y cada ViewModel, una vista ([Guide to app architecture, *UI layer*](../fuentes/flutter/app-architecture-guide.md)).
@@ -230,22 +249,18 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándares: el README de [shared_preferences](../fuentes/pub/shared_preferences/README.md) y el de [flutter_secure_storage](../fuentes/pub/flutter_secure_storage/README.md).
-
 - El token de refresco que pide [autenticacion.md](autenticacion.md#sesión) va en flutter_secure_storage.
-- Las preferencias usan `SharedPreferencesAsync`: sin caché, cada lectura trae el valor actual ([shared_preferences, *SharedPreferences vs SharedPreferencesAsync vs SharedPreferencesWithCache*](../fuentes/pub/shared_preferences/README.md) y [*Cache and async or sync getters*](../fuentes/pub/shared_preferences/README.md)).
-- flutter_secure_storage usa `AndroidOptions()`, sin biometría: la app refresca la sesión sin pedirle nada al usuario ([flutter_secure_storage, *Encryption Options (Version 10.0.0+)*](../fuentes/pub/flutter_secure_storage/README.md)).
-- En Android, `SharedPreferencesAsync` usa su backend por defecto, DataStore Preferences ([shared_preferences, *Android platform storage*](../fuentes/pub/shared_preferences/README.md)).
-- shared_preferences no guarda datos críticos: no garantiza que una escritura llegue al disco ([shared_preferences, *Shared preferences plugin*](../fuentes/pub/shared_preferences/README.md)).
-- Si `main` usa flutter_secure_storage antes de `runApp`, llama antes a `WidgetsFlutterBinding.ensureInitialized()` ([flutter_secure_storage, *Installation*](../fuentes/pub/flutter_secure_storage/README.md)).
-- La copia de seguridad de Android no incluye los datos de flutter_secure_storage: restaurados en otro dispositivo, su clave no se puede recuperar ([flutter_secure_storage, *Disabling Auto Backup*](../fuentes/pub/flutter_secure_storage/README.md)).
-- En iOS, los entitlements de debug y de release declaran `keychain-access-groups` ([flutter_secure_storage, *macOS & iOS*](../fuentes/pub/flutter_secure_storage/README.md)).
+- flutter_secure_storage usa `AndroidOptions()`, sin biometría.
+- La copia de seguridad de Android excluye `FlutterSecureStorage.xml` y `FlutterSecureKeyStorage.xml`, las preferencias de flutter_secure_storage: `data_extraction_rules.xml` las saca de la copia en la nube y de la transferencia entre dispositivos, y `backup_rules.xml`, de la copia de un dispositivo con la API 30 o menor. Restauradas en otro dispositivo, su clave no se puede recuperar. [flutter_secure_storage 11.2.0](https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/flutter_secure_storage-v11.2.0/flutter_secure_storage/android/src/main/java/com/it_nomads/fluttersecurestorage/FlutterSecureStorageConfig.java)
+- Las preferencias usan `SharedPreferencesAsync`.
+- shared_preferences no guarda datos críticos: no garantiza que una escritura llegue al disco. [shared_preferences 2.5.6](https://raw.githubusercontent.com/flutter/packages/shared_preferences-v2.5.6/packages/shared_preferences/shared_preferences/README.md)
 
 ## Código de autorización
 
 Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
-- La app hace el flujo del código de autorización con flutter_appauth, que usa AppAuth.
+- La app hace el flujo del código de autorización con flutter_appauth.
+- En Android, el manifiesto declara el `intent-filter` de `RedirectUriReceiverActivity` con la URI `https` de retorno y `android:autoVerify="true"`, en vez de `appAuthRedirectScheme`, que solo declara un esquema propio. [flutter_appauth 13.0.0](https://raw.githubusercontent.com/MaikuB/flutter_appauth/flutter_appauth-v13.0.0/flutter_appauth/README.md)
 
 ## Código por SMS
 
@@ -259,33 +274,48 @@ Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
 - Los campos para entrar y para elegir una contraseña van en un `AutofillGroup`, y los gestores de contraseñas los completan por sus `autofillHints`: al entrar, `AutofillHints.username` en el del correo o el teléfono y `AutofillHints.password` en el de la contraseña, y al elegir una contraseña, `AutofillHints.newPassword`. [Flutter 3.47.9](https://github.com/flutter/flutter/blob/3.47.9/packages/flutter/lib/src/widgets/autofill.dart)
 
-## Idiomas
+## Errores
 
-Estándar: [*Internationalizing Flutter apps*](../fuentes/flutter/internationalization.md).
+Contrato: [transversal.md](transversal.md#errores).
+
+- El `http.Client` de la app convierte una respuesta que no es 2xx en la excepción tipada del sobre antes de devolverla: el cliente que genera swagger_parser descarta el cuerpo de esa respuesta y lanza `ClientException('HTTP <status>')`. [swagger_parser 2.3.0](https://raw.githubusercontent.com/Carapacik/swagger_parser/2.3.0/swagger_parser/lib/src/dart/dart_package_http_builder.dart)
+
+## Fechas
+
+Contrato: [transversal.md](transversal.md#fechas).
+
+- Un `DateTime` que va al servidor está en UTC: `toIso8601String()` escribe una hora local sin su desfase. [Dart 3.13.7](https://raw.githubusercontent.com/dart-lang/sdk/3.13.7/sdk/lib/core/date_time.dart)
+
+## Idiomas
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
 - Lo que genera `gen-l10n`, `lib/l10n/app_localizations*.dart`, no se versiona.
-- Los textos van en archivos ARB de `lib/l10n/`, y la plantilla es `app_es.arb`, la del idioma base: `l10n.yaml` lleva `arb-dir: lib/l10n`, `template-arb-file: app_es.arb` y `output-localization-file: app_localizations.dart` ([Internationalizing Flutter apps, *Add your own localized messages*](../fuentes/flutter/internationalization.md)).
-- `pubspec.yaml` declara flutter_localizations, con `sdk: flutter`, e intl, y lleva `generate: true` en `flutter:` ([Internationalizing Flutter apps, *Add your own localized messages*](../fuentes/flutter/internationalization.md)).
-- Un `Locale` se crea con `Locale.fromSubtags`, que admite el script ([Internationalizing Flutter apps, *Set up an internationalized app with `flutter_localizations`*](../fuentes/flutter/internationalization.md)).
-- `MaterialApp` declara los `localizationsDelegates` de `flutter_localizations` y sus `supportedLocales` ([Internationalizing Flutter apps, *Set up an internationalized app with `flutter_localizations`*](../fuentes/flutter/internationalization.md)).
-- El proyecto de Xcode declara en *Localizations* los idiomas de la app: la App Store los muestra desde ahí ([Internationalizing Flutter apps, *Localizing for iOS: Updating the iOS app bundle*](../fuentes/flutter/internationalization.md)).
+- Los textos van en archivos ARB de `lib/l10n/`, y la plantilla es `app_es.arb`, la del idioma base: `l10n.yaml` lleva `template-arb-file: app_es.arb`.
+- Un `Locale` se crea con `Locale.fromSubtags`, que admite el script.
+- El usuario elige el idioma de la app en los ajustes del sistema, y Flutter lo recibe como el de la configuración de la app. [Flutter 3.47.9](https://raw.githubusercontent.com/flutter/flutter/3.47.9/engine/src/flutter/shell/platform/android/io/flutter/plugin/localization/LocalizationPlugin.java)
+- En Android, `res/xml/locales_config.xml` lista los idiomas de los ARB, y el manifiesto lo declara en `android:localeConfig`. Va escrito a mano: AGP arma el suyo con las carpetas `res/values-<idioma>/`, y los textos de la app están en los ARB. [Per-app language preferences](https://developer.android.com/guide/topics/resources/app-languages)
+- En iOS, el proyecto de Xcode declara en *Localizations* los idiomas de los ARB: la App Store los toma de ahí. [Internationalizing Flutter apps](https://raw.githubusercontent.com/flutter/website/5aa5d3cfa2c41558b22516125c73d7a5efc4ce15/sites/docs/src/content/ui/internationalization/index.md)
+- `Accept-Language` lleva el idioma con que la app muestra sus textos, el que `MaterialApp` resuelve entre sus `supportedLocales`, y lo pone el `http.Client` de la app.
 
 ## Mapas
 
 Contrato: [transversal.md](transversal.md#mapas).
 
-- El mapa usa maplibre_gl, con el estilo claro o el oscuro de la configuración del servidor, según el modo de la app.
 - Los recorridos, los marcadores y las geocercas son capas de MapLibre, no widgets encima del mapa: la cámara le llega a Flutter como un mensaje de MapLibre, y lo que Flutter dibuja atado a ella se atrasa mientras dura el gesto.
-- `MapLibreMap` lleva `attributionEnabled: false`, y la app muestra la atribución de la configuración: el botón de MapLibre la esconde detrás de un toque.
+- `MapLibreMap` lleva `attributionEnabled: false`, y la app muestra la atribución de la configuración.
 
 ## OpenAPI y clientes
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
-- swagger_parser genera los modelos del cable y el cliente de la API desde `../server/openapi.json`, en `lib/data/services/api/`. `swagger_parser.yaml` lleva `serializer: freezed`, `http_client: http` y `page_width: 99`.
-- Un modelo generado rechaza un campo y un valor de enum que no conoce: el OpenAPI del servidor declara `additionalProperties: false` en cada esquema ([fastapi.md](fastapi.md#esquemas)).
+- swagger_parser genera los modelos del cable y el cliente de la API desde `../server/openapi.json`, en `lib/data/services/api/`. `swagger_parser.yaml` lleva `serializer: freezed` y `http_client: http`.
+
+## Paginación
+
+Contrato: [transversal.md](transversal.md#paginación).
+
+- El ViewModel de una lista que se recorre con `nextPageToken` guarda en su estado los elementos cargados y el `nextPageToken`, y carga la página siguiente con un método.
 
 ## Pagos
 
@@ -297,13 +327,23 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 Contrato: [transversal.md](transversal.md#push).
 
-- La app recibe push con firebase_messaging, sobre firebase_core.
+- La app pide el permiso de notificaciones con `requestPermission()`, de firebase_messaging, después de una acción del usuario que deja claro para qué sirven, y no al arrancar.
+
+## Red
+
+- La app tiene un solo `http.Client`, una subclase de `BaseClient` en un provider con `keepAlive: true`, que reciben el cliente generado y los demás servicios: reutiliza las conexiones, y cada cabecera y cada respuesta de error se tratan en un solo lugar.
 
 ## Reintentos
 
 Contrato: [transversal.md](transversal.md#reintentos).
 
-- El uuid v4 de un recurso que crea la app sale de `Uuid().v4()`, de uuid.
+- Los reintentos los hace un `RetryClient`, de package:http, por el que el `http.Client` de la app pasa solo las peticiones idempotentes, con `when` en un 502, un 503 o un 504, `whenError` en una `ClientException` y `delay` exponencial con jitter: por defecto reintenta solo un 503, nunca un fallo de red, y sin jitter. [http 1.6.0](https://pub.dev/documentation/http/1.6.0/retry/RetryClient-class.html)
+
+## Sesión
+
+Contrato: [autenticacion.md](autenticacion.md#sesión).
+
+- El `http.Client` de la app pone el token de acceso en `Authorization` y hace el refresco ante un 401, con un solo `Future` de refresco en curso, que esperan las peticiones que reciben un 401 mientras tanto.
 
 ## Tema
 
@@ -318,7 +358,14 @@ Contrato: [transversal.md](transversal.md#tema).
 
 Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
 
+- El `http.Client` de la app pone el `User-Agent` de pieza en cada petición: sin él, `dart:io` manda `Dart/<versión> (dart:io)`. [Dart 3.13.7](https://raw.githubusercontent.com/dart-lang/sdk/3.13.7/sdk/lib/_http/http.dart)
 - La versión del `User-Agent` sale de `PackageInfo.fromPlatform()`, de package_info_plus: la versión vive solo en `pubspec.yaml`.
+
+## WebSocket
+
+Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autenticacion.md#websocket).
+
+- El WebSocket va por `WebSocket.connect`, de `dart:io`, con el `User-Agent` y `Authorization` en `headers`.
 
 ## Pruebas
 
@@ -335,7 +382,9 @@ Contrato: [transversal.md](transversal.md#distribución).
 
 - CI construye la app de iOS en macOS con `flutter build ios --no-codesign`: sin una Mac, es la única revisión del proyecto de Xcode.
 - El número de build es el que sigue al `+` en `version`, de `pubspec.yaml`.
-- La versión de Android se compila con `flutter build appbundle --release` y se firma con la llave de subida que nombra `android/key.properties`, que git ignora. [Build and release an Android app](https://docs.flutter.dev/deployment/android)
+- La versión de Android se compila con `flutter build appbundle` y se firma con la llave de subida que nombra `android/key.properties`, que git ignora. [Build and release an Android app](https://docs.flutter.dev/deployment/android)
+- La versión de iOS es el `.ipa` de `flutter build ipa --export-options-plist=ios/ExportOptions.plist`, que CI sube a App Store Connect con `xcrun altool` y una llave de la API de App Store Connect. [Build and release an iOS app](https://docs.flutter.dev/deployment/ios)
+- El target `Runner` firma la configuración Release a mano, con el certificado Apple Distribution y el perfil de App Store de la app, y `ios/ExportOptions.plist` lleva `method` `app-store-connect`, `signingStyle` `manual` y ese perfil en `provisioningProfiles`. CI instala el certificado y el perfil desde sus secretos, con `scripts/apple.py`.
 
 ## Cumplimiento
 
@@ -363,7 +412,7 @@ Contrato: [transversal.md](transversal.md#distribución).
 | *PREFER relative import paths* | `prefer_relative_imports` |
 | *DO place `dart:` imports before other imports*, *DO place `package:` imports before relative imports*, *DO specify exports in a separate section after all imports* y *DO sort sections alphabetically* | `directives_ordering` |
 | *DON'T explicitly name libraries* | `unnecessary_library_name` |
-| *PREFER using `lowerCamelCase` for constant names* | `constant_identifier_names` y `non_constant_identifier_names` |
+| *PREFER using `lowerCamelCase` for constant names* | `constant_identifier_names` |
 | *DO name extensions using `UpperCamelCase`*, *DO name import prefixes using `lowercase_with_underscores`*, *DO name other identifiers using `lowerCamelCase`* y *DON'T use a leading underscore for identifiers that aren't private* | `camel_case_extensions`, `library_prefixes`, `non_constant_identifier_names`, `no_leading_underscores_for_local_identifiers` y `no_leading_underscores_for_library_prefixes` |
 | Las clases, los enums y los typedefs en `UpperCamelCase` | `camel_case_types` |
 | Los archivos `.dart` y el paquete en `lowercase_with_underscores` | `file_names` y `package_names` |

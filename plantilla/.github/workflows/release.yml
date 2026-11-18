@@ -56,19 +56,35 @@ jobs:
       # A draft until checksums: a failed job leaves no half release.
       - run: gh release create "$GITHUB_REF_NAME" --draft --generate-notes "${{ github.event.repository.name }}-$GITHUB_REF_NAME.tar.gz"
 
-  # macOS waits for the Apple Developer account: unsigned, macOS 15 does not open the app.
+  # transversal.md, «Distribución»: the desktop systems the repository publishes. ci.yml already
+  # failed if a variable is missing.
+  systems:
+    needs: ci
+    runs-on: ubuntu-latest
+    outputs:
+      desktop: ${{ steps.desktop.outputs.include }}
+    steps:
+      - id: desktop
+        env:
+          LINUX: ${{ vars.RELEASE_LINUX }}
+          WINDOWS: ${{ vars.RELEASE_WINDOWS }}
+          MACOS: ${{ vars.RELEASE_MACOS }}
+        run: |
+          include='[]'
+          add() { include=$(echo "$include" | jq -c --argjson entry "$1" '. + [$entry]'); }
+          if [ "$LINUX" = true ]; then add '{"os":"ubuntu-latest","system":"linux","ext":"bin","archivo":"desktop-linux.bin"}'; fi
+          if [ "$WINDOWS" = true ]; then add '{"os":"windows-latest","system":"windows","ext":"exe","archivo":"desktop-windows.exe"}'; fi
+          if [ "$MACOS" = true ]; then add '{"os":"macos-latest","system":"macos","ext":"app","archivo":"desktop-macos.dmg"}'; fi
+          echo "include=$include" >> "$GITHUB_OUTPUT"
+
+  # Not run yet on macOS: check it the first time a repository publishes there.
   desktop:
-    needs: artifact
+    needs: [artifact, systems]
+    if: needs.systems.outputs.desktop != '[]'
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            ext: bin
-            archivo: desktop-linux.bin
-          - os: windows-latest
-            ext: exe
-            archivo: desktop-windows.exe
+        include: ${{ fromJSON(needs.systems.outputs.desktop) }}
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
@@ -108,7 +124,21 @@ jobs:
       # pyside6-deploy does not create exec_directory on Linux or Windows.
       - run: mkdir -p dist
       - run: uv run --no-editable pyside6-deploy -c pysidedeploy.spec --force --no-install
-      - run: mv dist/*.${{ matrix.ext }} "${{ matrix.archivo }}"
+      - if: runner.os != 'macOS'
+        run: mv dist/*.${{ matrix.ext }} "${{ matrix.archivo }}"
+      # transversal.md, «Distribución»: the .app goes in a DMG signed with Developer ID, notarized
+      # and stapled.
+      - if: runner.os == 'macOS'
+        env:
+          CERTIFICATE: ${{ secrets.APPLE_DEVELOPER_ID_P12 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_ID_PASSWORD }}
+          IDENTITY: ${{ secrets.APPLE_DEVELOPER_ID_IDENTITY }}
+          API_KEY: ${{ secrets.APPLE_API_KEY_P8 }}
+          API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+        run: |
+          python3 ../scripts/apple.py keychain
+          python3 ../scripts/apple.py dmg dist/*.app "${{ matrix.archivo }}" --sign-app
       - run: gh release upload "$GITHUB_REF_NAME" "${{ matrix.archivo }}"
 
   # transversal.md, «Distribución»: the version goes to the internal track of Play, and the
@@ -116,6 +146,7 @@ jobs:
   # Not run yet: check it the first time a repository runs it on GitHub Actions.
   mobile:
     needs: artifact
+    if: vars.RELEASE_ANDROID == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -149,7 +180,7 @@ jobs:
             echo "keyAlias=$KEY_ALIAS"
             echo "keyPassword=$KEY_PASSWORD"
           } > android/key.properties
-      - run: flutter build appbundle --release
+      - run: flutter build appbundle
       - env:
           ACCOUNT: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
         run: >-
@@ -157,10 +188,45 @@ jobs:
           build/app/outputs/bundle/release/app-release.aab PIEZA.apk
       - run: gh release upload "$GITHUB_REF_NAME" PIEZA.apk
 
+  # transversal.md, «Distribución»: the iOS version reaches App Store Connect, and stays in
+  # TestFlight. plataformas/flutter.md, «Entrega»: Runner signs Release by hand.
+  # Not run yet: check it the first time a repository publishes on iOS.
+  mobile-ios:
+    needs: artifact
+    if: vars.RELEASE_IOS == 'true'
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: PIEZA
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+      - run: flutter pub get
+      - run: dart run swagger_parser
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - env:
+          CERTIFICATE: ${{ secrets.APPLE_DISTRIBUTION_P12 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DISTRIBUTION_PASSWORD }}
+          PROFILE: ${{ secrets.APPLE_PROFILE_PIEZA }}
+        run: |
+          python3 ../scripts/apple.py keychain
+          python3 ../scripts/apple.py profile
+      - run: flutter build ipa --export-options-plist=ios/ExportOptions.plist
+      - env:
+          API_KEY: ${{ secrets.APPLE_API_KEY_P8 }}
+          API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APP_ID: ${{ vars.APPLE_APP_ID_PIEZA }}
+        run: python3 ../scripts/apple.py upload build/ios/ipa/*.ipa
+
   # The same for an app of mobile/ in Kotlin, with its Gradle.
   # Not run yet: check it the first time a repository runs it on GitHub Actions.
   android:
     needs: artifact
+    if: vars.RELEASE_ANDROID == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -204,6 +270,7 @@ jobs:
   # The build and its signature ran on GitHub Actions; the upload to Play and to the release, not yet.
   flet-mobile:
     needs: artifact
+    if: vars.RELEASE_ANDROID == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -248,21 +315,61 @@ jobs:
           build/aab/*.aab PIEZA.apk
       - run: gh release upload "$GITHUB_REF_NAME" PIEZA.apk
 
-  # The installers of an app of desktop/ in Flet: a repository keeps the desktop job of the
-  # technology of its desktop/. macOS waits for the Apple Developer account.
-  # The builds ran on GitHub Actions; the upload to the release, not yet.
-  flet-desktop:
+  # The same for iOS. flet build ipa reads the team, the certificate and the profile from
+  # [tool.flet.ios]. Not run yet: check it the first time a repository publishes on iOS.
+  flet-ios:
     needs: artifact
+    if: vars.RELEASE_IOS == 'true'
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: PIEZA
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version-file: PIEZA/pyproject.toml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+      - run: uv sync --locked
+      # plataformas/flet.md, «Idiomas»: flet build packages src/ as it is, with the compiled .mo.
+      - run: uv run pybabel compile -d src/locales -D PIEZA
+      # plataformas/flet.md, «Proyecto»: flet build installs with pip, which does not read uv.lock.
+      - run: >-
+          uv export --locked --no-dev --no-emit-project --no-emit-local --no-hashes
+          --format requirements.txt -o "$RUNNER_TEMP/constraints.txt"
+      - env:
+          CERTIFICATE: ${{ secrets.APPLE_DISTRIBUTION_P12 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DISTRIBUTION_PASSWORD }}
+          PROFILE: ${{ secrets.APPLE_PROFILE_PIEZA }}
+        run: |
+          python3 ../scripts/apple.py keychain
+          python3 ../scripts/apple.py profile
+      - env:
+          PIP_CONSTRAINT: ${{ runner.temp }}/constraints.txt
+        run: uv run flet build ipa --yes
+      - env:
+          API_KEY: ${{ secrets.APPLE_API_KEY_P8 }}
+          API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APP_ID: ${{ vars.APPLE_APP_ID_PIEZA }}
+        run: python3 ../scripts/apple.py upload build/ipa/*.ipa
+
+  # The installers of an app of desktop/ in Flet: a repository keeps the desktop job of the
+  # technology of its desktop/. The Linux and Windows builds ran on GitHub Actions; the upload to
+  # the release and macOS, not yet.
+  flet-desktop:
+    needs: [artifact, systems]
+    if: needs.systems.outputs.desktop != '[]'
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            target: linux
-            archivo: desktop-linux.bin
-          - os: windows-latest
-            target: windows
-            archivo: desktop-windows.exe
+        include: ${{ fromJSON(needs.systems.outputs.desktop) }}
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
@@ -295,9 +402,25 @@ jobs:
       - run: >-
           uv export --locked --no-dev --no-emit-project --no-emit-local --no-hashes
           --format requirements.txt -o "$RUNNER_TEMP/constraints.txt"
+      - if: runner.os == 'macOS'
+        env:
+          CERTIFICATE: ${{ secrets.APPLE_DEVELOPER_ID_P12 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_ID_PASSWORD }}
+        run: python3 ../scripts/apple.py keychain
+      # plataformas/flet.md, «Entrega»: on macOS, flet build signs, notarizes and staples the app.
       - env:
           PIP_CONSTRAINT: ${{ runner.temp }}/constraints.txt
-        run: uv run flet build ${{ matrix.target }} --yes
+          APPLE_API_KEY: ${{ runner.temp }}/AuthKey.p8
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          KEY: ${{ secrets.APPLE_API_KEY_P8 }}
+        run: |
+          if [ "${{ matrix.system }}" = macos ]; then
+            printf '%s' "$KEY" > "$APPLE_API_KEY"
+            uv run flet build macos --macos-distribution developer-id --yes
+          else
+            uv run flet build ${{ matrix.system }} --yes
+          fi
       # The runner has no FUSE 2, which appimagetool needs. The AppImage keeps the .bin name of
       # install.py: it is an executable like any other.
       - if: runner.os == 'Linux'
@@ -307,11 +430,20 @@ jobs:
       # The Windows runner has Inno Setup 6, with iscc on the PATH.
       - if: runner.os == 'Windows'
         run: iscc installer.iss && mv build/installer/setup.exe "${{ matrix.archivo }}"
+      - if: runner.os == 'macOS'
+        env:
+          IDENTITY: ${{ secrets.APPLE_DEVELOPER_ID_IDENTITY }}
+          API_KEY: ${{ secrets.APPLE_API_KEY_P8 }}
+          API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+        run: python3 ../scripts/apple.py dmg build/macos/*.app "${{ matrix.archivo }}"
       - run: gh release upload "$GITHUB_REF_NAME" "${{ matrix.archivo }}"
 
   # One .sha256 for every file of the release: the signature covers them all.
+  # A platform the repository does not publish leaves its job skipped, not failed.
   checksums:
-    needs: [artifact, desktop, mobile, android, flet-mobile, flet-desktop]
+    needs: [artifact, desktop, mobile, mobile-ios, android, flet-mobile, flet-ios, flet-desktop]
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

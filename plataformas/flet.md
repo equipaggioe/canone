@@ -179,10 +179,11 @@ Estándar: [*Integration testing*](../fuentes/flet/integration-testing.md) de Fl
 
 ## Entrega
 
-Estándares: [*Publishing a Flet app*](../fuentes/flet/publish.md), [*Packaging app for Android*](../fuentes/flet/publish-android.md), [*Packaging app for Windows*](../fuentes/flet/publish-windows.md) y [*Packaging app for Linux*](../fuentes/flet/publish-linux.md) de Flet.
+Estándares: [*Publishing a Flet app*](../fuentes/flet/publish.md), [*Packaging app for Android*](../fuentes/flet/publish-android.md), [*Packaging app for Windows*](../fuentes/flet/publish-windows.md), [*Packaging app for Linux*](../fuentes/flet/publish-linux.md), [*Packaging app for iOS*](../fuentes/flet/publish-ios.md) y [*Packaging app for macOS*](../fuentes/flet/publish-macos.md) de Flet.
 
 Contrato: [transversal.md](transversal.md#distribución).
 
+- CI instala el certificado Apple Distribution y el perfil de App Store desde sus secretos, con `scripts/apple.py`, sin otra acción de GitHub.
 - El release corre `uv run flet build` después de `uv sync --locked`, sin flet-build-action: la acción corre `uv run` sin `--locked`, y un `uv.lock` desfasado no detiene el build. [flet-build-action v1](https://raw.githubusercontent.com/flet-dev/flet-build-action/v1/action.yml)
 - `[tool.flet]` declara `bundle_id`, `<dominio al revés>.<pieza>`: sin él, sale de `org`, que vale `com.flet` si falta ([Publishing, *Bundle ID*](../fuentes/flet/publish.md) y [*Organization name*](../fuentes/flet/publish.md)).
 - `[tool.flet]` declara `product`, el nombre que ve el usuario: sin él, es `[project].name` ([Publishing, *Product name*](../fuentes/flet/publish.md)).
@@ -208,6 +209,11 @@ Contrato: [transversal.md](transversal.md#distribución).
 - El AppImage lleva el bundle entero, y su `AppRun` solo hace `exec` del ejecutable, sin `LD_LIBRARY_PATH` ([Packaging app for Linux, *Distributing*](../fuentes/flet/publish-linux.md) y [*Do not set `LD_LIBRARY_PATH` in `AppRun`*](../fuentes/flet/publish-linux.md)).
 - El `Exec=` del desktop entry se reescribe con el nombre del ejecutable ([Packaging app for Linux, *Distributing*](../fuentes/flet/publish-linux.md)).
 - `build-appimage.sh` descarga appimagetool de un release fijo, no del tag `continuous` ([Packaging app for Linux, *Distributing*](../fuentes/flet/publish-linux.md)).
+- La versión de iOS es el `.ipa` de `flet build ipa`, con `export_method = "app-store-connect"` en `[tool.flet.ios]`, y CI la sube a App Store Connect con `xcrun altool --upload-package` y una llave de la API de App Store Connect ([Packaging app for iOS, *Export method*](../fuentes/flet/publish-ios.md) y [*Building and signing in CI*](../fuentes/flet/publish-ios.md)).
+- `[tool.flet.ios]` declara `team_id`, `signing_certificate = "Apple Distribution"` y, en `provisioning_profile`, el perfil de App Store de la app ([Packaging app for iOS, *Team ID*](../fuentes/flet/publish-ios.md), [*Signing Certificate*](../fuentes/flet/publish-ios.md) y [*Provisioning Profile*](../fuentes/flet/publish-ios.md)).
+- La versión de macOS sale de `flet build macos --macos-distribution developer-id`, que firma la app con el runtime endurecido, la notariza y le grapa el ticket ([Packaging app for macOS, *Distribution lanes*](../fuentes/flet/publish-macos.md)).
+- La app va en un DMG de `hdiutil create`, que se firma con el mismo certificado, se notariza y lleva grapado el ticket ([Packaging app for macOS, *Distributing*](../fuentes/flet/publish-macos.md)).
+- La notarización usa una llave de la API de App Store Connect, por `APPLE_API_KEY`, `APPLE_API_KEY_ID` y `APPLE_API_ISSUER`, y `flet build` encuentra solo el certificado Developer ID, el único del llavero del runner ([Packaging app for macOS, *Creating a credential*](../fuentes/flet/publish-macos.md), [*Providing it to Flet*](../fuentes/flet/publish-macos.md) y [*Identity auto-discovery*](../fuentes/flet/publish-macos.md)).
 
 ## Cumplimiento
 

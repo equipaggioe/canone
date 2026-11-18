@@ -89,9 +89,6 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [flutter/app-architecture-concepts.md](flutter/app-architecture-concepts.md) | [URL](https://raw.githubusercontent.com/flutter/website/c63034dad2738e18d4f3a0c88487410179395f3a/sites/docs/src/content/app-architecture/concepts.md) |  |
 | [flutter/app-architecture-guide.md](flutter/app-architecture-guide.md) | [URL](https://raw.githubusercontent.com/flutter/website/afe82c4e59af75731eb83c2138a93837934f65b8/sites/docs/src/content/app-architecture/guide.md) |  |
 | [flutter/architecture-recommendations.yml](flutter/architecture-recommendations.yml) | [URL](https://raw.githubusercontent.com/flutter/website/afe82c4e59af75731eb83c2138a93837934f65b8/sites/docs/src/data/architectureRecommendations.yml) | Las recomendaciones que muestra [*Architecture recommendations and resources*](https://raw.githubusercontent.com/flutter/website/afe82c4e59af75731eb83c2138a93837934f65b8/sites/docs/src/content/app-architecture/recommendations.md) |
-| [flutter/internationalization.md](flutter/internationalization.md) | [URL](https://raw.githubusercontent.com/flutter/website/5aa5d3cfa2c41558b22516125c73d7a5efc4ce15/sites/docs/src/content/ui/internationalization/index.md) |  |
-| [pub/shared_preferences/README.md](pub/shared_preferences/README.md) | [URL](https://raw.githubusercontent.com/flutter/packages/shared_preferences-v2.5.6/packages/shared_preferences/shared_preferences/README.md) |  |
-| [pub/flutter_secure_storage/README.md](pub/flutter_secure_storage/README.md) | [URL](https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/flutter_secure_storage-v11.2.0/flutter_secure_storage/README.md) |  |
 | [riverpod/do_dont.mdx](riverpod/do_dont.mdx) | [URL](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/root/do_dont.mdx) | Tag de flutter_riverpod 3.5.0 |
 | [riverpod/providers.mdx](riverpod/providers.mdx) | [URL](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/providers.mdx) | Tag de flutter_riverpod 3.5.0 |
 | [riverpod/refs.mdx](riverpod/refs.mdx) | [URL](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/refs.mdx) | Tag de flutter_riverpod 3.5.0 |
@@ -117,6 +114,8 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [flet/publish-android.md](flet/publish-android.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/android.md) |  |
 | [flet/publish-windows.md](flet/publish-windows.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/windows.md) |  |
 | [flet/publish-linux.md](flet/publish-linux.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/linux.md) |  |
+| [flet/publish-ios.md](flet/publish-ios.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/ios.md) |  |
+| [flet/publish-macos.md](flet/publish-macos.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/macos.md) |  |
 | [flet/integration-testing.md](flet/integration-testing.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/getting-started/integration-testing.md) |  |
 | [flet/async-apps.md](flet/async-apps.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/async-apps.md) |  |
 | [flet/declarative-vs-imperative.md](flet/declarative-vs-imperative.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/declarative-vs-imperative.md) |  |

@@ -35,6 +35,12 @@ path = "src"
 [tool.flet.android.manifest_application]
 allowBackup = false
 
+[tool.flet.ios]
+team_id = "EQUIPO"
+export_method = "app-store-connect"
+signing_certificate = "Apple Distribution"
+provisioning_profile = "PERFIL"
+
 [tool.uv]
 python-preference = "only-system"
 required-version = "==0.13.9"

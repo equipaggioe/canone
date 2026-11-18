@@ -167,12 +167,12 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | riverpod_generator | 4.0.10 | [Estado](plataformas/flutter.md#estado) |
 | riverpod_lint | 3.2.0 | [Estado](plataformas/flutter.md#estado) |
 | go_router | 18.1.4 | [Arquitectura](plataformas/flutter.md#arquitectura) |
-| http | 1.6.0 | [Arquitectura](plataformas/flutter.md#arquitectura) |
+| http | 1.6.0 | [Red](plataformas/flutter.md#red) |
 | maplibre_gl | 0.28.0 | [Mapas](plataformas/flutter.md#mapas) |
 | freezed_annotation | 3.1.0 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | freezed | 4.0.3 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | json_annotation | 4.12.0 | [Arquitectura](plataformas/flutter.md#arquitectura) |
-| json_serializable | 6.15.2 | [Arquitectura](plataformas/flutter.md#arquitectura) |
+| json_serializable | 6.15.2 | — |
 | build_runner | 2.17.1 | [Proyecto](plataformas/flutter.md#proyecto) |
 | dependency_validator | 5.1.0 | [Proyecto](plataformas/flutter.md#proyecto) |
 | swagger_parser | 2.3.0 | [OpenAPI y clientes](plataformas/flutter.md#openapi-y-clientes) |
@@ -181,11 +181,11 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | flutter_appauth | 13.0.0 | [Código de autorización](plataformas/flutter.md#código-de-autorización) |
 | sms_autofill | 2.6.1 | [Código por SMS](plataformas/flutter.md#código-por-sms) |
 | flutter_stripe, con Stripe | 15.0.0 | [Pagos](plataformas/flutter.md#pagos) |
-| firebase_core | 5.2.0 | [Push](plataformas/flutter.md#push) |
+| firebase_core | 5.2.0 | — |
 | firebase_messaging | 17.1.0 | [Push](plataformas/flutter.md#push) |
-| flutter_localizations | el de Flutter 3.47.9 | [Idiomas](plataformas/flutter.md#idiomas) |
-| intl | 0.20.3 | [Idiomas](plataformas/flutter.md#idiomas) |
-| uuid | 4.6.0 | [Reintentos](plataformas/flutter.md#reintentos) |
+| flutter_localizations | el de Flutter 3.47.9 | — |
+| intl | 0.20.3 | — |
+| uuid | 4.6.0 | — |
 | package_info_plus | 10.2.2 | [Versión mínima de cliente](plataformas/flutter.md#versión-mínima-de-cliente) |
 | flutter_lints | 6.0.0 | [Estilo](plataformas/flutter.md#estilo) |
 

@@ -49,6 +49,7 @@ El resto de este documento dice cómo se escribe y cómo se revisa una página.
 - Cada página identifica las plantillas de `plantilla/` que se derivan de sus convenciones.
 - Las páginas no fijan qué se usa en cada plataforma ni en qué versión: eso está en [stack.md](../stack.md), y cada página escribe cómo se usa.
 - Las páginas no indican qué repositorios utilizan cada tecnología ni establecen cuándo elegir una plataforma sobre otra.
+- Una página escribe cómo se construye, se firma y se publica en cada plataforma como si el producto tuviera las cuentas y los certificados que esa plataforma pide. En qué plataformas construye y publica un producto lo elige cada repositorio ([transversal.md](transversal.md#distribución)).
 
 ### En desarrollo
 
@@ -105,6 +106,8 @@ Una fuente debe cumplir los seis requisitos siguientes:
 4. **Independiente:** las convenciones adoptadas no dependen de la infraestructura de quien publica la fuente.
 5. **Cubre:** resuelve la mayoría de las decisiones de los asuntos que regula, considerando conjuntamente todas las páginas, para que esos asuntos sigan su enfoque. En esos asuntos, lo no cubierto debe quedar en minoría. Lo que se contradice o se dirige a otro actor no cuenta como cubierto.
 6. **Aporta:** es el origen de al menos tres convenciones, contando todas las páginas. Cuentan también las elecciones y los endurecimientos que la tienen como origen. No cuenta lo que se dirige a otro actor, ni una convención que se propone en la misma revisión.
+
+Para «Cubre» y «Aporta», los documentos de una misma documentación, la que publica quien define una tecnología para una de sus versiones, cuentan juntos: una guía partida en páginas es una sola guía. Cada documento sigue siendo una fuente aparte.
 
 Un documento que no cumple «Cubre» o «Aporta» no es fuente, y lo que se aproveche de él se escribe como convención propia.
 

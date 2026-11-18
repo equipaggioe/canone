@@ -228,9 +228,6 @@ UNIDADES = [
  ('flutter/app-architecture-concepts.md', None, [], 'low'),
  ('flutter/app-architecture-guide.md', None, [], 'low'),
  ('flutter/architecture-recommendations.yml', None, [], 'yml'),
- ('pub/shared_preferences/README.md', None, [], 'low'),
- ('pub/flutter_secure_storage/README.md', None, [], 'low'),
- ('flutter/internationalization.md', None, [], 'low'),
  # postgres
  ('postgresql/ddl.sgml', ['The System Catalog Schema', 'Primary Keys', 'System Columns', 'Check Constraints', 'Not-Null Constraints', 'Foreign Keys', 'Modifying Tables'], [], 'low'),
  ('postgis/using_postgis_dataman.xml', ['Geography Data Type', 'GiST Indexes'], [], 'low'),

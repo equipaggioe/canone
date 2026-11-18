@@ -85,7 +85,7 @@ CERTIFICATES = Path("/etc/ssl/certs/ca-certificates.crt")
 INSTALLERS = {
     "linux": "desktop-linux.bin",
     "windows": "desktop-windows.exe",
-    "macos": "desktop-macos.zip",
+    "macos": "desktop-macos.dmg",
 }
 
 

@@ -1,6 +1,6 @@
 # ADR-0174 · Flet fija sus transitivas con `PIP_CONSTRAINT` y construye sin flet-build-action
 
-- **Estado:** Aceptada. El usuario pidió aplicar lo recomendado y correr las pruebas (2026-11-17)
+- **Estado:** Aceptada. El usuario pidió aplicar lo recomendado y correr las pruebas (2026-11-17). El punto 5 lo reemplaza el [ADR-0180](0180-cada-plataforma-se-escribe-como-si-hubiera-cuenta-y-cada-repositorio-elige-donde-publica.md)
 - **Fecha:** 2026-11-17
 - **Alcance:** [`plataformas/flet.md`](../plataformas/flet.md), «Proyecto», «Almacenamiento» y
   «Entrega»; [`plataformas/transversal.md`](../plataformas/transversal.md), «Distribución»;

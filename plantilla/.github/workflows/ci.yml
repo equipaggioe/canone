@@ -23,6 +23,22 @@ jobs:
           repository: equipaggioe/canone
           path: .canone
       - run: python3 .canone/scripts/verificar.py --repo .
+      # transversal.md, «Distribución»: each platform says whether it is built and published, and
+      # a missing variable fails instead of leaving the platform out.
+      - env:
+          RELEASE_ANDROID: ${{ vars.RELEASE_ANDROID }}
+          RELEASE_IOS: ${{ vars.RELEASE_IOS }}
+          RELEASE_LINUX: ${{ vars.RELEASE_LINUX }}
+          RELEASE_MACOS: ${{ vars.RELEASE_MACOS }}
+          RELEASE_WINDOWS: ${{ vars.RELEASE_WINDOWS }}
+        run: |
+          for name in RELEASE_ANDROID RELEASE_IOS RELEASE_LINUX RELEASE_MACOS RELEASE_WINDOWS; do
+            value=$(printenv "$name" || true)
+            if [ "$value" != true ] && [ "$value" != false ]; then
+              echo "The variable $name must be true or false, and is '$value'" >&2
+              exit 1
+            fi
+          done
 
   server:
     runs-on: ubuntu-latest
@@ -249,6 +265,7 @@ jobs:
 
   # Not run yet: check it the first time a repository runs it on GitHub Actions.
   ios:
+    if: vars.RELEASE_IOS == 'true'
     runs-on: macos-latest
     defaults:
       run:

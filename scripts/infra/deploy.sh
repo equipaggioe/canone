@@ -21,7 +21,7 @@ set -eu
 canone=$1
 work=$(mktemp -d)
 api=$work/api
-desktop="desktop-linux.bin desktop-windows.exe desktop-macos.zip mobile-customer.apk"
+desktop="desktop-linux.bin desktop-windows.exe desktop-macos.dmg mobile-customer.apk"
 pids=
 cleanup() {
     status=$?

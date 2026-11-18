@@ -185,3 +185,6 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0177](0177-flutter-y-sveltekit-dejan-de-estar-en-desarrollo.md) | `flutter.md` y `sveltekit.md` dejan de estar en desarrollo | Con Flutter o SvelteKit |
 | [0178](0178-la-interfaz-de-flet-es-declarativa.md) | La interfaz de Flet es declarativa | Con Flet |
 | [0179](0179-una-app-de-flet-no-muestra-mapas.md) | Una app de Flet no muestra mapas | Con Flet |
+| [0180](0180-cada-plataforma-se-escribe-como-si-hubiera-cuenta-y-cada-repositorio-elige-donde-publica.md) | Cada plataforma se escribe como si hubiera cuenta, y cada repositorio elige dónde publica | Con apps o con `desktop/` |
+| [0181](0181-cubre-y-aporta-cuentan-juntas-las-paginas-de-una-misma-documentacion.md) | «Cubre» y «Aporta» cuentan juntas las páginas de una misma documentación | `plataformas/` y `fuentes/` |
+| [0182](0182-flutter-traduce-los-errores-reintenta-y-autentica-en-un-solo-http-client.md) | Flutter traduce los errores, reintenta y autentica en un solo `http.Client` | Con Flutter |

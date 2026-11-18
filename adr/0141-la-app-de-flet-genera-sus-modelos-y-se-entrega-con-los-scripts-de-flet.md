@@ -1,6 +1,6 @@
 # ADR-0141 · La app de Flet genera sus modelos con datamodel-code-generator y se entrega como AAB, `setup.exe` y AppImage
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. Del punto 3, la espera a la cuenta de Apple la reemplaza el [ADR-0180](0180-cada-plataforma-se-escribe-como-si-hubiera-cuenta-y-cada-repositorio-elige-donde-publica.md)
 - **Fecha:** 2026-11-13
 - **Alcance:** [`plataformas/flet.md`](../plataformas/flet.md), `plantilla/flet/` y los jobs de Flet
   de `ci.yml` y `release.yml`

@@ -119,7 +119,8 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [flet/publish-linux.md](flet/publish-linux.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/linux.md) |  |
 | [flet/integration-testing.md](flet/integration-testing.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/getting-started/integration-testing.md) |  |
 | [flet/async-apps.md](flet/async-apps.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/async-apps.md) |  |
-| [flet/custom-controls.md](flet/custom-controls.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/custom-controls.md) |  |
+| [flet/declarative-vs-imperative.md](flet/declarative-vs-imperative.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/declarative-vs-imperative.md) |  |
+| [flet/router.md](flet/router.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/router.md) |  |
 | [flet/navigation-and-routing.md](flet/navigation-and-routing.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/navigation-and-routing.md) |  |
 | [flet/accessibility.md](flet/accessibility.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/accessibility.md) |  |
 | [pyside6/deployment-pyside6-deploy.rst](pyside6/deployment-pyside6-deploy.rst) | [URL](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/deployment/deployment-pyside6-deploy.rst) |  |

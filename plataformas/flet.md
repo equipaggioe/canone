@@ -46,42 +46,41 @@ Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md) de Flet.
 
 Plantilla: [plantilla/flet/](../plantilla/flet/), el job `flet` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y los jobs `flet-mobile` y `flet-desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `pyproject.toml`, `installer.iss` y `build-appimage.sh` son un punto de partida.
 
+## Componentes
+
+Estándar: [*Declarative vs Imperative*](../fuentes/flet/declarative-vs-imperative.md) de Flet.
+
+- Una pieza de interfaz reutilizable es un `@ft.component`, y no una subclase de un control con `@ft.control`.
+- Un diálogo se muestra con `ft.use_dialog()`, desde el estado del componente, y no con `page.show_dialog()`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/declarative-dialogs.md)
+- Una lista de cientos de elementos usa `ListView` o `GridView`, que dibujan solo lo visible, y no `Column` ni `Row`, que dibujan todo. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/large-lists.md)
+- Un `ListView` cuyos elementos miden lo mismo lleva `item_extent` o `first_item_prototype`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/large-lists.md)
+- La interfaz es declarativa: cada pantalla es un `@ft.component` que devuelve sus controles a partir del estado, y ningún handler cambia las propiedades de un control ni `page.controls` ([Declarative vs Imperative, *Declarative*](../fuentes/flet/declarative-vs-imperative.md)).
+- El estado que comparten varios componentes vive en clases `@ft.observable`, y sus cambios son métodos de esas clases ([Declarative vs Imperative, *Observables*](../fuentes/flet/declarative-vs-imperative.md) y [*Example*](../fuentes/flet/declarative-vs-imperative.md)).
+- El estado que es solo de una vista, como si una fila está en edición, vive en un hook como `ft.use_state`, y no en el observable ([Declarative vs Imperative, *Hooks*](../fuentes/flet/declarative-vs-imperative.md) y [*Example*](../fuentes/flet/declarative-vs-imperative.md)).
+
 ## Async
 
 Estándar: [*Async apps*](../fuentes/flet/async-apps.md) de Flet.
 
-- Un control que lanza una tarea en `did_mount()` la cancela en `will_unmount()` ([Async apps, *Background tasks*](../fuentes/flet/async-apps.md)).
+- Un componente que trabaja en segundo plano al montarse, como cargar datos, lo hace en `ft.use_effect` con un setup `async` y dependencias vacías: Flet cancela el setup al desmontar el componente. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/components/hooks/use_effect.py)
 - Ningún handler bloquea, sea síncrono o async: los dos corren en el único bucle de eventos de la app, y mientras uno corre no se despacha otro evento ni se actualiza la pantalla ([Async apps, *Never block the event loop*](../fuentes/flet/async-apps.md) y [*Control event handlers*](../fuentes/flet/async-apps.md)).
 - Un handler que espera algo es `async def` ([Async apps, *Control event handlers*](../fuentes/flet/async-apps.md)).
 - Una tarea que sigue después del handler que la lanza se crea con `page.run_task()`, que recibe la función y sus argumentos, guarda la referencia de la tarea y reporta sus excepciones ([Async apps, *Async lambdas*](../fuentes/flet/async-apps.md) y [*Background tasks*](../fuentes/flet/async-apps.md)).
-- Un handler que muestra su avance es un generador que hace `yield` entre partes cortas ([Async apps, *Yielding for intermediate updates*](../fuentes/flet/async-apps.md)).
 - Una llamada que bloquea corre con `await asyncio.to_thread()` o, si no hace falta su resultado, con `page.run_thread()` ([Async apps, *Threading*](../fuentes/flet/async-apps.md)).
-
-## Controles
-
-Estándar: [*Custom Controls*](../fuentes/flet/custom-controls.md) de Flet.
-
-- Una lista de cientos de elementos usa `ListView` o `GridView`, que dibujan solo lo visible, y no `Column` ni `Row`, que dibujan todo. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/large-lists.md)
-- Un `ListView` cuyos elementos miden lo mismo lleva `item_extent` o `first_item_prototype`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/large-lists.md)
-- Un control propio se declara con `@ft.control` ([Custom Controls, *Styled controls*](../fuentes/flet/custom-controls.md)).
-- Un control propio fija sus valores por defecto como campos anotados, y no en `init()`: un valor que fija `init()` no se puede cambiar desde el constructor ([Custom Controls, *Styled controls*](../fuentes/flet/custom-controls.md)).
-- Un control propio que llama a `self.update()` en sus métodos es aislado: su `is_isolated` devuelve `True` ([Custom Controls, *Isolated controls*](../fuentes/flet/custom-controls.md)).
-- La lógica que necesita `self.page` va en `build()`, no en el constructor ([Custom Controls, *`build()`*](../fuentes/flet/custom-controls.md)).
-- La limpieza de un control va en `will_unmount()` ([Custom Controls, *`will_unmount()`*](../fuentes/flet/custom-controls.md)).
 
 ## Navegación
 
-Estándar: [*Navigation and Routing*](../fuentes/flet/navigation-and-routing.md) de Flet.
+Estándares: [*Router*](../fuentes/flet/router.md) y [*Navigation and Routing*](../fuentes/flet/navigation-and-routing.md) de Flet.
 
-- Toda ruta empieza con `/` ([Navigation and Routing, *Route basics*](../fuentes/flet/navigation-and-routing.md)).
-- `page.views` se arma desde `page.route`, la única fuente de verdad, y siempre tiene la vista de `/` ([Navigation and Routing, *Routing model in Flet*](../fuentes/flet/navigation-and-routing.md) y [*Practical recommendations*](../fuentes/flet/navigation-and-routing.md)).
-- Solo `page.on_route_change` cambia `page.views`: vacía la pila, agrega la vista de `/` y después las de la ruta ([Navigation and Routing, *Building views from route*](../fuentes/flet/navigation-and-routing.md) y [*Practical recommendations*](../fuentes/flet/navigation-and-routing.md)).
-- `page.on_view_pop` maneja la vuelta atrás y navega a la vista que queda arriba ([Navigation and Routing, *Building views from route*](../fuentes/flet/navigation-and-routing.md)).
+- Con `manage_views=True`, el componente `not_found` devuelve un control, y no una `View`: el `Router` ya lo pone en una, y una `View` dentro de otra falla al dibujarse.
+- La navegación usa `ft.Router` con `manage_views=True`, y la app arranca con `page.render_views()`: cada nivel de la ruta es una `View`, con la vuelta atrás del sistema y de la `AppBar` ([Router, *Multi-view navigation*](../fuentes/flet/router.md)).
+- Un parámetro de la ruta se lee con `ft.use_route_params()` ([Router, *Dynamic segments, optional segments, and splats*](../fuentes/flet/router.md)).
+- Las pantallas que piden sesión cuelgan de una ruta de layout que, sin sesión, navega al inicio de sesión ([Router, *Authentication*](../fuentes/flet/router.md)).
+- Una ruta que no existe muestra el componente `not_found` del `Router` ([Router, *404 handling*](../fuentes/flet/router.md)).
+- Toda ruta a la que se navega empieza con `/` ([Navigation and Routing, *Route basics*](../fuentes/flet/navigation-and-routing.md)).
 - Se navega con `page.navigate()` desde un callback síncrono, y con `await page.push_route()` desde uno async ([Navigation and Routing, *Programmatic navigation*](../fuentes/flet/navigation-and-routing.md)).
 - Un parámetro opcional de la query se lee con `page.query.to_dict.get()`: `page.query.get()` lanza `KeyError` si falta ([Navigation and Routing, *Query strings*](../fuentes/flet/navigation-and-routing.md)).
 - Una vista que pide confirmar la vuelta atrás, como una con cambios sin guardar, lleva `can_pop` en `False` y confirma en `on_confirm_pop` ([Navigation and Routing, *Back navigation and pop confirmation*](../fuentes/flet/navigation-and-routing.md)).
-- Un flujo de varios pasos que termina vuelve a su destino con `page.pop_views_until()`, y el resultado le llega por `page.on_views_pop_until` ([Navigation and Routing, *Pop multiple views with a result*](../fuentes/flet/navigation-and-routing.md)).
-- Una ruta con parámetros se lee con `TemplateRoute`, no partiendo la cadena ([Navigation and Routing, *Route templates (parameterized routes)*](../fuentes/flet/navigation-and-routing.md) y [*Practical recommendations*](../fuentes/flet/navigation-and-routing.md)).
 
 ## Ciclo de vida
 
@@ -126,12 +125,6 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - Babel compila el `.mo` de cada catálogo, con `pybabel compile -d src/locales -D <pieza>`, y va en el grupo `dev`: `gettext` lee solo el `.mo`. [Python 3.13](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/gettext.rst)
 - Los catálogos van en `src/locales/<idioma>/LC_MESSAGES/<pieza>.po`. El `.mo` se genera antes de `flet build` y de `flet test`, y no va en git: sale del `.po`, y en git quedaría desfasado.
 - `page.locale_configuration` declara en `supported_locales` los idiomas de la app, con el base primero, y en `current_locale`, el que eligió el usuario: sin ella, los controles de Flutter quedan en `en-US`, y un idioma que no está en la lista cae en el primero. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/types.py)
-
-## Mapas
-
-Contrato: [transversal.md](transversal.md#mapas).
-
-- El mapa usa flet-map, con teselas raster, en lugar de MapLibre: Flet no tiene una extensión de MapLibre, y flet-map, sobre flutter_map, no dibuja teselas vectoriales. [flet-map 1.1.2](https://pypi.org/project/flet-map/1.1.2/)
 
 ## OpenAPI y clientes
 

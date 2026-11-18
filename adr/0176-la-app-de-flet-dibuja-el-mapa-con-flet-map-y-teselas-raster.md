@@ -1,6 +1,6 @@
 # ADR-0176 · La app de Flet dibuja el mapa con flet-map y teselas raster
 
-- **Estado:** Aceptada. El usuario pidió que, si una app de Flet muestra un mapa, sea con flet-map (2026-11-17)
+- **Estado:** Reemplazada por [ADR-0179](0179-una-app-de-flet-no-muestra-mapas.md)
 - **Fecha:** 2026-11-17
 - **Alcance:** [`plataformas/flet.md`](../plataformas/flet.md), «Mapas»;
   [`plataformas/transversal.md`](../plataformas/transversal.md), «Mapas», y [`stack.md`](../stack.md)

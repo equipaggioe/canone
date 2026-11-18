@@ -135,7 +135,8 @@ Estándares: [RFC 5646](../fuentes/rfc/rfc5646.txt) y [RFC 9110](../fuentes/rfc/
 Estándares: la [guía de atribución](../fuentes/osm/attribution-guidelines.md) de OpenStreetMap y [RFC 7946](../fuentes/rfc/rfc7946.txt).
 
 - Toda posición o trazado en la API es una geometría GeoJSON.
-- Las teselas son vectoriales, de OpenFreeMap, y cada cliente las dibuja con MapLibre, salvo el de Flet, que usa teselas raster ([flet.md](flet.md#mapas)).
+- Las teselas son vectoriales, de OpenFreeMap, y cada cliente las dibuja con MapLibre.
+- Una app de Flet no muestra mapas: Flet no tiene una extensión de MapLibre.
 - El mapa usa el estilo `positron` de OpenFreeMap en el modo claro, y `dark` en el oscuro: el mapa sigue el modo de la app ([Tema](#tema)), y los dos estilos comparten las teselas.
 - La URL de cada estilo y la atribución las entrega el servidor en su configuración pública: cambiar de proveedor no exige publicar otra versión de las apps.
 - Cada cliente muestra la atribución de la configuración como texto, y apaga el control de atribución de MapLibre: en un mapa angosto, MapLibre la esconde detrás de un botón.

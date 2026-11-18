@@ -183,3 +183,5 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0175](0175-qt-y-flet-entran-con-pantallas-propias-sin-salir-al-navegador.md) | Las apps de escritorio de Qt y de Flet entran con pantallas propias, sin salir al navegador | Con Qt o Flet |
 | [0176](0176-la-app-de-flet-dibuja-el-mapa-con-flet-map-y-teselas-raster.md) | La app de Flet dibuja el mapa con flet-map y teselas raster | Con Flet |
 | [0177](0177-flutter-y-sveltekit-dejan-de-estar-en-desarrollo.md) | `flutter.md` y `sveltekit.md` dejan de estar en desarrollo | Con Flutter o SvelteKit |
+| [0178](0178-la-interfaz-de-flet-es-declarativa.md) | La interfaz de Flet es declarativa | Con Flet |
+| [0179](0179-una-app-de-flet-no-muestra-mapas.md) | Una app de Flet no muestra mapas | Con Flet |

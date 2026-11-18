@@ -1,6 +1,6 @@
 # ADR-0165 · `qt.md` escribe solo lo que elige, y se aplica a los repositorios
 
-- **Estado:** Aceptada. El usuario pidió aplicar la revisión con sus correcciones (2026-11-16)
+- **Estado:** Aceptada. El usuario pidió aplicar la revisión con sus correcciones (2026-11-16). El punto 6 lo reemplaza el [ADR-0175](0175-qt-y-flet-entran-con-pantallas-propias-sin-salir-al-navegador.md)
 - **Fecha:** 2026-11-16
 - **Alcance:** [`plataformas/qt.md`](../plataformas/qt.md),
   [`plataformas/transversal.md`](../plataformas/transversal.md), «Distribución»,

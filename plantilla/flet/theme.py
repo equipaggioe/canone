@@ -4,7 +4,7 @@ import flet as ft
 
 import colors
 
-KEY = "PRODUCTO.PIEZA.theme"
+KEY = "theme"
 
 
 async def apply(page: ft.Page, prefs: ft.SharedPreferences) -> None:

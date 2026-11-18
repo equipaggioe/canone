@@ -1,7 +1,5 @@
 # SvelteKit
 
-> **En desarrollo; no se implementa:** [README.md](README.md#en-desarrollo).
-
 Una superficie web con SvelteKit y UnoCSS.
 
 ## Proyecto

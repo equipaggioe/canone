@@ -121,8 +121,6 @@ Página: [java.md](plataformas/java.md).
 
 ## SvelteKit
 
-> **En desarrollo; no se implementa:** [README.md](plataformas/README.md#en-desarrollo).
-
 Página: [sveltekit.md](plataformas/sveltekit.md).
 
 | Se usa | Versión | Para |
@@ -157,8 +155,6 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | `@axe-core/playwright` | 4.14.0 | [Accesibilidad](plataformas/sveltekit.md#accesibilidad) |
 
 ## Flutter
-
-> **En desarrollo; no se implementa:** [README.md](plataformas/README.md#en-desarrollo).
 
 Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [Android](#android).
 
@@ -250,6 +246,7 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter 
 | :--- | :--- | :--- |
 | Flet | 1.1.2 | — |
 | flet-secure-storage | 1.1.2 | [Almacenamiento](plataformas/flet.md#almacenamiento) |
+| flet-map | 1.1.2 | [Mapas](plataformas/flet.md#mapas) |
 | httpx-ws | 0.10.0 | [WebSocket](plataformas/flet.md#websocket) |
 | Babel | 2.18.0 | [Idiomas](plataformas/flet.md#idiomas) |
 | datamodel-code-generator, con el extra `ruff` | 0.97.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |

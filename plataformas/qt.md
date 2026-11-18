@@ -110,12 +110,11 @@ Estándar: [QSettings](../fuentes/qt/qsettings.qdoc) de Qt.
 - Una clave se escribe siempre con las mismas mayúsculas, dos claves no difieren solo en ellas, y ninguna lleva `/` ni `\` ([QSettings, *Section and Key Syntax*](../fuentes/qt/qsettings.qdoc)).
 - La ventana principal lee su geometría y su estado al crearse, y los guarda en `closeEvent()` ([QSettings, *Restoring the State of a GUI Application*](../fuentes/qt/qsettings.qdoc)).
 
-## Código de autorización
+## Contraseñas
 
-Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
+Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
-- La app hace el flujo del código de autorización con `QOAuth2AuthorizationCodeFlow`, de QtNetworkAuth.
-- La vuelta la recibe `QOAuthHttpServerReplyHandler`.
+- El campo de la contraseña es un `QLineEdit` en `EchoMode.Password`, con una acción al final que lo pasa a `EchoMode.Normal` mientras está marcada.
 
 ## Idiomas
 
@@ -183,7 +182,6 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 - Nuitka con el extra `onefile`, imageio y, en Linux, patchelf van en el grupo `deploy`.
 - En CI de Windows, el job agrega al `PATH` la carpeta del `dumpbin` de MSVC que encuentra `vswhere`, y falla si no lo encuentra: sin él, `pyside6-deploy` solo avisa y no busca los módulos de Qt de los que dependen los que usa la app. [PySide6 6.12.0](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside-tools/deploy_lib/config.py)
 - El job que empaqueta instala la app sin modo editable, con `--no-editable` en `uv sync` y en `uv run`: Nuitka busca en el `RECORD` de la distribución el paquete al que pertenecen sus metadatos, y una instalación editable no lo lista. [Nuitka 4.3.5](https://raw.githubusercontent.com/Nuitka/Nuitka/4.3.5/nuitka/utils/Distributions.py)
-- macOS no se construye hasta que haya cuenta de Apple Developer: sin firma ni notarización, macOS 15 no abre la app.
 - El `mode` del `.spec` es `onefile`: cada sistema recibe un solo archivo, que [despliegue.md](despliegue.md#versiones) publica ([pyside6-deploy, *pysidedeploy.spec parameters*](../fuentes/pyside6/deployment-pyside6-deploy.rst)).
 - `pyside6-deploy` corre con `--no-install`, y el `packages` del `.spec` lista `Nuitka` e `imageio`: comprueba que el grupo `deploy` los trajo, y no instala nada con pip, que un venv de uv no tiene ([pyside6-deploy, *Command Line Options*](../fuentes/pyside6/deployment-pyside6-deploy.rst) y [*What pyside6-deploy runs*](../fuentes/pyside6/deployment-pyside6-deploy.rst)).
 - `pysidedeploy.spec` va en git: elige los paquetes y los argumentos de Nuitka ([pyside6-deploy, *What pyside6-deploy runs*](../fuentes/pyside6/deployment-pyside6-deploy.rst)).

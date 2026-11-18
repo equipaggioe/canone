@@ -186,11 +186,16 @@ jobs:
       - run: |
           uv export --locked --no-emit-project --format requirements.txt -o "$RUNNER_TEMP/req.txt"
           uv run pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/req.txt"
+      # plataformas/flet.md, «Proyecto»: flet build installs with pip, which does not read uv.lock.
+      - run: >-
+          uv export --locked --no-dev --no-emit-project --no-emit-local --no-hashes
+          --format requirements.txt -o "$RUNNER_TEMP/constraints.txt"
       # flet test builds the integration test app before pytest starts: built inside pytest,
       # flet-cli writes files without an encoding. With the LD_LIBRARY_PATH of setup-python, the
       # Python that the app embeds never starts.
       - run: env -u LD_LIBRARY_PATH xvfb-run uv run flet test
         env:
+          PIP_CONSTRAINT: ${{ runner.temp }}/constraints.txt
           PYTHONDEVMODE: "1"
           PYTHONWARNDEFAULTENCODING: "1"
 

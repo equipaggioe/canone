@@ -9,6 +9,8 @@ Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md) de Flet.
 - CI pone en el `PATH` el Flutter de [stack.md](../stack.md#flet), con la versión mayor y menor que pide Flet: `flet build` usa el del `PATH` si coinciden, y si no, descarga el suyo. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet-cli/src/flet_cli/commands/flutter_base.py)
 - Pydantic es la que fija [stack.md](../stack.md#flet), y no la del bloque de Python: `flet build apk` instala desde el índice de Flet para Android, y esa es la última Pydantic cuyo `pydantic-core` está en él. [Índice de Flet](https://pypi.flet.dev/pydantic-core/)
 - Las dependencias de `[project]` van exactas, con `==`, en lugar del `>=` de [python.md](python.md): `flet build` no lee `uv.lock` y le pasa a pip las dependencias tal como están escritas. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet-cli/src/flet_cli/commands/build_base.py)
+- `flet build` y `flet test` corren con `PIP_CONSTRAINT` en el `uv.lock` exportado con `uv export --locked --no-dev --no-emit-project --no-emit-local --no-hashes`: así las dependencias transitivas que resuelve pip llevan las versiones de `uv.lock`. Una ruta local en las restricciones hace fallar a pip.
+- Un paquete local del repositorio entra a `flet build` por `[tool.flet].dev_packages`, con la ruta a su wheel, construido antes con `uv build --wheel`: `flet build` no lee `[tool.uv.sources]`, y para Android pip no puede construir una carpeta.
 - El grupo `dev` lleva también `flet` con el extra `cli`, que trae `flet build`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/getting-started/installation.md)
 - El proyecto no lleva `[build-system]`, en lugar del `uv_build` de [python.md](python.md): sin `src/app/`, no hay paquete que construir.
 - `src/` no lleva `__init__.py`, en lugar de lo que pide [Paquetes](python.md#paquetes): `flet build` empaqueta `src/` como la raíz de la app, y sus módulos de primer nivel no son de ningún paquete.
@@ -101,14 +103,12 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 ## Almacenamiento
 
-Estándares: [*Client Storage*](../fuentes/flet/client-storage.md) y [*Packaging app for Windows*](../fuentes/flet/publish-windows.md) de Flet.
+Estándar: [*Packaging app for Windows*](../fuentes/flet/publish-windows.md) de Flet.
 
 - Lo sensible, como el token de refresco que pide [autenticacion.md](autenticacion.md#sesión), va en `SecureStorage`, de flet-secure-storage, que usa el almacén de credenciales del sistema: cifrarlo a mano obliga a guardar la clave en algún lado. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/services/securestorage/index.md)
 - En Android, `[tool.flet.android.manifest_application]` lleva `allowBackup = false`: `SecureStorage` usa flutter_secure_storage, y una copia restaurada en otro dispositivo trae datos cuya clave no se puede recuperar. [flutter_secure_storage 10.3.1](https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/v10.3.1/flutter_secure_storage/README.md)
-- Cada clave de `SharedPreferences` empieza con `<producto>.<pieza>.` ([Client Storage, *Client Storage*](../fuentes/flet/client-storage.md)).
-- La app no llama a `clear()` de `SharedPreferences`: borra las preferencias de todas las apps de Flet del usuario ([Client Storage, *Client Storage*](../fuentes/flet/client-storage.md)).
-- `SharedPreferences` guarda solo preferencias, y ningún dato de la app que no pueda perderse ([Client Storage, *Client Storage*](../fuentes/flet/client-storage.md)).
-- Un servicio, como `SharedPreferences` o `SecureStorage`, se crea una vez, y la app guarda su referencia mientras lo usa: Flet lo da de baja cuando no queda ninguna ([Client Storage, *Client Storage*](../fuentes/flet/client-storage.md)).
+- `SharedPreferences` guarda solo preferencias, y ningún dato de la app que no pueda perderse. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md)
+- Un servicio, como `SharedPreferences` o `SecureStorage`, se crea una vez, y la app guarda su referencia mientras lo usa: Flet lo da de baja cuando no queda ninguna. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md)
 - La app guarda sus archivos en `FLET_APP_STORAGE_DATA`, nunca junto a `__file__`: la carpeta donde se instala la app puede no admitir escritura ([Packaging app for Windows, *Distributing*](../fuentes/flet/publish-windows.md)).
 
 ## Contraseñas
@@ -126,6 +126,12 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - Babel compila el `.mo` de cada catálogo, con `pybabel compile -d src/locales -D <pieza>`, y va en el grupo `dev`: `gettext` lee solo el `.mo`. [Python 3.13](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/gettext.rst)
 - Los catálogos van en `src/locales/<idioma>/LC_MESSAGES/<pieza>.po`. El `.mo` se genera antes de `flet build` y de `flet test`, y no va en git: sale del `.po`, y en git quedaría desfasado.
 - `page.locale_configuration` declara en `supported_locales` los idiomas de la app, con el base primero, y en `current_locale`, el que eligió el usuario: sin ella, los controles de Flutter quedan en `en-US`, y un idioma que no está en la lista cae en el primero. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/types.py)
+
+## Mapas
+
+Contrato: [transversal.md](transversal.md#mapas).
+
+- El mapa usa flet-map, con teselas raster, en lugar de MapLibre: Flet no tiene una extensión de MapLibre, y flet-map, sobre flutter_map, no dibuja teselas vectoriales. [flet-map 1.1.2](https://pypi.org/project/flet-map/1.1.2/)
 
 ## OpenAPI y clientes
 
@@ -184,6 +190,7 @@ Estándares: [*Publishing a Flet app*](../fuentes/flet/publish.md), [*Packaging 
 
 Contrato: [transversal.md](transversal.md#distribución).
 
+- El release corre `uv run flet build` después de `uv sync --locked`, sin flet-build-action: la acción corre `uv run` sin `--locked`, y un `uv.lock` desfasado no detiene el build. [flet-build-action v1](https://raw.githubusercontent.com/flet-dev/flet-build-action/v1/action.yml)
 - `[tool.flet]` declara `bundle_id`, `<dominio al revés>.<pieza>`: sin él, sale de `org`, que vale `com.flet` si falta ([Publishing, *Bundle ID*](../fuentes/flet/publish.md) y [*Organization name*](../fuentes/flet/publish.md)).
 - `[tool.flet]` declara `product`, el nombre que ve el usuario: sin él, es `[project].name` ([Publishing, *Product name*](../fuentes/flet/publish.md)).
 - `[tool.flet]` declara `company` antes de la primera versión, y ni `company` ni `product` cambian después: Windows guarda los datos de la app en `%APPDATA%\<company>\<product>`, y sin `company`, en *Your Company* ([Packaging app for Windows, *Distributing*](../fuentes/flet/publish-windows.md)).

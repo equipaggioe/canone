@@ -7,9 +7,8 @@ Cómo se registra una cuenta, cómo entra y cómo mantiene su sesión: lo que ha
 Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y [RFC 9700](../fuentes/rfc/rfc9700.txt).
 
 - Una app usa la passkey con la API de su sistema operativo cuando su framework la ofrece de forma oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización.
-- Una app de Flet no usa passkeys: entra con contraseña o con código por SMS. Flet no tiene una API oficial de passkeys, y no está comprobado que `page.login()` abra el navegador del sistema y no un web-view.
-- La app de escritorio entra solo por el navegador del sistema, sin pantallas propias de contraseña ni de código por SMS.
-- La URI de retorno de una app móvil es una URI `https` que reclama la app, y la de la app de escritorio, `http://127.0.0.1:{puerto}/<ruta>`, con el puerto que la app abre al pedir. El servidor no acepta otra: Windows y Linux no dejan que una app de Qt reclame una URI `https`. [Qt 6.12](https://doc.qt.io/qt-6.12/qoauthurischemereplyhandler.html)
+- Una app de escritorio, de Flet o de Qt, no usa passkeys: entra con contraseña o con código por SMS, en pantallas propias, sin salir al navegador. Ni Flet ni Qt tienen una API oficial de passkeys.
+- La URI de retorno de una app es una URI `https` que reclama la app, y el servidor no acepta otra.
 - El código vive en Valkey, con la cuenta.
 - La app abre la petición de autorización en el navegador del sistema, en una pestaña dentro de la app donde el sistema la ofrece, y nunca en un web-view ([RFC 8252 §5](../fuentes/rfc/rfc8252.txt), [§6](../fuentes/rfc/rfc8252.txt) y [§8.12](../fuentes/rfc/rfc8252.txt)).
 - El endpoint de autorización autentica al usuario en cada petición, aunque el navegador tenga abierta una sesión de la web ([RFC 8252 §8.6](../fuentes/rfc/rfc8252.txt)).
@@ -21,7 +20,7 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 - La app crea el `code_verifier` ([RFC 7636 §4.1](../fuentes/rfc/rfc7636.txt) y [§7.1](../fuentes/rfc/rfc7636.txt)).
 - La app manda un `state` aleatorio y rechaza la respuesta que no llega a la URI de retorno o con el `state` de su petición ([RFC 8252 §8.9](../fuentes/rfc/rfc8252.txt) y [§8.10](../fuentes/rfc/rfc8252.txt)).
 - La app es un cliente público: está registrada en el servidor con su `client_id` y su URI de retorno completa, y no tiene secreto ([RFC 8252 §8.4](../fuentes/rfc/rfc8252.txt) y [§8.5](../fuentes/rfc/rfc8252.txt)).
-- El servidor compara la URI de retorno con la registrada como cadena exacta, salvo el puerto de la de loopback ([RFC 8252 §7.3](../fuentes/rfc/rfc8252.txt) y [§8.4](../fuentes/rfc/rfc8252.txt)).
+- El servidor compara la URI de retorno con la registrada como cadena exacta ([RFC 8252 §8.4](../fuentes/rfc/rfc8252.txt)).
 - Una petición de autorización sin `client_id`, o con un `client_id` o una URI de retorno que no son los registrados, muestra el error en el navegador y no redirige ([RFC 6749 §3.1.2.4](../fuentes/rfc/rfc6749.txt) y [§4.1.2.1](../fuentes/rfc/rfc6749.txt)).
 - El endpoint de autorización acepta `GET`, y el de token, solo `POST` en `application/x-www-form-urlencoded` ([RFC 6749 §3.1](../fuentes/rfc/rfc6749.txt), [§3.2](../fuentes/rfc/rfc6749.txt) y [§4.1.3](../fuentes/rfc/rfc6749.txt)).
 - Los dos endpoints toman un parámetro sin valor como ausente e ignoran el que no conocen, en vez de responder 422. Un parámetro repetido responde `invalid_request` ([RFC 6749 §3.1](../fuentes/rfc/rfc6749.txt), [§3.2](../fuentes/rfc/rfc6749.txt), [§4.1.2.1](../fuentes/rfc/rfc6749.txt) y [§5.2](../fuentes/rfc/rfc6749.txt)).

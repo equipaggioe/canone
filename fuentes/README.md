@@ -122,7 +122,6 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [flet/custom-controls.md](flet/custom-controls.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/custom-controls.md) |  |
 | [flet/navigation-and-routing.md](flet/navigation-and-routing.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/navigation-and-routing.md) |  |
 | [flet/accessibility.md](flet/accessibility.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/accessibility.md) |  |
-| [flet/client-storage.md](flet/client-storage.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md) |  |
 | [pyside6/deployment-pyside6-deploy.rst](pyside6/deployment-pyside6-deploy.rst) | [URL](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside6/doc/deployment/deployment-pyside6-deploy.rst) |  |
 | [qt/model-view-programming.qdoc](qt/model-view-programming.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/model-view-programming.qdoc) |  |
 | [qt/qwidget.qdoc](qt/qwidget.qdoc) | [URL](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/kernel/qwidget.cpp) | Comentarios `/*! */` del código fuente |

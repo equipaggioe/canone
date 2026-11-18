@@ -179,3 +179,7 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0171](0171-dependency-analysis-no-cuenta-lo-que-solo-usa-el-codigo-que-genera-hilt.md) | dependency-analysis no cuenta lo que solo usa el código que genera Hilt | Con Android |
 | [0172](0172-una-tarea-que-maneja-chromium-corre-en-su-instancia-de-browser.md) | Una tarea que maneja Chromium corre en su instancia de `PRODUCTO-browser@`, con el Chromium de Debian | Con servidor |
 | [0173](0173-una-pieza-en-java-se-compila-con-el-jdk-del-ci-sin-advertencias-y-el-servidor-la-prueba-corriendo.md) | Una pieza en Java se compila con el JDK del CI, sin advertencias y con google-java-format, y el servidor la prueba corriendo | Con una pieza en Java |
+| [0174](0174-flet-fija-sus-transitivas-con-pip-constraint-y-construye-sin-flet-build-action.md) | Flet fija sus transitivas con `PIP_CONSTRAINT` y construye sin flet-build-action | Con Flet |
+| [0175](0175-qt-y-flet-entran-con-pantallas-propias-sin-salir-al-navegador.md) | Las apps de escritorio de Qt y de Flet entran con pantallas propias, sin salir al navegador | Con Qt o Flet |
+| [0176](0176-la-app-de-flet-dibuja-el-mapa-con-flet-map-y-teselas-raster.md) | La app de Flet dibuja el mapa con flet-map y teselas raster | Con Flet |
+| [0177](0177-flutter-y-sveltekit-dejan-de-estar-en-desarrollo.md) | `flutter.md` y `sveltekit.md` dejan de estar en desarrollo | Con Flutter o SvelteKit |

@@ -457,6 +457,7 @@ PYPROJECT = {
         "babel": ">=2.18.0",
         "datamodel-code-generator": ">=0.97.0",
         "flet": ">=1.1.2",
+        "flet-map": ">=1.1.2",
         "flet-secure-storage": ">=1.1.2",
         "httpx-ws": ">=0.10.0",
     },

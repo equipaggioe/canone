@@ -16,6 +16,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
 - Una dependencia cuenta como usada si la usa el código o la configuración.
 - CI corre `pnpm exec knip --dependencies` después de `pnpm build`, que escribe `.svelte-kit/`: sin él, knip no resuelve los `./$types`. Falla con una dependencia que no se usa o un paquete importado sin declarar.
 - `knip.json` ignora los paquetes sin declarar que knip ve en `tsconfig.json`: toma por paquete el `$app/tsconfig` que extiende SvelteKit 3. [knip 6.45.1](https://raw.githubusercontent.com/webpro-nl/knip/knip%406.45.1/packages/docs/src/content/docs/reference/configuration.md)
+- `pnpm-workspace.yaml` niega el script de instalación de esbuild, con `allowBuilds`: con `CI=true`, `pnpm install` falla con `ERR_PNPM_IGNORED_BUILDS` ante un script que nadie permitió ni negó. El script solo comprueba el binario de esbuild, que llega como dependencia opcional, y `vite build` pasa sin él. Comprobado el 2026-11-17 con pnpm 12.18.0 y Vite 7, con `CI=true` en Windows: `ignoredBuiltDependencies` no lo resuelve. En el runner de GitHub, todavía no.
 - `package.json` declara la versión exacta de pnpm en `packageManager`: `pnpm/action-setup` la toma de ahí en CI, y falla si no la encuentra. [pnpm/action-setup 6.1.1](https://raw.githubusercontent.com/pnpm/action-setup/v6.1.1/README.md)
 - `package.json` declara en `imports` `"#lib/*": "./src/lib/*"`: SvelteKit 3 quitó `$lib`. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs/kit%403.2.0/documentation/docs/98-reference/26-%24lib.md)
 - Un import de `#lib/` lleva la extensión `.js`, como `#lib/api/client.js`: TypeScript resuelve `imports` como Node, que no completa la extensión. [TypeScript](https://raw.githubusercontent.com/microsoft/TypeScript-Website/4ec663ac4412c3a7086401bd5a8811565589b11d/packages/documentation/copy/en/modules-reference/Reference.md)
@@ -38,6 +39,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
   package.json
   playwright.config.ts
   pnpm-lock.yaml
+  pnpm-workspace.yaml
   tsconfig.json
   uno.config.ts       el preset y los tokens
   vite.config.ts      el adaptador y la CSP
@@ -58,7 +60,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
   tests/
 ```
 
-Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc` y `knip.json`, que se copian sin editar, y `vite.config.ts`, `playwright.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore` y `.prettierignore`, puntos de partida.
+Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, `knip.json` y `pnpm-workspace.yaml`, que se copian sin editar, y `vite.config.ts`, `playwright.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore` y `.prettierignore`, puntos de partida.
 
 ## Estilo
 
@@ -266,6 +268,7 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | Las advertencias `a11y_*` | `svelte-check --fail-on-warnings` en CI |
 | Todo paquete que importa el código está declarado, y toda dependencia declarada se usa | `pnpm exec knip --dependencies` en CI |
 | `knip.json` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
+| `pnpm-workspace.yaml` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
 | Ningún `svelte-ignore` de una advertencia `a11y_*` | [scripts/verificar.py](../scripts/verificar.py) |
 | La misma versión de Playwright en todo `package.json` | [scripts/verificar.py](../scripts/verificar.py) |
 | pnpm en `packageManager`, y las versiones de [stack.md](../stack.md), exactas | [scripts/verificar.py](../scripts/verificar.py) |

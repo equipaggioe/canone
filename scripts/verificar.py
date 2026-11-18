@@ -956,7 +956,7 @@ def revisar(repo: Path) -> list[str]:
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no tiene uno.config.ts")
         elif not re.search(r"separators:\s*\[\s*['\"]:['\"]\s*\]", uno.read_text(encoding="utf-8")):
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/uno.config.ts no fija separators: [':']")
-        for nombre in (".prettierrc", "knip.json"):
+        for nombre in (".prettierrc", "knip.json", "pnpm-workspace.yaml"):
             fallas.extend(
                 comparar(superficie / nombre, PLANTILLA / "sveltekit" / nombre, f"{superficie.name}/{nombre}")
             )

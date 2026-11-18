@@ -1,0 +1,4 @@
+# plataformas/sveltekit.md: esbuild trae su binario como dependencia opcional, y su script
+# de instalación solo lo comprueba. Con CI=true, pnpm falla en cada build que nadie decidió.
+allowBuilds:
+  esbuild: false

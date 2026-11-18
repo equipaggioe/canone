@@ -51,6 +51,8 @@ Una app en Flutter.
       src/
         main/
           AndroidManifest.xml
+          kotlin/<paquete>/
+            App.kt    la Application, que crea los canales de notificación
           res/
             xml/
               backup_rules.xml
@@ -261,6 +263,7 @@ Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
 - La app hace el flujo del código de autorización con flutter_appauth.
 - En Android, el manifiesto declara el `intent-filter` de `RedirectUriReceiverActivity` con la URI `https` de retorno y `android:autoVerify="true"`, en vez de `appAuthRedirectScheme`, que solo declara un esquema propio. [flutter_appauth 13.0.0](https://raw.githubusercontent.com/MaikuB/flutter_appauth/flutter_appauth-v13.0.0/flutter_appauth/README.md)
+- En iOS, el retorno llega a un esquema propio con el dominio al revés, que `Info.plist` declara en `CFBundleURLTypes`: AppAuth-iOS abre `ASWebAuthenticationSession` con el esquema de la URI de retorno, y con `https` la sesión no recibe el retorno. [AppAuth-iOS 3.0.0](https://raw.githubusercontent.com/openid/AppAuth-iOS/3.0.0/Sources/AppAuth/iOS/OIDExternalUserAgentIOS.m)
 
 ## Código por SMS
 
@@ -328,6 +331,8 @@ Contrato: [transversal.md](transversal.md#pagos).
 Contrato: [transversal.md](transversal.md#push).
 
 - La app pide el permiso de notificaciones con `requestPermission()`, de firebase_messaging, después de una acción del usuario que deja claro para qué sirven, y no al arrancar.
+- Cada tipo de notificación tiene su canal, que crea al arrancar la `Application` de la app, en Kotlin, con `NotificationManager.createNotificationChannel()`: volver a crear un canal con los mismos valores no cambia nada, y la `Application` arranca también cuando el proceso lo levanta un mensaje de FCM. [Create and manage notification channels](https://developer.android.com/develop/ui/views/notifications/channels)
+- El manifiesto declara `com.google.firebase.messaging.default_notification_channel_id`: FCM manda a ese canal el mensaje que no nombra uno. [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/android/client)
 
 ## Red
 

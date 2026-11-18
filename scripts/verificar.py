@@ -1026,11 +1026,53 @@ def revisar(repo: Path) -> list[str]:
     return fallas
 
 
+# transversal.md, «Distribución»: cada pieza que se publica declara una variable por plataforma,
+# RELEASE_<PIEZA>_<PLATAFORMA>, con true o false. Una que falta, que vale otra cosa o que no es de
+# ninguna pieza falla: con un valor por defecto, una plataforma dejaría de publicarse sin aviso.
+ESCRITORIO = ("LINUX", "MACOS", "WINDOWS")
+MOVIL = ("ANDROID", "IOS")
+
+
+def plataformas_por_pieza(repo: Path) -> dict[str, tuple[str, ...]]:
+    piezas: dict[str, tuple[str, ...]] = {}
+    for carpeta in sorted(p for p in repo.iterdir() if p.is_dir() and not p.name.startswith(".")):
+        pyproject = carpeta / "pyproject.toml"
+        flet = pyproject.exists() and "flet" in tomllib.loads(
+            pyproject.read_text(encoding="utf-8")
+        ).get("tool", {})
+        if carpeta.name == "desktop":
+            piezas[carpeta.name] = ESCRITORIO
+        elif (carpeta / "pubspec.yaml").exists() or flet:
+            piezas[carpeta.name] = MOVIL
+        elif (carpeta / "settings.gradle.kts").exists():
+            piezas[carpeta.name] = ("ANDROID",)
+    return piezas
+
+
+def variables_release(repo: Path, variables: dict[str, str]) -> list[str]:
+    esperadas = {
+        f"RELEASE_{pieza.upper().replace('-', '_')}_{plataforma}"
+        for pieza, plataformas in plataformas_por_pieza(repo).items()
+        for plataforma in plataformas
+    }
+    fallas = []
+    for nombre in sorted(esperadas):
+        if nombre not in variables:
+            fallas.append(f"transversal.md: falta la variable {nombre}, con true o false")
+        elif variables[nombre] not in ("true", "false"):
+            fallas.append(f"transversal.md: la variable {nombre} vale {variables[nombre]!r}, no true ni false")
+    for nombre in sorted(set(variables) - esperadas):
+        if nombre.startswith("RELEASE_"):
+            fallas.append(f"transversal.md: la variable {nombre} no es de ninguna pieza que se publica")
+    return fallas
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", type=Path)
     parser.add_argument("--todos", type=Path, help="directorio que contiene los repositorios")
     parser.add_argument("--canone", action="store_true", help="revisa los enlaces de plataformas/ a fuentes/")
+    parser.add_argument("--variables", help="las variables de GitHub Actions del repositorio, en JSON")
     args = parser.parse_args()
 
     # La consola de Windows no es UTF-8 y los nombres de archivo llevan acentos.
@@ -1061,6 +1103,8 @@ def main() -> int:
     total = 0
     for repo in repos:
         fallas = revisar(repo)
+        if args.variables is not None:
+            fallas += variables_release(repo, json.loads(args.variables))
         total += len(fallas)
         print(f"\n{repo.name}: {len(fallas)} incumplimientos")
         for falla in fallas:

@@ -66,9 +66,9 @@ jobs:
     steps:
       - id: desktop
         env:
-          LINUX: ${{ vars.RELEASE_LINUX }}
-          WINDOWS: ${{ vars.RELEASE_WINDOWS }}
-          MACOS: ${{ vars.RELEASE_MACOS }}
+          LINUX: ${{ vars.RELEASE_DESKTOP_LINUX }}
+          WINDOWS: ${{ vars.RELEASE_DESKTOP_WINDOWS }}
+          MACOS: ${{ vars.RELEASE_DESKTOP_MACOS }}
         run: |
           include='[]'
           add() { include=$(echo "$include" | jq -c --argjson entry "$1" '. + [$entry]'); }
@@ -146,7 +146,7 @@ jobs:
   # Not run yet: check it the first time a repository runs it on GitHub Actions.
   mobile:
     needs: artifact
-    if: vars.RELEASE_ANDROID == 'true'
+    if: vars.RELEASE_PIEZA_ANDROID == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -193,7 +193,7 @@ jobs:
   # Not run yet: check it the first time a repository publishes on iOS.
   mobile-ios:
     needs: artifact
-    if: vars.RELEASE_IOS == 'true'
+    if: vars.RELEASE_PIEZA_IOS == 'true'
     runs-on: macos-latest
     defaults:
       run:
@@ -226,7 +226,7 @@ jobs:
   # Not run yet: check it the first time a repository runs it on GitHub Actions.
   android:
     needs: artifact
-    if: vars.RELEASE_ANDROID == 'true'
+    if: vars.RELEASE_MOBILE_ANDROID == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -270,7 +270,7 @@ jobs:
   # The build and its signature ran on GitHub Actions; the upload to Play and to the release, not yet.
   flet-mobile:
     needs: artifact
-    if: vars.RELEASE_ANDROID == 'true'
+    if: vars.RELEASE_PIEZA_ANDROID == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -319,7 +319,7 @@ jobs:
   # [tool.flet.ios]. Not run yet: check it the first time a repository publishes on iOS.
   flet-ios:
     needs: artifact
-    if: vars.RELEASE_IOS == 'true'
+    if: vars.RELEASE_PIEZA_IOS == 'true'
     runs-on: macos-latest
     defaults:
       run:

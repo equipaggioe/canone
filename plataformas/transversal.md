@@ -69,7 +69,7 @@ Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 
 ## Distribución
 
-- Cada repositorio declara en variables de GitHub Actions en qué plataformas construye y publica: `RELEASE_ANDROID`, `RELEASE_IOS`, `RELEASE_LINUX`, `RELEASE_MACOS` y `RELEASE_WINDOWS`, cada una con `true` o `false`. CI falla si falta una o si vale otra cosa: con un valor por defecto, un repositorio mal configurado dejaría de publicar en una plataforma sin que nadie lo note.
+- Cada repositorio declara en variables de GitHub Actions en qué plataformas construye y publica cada pieza: `RELEASE_<PIEZA>_<PLATAFORMA>`, con `true` o `false`, como `RELEASE_CUSTOMER_IOS` o `RELEASE_DESKTOP_MACOS`. Una app en Flutter o en Flet lleva `ANDROID` e `IOS`; una en Kotlin, `ANDROID`, y `desktop/`, `LINUX`, `MACOS` y `WINDOWS`. CI falla si falta una, si vale otra cosa o si no es de ninguna pieza: con un valor por defecto, un repositorio mal configurado dejaría de publicar en una plataforma sin que nadie lo note.
 - Los ejecutables y los instaladores de Windows van sin firmar.
 - Una app de iOS se publica en la App Store: cada versión llega a App Store Connect firmada con el certificado Apple Distribution y el perfil de App Store de la app.
 - La versión de macOS de una app de escritorio es un DMG con la app dentro. La app y el DMG van firmados con un certificado Developer ID, la app con el runtime endurecido y sello de tiempo, y el DMG va notarizado y con el ticket grapado: desde macOS 15, una app descargada sin notarizar no abre sin pasar por los ajustes de seguridad del sistema. [Notarizing macOS software before distribution](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution)

@@ -8,9 +8,9 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 
 - Una app usa la passkey con la API de su sistema operativo cuando su framework la ofrece de forma oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización.
 - Una app de escritorio, de Flet o de Qt, no usa passkeys: entra con contraseña o con código por SMS, en pantallas propias, sin salir al navegador. Ni Flet ni Qt tienen una API oficial de passkeys.
-- La URI de retorno de una app es una URI `https` que reclama la app, y el servidor no acepta otra.
 - Una app de Android que recibe la URI `https` de retorno la reclama con App Links: `assetlinks.json` declara para ella `delegate_permission/common.handle_all_urls`, y sin esa relación Android no verifica el dominio y abre la URI en el navegador. [Verify Android App Links](https://developer.android.com/training/app-links/verify-android-applinks)
 - El código vive en Valkey, con la cuenta.
+- Una app recibe el retorno en una URI `https` que reclama, donde su sistema y su biblioteca lo permiten, y si no, en un esquema propio con su dominio al revés, como `com.example.app:/oauth2redirect` ([RFC 8252 §7.1](../fuentes/rfc/rfc8252.txt) y [§7.2](../fuentes/rfc/rfc8252.txt)).
 - La app abre la petición de autorización en el navegador del sistema, en una pestaña dentro de la app donde el sistema la ofrece, y nunca en un web-view ([RFC 8252 §5](../fuentes/rfc/rfc8252.txt), [§6](../fuentes/rfc/rfc8252.txt) y [§8.12](../fuentes/rfc/rfc8252.txt)).
 - El endpoint de autorización autentica al usuario en cada petición, aunque el navegador tenga abierta una sesión de la web ([RFC 8252 §8.6](../fuentes/rfc/rfc8252.txt)).
 - La petición de autorización lleva `code_challenge` con `code_challenge_method` `S256`. Sin él, o con `plain`, responde `invalid_request` ([RFC 7636 §4.2](../fuentes/rfc/rfc7636.txt) y [§4.4.1](../fuentes/rfc/rfc7636.txt)).

@@ -2,7 +2,10 @@
 
 - **Estado:** Aceptada. El usuario pidió escribir las reglas de iOS como si ya hubiera cuenta de
   Apple, que la plataforma de cada repositorio sea un parámetro, también Windows, y aplicar lo
-  recomendado (2026-11-18). Los puntos 6 y 7 son *(propuesta)*: el usuario no los respondió uno por uno
+  recomendado (2026-11-18). Los puntos 6 y 7 son *(propuesta)*: el usuario no los respondió uno
+  por uno. El punto 5, en lo que esperaba un servicio de firma, lo reemplaza el
+  [ADR-0183](0183-windows-va-sin-firmar-y-los-canales-de-flutter-los-crea-su-application.md), y el
+  punto 2, el [ADR-0184](0184-la-uri-de-retorno-es-https-donde-se-puede-y-cada-pieza-elige-sus-plataformas.md)
 - **Fecha:** 2026-11-18
 - **Alcance:** [`plataformas/README.md`](../plataformas/README.md), «Alcance»;
   [`plataformas/transversal.md`](../plataformas/transversal.md), «Distribución»;

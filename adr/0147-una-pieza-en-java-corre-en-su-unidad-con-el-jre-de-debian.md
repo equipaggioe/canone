@@ -1,6 +1,6 @@
 # ADR-0147 · Una pieza en Java corre en su unidad, con el JRE de Debian 13, y se compila con sus dependencias fijadas por SHA-256
 
-- **Estado:** Aceptada en los puntos 1 a 4, que pidió el usuario (2026-11-13). Los puntos 5 a 8 son *(propuesta)*: se eligieron al construir
+- **Estado:** Aceptada en los puntos 1 a 4, que pidió el usuario (2026-11-13). Los puntos 5 a 8 son *(propuesta)*: se eligieron al construir. El punto 7 lo reemplaza el [ADR-0173](0173-una-pieza-en-java-se-compila-con-el-jdk-del-ci-sin-advertencias-y-el-servidor-la-prueba-corriendo.md)
 - **Fecha:** 2026-11-13
 - **Alcance:** [`plataformas/java.md`](../plataformas/java.md); [`plataformas/despliegue.md`](../plataformas/despliegue.md), «Máquina», «Procesos» y «Versiones»; `packages.py`, `install.py`, `deploy.py` y `PRODUCTO-java@.service` de `plantilla/infra/`; `plantilla/scripts/java.py` y el `release.yml` de la plantilla
 

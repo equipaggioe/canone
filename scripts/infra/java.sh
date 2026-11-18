@@ -3,8 +3,10 @@
 # without --java there is no unit and deploy.py restarts no piece; a name that cannot name a unit
 # fails; with --java the unit is enabled and deploy.py restarts it; the piece runs its jar from the
 # current version, answers on loopback, reaches only localhost, stops without failing and keeps an
-# exposure of 2.0 or less; and uninstall.py app takes the unit.
+# exposure of 2.0 or less; and uninstall.py app takes the unit. The piece is scripts/infra/ping/,
+# which the CI builds outside the machine, as release.yml does:
 #
+#     python3 <canone>/plantilla/scripts/java.py ping Ping ping/build    (in scripts/infra/)
 #     sh java.sh <canone>
 set -eu
 canone=$1
@@ -37,24 +39,8 @@ systemctl is-enabled --quiet demo-java@ping.service
 grep -qxF "JAVA: tuple[str, ...] = ('ping',)" /usr/local/sbin/demo-deploy
 
 step "The piece runs its jar from the current version, on loopback"
-mkdir -p "$work/ping/src"
-: > "$work/ping/dependencies.txt"
-cat > "$work/ping/src/Ping.java" << 'EOF'
-import com.sun.net.httpserver.HttpServer;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-
-public class Ping {
-    public static void main(String[] args) throws Exception {
-        var server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 8099), 0);
-        server.createContext("/", exchange -> { exchange.sendResponseHeaders(204, -1); exchange.close(); });
-        server.start();
-    }
-}
-EOF
-python3 "$canone/plantilla/scripts/java.py" "$work/ping" Ping "$work/out"
 mkdir -p /srv/demo/releases/v0.0.1
-cp -r "$work/out/ping" /srv/demo/releases/v0.0.1/
+cp -r "$canone/scripts/infra/ping/build/ping" /srv/demo/releases/v0.0.1/
 ln -sfn /srv/demo/releases/v0.0.1 /srv/demo/current
 systemctl start demo-java@ping.service
 for attempt in $(seq 30); do

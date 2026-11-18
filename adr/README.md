@@ -178,3 +178,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0170](0170-cada-app-guarda-su-numero-de-build-en-su-manifiesto.md) | Cada app guarda su número de build en su manifiesto | Con Android, Flutter o Flet |
 | [0171](0171-dependency-analysis-no-cuenta-lo-que-solo-usa-el-codigo-que-genera-hilt.md) | dependency-analysis no cuenta lo que solo usa el código que genera Hilt | Con Android |
 | [0172](0172-una-tarea-que-maneja-chromium-corre-en-su-instancia-de-browser.md) | Una tarea que maneja Chromium corre en su instancia de `PRODUCTO-browser@`, con el Chromium de Debian | Con servidor |
+| [0173](0173-una-pieza-en-java-se-compila-con-el-jdk-del-ci-sin-advertencias-y-el-servidor-la-prueba-corriendo.md) | Una pieza en Java se compila con el JDK del CI, sin advertencias y con google-java-format, y el servidor la prueba corriendo | Con una pieza en Java |

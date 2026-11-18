@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v7
       - run: sudo sh scripts/infra/seccomp.sh "$PWD"
 
-  # java.md: java.py builds a piece with the JDK of Debian 13 and checks each dependency.
+  # java.md: java.py builds a piece with the JDK of the CI, and the JRE of Debian 13 runs it.
   java-build:
     runs-on: ubuntu-latest
     container: debian:trixie
@@ -38,7 +38,11 @@ jobs:
       - uses: actions/checkout@v7
       - run: >-
           apt-get update && apt-get install --yes --no-install-recommends
-          openjdk-21-jdk-headless python3 ca-certificates
+          openjdk-21-jre-headless python3 ca-certificates
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "25.0.5"
       - run: sh scripts/infra/java-build.sh "$PWD"
 
   caddy:
@@ -188,7 +192,7 @@ jobs:
           debootstrap systemd-container debian-archive-keyring
       - run: >-
           sudo debootstrap --variant=minbase
-          --include=systemd,systemd-sysv,dbus,sudo,ca-certificates,unattended-upgrades,systemd-timesyncd,openssh-server,postgresql,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2,restic,curl${{ matrix.script == 'java.sh' && ',openjdk-21-jdk-headless' || '' }}
+          --include=systemd,systemd-sysv,dbus,sudo,ca-certificates,unattended-upgrades,systemd-timesyncd,openssh-server,postgresql,valkey-server,nftables,procps,python3,wireguard-tools,systemd-journal-remote,iproute2,restic,curl
           trixie /var/lib/machines/machine http://deb.debian.org/debian
       # Caddy comes from its repository, as packages.py installs it: before the machine boots,
       # while it still has the network of the runner.
@@ -196,6 +200,17 @@ jobs:
           sudo systemd-nspawn --directory=/var/lib/machines/machine --bind-ro="$PWD:/canone"
           python3 /canone/plantilla/infra/packages.py
           ${{ matrix.script == 'browser.sh' && '--browser probe=minutely' || '' }}
+          ${{ matrix.script == 'java.sh' && '--java ping' || '' }}
+      # java.md: the piece of java.sh, built outside the machine with the JDK of the CI, as
+      # release.yml builds it.
+      - if: matrix.script == 'java.sh'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "25.0.5"
+      - if: matrix.script == 'java.sh'
+        run: python3 ../../plantilla/scripts/java.py ping Ping ping/build
+        working-directory: scripts/infra
       # The receiver runs rest-server 0.14.0 from its release, the version despliegue.md fixes.
       - if: matrix.script == 'backup.sh'
         run: |

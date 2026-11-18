@@ -64,6 +64,15 @@ jobs:
       - uses: astral-sh/setup-uv@v10.3.3
         with:
           version-file: server/pyproject.toml
+      # Only with a piece in Java: java.py fails on code without its format or with a warning, and
+      # the tests that call the piece call it running, which the step of pytest starts (java.md,
+      # «Pruebas»).
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "25.0.5"
+      - run: python3 scripts/java.py PIEZA_JAVA CLASE PIEZA_JAVA/build
+        working-directory: .
       - run: uv sync --locked
       - run: uv run ruff format --check
       - run: uv run ruff check
@@ -90,10 +99,16 @@ jobs:
       - run: uv run alembic check
         env:
           CREDENTIALS_DIRECTORY: ${{ runner.temp }}/owner
-      - run: uv run pytest
+      # A piece in Java runs in the step of pytest, without depending on a process that outlives
+      # its step.
+      - run: |
+          java -jar ../PIEZA_JAVA/build/PIEZA_JAVA/PIEZA_JAVA.jar > "$RUNNER_TEMP/PIEZA_JAVA.log" 2>&1 &
+          uv run pytest
         env:
           PYTHONDEVMODE: "1"
           PYTHONWARNDEFAULTENCODING: "1"
+      - if: failure()
+        run: cat "$RUNNER_TEMP/PIEZA_JAVA.log"
 
   desktop:
     runs-on: ubuntu-latest

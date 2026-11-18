@@ -116,6 +116,8 @@ Página: [java.md](plataformas/java.md).
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | Java | 21, el JRE de Debian 13 | [Proyecto](plataformas/java.md#proyecto) |
+| JDK, con el que compila `java.py` | 25.0.5 | [Entrega](plataformas/java.md#entrega) |
+| google-java-format | 2.0.0 | [Código](plataformas/java.md#código) |
 
 ## SvelteKit
 

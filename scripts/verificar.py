@@ -552,7 +552,7 @@ ACCIONES = {
 # La versión de cada acción la exigen las páginas que la usan: Flet construye con el Flutter de
 # Flutter.
 ENTRADAS = {
-    "actions/setup-java": ({"android.md"}, "java-version", "25.0.5"),
+    "actions/setup-java": ({"android.md", "java.md"}, "java-version", "25.0.5"),
     "actions/setup-node": ({"sveltekit.md"}, "node-version", "26.13.1"),
     "actions/setup-python": ({"python.md"}, "python-version", "3.13"),
     "subosito/flutter-action": ({"flutter.md", "flet.md"}, "flutter-version", "3.47.9"),
@@ -664,6 +664,31 @@ def versiones_workflows(repo: Path, paginas: set[str]) -> list[str]:
         for imagen in re.findall(r"valkey/valkey:(\S+)", texto):
             if imagen != VALKEY:
                 fallas.append(f"stack.md: {relativo} usa valkey/valkey:{imagen}, no {VALKEY}")
+    return fallas
+
+
+# java.md, «Entrega» and «Pruebas»: release.yml builds each piece in Java, a folder of the root
+# with dependencies.txt, and ci.yml builds it and starts it for the tests.
+PIEZA_JAVA = re.compile(r"scripts/java\.py ([a-z][a-z0-9-]*) ")
+
+
+def piezas_java(repo: Path) -> list[str]:
+    carpetas = {p.name for p in repo.iterdir() if (p / "dependencies.txt").is_file()}
+    workflows = repo / ".github/workflows"
+    release, ci = (
+        (workflows / nombre).read_text(encoding="utf-8") if (workflows / nombre).exists() else ""
+        for nombre in ("release.yml", "ci.yml")
+    )
+    publicadas = set(PIEZA_JAVA.findall(release))
+    fallas = [f"plataformas/java.md: release.yml no compila {p}/" for p in sorted(carpetas - publicadas)]
+    fallas += [
+        f"plataformas/java.md: release.yml compila {p}, que no es una carpeta con dependencies.txt"
+        for p in sorted(publicadas - carpetas)
+    ]
+    for pieza in sorted(carpetas):
+        arranca = rf"java -jar \S*{pieza}/build/{pieza}/{pieza}\.jar"
+        if f"scripts/java.py {pieza} " not in ci or not re.search(arranca, ci):
+            fallas.append(f"plataformas/java.md: ci.yml no compila y arranca {pieza}/")
     return fallas
 
 
@@ -842,6 +867,7 @@ def revisar(repo: Path) -> list[str]:
     java = Path("scripts/java.py")
     if (repo / java).exists():
         fallas.extend(comparar(repo / java, PLANTILLA / java, java.as_posix()))
+    fallas.extend(piezas_java(repo))
 
     for carpeta in sorted(p for p in repo.iterdir() if p.is_dir()):
         if carpeta.name.startswith("."):

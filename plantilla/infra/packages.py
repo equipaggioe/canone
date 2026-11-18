@@ -47,7 +47,7 @@ BASE = (
 EXTENSIONS = {"postgis": ("postgresql-17-postgis-3",)}
 TURN = ("coturn",)
 LOGS = ("systemd-journal-remote", "wireguard-tools")
-# java.md: the JRE of Debian 13 that runs each piece in Java.
+# despliegue.md, «Máquina»: the JRE of Debian 13 that runs each piece in Java.
 JAVA = ("openjdk-21-jre-headless",)
 # ADR-0172: the Chromium of Debian 13 that a task of install.py --browser drives.
 BROWSER = ("chromium-headless-shell",)

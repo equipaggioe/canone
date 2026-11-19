@@ -169,7 +169,8 @@ Estándar: [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
 
 - La API habla en camelCase.
 - Cada cliente genera del `openapi.json` del servidor los modelos del cable, en la convención de su lenguaje, y ninguno los escribe a mano: copiado a mano en varios lenguajes, el contrato diverge sin que nadie lo note.
-- Un cliente falla ante un campo que no conoce en una respuesta: como en el servidor, un campo desconocido es un error del contrato que tiene que verse.
+- Un cliente falla ante un campo que no conoce en una respuesta del servidor: como en el servidor, un campo desconocido es un error del contrato que tiene que verse.
+- La respuesta de un servicio externo se lee con modelos escritos a mano, que validan los campos que el cliente lee e ignoran los que no conoce: el servicio agrega campos sin avisar, y su contrato no sale del `openapi.json`.
 - Los valores de un enum van en snake_case.
 - El servidor responde 422 a un campo o un parámetro que no conoce: el cliente y el servidor salen del mismo contrato, y un campo desconocido es un error del cliente que tiene que verse.
 - El servidor rechaza con un error un mensaje que no cumple las reglas de esta sección ([I-JSON §3](../fuentes/rfc/rfc7493.txt)).
@@ -229,7 +230,7 @@ Estándares: la [*Push API*](../fuentes/w3c/push-api.html) de W3C, [RFC 8030](..
 Estándar: [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 - Un recurso que el usuario crea desde un cliente se crea por `PUT /<recurso>/{id}`, con un uuid v4 que genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez de crear otra.
-- El cliente reintenta ante un fallo de red, un 502, un 503 o un 504, hasta 3 veces, con espera exponencial y jitter: un reinicio del servidor no le muestra un error al usuario.
+- El cliente reintenta ante un fallo de red, un 502, un 503 o un 504, hasta 3 veces, con espera exponencial y jitter, también con un servicio externo: un reinicio del servidor, propio o externo, no le muestra un error al usuario.
 - El cliente reintenta solo una petición idempotente ([RFC 9110 §9.2.2](../fuentes/rfc/rfc9110.txt)).
 - Un `PUT` o un `DELETE` repetido tiene el mismo efecto que uno solo ([RFC 9110 §9.2.2](../fuentes/rfc/rfc9110.txt)).
 - Un `PUT` que crea el recurso responde 201, y uno que lo reemplaza, 200 o 204 ([RFC 9110 §9.3.4](../fuentes/rfc/rfc9110.txt)).

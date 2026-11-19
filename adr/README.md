@@ -190,3 +190,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0182](0182-flutter-traduce-los-errores-reintenta-y-autentica-en-un-solo-http-client.md) | Flutter traduce los errores, reintenta y autentica en un solo `http.Client` | Con Flutter |
 | [0183](0183-windows-va-sin-firmar-y-los-canales-de-flutter-los-crea-su-application.md) | Windows va sin firmar, y los canales de Flutter los crea su `Application` | Con apps o con `desktop/` |
 | [0184](0184-la-uri-de-retorno-es-https-donde-se-puede-y-cada-pieza-elige-sus-plataformas.md) | La URI de retorno es `https` donde se puede, y cada pieza elige sus plataformas | Con apps o con `desktop/` |
+| [0186](0186-lo-que-no-es-interfaz-va-en-services-y-un-servicio-externo-tiene-su-modulo-en-api.md) | Lo que no es interfaz va en `services/`, y un servicio externo tiene su módulo en `api/` | Con clientes |

@@ -19,10 +19,14 @@ desktop/
     resources.qrc       el icono y las traducciones compiladas
     translations/
       <locale>.ts
-    api/
+    api/                lo que habla HTTP
       __init__.py
-      client.py
+      client.py         las llamadas al servidor propio
       models.py         los modelos del cable, generados
+      <servicio>.py     un servicio externo: sus llamadas y sus modelos
+    services/           lo que no es interfaz ni HTTP
+      __init__.py
+      <módulo>.py
     windows/
       __init__.py
       main_window.py
@@ -137,7 +141,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 ## Red
 
-- HTTP va por `QNetworkAccessManager`, y las respuestas se leen con los modelos de `api/models.py`.
+- HTTP va por `QNetworkAccessManager`, y las respuestas se leen con los modelos de `api/`.
 - La app no llama a `ignoreSslErrors()`: un certificado que no vale termina la conexión, como fija [python.md](python.md#seguridad).
 - La app tiene un solo `QNetworkAccessManager`.
 - El `QNetworkAccessManager` libera cada respuesta al terminar, con `setAutoDeleteReplies(True)`.

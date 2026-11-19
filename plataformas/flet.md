@@ -29,10 +29,14 @@ Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md) de Flet.
     theme.py
     assets/
       icon.png
-    api/                el cliente de la API
+    api/                lo que habla HTTP
       __init__.py
-      client.py         las llamadas, escritas a mano
+      client.py         las llamadas al servidor propio, escritas a mano
       models.py         los modelos del cable, generados
+      <servicio>.py     un servicio externo: sus llamadas y sus modelos
+    services/           lo que no es interfaz ni HTTP
+      __init__.py
+      <módulo>.py
     locales/
       <idioma>/LC_MESSAGES/<pieza>.po
     views/              una vista por ruta
@@ -137,8 +141,8 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 ## Red
 
-- HTTP va por un solo `httpx.AsyncClient`, con `await` desde handlers async, y las respuestas se leen con los modelos de `api/models.py`: no bloquea el bucle de eventos y reutiliza las conexiones.
-- Los reintentos de [transversal.md](transversal.md#reintentos) se escriben a mano en `api/client.py`: el `retries` del transporte de httpx solo reintenta una conexión que falla, y no un 502, un 503 ni un 504. [httpx 0.28.1](https://raw.githubusercontent.com/encode/httpx/0.28.1/httpx/_transports/default.py)
+- HTTP va por un solo `httpx.AsyncClient`, con `await` desde handlers async, y las respuestas se leen con los modelos de `api/`: no bloquea el bucle de eventos y reutiliza las conexiones.
+- Los reintentos de [transversal.md](transversal.md#reintentos) se escriben a mano en `api/`: el `retries` del transporte de httpx solo reintenta una conexión que falla, y no un 502, un 503 ni un 504. [httpx 0.28.1](https://raw.githubusercontent.com/encode/httpx/0.28.1/httpx/_transports/default.py)
 
 ## Tema
 

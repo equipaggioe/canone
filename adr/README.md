@@ -199,3 +199,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0191](0191-la-primera-cuenta-de-administracion-se-registra-con-el-codigo-de-instalacion.md) | La primera cuenta de administración se registra con el código de instalación | Con autenticación |
 | [0192](0192-una-app-de-qt-no-declara-el-dominio-de-su-organizacion.md) | Una app de Qt no declara el dominio de su organización | Con `desktop/` |
 | [0193](0193-flet-lee-el-codigo-por-sms-con-una-extension-de-la-plantilla.md) | Flet lee el código por SMS con una extensión que copia la plantilla | Con Flet |
+| [0195](0195-un-widget-de-qt-que-flota-sobre-otros-se-ubica-sin-layout-con-su-sizehint.md) | Un widget de Qt que flota sobre otros se ubica sin layout, con el tamaño de su `sizeHint()` | Con `desktop/` |

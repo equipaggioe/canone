@@ -80,7 +80,7 @@ Estándar: [QWidget](../fuentes/qt/qwidget.qdoc) de Qt.
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
-- Los widgets se ubican con layouts.
+- Los widgets se ubican con layouts, salvo el que flota encima de otros, como una búsqueda sobre un texto o una lista desplegada bajo un campo: va con `setGeometry()`, y su tamaño sale de su `sizeHint()`, acotado por el lugar que hay. Un layout no lo puede superponer sin quitarle los clics al de abajo.
 
 ## Model/View
 

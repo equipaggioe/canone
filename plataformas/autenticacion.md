@@ -7,9 +7,11 @@ Cómo se registra una cuenta, cómo entra y cómo mantiene su sesión: lo que ha
 Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y [RFC 9700](../fuentes/rfc/rfc9700.txt).
 
 - Una app que ofrece la passkey la usa con la API de su sistema operativo cuando su framework la ofrece de forma oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización.
+- Una app que corre en el navegador hace el flujo por el servidor, en su misma pestaña: abre un endpoint del servidor que crea el `state` y el `code_verifier` y redirige a la petición de autorización, y la URI de retorno es otro endpoint del servidor, que canjea el código, deja la cookie de sesión de la web y vuelve a la app con un 303. Ningún token llega al navegador.
 - Una app de Android que recibe la URI `https` de retorno la reclama con App Links: `assetlinks.json` declara para ella `delegate_permission/common.handle_all_urls`, y sin esa relación Android no verifica el dominio y abre la URI en el navegador. [Verify Android App Links](https://developer.android.com/training/app-links/verify-android-applinks)
 - El código vive en Valkey, con la cuenta.
-- Una app recibe el retorno en una URI `https` que reclama, donde su sistema y su biblioteca lo permiten, y si no, en un esquema propio con su dominio al revés, como `com.example.app:/oauth2redirect` ([RFC 8252 §7.1](../fuentes/rfc/rfc8252.txt) y [§7.2](../fuentes/rfc/rfc8252.txt)).
+- Una app del teléfono recibe el retorno en una URI `https` que reclama, donde su sistema y su biblioteca lo permiten, y si no, en un esquema propio con su dominio al revés, como `com.example.app:/oauth2redirect` ([RFC 8252 §7.1](../fuentes/rfc/rfc8252.txt) y [§7.2](../fuentes/rfc/rfc8252.txt)).
+- Una app de escritorio recibe el retorno en `http://127.0.0.1:{puerto}/<ruta>`, con un puerto que abre en la interfaz de loopback al empezar la petición y cierra al recibir la respuesta ([RFC 8252 §7.3](../fuentes/rfc/rfc8252.txt) y [§8.3](../fuentes/rfc/rfc8252.txt)).
 - La app abre la petición de autorización en el navegador del sistema, en una pestaña dentro de la app donde el sistema la ofrece, y nunca en un web-view ([RFC 8252 §5](../fuentes/rfc/rfc8252.txt), [§6](../fuentes/rfc/rfc8252.txt) y [§8.12](../fuentes/rfc/rfc8252.txt)).
 - El endpoint de autorización autentica al usuario en cada petición, aunque el navegador tenga abierta una sesión de la web ([RFC 8252 §8.6](../fuentes/rfc/rfc8252.txt)).
 - La petición de autorización lleva `code_challenge` con `code_challenge_method` `S256`. Sin él, o con `plain`, responde `invalid_request` ([RFC 7636 §4.2](../fuentes/rfc/rfc7636.txt) y [§4.4.1](../fuentes/rfc/rfc7636.txt)).
@@ -20,7 +22,7 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 - La app crea el `code_verifier` ([RFC 7636 §4.1](../fuentes/rfc/rfc7636.txt) y [§7.1](../fuentes/rfc/rfc7636.txt)).
 - La app manda un `state` aleatorio y rechaza la respuesta que no llega a la URI de retorno o con el `state` de su petición ([RFC 8252 §8.9](../fuentes/rfc/rfc8252.txt) y [§8.10](../fuentes/rfc/rfc8252.txt)).
 - La app es un cliente público: está registrada en el servidor con su `client_id` y su URI de retorno completa, y no tiene secreto ([RFC 8252 §8.4](../fuentes/rfc/rfc8252.txt) y [§8.5](../fuentes/rfc/rfc8252.txt)).
-- El servidor compara la URI de retorno con la registrada como cadena exacta ([RFC 8252 §8.4](../fuentes/rfc/rfc8252.txt)).
+- El servidor compara la URI de retorno con la registrada como cadena exacta, salvo el puerto de una URI de loopback, que acepta cualquiera ([RFC 8252 §7.3](../fuentes/rfc/rfc8252.txt) y [§8.4](../fuentes/rfc/rfc8252.txt)).
 - Una petición de autorización sin `client_id`, o con un `client_id` o una URI de retorno que no son los registrados, muestra el error en el navegador y no redirige ([RFC 6749 §3.1.2.4](../fuentes/rfc/rfc6749.txt) y [§4.1.2.1](../fuentes/rfc/rfc6749.txt)).
 - El endpoint de autorización acepta `GET`, y el de token, solo `POST` en `application/x-www-form-urlencoded` ([RFC 6749 §3.1](../fuentes/rfc/rfc6749.txt), [§3.2](../fuentes/rfc/rfc6749.txt) y [§4.1.3](../fuentes/rfc/rfc6749.txt)).
 - Los dos endpoints toman un parámetro sin valor como ausente e ignoran el que no conocen, en vez de responder 422. Un parámetro repetido responde `invalid_request` ([RFC 6749 §3.1](../fuentes/rfc/rfc6749.txt), [§3.2](../fuentes/rfc/rfc6749.txt), [§4.1.2.1](../fuentes/rfc/rfc6749.txt) y [§5.2](../fuentes/rfc/rfc6749.txt)).
@@ -36,15 +38,18 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 
 ## Código por SMS
 
-Estándar: [*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG.
+Estándares: [*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG y [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
 - El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el mismo número crearía otra cuenta.
 - El servidor valida el número con `phonenumbers`.
 - Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el final de la última queda para la sintaxis futura del formato.
+- Una app de iOS declara el host de la última línea en sus dominios asociados, como `webcredentials:<host>`, y ese host sirve `/.well-known/apple-app-site-association` con la app en `webcredentials.apps`: iOS ofrece el código en una app solo si ese host es uno de sus dominios asociados. [Apple](https://developer.apple.com/documentation/security/enabling-autofill-for-domain-bound-sms-codes)
 - Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta 10 por hora.
+- El código para entrar sigue las reglas del de [Recuperación](#recuperación).
 - El host de la última línea es el de la web donde se escribe el código ([SMS one-time codes, *Usage*](../fuentes/wicg/sms-one-time-codes.bs)).
 - La última línea del SMS es `@<host> #<código>`, con un solo espacio en medio ([SMS one-time codes, *Parsing*](../fuentes/wicg/sms-one-time-codes.bs)).
 - El SMS no termina en un salto de línea: su última línea es la del código ([SMS one-time codes, *Parsing*](../fuentes/wicg/sms-one-time-codes.bs)).
+- Cada fallo del código para entrar cuenta entre los fallos consecutivos del teléfono, y un código nuevo no los reinicia ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
 
 ## Contraseñas
 
@@ -84,9 +89,11 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - El titular ve en la app cada intento fallido y cada autenticador deshabilitado.
 - Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
 - Los fallos consecutivos y la hora del siguiente intento viven en la base: sin ventana de tiempo, perderlos le regala al atacante 100 intentos nuevos.
-- El servidor acepta en toda cuenta los dos métodos para entrar, y cada repositorio elige cuáles ofrece cada pieza, de los disponibles en su plataforma.
+- El servidor acepta en toda cuenta los métodos para entrar, y cada repositorio elige cuáles ofrece cada pieza, de los disponibles en su plataforma.
+- La pantalla para entrar ofrece primero la passkey, si el dispositivo la tiene, y luego el código por SMS y la contraseña, entre los que elige el usuario: él sabe si el dispositivo recibe SMS.
+- La app guarda en el dispositivo el último método con que entró, y lo ofrece primero la próxima vez.
 - Mientras no hay una cuenta de administración, el registro acepta el código de instalación, `setup_code` de `Settings`, y la cuenta que se registra con él es de administración. Con la primera, el registro deja de aceptarlo.
-- Una cuenta entra con una contraseña o con una passkey ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
+- Una cuenta entra con una contraseña, una passkey o un código por SMS ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
 - Las direcciones de aviso son el correo, el teléfono y el push a las apps con sesión abierta: una cuenta con un solo medio también tiene dos ([NIST SP 800-63B-4 §4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Cada autenticador guarda cuándo se vinculó y cuándo cambió, y cada uno de esos eventos va al registro de eventos con su IP y su user agent ([NIST SP 800-63B-4 §4.1](../fuentes/nist/sp800-63b-4.txt)).
 - Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429: llegar a los 100 fallos lleva unos cuatro días, y el titular lo ve antes ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
@@ -97,17 +104,17 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Vincular, cambiar o borrar un autenticador, y recuperar la cuenta, avisa a todas las direcciones de aviso. El aviso dice qué hacer, y a quién escribir, si el titular no lo hizo ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt), [§4.2.3](../fuentes/nist/sp800-63b-4.txt), [§4.5](../fuentes/nist/sp800-63b-4.txt) y [§4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Un autenticador se deshabilita a los 100 fallos consecutivos. Si los fallos involucran dos autenticadores, se deshabilitan los dos ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - El titular vuelve a habilitarlo desde una sesión abierta o, si es la contraseña, restableciéndola ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
-- El titular invalida en el acto un autenticador perdido o robado, borrando la passkey, y la app le explica cómo protegerlos ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.3](../fuentes/nist/sp800-63b-4.txt)).
+- El titular invalida en el acto un autenticador perdido o robado, borrando la passkey o cambiando el teléfono, y la app le explica cómo protegerlos ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.3](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta que se borra o se deshabilita pierde en el momento sus autenticadores ([NIST SP 800-63B-4 §4.5](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta que se borra o se deshabilita pierde en el momento sus sesiones ([ASVS 5.0 §7.4.2](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 
-| Pieza | Métodos disponibles para entrar |
-| :--- | :--- |
-| La web | Passkey y contraseña |
-| Una app de Android | Passkey y contraseña |
-| Una app de Flutter | Passkey y contraseña |
-| Una app de Flet, en el teléfono | Passkey y contraseña |
-| Una app de Flet o de Qt, en escritorio | Contraseña |
+| Pieza | Passkey | Contraseña | Código por SMS |
+| :--- | :--- | :--- | :--- |
+| La web | Sí | Sí | Sí, con WebOTP |
+| Una app de Flutter o de Flet, en la web | Sí, en la misma pestaña | Sí | Sí, con WebOTP |
+| Una app de Android | Sí | Sí | Sí, se completa solo |
+| Una app de Flutter o de Flet, en el teléfono | Sí | Sí | Sí, se completa solo |
+| Una app de Flutter, de Flet o de Qt, en escritorio | Sí, por el navegador del sistema | Sí | Sí |
 
 ## Passkeys
 
@@ -155,7 +162,7 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 - Con el código, una cuenta con contraseña la restablece.
 - El código vive en Valkey, y uno nuevo reemplaza al anterior.
 - El código vale una sola vez.
-- Una cuenta con passkey se recupera con el mismo código, que se aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela desde la app: quien roba el correo no entra antes de que el dueño la vea.
+- Una cuenta con passkey que se recupera con el código del correo lo aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela desde la app: quien roba el correo no entra antes de que el dueño la vea. El código del teléfono se aplica en el momento, porque con él la cuenta ya entra.
 - Una cuenta se recupera con un código que recibe, a su elección, en el correo o en el teléfono que registró ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt) y [§4.2.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - El código vence a los 10 minutos, también el que va al correo ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Quien no puede entrar ni recibir el código recupera la cuenta con un administrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
@@ -166,17 +173,17 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
 Estándares: de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md) y [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md); [RFC 6749](../fuentes/rfc/rfc6749.txt); [RFC 9700](../fuentes/rfc/rfc9700.txt); [RFC 9110](../fuentes/rfc/rfc9110.txt), y el [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md) de OWASP.
 
-- La web presenta su sesión con una cookie, y una app, con un token de acceso que renueva con un token de refresco. En la web, ningún token queda al alcance de un script.
+- La web y una app que corre en el navegador presentan su sesión con una cookie, y una app instalada, con un token de acceso que renueva con un token de refresco. En el navegador, ningún token queda al alcance de un script.
 - La web y las apps comparten la tabla de sesiones: cambia solo el token que presenta cada una.
 - Una sesión no tiene vencimiento total: pedir entrar de nuevo cada mes aleja al usuario de una app de uso diario, y el refresco rotado descubre un token robado cuando el dueño vuelve a refrescar.
 - La sesión vence tras 30 días sin uso.
 - La cookie de la web dura 30 días de `Max-Age`, que se renuevan con el último uso.
 - El último uso se actualiza al refrescar, en una app, y a lo sumo cada 15 minutos, en la web: una escritura por petición cargaría la base sin mover el vencimiento.
 - Una tarea periódica borra las sesiones vencidas.
-- En una app, el token de acceso vive solo en memoria, y el de refresco, en el almacenamiento seguro del sistema: ningún almacenamiento guarda un token que da acceso directo a la API.
-- Una app hace un solo refresco a la vez, y las peticiones que reciben un 401 mientras tanto lo esperan. Con la rotación, dos refrescos simultáneos presentan tokens ya rotados.
-- Ante un 401, una app refresca la sesión una sola vez y reintenta una sola vez.
-- Una app que entra con contraseña o con la passkey de su sistema recibe la misma respuesta que el canje del código: así todas las apps leen una sola.
+- En una app instalada, el token de acceso vive solo en memoria, y el de refresco, en el almacenamiento seguro del sistema: ningún almacenamiento guarda un token que da acceso directo a la API.
+- Una app instalada hace un solo refresco a la vez, y las peticiones que reciben un 401 mientras tanto lo esperan. Con la rotación, dos refrescos simultáneos presentan tokens ya rotados.
+- Ante un 401, una app instalada refresca la sesión una sola vez y reintenta una sola vez.
+- Una app que entra con contraseña, con código por SMS o con la passkey de su sistema recibe la misma respuesta que el canje del código: así todas las apps leen una sola.
 - La fila de una sesión de una app guarda el SHA-256 del secreto vigente y el del anterior. El anterior vale mientras el vigente no se usó: una respuesta perdida cerraría la sesión del dueño y le avisaría de un robo.
 - Presentar el anterior reemplaza el vigente, y el anterior no cambia. Si el vigente pasara a ser el anterior, un dueño y un ladrón que refrescan por turnos nunca presentarían un reúso.
 - Un token de refresco con la firma inválida o de una sesión que no existe responde `invalid_grant`, sin aviso.
@@ -184,7 +191,7 @@ Estándares: de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes
 - La fila de la sesión guarda el SHA-256 del token de la web: quien lee la base no se lleva ninguna sesión.
 - El token de refresco es el id de su sesión y un secreto aleatorio de 256 bits, firmados con HMAC.
 - Iniciar sesión o volver a autenticarse crea o renueva la fila de sesión, con su creación y su último uso.
-- La API se sirve en el mismo origen que la web, bajo `/api`, sin `Access-Control-Allow-Origin`: la cookie de sesión es de primera parte ([HTTP Security Response Headers Cheat Sheet, *Access-Control-Allow-Origin*](../fuentes/owasp/HTTP_Headers.md)).
+- La API, bajo `/api`, y las apps que corren en el navegador se sirven en el mismo origen que la web, sin `Access-Control-Allow-Origin`: la cookie de sesión es de primera parte ([HTTP Security Response Headers Cheat Sheet, *Access-Control-Allow-Origin*](../fuentes/owasp/HTTP_Headers.md)).
 - Cerrar sesión borra la fila ([RFC 9700 §4.14.2](../fuentes/rfc/rfc9700.txt)).
 - El token de la web es un valor aleatorio de 256 bits ([ASVS 5.0 §7.2.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - La cookie de la web es `__Host-session`, `Secure`, `HttpOnly` y `SameSite=Strict`, con `Path=/`: ningún script la lee, ninguna petición de otro sitio la lleva y ningún subdominio la reemplaza ([ASVS 5.0 §3.3.1](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), [§3.3.2](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), [§3.3.3](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md) y [§3.3.4](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md)).

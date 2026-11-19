@@ -179,6 +179,9 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | shared_preferences | 2.5.6 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
 | flutter_secure_storage | 11.2.0 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
 | flutter_appauth | 13.0.0 | [Código de autorización](plataformas/flutter.md#código-de-autorización) |
+| oauth2 | 2.0.5 | [Código de autorización](plataformas/flutter.md#código-de-autorización) |
+| url_launcher | 6.3.3 | [Código de autorización](plataformas/flutter.md#código-de-autorización) |
+| web | 1.1.2 | [Código de autorización](plataformas/flutter.md#código-de-autorización) |
 | sms_autofill | 2.6.1 | [Código por SMS](plataformas/flutter.md#código-por-sms) |
 | flutter_stripe, con Stripe | 15.0.0 | [Pagos](plataformas/flutter.md#pagos) |
 | firebase_core | 5.2.0 | — |

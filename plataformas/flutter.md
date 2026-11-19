@@ -4,7 +4,7 @@ Una app en Flutter.
 
 ## Proyecto
 
-- La app es para Android y para iOS.
+- La app es para Android y para iOS, y para escritorio y la web si el repositorio lo elige.
 - `pubspec.yaml` declara exactos flutter_riverpod y riverpod_annotation, y en `dev_dependencies`, riverpod_generator: las mutations de Riverpod son experimentales y pueden cambiar sin una versión mayor. [Riverpod 3.5.0](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/mutations.mdx)
 - Las demás dependencias van exactas o con `^`.
 - CI corre `dart run dependency_validator`, que falla con un paquete importado sin declarar o una dependencia que no se usa ([stack.md](../stack.md#qué-entra)). `pubspec.yaml` lleva `dependency_validator:` con `allow_pins: true`: sin él, también falla con cada versión exacta, y las de Riverpod lo son.
@@ -261,7 +261,10 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
-- La app hace el flujo del código de autorización con flutter_appauth.
+- En el teléfono, la app hace el flujo del código de autorización con flutter_appauth.
+- En escritorio, la app hace el flujo con `AuthorizationCodeGrant`, de oauth2, que manda el `code_challenge` con `S256`, y no con flutter_appauth, que no tiene Windows ni Linux. [flutter_appauth 13.0.0](https://raw.githubusercontent.com/MaikuB/flutter_appauth/flutter_appauth-v13.0.0/flutter_appauth/pubspec.yaml)
+- En escritorio, la app recibe el retorno en un `HttpServer` de `dart:io`, abierto en `InternetAddress.loopbackIPv4` con el puerto 0, y lo cierra al recibir la respuesta. Abre la petición con `launchUrl`, de url_launcher, en `LaunchMode.externalApplication`.
+- En la web, la app abre el endpoint del servidor que empieza el flujo con `window.location.assign()`, de package:web, en su misma pestaña. No canjea el código ni guarda tokens: sus peticiones llevan la cookie, y ante un 401 vuelve a entrar.
 - En Android, el manifiesto declara el `intent-filter` de `RedirectUriReceiverActivity` con la URI `https` de retorno y `android:autoVerify="true"`, en vez de `appAuthRedirectScheme`, que solo declara un esquema propio. [flutter_appauth 13.0.0](https://raw.githubusercontent.com/MaikuB/flutter_appauth/flutter_appauth-v13.0.0/flutter_appauth/README.md)
 - En iOS, el retorno llega a un esquema propio con el dominio al revés, que `Info.plist` declara en `CFBundleURLTypes`: AppAuth-iOS abre `ASWebAuthenticationSession` con el esquema de la URI de retorno, y con `https` la sesión no recibe el retorno. [AppAuth-iOS 3.0.0](https://raw.githubusercontent.com/openid/AppAuth-iOS/3.0.0/Sources/AppAuth/iOS/OIDExternalUserAgentIOS.m)
 
@@ -270,6 +273,7 @@ Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
 
 - El campo del código es `TextFieldPinAutoFill`: lleva una `InputDecoration`, y se ve como los demás campos del tema.
+- En iOS, `TextFieldPinAutoFill` lleva `AutofillHints.oneTimeCode`, e iOS ofrece el código sobre el teclado. `ios/Runner/Runner.entitlements` declara el host del SMS en `com.apple.developer.associated-domains`. [sms_autofill 2.6.1](https://pub.dev/api/archives/sms_autofill-2.6.1.tar.gz)
 
 ## Contraseñas
 

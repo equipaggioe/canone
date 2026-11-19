@@ -1,7 +1,7 @@
 # ADR-0184 · La URI de retorno es `https` donde se puede, y cada pieza elige sus plataformas
 
 - **Estado:** Aceptada. El usuario pidió aplicar lo recomendado para el login de Flutter en iOS, si
-  no era un parche, y para lo demás que quedaba abierto (2026-11-18)
+  no era un parche, y para lo demás que quedaba abierto (2026-11-18). El punto 1, en las apps de escritorio, lo reemplaza el [ADR-0194](0194-el-sms-sirve-para-entrar-y-el-escritorio-y-la-web-de-flutter-y-flet-tienen-passkey.md)
 - **Fecha:** 2026-11-18
 - **Alcance:** [`plataformas/autenticacion.md`](../plataformas/autenticacion.md), «Código de
   autorización»; [`plataformas/flutter.md`](../plataformas/flutter.md);

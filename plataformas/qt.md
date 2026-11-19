@@ -120,6 +120,14 @@ Estándar: [QSettings](../fuentes/qt/qsettings.qdoc) de Qt.
 - Una clave se escribe siempre con las mismas mayúsculas, dos claves no difieren solo en ellas, y ninguna lleva `/` ni `\` ([QSettings, *Section and Key Syntax*](../fuentes/qt/qsettings.qdoc)).
 - La ventana principal lee su geometría y su estado al crearse, y los guarda en `closeEvent()` ([QSettings, *Restoring the State of a GUI Application*](../fuentes/qt/qsettings.qdoc)).
 
+## Código de autorización
+
+Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
+
+- La app hace el flujo con `QOAuth2AuthorizationCodeFlow`, de Qt Network Authorization, que manda el `code_challenge` con `S256`. [Qt 6.12.0](https://raw.githubusercontent.com/qt/qtnetworkauth/v6.12.0/src/oauth/qoauth2authorizationcodeflow_p.h)
+- La app recibe el retorno en un `QOAuthHttpServerReplyHandler` creado sin dirección ni puerto: escucha en `127.0.0.1` con un puerto libre, y la URI de retorno lleva esa IP y no `localhost`. Lo cierra con `close()` al recibir el token. [Qt 6.12.0](https://raw.githubusercontent.com/qt/qtnetworkauth/v6.12.0/src/oauth/qoauthhttpserverreplyhandler.cpp)
+- `authorizeWithBrowser` va conectado a `QDesktopServices.openUrl`, que abre la petición en el navegador del sistema.
+
 ## Contraseñas
 
 Contrato: [autenticacion.md](autenticacion.md#contraseñas).

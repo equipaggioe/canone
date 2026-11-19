@@ -2,7 +2,7 @@
 
 - **Estado:** Aceptada. El usuario pidió que Canone defina los métodos disponibles en cada
   plataforma y no cuál usa cada app, confirmó que el código por SMS deja de servir para entrar
-  y pidió tratar las cuentas de administración como las demás (2026-11-18)
+  y pidió tratar las cuentas de administración como las demás (2026-11-18). El punto 1, en el código por SMS, lo reemplaza el [ADR-0194](0194-el-sms-sirve-para-entrar-y-el-escritorio-y-la-web-de-flutter-y-flet-tienen-passkey.md)
 - **Fecha:** 2026-11-18
 - **Alcance:** [`plataformas/autenticacion.md`](../plataformas/autenticacion.md), «Código de
   autorización», «Código por SMS», «Cuentas», «Passkeys», «Recuperación» y «Sesión»;

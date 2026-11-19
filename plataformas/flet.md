@@ -123,17 +123,23 @@ Estándar: [*Packaging app for Windows*](../fuentes/flet/publish-windows.md) de 
 
 Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
-- La app abre la petición de autorización con `UrlLauncher().launch_url()` en `LaunchMode.IN_APP_BROWSER_VIEW`: es una pestaña del navegador en Android y `SFSafariViewController` en iOS, donde la passkey funciona. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/services/url_launcher.py), [url_launcher_ios 6.4.2](https://raw.githubusercontent.com/flutter/packages/url_launcher_ios-v6.4.2/packages/url_launcher/url_launcher_ios/ios/url_launcher_ios/Sources/url_launcher_ios/URLLaunchSession.swift), [WebKit](https://webkit.org/blog/11312/meet-face-id-and-touch-id-for-the-web/)
+- En el teléfono, la app abre la petición de autorización con `UrlLauncher().launch_url()` en `LaunchMode.IN_APP_BROWSER_VIEW`: es una pestaña del navegador en Android y `SFSafariViewController` en iOS, donde la passkey funciona. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/services/url_launcher.py), [url_launcher_ios 6.4.2](https://raw.githubusercontent.com/flutter/packages/url_launcher_ios-v6.4.2/packages/url_launcher/url_launcher_ios/ios/url_launcher_ios/Sources/url_launcher_ios/URLLaunchSession.swift), [WebKit](https://webkit.org/blog/11312/meet-face-id-and-touch-id-for-the-web/)
 - En Android, la URI `https` de retorno se declara en `[[tool.flet.android.activity.intent_filter]]`, con `autoVerify = true`, y no en `[tool.flet.deep_linking]`, cuyo filtro no lleva `android:autoVerify`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/index.md)
 - En iOS, el retorno llega a un esquema propio con el dominio al revés, declarado en `[tool.flet.ios.deep_linking]`: iOS abre en Safari un Universal Link del mismo dominio que la página. [Apple](https://developer.apple.com/documentation/xcode/allowing-apps-and-websites-to-link-to-your-content)
 - En iOS, la app cierra la pestaña con `UrlLauncher().close_in_app_web_view()` cuando recibe el retorno: `SFSafariViewController` se abre sobre la app y no se cierra solo. [url_launcher_ios 6.4.2](https://raw.githubusercontent.com/flutter/packages/url_launcher_ios-v6.4.2/packages/url_launcher/url_launcher_ios/lib/url_launcher_ios.dart)
+- En escritorio, la app recibe el retorno en un servidor de `asyncio.start_server`, abierto en `127.0.0.1` con el puerto 0, y lo cierra al recibir la respuesta. Abre la petición con `UrlLauncher().launch_url()` sin `mode`, que en escritorio la abre en el navegador del sistema, y vuelve al frente con `page.window.to_front()`.
+- En la web, la app abre el endpoint del servidor que empieza el flujo con `UrlLauncher().launch_url()` y `web_only_window_name="_self"`, en su misma pestaña. No canjea el código ni guarda tokens: sus peticiones llevan la cookie, y ante un 401 vuelve a entrar.
+- En la web, el `base_url` del `httpx.AsyncClient` es el origen de `page.url`: en el navegador, httpx no acepta una URL relativa.
 
 ## Código por SMS
+
+Estándar: [*Packaging app for iOS*](../fuentes/flet/publish-ios.md) de Flet.
 
 Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
 
 - En Android, la app lee el código del SMS con `SmsCode`, de la extensión `flet_sms` que copia la plantilla en `packages/sms/`: con el teclado y el autocompletado de Samsung, un `TextField` con `AutofillHint.ONE_TIME_CODE` no ofrece el código.
 - `flet_sms` lee el SMS con smart_auth, y no con el sms_autofill de [flutter.md](flutter.md#código-por-sms): sms_autofill 2.6.1 compila con `compileSdk 37`, y el plugin de Android que usa Flet 1.1.2, AGP 8.13.2, no encuentra esa plataforma, que el SDK publica como `android-37.0`. [sms_autofill 2.6.1](https://pub.dev/api/archives/sms_autofill-2.6.1.tar.gz)
+- En iOS, el campo del código es un `TextField` con `AutofillHint.ONE_TIME_CODE`, e iOS ofrece el código sobre el teclado. `[tool.flet.ios.entitlement]` declara el host del SMS en `com.apple.developer.associated-domains` ([Packaging app for iOS, *Entitlements*](../fuentes/flet/publish-ios.md)).
 
 ## Contraseñas
 
@@ -223,6 +229,7 @@ Contrato: [transversal.md](transversal.md#distribución).
 - La versión de Windows es el `setup.exe` que compila Inno Setup desde `installer.iss`, el script de Flet, después de `flet build windows` ([Packaging app for Windows, *Distributing*](../fuentes/flet/publish-windows.md)).
 - El `AppId` de `installer.iss` es el `bundle_id`, y no cambia entre versiones: con otro, el instalador registra una app aparte en vez de actualizarla ([Packaging app for Windows, *Distributing*](../fuentes/flet/publish-windows.md)).
 - CI compila el instalador con el `iscc` del runner de Windows ([Packaging app for Windows, *Building the installer in CI*](../fuentes/flet/publish-windows.md)).
+- La versión de la web es la de `flet build web`, que corre Python en el navegador con Pyodide: en la que corre Python en el servidor, las peticiones a la API salen del servidor de Flet y no llevan la cookie del navegador ([Publish Flet web app](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/web/index.md)).
 - La versión de Linux es el AppImage que arma `build-appimage.sh`, el script de Flet, después de `flet build linux` ([Packaging app for Linux, *Distributing*](../fuentes/flet/publish-linux.md)).
 - En CI, `build-appimage.sh` corre con `APPIMAGE_EXTRACT_AND_RUN=1`, sin FUSE ([Packaging app for Linux, *Distributing*](../fuentes/flet/publish-linux.md)).
 - La versión de Android que va a Google Play es un AAB, de `flet build aab` ([Packaging app for Android, *`flet build aab`*](../fuentes/flet/publish-android.md)).

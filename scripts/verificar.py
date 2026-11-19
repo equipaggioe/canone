@@ -70,6 +70,18 @@ CANONICOS = [
     Path("server/tests/test_tasks.py"),
 ]
 
+# plataformas/flet.md, «Código por SMS»: la extensión de Flet que lee el código del SMS.
+SMS = [
+    Path("packages/sms/.gitignore"),
+    Path("packages/sms/pyproject.toml"),
+    Path("packages/sms/src/flet_sms/__init__.py"),
+    Path("packages/sms/src/flet_sms/sms.py"),
+    Path("packages/sms/src/flutter/flet_sms/pubspec.yaml"),
+    Path("packages/sms/src/flutter/flet_sms/lib/flet_sms.dart"),
+    Path("packages/sms/src/flutter/flet_sms/lib/src/extension.dart"),
+    Path("packages/sms/src/flutter/flet_sms/lib/src/sms_code.dart"),
+]
+
 # plataformas/fastapi.md: el driver es asyncpg y las pruebas async corren con AnyIO. Se revisa la
 # dependencia declarada, así un paquete se ve aunque nadie lo importe todavía.
 DESCARTADAS = {"psycopg", "psycopg2", "psycopg2-binary", "pytest-asyncio"}
@@ -979,6 +991,10 @@ def revisar(repo: Path) -> list[str]:
     if (repo / java).exists():
         fallas.extend(comparar(repo / java, PLANTILLA / java, java.as_posix()))
     fallas.extend(piezas_java(repo))
+
+    if (repo / "packages/sms").is_dir():
+        for rel in SMS:
+            fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
 
     for carpeta in sorted(p for p in repo.iterdir() if p.is_dir()):
         if carpeta.name.startswith("."):

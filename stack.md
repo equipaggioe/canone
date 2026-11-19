@@ -246,6 +246,7 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter 
 | :--- | :--- | :--- |
 | Flet | 1.1.2 | — |
 | flet-secure-storage | 1.1.2 | [Almacenamiento](plataformas/flet.md#almacenamiento) |
+| smart_auth, en `packages/sms/` | 4.0.0 | [Código por SMS](plataformas/flet.md#código-por-sms) |
 | httpx-ws | 0.10.0 | [WebSocket](plataformas/flet.md#websocket) |
 | Babel | 2.18.0 | [Idiomas](plataformas/flet.md#idiomas) |
 | datamodel-code-generator, con el extra `ruff` | 0.97.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |

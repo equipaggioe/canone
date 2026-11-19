@@ -32,6 +32,7 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `flet/src/api/ruff.toml` | `src/` de la pieza | Canónico | [flet.md](../plataformas/flet.md) |
 | `flet/theme.py` | `src/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
 | `flet/tests/test_theme.py` | `tests/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
+| `packages/sms/` | `packages/sms/`, si una app de Flet lee el código por SMS | Canónico | [flet.md](../plataformas/flet.md#código-por-sms) |
 | `sveltekit/.prettierrc`<br>`knip.json`<br>`pnpm-workspace.yaml` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
 | `sveltekit/.gitignore` | Cada superficie SvelteKit | Punto de partida | [repositorio.md](../repositorio.md), [sveltekit.md](../plataformas/sveltekit.md) |
 | `sveltekit/.prettierignore`<br>`eslint.config.js`<br>`vite.config.ts`<br>`playwright.config.ts`<br>`uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |

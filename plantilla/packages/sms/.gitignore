@@ -1,0 +1,4 @@
+build/
+*.egg-info/
+.dart_tool/
+pubspec.lock

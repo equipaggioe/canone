@@ -128,6 +128,13 @@ Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 - En iOS, el retorno llega a un esquema propio con el dominio al revés, declarado en `[tool.flet.ios.deep_linking]`: iOS abre en Safari un Universal Link del mismo dominio que la página. [Apple](https://developer.apple.com/documentation/xcode/allowing-apps-and-websites-to-link-to-your-content)
 - En iOS, la app cierra la pestaña con `UrlLauncher().close_in_app_web_view()` cuando recibe el retorno: `SFSafariViewController` se abre sobre la app y no se cierra solo. [url_launcher_ios 6.4.2](https://raw.githubusercontent.com/flutter/packages/url_launcher_ios-v6.4.2/packages/url_launcher/url_launcher_ios/lib/url_launcher_ios.dart)
 
+## Código por SMS
+
+Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
+
+- En Android, la app lee el código del SMS con `SmsCode`, de la extensión `flet_sms` que copia la plantilla en `packages/sms/`: con el teclado y el autocompletado de Samsung, un `TextField` con `AutofillHint.ONE_TIME_CODE` no ofrece el código.
+- `flet_sms` lee el SMS con smart_auth, y no con el sms_autofill de [flutter.md](flutter.md#código-por-sms): sms_autofill 2.6.1 compila con `compileSdk 37`, y el plugin de Android que usa Flet 1.1.2, AGP 8.13.2, no encuentra esa plataforma, que el SDK publica como `android-37.0`. [sms_autofill 2.6.1](https://pub.dev/api/archives/sms_autofill-2.6.1.tar.gz)
+
 ## Contraseñas
 
 Contrato: [autenticacion.md](autenticacion.md#contraseñas).

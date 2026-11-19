@@ -1,0 +1,16 @@
+[project]
+name = "flet-sms"
+version = "0.1.0"
+requires-python = "==3.13.*"
+dependencies = ["flet>=1.1.2"]
+
+[tool.setuptools.package-data]
+"flutter.flet_sms" = ["pubspec.yaml", "lib/**"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+python-preference = "only-system"
+required-version = "==0.13.9"

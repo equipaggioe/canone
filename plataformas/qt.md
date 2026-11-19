@@ -16,7 +16,8 @@ desktop/
     colors.py
     theme.py            la paleta y la hoja de estilo global
     icon.png
-    resources.qrc       el icono y las traducciones compiladas
+    resources.qrc       el icono, las imágenes de assets/ y las traducciones compiladas
+    assets/             lo que no es código: las imágenes y los archivos que se leen del disco
     translations/
       <locale>.ts
     api/                lo que habla HTTP

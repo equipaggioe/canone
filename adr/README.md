@@ -194,3 +194,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0186](0186-lo-que-no-es-interfaz-va-en-services-y-un-servicio-externo-tiene-su-modulo-en-api.md) | Lo que no es interfaz va en `services/`, y un servicio externo tiene su módulo en `api/` | Con clientes |
 | [0187](0187-flet-fija-jni-y-jni-flutter-en-el-pubspec-que-genera.md) | Flet fija `jni` y `jni_flutter` en el `pubspec.yaml` que genera | Con Flet |
 | [0188](0188-verificar-comprueba-el-arbol-de-qt-y-flet-y-ruff-deja-http-solo-en-api.md) | `verificar.py` comprueba el árbol de Qt y de Flet, y ruff deja HTTP solo en `api/` | Con clientes |
+| [0189](0189-lo-que-no-es-codigo-de-qt-va-en-src-app-assets.md) | Lo que no es código de una app de Qt va en `src/app/assets/` | Con `desktop/` |

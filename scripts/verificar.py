@@ -709,10 +709,11 @@ def piezas_java(repo: Path) -> list[str]:
 ARBOLES = {
     "qt.md": (
         "app/",
-        {"translations", "api", "services", "windows", "dialogs", "widgets", "models"},
+        {"assets", "translations", "api", "services", "windows", "dialogs", "widgets", "models"},
         [
             r"app/(__init__|main|colors|theme)\.py",
             r"app/(icon\.png|resources\.qrc)",
+            r"app/assets/.+",
             r"app/translations/[^/]+\.ts",
             r"app/api/([^/]+\.py|ruff\.toml)",
             r"app/services/([^/]+\.py|ruff\.toml|[^/]+/[^/]+\.py)",

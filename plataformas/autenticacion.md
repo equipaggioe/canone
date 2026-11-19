@@ -85,6 +85,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
 - Los fallos consecutivos y la hora del siguiente intento viven en la base: sin ventana de tiempo, perderlos le regala al atacante 100 intentos nuevos.
 - El servidor acepta en toda cuenta los dos métodos para entrar, y cada repositorio elige cuáles ofrece cada pieza, de los disponibles en su plataforma.
+- Mientras no hay una cuenta de administración, el registro acepta el código de instalación, `setup_code` de `Settings`, y la cuenta que se registra con él es de administración. Con la primera, el registro deja de aceptarlo.
 - Una cuenta entra con una contraseña o con una passkey ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
 - Las direcciones de aviso son el correo, el teléfono y el push a las apps con sesión abierta: una cuenta con un solo medio también tiene dos ([NIST SP 800-63B-4 §4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Cada autenticador guarda cuándo se vinculó y cuándo cambió, y cada uno de esos eventos va al registro de eventos con su IP y su user agent ([NIST SP 800-63B-4 §4.1](../fuentes/nist/sp800-63b-4.txt)).
@@ -105,7 +106,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 | La web | Passkey y contraseña |
 | Una app de Android | Passkey y contraseña |
 | Una app de Flutter | Passkey y contraseña |
-| Una app de Flet, en Android | Passkey y contraseña |
+| Una app de Flet, en el teléfono | Passkey y contraseña |
 | Una app de Flet o de Qt, en escritorio | Contraseña |
 
 ## Passkeys

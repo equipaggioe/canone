@@ -123,8 +123,10 @@ Estándar: [*Packaging app for Windows*](../fuentes/flet/publish-windows.md) de 
 
 Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
-- En Android, la app abre la petición de autorización con `UrlLauncher().launch_url()` en `LaunchMode.IN_APP_BROWSER_VIEW`, que es una pestaña del navegador y no un web-view. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/services/url_launcher.py)
+- La app abre la petición de autorización con `UrlLauncher().launch_url()` en `LaunchMode.IN_APP_BROWSER_VIEW`: es una pestaña del navegador en Android y `SFSafariViewController` en iOS, donde la passkey funciona. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/services/url_launcher.py), [url_launcher_ios 6.4.2](https://raw.githubusercontent.com/flutter/packages/url_launcher_ios-v6.4.2/packages/url_launcher/url_launcher_ios/ios/url_launcher_ios/Sources/url_launcher_ios/URLLaunchSession.swift), [WebKit](https://webkit.org/blog/11312/meet-face-id-and-touch-id-for-the-web/)
 - En Android, la URI `https` de retorno se declara en `[[tool.flet.android.activity.intent_filter]]`, con `autoVerify = true`, y no en `[tool.flet.deep_linking]`, cuyo filtro no lleva `android:autoVerify`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/index.md)
+- En iOS, el retorno llega a un esquema propio con el dominio al revés, declarado en `[tool.flet.ios.deep_linking]`: iOS abre en Safari un Universal Link del mismo dominio que la página. [Apple](https://developer.apple.com/documentation/xcode/allowing-apps-and-websites-to-link-to-your-content)
+- En iOS, la app cierra la pestaña con `UrlLauncher().close_in_app_web_view()` cuando recibe el retorno: `SFSafariViewController` se abre sobre la app y no se cierra solo. [url_launcher_ios 6.4.2](https://raw.githubusercontent.com/flutter/packages/url_launcher_ios-v6.4.2/packages/url_launcher/url_launcher_ios/lib/url_launcher_ios.dart)
 
 ## Contraseñas
 

@@ -23,6 +23,9 @@
   URI `https` que la app declara con `autoVerify`, y la app recibe la ruta con `code` y `state` en
   `on_route_change`. El dominio se aprobó con `pm set-app-links`, sin `assetlinks.json`, y la página
   estaba en otro origen que la URI de retorno.
+- Comprobado el 2026-11-18 en el mismo teléfono, con un túnel temporal con HTTPS: con la página, la
+  redirección y la URI de retorno en el mismo host, y el dominio verificado por Android con
+  `assetlinks.json`, la app también recibe `code` y `state`.
 
 ## Decisión
 

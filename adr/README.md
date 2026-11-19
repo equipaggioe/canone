@@ -195,3 +195,5 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0187](0187-flet-fija-jni-y-jni-flutter-en-el-pubspec-que-genera.md) | Flet fija `jni` y `jni_flutter` en el `pubspec.yaml` que genera | Con Flet |
 | [0188](0188-verificar-comprueba-el-arbol-de-qt-y-flet-y-ruff-deja-http-solo-en-api.md) | `verificar.py` comprueba el árbol de Qt y de Flet, y ruff deja HTTP solo en `api/` | Con clientes |
 | [0189](0189-lo-que-no-es-codigo-de-qt-va-en-src-app-assets.md) | Lo que no es código de una app de Qt va en `src/app/assets/` | Con `desktop/` |
+| [0190](0190-la-app-de-flet-en-ios-usa-la-passkey-en-sfsafariviewcontroller.md) | La app de Flet en iOS usa la passkey en `SFSafariViewController` y recibe el retorno en un esquema propio | Con Flet |
+| [0191](0191-la-primera-cuenta-de-administracion-se-registra-con-el-codigo-de-instalacion.md) | La primera cuenta de administración se registra con el código de instalación | Con autenticación |

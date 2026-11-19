@@ -1,6 +1,6 @@
 # ADR-0133 · La autenticación tiene su página, y el servidor comprueba aparte lo que sus bibliotecas no miran
 
-- **Estado:** Aceptada; el punto 6 es propuesta
+- **Estado:** Aceptada; el punto 6 es propuesta. Los puntos 11 y 12, en el código por SMS, los reemplaza el [ADR-0185](0185-una-cuenta-entra-con-passkey-o-contrasena-y-cada-repositorio-elige-cuales-ofrece.md)
 - **Fecha:** 2026-11-09
 - **Alcance:** `plataformas/autenticacion.md`, `fastapi.md`, `transversal.md`, `flutter.md`, `qt.md`,
   `flet.md`, `plataformas/README.md` y `scripts/verificar.py`; el servidor y sus clientes

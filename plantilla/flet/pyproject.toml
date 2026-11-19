@@ -35,6 +35,10 @@ path = "src"
 [tool.flet.android.manifest_application]
 allowBackup = false
 
+[tool.flet.flutter.pubspec.dependency_overrides]
+jni = "1.1.2"
+jni_flutter = "1.0.4+1"
+
 [tool.flet.ios]
 team_id = "EQUIPO"
 export_method = "app-store-connect"

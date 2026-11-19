@@ -190,4 +190,6 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0182](0182-flutter-traduce-los-errores-reintenta-y-autentica-en-un-solo-http-client.md) | Flutter traduce los errores, reintenta y autentica en un solo `http.Client` | Con Flutter |
 | [0183](0183-windows-va-sin-firmar-y-los-canales-de-flutter-los-crea-su-application.md) | Windows va sin firmar, y los canales de Flutter los crea su `Application` | Con apps o con `desktop/` |
 | [0184](0184-la-uri-de-retorno-es-https-donde-se-puede-y-cada-pieza-elige-sus-plataformas.md) | La URI de retorno es `https` donde se puede, y cada pieza elige sus plataformas | Con apps o con `desktop/` |
+| [0185](0185-una-cuenta-entra-con-passkey-o-contrasena-y-cada-repositorio-elige-cuales-ofrece.md) | Una cuenta entra con passkey o con contraseña, y cada repositorio elige cuáles ofrece | Con autenticación |
 | [0186](0186-lo-que-no-es-interfaz-va-en-services-y-un-servicio-externo-tiene-su-modulo-en-api.md) | Lo que no es interfaz va en `services/`, y un servicio externo tiene su módulo en `api/` | Con clientes |
+| [0187](0187-flet-fija-jni-y-jni-flutter-en-el-pubspec-que-genera.md) | Flet fija `jni` y `jni_flutter` en el `pubspec.yaml` que genera | Con Flet |

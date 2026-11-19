@@ -1,6 +1,6 @@
 # ADR-0067 · La autenticación sigue a NIST, y el bloqueo cuenta fallos consecutivos con esperas crecientes
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1, en las cuentas de administración, lo reemplaza el [ADR-0185](0185-una-cuenta-entra-con-passkey-o-contrasena-y-cada-repositorio-elige-cuales-ofrece.md)
 - **Fecha:** 2026-10-22
 - **Alcance:** las secciones «Autenticación», «Código por SMS» y «Contraseñas» de
   [`plataformas/fastapi.md`](../plataformas/fastapi.md)

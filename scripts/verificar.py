@@ -560,6 +560,8 @@ ENTRADAS = {
 # plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de la Pydantic del
 # bloque de Python de stack.md.
 FLET = {"pydantic": "==2.13.4"}
+# plataformas/flet.md, «Proyecto»: con jni 1.2.0 la app de Android no arranca.
+FLET_OVERRIDES = {"jni": "1.1.2", "jni_flutter": "1.0.4+1"}
 # stack.md, «Despliegue» y «PostgreSQL»: la misma versión, también en el CI.
 VALKEY = "8.1"
 POSTGIS = "17-3.5"
@@ -584,6 +586,15 @@ def versiones_pyproject(repo: Path, paginas: set[str]) -> list[str]:
         for grupo in datos.get("dependency-groups", {}).values():
             requisitos += [r for r in grupo if isinstance(r, str)]
         es_flet = "flet.md" in paginas and "flet" in datos.get("tool", {})
+        if es_flet:
+            pubspec = datos["tool"]["flet"].get("flutter", {}).get("pubspec", {})
+            overrides = pubspec.get("dependency_overrides", {})
+            for nombre, version in FLET_OVERRIDES.items():
+                if overrides.get(nombre) != version:
+                    fallas.append(
+                        f"stack.md: {relativo.as_posix()} no fija {nombre} {version} en "
+                        "[tool.flet.flutter.pubspec.dependency_overrides]"
+                    )
         for requisito in requisitos:
             coincide = REQUISITO.match(requisito)
             nombre = coincide[1].lower().replace("_", "-")

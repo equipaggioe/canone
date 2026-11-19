@@ -6,8 +6,7 @@ Cómo se registra una cuenta, cómo entra y cómo mantiene su sesión: lo que ha
 
 Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y [RFC 9700](../fuentes/rfc/rfc9700.txt).
 
-- Una app usa la passkey con la API de su sistema operativo cuando su framework la ofrece de forma oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización.
-- Una app de escritorio, de Flet o de Qt, no usa passkeys: entra con contraseña o con código por SMS, en pantallas propias, sin salir al navegador. Ni Flet ni Qt tienen una API oficial de passkeys.
+- Una app que ofrece la passkey la usa con la API de su sistema operativo cuando su framework la ofrece de forma oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización.
 - Una app de Android que recibe la URI `https` de retorno la reclama con App Links: `assetlinks.json` declara para ella `delegate_permission/common.handle_all_urls`, y sin esa relación Android no verifica el dominio y abre la URI en el navegador. [Verify Android App Links](https://developer.android.com/training/app-links/verify-android-applinks)
 - El código vive en Valkey, con la cuenta.
 - Una app recibe el retorno en una URI `https` que reclama, donde su sistema y su biblioteca lo permiten, y si no, en un esquema propio con su dominio al revés, como `com.example.app:/oauth2redirect` ([RFC 8252 §7.1](../fuentes/rfc/rfc8252.txt) y [§7.2](../fuentes/rfc/rfc8252.txt)).
@@ -37,25 +36,15 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 
 ## Código por SMS
 
-Estándares: [*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG y [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
+Estándar: [*Origin-bound one-time codes delivered via SMS*](../fuentes/wicg/sms-one-time-codes.bs) de WICG.
 
 - El número viaja y se guarda con `+`, el código de país y solo dígitos: escrito de otra forma, el mismo número crearía otra cuenta.
 - El servidor valida el número con `phonenumbers`.
 - Si un cliente es una app de Android, su hash va en la penúltima línea del SMS: el final de la última queda para la sintaxis futura del formato.
-- Verificar el primer código de un número sin cuenta crea la cuenta.
-- Un código nuevo reemplaza al anterior: solo vale el último.
 - Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta 10 por hora.
-- Un código se invalida al tercer intento fallido.
-- El código vive en Valkey.
-- El código tiene 6 dígitos ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
 - El host de la última línea es el de la web donde se escribe el código ([SMS one-time codes, *Usage*](../fuentes/wicg/sms-one-time-codes.bs)).
 - La última línea del SMS es `@<host> #<código>`, con un solo espacio en medio ([SMS one-time codes, *Parsing*](../fuentes/wicg/sms-one-time-codes.bs)).
 - El SMS no termina en un salto de línea: su última línea es la del código ([SMS one-time codes, *Parsing*](../fuentes/wicg/sms-one-time-codes.bs)).
-- Un código vence a los 10 minutos ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
-- Un código vale una sola vez ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
-- Cada fallo cuenta entre los fallos consecutivos del teléfono, y un código nuevo no los reinicia ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
-- Un código por correo solo verifica la dirección o recupera la cuenta: el correo no sirve para entrar ([NIST SP 800-63B-4 §3.1.3.1](../fuentes/nist/sp800-63b-4.txt)).
-- Al registrar un teléfono, el cliente avisa que el SMS es el autenticador más débil y ofrece agregar una passkey o una contraseña ([NIST SP 800-63B-4 §3.1.3.3](../fuentes/nist/sp800-63b-4.txt) y [§3.2.9](../fuentes/nist/sp800-63b-4.txt)).
 
 ## Contraseñas
 
@@ -95,27 +84,35 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - El titular ve en la app cada intento fallido y cada autenticador deshabilitado.
 - Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
 - Los fallos consecutivos y la hora del siguiente intento viven en la base: sin ventana de tiempo, perderlos le regala al atacante 100 intentos nuevos.
-- Una cuenta de usuario entra con un solo factor: una contraseña, un código por SMS o una passkey ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
-- Una cuenta de administración entra solo con passkeys que verifican al usuario: dos factores en un autenticador resistente al phishing ([NIST SP 800-63B-4 §2.2.1](../fuentes/nist/sp800-63b-4.txt) y [§2.2.2](../fuentes/nist/sp800-63b-4.txt)).
+- El servidor acepta en toda cuenta los dos métodos para entrar, y cada repositorio elige cuáles ofrece cada pieza, de los disponibles en su plataforma.
+- Una cuenta entra con una contraseña o con una passkey ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
 - Las direcciones de aviso son el correo, el teléfono y el push a las apps con sesión abierta: una cuenta con un solo medio también tiene dos ([NIST SP 800-63B-4 §4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Cada autenticador guarda cuándo se vinculó y cuándo cambió, y cada uno de esos eventos va al registro de eventos con su IP y su user agent ([NIST SP 800-63B-4 §4.1](../fuentes/nist/sp800-63b-4.txt)).
 - Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429: llegar a los 100 fallos lleva unos cuatro días, y el titular lo ve antes ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - Un inicio de sesión exitoso pone en cero los fallos de los autenticadores que usó ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta se registra con un correo o con un teléfono, verificado con un código como el de [Recuperación](#recuperación) ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
-- Una cuenta puede tener un correo, un teléfono y varias passkeys, y una de usuario, también una contraseña ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
+- Una cuenta puede tener un correo, un teléfono, varias passkeys y una contraseña ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Agregar o borrar una passkey, agregar o cambiar la contraseña y cambiar el correo o el teléfono piden volver a autenticarse en ese momento ([ASVS 5.0 §7.5.1](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - Vincular, cambiar o borrar un autenticador, y recuperar la cuenta, avisa a todas las direcciones de aviso. El aviso dice qué hacer, y a quién escribir, si el titular no lo hizo ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt), [§4.2.3](../fuentes/nist/sp800-63b-4.txt), [§4.5](../fuentes/nist/sp800-63b-4.txt) y [§4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Un autenticador se deshabilita a los 100 fallos consecutivos. Si los fallos involucran dos autenticadores, se deshabilitan los dos ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - El titular vuelve a habilitarlo desde una sesión abierta o, si es la contraseña, restableciéndola ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
-- El titular invalida en el acto un autenticador perdido o robado, borrando la passkey o cambiando el teléfono, y la app le explica cómo protegerlos ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.3](../fuentes/nist/sp800-63b-4.txt)).
+- El titular invalida en el acto un autenticador perdido o robado, borrando la passkey, y la app le explica cómo protegerlos ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.3](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta que se borra o se deshabilita pierde en el momento sus autenticadores ([NIST SP 800-63B-4 §4.5](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta que se borra o se deshabilita pierde en el momento sus sesiones ([ASVS 5.0 §7.4.2](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+
+| Pieza | Métodos disponibles para entrar |
+| :--- | :--- |
+| La web | Passkey y contraseña |
+| Una app de Android | Passkey y contraseña |
+| Una app de Flutter | Passkey y contraseña |
+| Una app de Flet, en Android | Passkey y contraseña |
+| Una app de Flet o de Qt, en escritorio | Contraseña |
 
 ## Passkeys
 
 Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C, [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y los [requisitos de Credential Manager](../fuentes/android/credential-manager-prerequisites.md) de Android.
 
-- El servidor verifica las passkeys con `verify_registration_response` y `verify_authentication_response` de `webauthn`, de Duo, con `supported_pub_key_algs` igual a `pubKeyCredParams` y `require_user_verification` en una cuenta de administración. La biblioteca no mira el largo del credential ID, `crossOrigin`, `topOrigin`, las extensiones, la atestación que se acepta ni que BE sea el guardado: lo comprueba el servidor. [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/registration/verify_registration_response.py)
+- El servidor verifica las passkeys con `verify_registration_response` y `verify_authentication_response` de `webauthn`, de Duo, con `supported_pub_key_algs` igual a `pubKeyCredParams`. La biblioteca no mira el largo del credential ID, `crossOrigin`, `topOrigin`, las extensiones, la atestación que se acepta ni que BE sea el guardado: lo comprueba el servidor. [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/registration/verify_registration_response.py)
 - El servidor no pide extensiones.
 - El cliente le manda al servidor la respuesta de `create()` o de `get()` entera, con `clientExtensionResults` y `transports`.
 - El challenge vive en Valkey 10 minutos.
@@ -125,7 +122,7 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 - Si `<dominio>` sirve un `robots.txt`, este permite `/.well-known/` ([Prerequisites, *Allow retrieval of the Digital Asset Links file*](../fuentes/android/credential-manager-prerequisites.md)).
 - El RP ID es `<dominio>`: una misma passkey sirve en `app.<dominio>` y en `panel.<dominio>` ([WebAuthn §5.4.2](../fuentes/w3c/webauthn-3.html)).
 - Toda passkey es descubrible, con `residentKey` `required` y `requireResidentKey` `true`: el usuario entra sin escribir su correo ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html)).
-- `userVerification` es `preferred` en una cuenta de usuario y `required` en una de administración ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html) y [§5.5](../fuentes/w3c/webauthn-3.html)).
+- `userVerification` es `preferred` ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html) y [§5.5](../fuentes/w3c/webauthn-3.html)).
 - `attestation` es `none`: la mayoría de las passkeys de consumo no tienen atestación ([WebAuthn §5.4.7](../fuentes/w3c/webauthn-3.html)).
 - El registro acepta la atestación `none` y la propia, `packed` sin `x5c`, que el navegador entrega aunque se pida `none`. Otra hace fallar el registro ([WebAuthn §5.4.7](../fuentes/w3c/webauthn-3.html) y [§7.1](../fuentes/w3c/webauthn-3.html)).
 - Un `clientExtensionResults` que no está vacío hace fallar el registro o el login: solo lo llena una extensión que agregó el cliente, y eso es un error de su código ([WebAuthn §7.1](../fuentes/w3c/webauthn-3.html), [§7.2](../fuentes/w3c/webauthn-3.html) y [§9.4](../fuentes/w3c/webauthn-3.html)).
@@ -142,9 +139,9 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 - Si el `signCount` de la aserción o el guardado no es cero y el nuevo no es mayor, el login falla y el titular recibe un aviso: la passkey puede estar clonada ([WebAuthn §6.1.1](../fuentes/w3c/webauthn-3.html) y [§7.2](../fuentes/w3c/webauthn-3.html)).
 - El servidor guarda el `signCount` y el `backupState` nuevos después de las demás comprobaciones del login, y `uvInitialized` queda como se registró ([WebAuthn §7.2](../fuentes/w3c/webauthn-3.html)).
 - Si el `backupState` de una passkey pasa de 1 a 0, la app le pide al titular revisar sus otros autenticadores y, si no tiene otro, agregar uno ([WebAuthn §6.1.3](../fuentes/w3c/webauthn-3.html)).
-- Al registrar una passkey, el servidor comprueba que `type` sea `webauthn.create`, el challenge, el `origin`, que `rpIdHash` sea el del RP ID, el bit UP, el bit UV si la cuenta lo exige, que BS no esté sin BE, que el `alg` de la clave esté en `pubKeyCredParams` y la atestación con su formato ([WebAuthn §7.1](../fuentes/w3c/webauthn-3.html)).
+- Al registrar una passkey, el servidor comprueba que `type` sea `webauthn.create`, el challenge, el `origin`, que `rpIdHash` sea el del RP ID, el bit UP, que BS no esté sin BE, que el `alg` de la clave esté en `pubKeyCredParams` y la atestación con su formato ([WebAuthn §7.1](../fuentes/w3c/webauthn-3.html)).
 - Cada passkey guarda su credential ID, su clave pública, `signCount`, `uvInitialized`, `transports`, `backupEligible`, `backupState`, su nombre, su creación y su último uso ([WebAuthn §6.1.3](../fuentes/w3c/webauthn-3.html) y [§7.1](../fuentes/w3c/webauthn-3.html)).
-- Al autenticar, el servidor busca la passkey por el user handle y el credential ID o, al volver a autenticarse, entre las de la cuenta. Comprueba que `type` sea `webauthn.get`, el challenge, el `origin`, que `rpIdHash` sea el del RP ID, el bit UP, el bit UV si la cuenta lo exige, que BS no esté sin BE, que BE sea el que se guardó y la firma con la clave guardada ([WebAuthn §7.2](../fuentes/w3c/webauthn-3.html)).
+- Al autenticar, el servidor busca la passkey por el user handle y el credential ID o, al volver a autenticarse, entre las de la cuenta. Comprueba que `type` sea `webauthn.get`, el challenge, el `origin`, que `rpIdHash` sea el del RP ID, el bit UP, que BS no esté sin BE, que BE sea el que se guardó y la firma con la clave guardada ([WebAuthn §7.2](../fuentes/w3c/webauthn-3.html)).
 - El titular ve sus passkeys, con su nombre y su último uso, y borra la que quiera: así revoca la de un dispositivo perdido ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt)).
 
 ## Recuperación
@@ -156,21 +153,21 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 - Un código se invalida al tercer intento fallido.
 - Con el código, una cuenta con contraseña la restablece.
 - El código vive en Valkey, y uno nuevo reemplaza al anterior.
+- El código vale una sola vez.
 - Una cuenta con passkey se recupera con el mismo código, que se aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela desde la app: quien roba el correo no entra antes de que el dueño la vea.
-- Una cuenta de usuario se recupera con un código que recibe, a su elección, en el correo o en el teléfono que registró ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt) y [§4.2.2.1](../fuentes/nist/sp800-63b-4.txt)).
+- Una cuenta se recupera con un código que recibe, a su elección, en el correo o en el teléfono que registró ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt) y [§4.2.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - El código vence a los 10 minutos, también el que va al correo ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
-- Una cuenta de administración la recupera otro administrador, nunca un código: quien roba el correo o el teléfono no se lleva la administración ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
-- Quien perdió su número y no tiene otra forma de entrar recupera la cuenta con un administrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
+- Quien no puede entrar ni recibir el código recupera la cuenta con un administrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - El código tiene 6 dígitos ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Cada fallo cuenta entre los fallos consecutivos de la contraseña ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 
 ## Sesión
 
-Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt); de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md) y [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md); [RFC 6749](../fuentes/rfc/rfc6749.txt); [RFC 9700](../fuentes/rfc/rfc9700.txt); [RFC 9110](../fuentes/rfc/rfc9110.txt), y el [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md) de OWASP.
+Estándares: de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md) y [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md); [RFC 6749](../fuentes/rfc/rfc6749.txt); [RFC 9700](../fuentes/rfc/rfc9700.txt); [RFC 9110](../fuentes/rfc/rfc9110.txt), y el [*HTTP Security Response Headers Cheat Sheet*](../fuentes/owasp/HTTP_Headers.md) de OWASP.
 
 - La web presenta su sesión con una cookie, y una app, con un token de acceso que renueva con un token de refresco. En la web, ningún token queda al alcance de un script.
 - La web y las apps comparten la tabla de sesiones: cambia solo el token que presenta cada una.
-- Una sesión de usuario no tiene vencimiento total: pedir entrar de nuevo cada mes aleja al usuario de una app de uso diario, y el refresco rotado descubre un token robado cuando el dueño vuelve a refrescar.
+- Una sesión no tiene vencimiento total: pedir entrar de nuevo cada mes aleja al usuario de una app de uso diario, y el refresco rotado descubre un token robado cuando el dueño vuelve a refrescar.
 - La sesión vence tras 30 días sin uso.
 - La cookie de la web dura 30 días de `Max-Age`, que se renuevan con el último uso.
 - El último uso se actualiza al refrescar, en una app, y a lo sumo cada 15 minutos, en la web: una escritura por petición cargaría la base sin mover el vencimiento.
@@ -178,7 +175,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt); de ASVS 5.0, 
 - En una app, el token de acceso vive solo en memoria, y el de refresco, en el almacenamiento seguro del sistema: ningún almacenamiento guarda un token que da acceso directo a la API.
 - Una app hace un solo refresco a la vez, y las peticiones que reciben un 401 mientras tanto lo esperan. Con la rotación, dos refrescos simultáneos presentan tokens ya rotados.
 - Ante un 401, una app refresca la sesión una sola vez y reintenta una sola vez.
-- Una app que entra con contraseña, con código por SMS o con la passkey de su sistema recibe la misma respuesta que el canje del código: así todas las apps leen una sola.
+- Una app que entra con contraseña o con la passkey de su sistema recibe la misma respuesta que el canje del código: así todas las apps leen una sola.
 - La fila de una sesión de una app guarda el SHA-256 del secreto vigente y el del anterior. El anterior vale mientras el vigente no se usó: una respuesta perdida cerraría la sesión del dueño y le avisaría de un robo.
 - Presentar el anterior reemplaza el vigente, y el anterior no cambia. Si el vigente pasara a ser el anterior, un dueño y un ladrón que refrescan por turnos nunca presentarían un reúso.
 - Un token de refresco con la firma inválida o de una sesión que no existe responde `invalid_grant`, sin aviso.
@@ -188,7 +185,6 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt); de ASVS 5.0, 
 - Iniciar sesión o volver a autenticarse crea o renueva la fila de sesión, con su creación y su último uso.
 - La API se sirve en el mismo origen que la web, bajo `/api`, sin `Access-Control-Allow-Origin`: la cookie de sesión es de primera parte ([HTTP Security Response Headers Cheat Sheet, *Access-Control-Allow-Origin*](../fuentes/owasp/HTTP_Headers.md)).
 - Cerrar sesión borra la fila ([RFC 9700 §4.14.2](../fuentes/rfc/rfc9700.txt)).
-- Una sesión de una cuenta de administración vence a las 24 horas de iniciarse o tras 1 hora sin uso, y volver a autenticarse reinicia los dos plazos ([NIST SP 800-63B-4 §2.2.3](../fuentes/nist/sp800-63b-4.txt) y [§5.2](../fuentes/nist/sp800-63b-4.txt)).
 - El token de la web es un valor aleatorio de 256 bits ([ASVS 5.0 §7.2.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - La cookie de la web es `__Host-session`, `Secure`, `HttpOnly` y `SameSite=Strict`, con `Path=/`: ningún script la lee, ninguna petición de otro sitio la lleva y ningún subdominio la reemplaza ([ASVS 5.0 §3.3.1](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), [§3.3.2](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), [§3.3.3](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md) y [§3.3.4](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md)).
 - Una petición con la cookie y un método que no es seguro responde 403 si su `Origin` falta o no es el del servidor: no le pide nada a la web ([ASVS 5.0 §3.5.2](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md)).

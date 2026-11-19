@@ -250,6 +250,8 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter 
 | Babel | 2.18.0 | [Idiomas](plataformas/flet.md#idiomas) |
 | datamodel-code-generator, con el extra `ruff` | 0.97.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |
 | Pydantic, en lugar de la de [Python](#python) | 2.13.4 | [Proyecto](plataformas/flet.md#proyecto) |
+| jni, en el `pubspec.yaml` que genera `flet build` | 1.1.2 | [Proyecto](plataformas/flet.md#proyecto) |
+| jni_flutter, en el `pubspec.yaml` que genera `flet build` | 1.0.4+1 | [Proyecto](plataformas/flet.md#proyecto) |
 
 ## Qt
 

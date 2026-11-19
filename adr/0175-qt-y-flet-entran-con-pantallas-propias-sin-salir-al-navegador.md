@@ -1,6 +1,6 @@
 # ADR-0175 · Las apps de escritorio de Qt y de Flet entran con pantallas propias, sin salir al navegador
 
-- **Estado:** Aceptada. El usuario eligió las pantallas propias para el escritorio de Qt y de Flet, y que la app móvil de Flet funcione como la de Flutter (2026-11-17). El punto 2 lo reemplaza el [ADR-0184](0184-la-uri-de-retorno-es-https-donde-se-puede-y-cada-pieza-elige-sus-plataformas.md)
+- **Estado:** Aceptada. El usuario eligió las pantallas propias para el escritorio de Qt y de Flet, y que la app móvil de Flet funcione como la de Flutter (2026-11-17). El punto 1 lo reemplaza el [ADR-0185](0185-una-cuenta-entra-con-passkey-o-contrasena-y-cada-repositorio-elige-cuales-ofrece.md), y el punto 2, el [ADR-0184](0184-la-uri-de-retorno-es-https-donde-se-puede-y-cada-pieza-elige-sus-plataformas.md)
 - **Fecha:** 2026-11-17
 - **Alcance:** [`plataformas/autenticacion.md`](../plataformas/autenticacion.md), «Código de
   autorización», y [`plataformas/qt.md`](../plataformas/qt.md)

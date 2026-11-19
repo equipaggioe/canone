@@ -8,6 +8,7 @@ Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md) de Flet.
 
 - CI pone en el `PATH` el Flutter de [stack.md](../stack.md#flet), con la versión mayor y menor que pide Flet: `flet build` usa el del `PATH` si coinciden, y si no, descarga el suyo. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet-cli/src/flet_cli/commands/flutter_base.py)
 - Pydantic es la que fija [stack.md](../stack.md#flet), y no la del bloque de Python: `flet build apk` instala desde el índice de Flet para Android, y esa es la última Pydantic cuyo `pydantic-core` está en él. [Índice de Flet](https://pypi.flet.dev/pydantic-core/)
+- `[tool.flet.flutter.pubspec.dependency_overrides]` fija `jni` y `jni_flutter` en las versiones de [stack.md](../stack.md#flet): con `jni` 1.2.0 y `jni_flutter` 1.1.0, que `path_provider_android` 2.3.1 resuelve, la app de Android no arranca y muestra `ClassNotFoundException: Landroid/content/Context;`.
 - Las dependencias de `[project]` van exactas, con `==`, en lugar del `>=` de [python.md](python.md): `flet build` no lee `uv.lock` y le pasa a pip las dependencias tal como están escritas. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet-cli/src/flet_cli/commands/build_base.py)
 - `flet build` y `flet test` corren con `PIP_CONSTRAINT` en el `uv.lock` exportado con `uv export --locked --no-dev --no-emit-project --no-emit-local --no-hashes`: así las dependencias transitivas que resuelve pip llevan las versiones de `uv.lock`. Una ruta local en las restricciones hace fallar a pip.
 - Un paquete local del repositorio entra a `flet build` por `[tool.flet].dev_packages`, con la ruta a su wheel, construido antes con `uv build --wheel`: `flet build` no lee `[tool.uv.sources]`, y para Android pip no puede construir una carpeta.
@@ -113,6 +114,13 @@ Estándar: [*Packaging app for Windows*](../fuentes/flet/publish-windows.md) de 
 - `SharedPreferences` guarda solo preferencias, y ningún dato de la app que no pueda perderse. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md)
 - Un servicio, como `SharedPreferences` o `SecureStorage`, se crea una vez, y la app guarda su referencia mientras lo usa: Flet lo da de baja cuando no queda ninguna. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md)
 - La app guarda sus archivos en `FLET_APP_STORAGE_DATA`, nunca junto a `__file__`: la carpeta donde se instala la app puede no admitir escritura ([Packaging app for Windows, *Distributing*](../fuentes/flet/publish-windows.md)).
+
+## Código de autorización
+
+Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
+
+- En Android, la app abre la petición de autorización con `UrlLauncher().launch_url()` en `LaunchMode.IN_APP_BROWSER_VIEW`, que es una pestaña del navegador y no un web-view. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/services/url_launcher.py)
+- En Android, la URI `https` de retorno se declara en `[[tool.flet.android.activity.intent_filter]]`, con `autoVerify = true`, y no en `[tool.flet.deep_linking]`, cuyo filtro no lleva `android:autoVerify`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/index.md)
 
 ## Contraseñas
 

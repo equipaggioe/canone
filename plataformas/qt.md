@@ -24,9 +24,14 @@ desktop/
       client.py         las llamadas al servidor propio
       models.py         los modelos del cable, generados
       <servicio>.py     un servicio externo: sus llamadas y sus modelos
+      ruff.toml         permite QtNetwork
     services/           lo que no es interfaz ni HTTP
       __init__.py
+      ruff.toml         prohíbe QtWidgets
       <módulo>.py
+      <dominio>/
+        __init__.py
+        <módulo>.py
     windows/
       __init__.py
       main_window.py
@@ -44,7 +49,7 @@ desktop/
     test_theme.py
 ```
 
-Plantilla: [plantilla/qt/](../plantilla/qt/), el job `desktop` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y el job `desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `tests/test_theme.py` es canónico y se copia sin editar; `theme.py` es un punto de partida.
+Plantilla: [plantilla/qt/](../plantilla/qt/), el job `desktop` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y el job `desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `tests/test_theme.py` es canónico y se copia sin editar; `theme.py` es un punto de partida. `src/app/api/ruff.toml` y `src/app/services/ruff.toml` se copian sin editar.
 
 ## PySide6
 
@@ -200,6 +205,9 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 | Un enum con su clase | Pyrefly `missing-attribute` |
 | La interfaz en código | ruff `TID251` sobre `PySide6.QtUiTools`, y [scripts/verificar.py](../scripts/verificar.py), que falla con un `.ui` en `desktop/` |
 | HTTP por `QNetworkAccessManager`: sin httpx, requests, `urllib.request` ni `http.client` | ruff `TID251` sobre httpx, requests, `urllib.request` y `http.client` |
+| El árbol de «Proyecto» en `src/` | [scripts/verificar.py](../scripts/verificar.py), que falla con un archivo o una carpeta que el árbol no tiene, y con un módulo de `dialogs/`, `widgets/` o `models/` que no declara una sola clase pública con su nombre |
+| HTTP solo en `api/` | ruff `TID251` sobre `PySide6.QtNetwork`, que `src/app/api/ruff.toml` permite |
+| `services/` sin interfaz | ruff `TID251` sobre `PySide6.QtWidgets`, que prohíbe `src/app/services/ruff.toml` |
 | El estilo Fusion | `test_style_is_fusion`, de `tests/test_theme.py` |
 | Una sola hoja de estilo, armada en `theme.py` | `test_style_sheet_only_in_theme`, de `tests/test_theme.py` |
 | Pruebas sin pantalla | `QT_QPA_PLATFORM=offscreen` en el job de CI |

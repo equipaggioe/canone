@@ -703,6 +703,105 @@ def piezas_java(repo: Path) -> list[str]:
     return fallas
 
 
+# qt.md y flet.md, «Proyecto»: el árbol completo es la convención. Cada pieza nombra la carpeta
+# de src/ en la que va el código, las carpetas que tiene ahí y los archivos que admite cada una,
+# relativos a src/. Una carpeta que el árbol no tiene se nombra una sola vez.
+ARBOLES = {
+    "qt.md": (
+        "app/",
+        {"translations", "api", "services", "windows", "dialogs", "widgets", "models"},
+        [
+            r"app/(__init__|main|colors|theme)\.py",
+            r"app/(icon\.png|resources\.qrc)",
+            r"app/translations/[^/]+\.ts",
+            r"app/api/([^/]+\.py|ruff\.toml)",
+            r"app/services/([^/]+\.py|ruff\.toml|[^/]+/[^/]+\.py)",
+            r"app/windows/(__init__|main_window)\.py",
+            r"app/(dialogs|widgets|models)/[^/]+\.py",
+        ],
+    ),
+    "flet.md": (
+        "",
+        {"assets", "api", "services", "locales", "views"},
+        [
+            r"(main|colors|theme)\.py",
+            r"assets/icon\.png",
+            r"api/([^/]+\.py|ruff\.toml)",
+            r"services/([^/]+\.py|[^/]+/[^/]+\.py)",
+            r"locales/[^/]+/LC_MESSAGES/{pieza}\.po",
+            r"views/[^/]+\.py",
+        ],
+    ),
+}
+# qt.md, «Proyecto»: los ruff.toml de src/ que se copian sin editar.
+RUFF_ANIDADOS = {
+    "qt.md": [Path("src/app/api/ruff.toml"), Path("src/app/services/ruff.toml")],
+    "flet.md": [Path("src/api/ruff.toml")],
+}
+# qt.md, «Proyecto»: un módulo de estas carpetas es una sola clase pública, con su nombre.
+POR_CLASE = ("dialogs", "widgets", "models")
+
+
+def piezas_python(repo: Path) -> dict[str, str]:
+    """Devuelve las piezas de Qt y de Flet del repositorio, con su página."""
+    piezas = {}
+    for pyproject in sorted(repo.glob("*/pyproject.toml")):
+        if "flet" in tomllib.loads(pyproject.read_text(encoding="utf-8")).get("tool", {}):
+            piezas[pyproject.parent.name] = "flet.md"
+    if (repo / "desktop").is_dir() and "desktop" not in piezas:
+        piezas["desktop"] = "qt.md"
+    return piezas
+
+
+def fuera_del_arbol(repo: Path, pieza: str, pagina: str) -> list[str]:
+    """Devuelve lo que hay en src/ de la pieza y su árbol no tiene."""
+    raiz, carpetas, patrones = ARBOLES[pagina]
+    patrones = [patron.format(pieza=re.escape(pieza)) for patron in patrones]
+    base = f"{pieza}/src/"
+    sobrantes: set[str] = set()
+    for ruta in listar(repo):
+        if not ruta.startswith(base):
+            continue
+        relativa = ruta.removeprefix(base)
+        if any(re.fullmatch(patron, relativa) for patron in patrones):
+            continue
+        partes = relativa.removeprefix(raiz).split("/")
+        if not relativa.startswith(raiz):
+            primera = relativa.split("/")[0]
+            sobrantes.add(base + primera + ("/" if "/" in relativa else ""))
+        elif len(partes) > 1 and partes[0] not in carpetas:
+            sobrantes.add(base + raiz + partes[0] + "/")
+        else:
+            sobrantes.add(ruta)
+    return [f"plataformas/{pagina}: {ruta} no está en el árbol de «Proyecto»" for ruta in sorted(sobrantes)]
+
+
+def serpiente(nombre: str) -> str:
+    """Devuelve el nombre de una clase en snake_case, como su módulo."""
+    return re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", "_", nombre).lower()
+
+
+def modulos_por_clase(repo: Path, pieza: str) -> list[str]:
+    """Devuelve los módulos de dialogs/, widgets/ y models/ que no son una sola clase."""
+    fallas = []
+    for ruta in listar(repo):
+        carpeta = Path(ruta).parent
+        if carpeta.parent.as_posix() != f"{pieza}/src/app" or carpeta.name not in POR_CLASE:
+            continue
+        if not ruta.endswith(".py") or ruta.endswith("/__init__.py"):
+            continue
+        arbol = ast.parse((repo / ruta).read_text(encoding="utf-8"))
+        clases = [
+            nodo.name
+            for nodo in arbol.body
+            if isinstance(nodo, ast.ClassDef) and not nodo.name.startswith("_")
+        ]
+        if [serpiente(clase) for clase in clases] != [Path(ruta).stem]:
+            declara = ", ".join(clases) or "ninguna clase pública"
+            fallas.append(f"plataformas/qt.md: {ruta} declara {declara}, no una sola clase con su nombre")
+    return fallas
+
+
 # plataformas/android.md, «Proyecto»: con el JDK 25, Android Lint agota 512 MB de Metaspace.
 def metaspace_lint(proyecto: Path, nombre: str) -> list[str]:
     propiedades = proyecto / "gradle.properties"
@@ -1011,6 +1110,17 @@ def revisar(repo: Path) -> list[str]:
         for ui in listar(repo):
             if ui.startswith("desktop/") and ui.endswith(".ui"):
                 fallas.append(f"plataformas/qt.md: {ui} es un .ui; la interfaz se construye en código")
+
+    for pieza, pagina in piezas_python(repo).items():
+        if pagina not in paginas:
+            continue
+        fallas.extend(fuera_del_arbol(repo, pieza, pagina))
+        if pagina == "qt.md":
+            fallas.extend(modulos_por_clase(repo, pieza))
+        plantilla = PLANTILLA / pagina.removesuffix(".md")
+        for rel in RUFF_ANIDADOS[pagina]:
+            if (repo / pieza / rel).parent.is_dir():
+                fallas.extend(comparar(repo / pieza / rel, plantilla / rel, f"{pieza}/{rel.as_posix()}"))
 
     docs = repo / "docs"
     if docs.is_dir():

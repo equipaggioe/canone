@@ -35,9 +35,13 @@ Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md) de Flet.
       client.py         las llamadas al servidor propio, escritas a mano
       models.py         los modelos del cable, generados
       <servicio>.py     un servicio externo: sus llamadas y sus modelos
+      ruff.toml         permite httpx
     services/           lo que no es interfaz ni HTTP
       __init__.py
       <módulo>.py
+      <dominio>/
+        __init__.py
+        <módulo>.py
     locales/
       <idioma>/LC_MESSAGES/<pieza>.po
     views/              una vista por ruta
@@ -49,7 +53,7 @@ Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md) de Flet.
     test_<módulo>.py
 ```
 
-Plantilla: [plantilla/flet/](../plantilla/flet/), el job `flet` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y los jobs `flet-mobile` y `flet-desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `pyproject.toml`, `installer.iss` y `build-appimage.sh` son un punto de partida.
+Plantilla: [plantilla/flet/](../plantilla/flet/), el job `flet` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y los jobs `flet-mobile` y `flet-desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `src/api/ruff.toml` se copia sin editar; `pyproject.toml`, `installer.iss` y `build-appimage.sh` son un punto de partida.
 
 ## Componentes
 
@@ -233,3 +237,5 @@ Contrato: [transversal.md](transversal.md#distribución).
 | :--- | :--- |
 | Las versiones de [stack.md](../stack.md), exactas en `[project]` | [scripts/verificar.py](../scripts/verificar.py) |
 | `src/api/models.py` al día con `../server/openapi.json` | `uv run datamodel-codegen` y `git diff --exit-code src/api/models.py` en CI |
+| El árbol de «Proyecto» en `src/` | [scripts/verificar.py](../scripts/verificar.py), que falla con un archivo o una carpeta que el árbol no tiene |
+| HTTP solo en `api/` | ruff `TID251` sobre httpx y httpx-ws, que `src/api/ruff.toml` permite |

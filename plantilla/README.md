@@ -25,9 +25,11 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `server/tests/__init__.py`<br>`test_conventions.py`<br>`test_events.py`<br>`test_files.py`<br>`test_tasks.py` | `server/tests/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
 | `server/` (el resto) | `server/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
 | `qt/pyproject.toml`<br>`pysidedeploy.spec` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
+| `qt/src/app/api/ruff.toml`<br>`services/ruff.toml` | `desktop/src/app/` | Canónico | [qt.md](../plataformas/qt.md) |
 | `qt/theme.py` | `desktop/src/app/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
 | `qt/tests/test_theme.py` | `desktop/tests/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
 | `flet/pyproject.toml`<br>`installer.iss`<br>`build-appimage.sh` | La pieza Flet | Punto de partida | [python.md](../plataformas/python.md), [flet.md](../plataformas/flet.md) |
+| `flet/src/api/ruff.toml` | `src/` de la pieza | Canónico | [flet.md](../plataformas/flet.md) |
 | `flet/theme.py` | `src/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
 | `flet/tests/test_theme.py` | `tests/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
 | `sveltekit/.prettierrc`<br>`knip.json`<br>`pnpm-workspace.yaml` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |

@@ -2,7 +2,8 @@
 
 - **Estado:** Aceptada. El usuario eligió lo recomendado para dónde va el código que no es de Qt y
   para el cliente de una API externa, con sus dos puntos: el campo que no se conoce y los
-  reintentos (2026-11-18)
+  reintentos (2026-11-18). Su consecuencia de que ninguna herramienta comprueba el árbol la deja
+  atrás el [ADR-0188](0188-verificar-comprueba-el-arbol-de-qt-y-flet-y-ruff-deja-http-solo-en-api.md)
 - **Fecha:** 2026-11-18
 - **Alcance:** [`plataformas/qt.md`](../plataformas/qt.md), «Proyecto» y «Red»;
   [`plataformas/flet.md`](../plataformas/flet.md), «Proyecto» y «Red»;

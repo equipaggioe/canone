@@ -1,0 +1,6 @@
+# flet.md, «Proyecto»: HTTP goes in api/. A nested banned-api replaces the
+# one of pyproject.toml, so an empty one allows httpx and httpx-ws.
+extend = "../../pyproject.toml"
+
+[lint.flake8-tidy-imports]
+banned-api = {}

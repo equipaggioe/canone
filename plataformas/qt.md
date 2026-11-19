@@ -116,7 +116,7 @@ Estándar: [QSettings](../fuentes/qt/qsettings.qdoc) de Qt.
 
 - `QSettings` usa `IniFormat`.
 - El token de refresco que pide [autenticacion.md](autenticacion.md#sesión) va en keyring.
-- `main.py` declara el nombre de la organización, su dominio y el nombre de la app en la `QApplication` antes de crear un `QSettings` ([QSettings, *Basic Usage*](../fuentes/qt/qsettings.qdoc)).
+- `main.py` declara el nombre de la organización y el de la app en la `QApplication` antes de crear un `QSettings` ([QSettings, *Basic Usage*](../fuentes/qt/qsettings.qdoc)).
 - Una clave se escribe siempre con las mismas mayúsculas, dos claves no difieren solo en ellas, y ninguna lleva `/` ni `\` ([QSettings, *Section and Key Syntax*](../fuentes/qt/qsettings.qdoc)).
 - La ventana principal lee su geometría y su estado al crearse, y los guarda en `closeEvent()` ([QSettings, *Restoring the State of a GUI Application*](../fuentes/qt/qsettings.qdoc)).
 

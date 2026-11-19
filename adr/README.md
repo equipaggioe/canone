@@ -197,3 +197,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0189](0189-lo-que-no-es-codigo-de-qt-va-en-src-app-assets.md) | Lo que no es código de una app de Qt va en `src/app/assets/` | Con `desktop/` |
 | [0190](0190-la-app-de-flet-en-ios-usa-la-passkey-en-sfsafariviewcontroller.md) | La app de Flet en iOS usa la passkey en `SFSafariViewController` y recibe el retorno en un esquema propio | Con Flet |
 | [0191](0191-la-primera-cuenta-de-administracion-se-registra-con-el-codigo-de-instalacion.md) | La primera cuenta de administración se registra con el código de instalación | Con autenticación |
+| [0192](0192-una-app-de-qt-no-declara-el-dominio-de-su-organizacion.md) | Una app de Qt no declara el dominio de su organización | Con `desktop/` |

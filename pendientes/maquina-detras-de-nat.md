@@ -11,6 +11,8 @@ máquina sin IPv4 propia: este archivo junta lo comprobado y propone qué cambia
 | `plantilla/infra/Caddyfile` | No acepta PROXY protocol |
 | `install.py` | Su única opción para NAT es `--turn-ip`. Sirve solo con UDP reenviado, y este NAT no lo tiene |
 | consola, `Remote` de `services/ssh.py` | Arma `ssh user@host` y no permite otro puerto |
+| consola, `update_cloudflare` | Escribe solo el registro A de cada host |
+| consola, `canone.install_args` | No tiene nada para un proxy |
 | `plantilla/receiver/backup.sh` y `backup.ps1` | Arman `ssh <app>-receiver@<servidor>` y no permiten otro puerto |
 | VPS de prueba | Se probó a mano, sin `install.py` |
 
@@ -120,11 +122,45 @@ Cada punto lleva la opción que se recomienda. Nada de esto está decidido.
 | 3 | `despliegue.md`, «Caddy» | Decir que con `--proxy` la redirección a HTTPS es la del sitio `http://`, no la que Caddy crea sola, y por qué |
 | 4 | `despliegue.md`, «Firewall» | Sin cambio: el proxy entra por el 80 y el 443, que ya están abiertos |
 | 5 | Script nuevo `ipv6.py <dirección>/64 <puerta de enlace>`, de quien prepara la máquina, como `swap.py` | Escribe `/etc/netplan/60-ipv6.yaml`, con modo 600, y corre `netplan apply`. Es un archivo aparte, porque cloud-init escribe el suyo. `uninstall.py machine` lo borra |
-| 6 | consola, `Remote` | Un campo `port` que agrega `-p` a `ssh` y `-P` a `scp` |
+| 6 | consola | Las claves y los pasos de «Cómo lo maneja consola» |
 | 7 | `backup.sh` y `backup.ps1` | Sin cambio de código: el puerto va en el `~/.ssh/config` de la receptora, con un `Host` que nombra al servidor |
 | 8 | `despliegue.md`, «Coturn» | Decir que `--turn-ip` no alcanza detrás de un NAT sin UDP reenviado, y que entonces TURN solo sirve por IPv6 |
 | 9 | `despliegue.md`, «Cumplimiento» | Una prueba en `infra.yml` del `Caddyfile` con `--proxy`: la IP real con el encabezado desde `allow`, el corte con un encabezado de otro origen, el acceso directo sin encabezado y la redirección por HTTP |
 | 10 | `stack.md` o `despliegue.md` | Que un proveedor que prohíbe producción sirve solo para máquinas con `--development` |
+
+## Cómo lo maneja consola
+
+Esta sección sale de leer el código de consola. No se probó. Es una propuesta, igual que «Qué
+cambiaría en Canone»: nada está decidido.
+
+Se recomienda que consola no reciba una marca de «VPS NAT», sino tres claves opcionales en `.consola/config.env`,
+y cada una describe una sola cosa de la máquina. Una marca no sirve porque lo que cambia son cuatro
+cosas separadas (el puerto del SSH, la IPv6, el proxy y TURN), y otro proveedor con NAT puede
+traer otra combinación. Con las tres claves vacías, consola hace lo mismo que hoy.
+
+| Clave | Qué es | Qué hace consola con ella |
+| :--- | :--- | :--- |
+| `VPS_SSH_PORT` | El puerto del SSH, vacío para el 22. En TierHive, el 7511 | `Remote` agrega `-p` a cada `ssh`, incluidos los túneles, la terminal externa y la entrada con contraseña de «Poner la llave», y `-P` a cada `scp`. `forget_host` borra `[host]:puerto` de `known_hosts`: con otro puerto, `ssh-keygen -R host` no encuentra la entrada |
+| `VPS_IPV6` y `VPS_IPV6_GATEWAY` | La dirección `/64` que el proveedor asigna a la VPS y su puerta de enlace | Un paso nuevo, «Poner la IPv6», corre `ipv6.py` en `bootstrap_vps` antes de `packages.py`. `update_cloudflare` escribe además el AAAA de cada host, sin proxy, igual que el A. Sirve también para una VPS que no está detrás de NAT |
+| `VPS_PROXY` | La dirección del proxy TCP del proveedor, como `10.0.0.57/32` | `canone.install_args` agrega `--proxy` |
+
+`VPS_IP` sigue siendo la IPv4 pública, la del SSH y la del registro A. En TierHive las dos son
+`158.69.255.89`, así que el modo «VPS» de `update_cloudflare` ya apunta el A al lugar correcto.
+
+Con `VPS_PROXY` puesto y una app con llamadas (la que declara `turn_secret`), la revisión previa
+avisa que TURN solo sirve por IPv6 y no ofrece `TURN_IP`.
+
+Lo que sigue a mano, porque TierHive no tiene API, se hace una vez por máquina:
+
+| Paso | Dónde |
+| :--- | :--- |
+| Pedir la `/64` y asignar la dirección a la VPS | Panel de TierHive, «IPv4 & IPv6 Config» |
+| Agregar cada host en modo TCP, con su región | Panel de TierHive, «HAProxy» |
+| Crear el TXT `_tierhive-validation.<host>` y validar | Cloudflare, y después el panel |
+| Backend: la VPS, `443→443` y `80→80` | Panel de TierHive |
+
+Consola podría escribir el TXT con su token de Cloudflare. Se recomienda no hacerlo: se escribe
+una vez por host, y el valor solo aparece en el panel.
 
 ## Preguntas abiertas
 
@@ -132,6 +168,7 @@ Cada punto lleva la opción que se recomienda. Nada de esto está decidido.
 | :--- | :--- |
 | ¿`allow` cubre toda `10.0.0.0/8` o solo la dirección del HAProxy? | Solo la dirección observada, `10.0.0.57/32`, que se probó. No se sabe si la VPS de otro cliente alcanza la nuestra por la red de TierHive, y con `/8` podría falsificar la IP del visitante. Otra región puede tener otra dirección: `--proxy` acepta varias |
 | ¿Se acepta TierHive para producción? | No, por sus propias reglas de uso. Para desarrollo y pruebas, sí |
+| ¿Consola entra por el 7511 de IPv4 o por el 22 de IPv6? | Por IPv4, con `VPS_SSH_PORT`: llega desde cualquier red, y la PC o el CI pueden no tener IPv6. Si la inestabilidad del 7511 molesta en el uso, se agrega aparte una clave para entrar por IPv6. `VPS_IP` no sirve para eso, porque también es el registro A |
 | ¿Un dominio por host o un comodín? | Un comodín `*.<dominio>` más `<dominio>`, si el modo TCP lo acepta como dice el panel. Si no, uno por host (`<dominio>`, `app.`, `panel.`), cada uno con su TXT |
 
 ## Lo que no se probó

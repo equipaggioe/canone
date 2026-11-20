@@ -434,6 +434,25 @@ def versiones_uv(repo: Path) -> list[str]:
     return fallas
 
 
+# plataformas/python.md, «Proyecto»: las dependencias y la configuración de pytest van en el
+# pyproject.toml de la pieza. Cualquiera de los archivos de pytest le gana aunque esté vacío.
+SUELTOS = ("requirements.txt", "pytest.ini", ".pytest.ini", "pytest.toml", ".pytest.toml")
+
+
+def configuracion_suelta(repo: Path) -> list[str]:
+    """Devuelve los archivos que dejan fuera de pyproject.toml lo que va en él."""
+    fallas = []
+    for ruta in sorted(listar(repo)):
+        relativo = Path(ruta)
+        if relativo.name != "pyproject.toml" or not (repo / relativo).is_file():
+            continue
+        for nombre in SUELTOS:
+            if (repo / relativo.parent / nombre).exists():
+                suelto = (relativo.parent / nombre).as_posix()
+                fallas.append(f"plataformas/python.md: {suelto}; va en pyproject.toml")
+    return fallas
+
+
 # stack.md: fija las versiones, y los manifiestos y los workflows de cada repositorio las siguen.
 # Van por página, para saltar las de las páginas que están en desarrollo.
 PYPROJECT = {
@@ -1022,17 +1041,15 @@ def revisar(repo: Path) -> list[str]:
     elif not re.search(r"^\s+schedule:\s*\n\s+- cron:", ci.read_text(encoding="utf-8"), re.M):
         fallas.append("ADR-0019: .github/workflows/ci.yml no corre cada semana (falta schedule)")
 
+    fallas.extend(configuracion_suelta(repo))
+
     servidor = repo / "server"
     if servidor.is_dir():
-        if (servidor / "requirements.txt").exists():
-            fallas.append("plataformas/python.md: server/requirements.txt sigue existiendo")
         if not (servidor / "pyproject.toml").exists():
             fallas.append("plataformas/python.md: falta server/pyproject.toml")
         else:
             for nombre in sorted(dependencias(servidor / "pyproject.toml") & DESCARTADAS):
                 fallas.append(f"plataformas/fastapi.md: server/ declara {nombre}, que está descartada")
-        if (servidor / "pytest.ini").exists():
-            fallas.append("plataformas/python.md: pytest.ini suelto; la configuración va en pyproject.toml")
         if (servidor / "app").is_dir():
             fallas.append("plataformas/fastapi.md: el paquete va en server/src/app/, no en server/app/")
         if not (servidor / ".gitignore").exists():

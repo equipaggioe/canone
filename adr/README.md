@@ -201,3 +201,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0193](0193-flet-lee-el-codigo-por-sms-con-una-extension-de-la-plantilla.md) | Flet lee el código por SMS con una extensión que copia la plantilla | Con Flet |
 | [0194](0194-el-sms-sirve-para-entrar-y-el-escritorio-y-la-web-de-flutter-y-flet-tienen-passkey.md) | El SMS sirve para entrar, y el escritorio y la web de Flutter y Flet tienen passkey | Con autenticación |
 | [0195](0195-un-widget-de-qt-que-flota-sobre-otros-se-ubica-sin-layout-con-su-sizehint.md) | Un widget de Qt que flota sobre otros se ubica sin layout, con el tamaño de su `sizeHint()` | Con `desktop/` |
+| [0196](0196-python-escribe-solo-lo-que-dice-su-origen-y-cada-fila-nombra-lo-que-su-herramienta-hace-cumplir.md) | `python.md` escribe solo lo que dice su origen, y cada fila de Cumplimiento nombra lo que su herramienta hace cumplir | Con Python |

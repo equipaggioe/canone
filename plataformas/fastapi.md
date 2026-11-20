@@ -83,7 +83,7 @@ Plantilla: [plantilla/server/](../plantilla/server/) y el job `server` de [plant
 
 ## Estilo
 
-- Cada columna y cada relación de un modelo se declaran en una sola línea, sin el límite de 99 caracteres de [python.md](python.md#estilo): el modelo se lee de arriba abajo, una declaración por renglón.
+- Cada columna y cada relación de un modelo se declaran en una sola línea, y el código de `models/` no tiene el límite de 99 caracteres de [python.md](python.md#estilo): el modelo se lee de arriba abajo, una declaración por renglón.
 
 ## Paquetes
 
@@ -444,7 +444,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Una relación de uno a muchos deja el borrado al `ON DELETE` | `test_one_to_many_leaves_deletes_to_the_database` |
 | `Timestamp` en los esquemas | `test_schema_datetimes_are_timestamps` |
 | Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
-| Una columna o relación por línea | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
+| Una columna o relación por línea, y `models/` sin el límite de 99 | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |
 | Las variables OTLP no agregan un exportador | `test_otlp_variables_export_nothing` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |

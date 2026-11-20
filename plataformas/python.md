@@ -117,6 +117,7 @@ Estándar: [PEP 8](../fuentes/python/pep-0008.rst).
 - En cada grupo de imports, los `import` van antes que los `from`, y unos y otros en orden alfabético del módulo.
 - Los nombres de un `from` van en orden alfabético: primero las constantes, después las clases y al final lo demás.
 - Los nombres de un mismo módulo se importan en un solo `from`.
+- Un módulo importa cada submódulo que usa, aunque otro módulo ya lo cargue.
 - Los imports son absolutos: una sola forma, y la que da mejores errores ([PEP 8, *Imports*](../fuentes/python/pep-0008.rst)).
 - No se importa con `from <módulo> import *`, tampoco para volver a publicar una interfaz: deja sin saber qué nombres hay, y el `__init__.py` de un paquete expone los de sus submódulos nombre por nombre ([PEP 8, *Imports*](../fuentes/python/pep-0008.rst)).
 - Cada import va en su propia línea, al principio del archivo, después de los comentarios y el docstring del módulo y antes de sus variables y constantes ([PEP 8, *Imports*](../fuentes/python/pep-0008.rst)).
@@ -169,6 +170,7 @@ Estándares: [*Developing with asyncio*](../fuentes/python/asyncio-dev.rst) y [*
 
 Estándar: [PEP 8](../fuentes/python/pep-0008.rst).
 
+- Un `except` no nombra una excepción que ya atrapa uno anterior del mismo `try`, ni una subclase de otra que nombra.
 - Una excepción deriva de `Exception`, no de `BaseException`. La jerarquía distingue lo que necesita saber quien la atrapa, no dónde se lanza ([PEP 8, *Programming Recommendations*](../fuentes/python/pep-0008.rst)).
 - Una excepción que reemplaza a otra se lanza con `raise X from Y`. Con `raise X from None`, la nueva lleva los datos de la original, como su mensaje ([PEP 8, *Programming Recommendations*](../fuentes/python/pep-0008.rst)).
 - Un `except` nombra las excepciones que atrapa. `except Exception:` atrapa todos los errores del programa, y `except:` solo registra el traceback, o limpia y relanza con `raise` ([PEP 8, *Programming Recommendations*](../fuentes/python/pep-0008.rst)).
@@ -248,6 +250,8 @@ Estándar: las [*Good Integration Practices*](../fuentes/pytest/goodpractices.rs
 | `# pyrefly: ignore` | Pyrefly con `enabled-ignores = ["pyrefly"]` |
 | `# noqa` con código | ruff `PGH004` |
 | Sin lo marcado con `@deprecated` | Pyrefly con `deprecated = "error"` |
+| Cada submódulo que se usa, importado | Pyrefly con `implicit-import = "error"` |
+| Ningún `except` que nunca se alcanza | Pyrefly con `unreachable-except-clause = "error"` |
 | Sin `typing_extensions` para lo que trae `typing` | ruff `UP035` con `target-version = "py313"` |
 | Las uniones | ruff `UP007`, `UP045` y `RUF036` |
 | Los genéricos, salvo un alias de `collections.abc` escrito como `typing.<Nombre>` | ruff `UP006` y `UP035` |

@@ -84,8 +84,10 @@ ignore-missing-imports = ["geoalchemy2", "geoalchemy2.*"]
 
 [tool.pyrefly.errors]
 deprecated = "error"
+implicit-import = "error"
 missing-override-decorator = false
 unannotated-return = "error"
+unreachable-except-clause = "error"
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]

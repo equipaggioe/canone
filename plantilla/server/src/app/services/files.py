@@ -12,8 +12,8 @@ import sqlalchemy as sa
 from PIL import Image, ImageOps
 from starlette.responses import FileResponse
 
-from app import models
 from app.database import SessionFactory
+from app.models.base import Base
 
 # Lets an upload that has not committed its row yet finish.
 MARGIN_SECONDS = 3600
@@ -87,7 +87,7 @@ def file_tables() -> list[sa.Table]:
 
     Importing app.models fills the metadata with every table.
     """
-    tables = models.base.Base.metadata.tables
+    tables = Base.metadata.tables
     return [table for name, table in tables.items() if name.endswith("_file")]
 
 

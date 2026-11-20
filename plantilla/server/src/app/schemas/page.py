@@ -6,7 +6,7 @@ from typing import Any
 
 from cryptography.fernet import Fernet, InvalidToken
 from fastapi.exceptions import RequestValidationError
-from pydantic import Field, TypeAdapter, ValidationError, field_validator
+from pydantic import Field, TypeAdapter, field_validator
 
 from app.config import settings
 from app.schemas.base import InputSchema, Schema
@@ -61,7 +61,7 @@ def decode_token[T](token: str, filters: Mapping[str, Any], position: type[T]) -
         if content["filters"] != JSON.dump_python(filters, mode="json"):
             raise ValueError
         return TypeAdapter(position).validate_python(content["position"])
-    except (InvalidToken, ValueError, KeyError, TypeError, ValidationError) as error:
+    except (InvalidToken, ValueError, KeyError, TypeError) as error:
         raise RequestValidationError(
             [{"loc": ("query", "pageToken"), "msg": "Invalid page token", "type": "value_error"}]
         ) from error

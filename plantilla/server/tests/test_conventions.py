@@ -19,6 +19,7 @@ import sqlalchemy as sa
 from fastapi import FastAPI, Query
 from httpx import ASGITransport, AsyncClient
 from pydantic import AwareDatetime, BaseModel, ValidationError
+from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
 
 import app.models
@@ -366,7 +367,7 @@ def test_relationships_raise() -> None:
     assert not offenders
 
 
-def deletes_by_database(relationship: sa.orm.RelationshipProperty[Any]) -> bool:
+def deletes_by_database(relationship: orm.RelationshipProperty[Any]) -> bool:
     """Tell whether a one-to-many leaves the delete to its ON DELETE."""
     child_columns = [remote for _, remote in relationship.local_remote_pairs or []]
     rules = {key.ondelete for column in child_columns for key in column.foreign_keys}
@@ -382,7 +383,7 @@ def test_one_to_many_leaves_deletes_to_the_database() -> None:
         str(relationship)
         for mapper in Base.registry.mappers
         for relationship in mapper.relationships
-        if relationship.direction is sa.orm.ONETOMANY and not deletes_by_database(relationship)
+        if relationship.direction is orm.ONETOMANY and not deletes_by_database(relationship)
     ]
     assert not offenders
 

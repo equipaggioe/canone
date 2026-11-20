@@ -80,7 +80,9 @@ enabled-ignores = ["pyrefly"]
 
 [tool.pyrefly.errors]
 deprecated = "error"
+implicit-import = "error"
 unannotated-return = "error"
+unreachable-except-clause = "error"
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]

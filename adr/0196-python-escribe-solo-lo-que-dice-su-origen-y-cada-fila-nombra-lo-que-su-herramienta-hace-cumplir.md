@@ -20,6 +20,7 @@ Se revisó `python.md` con los cinco pasos de [plataformas/README.md](../platafo
 - En los repositorios hay `os.path` 231 veces, en 8 de ellos, y `pathlib` en 15; 6199 f-strings, 10 cadenas con `%` y 7 con `format()`.
 - Pyrefly oculta los avisos y sale con 0: una llamada a algo `@deprecated` pasa el CI. La plantilla del servidor no tiene ninguna, y la de Flet tampoco. Con `filterwarnings = ["error"]`, las 95 pruebas de la plantilla del servidor pasan, en Debian 13 con PostgreSQL y Valkey. Las pruebas de Qt y de Flet no se pudieron correr fuera de un repositorio.
 - `UP031` y `UP032` no marcan el `%s` de logging, ni un `format()` con `**` o con un argumento entre corchetes. `PTH201` y `PTH210` son reglas de `pathlib` que no tratan de elegirlo.
+- `requires-python` con `==` es lo que fija la serie en una app de Flet: con `flet build apk` de Flet 1.1.2, `==3.13.*` empaqueta `libpython3.13.so` y `>=3.13` empaqueta `libpython3.14.so`. La razón salió de `python.md` porque no se aparta de nada.
 - Las razones que son un hecho se comprobaron: una carpeta sin `__init__.py` se importa como paquete de espacio de nombres, una tarea sin referencia se borra con `gc`, comparar una naive con una aware lanza `TypeError`, `mktemp` no crea el archivo, `logging.config.listen` ejecutó un `os.makedirs` que recibió, y 624 salidas de `random` predicen las siguientes.
 
 ## Decisión
@@ -35,6 +36,7 @@ Se revisó `python.md` con los cinco pasos de [plataformas/README.md](../platafo
 9. Una ruta se maneja con `pathlib`. Lo comprueba ruff `PTH`, sin `PTH201` ni `PTH210`.
 10. Una cadena literal con valores se arma con una f-string. Lo comprueban ruff `UP031` y `UP032`.
 11. Lo obsoleto rompe CI: Pyrefly lleva `deprecated = "error"`, y pytest, `filterwarnings = ["error"]`. Un aviso de un tercero se ignora por su clase y su módulo, y lo escribe la página de la pieza.
+12. Un módulo importa cada submódulo que usa, y un `except` no repite lo que ya atrapa otro: Pyrefly lleva `implicit-import = "error"` y `unreachable-except-clause = "error"`. La plantilla del servidor tenía 3 y 1, ocultos como avisos, y se corrigieron.
 
 ## Consecuencias
 

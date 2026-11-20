@@ -348,17 +348,87 @@ def versiones_gradle(
 # del repositorio, porque cada versión descarga sus propios navegadores.
 PLAYWRIGHT = "1.65.1"
 
-# plataformas/sveltekit.md, «CSP»: lo que vite.config.ts fija de la CSP.
+# plataformas/sveltekit.md, «CSP»: lo que vite.config.ts fija de la CSP, con el objeto que lo
+# contiene. script-src admite, además de 'self', los orígenes https de una pasarela de pago, y
+# ninguna palabra clave como 'unsafe-inline' o 'strict-dynamic'.
 Q = r"['\"]"
 CSP = {
-    "mode: 'hash'": rf"mode:\s*{Q}hash{Q}",
-    "script-src 'self'": rf"{Q}script-src{Q}\s*:\s*\[\s*{Q}self{Q}\s*\]",
-    "object-src 'none'": rf"{Q}object-src{Q}\s*:\s*\[\s*{Q}none{Q}\s*\]",
-    "base-uri 'none'": rf"{Q}base-uri{Q}\s*:\s*\[\s*{Q}none{Q}\s*\]",
-    "form-action 'self'": rf"{Q}form-action{Q}\s*:\s*\[\s*{Q}self{Q}\s*\]",
-    "style-src-attr 'unsafe-inline'": rf"{Q}style-src-attr{Q}\s*:\s*\[\s*{Q}unsafe-inline{Q}\s*\]",
-    "assetsInlineLimit: 0": r"assetsInlineLimit:\s*0\b",
+    "mode: 'hash'": ("csp", rf"\bmode\s*:\s*{Q}hash{Q}"),
+    "script-src 'self'": (
+        "directives",
+        rf"{Q}script-src{Q}\s*:\s*\[\s*{Q}self{Q}(\s*,\s*{Q}https://[^'\"\s]+{Q})*\s*,?\s*\]",
+    ),
+    "object-src 'none'": ("directives", rf"{Q}object-src{Q}\s*:\s*\[\s*{Q}none{Q}\s*\]"),
+    "base-uri 'none'": ("directives", rf"{Q}base-uri{Q}\s*:\s*\[\s*{Q}none{Q}\s*\]"),
+    "form-action 'self'": ("directives", rf"{Q}form-action{Q}\s*:\s*\[\s*{Q}self{Q}\s*\]"),
+    "style-src-attr 'unsafe-inline'": (
+        "directives",
+        rf"{Q}style-src-attr{Q}\s*:\s*\[\s*{Q}unsafe-inline{Q}\s*\]",
+    ),
+    "assetsInlineLimit: 0": ("build", r"\bassetsInlineLimit\s*:\s*0\b"),
 }
+
+
+def sin_comentarios(codigo: str) -> str:
+    """El código JavaScript sin sus comentarios: una opción comentada no rige."""
+    salida, i, comilla = [], 0, ""
+    while i < len(codigo):
+        letra = codigo[i]
+        if comilla:
+            salida.append(codigo[i : i + 2] if letra == "\\" else letra)
+            if letra == "\\":
+                i += 2
+                continue
+            if letra == comilla:
+                comilla = ""
+        elif letra in "'\"`":
+            comilla = letra
+            salida.append(letra)
+        elif codigo.startswith("//", i):
+            fin = codigo.find("\n", i)
+            i = len(codigo) if fin < 0 else fin
+            continue
+        elif codigo.startswith("/*", i):
+            fin = codigo.find("*/", i + 2)
+            i = len(codigo) if fin < 0 else fin + 2
+            continue
+        else:
+            salida.append(letra)
+        i += 1
+    return "".join(salida)
+
+
+def objeto(codigo: str, clave: str) -> str:
+    """El contenido del primer objeto literal de la clave, o vacío si no está."""
+    coincide = re.search(rf"(?<![\w$]){clave}\s*:\s*\{{", codigo)
+    if not coincide:
+        return ""
+    profundidad = 1
+    for posicion in range(coincide.end(), len(codigo)):
+        profundidad += {"{": 1, "}": -1}.get(codigo[posicion], 0)
+        if profundidad == 0:
+            return codigo[coincide.end() : posicion]
+    return ""
+
+
+def vite_sveltekit(vite: Path) -> list[str]:
+    """Lo que vite.config.ts fija del proxy y de la CSP, sin contar lo comentado."""
+    nombre = vite.parent.name
+    codigo = sin_comentarios(vite.read_text(encoding="utf-8")) if vite.exists() else ""
+    fallas = []
+    # «Carga de datos»: server.proxy manda /api al servidor, también el WebSocket.
+    api = objeto(objeto(objeto(codigo, "server"), "proxy"), rf"{Q}/api{Q}")
+    if not (
+        re.search(rf"\btarget\s*:\s*{Q}http://localhost:8000{Q}", api)
+        and re.search(r"\bws\s*:\s*true\b", api)
+    ):
+        fallas.append(f"plataformas/sveltekit.md: {nombre}/vite.config.ts no manda /api al servidor")
+    csp = objeto(codigo, "csp")
+    bloques = {"csp": csp, "directives": objeto(csp, "directives"), "build": objeto(codigo, "build")}
+    for requisito, (bloque, patron) in CSP.items():
+        if not re.search(patron, bloques[bloque]):
+            fallas.append(f"plataformas/sveltekit.md: {nombre}/vite.config.ts no fija {requisito}")
+    return fallas
 
 
 def versiones_playwright(repo: Path) -> list[str]:
@@ -1040,7 +1110,9 @@ def revisar(repo: Path) -> list[str]:
         fallas.extend(versiones_package(superficie, datos, deps))
         fallas.extend(scripts_package(superficie, datos))
         eslint = superficie / "eslint.config.js"
-        if not eslint.exists() or "includeIgnoreFile(" not in eslint.read_text(encoding="utf-8"):
+        reglas = sin_comentarios(eslint.read_text(encoding="utf-8")) if eslint.exists() else ""
+        # La ruta del .gitignore puede ir en una variable, como la escribe sv.
+        if not (re.search(r"\bincludeIgnoreFile\s*\(", reglas) and ".gitignore" in reglas):
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/eslint.config.js no usa includeIgnoreFile")
         ignorados = superficie / ".prettierignore"
         if not ignorados.exists() or "pnpm-lock.yaml" not in ignorados.read_text(encoding="utf-8").split():
@@ -1049,20 +1121,15 @@ def revisar(repo: Path) -> list[str]:
             if re.search(r"svelte-ignore[^>]*\ba11y_", svelte.read_text(encoding="utf-8")):
                 relativo = svelte.relative_to(superficie.parent).as_posix()
                 fallas.append(f"plataformas/sveltekit.md: {relativo} apaga una advertencia a11y_ con svelte-ignore")
-        vite = superficie / "vite.config.ts"
-        proxy = r"['\"]/api['\"]\s*:\s*\{\s*target:\s*['\"]http://localhost:8000['\"],\s*ws:\s*true\s*\}"
-        if not vite.exists() or not re.search(proxy, vite.read_text(encoding="utf-8")):
-            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/vite.config.ts no manda /api al servidor")
-        configuracion = vite.read_text(encoding="utf-8") if vite.exists() else ""
-        for nombre, patron in CSP.items():
-            if not re.search(patron, configuracion):
-                fallas.append(f"plataformas/sveltekit.md: {superficie.name}/vite.config.ts no fija {nombre}")
+        fallas.extend(vite_sveltekit(superficie / "vite.config.ts"))
         if "@sveltejs/adapter-static" not in deps:
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no usa adapter-static")
         uno = superficie / "uno.config.ts"
         if not uno.exists():
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no tiene uno.config.ts")
-        elif not re.search(r"separators:\s*\[\s*['\"]:['\"]\s*\]", uno.read_text(encoding="utf-8")):
+        elif not re.search(
+            r"\bseparators\s*:\s*\[\s*['\"]:['\"]\s*\]", sin_comentarios(uno.read_text(encoding="utf-8"))
+        ):
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/uno.config.ts no fija separators: [':']")
         for nombre in (".prettierrc", "knip.json", "pnpm-workspace.yaml", "static/theme.js"):
             fallas.extend(

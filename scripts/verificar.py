@@ -765,9 +765,13 @@ ARBOLES = {
         ],
     ),
 }
-# qt.md, «Proyecto»: los ruff.toml de src/ que se copian sin editar.
-RUFF_ANIDADOS = {
-    "qt.md": [Path("src/app/api/ruff.toml"), Path("src/app/services/ruff.toml")],
+# qt.md y flet.md, «Proyecto»: los archivos de src/ que se copian sin editar.
+COPIAS_SRC = {
+    "qt.md": [
+        Path("src/app/api/ruff.toml"),
+        Path("src/app/services/ruff.toml"),
+        Path("src/app/services/language.py"),
+    ],
     "flet.md": [Path("src/api/ruff.toml")],
 }
 # qt.md, «Proyecto»: un módulo de estas carpetas es una sola clase pública, con su nombre.
@@ -1152,7 +1156,7 @@ def revisar(repo: Path) -> list[str]:
         if pagina == "qt.md":
             fallas.extend(modulos_por_clase(repo, pieza))
         plantilla = PLANTILLA / pagina.removesuffix(".md")
-        for rel in RUFF_ANIDADOS[pagina]:
+        for rel in COPIAS_SRC[pagina]:
             if (repo / pieza / rel).parent.is_dir():
                 fallas.extend(comparar(repo / pieza / rel, plantilla / rel, f"{pieza}/{rel.as_posix()}"))
 

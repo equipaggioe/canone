@@ -29,6 +29,7 @@ desktop/
     services/           lo que no es interfaz ni HTTP
       __init__.py
       ruff.toml         prohíbe QtWidgets
+      language.py       el idioma de la interfaz
       <módulo>.py
       <dominio>/
         __init__.py
@@ -50,7 +51,7 @@ desktop/
     test_theme.py
 ```
 
-Plantilla: [plantilla/qt/](../plantilla/qt/), el job `desktop` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y el job `desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `tests/test_theme.py` es canónico y se copia sin editar; `theme.py` es un punto de partida. `src/app/api/ruff.toml` y `src/app/services/ruff.toml` se copian sin editar.
+Plantilla: [plantilla/qt/](../plantilla/qt/), el job `desktop` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y el job `desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `tests/test_theme.py` es canónico y se copia sin editar; `theme.py` es un punto de partida. `src/app/api/ruff.toml`, `src/app/services/ruff.toml` y `src/app/services/language.py` se copian sin editar.
 
 ## PySide6
 
@@ -138,10 +139,13 @@ Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
 Contrato: [transversal.md](transversal.md#idiomas).
 
-- El idioma que elige el usuario se guarda en `QSettings`, y la app lo aplica con `QLocale.setDefault()` y su `QTranslator`. Hasta que elige, es el de `QLocale.system()`. `Accept-Language` lo toma de ahí.
-- Los textos usan Qt Linguist.
+- El idioma que elige el usuario se guarda en `QSettings`, bajo la clave `language.KEY`, y `main.py` lo aplica con `language.install()` antes de crear un widget: fija `QLocale.setDefault()` e instala el `QTranslator` de la app y el de Qt. Hasta que elige, es el primero de `QLocale.system().uiLanguages()` que tiene traducción, o el base. `Accept-Language` lo toma de `QLocale()`.
+- Los textos usan Qt Linguist, y el texto fuente es el del idioma base.
+- Un texto se traduce con `QCoreApplication.translate("<contexto>", ...)`, con la clase o el módulo donde está como contexto, y no con `self.tr()`: en PySide6, `tr()` busca con la clase del objeto, y un método heredado no encuentra el texto que `pyside6-lupdate` guardó con la clase donde está escrito.
+- Un valor entra en el texto con `.format()` después de traducirlo, nunca en un f-string: el f-string arma el texto antes de buscarlo, y la búsqueda falla.
+- Un texto que se arma al importar, antes de instalar el traductor, se marca con `QT_TRANSLATE_NOOP` de `services/language.py` y se traduce donde se muestra. El de PySide6 devuelve `object` en sus stubs.
 - Los `.qm` van en `resources.qrc`.
-- Los textos se extraen con `pyside6-lupdate -extensions py src/app`.
+- Los textos se extraen de los `.py` que git no ignora, sin el `rc_resources.py` generado: `pyside6-lupdate $(git ls-files --cached --others --exclude-standard 'src/app/*.py') -ts src/app/translations/<locale>.ts`. En Windows, `pyside6-lupdate` 6.12.0 termina con un fallo de acceso a memoria si lee el `rc_resources.py` de una app con traducciones.
 - Los `.qm` y `rc_resources.py` se generan y no van en git.
 
 ## OpenAPI y clientes
@@ -197,6 +201,8 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 - La versión de macOS es el `.app` de `pyside6-deploy` dentro del DMG que pide [transversal.md](transversal.md#distribución), que `scripts/apple.py` firma y notariza junto con la app.
 - Las rutas de `pysidedeploy.spec` son relativas a `desktop/`, y la app se empaqueta solo en CI: cada corrida reescribe en el archivo las rutas absolutas de la máquina.
 - `icon.png` mide 1024 × 1024 px, el mayor tamaño que usa macOS, y es el único icono, en lugar del `.ico` de Windows y el `.icns` de macOS que pide `pyside6-deploy`: Nuitka lo convierte al formato de cada sistema, y un archivo sirve a todos.
+- La ventana principal pone `icon.png` con `setWindowIcon`: en Linux, con el `mode` en `onefile`, Nuitka no lo pone en el binario y avisa que `--linux-app-icon` solo rige con `--mode=app`.
+- El job que empaqueta instala las dependencias, compila las traducciones y `resources.qrc`, y al final instala la app: Nuitka compila la copia instalada, y una instalada antes no tiene `rc_resources.py`.
 - La carpeta `dist/`, el `exec_directory` del `.spec`, existe antes de ejecutar `pyside6-deploy`: no la crea, y al copiar el binario falla con `FileNotFoundError`.
 - Nuitka con el extra `onefile`, imageio y, en Linux, patchelf van en el grupo `deploy`.
 - En CI de Windows, el job agrega al `PATH` la carpeta del `dumpbin` de MSVC que encuentra `vswhere`, y falla si no lo encuentra: sin él, `pyside6-deploy` solo avisa y no busca los módulos de Qt de los que dependen los que usa la app. [PySide6 6.12.0](https://raw.githubusercontent.com/qtproject/pyside-pyside-setup/v6.12.0/sources/pyside-tools/deploy_lib/config.py)
@@ -217,6 +223,7 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 | El árbol de «Proyecto» en `src/` | [scripts/verificar.py](../scripts/verificar.py), que falla con un archivo o una carpeta que el árbol no tiene, y con un módulo de `dialogs/`, `widgets/` o `models/` que no declara una sola clase pública con su nombre |
 | HTTP solo en `api/` | ruff `TID251` sobre `PySide6.QtNetwork`, que `src/app/api/ruff.toml` permite |
 | `services/` sin interfaz | ruff `TID251` sobre `PySide6.QtWidgets`, que prohíbe `src/app/services/ruff.toml` |
+| Los `ruff.toml` de `src/` y `services/language.py`, sin editar | [scripts/verificar.py](../scripts/verificar.py), que los compara con los de la plantilla |
 | El estilo Fusion | `test_style_is_fusion`, de `tests/test_theme.py` |
 | Una sola hoja de estilo, armada en `theme.py` | `test_style_sheet_only_in_theme`, de `tests/test_theme.py` |
 | Pruebas sin pantalla | `QT_QPA_PLATFORM=offscreen` en el job de CI |

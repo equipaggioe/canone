@@ -153,6 +153,7 @@ Nada de esto cambia el plan:
 | Red | Privada `10.19.47.2/24`, puerta `10.19.47.1`. IPv6 `2a11:6c7:2600:9103::2/64`, puerta `2a11:6c7:2600:9103::1`, fija en `/etc/netplan/60-ipv6.yaml` |
 | HAProxy | `navetta.equipaggio.net` en modo TCP, región Beauharnois, `443→:8443` y `80→:8080` hacia `10.19.47.2` |
 | Cloudflare | TXT `_tierhive-validation.navetta.equipaggio.net`. El registro A de `navetta` no se tocó |
+| Contraseña de `root` | La inicial de TierHive, sin cambiar hasta producción; no se escribe aquí. `install.py` la bloquea al instalar |
 | Lo que quedó | La llave `servidor@equi-1` en `/root/.ssh/authorized_keys`. Caddy, los servidores de prueba, sus archivos y la CA local de Caddy se borraron |
 
 ## Fuentes

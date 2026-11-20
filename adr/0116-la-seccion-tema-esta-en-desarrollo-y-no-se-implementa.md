@@ -1,6 +1,6 @@
 # ADR-0116 · La sección «Tema» está en desarrollo y no se implementa
 
-- **Estado:** Aceptada, salvo el punto 2, que sigue en propuesta
+- **Estado:** Reemplazada por [ADR-0198](0198-la-seccion-tema-deja-de-estar-en-desarrollo.md)
 - **Fecha:** 2026-11-03
 - **Alcance:** «Tema» de [plataformas/transversal.md](../plataformas/transversal.md#tema) y de cada cliente, [plantilla/README.md](../plantilla/README.md) y `scripts/verificar.py`
 

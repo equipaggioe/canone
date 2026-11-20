@@ -7,11 +7,20 @@
   "modifiers": {
     "theme": {
       "contexts": {
+        "brand": [{ "$ref": "brand.tokens.json" }]
+      },
+      "default": "brand"
+    },
+    "mode": {
+      "contexts": {
         "light": [{ "$ref": "light.tokens.json" }],
         "dark": [{ "$ref": "dark.tokens.json" }]
-      },
-      "default": "light"
+      }
     }
   },
-  "resolutionOrder": [{ "$ref": "#/sets/palette" }, { "$ref": "#/modifiers/theme" }]
+  "resolutionOrder": [
+    { "$ref": "#/sets/palette" },
+    { "$ref": "#/modifiers/theme" },
+    { "$ref": "#/modifiers/mode" }
+  ]
 }

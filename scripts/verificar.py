@@ -765,14 +765,15 @@ ARBOLES = {
         ],
     ),
 }
-# qt.md y flet.md, «Proyecto»: los archivos de src/ que se copian sin editar.
+# qt.md y flet.md, «Proyecto» y «Tema»: los archivos de la pieza que se copian sin editar.
 COPIAS_SRC = {
     "qt.md": [
         Path("src/app/api/ruff.toml"),
         Path("src/app/services/ruff.toml"),
         Path("src/app/services/language.py"),
+        Path("tests/test_theme.py"),
     ],
-    "flet.md": [Path("src/api/ruff.toml")],
+    "flet.md": [Path("src/api/ruff.toml"), Path("tests/test_theme.py")],
 }
 # qt.md, «Proyecto»: un módulo de estas carpetas es una sola clase pública, con su nombre.
 POR_CLASE = ("dialogs", "widgets", "models")
@@ -1104,7 +1105,7 @@ def revisar(repo: Path) -> list[str]:
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/ no tiene uno.config.ts")
         elif not re.search(r"separators:\s*\[\s*['\"]:['\"]\s*\]", uno.read_text(encoding="utf-8")):
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/uno.config.ts no fija separators: [':']")
-        for nombre in (".prettierrc", "knip.json", "pnpm-workspace.yaml"):
+        for nombre in (".prettierrc", "knip.json", "pnpm-workspace.yaml", "static/theme.js"):
             fallas.extend(
                 comparar(superficie / nombre, PLANTILLA / "sveltekit" / nombre, f"{superficie.name}/{nombre}")
             )
@@ -1170,8 +1171,7 @@ def revisar(repo: Path) -> list[str]:
                 + ", ".join(sueltos)
             )
 
-    # Desactivada mientras «Tema» de transversal.md está en desarrollo: ningún producto la usa.
-    # fallas.extend(colores_generados(repo))
+    fallas.extend(colores_generados(repo))
     fallas.extend(nombres_largos(repo))
     fallas.extend(configuracion_con_repositorio(repo))
     if "sveltekit.md" in paginas:

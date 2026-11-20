@@ -49,16 +49,18 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
     hooks.ts
     lib/
       colors.ts
+      theme.ts        la elección del modo y del tema
       api/            los tipos de openapi-typescript y el cliente de openapi-fetch
       components/
       state/          las clases con $state, en módulos .svelte.ts
     routes/
     service-worker/
   static/
+    theme.js          copia la elección en <html> antes de pintar
   tests/
 ```
 
-Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, `knip.json` y `pnpm-workspace.yaml`, que se copian sin editar, y `vite.config.ts`, `playwright.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore` y `.prettierignore`, puntos de partida.
+Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, `knip.json`, `pnpm-workspace.yaml` y `static/theme.js`, que se copian sin editar, y `vite.config.ts`, `playwright.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore`, `.prettierignore` y `src/lib/theme.ts`, puntos de partida.
 
 ## Estilo
 
@@ -177,7 +179,11 @@ Contrato: [transversal.md](transversal.md#tema).
 
 - El preset es Wind4: trae el reset y genera las variables CSS del tema.
 - La configuración va en `uno.config.ts`, y no en `vite.config.ts`: funciona mejor con el editor y las integraciones. [UnoCSS 66.13.0](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/guide/config-file.md)
-- Los tokens van en el `theme` de `uno.config.ts`, sin tamaños literales fuera de él. Los colores son `colors`, generado en `src/lib/colors.ts`, y sus variables CSS entran como preflight desde `colorsCss`, con el modo oscuro de `prefers-color-scheme` cuando `<html>` no lleva `data-theme`, y con `data-theme="dark"`. La elección del usuario va en `localStorage`, y la app la escribe en `data-theme`; con «sistema», lo quita.
+- Los tokens van en el `theme` de `uno.config.ts`, sin tamaños literales fuera de él. Los colores son `colors`, generado en `src/lib/colors.ts`, y sus variables CSS entran como preflight desde `colorsCss`.
+- `colorsCss` pinta el tema inicial en `:root` y cada otro tema con `data-theme` en `<html>`. El modo oscuro entra con `data-mode="dark"`, y con `prefers-color-scheme` cuando `<html>` no lleva `data-mode`. Con un solo modo, cada tema es un bloque, sin `prefers-color-scheme`. Cada bloque fija su `color-scheme`, y no hay `light-dark()`: llega a Safari 17.5, y Wind4 pide Safari 16.4. [Tailwind CSS Compatibility](https://tailwindcss.com/docs/compatibility)
+- La elección del usuario va en `localStorage`, en `mode` y `theme`, y `src/lib/theme.ts` la escribe también en `data-mode` y `data-theme`. Con «sistema», quita `data-mode`.
+- `app.html` carga `static/theme.js` en el `<head>`, antes de `%sveltekit.head%`, con `<script src="%sveltekit.assets%/theme.js">`: copia la elección en `<html>` antes de pintar. Un script en línea no sirve, porque SvelteKit no pone su hash en la CSP.
+- `knip.json` declara `static/theme.js` en `entry`: lo carga `app.html`, y knip no lo ve.
 - `uno.config.ts` fija `separators: [':']`. Con los separadores por defecto, `:` y `-`, un atajo como `link-primary` u `open-panel` se lee como una variante seguida de una clase, y no se genera, sin error. [UnoCSS 66.13.0](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/config/index.md)
 - `app.html` no lleva clases de utilidad: SvelteKit 3 no le pasa `app.html` a UnoCSS, que no las genera, sin error, ni en el build ni en `vite dev`. Por eso el build avisa `transform_index_html_unsupported` con los plugins de UnoCSS. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs/kit%403.2.0/packages/kit/src/messages/build-warnings.js)
 - Las clases de utilidad no van en archivos `.ts`: UnoCSS no los lee por defecto ([UnoCSS Vite Plugin, *VanillaJS / TypeScript*](../fuentes/unocss/integrations-vite.md)).

@@ -315,11 +315,9 @@ Contrato: [transversal.md](transversal.md#reintentos).
 
 ## Tema
 
-> **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
-
 Contrato: [transversal.md](transversal.md#tema).
 
-- El `ColorScheme` claro y el oscuro son `LightColorScheme` y `DarkColorScheme`, generados en `ui/theme/Colors.kt`. El modo sale de la elección del usuario, guardada en Preferences DataStore, y con «sistema», de `isSystemInDarkTheme()`.
+- `MaterialTheme` toma el esquema del modo, `light` o `dark`, del `ColorTheme` elegido, generado en `ui/theme/ColorTheme.kt`. El tema, y el modo cuando el producto tiene los dos, salen de la elección del usuario, guardada en Preferences DataStore: `ColorTheme.initial` mientras no elija otro tema, y con «sistema», `isSystemInDarkTheme()`.
 - Los tamaños van en `ui/theme/`, sin tamaños literales fuera de él.
 
 ## Versión mínima de cliente

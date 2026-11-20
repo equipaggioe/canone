@@ -173,14 +173,12 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 ## Tema
 
-> **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
-
 Contrato: [transversal.md](transversal.md#tema).
 
-- `page.theme` y `page.dark_theme` se arman en `theme.py` con `LIGHT` y `DARK`, generados en `colors.py`, y `page.theme_mode` sale de la elección del usuario, guardada en `SharedPreferences`: `ThemeMode.SYSTEM` mientras no elija otro.
+- `page.theme` se arma en `theme.py` con el esquema del `ColorTheme` elegido, generado en `colors.py`: `light`, o `dark` si el producto solo tiene ese modo. Con los dos modos, `page.dark_theme` usa `dark` y `page.theme_mode` sale de la elección del usuario. Las elecciones se guardan en `SharedPreferences`: `INITIAL` y `ThemeMode.SYSTEM` mientras no elija otras.
 - Los tamaños van en `theme.py`, sin tamaños literales fuera de él.
 
-Plantilla: `theme.py` y `tests/test_theme.py` de [plantilla/flet/](../plantilla/flet/), en desarrollo como esta sección: no se copian.
+Plantilla: `theme.py` y `tests/test_theme.py` de [plantilla/flet/](../plantilla/flet/). `tests/test_theme.py` es canónico y se copia sin editar; `theme.py` es un punto de partida para los dos modos, y con uno se le quita la elección del modo.
 
 ## Versión mínima de cliente
 

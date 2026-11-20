@@ -14,7 +14,7 @@ desktop/
     __init__.py
     main.py             crea la QApplication y abre la ventana principal
     colors.py
-    theme.py            la paleta y la hoja de estilo global
+    theme.py            el estilo y la paleta
     icon.png
     resources.qrc       el icono, las imágenes de assets/ y las traducciones compiladas
     assets/             lo que no es código: las imágenes y los archivos que se leen del disco
@@ -51,7 +51,7 @@ desktop/
     test_theme.py
 ```
 
-Plantilla: [plantilla/qt/](../plantilla/qt/), el job `desktop` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y el job `desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `tests/test_theme.py` es canónico y se copia sin editar; `theme.py` es un punto de partida. `src/app/api/ruff.toml`, `src/app/services/ruff.toml` y `src/app/services/language.py` se copian sin editar.
+Plantilla: [plantilla/qt/](../plantilla/qt/), el job `desktop` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y el job `desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `tests/test_theme.py` es canónico y se copia sin editar; `theme.py` es un punto de partida para los dos modos, y con uno se le quita la elección del modo. `src/app/api/ruff.toml`, `src/app/services/ruff.toml` y `src/app/services/language.py` se copian sin editar.
 
 ## PySide6
 
@@ -166,14 +166,14 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 ## Tema
 
-> **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
-
 Estándar: [QWidget](../fuentes/qt/qwidget.qdoc) de Qt.
 
 Contrato: [transversal.md](transversal.md#tema).
 
-- La app usa el estilo Fusion y una sola hoja de estilo, aplicada a la `QApplication` y armada desde `theme.py`.
-- La paleta de la `QApplication` sale de `palette()` con `LIGHT` o `DARK`, generados en `colors.py`, según la elección del usuario, guardada en `QSettings`. Con «sistema», sigue `QStyleHints.colorScheme()` y se vuelve a aplicar con `colorSchemeChanged`.
+- La app usa Fusion a través de `Style`, el `QProxyStyle` de `theme.py`, y ninguna hoja de estilo: Qt recomienda un `QProxyStyle` para ajustar el estilo en producción, deja las hojas de estilo para prototipos y ajustes locales, y pide no cambiar de tema con ellas. [QProxyStyle, Qt 6.12.0](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/styles/qproxystyle.cpp) y [Qt Style Sheets, Qt 6.12.0](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/doc/src/widgets-and-layouts/stylesheet.qdoc)
+- La paleta de la `QApplication` sale de `palette()` con el esquema del modo del `ColorTheme` elegido, generado en `colors.py`, según la elección del usuario, guardada en `QSettings`: `INITIAL` mientras no elija otro tema. Con los dos modos y «sistema», sigue `QStyleHints.colorScheme()` y se vuelve a aplicar con `colorSchemeChanged`.
+- `Style` dibuja el marco de los campos, los spin boxes, los combo boxes y los paneles en `Dark`, que es `outline`, y en 2 px de `Highlight` con el foco, y la grilla de las tablas en `Mid`, que es `outlineVariant`: Fusion los saca del color de la ventana oscurecido, y en el modo oscuro no se ven. [Fusion, Qt 6.12.0](https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/widgets/styles/qfusionstyle_p_p.h)
+- Un botón con la propiedad `variant` en `primary` o `danger` toma sus colores en `Style`, y no en una hoja de estilo.
 - Los tamaños van en `theme.py`, sin tamaños literales fuera de él.
 - Ningún widget cambia su estilo con `setStyle()`: la app usa uno solo ([QWidget, *setStyle*](../fuentes/qt/qwidget.qdoc)).
 
@@ -224,7 +224,7 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 | HTTP solo en `api/` | ruff `TID251` sobre `PySide6.QtNetwork`, que `src/app/api/ruff.toml` permite |
 | `services/` sin interfaz | ruff `TID251` sobre `PySide6.QtWidgets`, que prohíbe `src/app/services/ruff.toml` |
 | Los `ruff.toml` de `src/` y `services/language.py`, sin editar | [scripts/verificar.py](../scripts/verificar.py), que los compara con los de la plantilla |
-| El estilo Fusion | `test_style_is_fusion`, de `tests/test_theme.py` |
-| Una sola hoja de estilo, armada en `theme.py` | `test_style_sheet_only_in_theme`, de `tests/test_theme.py` |
+| Fusion, a través del `QProxyStyle` de `theme.py` | `test_style_is_fusion`, de `tests/test_theme.py` |
+| Ninguna hoja de estilo | `test_no_style_sheet`, de `tests/test_theme.py` |
 | Pruebas sin pantalla | `QT_QPA_PLATFORM=offscreen` en el job de CI |
 | `src/app/api/models.py` al día con `../server/openapi.json` | `uv run datamodel-codegen` y `git diff --exit-code src/app/api/models.py` en CI |

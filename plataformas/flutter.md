@@ -356,11 +356,9 @@ Contrato: [autenticacion.md](autenticacion.md#sesión).
 
 ## Tema
 
-> **En desarrollo; no se implementa:** [transversal.md](transversal.md#tema).
-
 Contrato: [transversal.md](transversal.md#tema).
 
-- El tema claro y el oscuro usan `lightColorScheme` y `darkColorScheme`, generados en `ui/core/themes/colors.dart`, y `themeMode` sale de la elección del usuario, guardada con `SharedPreferencesAsync`: `ThemeMode.system` mientras no elija otro.
+- `theme` usa el esquema del `ColorTheme` elegido, generado en `ui/core/themes/colors.dart`: `light`, o `dark` si el producto solo tiene ese modo. Con los dos modos, `darkTheme` usa `dark` y `themeMode` sale de la elección del usuario. Las elecciones se guardan con `SharedPreferencesAsync`: `ColorTheme.initial` y `ThemeMode.system` mientras no elija otras.
 - Los tamaños van en `ui/core/themes/`, sin tamaños literales fuera de él.
 
 ## Versión mínima de cliente

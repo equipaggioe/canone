@@ -16,8 +16,8 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `receiver/` | La receptora de los respaldos | No se copia: corre en la receptora, `backup.ps1` en Windows y `backup.sh` en Linux | [despliegue.md](../plataformas/despliegue.md#respaldos) |
 | `scripts/play.py` | `scripts/` | Canónico, con una app de `mobile/` | [despliegue.md](../plataformas/despliegue.md) |
 | `scripts/java.py` | `scripts/` | Canónico, con una pieza en Java | [java.md](../plataformas/java.md) |
-| `scripts/tokens.py` | `scripts/` | En desarrollo; no se copia | [transversal.md](../plataformas/transversal.md) |
-| `brand/tokens/` | `brand/tokens/` | En desarrollo; no se copia | [transversal.md](../plataformas/transversal.md) |
+| `scripts/tokens.py` | `scripts/` | Canónico, con un cliente | [transversal.md](../plataformas/transversal.md) |
+| `brand/tokens/` | `brand/tokens/` | Punto de partida, con un cliente | [transversal.md](../plataformas/transversal.md) |
 | `python/.gitignore` | Cada pieza Python | Punto de partida | [repositorio.md](../repositorio.md), [python.md](../plataformas/python.md) |
 | `server/pyproject.toml` | `server/` | Punto de partida | [python.md](../plataformas/python.md), [fastapi.md](../plataformas/fastapi.md) |
 | `server/alembic.ini`<br>`alembic/README`<br>`alembic/env.py`<br>`alembic/script.py.mako` | `server/` | Canónico | [fastapi.md](../plataformas/fastapi.md) |
@@ -26,16 +26,16 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `server/` (el resto) | `server/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
 | `qt/pyproject.toml`<br>`pysidedeploy.spec` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
 | `qt/src/app/api/ruff.toml`<br>`services/ruff.toml` | `desktop/src/app/` | Canónico | [qt.md](../plataformas/qt.md) |
-| `qt/theme.py` | `desktop/src/app/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
-| `qt/tests/test_theme.py` | `desktop/tests/` | En desarrollo; no se copia | [qt.md](../plataformas/qt.md) |
+| `qt/theme.py` | `desktop/src/app/` | Punto de partida | [qt.md](../plataformas/qt.md) |
+| `qt/tests/test_theme.py` | `desktop/tests/` | Canónico | [qt.md](../plataformas/qt.md) |
 | `flet/pyproject.toml`<br>`installer.iss`<br>`build-appimage.sh` | La pieza Flet | Punto de partida | [python.md](../plataformas/python.md), [flet.md](../plataformas/flet.md) |
 | `flet/src/api/ruff.toml` | `src/` de la pieza | Canónico | [flet.md](../plataformas/flet.md) |
-| `flet/theme.py` | `src/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
-| `flet/tests/test_theme.py` | `tests/` de la pieza | En desarrollo; no se copia | [flet.md](../plataformas/flet.md) |
+| `flet/theme.py` | `src/` de la pieza | Punto de partida | [flet.md](../plataformas/flet.md) |
+| `flet/tests/test_theme.py` | `tests/` de la pieza | Canónico | [flet.md](../plataformas/flet.md) |
 | `packages/sms/` | `packages/sms/`, si una app de Flet lee el código por SMS | Canónico | [flet.md](../plataformas/flet.md#código-por-sms) |
-| `sveltekit/.prettierrc`<br>`knip.json`<br>`pnpm-workspace.yaml` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
+| `sveltekit/.prettierrc`<br>`knip.json`<br>`pnpm-workspace.yaml`<br>`static/theme.js` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
 | `sveltekit/.gitignore` | Cada superficie SvelteKit | Punto de partida | [repositorio.md](../repositorio.md), [sveltekit.md](../plataformas/sveltekit.md) |
-| `sveltekit/.prettierignore`<br>`eslint.config.js`<br>`vite.config.ts`<br>`playwright.config.ts`<br>`uno.config.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |
+| `sveltekit/.prettierignore`<br>`eslint.config.js`<br>`vite.config.ts`<br>`playwright.config.ts`<br>`uno.config.ts`<br>`src/lib/theme.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |
 | `flutter/analysis_options.yaml` | Cada app Flutter | Canónico | [flutter.md](../plataformas/flutter.md) |
 | `flutter/.gitignore` | Cada app Flutter | Punto de partida | [repositorio.md](../repositorio.md), [flutter.md](../plataformas/flutter.md) |
 | `android/.editorconfig` | `mobile/` | Canónico | [android.md](../plataformas/android.md) |

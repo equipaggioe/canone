@@ -1,4 +1,4 @@
-"""Generate the color schemes of every client from brand/tokens/.
+"""Generate the color themes of every client from brand/tokens/.
 
     python scripts/tokens.py
     python scripts/tokens.py --check
@@ -83,11 +83,16 @@ SURFACES = (
 )
 
 # WCAG 1.4.3 at 4.5:1 for every pair, large text included, and 1.4.11
-# at 3:1 for the outline.
+# at 3:1 for the outline. Material puts primary and error as text on a
+# surface: the label of a text button and the error of a text field.
 TEXT = 4.5
 GRAPHIC = 3.0
 PAIRS = [
-    *((text, surface, TEXT) for text in ("onSurface", "onSurfaceVariant") for surface in SURFACES),
+    *(
+        (text, surface, TEXT)
+        for text in ("onSurface", "onSurfaceVariant", "primary", "error")
+        for surface in SURFACES
+    ),
     *(
         (f"on{name}", name[0].lower() + name[1:], TEXT)
         for name in (
@@ -114,8 +119,12 @@ PAIRS = [
 
 ALIAS = re.compile(r"\{palette(?:\.[^.{}]+)+\}")
 HEX = re.compile(r"#[0-9a-f]{6}")
+# A theme is named in every client: an enum member, a CSS attribute.
+NAME = re.compile(r"[a-z][a-z0-9]*")
 
 type Scheme = dict[str, str]
+type Themes = dict[str, dict[str, Scheme]]
+type Files = dict[str, dict[str, list[Path]]]
 
 
 class TokenError(Exception):
@@ -169,8 +178,19 @@ def sources(value: object, folder: Path, sets: dict[str, list[Path]], where: str
     return files
 
 
-def order(resolver: Path) -> dict[str, list[Path]]:
-    """Return the token files of each mode, in resolution order."""
+def contexts(modifiers: dict[str, object], name: str, allowed: set[str]) -> dict[str, object]:
+    """Return the contexts of one modifier."""
+    where = f"modifiers.{name}"
+    body = mapping(modifiers.get(name), where)
+    only(body, allowed, where)
+    found = mapping(body.get("contexts"), f"{where}.contexts")
+    if not found:
+        raise TokenError(f"{where} has no contexts")
+    return found
+
+
+def order(resolver: Path) -> tuple[str, Files]:
+    """Return the initial theme and the files of each theme and mode."""
     root = mapping(load(resolver), resolver.name)
     only(
         root,
@@ -185,19 +205,32 @@ def order(resolver: Path) -> dict[str, list[Path]]:
         body = mapping(value, f"sets.{name}")
         only(body, {"sources", "description"}, f"sets.{name}")
         sets[name] = sources(body.get("sources"), folder, {}, f"sets.{name}.sources")
-    modifiers = mapping(root.get("modifiers", {}), "modifiers")
-    only(modifiers, {"theme"}, "modifiers")
-    theme = mapping(modifiers.get("theme"), "modifiers.theme")
-    only(theme, {"contexts", "description", "default"}, "modifiers.theme")
-    contexts = mapping(theme.get("contexts"), "modifiers.theme.contexts")
-    if sorted(contexts) != sorted(MODES):
-        raise TokenError("modifiers.theme.contexts are not exactly light and dark")
-    if "default" in theme and theme["default"] not in MODES:
-        raise TokenError("modifiers.theme.default is not a context")
+    modifiers = mapping(root.get("modifiers"), "modifiers")
+    if sorted(modifiers) != ["mode", "theme"]:
+        raise TokenError("modifiers are not exactly theme and mode")
+    themes = contexts(modifiers, "theme", {"contexts", "description", "default"})
+    for name in themes:
+        if not NAME.fullmatch(name):
+            raise TokenError(
+                f"modifiers.theme.contexts: {name} is not lowercase letters and digits"
+            )
+    initial = mapping(modifiers["theme"], "modifiers.theme").get("default")
+    if not isinstance(initial, str) or initial not in themes:
+        raise TokenError("modifiers.theme.default is not one of its contexts")
+    modes = contexts(modifiers, "mode", {"contexts", "description"})
+    if not set(modes) <= set(MODES):
+        raise TokenError("modifiers.mode.contexts are not light, dark or both")
+    present = [mode for mode in MODES if mode in modes]
+    # A theme changes the palette and a mode assigns the roles.
+    for modifier, group, found in (("theme", "palette", themes), ("mode", "color", modes)):
+        for name, value in found.items():
+            where = f"modifiers.{modifier}.contexts.{name}"
+            for path in sources(value, folder, sets, where):
+                only(mapping(load(path), path.name), {group}, f"{where}: {path.name}")
     steps = root.get("resolutionOrder")
     if not isinstance(steps, list) or not steps:
         raise TokenError(f"{resolver.name}: resolutionOrder is missing")
-    files: dict[str, list[Path]] = {mode: [] for mode in MODES}
+    files: Files = {name: {mode: [] for mode in present} for name in themes}
     seen: set[str] = set()
     for index, step in enumerate(steps):
         reference = mapping(step, f"resolutionOrder[{index}]")
@@ -206,18 +239,21 @@ def order(resolver: Path) -> dict[str, list[Path]]:
         if not isinstance(target, str) or target in seen:
             raise TokenError(f"resolutionOrder[{index}] is not a new $ref")
         seen.add(target)
-        if target == "#/modifiers/theme":
-            for mode in MODES:
-                where = f"modifiers.theme.contexts.{mode}"
-                files[mode].extend(sources(contexts[mode], folder, sets, where))
-        elif target.startswith("#/sets/") and target[7:] in sets:
-            for mode in MODES:
-                files[mode].extend(sets[target[7:]])
-        else:
-            raise TokenError(f"resolutionOrder[{index}]: unsupported $ref {target}")
-    if "#/modifiers/theme" not in seen:
-        raise TokenError("resolutionOrder does not include the theme modifier")
-    return files
+        for name in themes:
+            for mode in present:
+                if target == "#/modifiers/theme":
+                    where = f"modifiers.theme.contexts.{name}"
+                    files[name][mode].extend(sources(themes[name], folder, sets, where))
+                elif target == "#/modifiers/mode":
+                    where = f"modifiers.mode.contexts.{mode}"
+                    files[name][mode].extend(sources(modes[mode], folder, sets, where))
+                elif target.startswith("#/sets/") and target[7:] in sets:
+                    files[name][mode].extend(sets[target[7:]])
+                else:
+                    raise TokenError(f"resolutionOrder[{index}]: unsupported $ref {target}")
+    if not {"#/modifiers/theme", "#/modifiers/mode"} <= seen:
+        raise TokenError("resolutionOrder does not include both modifiers")
+    return initial, files
 
 
 def merge(target: dict[str, object], source: dict[str, object]) -> None:
@@ -287,7 +323,7 @@ def color(value: object, where: str) -> str:
 
 
 def scheme(files: list[Path]) -> Scheme:
-    """Resolve one mode into {role: #rrggbb}."""
+    """Resolve one theme in one mode into {role: #rrggbb}."""
     tree: dict[str, object] = {}
     for path in files:
         merge(tree, mapping(load(path), path.name))
@@ -324,13 +360,21 @@ def contrast(first: str, second: str) -> float:
     return (high + 0.05) / (low + 0.05)
 
 
-def check_contrast(schemes: dict[str, Scheme]) -> None:
-    """Fail on a pair under its minimum ratio."""
+def check(themes: Themes) -> None:
+    """Fail on a pair under its minimum ratio or on two equal themes."""
     failures = [
-        f"{mode}: {front} on {back} is {ratio:.2f}:1, under {minimum}:1"
-        for mode, colors in schemes.items()
+        f"{name} {mode}: {front} on {back} is {ratio:.2f}:1, under {minimum}:1"
+        for name, modes in themes.items()
+        for mode, colors in modes.items()
         for front, back, minimum in PAIRS
         if (ratio := contrast(colors[front], colors[back])) < minimum
+    ]
+    names = list(themes)
+    failures += [
+        f"{first} and {second} are the same theme"
+        for index, first in enumerate(names)
+        for second in names[index + 1 :]
+        if themes[first] == themes[second]
     ]
     if failures:
         raise TokenError("; ".join(failures))
@@ -351,16 +395,36 @@ def argb(hex_color: str) -> str:
     return "0xFF" + hex_color[1:].upper()
 
 
-def dart(schemes: dict[str, Scheme]) -> str:
-    """Write the two ColorScheme of Flutter."""
-    blocks = []
-    for mode, colors in schemes.items():
-        fields = "".join(f"  {role}: Color({argb(value)}),\n" for role, value in colors.items())
-        blocks.append(
-            f"const {mode}ColorScheme = ColorScheme(\n"
-            f"  brightness: Brightness.{mode},\n{fields});\n"
+def modes_of(themes: Themes) -> list[str]:
+    """Return the modes of the product, the same in every theme."""
+    return list(next(iter(themes.values())))
+
+
+def dart(themes: Themes, initial: str) -> str:
+    """Write the ColorTheme enum of Flutter."""
+    entries = []
+    for name, modes in themes.items():
+        schemes = "".join(
+            f"    {mode}: ColorScheme(\n"
+            f"      brightness: Brightness.{mode},\n"
+            + "".join(f"      {role}: Color({argb(value)}),\n" for role, value in colors.items())
+            + "    ),\n"
+            for mode, colors in modes.items()
         )
-    return f"// {HEADER}\n\nimport 'package:flutter/material.dart';\n\n" + "\n".join(blocks)
+        entries.append(f"  {name}(\n{schemes}  )")
+    return (
+        f"// {HEADER}\n\n"
+        "import 'package:flutter/material.dart';\n\n"
+        "/// The color themes of brand/tokens/, each with a scheme per mode.\n"
+        "enum ColorTheme {\n" + ",\n".join(entries) + ";\n\n"
+        "  const ColorTheme({"
+        + ", ".join(f"required this.{mode}" for mode in modes_of(themes))
+        + "});\n\n"
+        "  /// The theme the app starts with.\n"
+        f"  static const initial = ColorTheme.{initial};\n\n"
+        + "".join(f"  final ColorScheme {mode};\n" for mode in modes_of(themes))
+        + "}\n"
+    )
 
 
 # Compose names one role differently and has no shadow. It still has the
@@ -374,40 +438,85 @@ COMPOSE_EXTRA = {
 }
 
 
-def kotlin(schemes: dict[str, Scheme], package: str) -> str:
-    """Write the two ColorScheme of Compose."""
-    blocks = []
-    for mode, colors in schemes.items():
-        names = {COMPOSE.get(role, role): value for role, value in colors.items()}
-        names |= {extra: colors[role] for extra, role in COMPOSE_EXTRA.items()}
-        fields = ",\n".join(
-            f"        {name} = Color({argb(value)})"
-            for name, value in names.items()
-            if name is not None
-        )
-        blocks.append(
-            f"val {mode.title()}ColorScheme =\n    {mode}ColorScheme(\n{fields}\n    )\n"
-        )
+def kotlin(themes: Themes, initial: str, package: str) -> str:
+    """Write the ColorTheme enum of Compose, as ktlint formats it."""
+    entries = []
+    for name, modes in themes.items():
+        schemes = []
+        for mode, colors in modes.items():
+            names = {COMPOSE.get(role, role): value for role, value in colors.items()}
+            names |= {extra: colors[role] for extra, role in COMPOSE_EXTRA.items()}
+            fields = ",\n".join(
+                f"                {role} = Color({argb(value)})"
+                for role, value in names.items()
+                if role is not None
+            )
+            schemes.append(
+                f"        {mode} =\n            {mode}ColorScheme(\n{fields}\n            )"
+            )
+        entries.append(f"    {name.upper()}(\n" + ",\n".join(schemes) + "\n    )")
     return (
         f"// {HEADER}\n"
         f"package {package}\n\n"
-        "import androidx.compose.material3.darkColorScheme\n"
-        "import androidx.compose.material3.lightColorScheme\n"
-        "import androidx.compose.ui.graphics.Color\n\n" + "\n".join(blocks)
+        "import androidx.compose.material3.ColorScheme\n"
+        + "".join(
+            f"import androidx.compose.material3.{mode}ColorScheme\n"
+            for mode in sorted(modes_of(themes))
+        )
+        + "import androidx.compose.ui.graphics.Color\n\n"
+        "// The color themes of brand/tokens/, each with a scheme per mode.\n"
+        "enum class ColorTheme("
+        + ", ".join(f"val {mode}: ColorScheme" for mode in modes_of(themes))
+        + ") {\n"
+        + ",\n".join(entries)
+        + "\n    ;\n\n"
+        "    companion object {\n"
+        "        // The theme the app starts with.\n"
+        f"        val initial = {initial.upper()}\n"
+        "    }\n"
+        "}\n"
     )
 
 
-def flet(schemes: dict[str, Scheme]) -> str:
-    """Write the two ColorScheme of Flet."""
-    blocks = []
-    for mode, colors in schemes.items():
-        fields = "".join(f'    {snake(role)}="{value}",\n' for role, value in colors.items())
-        blocks.append(f"{mode.upper()} = ft.ColorScheme(\n{fields})\n")
-    return f'"""{HEADER}"""\n\nimport flet as ft\n\n' + "\n".join(blocks)
+def python_enum(themes: Themes, initial: str, kind: str, scheme: Callable[[Scheme], str]) -> str:
+    """Write the ColorTheme enum of a Python client."""
+    members = "".join(
+        f"    {name.upper()} = (\n"
+        + "".join(scheme(colors) for colors in modes.values())
+        + "    )\n"
+        for name, modes in themes.items()
+    )
+    modes = modes_of(themes)
+    return (
+        "class ColorTheme(Enum):\n"
+        '    """The color themes of brand/tokens/, a scheme per mode."""\n\n'
+        + members
+        + "\n    def __init__(self, "
+        + ", ".join(f"{mode}: {kind}" for mode in modes)
+        + ") -> None:\n"
+        '        """Name the schemes of a theme, one per mode."""\n'
+        + "".join(f"        self.{mode} = {mode}\n" for mode in modes)
+        + f"\n\nINITIAL = ColorTheme.{initial.upper()}\n"
+    )
 
 
-# The palette of Fusion. Disabled text follows Material 3: on-surface at
-# 38% opacity.
+def flet(themes: Themes, initial: str) -> str:
+    """Write the ColorTheme enum of Flet."""
+
+    def scheme(colors: Scheme) -> str:
+        fields = "".join(
+            f'            {snake(role)}="{value}",\n' for role, value in colors.items()
+        )
+        return f"        ft.ColorScheme(\n{fields}        ),\n"
+
+    return f'"""{HEADER}"""\n\nfrom enum import Enum\n\nimport flet as ft\n\n\n' + python_enum(
+        themes, initial, "ft.ColorScheme", scheme
+    )
+
+
+# The palette of Fusion. Dark draws the shade of a sunken frame, and
+# takes the outline: surfaceDim is the surface itself in the dark mode.
+# Disabled text follows Material 3: on-surface at 38% opacity.
 QPALETTE = {
     "Window": "surface",
     "WindowText": "onSurface",
@@ -421,7 +530,7 @@ QPALETTE = {
     "Light": "surfaceBright",
     "Midlight": "surfaceContainerLow",
     "Mid": "outlineVariant",
-    "Dark": "surfaceDim",
+    "Dark": "outline",
     "Shadow": "shadow",
     "Highlight": "primary",
     "HighlightedText": "onPrimary",
@@ -434,23 +543,27 @@ QPALETTE = {
 DISABLED = ("WindowText", "Text", "ButtonText")
 
 
-def qt(schemes: dict[str, Scheme]) -> str:
-    """Write the two schemes of Qt and the function that builds a QPalette."""
-    blocks = []
-    for mode, colors in schemes.items():
-        fields = "".join(f'    "{snake(role)}": "{value}",\n' for role, value in colors.items())
-        blocks.append(f"{mode.upper()} = {{\n{fields}}}\n")
+def qt(themes: Themes, initial: str) -> str:
+    """Write the ColorTheme enum of Qt and the QPalette builder."""
+
+    def scheme(colors: Scheme) -> str:
+        fields = "".join(
+            f'            "{snake(role)}": "{value}",\n' for role, value in colors.items()
+        )
+        return f"        {{\n{fields}        }},\n"
+
     roles = "".join(
         f'    QPalette.ColorRole.{role}: "{snake(name)}",\n' for role, name in QPALETTE.items()
     )
     disabled = "".join(f"        QPalette.ColorRole.{role},\n" for role in DISABLED)
     return (
         f'"""{HEADER}"""\n\n'
-        "from PySide6.QtGui import QColor, QPalette\n\n"
-        + "\n".join(blocks)
+        "from enum import Enum\n\n"
+        "from PySide6.QtGui import QColor, QPalette\n\n\n"
+        + python_enum(themes, initial, "dict[str, str]", scheme)
         + f"\nROLES = {{\n{roles}}}\n\n\n"
         "def palette(colors: dict[str, str]) -> QPalette:\n"
-        '    """Build the palette of one mode."""\n'
+        '    """Build the palette of one scheme."""\n'
         "    result = QPalette()\n"
         "    for role, name in ROLES.items():\n"
         "        result.setColor(role, QColor(colors[name]))\n"
@@ -464,22 +577,42 @@ def qt(schemes: dict[str, Scheme]) -> str:
     )
 
 
-def typescript(schemes: dict[str, Scheme]) -> str:
-    """Write the UnoCSS colors and the CSS variables of both modes."""
+def css(selector: str, mode: str, colors: Scheme, indent: str = "") -> str:
+    """Write the variables of one theme in one mode under a selector."""
+    fields = "".join(
+        f"{indent}\t--color-{kebab(role)}: {value};\n" for role, value in colors.items()
+    )
+    return f"{indent}{selector} {{\n{indent}\tcolor-scheme: {mode};\n{fields}{indent}}}\n"
+
+
+def typescript(themes: Themes, initial: str) -> str:
+    """Write the UnoCSS colors and the CSS variables of each theme."""
+    rules = []
+    for name, modes in themes.items():
+        root = ":root" if name == initial else f":root[data-theme='{name}']"
+        if len(modes) == 1:
+            [(mode, colors)] = modes.items()
+            rules.append(css(root, mode, colors))
+            continue
+        rules += [
+            css(root, "light", modes["light"]),
+            css(f"{root}[data-mode='dark']", "dark", modes["dark"]),
+            "@media (prefers-color-scheme: dark) {\n"
+            + css(f"{root}:not([data-mode])", "dark", modes["dark"], "\t")
+            + "}\n",
+        ]
     names = ",\n".join(f"\t{quote(kebab(role))}: 'var(--color-{kebab(role)})'" for role in ROLES)
-    light = "".join(f"\t--color-{kebab(r)}: {v};\n" for r, v in schemes["light"].items())
-    dark = "".join(f"\t\t--color-{kebab(r)}: {v};\n" for r, v in schemes["dark"].items())
+    listed = ", ".join(f"'{name}'" for name in themes)
     return (
         f"// {HEADER}\n\n"
+        "/** @public */\n"
+        f"export const themes = [{listed}] as const;\n\n"
+        "/** @public */\n"
+        "export type Theme = (typeof themes)[number];\n\n"
+        "/** @public */\n"
+        f"export const initialTheme: Theme = '{initial}';\n\n"
         f"export const colors = {{\n{names}\n}};\n\n"
-        "export const colorsCss = `:root {\n"
-        "\tcolor-scheme: light dark;\n"
-        f"{light}}}\n"
-        "@media (prefers-color-scheme: dark) {\n"
-        "\t:root {\n"
-        f"{dark}\t}}\n"
-        "}\n"
-        "`;\n"
+        "export const colorsCss = `" + "".join(rules) + "`;\n"
     )
 
 
@@ -506,7 +639,7 @@ def namespace(app: Path) -> str:
     return found.group(1)
 
 
-type Writer = Callable[[dict[str, Scheme]], str]
+type Writer = Callable[[Themes, str], str]
 
 
 def outputs(repo: Path) -> dict[Path, Writer]:
@@ -517,7 +650,9 @@ def outputs(repo: Path) -> dict[Path, Writer]:
     for settings in sorted(repo.glob("*/settings.gradle.kts")):
         package = namespace(settings.parent) + ".ui.theme"
         folder = settings.parent / "app/src/main/java" / package.replace(".", "/")
-        found[folder / "Colors.kt"] = lambda schemes, package=package: kotlin(schemes, package)
+        found[folder / "ColorTheme.kt"] = lambda themes, initial, package=package: kotlin(
+            themes, initial, package
+        )
     for pyproject in sorted(repo.glob("*/pyproject.toml")):
         declared = requirements(pyproject)
         if "flet" in declared:
@@ -536,9 +671,13 @@ def generate(repo: Path) -> dict[Path, str]:
     files = outputs(repo)
     if not files:
         return {}
-    schemes = {mode: scheme(paths) for mode, paths in order(repo / RESOLVER).items()}
-    check_contrast(schemes)
-    return {path: writer(schemes) for path, writer in files.items()}
+    initial, paths = order(repo / RESOLVER)
+    themes = {
+        name: {mode: scheme(found) for mode, found in modes.items()}
+        for name, modes in paths.items()
+    }
+    check(themes)
+    return {path: writer(themes, initial) for path, writer in files.items()}
 
 
 def stale(repo: Path) -> list[str]:

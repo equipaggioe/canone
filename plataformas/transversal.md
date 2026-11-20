@@ -9,7 +9,7 @@ Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 - Las convenciones de esta sección rigen en todos los clientes, también en las apps, donde cada pantalla cuenta como una página web: una sola vara para todos los clientes.
 - Cada objetivo táctil mide al menos 48 × 48, salvo un enlace dentro de una frase: dp en las apps y px de CSS en la web, que también se usa en el teléfono.
 - Una llamada entre usuarios no lleva subtítulos en vivo: el criterio de los subtítulos en vivo apunta a las transmisiones, no a las llamadas entre personas. [WCAG 2.2](https://raw.githubusercontent.com/w3c/wcag/807a6c24c58526d017da5a32ea630ac31e850b71/understanding/20/captions-live.html)
-- Cada rol de texto de `brand/tokens/` cumple el contraste del texto contra cada fondo en que va, y `outline`, el de los componentes contra cada superficie, en los dos modos.
+- Cada rol de texto de `brand/tokens/` cumple el contraste del texto contra cada fondo en que va, y `outline`, el de los componentes contra cada superficie, en cada tema y en cada modo. `primary` y `error` son roles de texto: Material los usa en la etiqueta de un botón de texto y en el error de un campo.
 - Todos los clientes cumplen el nivel AA ([WCAG 2.2 §5.2.1](../fuentes/w3c/wcag22.html)).
 - El texto contrasta al menos 4.5:1 con su fondo, también el grande, salvo el de un componente inactivo, el decorativo, el que no se ve, el de una imagen con otro contenido importante y el de un logo: un rol de color no sabe el tamaño del texto que lleva ([WCAG 2.2 §1.4.3](../fuentes/w3c/wcag22.html) y [§1.4.6](../fuentes/w3c/wcag22.html)).
 - Todo contenido que no es texto tiene una alternativa de texto con el mismo propósito; un control, un nombre que dice para qué sirve, y lo decorativo queda oculto a las tecnologías de apoyo ([WCAG 2.2 §1.1.1](../fuentes/w3c/wcag22.html)).
@@ -237,25 +237,22 @@ Estándar: [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 ## Tema
 
-> **En desarrollo; no se implementa.**
-> Ningún repositorio la sigue mientras esta nota esté aquí, y `verificar.py` no la exige. Vale para
-> esta sección, el «Tema» de cada cliente, el
-> ADR-0062,
-> y lo que nombran «Proyecto» y la plantilla: `colors.py`, `theme.py`, `tests/test_theme.py`,
-> `scripts/tokens.py` y `brand/tokens/`. Se revisan y se desarrollan como cualquier otra parte de
-> Canone.
-
 Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el [módulo de color](../fuentes/dtcg/color.html) y el [resolver](../fuentes/dtcg/resolver.html).
 
 - Los colores de un producto van en `brand/tokens/`: `colors.resolver.json` y los `.tokens.json` que cita. Son la única fuente de los colores de todos sus clientes.
 - Los tokens tienen dos niveles: el grupo `palette` guarda los colores, en sRGB y opacos, y el grupo `color` asigna cada rol a un color de `palette` con un alias. Cambiar un color de la marca toca un solo token.
 - Los roles son las 46 propiedades de color no obsoletas del `ColorScheme` de Flutter, y cada modo las asigna todas. Compose, Flutter y Flet arman su esquema con esos roles, y uno sin asignar tomaría en silencio el color por defecto del framework.
-- `scripts/tokens.py` genera en cada cliente su esquema claro y su esquema oscuro, ya armados.
-- `scripts/tokens.py` falla ante lo que DTCG define fuera de las partes que siguen y ante un color que no cumpla el contraste de [Accesibilidad](#accesibilidad): un producto solo usa colores sRGB opacos en dos modos.
+- Cada producto elige sus temas y sus modos: uno o más temas, y el modo claro, el oscuro o los dos. Cada tema tiene los modos del producto.
+- Un tema cambia la paleta, y los modos asignan los roles: el mismo rol toma el mismo tono en todos los temas. Así los dos modificadores no se pisan, como recomienda DTCG ([DTCG Resolver §2.1](../fuentes/dtcg/resolver.html)).
+- `colors.resolver.json` tiene dos modificadores: `theme`, con un contexto por tema y el inicial en `default`, y `mode`, con `light`, `dark` o los dos ([DTCG Resolver §4.1.5](../fuentes/dtcg/resolver.html)). Los archivos de un tema solo tienen el grupo `palette`, y los de un modo, solo el grupo `color`.
+- Un tema se nombra con minúsculas y dígitos: es un miembro de un enum en cada cliente y un valor de `data-theme` en la web.
+- `scripts/tokens.py` genera en cada cliente el enum `ColorTheme`, con un miembro por tema y un esquema ya armado por modo, y el tema inicial.
+- `scripts/tokens.py` falla ante lo que DTCG define fuera de las partes que siguen, ante un color que no cumpla el contraste de [Accesibilidad](#accesibilidad) y ante dos temas iguales: un producto solo usa colores sRGB opacos.
 - Lo generado se commitea: un cliente compila sin correr el generador.
-- El usuario elige el modo en la app: sistema, claro u oscuro. Con «sistema», con el que empieza, el cliente sigue el modo del sistema y cambia con él.
-- La elección es una preferencia de cada dispositivo: la misma cuenta puede usar el modo oscuro en el teléfono y el claro en la computadora.
-- `colors.resolver.json` tiene un solo modificador, `theme`, con los contextos `light` y `dark` ([DTCG Resolver §4.1.5](../fuentes/dtcg/resolver.html)).
+- Con un solo modo, el cliente lo usa siempre, aunque el sistema esté en el otro.
+- Con los dos modos, el usuario elige el modo en la app: sistema, claro u oscuro. Con «sistema», con el que empieza, el cliente sigue el modo del sistema y cambia con él.
+- Si el producto tiene más de un tema, el usuario también lo elige, y empieza con el inicial.
+- Lo que elige el usuario son preferencias de cada dispositivo: la misma cuenta puede usar el modo oscuro en el teléfono y el claro en la computadora.
 - `brand/tokens/` sigue del formato las partes *Name and value*, *Description*, *Type*, *Group Structure*, *Curly Brace Syntax*, *Chained References* y *Circular References*, que hace cumplir `scripts/tokens.py` ([DTCG Format §5.1](../fuentes/dtcg/format.html), [§5.2.1](../fuentes/dtcg/format.html), [§5.2.2](../fuentes/dtcg/format.html), [§6.1](../fuentes/dtcg/format.html), [§7.1.1](../fuentes/dtcg/format.html), [§7.2.2](../fuentes/dtcg/format.html) y [§7.2.3](../fuentes/dtcg/format.html)).
 - `brand/tokens/` sigue del módulo de color las partes *Format* y *sRGB*, que hace cumplir `scripts/tokens.py` ([DTCG Color §4.1](../fuentes/dtcg/color.html) y [§4.2.1](../fuentes/dtcg/color.html)).
 - `brand/tokens/` sigue del resolver las partes *Root level properties*, *Reference objects*, *Input validation*, *Ordering* y *Aliases*, que hace cumplir `scripts/tokens.py` ([DTCG Resolver §4.1](../fuentes/dtcg/resolver.html), [§4.2](../fuentes/dtcg/resolver.html), [§6.1](../fuentes/dtcg/resolver.html), [§6.2](../fuentes/dtcg/resolver.html) y [§6.3](../fuentes/dtcg/resolver.html)).
@@ -286,6 +283,7 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | :--- | :--- |
 | El contraste de los roles de `brand/tokens/` | `scripts/tokens.py --check` |
 | Las partes de DTCG que sigue `brand/tokens/` | `scripts/tokens.py --check` |
+| Los dos modificadores, el nombre y el grupo de cada tema, y dos temas distintos | `scripts/tokens.py --check` |
 | Lo generado, al día con `brand/tokens/` | `scripts/tokens.py --check` |
 | problem+json en una ruta que no existe y en un error de validación | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
 | La URI de cada tipo propio responde HTML con su `title` | `test_problem_types_are_documented`, del servidor |

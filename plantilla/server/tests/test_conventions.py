@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 from datetime import UTC, datetime
+from enum import Enum, StrEnum
 from pathlib import Path
 from types import ModuleType
 from typing import Annotated, Any, TypeIs, get_args
@@ -19,9 +20,11 @@ import sqlalchemy as sa
 from fastapi import FastAPI, Query
 from httpx import ASGITransport, AsyncClient
 from pydantic import AwareDatetime, BaseModel, ValidationError
+from pydantic_settings import BaseSettings
 from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
 
+import app
 import app.models
 import app.routers
 import app.schemas
@@ -45,6 +48,7 @@ def import_all(package: ModuleType) -> list[ModuleType]:
 
 import_all(app.routers)
 SCHEMA_MODULES = import_all(app.schemas)
+APP_MODULES = import_all(app)
 TABLES = list(Base.metadata.tables.values())
 COLUMNS = [column for table in TABLES for column in table.columns]
 MODEL_FILES = sorted(Path(app.models.__path__[0]).glob("*/*.py"))
@@ -408,16 +412,32 @@ def test_mapped_attributes_fit_one_line() -> None:
     assert not offenders
 
 
-def test_schemas_inherit_schema() -> None:
-    """Every schema inherits the camelCase base."""
-    offenders = [
-        f"{module.__name__}.{name}"
-        for module in SCHEMA_MODULES
-        for name, value in vars(module).items()
+def defined_classes(base: type) -> list[type]:
+    """Return the subclasses of base that the app defines."""
+    return [
+        value
+        for module in APP_MODULES
+        for value in vars(module).values()
         if isinstance(value, type)
-        and issubclass(value, BaseModel)
+        and issubclass(value, base)
         and value.__module__ == module.__name__
-        and not issubclass(value, Schema)
+    ]
+
+
+def test_schemas_inherit_schema() -> None:
+    """Every schema of the app inherits the camelCase base."""
+    offenders = [
+        model.__qualname__
+        for model in defined_classes(BaseModel)
+        if not issubclass(model, (Schema, BaseSettings))
+    ]
+    assert not offenders
+
+
+def test_enums_are_strenums() -> None:
+    """Every enum of the app inherits StrEnum."""
+    offenders = [
+        kind.__qualname__ for kind in defined_classes(Enum) if not issubclass(kind, StrEnum)
     ]
     assert not offenders
 
@@ -506,8 +526,9 @@ def test_errors_are_problems() -> None:
 def test_log_lines_have_no_line_breaks() -> None:
     """A value with a line break stays on one line of the log."""
     record = logging.LogRecord("app", logging.INFO, __file__, 1, "got %s", ("a\r\nb",), None)
-    line = tracing.OneLineFormatter("%(message)s").format(record)
-    assert line == "got a\\r\\nb"
+    handler = tracing.log_handler()
+    assert handler.filter(record)
+    assert handler.format(record) == "INFO app  got a\\r\\nb"
 
 
 def test_openapi_file_is_current() -> None:
@@ -539,8 +560,10 @@ async def test_traceparent_starts_a_new_trace() -> None:
 
 
 # Starts and stops the app, and prints how many span processors it
-# added. FastAPI reads FASTAPI_OTEL_AUTO_CONFIGURE when it builds the
-# app, so the probe imports it in a process of its own.
+# added and whether it configures itself from the environment: without
+# the OTLP exporter installed, it adds none either way. FastAPI reads
+# FASTAPI_OTEL_AUTO_CONFIGURE when it builds the app, so the probe
+# imports it in a process of its own.
 TELEMETRY_PROBE = """
 import asyncio
 from opentelemetry.sdk.trace import TracerProvider
@@ -557,7 +580,7 @@ async def receive():
 async def send(message):
     pass
 asyncio.run(app({"type": "lifespan", "asgi": {"version": "3.0"}}, receive, send))
-print(len(added))
+print(len(added), app._telemetry["auto_configure"])
 """
 
 
@@ -574,7 +597,7 @@ def test_otlp_variables_export_nothing() -> None:
         encoding="utf-8",
         check=True,
     )
-    assert result.stdout == "0\n"
+    assert result.stdout == "0 False\n"
 
 
 class Item(InputSchema):

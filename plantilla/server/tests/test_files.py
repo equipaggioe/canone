@@ -4,6 +4,7 @@ from io import BytesIO
 from pathlib import Path
 
 import pytest
+from fastapi import HTTPException, UploadFile
 from PIL import Image, UnidentifiedImageError
 
 from app.services import files
@@ -32,6 +33,9 @@ def test_reencode_rejects_a_format_off_the_list() -> None:
         files.reencode(photo(1), {"PNG"})
 
 
+# Without the error filter of pytest: reencode turns the warning into
+# an error by itself.
+@pytest.mark.filterwarnings("default")
 def test_reencode_rejects_an_image_past_the_pixel_limit(monkeypatch: pytest.MonkeyPatch) -> None:
     """An image past the limit of Pillow fails, even below twice it."""
     monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 1)
@@ -76,3 +80,11 @@ def test_download_is_an_attachment(tmp_path: Path) -> None:
     response = files.download(path, None, "report.pdf")
     assert response.headers["content-disposition"] == 'attachment; filename="report.pdf"'
     assert response.media_type == "application/octet-stream"
+
+
+async def test_read_rejects_a_file_past_the_limit() -> None:
+    """A file past the limit is a 413; one at the limit is read."""
+    assert await files.read(UploadFile(BytesIO(b"xyz")), 3) == b"xyz"
+    with pytest.raises(HTTPException) as caught:
+        await files.read(UploadFile(BytesIO(b"xyzw")), 3)
+    assert caught.value.status_code == 413

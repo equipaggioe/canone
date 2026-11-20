@@ -76,7 +76,13 @@ def run_migrations_offline() -> None:
 
 def do_run_migrations(connection: Connection) -> None:
     """Run the migrations on one connection."""
-    context.configure(connection=connection, target_metadata=target_metadata, **spatial_options())
+    # ADR-0199: alembic check also sees a changed server default.
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        compare_server_default=True,
+        **spatial_options(),
+    )
 
     with context.begin_transaction():
         context.run_migrations()

@@ -60,11 +60,16 @@ class OneLineFormatter(logging.Formatter):
         return super().format(record).replace("\r", "\\r").replace("\n", "\\n")
 
 
+def log_handler() -> logging.Handler:
+    """Build the handler of the log: one line, with the trace-id."""
+    handler = logging.StreamHandler()
+    handler.addFilter(TraceFilter())
+    handler.setFormatter(OneLineFormatter("%(levelname)s %(name)s %(trace_id)s %(message)s"))
+    return handler
+
+
 def install() -> None:
     """Set the tracer provider and log the trace-id."""
     propagate.set_global_textmap(IgnoreTraceparent())
     trace.set_tracer_provider(TracerProvider())
-    handler = logging.StreamHandler()
-    handler.addFilter(TraceFilter())
-    handler.setFormatter(OneLineFormatter("%(levelname)s %(name)s %(trace_id)s %(message)s"))
-    logging.basicConfig(level=logging.INFO, handlers=[handler])
+    logging.basicConfig(level=logging.INFO, handlers=[log_handler()])

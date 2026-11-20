@@ -5,10 +5,12 @@ import shutil
 import time
 import warnings
 from collections.abc import Collection
+from http import HTTPStatus
 from io import BytesIO
 from pathlib import Path
 
 import sqlalchemy as sa
+from fastapi import HTTPException, UploadFile
 from PIL import Image, ImageOps
 from starlette.responses import FileResponse
 
@@ -22,6 +24,14 @@ MARGIN_SECONDS = 3600
 def folder() -> Path:
     """Return the folder of the files: the StateDirectory=."""
     return Path(os.environ["STATE_DIRECTORY"])
+
+
+async def read(upload: UploadFile, limit: int) -> bytes:
+    """Read an upload, or answer 413 past the limit of its resource."""
+    data = await upload.read(limit + 1)
+    if len(data) > limit:
+        raise HTTPException(HTTPStatus.CONTENT_TOO_LARGE)
+    return data
 
 
 def reencode(data: bytes, formats: Collection[str]) -> bytes:

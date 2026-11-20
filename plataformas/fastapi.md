@@ -106,9 +106,9 @@ Estándares: [*Session Basics*](../fuentes/sqlalchemy/session_basics.rst) y la [
 - Una relación bidireccional declara `back_populates` en los dos lados.
 - Un enum hereda de `StrEnum`. La `Base` guarda solo esos como `text` con `CHECK`; un `str, Enum` se vuelve un enum nativo de Postgres que guarda el nombre y no el valor.
 - Una columna `created_at` es `CreatedAt`, y una `updated_at` es `UpdatedAt`, de la `Base`. Las dos toman `now()`; `updated_at` lo toma en cada `UPDATE` que emite SQLAlchemy.
-- Una relación de uno a muchos deja el borrado al `ON DELETE` de la clave foránea del hijo. Si es `CASCADE`, lleva las cascadas `save-update`, `merge`, `delete` y `delete-orphan`, con `passive_deletes=True`; si es `RESTRICT`, lleva `passive_deletes="all"`. Sin eso, el ORM carga los hijos para ponerles `NULL`: un `CASCADE` falla por el `NOT NULL`, y un `RESTRICT` cambia en silencio una fila que no le pertenece al padre. [SQLAlchemy 2.1.9](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_9/doc/build/orm/cascades.rst)
+- El engine lleva `pool_pre_ping=True`: una conexión del pool que PostgreSQL cerró al reiniciarse hace fallar la petición que la toma. [SQLAlchemy 2.1.9](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_9/doc/build/core/pooling.rst)
+- Una relación de uno a muchos deja el borrado al `ON DELETE` de la clave foránea del hijo. Si es `CASCADE`, lleva las cascadas `save-update`, `merge`, `delete` y `delete-orphan`, con `passive_deletes=True`; si es `RESTRICT`, lleva `passive_deletes="all"`. Sin eso, el ORM carga los hijos para ponerles `NULL`: un `CASCADE` falla por el `NOT NULL`, y un `RESTRICT` cambia en silencio una fila que no le pertenece al padre ([Session Basics, *Deleting*](../fuentes/sqlalchemy/session_basics.rst)).
 - Toda relación lleva `lazy="raise"`: lo que se lee de ella se carga antes con una opción de carga, como `selectinload` ([asyncio, *Preventing Implicit IO when Using AsyncSession*](../fuentes/sqlalchemy/asyncio.rst)).
-- SQLAlchemy se instala con el extra `asyncio` ([asyncio, *Asyncio Platform Installation Notes*](../fuentes/sqlalchemy/asyncio.rst)).
 - El engine y `SessionFactory`, su `async_sessionmaker`, se crean una sola vez, en `database.py` ([Session Basics, *Using a sessionmaker*](../fuentes/sqlalchemy/session_basics.rst)).
 - La sesión la abre quien empieza la operación, como la dependencia de una petición o una tarea, y la recibe como argumento cada función que lee o cambia datos. La excepción es el evento que se escribe en su propia transacción, de [Registro de eventos](#registro-de-eventos) ([Session Basics, *Session Frequently Asked Questions*](../fuentes/sqlalchemy/session_basics.rst)).
 - Una petición usa una sola sesión y una sola transacción, abiertas con `SessionFactory.begin()`, además de las de sus eventos que se escriben aparte: hacen commit si la ruta termina, rollback si lanza, y se cierran al terminar ([Session Basics, *Framing out a begin / commit / rollback block*](../fuentes/sqlalchemy/session_basics.rst) y [*Session Frequently Asked Questions*](../fuentes/sqlalchemy/session_basics.rst)).
@@ -128,7 +128,9 @@ Estándar: la [autogeneración](../fuentes/alembic/autogenerate.rst) de Alembic.
 
 - `alembic/` sale de la plantilla `async` de Alembic: las migraciones corren con asyncpg, como la app.
 - Las migraciones corren con `python -m app.tasks migrate`, que aplica las de Alembic y después los seeders, en una sola transacción: un seeder que falla deshace las migraciones, y `deploy.py` vuelve a la versión anterior.
-- El job `server` del CI corre `alembic check` después de las migraciones: un modelo sin su migración falla.
+- Todo cambio de un modelo lleva su migración.
+- Los permisos de una tabla los da la migración que la crea: quedan versionados y el CI los prueba.
+- `env.py` compara los `server_default`, con `compare_server_default=True` ([Autogenerate, *What does Autogenerate Detect*](../fuentes/alembic/autogenerate.rst)).
 - `env.py` le pasa a Alembic como `target_metadata` la `MetaData` de la `Base`, con todos los modelos importados ([Autogenerate, *Auto Generating Migrations*](../fuentes/alembic/autogenerate.rst)).
 - Cada migración autogenerada se revisa y se corrige a mano antes de commitearla ([Autogenerate, *Auto Generating Migrations*](../fuentes/alembic/autogenerate.rst)).
 - La `MetaData` de la `Base` lleva una `naming_convention`, y toda restricción tiene nombre ([Autogenerate, *What does Autogenerate Detect*](../fuentes/alembic/autogenerate.rst)).
@@ -167,10 +169,6 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - Los routers se incluyen en un `APIRouter(prefix="/api")` de `main.py`.
 - Un `DELETE` borra la fila de verdad. Una columna `deleted_at` se escribe con un `PATCH`, como cualquier otro campo, y nunca reemplaza al borrado: un `DELETE` que solo marca la fila obliga a filtrar cada consulta y cada índice único.
 
-## Ciclo de vida
-
-- El arranque y el cierre van en el `lifespan` de la app: `on_event` está obsoleto. [FastAPI 0.163.1](https://raw.githubusercontent.com/fastapi/fastapi/0.163.1/fastapi/applications.py)
-
 ## Tareas
 
 - El trabajo que sigue a la respuesta va en `BackgroundTasks`.
@@ -178,7 +176,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - La tarea trabaja sobre lo que encuentra en la base, no sobre lo que pasó desde la vuelta anterior: una vuelta perdida la recupera la siguiente.
 - La dispara un timer de systemd con `python -m app.tasks <tarea>`: systemd no arranca una vuelta si la anterior sigue corriendo.
 - La purga y el barrido corren cada día, en sus unidades de [despliegue.md](despliegue.md#procesos). Cualquier otra tarea declara su calendario en `TIMERS` de `tasks.py`, como `{"alert": "minutely"}`, el `OnCalendar=` que recibe `install.py --task`: el calendario queda en el código, junto a la tarea.
-- Una tarea que maneja un navegador declara su calendario en `BROWSER_TIMERS` de `tasks.py`, con la forma de `TIMERS`, y no en `TIMERS`: corre en la unidad de [despliegue.md](despliegue.md#procesos) que deja correr a Chromium, con `install.py --browser` ([ADR-0172](../adr/0172-una-tarea-que-maneja-chromium-corre-en-su-instancia-de-browser.md)).
+- Una tarea que maneja un navegador declara su calendario en `BROWSER_TIMERS` de `tasks.py`, con la forma de `TIMERS`, y no en `TIMERS`: corre en la unidad de [despliegue.md](despliegue.md#procesos) que deja correr a Chromium, con `install.py --browser`.
 - Esa tarea maneja con Playwright el Chromium de Debian, `executable_path="/usr/bin/chromium-headless-shell"`, que instala `packages.py --browser`: se actualiza con la máquina, y el que baja Playwright solo cambia con su versión.
 
 ## Archivos
@@ -192,15 +190,17 @@ Contrato: [transversal.md](transversal.md#archivos).
 - La fila de un archivo guarda su tipo, su tamaño y su nombre original.
 - Un barrido borra los archivos, y las carpetas de tamaños, con más de una hora en disco y sin fila en ninguna tabla `_file`. El margen deja terminar la subida que todavía no confirmó su fila.
 - Antes de volver a codificar una imagen se aplica su orientación EXIF: sin eso queda girada.
+- Una imagen que se muestra en más de un tamaño, como una tarjeta en una lista y la misma imagen en grande, se guarda una vez por tamaño, en WebP, en la carpeta del ID de su fila: `<id>/<tamaño>.webp`, con el lado mayor de una constante del recurso y sin el original. Una pantalla con muchas tarjetas baja la pequeña de cada una, no la original. `files.sizes` las codifica de una sola decodificación, y `files.store_sizes` las escribe.
+- Una subida que pasa el tamaño máximo de su recurso responde 413: `files.read` la lee hasta ese tamaño.
+- El nombre original tiene a lo sumo 255 caracteres y nunca forma una ruta en disco ([File Upload, *Filename Safety*](../fuentes/owasp/File_Upload.md)).
+- Un usuario descarga a lo sumo 300 archivos por minuto: una pantalla llena de imágenes pide unas 50 ([File Upload, *Upload and Download Limits*](../fuentes/owasp/File_Upload.md)).
 - Toda imagen se vuelve a codificar con Pillow antes de guardarse, sin sus metadatos ([File Upload, *File Content Validation*](../fuentes/owasp/File_Upload.md)).
 - Cada recurso acepta solo los tipos de archivo que necesita, de una lista, y ninguno acepta ZIP ([File Upload, *List Allowed Extensions*](../fuentes/owasp/File_Upload.md) y [*File Content Validation*](../fuentes/owasp/File_Upload.md)).
 - El servidor comprueba el tipo de un archivo por su contenido: el `Content-Type` y la extensión que manda el cliente no lo deciden ([File Upload, *Content-Type Validation*](../fuentes/owasp/File_Upload.md) y [*File Signature Validation*](../fuentes/owasp/File_Upload.md)).
 - Pillow decodifica una imagen solo en los formatos de la lista del recurso y con su límite de píxeles, `Image.MAX_IMAGE_PIXELS` ([File Upload, *File Content Validation*](../fuentes/owasp/File_Upload.md) y [*Upload and Download Limits*](../fuentes/owasp/File_Upload.md)).
-- El archivo en disco se llama con el ID de su fila ([File Upload, *Filename Safety*](../fuentes/owasp/File_Upload.md)).
-- Una imagen que se muestra en más de un tamaño, como una tarjeta en una lista y la misma imagen en grande, se guarda una vez por tamaño, en WebP, en la carpeta del ID de su fila: `<id>/<tamaño>.webp`, con el lado mayor de una constante del recurso y sin el original. Una pantalla con muchas tarjetas baja la pequeña de cada una, no la original: servir varios tamaños de una imagen es lo que recomienda la web ([*Responsive images*](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Responsive_images)). `files.sizes` las codifica de una sola decodificación, y `files.store_sizes` las escribe.
-- El nombre original tiene a lo sumo 255 caracteres y nunca forma una ruta en disco ([File Upload, *Filename Safety*](../fuentes/owasp/File_Upload.md)).
+- Cada recurso fija en una constante el tamaño máximo de un archivo ([File Upload, *Upload and Download Limits*](../fuentes/owasp/File_Upload.md)).
+- La tabla `<recurso>_file` tiene clave `uuid`, y el archivo en disco se llama con el `uuid` de su fila ([File Upload, *Filename Safety*](../fuentes/owasp/File_Upload.md)).
 - Subir un archivo exige una sesión y el permiso de su recurso, y bajarlo, el permiso de su recurso ([File Upload, *User Permissions*](../fuentes/owasp/File_Upload.md)).
-- Un usuario descarga a lo sumo 300 archivos por minuto: una pantalla llena de imágenes pide unas 50 ([File Upload, *Upload and Download Limits*](../fuentes/owasp/File_Upload.md)).
 - Un archivo se responde con `Content-Disposition: attachment`, y con `application/octet-stream` si su tipo es desconocido o binario ([HTTP Security Response Headers Cheat Sheet, *Secure File Download Headers*](../fuentes/owasp/HTTP_Headers.md)).
 
 ## Correo y SMS
@@ -210,10 +210,10 @@ Estándar: [Standard Webhooks](../fuentes/standard-webhooks/standard-webhooks.md
 - El correo sale por la API de correo de Equipaggio, `PUT /email/{id}`, y el SMS, por su pasarela, `PUT /sms/{id}`.
 - Cada correo lleva una parte en texto y otra en HTML.
 - Un correo rebotado llega por el webhook de Equipaggio. El servidor marca la dirección como inválida, y la app le dice al usuario que su correo no llega.
+- Un webhook con un `webhook-timestamp` a más de 5 minutos de la hora del servidor se rechaza ([Standard Webhooks, *Verifying signatures*](../fuentes/standard-webhooks/standard-webhooks.md)).
 - El servidor verifica las firmas de `webhook-signature` sobre `webhook-id`, `webhook-timestamp` y el cuerpo tal como llegó, sin volver a serializarlo, y rechaza el webhook si ninguna vale ([Standard Webhooks, *Signature scheme*](../fuentes/standard-webhooks/standard-webhooks.md) y [*Webhook headers*](../fuentes/standard-webhooks/standard-webhooks.md)).
 - Una firma simétrica se compara en tiempo constante ([Standard Webhooks, *Verifying signatures*](../fuentes/standard-webhooks/standard-webhooks.md)).
 - La clave pública de una firma asimétrica sale de `Settings`, nunca de la petición ([Standard Webhooks, *Additional considerations*](../fuentes/standard-webhooks/standard-webhooks.md)).
-- Un webhook con un `webhook-timestamp` a más de 5 minutos de la hora del servidor se rechaza ([Standard Webhooks, *Verifying signatures*](../fuentes/standard-webhooks/standard-webhooks.md)).
 - `webhook-id` es la clave de idempotencia: un webhook ya procesado no se procesa otra vez ([Standard Webhooks, *Verifying signatures*](../fuentes/standard-webhooks/standard-webhooks.md)).
 
 ## Envíos al exterior
@@ -332,9 +332,11 @@ Contrato: [transversal.md](transversal.md#push).
 - Un FID al que FCM responde `UNREGISTERED` se borra: FCM ya no le entrega nada. [FCM](https://firebase.google.com/docs/cloud-messaging/manage-tokens)
 - El servidor envía Web Push con `webpush_async` de pywebpush y una sola `aiohttp.ClientSession` para toda la app: sin ella, cada envío abre una sesión nueva.
 - El endpoint de una suscripción web lo elige el cliente, y el servidor le hace un `POST`. Por eso la suscripción se rechaza con 422 si el host de su endpoint es una dirección IP, y la `ClientSession` de Web Push resuelve cada nombre con un resolver que descarta las direcciones que `ipaddress` no marca como globales y se conecta a la que resolvió: un endpoint no lleva al servidor a su propia red, a la máquina ni a los metadatos del proveedor. aiohttp no pasa por el resolver una dirección IP escrita en la URL. [aiohttp 3.14.5](https://raw.githubusercontent.com/aio-libs/aiohttp/v3.14.5/aiohttp/connector.py)
+- Cada Web Push lleva su TTL: pywebpush manda 0 si no se le da otro, y un aviso con TTL 0 se pierde si el navegador no está en línea. [pywebpush 2.5.0](https://raw.githubusercontent.com/web-push-libs/pywebpush/4a2b66dae1408a19eb2c3f724ef0792f5258e72b/pywebpush/__init__.py)
+- Una suscripción web que responde 410 se borra: el servicio de push de Firefox responde 410 a una suscripción que ya no vale. [autopush](https://raw.githubusercontent.com/mozilla-services/autopush-rs/60841760e34878715780bdc57309a31d1d33fd95/docs/src/errors.md)
+- El TTL de un aviso que no caduca es de 28 días ([RFC 8030 §5.2](../fuentes/rfc/rfc8030.txt)).
 - Una suscripción web se rechaza con 422 si su endpoint no es una URL `https` ([RFC 8030 §8](../fuentes/rfc/rfc8030.txt)).
-- Un Web Push de un aviso que no caduca lleva un TTL de 28 días, el de FCM por defecto: con el TTL 0 de pywebpush, se pierde si el navegador no está en línea ([RFC 8030 §5.2](../fuentes/rfc/rfc8030.txt)). [FCM](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages), [pywebpush 2.5.0](https://raw.githubusercontent.com/web-push-libs/pywebpush/4a2b66dae1408a19eb2c3f724ef0792f5258e72b/pywebpush/__init__.py)
-- Una suscripción web que responde 404 o 410 se borra: el 404 dice que venció, y el servicio de push de Firefox responde 410 a una suscripción que ya no vale ([RFC 8030 §7.3](../fuentes/rfc/rfc8030.txt)). [autopush](https://raw.githubusercontent.com/mozilla-services/autopush-rs/60841760e34878715780bdc57309a31d1d33fd95/docs/src/errors.md)
+- Una suscripción web que responde 404 se borra: venció ([RFC 8030 §7.3](../fuentes/rfc/rfc8030.txt)).
 
 ## Registro de eventos
 
@@ -345,15 +347,14 @@ Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) y el [*Appl
 - Un valor de una fila entra en `details` solo si su tabla y su campo están en una lista blanca: una columna nueva no se registra sola. Un campo fuera de la lista se registra como cambiado, sin su valor.
 - Un evento se escribe en su propia transacción, salvo el de un cambio de fila, que va en la del cambio: un fallo queda aunque la petición se deshaga, y un cambio deshecho no queda.
 - El rol de la app se llama como la app, y solo tiene `INSERT` y `SELECT` sobre `event_log`: un error o una inyección en la app no cambian ni borran el rastro. El rol no es el dueño de la tabla.
-- Los permisos de una tabla los da la migración que la crea: quedan versionados y el CI los prueba.
 - `actor_id` es un `uuid` sin clave foránea, y `ip_address`, un `inet`: el rastro sobrevive a la cuenta, e `inet` rechaza una dirección malformada.
-- La purga es una tarea periódica que borra lo que pasó la retención con la credencial del dueño del esquema, la de las migraciones: el servidor no la recibe. También crea las particiones por delante de [postgres.md](postgres.md#particiones), que son DDL.
+- La purga es una tarea periódica que borra lo que pasó la retención con la credencial del dueño del esquema, la de las migraciones: el servidor no la recibe.
 - Un evento que no se puede escribir hace fallar la operación que lo registra: un rastro incompleto no pasa en silencio.
 - La retención de `event_log` es una constante en días en `services/events.py`, y la plantilla guarda 365.
 - `action` es el nombre del vocabulario sin sus parámetros, como `authn_login_fail`. Los parámetros van en sus columnas: así se consultan ([Logging Vocabulary, *The Vocabulary*](../fuentes/owasp/Logging_Vocabulary.md)).
 - `level` es `info`, `warn` o `critical`, el nivel que el vocabulario da al evento ([Logging Vocabulary, *The Vocabulary*](../fuentes/owasp/Logging_Vocabulary.md)).
 - `event_log` se retiene un plazo fijo, mayor que cero: la IP y el user agent son datos personales ([Logging Cheat Sheet, *Disposal of logs*](../fuentes/owasp/Logging.md)).
-- Solo el rol de la app y el dueño leen `event_log`, y ningún rol es miembro de ellos. La migración de `event_log` se lo quita a `<app>_read`, que lee el resto de la base ([despliegue.md](despliegue.md#postgresql)), y cada CI revisa quién lo lee ([Logging Cheat Sheet, *Protection*](../fuentes/owasp/Logging.md)).
+- Solo el rol de la app y el dueño leen `event_log`, y ningún rol es miembro de ellos. La migración de `event_log` se lo quita a `<app>_read`, que lee el resto de la base ([despliegue.md](despliegue.md#postgresql)) ([Logging Cheat Sheet, *Protection*](../fuentes/owasp/Logging.md)).
 - La copia en solo lectura de `event_log` es el respaldo de [despliegue.md](despliegue.md#respaldos), en cada corrida ([Logging Cheat Sheet, *Protection*](../fuentes/owasp/Logging.md)).
 - Detectar que una fila de `event_log` se cambió o se borró le toca a quien la copia fuera de la máquina por la ruta de [Salud](#salud): en la máquina, solo el dueño y `root` pueden cambiarla, y `root` también cambia lo que lo detectaría ([Logging Cheat Sheet, *Protection*](../fuentes/owasp/Logging.md)).
 - Cada evento guarda cuándo, desde dónde, quién y qué: `occurred_at`, `ip_address`, `user_agent`, `actor_id`, `actor_label`, `action`, `level`, `target_type`, `target_id` y `details` en `jsonb` y, si el repositorio es multi-tenant, `tenant_id` ([Logging Cheat Sheet, *Event attributes*](../fuentes/owasp/Logging.md)).
@@ -389,7 +390,7 @@ Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) y el [*Appl
 ## Trazas
 
 - La app configura un `TracerProvider` del SDK de OpenTelemetry: sin él, FastAPI no crea spans y no hay trace-id.
-- La telemetría no sale del proceso: el `TracerProvider` no tiene exportador, y la app crea FastAPI con `telemetry={"auto_configure": False}`, porque `OTEL_EXPORTER_OTLP_ENDPOINT` le agregaría uno sin cambiar el código. Una traza no ve la base ni sigue a otro servicio, y su trace-id ya está en cada log y en cada error.
+- La telemetría no sale del proceso: el `TracerProvider` no tiene exportador, y la app crea FastAPI con `telemetry={"auto_configure": False}`. Una traza no ve la base ni sigue a otro servicio, y su trace-id ya está en cada log y en cada error. Sin ese parámetro, si el exportador OTLP llega instalado, como con `fastapi[standard]`, `FASTAPI_OTEL_AUTO_CONFIGURE=true` y `OTEL_EXPORTER_OTLP_ENDPOINT` le agregan uno sin cambiar el código. [FastAPI 0.163.1](https://raw.githubusercontent.com/fastapi/fastapi/0.163.1/fastapi/telemetry/_runtime.py)
 - El propagador global de OpenTelemetry ignora `traceparent`: cada petición y cada WebSocket empiezan una traza nueva. El cliente no elige el id con el que se buscan sus registros. Es un propagador propio: con `OTEL_PROPAGATORS=none`, FastAPI falla en cada petición.
 - Cada vuelta de una tarea periódica empieza su propia traza.
 - Cada línea de log lleva el trace-id del span actual.
@@ -435,26 +436,27 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 
 | Convención | Herramienta |
 | :--- | :--- |
+| Los archivos que se copian sin editar coinciden con la plantilla | `verificar.py --repo` |
 | Todo campo de `Settings` es obligatorio | `test_settings_are_required` |
 | Las dependencias y los parámetros con `Depends`, `Query`, `Path`, `Header`, `Cookie`, `Body`, `Form` o `File` se declaran con `Annotated` | ruff `FAST002` |
 | El commit corre antes de enviar la respuesta | `test_failed_commit_is_a_server_error` |
-| Los nombres en camelCase: todo esquema hereda del esquema base | `test_schemas_inherit_schema` |
+| Los nombres en camelCase: todo esquema de la app hereda del esquema base | `test_schemas_inherit_schema` |
 | El esquema base lee por nombre, y el de entrada solo por alias | `test_schemas_read_rows_by_name` |
 | `lazy="raise"` | `test_relationships_raise` |
 | Una relación de uno a muchos deja el borrado al `ON DELETE` | `test_one_to_many_leaves_deletes_to_the_database` |
 | `Timestamp` en los esquemas | `test_schema_datetimes_are_timestamps` |
-| Un enum hereda de `StrEnum` | `test_enums_are_checked_text` y ruff `UP042` |
+| Un enum hereda de `StrEnum` | `test_enums_are_strenums`, `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea, y `models/` sin el límite de 99 | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |
-| Las variables OTLP no agregan un exportador | `test_otlp_variables_export_nothing` |
+| La app no se configura la telemetría desde el entorno, y las variables OTLP no agregan un exportador | `test_otlp_variables_export_nothing` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | Cada operación declara sus errores, y solo como problem+json | `test_errors_are_problems` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
-| Un modelo sin su migración | `uv run alembic check` después de las migraciones, en el job `server` de CI |
-| La base de prueba con las migraciones y los seeders | `uv run python -m app.tasks migrate` antes de pytest en el job `server` de CI |
+| Un cambio de modelo que la autogeneración detecta, también de un `server_default`, sin su migración | `uv run alembic check` después de las migraciones, en el job `server` de CI |
+| La base de prueba con las migraciones | `uv run python -m app.tasks migrate` antes de pytest en el job `server` de CI |
 | Las migraciones de prueba como el dueño, y las pruebas con los permisos del servidor | `python -m app.tasks migrate` con la credencial del dueño en el job `server` de CI, y `run_as_server` de `tests/conftest.py` |
 | Que los seeders corren por módulo y por nombre, y solo las funciones `seed_` asíncronas del módulo | `test_seeders_run_by_module_and_name` |
-| Que un seeder que falla deshace las migraciones, que cada despliegue corre los seeders sin duplicar filas, y que `mock_data/` corre solo en desarrollo | [scripts/infra/deploy.sh](../scripts/infra/deploy.sh) de Canone, como dice [despliegue.md](despliegue.md#cumplimiento) |
+| Que un seeder que falla deshace las migraciones, que cada despliegue corre los seeders, y que `mock_data/` corre solo en desarrollo | [scripts/infra/deploy.sh](../scripts/infra/deploy.sh) de Canone, como dice [despliegue.md](despliegue.md#cumplimiento), sobre el `database.py` que se copia sin editar |
 | Las pruebas nunca llaman a la app con `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
 | El rol de la app no cambia ni borra `event_log`, y la purga respeta la retención | `test_server_cannot_change_events` y `test_purge_deletes_only_expired_events` |
 | Solo el rol de la app y el dueño leen `event_log` | `test_only_the_server_and_owner_read_events` |
@@ -467,7 +469,8 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Un 422 deja su evento: `input_validation_fail`, `input_validation_discrete_fail` o `malicious_extraneous` | `test_validation_error_is_an_event` |
 | El arranque y la parada dejan su evento | `test_lifespan_logs_start_and_stop` |
 | Una dirección malformada se omite y se nombra en `details` | `test_malformed_address_is_left_out` |
-| El log no tiene retornos de carro ni saltos de línea de un valor | `test_log_lines_have_no_line_breaks` |
+| El log de la app no tiene retornos de carro ni saltos de línea de un valor | `test_log_lines_have_no_line_breaks` |
 | Pillow vuelve a codificar la imagen derecha y sin metadatos, solo en los formatos de la lista y bajo su límite de píxeles | `test_reencode_turns_the_image_and_drops_the_metadata`, `test_reencode_rejects_a_format_off_the_list` y `test_reencode_rejects_an_image_past_the_pixel_limit` |
 | Cada tamaño de una imagen es un WebP derecho y sin metadatos, con su lado mayor, en la carpeta de su fila, y el barrido borra la carpeta sin fila | `test_sizes_keep_the_ratio_turn_the_image_and_drop_the_metadata`, `test_sizes_reject_a_format_off_the_list` y `test_sweep_deletes_only_old_files_without_row` |
+| Una subida que pasa el tamaño máximo responde 413 | `test_read_rejects_a_file_past_the_limit` |
 | Un archivo se responde como `attachment`, y de tipo desconocido como `application/octet-stream` | `test_download_is_an_attachment` |

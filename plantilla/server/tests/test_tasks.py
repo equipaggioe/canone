@@ -9,7 +9,7 @@ import pytest
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import tasks
+from app import database
 from app.services import files
 
 
@@ -53,7 +53,9 @@ def test_seeders_run_by_module_and_name(tmp_path: Path, monkeypatch: pytest.Monk
         encoding="utf-8",
     )
     monkeypatch.syspath_prepend(str(tmp_path))
-    found = [f"{seeder.__module__}.{seeder.__name__}" for seeder in tasks.seeders("fake_seeders")]
+    found = [
+        f"{seeder.__module__}.{seeder.__name__}" for seeder in database.seeders("fake_seeders")
+    ]
     assert found == [
         "fake_seeders.a_roles.seed_roles",
         "fake_seeders.a_roles.seed_users",

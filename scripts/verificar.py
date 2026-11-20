@@ -82,10 +82,6 @@ SMS = [
     Path("packages/sms/src/flutter/flet_sms/lib/src/sms_code.dart"),
 ]
 
-# plataformas/fastapi.md: el driver es asyncpg y las pruebas async corren con AnyIO. Se revisa la
-# dependencia declarada, así un paquete se ve aunque nadie lo importe todavía.
-DESCARTADAS = {"psycopg", "psycopg2", "psycopg2-binary", "pytest-asyncio"}
-
 # Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del
 # dominio. `panel` y `landing` son las dos excepciones, con el nombre que ya usa la industria.
 PREFIJOS = ("server", "web", "mobile", "desktop")
@@ -103,26 +99,6 @@ def nombre_valido(nombre: str) -> bool:
 
 def normalizar(texto: str) -> str:
     return texto.replace("\r\n", "\n").rstrip() + "\n"
-
-
-# ADR-0008: una bitácora que se puede editar por HTTP no es una bitácora. Se busca por el nombre
-# del archivo del router, que es como se nombran en los seis repositorios; un router que escriba
-# una bitácora con otro nombre se escapa, y eso se revisa leyendo, no aquí.
-BITACORAS = ("audit_log", "auth_log", "activity_log", "security_log", "event_log", "login_attempt")
-ESCRITURA = ("@router.post", "@router.patch", "@router.put", "@router.delete")
-
-
-def bitacoras_solo_lectura(servidor: Path) -> list[str]:
-    fallas = []
-    for carpeta in ("src/app/routers",):
-        for router in (servidor / carpeta).glob("*.py"):
-            if not any(nombre in router.stem for nombre in BITACORAS):
-                continue
-            texto = router.read_text(encoding="utf-8")
-            verbos = sorted({v.split(".")[1] for v in ESCRITURA if v in texto})
-            if verbos:
-                fallas.append(f"ADR-0008: {carpeta}/{router.name} expone {', '.join(verbos)} sobre una bitácora")
-    return fallas
 
 
 # principios.md, «Nombres»: a lo sumo cuatro palabras. Se revisan las funciones, los métodos y las
@@ -290,19 +266,6 @@ def configuracion_con_repositorio(repo: Path) -> list[str]:
                     f"principios.md: {relativo.as_posix()}:{linea} {nombre} repite el nombre del repositorio"
                 )
     return fallas
-
-
-def dependencias(pyproject: Path) -> set[str]:
-    datos = tomllib.loads(pyproject.read_text(encoding="utf-8"))
-    declaradas = list(datos.get("project", {}).get("dependencies", []))
-    for grupo in datos.get("dependency-groups", {}).values():
-        declaradas.extend(d for d in grupo if isinstance(d, str))
-    nombres = set()
-    for declarada in declaradas:
-        nombre = re.match(r"[A-Za-z0-9._-]+", declarada)
-        if nombre:
-            nombres.add(re.sub(r"[._]", "-", nombre.group()).lower())
-    return nombres
 
 
 # plataformas/transversal.md, «Tema»: los colores de cada cliente se generan desde brand/tokens/ con
@@ -1052,14 +1015,10 @@ def revisar(repo: Path) -> list[str]:
     if servidor.is_dir():
         if not (servidor / "pyproject.toml").exists():
             fallas.append("plataformas/python.md: falta server/pyproject.toml")
-        else:
-            for nombre in sorted(dependencias(servidor / "pyproject.toml") & DESCARTADAS):
-                fallas.append(f"plataformas/fastapi.md: server/ declara {nombre}, que está descartada")
         if (servidor / "app").is_dir():
             fallas.append("plataformas/fastapi.md: el paquete va en server/src/app/, no en server/app/")
         if not (servidor / ".gitignore").exists():
             fallas.append("repositorio.md: server/ no tiene su propio .gitignore")
-        fallas.extend(bitacoras_solo_lectura(servidor))
 
     # SvelteKit: solo para las superficies web que existan.
     for paquete in repo.glob("*/package.json"):

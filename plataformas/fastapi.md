@@ -205,16 +205,17 @@ Contrato: [transversal.md](transversal.md#archivos).
 
 ## Correo y SMS
 
-Estándar: [Standard Webhooks](../fuentes/standard-webhooks/standard-webhooks.md).
+Estándar: el [*Webhook Security Cheat Sheet*](../fuentes/owasp/Webhook_Security.md) de OWASP.
 
 - El correo sale por la API de correo de Equipaggio, `PUT /email/{id}`, y el SMS, por su pasarela, `PUT /sms/{id}`.
 - Cada correo lleva una parte en texto y otra en HTML.
 - Un correo rebotado llega por el webhook de Equipaggio. El servidor marca la dirección como inválida, y la app le dice al usuario que su correo no llega.
-- Un webhook con un `webhook-timestamp` a más de 5 minutos de la hora del servidor se rechaza ([Standard Webhooks, *Verifying signatures*](../fuentes/standard-webhooks/standard-webhooks.md)).
-- El servidor verifica las firmas de `webhook-signature` sobre `webhook-id`, `webhook-timestamp` y el cuerpo tal como llegó, sin volver a serializarlo, y rechaza el webhook si ninguna vale ([Standard Webhooks, *Signature scheme*](../fuentes/standard-webhooks/standard-webhooks.md) y [*Webhook headers*](../fuentes/standard-webhooks/standard-webhooks.md)).
-- Una firma simétrica se compara en tiempo constante ([Standard Webhooks, *Verifying signatures*](../fuentes/standard-webhooks/standard-webhooks.md)).
-- La clave pública de una firma asimétrica sale de `Settings`, nunca de la petición ([Standard Webhooks, *Additional considerations*](../fuentes/standard-webhooks/standard-webhooks.md)).
-- `webhook-id` es la clave de idempotencia: un webhook ya procesado no se procesa otra vez ([Standard Webhooks, *Verifying signatures*](../fuentes/standard-webhooks/standard-webhooks.md)).
+- La clave pública de una firma asimétrica sale de `Settings`, nunca de la petición.
+- Un webhook con un `webhook-timestamp` a más de 5 minutos de la hora del servidor se rechaza ([Webhook Security, *Replay Attack Protection*](../fuentes/owasp/Webhook_Security.md)).
+- El servidor verifica las firmas de `webhook-signature` con el esquema de [Standard Webhooks 1.0.2](https://github.com/standard-webhooks/standard-webhooks/blob/v1.0.2/spec/standard-webhooks.md#signature-scheme), el del webhook de Equipaggio: sobre `webhook-id`, `webhook-timestamp` y el cuerpo tal como llegó, sin volver a serializarlo ([Webhook Security, *Signature Verification*](../fuentes/owasp/Webhook_Security.md)).
+- El servidor acepta el webhook si una de sus firmas vale, y solo de los esquemas que espera; si ninguna vale, responde 401 sin decir por qué ([Webhook Security, *Signature Verification*](../fuentes/owasp/Webhook_Security.md)).
+- Una firma simétrica se compara en tiempo constante ([Webhook Security, *Signature Verification*](../fuentes/owasp/Webhook_Security.md)).
+- El servidor guarda el `webhook-id` de cada webhook procesado, y a uno repetido le responde 200 sin repetir su efecto ([Webhook Security, *Idempotency and Duplicate Events*](../fuentes/owasp/Webhook_Security.md)).
 
 ## Envíos al exterior
 
@@ -256,7 +257,7 @@ Estándar: [RFC 8656](../fuentes/rfc/rfc8656.txt).
 
 Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
 
-- Una credencial de TURN dura 1 hora. coturn la revisa solo al abrir el relay, así que vencer no corta una llamada en curso.
+- Una credencial de TURN dura 1 hora. coturn la revisa solo al abrir el relay, así que vencer no corta una llamada en curso. [coturn 4.6.1](https://raw.githubusercontent.com/coturn/coturn/4.6.1/src/server/ns_turn_server.c)
 - La llamada que suena vive en Valkey, con su oferta y un TTL de 60 segundos. Una llamada sin respuesta en ese plazo queda perdida.
 - El usuario de una credencial de TURN es solo su vencimiento, sin la cuenta: coturn lo recibe sin cifrar ([RFC 8656 §21.1.6](../fuentes/rfc/rfc8656.txt)).
 
@@ -450,7 +451,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |
 | La app no se configura la telemetría desde el entorno, y las variables OTLP no agregan un exportador | `test_otlp_variables_export_nothing` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
-| Cada operación declara sus errores, y solo como problem+json | `test_errors_are_problems` |
+| Cada operación declara sus errores solo como problem+json, con el esquema de su problema, y el 422 con el de `validation` | `test_errors_are_problems` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | Un cambio de modelo que la autogeneración detecta, también de un `server_default`, sin su migración | `uv run alembic check` después de las migraciones, en el job `server` de CI |
 | La base de prueba con las migraciones | `uv run python -m app.tasks migrate` antes de pytest en el job `server` de CI |
@@ -461,8 +462,8 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | El rol de la app no cambia ni borra `event_log`, y la purga respeta la retención | `test_server_cannot_change_events` y `test_purge_deletes_only_expired_events` |
 | Solo el rol de la app y el dueño leen `event_log` | `test_only_the_server_and_owner_read_events` |
 | `GET /api/health/events` y `GET /api/health/event-log` exigen el token | `test_events_need_the_token` |
-| Un token equivocado deja `authn_login_fail` | `test_wrong_token_is_an_event` |
-| `GET /api/health` responde 204, o 503 si Valkey no contesta | `test_health_answers_with_its_dependencies` y `test_health_needs_valkey` |
+| Un token equivocado deja `authn_login_fail`, de nivel `warn` | `test_wrong_token_is_an_event` |
+| `GET /api/health` responde 204, o 503 si la base o Valkey no contestan | `test_health_answers_with_its_dependencies`, `test_health_needs_the_database` y `test_health_needs_valkey` |
 | `GET /api/health/events` dice el último evento de cualquier nivel | `test_events_tell_the_last_event` |
 | `GET /api/health/events` dice el disco de su carpeta | `test_events_tell_the_disk` |
 | `GET /api/health/event-log` no responde una fila mientras siga abierta una transacción anterior | `test_event_log_waits_for_an_open_transaction` |

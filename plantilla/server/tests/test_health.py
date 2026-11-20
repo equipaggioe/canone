@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 import sqlalchemy as sa
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession, create_async_engine
 from valkey.asyncio import Valkey
 
 from app import store
@@ -16,7 +16,7 @@ from app.config import settings
 from app.database import engine
 from app.enums import EventLevel
 from app.models.event.event_log import EventLog
-from app.services import events
+from app.services import events, health
 
 
 @pytest.fixture
@@ -138,9 +138,25 @@ async def test_health_needs_valkey(client: AsyncClient, monkeypatch: pytest.Monk
         await unreachable.aclose()
 
 
+async def test_health_needs_the_database(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Without the database the check answers 503."""
+    unreachable = create_async_engine("postgresql+asyncpg://nobody@127.0.0.1:1/none")
+    monkeypatch.setattr(health, "engine", unreachable)
+    try:
+        assert (await client.get("/api/health")).status_code == 503
+    finally:
+        await unreachable.dispose()
+
+
 async def test_wrong_token_is_an_event(
     client: AsyncClient, session: AsyncSession, app_folder: Path
 ) -> None:
-    """A request without the token leaves authn_login_fail."""
+    """A request without the token leaves authn_login_fail.
+
+    It is a warn: a scan does not move lastCriticalAt.
+    """
     await client.get("/api/health/events", headers={"Authorization": "Bearer wrong"})
-    assert await session.scalar(sa.select(EventLog.action)) == "authn_login_fail"
+    row = (await session.execute(sa.select(EventLog.action, EventLog.level))).one()
+    assert tuple(row) == ("authn_login_fail", EventLevel.WARN)

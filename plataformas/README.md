@@ -219,7 +219,7 @@ Se utiliza una tabla con estas columnas:
 Revisar una página, una sección o una fuente es comprobar que cumple este documento entero, y proponer lo que cambia, lo que sale y lo que falta. Se hacen los cinco pasos, aunque el pedido nombre un solo aspecto. Una revisión propone y no edita: los cambios se hacen cuando el desarrollador los aprueba.
 
 1. **Decisiones:** qué decisiones tiene que resolver lo revisado, según las dos condiciones de [Qué entra en una página](#qué-entra-en-una-página).
-2. **Fuentes:** cada fuente, contra [Requisitos](#requisitos) y [Elección entre fuentes](#elección-entre-fuentes). No se propone una fuente nueva para convenciones que ya están escritas.
+2. **Fuentes:** cada fuente, contra [Requisitos](#requisitos) y [Elección entre fuentes](#elección-entre-fuentes). No se propone una fuente nueva para convenciones que ya están escritas, salvo una que, por [Elección entre fuentes](#elección-entre-fuentes), le gana a la que hoy sigue su asunto.
 3. **Convenciones:** cada convención, contra las dos condiciones, [Qué no se escribe](#qué-no-se-escribe), «Una convención, una sección» y [Redacción](#redacción). Una convención adoptada se compara con su origen.
 4. **Lo que falta:** para cada decisión del paso 1 que no tiene convención se propone una, de la fuente de su asunto o propia. Lo que se propone cumple las dos condiciones igual que lo escrito. Lo que la página no escribe de una fuente no se evalúa: no escribir es lo normal.
 5. **Cumplimiento:** cada fila, contra sus [Criterios](#criterios).

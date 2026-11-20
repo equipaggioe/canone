@@ -1,6 +1,6 @@
 # ADR-0163 · Una revisión recorre el documento entero y propone también lo que falta
 
-- **Estado:** Aceptada. El usuario pidió aplicar la propuesta (2026-11-16)
+- **Estado:** Aceptada. El usuario pidió aplicar la propuesta (2026-11-16). La primera mitad del punto 10 la reemplaza el [ADR-0200](0200-una-fuente-que-gana-la-eleccion-reemplaza-a-la-de-su-asunto-y-los-webhooks-siguen-a-owasp.md)
 - **Fecha:** 2026-11-16
 - **Alcance:** [`plataformas/README.md`](../plataformas/README.md)
 

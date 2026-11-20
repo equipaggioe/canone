@@ -509,8 +509,18 @@ def test_operation_ids() -> None:
     assert not offenders
 
 
+def problem_schema(status: str) -> dict[str, Any]:
+    """Return the only content an error may declare, by its status."""
+    name = "ValidationProblem" if status == "422" else "Problem"
+    return {errors.PROBLEM_JSON: {"schema": {"$ref": f"#/components/schemas/{name}"}}}
+
+
 def test_errors_are_problems() -> None:
-    """Every operation declares its errors, and only as problem+json."""
+    """Every operation declares its errors as problem+json.
+
+    Each with the schema of its problem: a 422 with the validation
+    one.
+    """
     document = main_app.openapi()
     offenders = [
         f"{method.upper()} {path} {status}"
@@ -518,7 +528,7 @@ def test_errors_are_problems() -> None:
         for method, operation in operations.items()
         for status in {"4XX", "5XX"} | set(operation["responses"])
         if status[0] in "45"
-        and set(operation["responses"].get(status, {}).get("content", {})) != {errors.PROBLEM_JSON}
+        and operation["responses"].get(status, {}).get("content") != problem_schema(status)
     ]
     assert not offenders
 

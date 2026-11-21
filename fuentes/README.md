@@ -49,7 +49,6 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [dtcg/format.html](dtcg/format.html) | [URL](https://www.designtokens.org/tr/2025.10/format/) |  |
 | [dtcg/color.html](dtcg/color.html) | [URL](https://www.designtokens.org/tr/2025.10/color/) |  |
 | [dtcg/resolver.html](dtcg/resolver.html) | [URL](https://www.designtokens.org/tr/2025.10/resolver/) |  |
-| [wicg/sms-one-time-codes.bs](wicg/sms-one-time-codes.bs) | [URL](https://raw.githubusercontent.com/WICG/sms-one-time-codes/2bb70db2550c4a4d76a4836f1b42d7abfca4ab82/index.bs) |  |
 | [nist/sp800-63b-4.txt](nist/sp800-63b-4.txt) | [URL](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf) | Texto extraído del PDF |
 | [nist/sp800-41r1.txt](nist/sp800-41r1.txt) | [URL](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-41r1.pdf) | Texto extraído del PDF |
 | [nist/ir7966.txt](nist/ir7966.txt) | [URL](https://nvlpubs.nist.gov/nistpubs/ir/2015/NIST.IR.7966.pdf) | Texto extraído del PDF |
@@ -57,10 +56,10 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [iana/iana-ipv6-special-registry.csv](iana/iana-ipv6-special-registry.csv) | [URL](https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry-1.csv) | Descargado el 2026-10-27. Lista de direcciones, no fuente |
 | [fhs/fhs-3.0.txt](fhs/fhs-3.0.txt) | [URL](https://www.debian.org/doc/packaging-manuals/fhs/fhs-3.0.txt) | Versión 3.0, la que sigue Debian 13. Copia de Debian: refspecs.linuxfoundation.org rechaza la descarga |
 | [owasp/ASVS_V3_Web_Frontend_Security.md](owasp/ASVS_V3_Web_Frontend_Security.md) | [URL](https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x12-V3-Web-Frontend-Security.md) | Versión 5.0.0 |
+| [owasp/ASVS_V6_Authentication.md](owasp/ASVS_V6_Authentication.md) | [URL](https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x15-V6-Authentication.md) | Versión 5.0.0 |
 | [owasp/ASVS_V7_Session_Management.md](owasp/ASVS_V7_Session_Management.md) | [URL](https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/en/0x16-V7-Session-Management.md) | Versión 5.0.0 |
 | [owasp/Authorization.md](owasp/Authorization.md) | [URL](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Authorization_Cheat_Sheet.md) |  |
 | [owasp/Content_Security_Policy.md](owasp/Content_Security_Policy.md) | [URL](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/eaa71fb4a421dc057bf03a3856d0d34967299ff1/cheatsheets/Content_Security_Policy_Cheat_Sheet.md) |  |
-| [owasp/Password_Storage.md](owasp/Password_Storage.md) | [URL](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Password_Storage_Cheat_Sheet.md) |  |
 | [owasp/HTTP_Headers.md](owasp/HTTP_Headers.md) | [URL](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/HTTP_Headers_Cheat_Sheet.md) |  |
 | [owasp/Logging.md](owasp/Logging.md) | [URL](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Cheat_Sheet.md) |  |
 | [owasp/Logging_Vocabulary.md](owasp/Logging_Vocabulary.md) | [URL](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/08bda3ac496ba5feed72e577de327057d0be4485/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md) |  |
@@ -105,7 +104,6 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [android/coroutines-best-practices.md](android/coroutines-best-practices.md) | [URL](https://developer.android.com/kotlin/coroutines/coroutines-best-practices) | Página web convertida a Markdown |
 | [android/hilt.md](android/hilt.md) | [URL](https://developer.android.com/training/dependency-injection/hilt-android) | Página web convertida a Markdown |
 | [android/localization.md](android/localization.md) | [URL](https://developer.android.com/guide/topics/resources/localization) | Página web convertida a Markdown |
-| [android/credential-manager-prerequisites.md](android/credential-manager-prerequisites.md) | [URL](https://developer.android.com/identity/credential-manager/prerequisites) | Página web convertida a Markdown |
 | [android/create-passkeys.md](android/create-passkeys.md) | [URL](https://developer.android.com/identity/passkeys/create-passkeys) | Página web convertida a Markdown |
 | [android/sign-in-with-passkeys.md](android/sign-in-with-passkeys.md) | [URL](https://developer.android.com/identity/passkeys/sign-in-with-passkeys) | Página web convertida a Markdown |
 | [android/notification-permission.md](android/notification-permission.md) | [URL](https://developer.android.com/develop/ui/compose/notifications/notification-permission) | Página web convertida a Markdown |

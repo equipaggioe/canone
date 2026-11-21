@@ -1,7 +1,8 @@
 # ADR-0045 · El login y las contraseñas siguen el nivel 1 de ASVS
 
 - **Estado:** Aceptada. Los puntos 1, 2 y 3 los reemplaza el
-  [ADR-0067](0067-la-autenticacion-sigue-a-nist-y-el-bloqueo-cuenta-fallos-consecutivos-con-esperas.md)
+  [ADR-0067](0067-la-autenticacion-sigue-a-nist-y-el-bloqueo-cuenta-fallos-consecutivos-con-esperas.md), y el
+  punto 6, el [ADR-0207](0207-autenticacion-deja-lo-que-tiene-una-sola-forma-el-titular-cierra-sus-sesiones-y-el-flujo-del-navegador-se-liga-a-una-cookie.md)
 - **Fecha:** 2026-10-11
 - **Alcance:** las secciones «Autenticación», «Código por SMS», «Contraseñas» y «Passkeys» de
   [`plataformas/fastapi.md`](../plataformas/fastapi.md)

@@ -414,7 +414,6 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autenticacion.md#websocket).
 
 - Cada proceso se suscribe a Valkey y reenvía a sus conexiones, con un canal por usuario.
-- Un handshake con la cookie exige un `Origin` igual al de la web, y uno con `Authorization` no lo revisa: una app nativa no manda `Origin`, y el secuestro entre sitios solo existe con la credencial que el navegador agrega por su cuenta.
 - Una conexión sin mensajes no se cierra: la conexión existe para esperar eventos del servidor, y el ping de Uvicorn ya cierra la que se cayó.
 - Los mensajes no llevan nonce: WSS ya impide que alguien fuera de la conexión repita un mensaje.
 - Los contadores de los límites del WebSocket viven en Valkey, compartidos por todos los procesos.

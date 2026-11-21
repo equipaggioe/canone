@@ -280,11 +280,11 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 ## Passkeys
 
-Estándares: [*Create a passkey*](../fuentes/android/create-passkeys.md), [*Sign in with a passkey*](../fuentes/android/sign-in-with-passkeys.md) y los [requisitos de Credential Manager](../fuentes/android/credential-manager-prerequisites.md) de Android.
+Estándares: [*Create a passkey*](../fuentes/android/create-passkeys.md) y [*Sign in with a passkey*](../fuentes/android/sign-in-with-passkeys.md) de Android.
 
 Contrato: [autenticacion.md](autenticacion.md#passkeys).
 
-- El manifiesto declara el `meta-data` `asset_statements`, y el recurso `asset_statements`, con `translatable="false"`, incluye `https://<dominio>/.well-known/assetlinks.json` ([Prerequisites, *Update the app's manifest*](../fuentes/android/credential-manager-prerequisites.md) y [*Configure Digital Asset Links for passwords*](../fuentes/android/credential-manager-prerequisites.md)).
+- El manifiesto declara el `meta-data` `asset_statements`, y el recurso `asset_statements`, con `translatable="false"`, incluye `https://<dominio>/.well-known/assetlinks.json`.
 - `minSdk` no baja de la API 28 ([Create a passkey, *Prerequisites*](../fuentes/android/create-passkeys.md)).
 - La app crea la passkey con un `CreatePublicKeyCredentialRequest` cuyo `requestJson` son las opciones del servidor, y `preferImmediatelyAvailableCredentials` en `false`: la app la crea cuando lo pide el usuario ([Create a passkey, *Create a passkey*](../fuentes/android/create-passkeys.md)).
 - Cada subclase de `CreateCredentialException` se maneja aparte ([Create a passkey, *Handle the response*](../fuentes/android/create-passkeys.md)).

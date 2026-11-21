@@ -3,7 +3,9 @@
 - **Estado:** Aceptada. El usuario eligió lo recomendado para dónde va el código que no es de Qt y
   para el cliente de una API externa, con sus dos puntos: el campo que no se conoce y los
   reintentos (2026-11-18). Su consecuencia de que ninguna herramienta comprueba el árbol la deja
-  atrás el [ADR-0188](0188-verificar-comprueba-el-arbol-de-qt-y-flet-y-ruff-deja-http-solo-en-api.md)
+  atrás el [ADR-0188](0188-verificar-comprueba-el-arbol-de-qt-y-flet-y-ruff-deja-http-solo-en-api.md).
+  Del punto 3, el [ADR-0211](0211-transversal-escribe-entero-cada-criterio-de-wcag-la-api-lleva-la-fecha-sin-hora-y-la-zona-y-tokens-dice-lo-que-no-sigue-de-dtcg.md)
+  deja fuera el problem+json del servidor propio
 - **Fecha:** 2026-11-18
 - **Alcance:** [`plataformas/qt.md`](../plataformas/qt.md), «Proyecto» y «Red»;
   [`plataformas/flet.md`](../plataformas/flet.md), «Proyecto» y «Red»;

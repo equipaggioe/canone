@@ -168,7 +168,7 @@ Estándar: [RFC 8656](../fuentes/rfc/rfc8656.txt).
 - En una máquina cuya interfaz tiene solo una dirección privada, porque la pública le llega por NAT, `install.py --turn-ip <pública>` agrega `external-ip=<pública>/<privada>`, con la privada por la que la máquina sale a internet: sin ella, coturn entrega su dirección privada, y la otra parte de la llamada no lo alcanza.
 - coturn no abre su consola de administración (`no-cli`), que por defecto escucha en el 5766 de la máquina, sin contraseña, para cualquier cuenta de ella. [coturn 4.6.1](https://raw.githubusercontent.com/coturn/coturn/4.6.1/examples/etc/turnserver.conf)
 - coturn no envía el atributo `SOFTWARE` (`no-software-attribute`): viaja sin cifrar y nombra su versión.
-- coturn exige una credencial en cada petición: solo releva con las temporales de [transversal.md](transversal.md#llamadas-de-voz-y-video) ([RFC 8656 §7.2](../fuentes/rfc/rfc8656.txt) y [§21.1.1](../fuentes/rfc/rfc8656.txt)).
+- coturn exige una credencial en cada petición: solo releva con las temporales (`use-auth-secret`) de [transversal.md](transversal.md#llamadas-de-voz-y-video) ([RFC 8656 §7.2](../fuentes/rfc/rfc8656.txt) y [§21.1.1](../fuentes/rfc/rfc8656.txt)).
 - El secreto son 256 bits aleatorios ([RFC 8656 §21.1.2](../fuentes/rfc/rfc8656.txt)).
 - coturn escucha solo en el 3478, por UDP y por TCP, sin TLS: WebRTC ya cifra la llamada, y TLS pediría el certificado de Caddy, que vive en una carpeta interna suya ([RFC 8656 §3.1](../fuentes/rfc/rfc8656.txt) y [§21.1.6](../fuentes/rfc/rfc8656.txt)).
 - Releva solo por UDP, del 49152 al 65535: WebRTC no releva por TCP ([RFC 8656 §3.1](../fuentes/rfc/rfc8656.txt) y [§7.2](../fuentes/rfc/rfc8656.txt)).

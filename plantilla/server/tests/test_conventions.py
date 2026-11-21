@@ -799,6 +799,7 @@ async def test_validation_error_points_to_the_field() -> None:
         b'{"a": NaN}',
         b'{"a": "\\uDEAD"}',
         b'{"\\uFFFF": 1}',
+        b'{"a": "\\uFDD0"}',
         b'"text"',
         '{"a": 1}'.encode("utf-16"),
     ],
@@ -880,7 +881,7 @@ async def test_outdated_client_is_rejected(
 
 
 async def test_problem_types_are_documented() -> None:
-    """The URI of each problem type serves its documentation."""
+    """The URI of each problem type serves its title and status."""
     transport = ASGITransport(app=main_app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         for problem in errors.TYPES.values():
@@ -888,6 +889,7 @@ async def test_problem_types_are_documented() -> None:
             assert response.status_code == 200
             assert response.headers["content-type"].startswith("text/html")
             assert problem.title in response.text
+            assert str(problem.status.value) in response.text
 
 
 @pytest.mark.usefixtures("database")

@@ -157,6 +157,12 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - Los catálogos van en `src/locales/<idioma>/LC_MESSAGES/<pieza>.po`. El `.mo` se genera antes de `flet build` y de `flet test`, y no va en git: sale del `.po`, y en git quedaría desfasado.
 - `page.locale_configuration` declara en `supported_locales` los idiomas de la app, con el base primero, y en `current_locale`, el que eligió el usuario: sin ella, los controles de Flutter quedan en `en-US`, y un idioma que no está en la lista cae en el primero. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/types.py)
 
+## Mapas
+
+Contrato: [transversal.md](transversal.md#mapas).
+
+- La app no muestra mapas: Flet no tiene una extensión de MapLibre.
+
 ## OpenAPI y clientes
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).

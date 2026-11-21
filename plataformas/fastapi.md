@@ -159,7 +159,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 - `alias_generator=to_camel` y `serialize_by_alias=True` en el esquema base.
 - `validate_by_name=True` en el esquema base: el código y las filas usan los nombres de Python, en snake_case. Sin él, `from_attributes` busca en una fila el alias, `createdAt`, y no encuentra `created_at`.
-- `extra="forbid"` en el esquema base: el OpenAPI declara `additionalProperties: false` en cada esquema, también en los de respuesta, y con eso el cliente generado falla ante un campo que no conoce.
+- `extra="forbid"` en el esquema base: el OpenAPI declara `additionalProperties: false` en cada esquema, también en los de respuesta, y con eso el cliente generado falla ante un campo que no conoce. `Problem` y `ValidationProblem` llevan `extra="ignore"`: el cliente ignora una extensión que no conoce ([transversal.md](transversal.md#errores)).
 - `validate_by_name=False` en los esquemas de entrada: el cliente escribe solo en camelCase, y un campo en snake_case responde 422 en vez de aceptarse con dos nombres.
 - Los parámetros de query se declaran en un esquema de entrada. Un parámetro desconocido responde 422 en vez de ignorarse.
 
@@ -455,6 +455,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | La app no se configura la telemetría desde el entorno, y las variables OTLP no agregan un exportador | `test_otlp_variables_export_nothing` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | Cada operación declara sus errores solo como problem+json, con el esquema de su problema, y el 422 con el de `validation` | `test_errors_are_problems` |
+| `Problem` y `ValidationProblem` sin `additionalProperties: false` | `test_problems_let_extensions_through` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | Un cambio de modelo que la autogeneración detecta, también de un `server_default`, sin su migración | `uv run alembic check` después de las migraciones, en el job `server` de CI |
 | La base de prueba con las migraciones | `uv run python -m app.tasks migrate` antes de pytest en el job `server` de CI |

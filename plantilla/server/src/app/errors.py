@@ -9,6 +9,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from pydantic import ConfigDict
 from pydantic.json_schema import models_json_schema
 from starlette.exceptions import HTTPException
 
@@ -64,7 +65,13 @@ class FieldError(Schema):
 
 
 class Problem(Schema):
-    """An RFC 9457 problem details object."""
+    """An RFC 9457 problem details object.
+
+    It does not forbid other members: a client ignores an extension it
+    does not know (transversal.md, «Errores»).
+    """
+
+    model_config = ConfigDict(extra="ignore")
 
     type: str
     title: str

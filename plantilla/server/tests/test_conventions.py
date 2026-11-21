@@ -682,6 +682,13 @@ def test_errors_are_problems() -> None:
     assert not offenders
 
 
+def test_problems_let_extensions_through() -> None:
+    """Problem and ValidationProblem do not forbid other members."""
+    schemas = main_app.openapi()["components"]["schemas"]
+    assert "additionalProperties" not in schemas["Problem"]
+    assert "additionalProperties" not in schemas["ValidationProblem"]
+
+
 def test_log_lines_have_no_line_breaks() -> None:
     """A value with a line break stays on one line of the log."""
     record = logging.LogRecord("app", logging.INFO, __file__, 1, "got %s", ("a\r\nb",), None)

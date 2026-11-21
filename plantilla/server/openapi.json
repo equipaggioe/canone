@@ -474,8 +474,7 @@
         "type": "object"
       },
       "Problem": {
-        "additionalProperties": false,
-        "description": "An RFC 9457 problem details object.",
+        "description": "An RFC 9457 problem details object.\n\nIt does not forbid other members: a client ignores an extension it\ndoes not know (transversal.md, «Errores»).",
         "properties": {
           "type": {
             "title": "Type",
@@ -516,7 +515,6 @@
         "type": "object"
       },
       "ValidationProblem": {
-        "additionalProperties": false,
         "description": "A problem of type validation, with one entry per field.",
         "properties": {
           "type": {

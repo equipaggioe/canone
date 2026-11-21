@@ -71,7 +71,7 @@ Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 - Cada repositorio declara en variables de GitHub Actions en qué plataformas construye y publica cada pieza: `RELEASE_<PIEZA>_<PLATAFORMA>`, con `true` o `false`, como `RELEASE_CUSTOMER_IOS` o `RELEASE_DESKTOP_MACOS`. Una app en Flutter o en Flet lleva `ANDROID` e `IOS`; una en Kotlin, `ANDROID`, y `desktop/`, `LINUX`, `MACOS` y `WINDOWS`. CI falla si falta una, si vale otra cosa o si no es de ninguna pieza: con un valor por defecto, un repositorio mal configurado dejaría de publicar en una plataforma sin que nadie lo note.
 - Los ejecutables y los instaladores de Windows van sin firmar.
 - Una app de iOS se publica en la App Store.
-- La versión de macOS de una app de escritorio es un DMG con la app dentro. La app y el DMG van firmados con un certificado Developer ID, la app con el runtime endurecido y sello de tiempo, y el DMG va notarizado y con el ticket grapado: desde macOS 15, una app descargada sin notarizar no abre sin pasar por los ajustes de seguridad del sistema. [Updates to runtime protection in macOS Sequoia](https://developer.apple.com/news/?id=saqachfa)
+- La versión de macOS de una app de escritorio es un DMG con la app dentro, notarizado y con el ticket grapado: desde macOS 15, una app descargada sin notarizar no abre sin pasar por los ajustes de seguridad del sistema. [Updates to runtime protection in macOS Sequoia](https://developer.apple.com/news/?id=saqachfa)
 - El número de build de una app de Android, de Flutter o de Flet es un entero que vive en su manifiesto, junto a su versión, y sube con cada versión que se publica.
 - Una app de Android se publica en Google Play con Play App Signing: la llave que firma la app la genera y la guarda Play, y cada versión llega a Play firmada con la llave de subida. [Play App Signing](https://support.google.com/googleplay/android-developer/answer/9842756)
 - La descarga directa de una app de Android, si la tiene, es el APK universal que Play genera de esa misma versión: la tienda y la descarga llevan la misma firma, y una app instalada por una se actualiza por la otra. [Play App Signing](https://support.google.com/googleplay/android-developer/answer/9842756)
@@ -88,8 +88,8 @@ Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt) y [RFC 9110](../fuentes/rfc/
 - El cliente toma una respuesta de error sin problem+json, o con un `type` que su catálogo no conoce, como de tipo `about:blank`, con su `status`, y su catálogo tiene un texto por `status` para ese tipo.
 - Ante un 5xx o un `type` que su catálogo no conoce, el cliente muestra el `traceId` junto al texto, para que el usuario lo copie.
 - Cada cliente traduce el sobre a un error tipado con los mismos campos.
-- Un error que su código de estado ya explica no tiene tipo propio: es de tipo `about:blank` ([RFC 9457 §4](../fuentes/rfc/rfc9457.txt) y [§4.2.1](../fuentes/rfc/rfc9457.txt)).
 - Todo problem+json lleva `status`, y ninguno lleva `instance`: `traceId` ya identifica la ocurrencia ([RFC 9457 §3.1.2](../fuentes/rfc/rfc9457.txt) y [§3.1.5](../fuentes/rfc/rfc9457.txt)).
+- Un error que su código de estado ya explica no tiene tipo propio: es de tipo `about:blank` ([RFC 9457 §4](../fuentes/rfc/rfc9457.txt) y [§4.2.1](../fuentes/rfc/rfc9457.txt)).
 - `status` es el código de estado de la respuesta ([RFC 9457 §3.1.2](../fuentes/rfc/rfc9457.txt)).
 - El `title` de un tipo no cambia de una ocurrencia a otra, salvo por el idioma, y el de `about:blank` es la frase de su código de estado ([RFC 9457 §3.1.3](../fuentes/rfc/rfc9457.txt) y [§4.2.1](../fuentes/rfc/rfc9457.txt)).
 - `detail` ayuda al cliente a corregir el problema, sin datos de depuración ni de la implementación ([RFC 9457 §3.1.4](../fuentes/rfc/rfc9457.txt), [§4](../fuentes/rfc/rfc9457.txt) y [§5](../fuentes/rfc/rfc9457.txt)).
@@ -145,11 +145,11 @@ Estándares: la [guía de atribución](../fuentes/osm/attribution-guidelines.md)
 - Los clientes buscan direcciones en el servidor, que consulta a Nominatim: su límite es por aplicación, y solo el servidor ve el total. [Nominatim](https://raw.githubusercontent.com/openstreetmap/owg-website/fd6937012a5b2d8f4c0255148342b97191c840e7/policies/nominatim.md)
 - La atribución nombra además a OpenFreeMap y a OpenMapTiles, como la que publica OpenFreeMap con sus teselas.
 - Una posición lleva solo la longitud y la latitud, sin altitud ([RFC 7946 §3.1.1](../fuentes/rfc/rfc7946.txt)).
+- La atribución va en una esquina del mapa, legible y a la vista sin tocar el mapa ([OSM, *Requirements to fit within OSMF’s safe harbour*](../fuentes/osm/attribution-guidelines.md) y [*Interactive maps*](../fuentes/osm/attribution-guidelines.md)).
 - Las coordenadas van en WGS 84, en grados decimales, primero la longitud y después la latitud ([RFC 7946 §3.1.1](../fuentes/rfc/rfc7946.txt) y [§4](../fuentes/rfc/rfc7946.txt)).
 - Un trazado que cruza el antimeridiano se corta en dos y viaja como un `MultiLineString` ([RFC 7946 §3.1.9](../fuentes/rfc/rfc7946.txt)).
 - No se agregan tipos a GeoJSON ni se cambia el sentido de sus miembros ([RFC 7946 §7](../fuentes/rfc/rfc7946.txt) y [§7.1](../fuentes/rfc/rfc7946.txt)).
 - El cliente no toma la cantidad de decimales de una coordenada como su precisión ([RFC 7946 §3.1.10](../fuentes/rfc/rfc7946.txt)).
-- La atribución va en una esquina del mapa, legible y a la vista sin tocar el mapa ([OSM, *Requirements to fit within OSMF’s safe harbour*](../fuentes/osm/attribution-guidelines.md) y [*Interactive maps*](../fuentes/osm/attribution-guidelines.md)).
 - La atribución dice «OpenStreetMap» y lleva a `openstreetmap.org/copyright` ([OSM, *Attribution text*](../fuentes/osm/attribution-guidelines.md)).
 - Ninguna otra atribución hace creer que los datos no son de OpenStreetMap ([OSM, *Requirements to fit within OSMF’s safe harbour*](../fuentes/osm/attribution-guidelines.md)).
 - Un cliente que busca direcciones con Nominatim atribuye a OpenStreetMap ([OSM, *Geocoding (search)*](../fuentes/osm/attribution-guidelines.md)).
@@ -215,11 +215,11 @@ Estándares: la [*Push API*](../fuentes/w3c/push-api.html) de W3C, [RFC 8030](..
 - El FID y la suscripción web pertenecen a la sesión: se borran cuando la sesión se cierra o vence.
 - Registrar una suscripción web reemplaza la que tenía la sesión, y registrar la misma otra vez no cambia nada: la web la vuelve a mandar al abrir y cuando el navegador la renueva, y no sabe cuál tenía antes.
 - La web recibe push con la Push API, sin el SDK de FCM: la CSP queda en `'self'`.
+- En la web, el push de una llamada entrante lleva `Urgency: high` ([RFC 8030 §5.3](../fuentes/rfc/rfc8030.txt)).
+- El JWT lleva en `sub` un `mailto:` de contacto del producto ([RFC 8292 §2.1](../fuentes/rfc/rfc8292.txt)).
 - Un Web Push es un mensaje declarativo: `web_push` vale 8030, y `notification` lleva `title` y, en `navigate`, la ruta que abre ([Push API, *Declarative push message*](../fuentes/w3c/push-api.html)).
 - La web le manda al servidor su suscripción como la serializa `toJSON()`: `endpoint`, `expirationTime` y, en `keys`, `p256dh` y `auth` en base64url ([Push API, *PushSubscription interface*](../fuentes/w3c/push-api.html) y [*PushEncryptionKeyName enumeration*](../fuentes/w3c/push-api.html)).
-- En la web, el push de una llamada entrante lleva `Urgency: high` ([RFC 8030 §5.3](../fuentes/rfc/rfc8030.txt)).
 - Cada Web Push lleva el JWT de VAPID del servidor ([RFC 8292 §2](../fuentes/rfc/rfc8292.txt)).
-- El JWT lleva en `sub` un `mailto:` de contacto del producto ([RFC 8292 §2.1](../fuentes/rfc/rfc8292.txt)).
 - La web se suscribe con `applicationServerKey`, la clave pública de VAPID del servidor: un punto de P-256 sin comprimir, en base64url ([Push API, *PushSubscriptionOptions Interface*](../fuentes/w3c/push-api.html)).
 - La clave de VAPID es un par de ECDSA sobre P-256, y el JWT se firma con ES256 ([RFC 8292 §2](../fuentes/rfc/rfc8292.txt)).
 - El JWT lleva en `aud` el origen del endpoint, y en `exp`, un vencimiento a lo sumo 24 horas después de la petición ([RFC 8292 §2](../fuentes/rfc/rfc8292.txt)).
@@ -247,7 +247,6 @@ Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el [mó
 - Un custom color se nombra con minúsculas y dígitos, y no con el de un rol del `ColorScheme`: es un campo en cada cliente. Todos los temas y los modos tienen los mismos custom colors.
 - Cada producto elige sus temas y sus modos: uno o más temas, y el modo claro, el oscuro o los dos. Cada tema tiene los modos del producto.
 - Un tema cambia la paleta, y los modos asignan los roles: el mismo rol toma el mismo tono en todos los temas. Los archivos de un tema solo tienen el grupo `palette`, y los de un modo, solo el grupo `color`.
-- `colors.resolver.json` tiene dos modificadores: `theme`, con un contexto por tema y el inicial en `default`, y `mode`, con `light`, `dark` o los dos ([DTCG Resolver §4.1.5](../fuentes/dtcg/resolver.html)).
 - Un tema se nombra con minúsculas y dígitos: es un miembro de un enum en cada cliente y un valor de `data-theme` en la web.
 - `scripts/tokens.py` genera en cada cliente el enum `ColorTheme`, con un miembro por tema y un esquema ya armado por modo, y el tema inicial. Si el producto tiene custom colors, genera también la clase `CustomColors`, y cada tema tiene uno por modo, aparte del esquema.
 - `scripts/tokens.py` falla ante lo que DTCG define fuera de las partes que siguen, ante un color que no cumpla el contraste de [Accesibilidad](#accesibilidad) y ante dos temas iguales: un producto solo usa colores sRGB opacos.
@@ -256,6 +255,7 @@ Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el [mó
 - Con los dos modos, el usuario elige el modo en la app: sistema, claro u oscuro. Con «sistema», con el que empieza, el cliente sigue el modo del sistema y cambia con él.
 - Si el producto tiene más de un tema, el usuario también lo elige, y empieza con el inicial.
 - Lo que elige el usuario son preferencias de cada dispositivo: la misma cuenta puede usar el modo oscuro en el teléfono y el claro en la computadora.
+- `colors.resolver.json` tiene dos modificadores: `theme`, con un contexto por tema y el inicial en `default`, y `mode`, con `light`, `dark` o los dos ([DTCG Resolver §4.1.5](../fuentes/dtcg/resolver.html)).
 - `brand/tokens/` sigue del formato las partes *Name and value*, *Description*, *Type*, *Group Structure* y *Curly Brace Syntax*, que hace cumplir `scripts/tokens.py` ([DTCG Format §5.1](../fuentes/dtcg/format.html), [§5.2.1](../fuentes/dtcg/format.html), [§5.2.2](../fuentes/dtcg/format.html), [§6.1](../fuentes/dtcg/format.html) y [§7.1.1](../fuentes/dtcg/format.html)).
 - `brand/tokens/` sigue del módulo de color las partes *Format* y *sRGB*, que hace cumplir `scripts/tokens.py`, salvo un `alpha` menor que 1 y el valor `none` en un componente: un color de la paleta es opaco y tiene sus tres componentes ([DTCG Color §4.1](../fuentes/dtcg/color.html) y [§4.2.1](../fuentes/dtcg/color.html)).
 - `brand/tokens/` sigue del resolver las partes *Root level properties* y *Reference objects*, que hace cumplir `scripts/tokens.py`, salvo tres reglas. Un modificador puede tener un solo contexto: un producto puede tener un solo tema o un solo modo. Los tokens van en los `.tokens.json`, no en línea en el resolver. Un `$ref` no lleva otras claves y apunta a un set, a un modificador desde `resolutionOrder` o a un `.tokens.json` entero de `brand/tokens/`: el resolver solo ordena los archivos ([DTCG Resolver §4.1](../fuentes/dtcg/resolver.html) y [§4.2](../fuentes/dtcg/resolver.html)).
@@ -277,6 +277,7 @@ Estándar: [RFC 9110](../fuentes/rfc/rfc9110.txt).
 Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Security.md) de OWASP.
 
 - Los mensajes son JSON `{type, data}`, en camelCase como la API.
+- El valor de `type` va en snake_case, como los valores de un enum.
 - Al perder la conexión, el cliente reconecta con espera exponencial y jitter, con hasta 30 segundos entre intentos, y vuelve a pedir el estado por REST. Lo que se envió mientras estaba desconectado no se repite.
 - Un cliente se conecta solo por `wss://` ([WebSocket Security, *Always Use WSS (WebSocket Secure)*](../fuentes/owasp/WebSocket_Security.md)).
 

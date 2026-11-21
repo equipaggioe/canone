@@ -1,6 +1,6 @@
 # ADR-0211 · `transversal.md` escribe entero cada criterio de WCAG que adopta, la API lleva la fecha sin hora y la zona horaria, y `brand/tokens/` dice lo que no sigue de DTCG
 
-- **Estado:** Aceptada. El usuario pidió aplicar los veredictos de la revisión (2026-11-21). Que el valor de `type` de un mensaje de WebSocket vaya en snake_case no lo confirmó: queda como propuesta abierta
+- **Estado:** Aceptada. El usuario pidió aplicar los veredictos de la revisión (2026-11-21). Que el valor de `type` de un mensaje de WebSocket vaya en snake_case no lo confirmó entonces: lo decide el [ADR-0212](0212-un-problem-json-deja-pasar-una-extension-desconocida-y-el-type-de-websocket-va-en-snake-case.md)
 - **Fecha:** 2026-11-21
 - **Alcance:** [plataformas/transversal.md](../plataformas/transversal.md), `flet.md`, `despliegue.md`, `plantilla/scripts/tokens.py` y `plantilla/server/tests/test_conventions.py`
 
@@ -30,7 +30,7 @@ Se revisó `transversal.md` con los cinco pasos de [plataformas/README.md](../pl
 ## Consecuencias
 
 - Cada repositorio con `brand/tokens/` copia el `tokens.py` nuevo: `verificar.py` compara la copia.
-- El modelo de problem+json que genera cada cliente tiene que ignorar una extensión desconocida, y `openapi.json` declara `additionalProperties: false` en `Problem`: queda en [pendientes/problem-json-en-los-modelos-generados.md](../pendientes/problem-json-en-los-modelos-generados.md). El valor de `type` de WebSocket queda en [pendientes/tipo-de-los-mensajes-de-websocket.md](../pendientes/tipo-de-los-mensajes-de-websocket.md).
+- El modelo de problem+json que genera cada cliente tiene que ignorar una extensión desconocida, y `openapi.json` declaraba `additionalProperties: false` en `Problem`: lo resuelve el [ADR-0212](0212-un-problem-json-deja-pasar-una-extension-desconocida-y-el-type-de-websocket-va-en-snake-case.md).
 
 ## Descartado
 

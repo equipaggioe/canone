@@ -683,10 +683,10 @@ def test_errors_are_problems() -> None:
 
 
 def test_problems_let_extensions_through() -> None:
-    """Problem and ValidationProblem do not forbid other members."""
+    """No schema of a problem forbids other members."""
     schemas = main_app.openapi()["components"]["schemas"]
-    assert "additionalProperties" not in schemas["Problem"]
-    assert "additionalProperties" not in schemas["ValidationProblem"]
+    for name in ("Problem", "ValidationProblem", "FieldError"):
+        assert "additionalProperties" not in schemas[name]
 
 
 def test_log_lines_have_no_line_breaks() -> None:

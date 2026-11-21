@@ -57,7 +57,9 @@ TYPES = {problem.name: problem for problem in (VALIDATION, CLIENT_OUTDATED)}
 
 
 class FieldError(Schema):
-    """One invalid field or parameter."""
+    """One invalid field or parameter, open to new members."""
+
+    model_config = ConfigDict(extra="ignore")
 
     detail: str
     pointer: str | None = None

@@ -169,7 +169,7 @@ Estándar: [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
 
 - La API habla en camelCase.
 - Cada cliente genera del `openapi.json` del servidor los modelos del cable, en la convención de su lenguaje, y ninguno los escribe a mano: copiado a mano en varios lenguajes, el contrato diverge sin que nadie lo note.
-- Un cliente falla ante un campo que no conoce en una respuesta del servidor, salvo en un problem+json, que sigue [Errores](#errores): como en el servidor, un campo desconocido es un error del contrato que tiene que verse.
+- Un cliente falla ante un campo que no conoce en una respuesta del servidor, salvo en un problem+json, que sigue [Errores](#errores), y salvo la web, que sale en el mismo artefacto que el servidor y se recarga cuando cambia de versión ([sveltekit.md](sveltekit.md#carga-de-datos)): como en el servidor, un campo desconocido es un error del contrato que tiene que verse.
 - La respuesta de un servicio externo se lee con modelos escritos a mano, que validan los campos que el cliente lee e ignoran los que no conoce: el servicio agrega campos sin avisar, y su contrato no sale del `openapi.json`.
 - Los valores de un enum van en snake_case.
 - El servidor responde 422 a un campo o un parámetro que no conoce: el cliente y el servidor salen del mismo contrato, y un campo desconocido es un error del cliente que tiene que verse.

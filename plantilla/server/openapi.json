@@ -435,8 +435,7 @@
         "title": "Page[LoggedEvent]"
       },
       "FieldError": {
-        "additionalProperties": false,
-        "description": "One invalid field or parameter.",
+        "description": "One invalid field or parameter, open to new members.",
         "properties": {
           "detail": {
             "title": "Detail",

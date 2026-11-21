@@ -1,6 +1,6 @@
 # ADR-0212 · Un problem+json deja pasar una extensión desconocida, y el `type` de WebSocket va en snake_case
 
-- **Estado:** Aceptada. El usuario eligió lo recomendado para el problem+json en los clientes generados, para Android y para el `type` de WebSocket (2026-11-21)
+- **Estado:** Aceptada. El usuario eligió lo recomendado para el problem+json en los clientes generados, para Android y para el `type` de WebSocket (2026-11-21). El [ADR-0213](0213-la-web-no-falla-ante-un-campo-desconocido-se-recarga-al-cambiar-de-version-y-todo-el-problem-json-queda-abierto.md) extiende el punto 1 a `FieldError`
 - **Fecha:** 2026-11-21
 - **Alcance:** [plataformas/transversal.md](../plataformas/transversal.md), `fastapi.md`, `android.md` y con `server/`
 

@@ -264,7 +264,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - openapi-generator genera desde `../server/openapi.json` los modelos del cable y las interfaces de Retrofit, con el generador `kotlin`, `library = "jvm-retrofit2"` y `serializationLibrary = "kotlinx_serialization"`, en `app/build/generated/openapi/`, que no se versiona. `preBuild` depende de `openApiGenerate`.
 - Un esquema libre, como el de un objeto con `additionalProperties`, se genera como `JsonElement`, con `typeMappings` y su `importMappings`: con `Any`, el plugin de kotlinx.serialization hace fallar al compilador.
 - El `Json` del convertidor de Retrofit suma los serializadores de `Serializer.kotlinxSerializationAdapters`, de lo generado, y deja `ignoreUnknownKeys` e `isLenient` en `false`, sus valores por defecto: el `Json` que genera openapi-generator los activa, y un campo desconocido tiene que fallar.
-- El problem+json se lee con un `Json` aparte, con `ignoreUnknownKeys = true`, donde la fuente de datos de red traduce la `HttpException`: el cliente ignora una extensión que no conoce ([transversal.md](transversal.md#errores)).
+- El problem+json se lee con un `Json` aparte, con `ignoreUnknownKeys = true`, donde la fuente de datos de red traduce la `HttpException`: el cliente ignora un miembro que no conoce ([transversal.md](transversal.md#errores)).
 
 ## Paginación
 

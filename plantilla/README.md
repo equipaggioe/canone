@@ -15,6 +15,7 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `infra/` | El servidor | Se instala: `authorize.py`, `packages.py`, `swap.py`, `uv.py`, `install.py`, `credentials.py`, `deploy.py`, `database.py` y `uninstall.py` corren en el servidor e instalan las unidades, los sitios y la configuración de la carpeta, con los datos de cada app. Qué hace y qué recibe cada uno está en [despliegue.md](../plataformas/despliegue.md) | [despliegue.md](../plataformas/despliegue.md), [java.md](../plataformas/java.md) |
 | `receiver/` | La receptora de los respaldos | No se copia: corre en la receptora, `backup.ps1` en Windows y `backup.sh` en Linux | [despliegue.md](../plataformas/despliegue.md#respaldos) |
 | `scripts/play.py` | `scripts/` | Canónico, con una app de `mobile/` | [despliegue.md](../plataformas/despliegue.md) |
+| `scripts/apple.py` | `scripts/` | Canónico, con una versión de iOS o de macOS | [despliegue.md](../plataformas/despliegue.md) |
 | `scripts/java.py` | `scripts/` | Canónico, con una pieza en Java | [java.md](../plataformas/java.md) |
 | `scripts/tokens.py` | `scripts/` | Canónico, con un cliente | [transversal.md](../plataformas/transversal.md) |
 | `brand/tokens/` | `brand/tokens/` | Punto de partida, con un cliente | [transversal.md](../plataformas/transversal.md) |

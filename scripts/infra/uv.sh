@@ -20,11 +20,22 @@ cleanup() {
 trap cleanup EXIT
 step() { printf '\n== %s\n' "$*"; }
 fails() { if "$@" > "$work/error" 2>&1; then exit 1; fi; }
+# The one version that every pyproject.toml of the template requires: it fails if two differ.
 version=$(python3 -c '
 import sys, tomllib
-with open(sys.argv[1], "rb") as file:
-    print(tomllib.load(file)["tool"]["uv"]["required-version"].removeprefix("=="))
-' "$canone/plantilla/server/pyproject.toml")
+from pathlib import Path
+versions = set()
+for path in Path(sys.argv[1]).rglob("pyproject.toml"):
+    if ".venv" in path.parts:
+        continue
+    data = tomllib.loads(path.read_text(encoding="utf-8"))
+    required = data.get("tool", {}).get("uv", {}).get("required-version")
+    if required is not None:
+        versions.add(required.removeprefix("=="))
+if len(versions) != 1:
+    raise SystemExit(f"the pyproject.toml of the template require {sorted(versions)}")
+print(versions.pop())
+' "$canone/plantilla")
 releases=https://github.com/astral-sh/uv/releases/download
 archive=uv-$(uname -m)-unknown-linux-gnu.tar.gz
 installed() { /usr/local/bin/uv --version | grep -Eq "^uv $version( |$)"; }

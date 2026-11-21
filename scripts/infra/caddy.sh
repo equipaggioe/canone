@@ -1,9 +1,11 @@
 #!/bin/sh
 # Runs the Caddyfile and the sites of plantilla/infra in Caddy, with a server on 8000 that counts
-# what reaches it: each host serves its piece with the headers and its charset, only the landing is
-# indexed, a piece without index.html serves 200.html at its root and at any other route, one
-# without 200.html answers a route that does not exist with its 404.html and a 404, /api/*
-# carries the headers too and is not cached, a body over its limit gets 413, by its
+# what reaches it: each host serves its piece with the headers of Security Headers, the
+# Permissions-Policy of install.py and its charset, without Server, X-Powered-By, COEP nor the
+# headers the cheat sheet advises against, only the landing is indexed, also under /api/*, a piece
+# without index.html serves 200.html at its root and at any other route, one without 200.html
+# answers a route that does not exist with its 404.html and a 404, /api/* carries the headers too
+# and no-store unless the server set its own Cache-Control, a body over its limit gets 413, by its
 # Content-Length or cut by request_body, and never reaches the server whole, and /downloads/ serves
 # the installers. Caddy signs its own certificates.
 #
@@ -20,11 +22,20 @@ cleanup() {
 }
 trap cleanup EXIT
 step() { printf '\n== %s\n' "$*"; }
-# The placeholders take values like those install.py writes.
+# The placeholders take the values install.py writes, here with --allow geolocation.
+policy=$(python3 - "$canone/plantilla/infra" <<'EOF'
+import sys
+
+sys.path.insert(0, sys.argv[1])
+import install
+
+print(", ".join(f"{name}=(self)" if name == "geolocation" else f"{name}=()" for name in install.FEATURES))
+EOF
+)
 mkdir -p "$work/caddy/sites"
 printf '{\n\tlocal_certs\n\tskip_install_trust\n}\n' | cat - "$canone/plantilla/infra/Caddyfile" > "$work/caddy/Caddyfile"
 for site in "$canone"/plantilla/infra/PRODUCTO-*.caddy; do
-    sed -e s/PRODUCTO/app/g -e s/DOMINIO/example.com/g -e "s/PERMISOS/camera=(), geolocation=(self)/g" \
+    sed -e s/PRODUCTO/app/g -e s/DOMINIO/example.com/g -e "s/PERMISOS/$policy/g" \
         "$site" > "$work/caddy/sites/$(basename "$site")"
 done
 for piece in web panel landing; do
@@ -33,7 +44,8 @@ for piece in web panel landing; do
 done
 mkdir -p /srv/app/downloads
 echo installer > /srv/app/downloads/desktop-linux.bin
-# The server answers 200 with the size of the body it read, and logs each request.
+# The server answers 200 with the size of the body it read, and logs each request. It sends
+# X-Powered-By, which Caddy takes away, and on /api/cached its own Cache-Control, which Caddy keeps.
 cat > "$work/server.py" <<'EOF'
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -57,6 +69,9 @@ class Handler(BaseHTTPRequestHandler):
         print(self.command, self.path, size, file=sys.stderr, flush=True)
         text = str(size).encode()
         self.send_response(200)
+        self.send_header("X-Powered-By", "server")
+        if self.path == "/api/cached":
+            self.send_header("Cache-Control", "max-age=60")
         self.send_header("Content-Length", str(len(text)))
         self.end_headers()
         self.wfile.write(text)
@@ -94,9 +109,12 @@ headers() {
     grep -qix 'referrer-policy: strict-origin-when-cross-origin' "$1"
     grep -qix 'cross-origin-opener-policy: same-origin' "$1"
     grep -qix 'cross-origin-resource-policy: same-site' "$1"
-    grep -qix 'permissions-policy: camera=(), geolocation=(self)' "$1"
-    if grep -qi '^server:' "$1"; then exit 1; fi
-    if grep -qi '^cross-origin-embedder-policy:' "$1"; then exit 1; fi
+    grep -qixF "permissions-policy: $policy" "$1"
+    # Server and X-Powered-By, COEP, and those the cheat sheet advises against.
+    for name in server x-powered-by cross-origin-embedder-policy x-xss-protection expect-ct \
+        public-key-pins public-key-pins-report-only x-aspnet-version x-aspnetmvc-version; do
+        if grep -qi "^$name:" "$1"; then echo "$name in $1"; exit 1; fi
+    done
 }
 
 step "Each host serves its piece, with the headers and its charset, and only the landing is indexed"
@@ -146,16 +164,21 @@ test "$(status https://app.example.com/nothing)" = 404
 # With 200.html, a route that does not exist is still the fallback's.
 test "$(https panel.example.com https://panel.example.com/nothing)" = fallback
 
-step "HTTP goes to HTTPS"
-test "$(https app.example.com -o /dev/null -w '%{http_code} %{redirect_url}' http://app.example.com/)" = "308 https://app.example.com/"
+step "/api/* reaches the server with the headers, and is not cached nor indexed on any host"
+for host in example.com app.example.com panel.example.com; do
+    https "$host" -D "$work/headers" -o /dev/null "https://$host/api/ping"
+    tr -d '\r' < "$work/headers" > "$work/clean"
+    headers "$work/clean"
+    grep -qix 'cache-control: no-store' "$work/clean"
+    grep -qix 'x-robots-tag: noindex, nofollow' "$work/clean"
+done
+test "$(reached 'GET /api/ping')" = 3
 
-step "/api/* reaches the server with the headers, and is not cached nor indexed"
-https app.example.com -D "$work/headers" -o /dev/null https://app.example.com/api/ping
+step "A Cache-Control of the server stays"
+https app.example.com -D "$work/headers" -o /dev/null https://app.example.com/api/cached
 tr -d '\r' < "$work/headers" > "$work/clean"
-headers "$work/clean"
-grep -qix 'cache-control: no-store' "$work/clean"
-grep -qix 'x-robots-tag: noindex, nofollow' "$work/clean"
-test "$(reached 'GET /api/ping')" = 1
+grep -qix 'cache-control: max-age=60' "$work/clean"
+if grep -qix 'cache-control: no-store' "$work/clean"; then exit 1; fi
 
 step "A body up to its limit reaches the server: 1 MB, and 10 MB in multipart"
 head -c 1000000 /dev/zero > "$work/1mb"

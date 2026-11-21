@@ -9,6 +9,7 @@ canone=$1
 infra=$canone/plantilla/infra
 step() { printf '\n== %s\n' "$*"; }
 venv=$(mktemp -d)
+trap 'rm -rf "$venv"' EXIT
 python3 -m venv "$venv"
 "$venv/bin/pip" install --quiet numpy==2.5.4
 # The sandboxing of a unit that systemd-run can take as properties.

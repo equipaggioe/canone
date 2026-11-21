@@ -16,7 +16,10 @@ installed() { dpkg-query -W -f '${Status}' "$1" 2>/dev/null | grep -qx 'install 
 
 step "--list names the base packages and installs nothing"
 python3 "$program" --list > "$work/base"
-grep -qx caddy "$work/base"
+# The packages of every machine that «Máquina» of despliegue.md names.
+printf '%s\n' caddy postgresql valkey-server restic sudo python3 nftables unattended-upgrades \
+    systemd-timesyncd ca-certificates | sort > "$work/named"
+sort "$work/base" | cmp - "$work/named"
 not grep -qx coturn "$work/base"
 not grep -qx postgresql-17-postgis-3 "$work/base"
 not grep -qx openjdk-21-jre-headless "$work/base"

@@ -1,6 +1,6 @@
 # ADR-0093 · Lo que entra se niega por defecto con nftables, y lo que sale no se filtra
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 5, en lo que toca a ICMP, lo reemplaza el [ADR-0210](0210-despliegue-resume-las-cabeceras-en-security-headers-deja-entrar-solo-el-icmp-que-pide-nist-y-saca-lo-que-no-decide.md)
 - **Fecha:** 2026-10-26
 - **Alcance:** «Firewall» de [`plataformas/despliegue.md`](../plataformas/despliegue.md),
   `plantilla/infra/` y `.github/workflows/infra.yml`

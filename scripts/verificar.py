@@ -1043,6 +1043,11 @@ def revisar(repo: Path) -> list[str]:
     if (repo / play).exists():
         fallas.extend(comparar(repo / play, PLANTILLA / play, play.as_posix()))
 
+    # despliegue.md, «Versiones»: the script that signs the Apple builds and ships them.
+    apple = Path("scripts/apple.py")
+    if (repo / apple).exists():
+        fallas.extend(comparar(repo / apple, PLANTILLA / apple, apple.as_posix()))
+
     # java.md: the script that builds each piece in Java.
     java = Path("scripts/java.py")
     if (repo / java).exists():

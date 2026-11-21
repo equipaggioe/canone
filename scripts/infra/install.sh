@@ -35,6 +35,9 @@ run() {
 }
 # An account that already administers: install.py only adds its keys, and asks no password.
 id operador > /dev/null 2>&1 || useradd --create-home --groups sudo operador
+# root with a password, as a provider delivers the machine: the image of debootstrap has none.
+echo 'root:password-of-the-provider' | chpasswd
+test "$(passwd --status root | cut -d ' ' -f 2)" = P
 
 step "The name of the app makes accounts systemd takes"
 for app in abcdefghijklmnopqrstuvw 1demo 'de mo'; do
@@ -127,6 +130,7 @@ test "$(setting port)" = 0
 test "$(setting maxmemory)" = 67108864
 test "$(setting maxmemory-policy)" = noeviction
 test "$(systemctl is-enabled valkey-server.service || true)" = disabled
+test "$(systemctl is-active valkey-server.service || true)" = inactive
 test "$(sysctl -n vm.overcommit_memory)" = 1
 
 step "The keys of the account live in a file of root, and a weak key fails"

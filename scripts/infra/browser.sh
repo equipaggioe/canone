@@ -4,7 +4,7 @@
 # and --browser without chromium-headless-shell fail; with --browser the timer runs on its
 # calendar and ends a round at its limit; the task drives the Chromium of Debian with Playwright,
 # as the server account; without each exception of its filter, or with MemoryDenyWriteExecute=,
-# the same task dies; a reinstall without --browser takes the timer, and uninstall.py app the
+# the same task does not open it; a reinstall without --browser takes the timer, and uninstall.py app the
 # unit. uv finds Playwright in UV_CACHE_DIR, filled before the machine lost its network.
 #
 #     sh browser.sh <canone>
@@ -54,6 +54,9 @@ run --browser probe=minutely
 systemctl is-active --quiet demo-browser@probe.timer
 systemctl show --property=TimersCalendar --value demo-browser@probe.timer | grep -qF 'OnCalendar=*-*-* *:*:00 ;'
 test "$(systemctl show --property=TimeoutStartUSec --value "$service")" = 1h
+# The timer would start a round of its own while a check runs, or right after one ends, and the
+# check would read the result of that round.
+systemctl stop demo-browser@probe.timer
 
 step "The task drives the Chromium of Debian with Playwright, as the server account"
 # A version whose app.tasks opens a page that runs JavaScript.
@@ -91,18 +94,19 @@ ln -sfn /srv/demo/releases/v0.0.1 /srv/demo/current
 test "$(probe)" = success
 journalctl --unit="$service" --output=cat | grep -qx 'title 42 as demo'
 
-step "Without each exception of its filter, or with MemoryDenyWriteExecute=, it dies"
+step "Without each exception of its filter, or with MemoryDenyWriteExecute=, it does not open the page"
 mkdir -p "$drop_in"
 for call in setpriority pkey_alloc capset; do
     # An empty SystemCallFilter= resets the filter, and the lines of the unit but one come back.
-    { echo '[Service]'; echo 'SystemCallFilter='
+    # Without an exception Chromium may hang instead of dying: a round ends at 2 min, not at 1 h.
+    { echo '[Service]'; echo 'TimeoutStartSec=2min'; echo 'SystemCallFilter='
       grep '^SystemCallFilter=' "$unit" | grep -vx "SystemCallFilter=$call"; } > "$drop_in/test.conf"
     systemctl daemon-reload
     result=$(probe)
     echo "without $call: $result"
     test "$result" != success
 done
-printf '[Service]\nMemoryDenyWriteExecute=yes\n' > "$drop_in/test.conf"
+printf '[Service]\nTimeoutStartSec=2min\nMemoryDenyWriteExecute=yes\n' > "$drop_in/test.conf"
 systemctl daemon-reload
 result=$(probe)
 echo "with MemoryDenyWriteExecute=: $result"

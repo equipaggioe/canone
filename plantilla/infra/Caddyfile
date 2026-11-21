@@ -13,6 +13,7 @@
 		Cross-Origin-Resource-Policy same-site
 		Permissions-Policy "{args.2}"
 		-Server
+		-X-Powered-By
 	}
 	handle /api/* {
 		@upload header Content-Type multipart/form-data*

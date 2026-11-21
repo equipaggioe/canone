@@ -26,7 +26,6 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [postgresql/ddl.sgml](postgresql/ddl.sgml) | [URL](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/ddl.sgml) |  |
 | [postgresql/indices.sgml](postgresql/indices.sgml) | [URL](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/indices.sgml) |  |
 | [postgresql/backup.sgml](postgresql/backup.sgml) | [URL](https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/doc/src/sgml/backup.sgml) |  |
-| [postgis/using_postgis_dataman.xml](postgis/using_postgis_dataman.xml) | [URL](https://raw.githubusercontent.com/postgis/postgis/stable-3.5/doc/using_postgis_dataman.xml) |  |
 | [rfc/rfc5646.txt](rfc/rfc5646.txt) | [URL](https://www.rfc-editor.org/rfc/rfc5646.txt) |  |
 | [rfc/rfc6749.txt](rfc/rfc6749.txt) | [URL](https://www.rfc-editor.org/rfc/rfc6749.txt) |  |
 | [rfc/rfc6585.txt](rfc/rfc6585.txt) | [URL](https://www.rfc-editor.org/rfc/rfc6585.txt) |  |

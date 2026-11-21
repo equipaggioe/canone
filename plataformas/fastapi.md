@@ -106,6 +106,8 @@ Estándares: [*Session Basics*](../fuentes/sqlalchemy/session_basics.rst) y la [
 - Una relación bidireccional declara `back_populates` en los dos lados.
 - Un enum hereda de `StrEnum`. La `Base` guarda solo esos como `text` con `CHECK`; un `str, Enum` se vuelve un enum nativo de Postgres que guarda el nombre y no el valor.
 - Una columna `created_at` es `CreatedAt`, y una `updated_at` es `UpdatedAt`, de la `Base`. Las dos toman `now()`; `updated_at` lo toma en cada `UPDATE` que emite SQLAlchemy.
+- Una columna espacial se declara con `geo_point()` o `geo_line()`, que crean un `Geography` por columna: GeoAlchemy2 copia el `nullable` entre la columna y su tipo, y un `Geography` compartido en un `Annotated` mezcla el de todas las columnas que lo usan. [GeoAlchemy2 0.21.0](https://raw.githubusercontent.com/geoalchemy/geoalchemy2/0.21.0/geoalchemy2/admin/dialects/common.py)
+- `GeoPoint` y `GeoLine` son alias de `WKBElement`, solo para `Mapped[...]`.
 - El engine lleva `pool_pre_ping=True`: una conexión del pool que PostgreSQL cerró al reiniciarse hace fallar la petición que la toma. [SQLAlchemy 2.1.9](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_9/doc/build/core/pooling.rst)
 - Una relación de uno a muchos deja el borrado al `ON DELETE` de la clave foránea del hijo. Si es `CASCADE`, lleva las cascadas `save-update`, `merge`, `delete` y `delete-orphan`, con `passive_deletes=True`; si es `RESTRICT`, lleva `passive_deletes="all"`. Sin eso, el ORM carga los hijos para ponerles `NULL`: un `CASCADE` falla por el `NOT NULL`, y un `RESTRICT` cambia en silencio una fila que no le pertenece al padre ([Session Basics, *Deleting*](../fuentes/sqlalchemy/session_basics.rst)).
 - Toda relación lleva `lazy="raise"`: lo que se lee de ella se carga antes con una opción de carga, como `selectinload` ([asyncio, *Preventing Implicit IO when Using AsyncSession*](../fuentes/sqlalchemy/asyncio.rst)).
@@ -130,6 +132,7 @@ Estándar: la [autogeneración](../fuentes/alembic/autogenerate.rst) de Alembic.
 - Las migraciones corren con `python -m app.tasks migrate`, que aplica las de Alembic y después los seeders, en una sola transacción: un seeder que falla deshace las migraciones, y `deploy.py` vuelve a la versión anterior.
 - Todo cambio de un modelo lleva su migración.
 - Los permisos de una tabla los da la migración que la crea: quedan versionados y el CI los prueba.
+- En un servidor que guarda geografía, `env.py` le pasa a Alembic los `alembic_helpers` de GeoAlchemy2. Sin ellos, la autogeneración crea el índice espacial dos veces y propone borrar `spatial_ref_sys`. [GeoAlchemy2 0.21.0](https://raw.githubusercontent.com/geoalchemy/geoalchemy2/0.21.0/doc/alembic.rst)
 - `env.py` compara los `server_default`, con `compare_server_default=True` ([Autogenerate, *What does Autogenerate Detect*](../fuentes/alembic/autogenerate.rst)).
 - `env.py` le pasa a Alembic como `target_metadata` la `MetaData` de la `Base`, con todos los modelos importados ([Autogenerate, *Auto Generating Migrations*](../fuentes/alembic/autogenerate.rst)).
 - Cada migración autogenerada se revisa y se corrige a mano antes de commitearla ([Autogenerate, *Auto Generating Migrations*](../fuentes/alembic/autogenerate.rst)).

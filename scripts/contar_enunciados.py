@@ -230,7 +230,6 @@ UNIDADES = [
  ('flutter/architecture-recommendations.yml', None, [], 'yml'),
  # postgres
  ('postgresql/ddl.sgml', ['The System Catalog Schema', 'Primary Keys', 'System Columns', 'Check Constraints', 'Not-Null Constraints', 'Foreign Keys', 'Modifying Tables'], [], 'low'),
- ('postgis/using_postgis_dataman.xml', ['Geography Data Type', 'GiST Indexes'], [], 'low'),
  ('postgresql/indices.sgml', ['Introduction', 'Multicolumn Indexes', 'Unique Indexes', 'Partial Indexes', 'Index-Only Scans and Covering Indexes'], [], 'low'),
  ('postgresql/datatype.sgml', ['Character Types', 'Date/Time Types', 'Integer Types', 'Arbitrary Precision Numbers', 'Network Address Types'], [], 'low'),
  ('postgresql/json.sgml', None, [], 'low'),

@@ -85,12 +85,11 @@ def is_allowed_primary_key(table: sa.Table) -> bool:
     columns = list(table.primary_key.columns)
     partition = partition_columns(table)
     if partition:
-        own = [column for column in columns if column.name not in partition]
-        names = {column.name for column in columns}
-        return partition <= names and len(own) == 1 and is_allowed_key(own[0])
+        rest = {column.name for column in columns[1:]}
+        return bool(columns) and rest == partition and is_allowed_key(columns[0])
     if len(columns) == 1:
         return is_allowed_key(columns[0])
-    return bool(columns) and all(
+    return len(columns) == 2 and all(
         column.foreign_keys or isinstance(column.type, sa.Text) for column in columns
     )
 
@@ -154,6 +153,24 @@ def key_table(name: str, *items: sa.schema.SchemaItem, **options: Any) -> sa.Tab
         (key_table("country", sa.Column("code", sa.Text)), False),
         (
             key_table(
+                "reading",
+                sa.Column("created_at", sa.DateTime(timezone=True), primary_key=True),
+                sa.Column("id", sa.BigInteger, sa.Identity(always=True), primary_key=True),
+                postgresql_partition_by="RANGE (created_at)",
+            ),
+            False,
+        ),
+        (
+            key_table(
+                "grant",
+                sa.Column("role", sa.Text, primary_key=True),
+                sa.Column("permission", sa.Text, primary_key=True),
+                sa.Column("scope", sa.Text, primary_key=True),
+            ),
+            False,
+        ),
+        (
+            key_table(
                 "role_permission",
                 sa.Column("role", sa.Text, primary_key=True),
                 sa.Column("permission", sa.Text, primary_key=True),
@@ -204,7 +221,7 @@ def test_foreign_keys_declare_on_delete() -> None:
         f"{key.parent.table.name}.{key.parent.name}"
         for table in TABLES
         for key in table.foreign_keys
-        if key.ondelete not in ("CASCADE", "RESTRICT")
+        if (key.ondelete or "").upper() not in ("CASCADE", "RESTRICT")
     ]
     assert not offenders
 
@@ -213,7 +230,11 @@ def is_indexed(key: sa.ForeignKeyConstraint) -> bool:
     """Tell whether an index or a key leads with the key's columns."""
     names = {column.name for column in key.columns}
     table = key.table
-    leads = [list(index.columns) for index in table.indexes]
+    leads = [
+        list(index.columns)
+        for index in table.indexes
+        if index.dialect_options["postgresql"]["where"] is None
+    ]
     leads += [
         list(constraint.columns)
         for constraint in table.constraints
@@ -281,13 +302,19 @@ def test_unindexed_key(table: sa.Table, unindexed: list[str]) -> None:
     assert unindexed_keys([table]) == unindexed
 
 
+def element_type(column: sa.Column[Any]) -> Any:
+    """Return the type of a column, or of the elements of its array."""
+    kind = column.type
+    return kind.item_type if isinstance(kind, sa.ARRAY) else kind
+
+
 def test_strings_are_text() -> None:
-    """Every string column is created as TEXT."""
+    """Every string column, or array of strings, is created as TEXT."""
     offenders = [
         f"{column.table.name}.{column.name}"
         for column in COLUMNS
-        if isinstance(column.type, sa.String)
-        and column.type.compile(dialect=engine.dialect) != "TEXT"
+        if isinstance(element_type(column), sa.String)
+        and element_type(column).compile(dialect=engine.dialect) != "TEXT"
     ]
     assert not offenders
 
@@ -356,6 +383,93 @@ def test_enums_are_checked_text() -> None:
         for column in COLUMNS
         if isinstance(column.type, sa.Enum)
         and (column.type.native_enum or not column.type.create_constraint)
+    ]
+    assert not offenders
+
+
+def test_single_keys_are_id() -> None:
+    """A primary key of one column is called id."""
+    offenders = [
+        table.name
+        for table in TABLES
+        if len(table.primary_key.columns) == 1
+        and next(iter(table.primary_key.columns)).name != "id"
+    ]
+    assert not offenders
+
+
+def test_timestamps_end_in_at() -> None:
+    """Every timestamptz column ends in _at."""
+    offenders = [
+        f"{column.table.name}.{column.name}"
+        for column in COLUMNS
+        if isinstance(column.type, sa.DateTime) and not column.name.endswith("_at")
+    ]
+    assert not offenders
+
+
+def test_tables_avoid_pg_prefix() -> None:
+    """No table name starts with pg_."""
+    assert not [table.name for table in TABLES if table.name.startswith("pg_")]
+
+
+def key_columns(table: sa.Table) -> list[list[str]]:
+    """Return the columns of each primary key and UNIQUE of a table."""
+    return [
+        [column.name for column in constraint.columns]
+        for constraint in table.constraints
+        if isinstance(constraint, (sa.PrimaryKeyConstraint, sa.UniqueConstraint))
+    ]
+
+
+def test_keys_have_no_twin_index() -> None:
+    """No index repeats the columns of a primary key or a UNIQUE."""
+    offenders = [
+        index.name
+        for table in TABLES
+        for index in table.indexes
+        if index.dialect_options["postgresql"]["where"] is None
+        and [column.name for column in index.columns] in key_columns(table)
+    ]
+    assert not offenders
+
+
+def test_json_is_jsonb() -> None:
+    """Every JSON document is jsonb."""
+    offenders = [
+        f"{column.table.name}.{column.name}"
+        for column in COLUMNS
+        if isinstance(column.type, sa.JSON) and not isinstance(column.type, postgresql.JSONB)
+    ]
+    assert not offenders
+
+
+def test_integers_are_not_small() -> None:
+    """No column is a smallint."""
+    offenders = [
+        f"{column.table.name}.{column.name}"
+        for column in COLUMNS
+        if isinstance(column.type, sa.SmallInteger)
+    ]
+    assert not offenders
+
+
+def test_amounts_are_not_money() -> None:
+    """No column is money."""
+    offenders = [
+        f"{column.table.name}.{column.name}"
+        for column in COLUMNS
+        if isinstance(column.type, postgresql.MONEY)
+    ]
+    assert not offenders
+
+
+def test_times_have_no_zone() -> None:
+    """No column is a time with time zone."""
+    offenders = [
+        f"{column.table.name}.{column.name}"
+        for column in COLUMNS
+        if isinstance(column.type, sa.Time) and column.type.timezone
     ]
     assert not offenders
 

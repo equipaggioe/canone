@@ -237,6 +237,7 @@ Contrato: [transversal.md](transversal.md#errores).
 Contrato: [transversal.md](transversal.md#fechas).
 
 - Los campos de fecha y hora de los esquemas son `Timestamp`, del esquema base: entra solo como cadena RFC 3339 y queda en UTC. `AwareDatetime` acepta también un número como epoch y una hora sin segundos, y conserva el desfase que recibe; un `datetime`, además, una hora sin zona.
+- Los campos de fecha sin hora de los esquemas son `Day`, del esquema base: entra solo como cadena `AAAA-MM-DD`. `date` acepta también un número como epoch y una fecha con hora en cero.
 
 ## Idiomas
 
@@ -449,6 +450,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | `lazy="raise"` | `test_relationships_raise` |
 | Una relación de uno a muchos deja el borrado al `ON DELETE` | `test_one_to_many_leaves_deletes_to_the_database` |
 | `Timestamp` en los esquemas | `test_schema_datetimes_are_timestamps` |
+| `Day` en los esquemas, y que solo lee `AAAA-MM-DD` | `test_schema_dates_are_days` y `test_day_takes_only_a_full_date` |
 | Un enum hereda de `StrEnum` | `test_enums_are_strenums`, `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea, y `models/` sin el límite de 99 | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |

@@ -2,13 +2,14 @@
 
 import ast
 import importlib
+import json
 import logging
 import os
 import pkgutil
 import re
 import subprocess
 import sys
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from enum import Enum, StrEnum
 from pathlib import Path
 from types import ModuleType
@@ -34,7 +35,7 @@ from app.database import engine
 from app.dependencies import SessionDep
 from app.main import app as main_app
 from app.models.base import Base
-from app.schemas.base import InputSchema, Schema, Timestamp
+from app.schemas.base import Day, InputSchema, Schema, Timestamp
 from app.schemas.page import decode_token, encode_token
 
 
@@ -638,6 +639,44 @@ def test_schema_datetimes_are_timestamps() -> None:
         if mentions_datetime(field.rebuild_annotation())
     ]
     assert not offenders
+
+
+def mentions_date(annotation: Any) -> bool:
+    """Tell whether a type holds a time-free date other than Day."""
+    if annotation == Day:
+        return False
+    return annotation is date or any(mentions_date(arg) for arg in get_args(annotation))
+
+
+def test_schema_dates_are_days() -> None:
+    """Every date without a time of a schema is Day."""
+    offenders = [
+        f"{module.__name__}.{name}.{field_name}"
+        for module in SCHEMA_MODULES
+        for name, value in vars(module).items()
+        if isinstance(value, type)
+        and issubclass(value, BaseModel)
+        and value.__module__ == module.__name__
+        for field_name, field in value.model_fields.items()
+        if mentions_date(field.rebuild_annotation())
+    ]
+    assert not offenders
+
+
+class Born(InputSchema):
+    """A body with a date without a time."""
+
+    born_on: Day
+
+
+@pytest.mark.parametrize("value", [1767830400, "2026-01-08T00:00:00Z", "20260108", "2026-1-8"])
+def test_day_takes_only_a_full_date(value: object) -> None:
+    """Day reads only YYYY-MM-DD, and writes it back the same way."""
+    assert Born.model_validate_json('{"bornOn": "2026-01-08"}').model_dump_json() == (
+        '{"bornOn":"2026-01-08"}'
+    )
+    with pytest.raises(ValidationError):
+        Born.model_validate_json(json.dumps({"bornOn": value}))
 
 
 def test_settings_are_required() -> None:

@@ -292,7 +292,7 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Todos los roles en cada modo, y de cada custom color, el nombre, los cuatro roles y que esté en todos los temas y los modos | `scripts/tokens.py --check` |
 | Lo generado, al día con `brand/tokens/` | `scripts/tokens.py --check` |
 | problem+json en una ruta que no existe y en un error de validación | `test_unknown_route_is_a_problem` y `test_validation_error_points_to_the_field`, del servidor |
-| La URI de cada tipo propio responde HTML con su `title` | `test_problem_types_are_documented`, del servidor |
+| La URI de cada tipo propio responde HTML con su `title` y su código de estado | `test_problem_types_are_documented`, del servidor |
 | El `traceId` en el problem+json de una ruta que no existe | `test_unknown_route_is_a_problem`, del servidor |
 | El servidor rechaza un cuerpo JSON con un nombre repetido, un número fuera de un `double`, un sustituto suelto, un no-carácter, otra codificación que UTF-8 o un nivel superior que no es objeto ni arreglo | `test_body_that_is_not_ijson`, `test_body_that_is_ijson_or_not_json` y `test_repeated_member_is_a_validation_error`, del servidor |
 | Un cuerpo que no es JSON responde 400 | `test_body_that_is_not_json_is_a_bad_request`, del servidor |

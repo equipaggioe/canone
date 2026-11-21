@@ -1,7 +1,7 @@
 """The parents of every schema: camelCase, and no extra input."""
 
 import re
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from typing import Annotated
 
 from pydantic import AfterValidator, AwareDatetime, BaseModel, BeforeValidator, ConfigDict
@@ -24,6 +24,21 @@ def to_utc(moment: datetime) -> datetime:
 
 Timestamp = Annotated[AwareDatetime, BeforeValidator(check_rfc3339), AfterValidator(to_utc)]
 """Every date and time of a schema."""
+
+FULL_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+
+def check_full_date(value: object) -> object:
+    """Let through a date, or a string written as YYYY-MM-DD."""
+    if (isinstance(value, date) and not isinstance(value, datetime)) or (
+        isinstance(value, str) and FULL_DATE.fullmatch(value)
+    ):
+        return value
+    raise ValueError("expected an RFC 3339 full-date")
+
+
+Day = Annotated[date, BeforeValidator(check_full_date)]
+"""Every date without a time of a schema."""
 
 
 class Schema(BaseModel):

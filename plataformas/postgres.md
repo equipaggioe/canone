@@ -80,6 +80,8 @@ Estándar: [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
 Estándar: [*Data Definition*](../fuentes/postgresql/ddl.sgml) de PostgreSQL.
 
 - Toda clave foránea declara su `ON DELETE`, y nunca `SET NULL` ni `SET DEFAULT`: borrar el padre no cambia en silencio una fila que no le pertenece.
+- Un texto que se compara sin distinguir mayúsculas se guarda en minúsculas, con un `CHECK` `x = lower(x)`.
+- Un `UNIQUE` sobre columnas que admiten `NULL` lleva `NULLS NOT DISTINCT` si dos filas con `NULL` en ellas son duplicadas ([Data Definition, *Unique Constraints*](../fuentes/postgresql/ddl.sgml)).
 - `ON DELETE` es `CASCADE` si el hijo es parte del padre y no existe sin él, y `RESTRICT` si son objetos independientes ([Data Definition, *Foreign Keys*](../fuentes/postgresql/ddl.sgml)).
 - Una columna admite `NULL` solo si su dato puede faltar ([Data Definition, *Not-Null Constraints*](../fuentes/postgresql/ddl.sgml)).
 - Un `CHECK` mira solo su fila. Una regla entre filas o entre tablas es un `UNIQUE`, un `EXCLUDE` o una clave foránea ([Data Definition, *Check Constraints*](../fuentes/postgresql/ddl.sgml)).

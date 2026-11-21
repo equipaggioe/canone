@@ -1,7 +1,8 @@
 # ADR-0004 · Una columna geográfica se declara con una función, no con un Annotated
 
 - **Estado:** Aceptada. El punto 4 de la decisión lo reemplaza el
-  [ADR-0126](0126-el-indice-gist-lo-crea-geoalchemy2-con-sus-alembic-helpers.md)
+  [ADR-0126](0126-el-indice-gist-lo-crea-geoalchemy2-con-sus-alembic-helpers.md), y el punto 2, el
+  [ADR-0204](0204-una-columna-espacial-dice-si-lleva-indice-un-texto-sin-mayusculas-se-guarda-en-minusculas-y-un-unique-con-null-dice-si-son-duplicados.md)
 - **Fecha:** 2026-09-22
 - **Alcance:** `server/app/models/`, repositorios con PostGIS
 

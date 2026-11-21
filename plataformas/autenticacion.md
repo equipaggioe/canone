@@ -83,6 +83,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt), el [*Password
 Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) de ASVS 5.0.
 
 - El correo y el teléfono identifican la cuenta: cada uno pertenece a una sola, y el registro responde 409 si la cuenta ya existe.
+- El servidor pasa el correo a minúsculas al recibirlo, y así lo guarda, lo compara y le envía.
 - Una cuenta no tiene nombre de usuario.
 - Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos: quien prueba correos o teléfonos en serie busca cuentas existentes.
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el viejo recibe un aviso.

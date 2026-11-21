@@ -14,7 +14,7 @@ Estándares: [*Data Definition*](../fuentes/postgresql/ddl.sgml) e [*Indexes*](.
 - Una clave primaria de una sola columna que no es clave foránea se llama `id`.
 - Una clave foránea se llama `<tabla>_id`, o `<rol>_id` si hay más de una hacia la misma tabla o si apunta a la propia.
 - Una columna que guarda una magnitud lleva de sufijo, en minúsculas, la abreviatura oficial de su unidad: `distance_m`, `weight_g`.
-- Las columnas `timestamptz` terminan en `_at`.
+- Una columna `timestamptz` termina en `_at` si marca un instante, y en `_from` o `_until` si marca el inicio o el fin de un periodo.
 - Las tablas van en singular ([Data Definition, *Table Basics*](../fuentes/postgresql/ddl.sgml)).
 - Un índice que nombra el modelo se llama `ix_<tabla>_<para qué sirve>`, como `ix_event_log_critical` ([Indexes, *Introduction*](../fuentes/postgresql/indices.sgml)).
 - El nombre de una tabla no empieza por `pg_` ([Data Definition, *The System Catalog Schema*](../fuentes/postgresql/ddl.sgml)).
@@ -116,7 +116,7 @@ Las pruebas son las de `tests/test_conventions.py` de [fastapi.md](fastapi.md).
 | Convención | Herramienta |
 | :--- | :--- |
 | Una clave primaria de una sola columna que no es clave foránea se llama `id` | `test_single_keys_are_id` |
-| Las columnas `timestamptz` terminan en `_at` | `test_timestamps_end_in_at` |
+| Una columna `timestamptz` termina en `_at`, `_from` o `_until` | `test_timestamps_have_suffix` |
 | El nombre de una tabla no empieza por `pg_` | `test_tables_avoid_pg_prefix` |
 | Clave `text` con `CHECK`, identity `integer` o `bigint` `ALWAYS` o `uuid` con `gen_random_uuid()`, la de una tabla particionada, con su id primero, la de un par de valores y la clave foránea con `CASCADE` de una tabla que amplía otra | `test_primary_key_is_allowed` y `test_primary_key_rules` |
 | Una clave foránea tiene el tipo de la clave a la que apunta | `test_foreign_keys_match_key_type` y `test_foreign_key_type_mismatch` |

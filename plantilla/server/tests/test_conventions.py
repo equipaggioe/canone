@@ -432,12 +432,13 @@ def test_single_keys_are_id() -> None:
     assert not offenders
 
 
-def test_timestamps_end_in_at() -> None:
-    """Every timestamptz column ends in _at."""
+def test_timestamps_have_suffix() -> None:
+    """Every timestamptz column ends in _at, _from or _until."""
     offenders = [
         f"{column.table.name}.{column.name}"
         for column in COLUMNS
-        if isinstance(column.type, sa.DateTime) and not column.name.endswith("_at")
+        if isinstance(column.type, sa.DateTime)
+        and not column.name.endswith(("_at", "_from", "_until"))
     ]
     assert not offenders
 

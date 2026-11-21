@@ -233,6 +233,7 @@ UNIDADES = [
  ('postgresql/indices.sgml', ['Introduction', 'Multicolumn Indexes', 'Unique Indexes', 'Partial Indexes', 'Index-Only Scans and Covering Indexes'], [], 'low'),
  ('postgresql/datatype.sgml', ['Character Types', 'Date/Time Types', 'Integer Types', 'Arbitrary Precision Numbers', 'Network Address Types'], [], 'low'),
  ('postgresql/json.sgml', None, [], 'low'),
+ ('postgresql/array.sgml', ['Searching in Arrays'], [], 'low'),
  # python
  ('pytest/goodpractices.rst', ['Install package in a virtual environment', 'Choosing a test layout', 'Do not run via setuptools', "Using pytest's strict mode"], [], 'low'),
  ('python/pep-0008.rst', None, [], 'low'),

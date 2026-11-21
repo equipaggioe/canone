@@ -304,3 +304,68 @@ jobs:
           python3 -c 'import sys; sys.path.insert(0, "plantilla/infra"); import install; install.create_database("app", ["postgis"])'
           runuser -u app_owner -- pg_restore --exit-on-error --dbname=app /var/lib/app-dump/app.dump
           test "$(query app -Atc "SELECT ST_AsText(spot::geometry) FROM place")" = "POINT(-70.6 -33.4)"
+
+  # The job server of plantilla/.github/workflows/ci.yml, on the server template, without a piece in
+  # Java and without geography. The URLs name the roles in lowercase, as PostgreSQL folds them.
+  server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plantilla/server
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+      valkey:
+        image: valkey/valkey:8.1
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v7
+      - run: |
+          folder="$RUNNER_TEMP/credentials"
+          mkdir "$folder"
+          printf %s postgresql+asyncpg://postgres:postgres@localhost:5432/producto > "$folder/app_database_url"
+          printf %s test-health-token > "$folder/app_health_token"
+          printf %s "{}" > "$folder/app_min_client_versions"
+          printf %s 0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY= > "$folder/app_page_token_key"
+          printf %s valkey://localhost:6379/0 > "$folder/app_valkey_url"
+          echo "CREDENTIALS_DIRECTORY=$folder" >> "$GITHUB_ENV"
+          cp -r "$folder" "$RUNNER_TEMP/owner"
+          printf %s postgresql+asyncpg://producto_owner:owner@localhost:5432/producto > "$RUNNER_TEMP/owner/app_database_url"
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version-file: plantilla/server/pyproject.toml
+      - run: uv sync --locked
+      - run: uv run ruff format --check
+      - run: uv run ruff check
+      - run: uv run pyrefly check
+      - run: uv run deptry .
+      - run: |
+          uv export --locked --no-emit-project --format requirements.txt -o "$RUNNER_TEMP/req.txt"
+          uv run pip-audit --disable-pip --require-hashes -r "$RUNNER_TEMP/req.txt"
+      - run: |
+          psql postgresql://postgres:postgres@localhost:5432/postgres -c "CREATE ROLE PRODUCTO" \
+            -c "CREATE ROLE PRODUCTO_owner LOGIN PASSWORD 'owner'" -c "CREATE ROLE PRODUCTO_read" \
+            -c "CREATE DATABASE PRODUCTO OWNER PRODUCTO_owner"
+          psql postgresql://postgres:postgres@localhost:5432/producto \
+            -c "ALTER DEFAULT PRIVILEGES FOR ROLE PRODUCTO_owner IN SCHEMA public GRANT SELECT ON TABLES TO PRODUCTO_read"
+      - run: uv run python -m app.tasks migrate
+        env:
+          CREDENTIALS_DIRECTORY: ${{ runner.temp }}/owner
+      - run: uv run alembic check
+        env:
+          CREDENTIALS_DIRECTORY: ${{ runner.temp }}/owner
+      - run: uv run pytest
+        env:
+          PYTHONDEVMODE: "1"

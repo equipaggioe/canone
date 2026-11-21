@@ -80,6 +80,12 @@ def partition_columns(table: sa.Table) -> set[str]:
     return set(re.findall(r"\w+", partition)) & set(table.columns.keys())
 
 
+def extends_parent(column: sa.Column[Any]) -> bool:
+    """Tell whether a key is a foreign key with CASCADE."""
+    keys = column.foreign_keys
+    return bool(keys) and all((key.ondelete or "").upper() == "CASCADE" for key in keys)
+
+
 def is_allowed_primary_key(table: sa.Table) -> bool:
     """Tell whether a table key follows postgres.md."""
     columns = list(table.primary_key.columns)
@@ -88,7 +94,7 @@ def is_allowed_primary_key(table: sa.Table) -> bool:
         rest = {column.name for column in columns[1:]}
         return bool(columns) and rest == partition and is_allowed_key(columns[0])
     if len(columns) == 1:
-        return is_allowed_key(columns[0])
+        return is_allowed_key(columns[0]) or extends_parent(columns[0])
     return len(columns) == 2 and all(
         column.foreign_keys or isinstance(column.type, sa.Text) for column in columns
     )
@@ -144,13 +150,33 @@ def key_table(name: str, *items: sa.schema.SchemaItem, **options: Any) -> sa.Tab
         (
             key_table(
                 "country",
-                sa.Column("code", sa.Text, primary_key=True),
-                sa.CheckConstraint("code ~ '^[A-Z]{2}$'", name="code"),
+                sa.Column("id", sa.Text, primary_key=True),
+                sa.CheckConstraint("id ~ '^[A-Z]{2}$'", name="id"),
             ),
             True,
         ),
-        (key_table("country", sa.Column("code", sa.Text, primary_key=True)), False),
-        (key_table("country", sa.Column("code", sa.Text)), False),
+        (key_table("country", sa.Column("id", sa.Text, primary_key=True)), False),
+        (key_table("country", sa.Column("id", sa.Text)), False),
+        (
+            key_table(
+                "profile",
+                sa.Column(
+                    "account_id", sa.ForeignKey("account.id", ondelete="CASCADE"), primary_key=True
+                ),
+            ),
+            True,
+        ),
+        (
+            key_table(
+                "profile",
+                sa.Column(
+                    "account_id",
+                    sa.ForeignKey("account.id", ondelete="RESTRICT"),
+                    primary_key=True,
+                ),
+            ),
+            False,
+        ),
         (
             key_table(
                 "reading",
@@ -354,7 +380,7 @@ def is_allowed_geography(column: sa.Column[Any]) -> bool:
     """Tell whether a geography column follows postgres.md."""
     # geoalchemy2 has no type stubs.
     kind: Any = column.type
-    return kind.srid == 4326 and kind.spatial_index
+    return kind.srid == 4326
 
 
 def geography_offenders(tables: list[sa.Table]) -> list[str]:
@@ -371,28 +397,36 @@ def geography_offenders(tables: list[sa.Table]) -> list[str]:
 
 
 def test_geography_columns() -> None:
-    """Every spatial column is a WGS 84 geography with a GiST index."""
+    """Every spatial column is a WGS 84 geography."""
     pytest.importorskip("geoalchemy2")
     assert not geography_offenders(TABLES)
 
 
+def is_unchecked_enum(column: sa.Column[Any]) -> bool:
+    """Tell whether an enum or enum array is native or unchecked."""
+    kind = element_type(column)
+    if not isinstance(kind, sa.Enum):
+        return False
+    if isinstance(column.type, sa.ARRAY):
+        return kind.native_enum or not is_checked(column)
+    return kind.native_enum or not kind.create_constraint
+
+
 def test_enums_are_checked_text() -> None:
-    """Every enum is text with a CHECK, not a native PostgreSQL enum."""
+    """Every enum, also in an array, is text with a CHECK."""
     offenders = [
-        f"{column.table.name}.{column.name}"
-        for column in COLUMNS
-        if isinstance(column.type, sa.Enum)
-        and (column.type.native_enum or not column.type.create_constraint)
+        f"{column.table.name}.{column.name}" for column in COLUMNS if is_unchecked_enum(column)
     ]
     assert not offenders
 
 
 def test_single_keys_are_id() -> None:
-    """A primary key of one column is called id."""
+    """A one-column key that is no foreign key is called id."""
     offenders = [
         table.name
         for table in TABLES
         if len(table.primary_key.columns) == 1
+        and not next(iter(table.primary_key.columns)).foreign_keys
         and next(iter(table.primary_key.columns)).name != "id"
     ]
     assert not offenders

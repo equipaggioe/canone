@@ -1,6 +1,6 @@
 # ADR-0126 · El índice GiST lo crea GeoAlchemy2, con sus `alembic_helpers`
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0203](0203-una-tabla-que-amplia-otra-lleva-su-clave-foranea-como-clave-una-lista-que-se-busca-va-en-una-tabla-y-el-ci-de-canone-prueba-la-plantilla-del-servidor.md)
 - **Fecha:** 2026-11-06
 - **Alcance:** [plataformas/postgres.md](../plataformas/postgres.md), `plantilla/server/alembic/env.py`,
   `plantilla/server/src/app/models/base.py` y `plantilla/server/tests/test_conventions.py`

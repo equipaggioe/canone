@@ -105,6 +105,7 @@ Estándares: [*Session Basics*](../fuentes/sqlalchemy/session_basics.rst) y la [
 - La sesión es una `AsyncSession` con asyncpg.
 - Una relación bidireccional declara `back_populates` en los dos lados.
 - Un enum hereda de `StrEnum`. La `Base` guarda solo esos como `text` con `CHECK`; un `str, Enum` se vuelve un enum nativo de Postgres que guarda el nombre y no el valor.
+- Un array de un `StrEnum` lleva `create_constraint=False` en su `Enum`, y la tabla declara su `CHECK` con `<@`: SQLAlchemy no genera ese `CHECK`, y con `create_constraint=True` falla al compilar. [SQLAlchemy 2.1.9](https://raw.githubusercontent.com/sqlalchemy/sqlalchemy/rel_2_1_9/lib/sqlalchemy/dialects/postgresql/base.py)
 - Una columna `created_at` es `CreatedAt`, y una `updated_at` es `UpdatedAt`, de la `Base`. Las dos toman `now()`; `updated_at` lo toma en cada `UPDATE` que emite SQLAlchemy.
 - Una columna espacial se declara con `geo_point()` o `geo_line()`, que crean un `Geography` por columna: GeoAlchemy2 copia el `nullable` entre la columna y su tipo, y un `Geography` compartido en un `Annotated` mezcla el de todas las columnas que lo usan. [GeoAlchemy2 0.21.0](https://raw.githubusercontent.com/geoalchemy/geoalchemy2/0.21.0/geoalchemy2/admin/dialects/common.py)
 - `GeoPoint` y `GeoLine` son alias de `WKBElement`, solo para `Mapped[...]`.

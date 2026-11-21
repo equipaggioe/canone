@@ -9,7 +9,7 @@ Estándar: [WCAG 2.2](../fuentes/w3c/wcag22.html) de W3C.
 - Las convenciones de esta sección rigen en todos los clientes, también en las apps, donde cada pantalla cuenta como una página web: una sola vara para todos los clientes.
 - Cada objetivo táctil mide al menos 48 × 48, salvo un enlace dentro de una frase: dp en las apps y px de CSS en la web, que también se usa en el teléfono.
 - Una llamada entre usuarios no lleva subtítulos en vivo: el criterio de los subtítulos en vivo apunta a las transmisiones, no a las llamadas entre personas. [WCAG 2.2](https://raw.githubusercontent.com/w3c/wcag/807a6c24c58526d017da5a32ea630ac31e850b71/understanding/20/captions-live.html)
-- Cada rol de texto de `brand/tokens/` cumple el contraste del texto contra cada fondo en que va, y `outline`, el de los componentes contra cada superficie, en cada tema y en cada modo. `primary` y `error` son roles de texto: Material los usa en la etiqueta de un botón de texto y en el error de un campo.
+- Cada rol de texto de `brand/tokens/` cumple el contraste del texto contra cada fondo en que va, y `outline`, el de los componentes contra cada superficie, en cada tema y en cada modo. `primary`, `error` y el rol que da nombre a cada custom color son roles de texto: Material usa los dos primeros en la etiqueta de un botón de texto y en el error de un campo, y el de un custom color es el color de su estado en un texto.
 - Todos los clientes cumplen el nivel AA ([WCAG 2.2 §5.2.1](../fuentes/w3c/wcag22.html)).
 - El texto contrasta al menos 4.5:1 con su fondo, también el grande, salvo el de un componente inactivo, el decorativo, el que no se ve, el de una imagen con otro contenido importante y el de un logo: un rol de color no sabe el tamaño del texto que lleva ([WCAG 2.2 §1.4.3](../fuentes/w3c/wcag22.html) y [§1.4.6](../fuentes/w3c/wcag22.html)).
 - Todo contenido que no es texto tiene una alternativa de texto con el mismo propósito; un control, un nombre que dice para qué sirve, y lo decorativo queda oculto a las tecnologías de apoyo ([WCAG 2.2 §1.1.1](../fuentes/w3c/wcag22.html)).
@@ -241,12 +241,15 @@ Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el [mó
 
 - Los colores de un producto van en `brand/tokens/`: `colors.resolver.json` y los `.tokens.json` que cita. Son la única fuente de los colores de todos sus clientes.
 - Los tokens tienen dos niveles: el grupo `palette` guarda los colores, en sRGB y opacos, y el grupo `color` asigna cada rol a un color de `palette` con un alias. Cambiar un color de la marca toca un solo token.
-- Los roles son las 46 propiedades de color no obsoletas del `ColorScheme` de Flutter, y cada modo las asigna todas. Compose, Flutter y Flet arman su esquema con esos roles, y uno sin asignar tomaría en silencio el color por defecto del framework.
+- Los roles son las 46 propiedades de color no obsoletas del `ColorScheme` de Flutter y los de los custom colors del producto, y cada modo los asigna todos. Compose, Flutter y Flet arman su esquema con esos roles, y uno sin asignar tomaría en silencio el color por defecto del framework.
+- Un estado que el `ColorScheme` no tiene lleva un custom color de Material: una familia de cuatro roles, `x`, `onX`, `xContainer` y `onXContainer`, que son el `color`, `onColor`, `colorContainer` y `onColorContainer` de su `ColorGroup`. [material-color-utilities](https://raw.githubusercontent.com/material-foundation/material-color-utilities/4dbd965df653f8c82d09c0c96c8067d4b7fa9070/typescript/utils/theme_utils.ts)
+- El éxito es el custom color `success`, y la advertencia, `warning`.
+- Un custom color se nombra con minúsculas y dígitos, y no con el de un rol del `ColorScheme`: es un campo en cada cliente. Todos los temas y los modos tienen los mismos custom colors.
 - Cada producto elige sus temas y sus modos: uno o más temas, y el modo claro, el oscuro o los dos. Cada tema tiene los modos del producto.
 - Un tema cambia la paleta, y los modos asignan los roles: el mismo rol toma el mismo tono en todos los temas. Así los dos modificadores no se pisan, como recomienda DTCG ([DTCG Resolver §2.1](../fuentes/dtcg/resolver.html)).
 - `colors.resolver.json` tiene dos modificadores: `theme`, con un contexto por tema y el inicial en `default`, y `mode`, con `light`, `dark` o los dos ([DTCG Resolver §4.1.5](../fuentes/dtcg/resolver.html)). Los archivos de un tema solo tienen el grupo `palette`, y los de un modo, solo el grupo `color`.
 - Un tema se nombra con minúsculas y dígitos: es un miembro de un enum en cada cliente y un valor de `data-theme` en la web.
-- `scripts/tokens.py` genera en cada cliente el enum `ColorTheme`, con un miembro por tema y un esquema ya armado por modo, y el tema inicial.
+- `scripts/tokens.py` genera en cada cliente el enum `ColorTheme`, con un miembro por tema y un esquema ya armado por modo, y el tema inicial. Si el producto tiene custom colors, genera también la clase `CustomColors`, y cada tema tiene uno por modo, aparte del esquema.
 - `scripts/tokens.py` falla ante lo que DTCG define fuera de las partes que siguen, ante un color que no cumpla el contraste de [Accesibilidad](#accesibilidad) y ante dos temas iguales: un producto solo usa colores sRGB opacos.
 - Lo generado se commitea: un cliente compila sin correr el generador.
 - Con un solo modo, el cliente lo usa siempre, aunque el sistema esté en el otro.

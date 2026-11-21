@@ -1,6 +1,6 @@
 # ADR-0062 · Los colores de un producto salen de `brand/tokens/` en DTCG, y un generador arma el esquema de cada cliente
 
-- **Estado:** Aceptada. El modo del punto 8 lo reemplaza el [ADR-0160](0160-el-usuario-elige-el-modo-claro-u-oscuro-en-cada-dispositivo.md), y el modificador del punto 2 y los puntos 7, 8 y 9, el [ADR-0201](0201-un-producto-elige-sus-temas-y-sus-modos-y-el-modo-es-otro-modificador.md)
+- **Estado:** Aceptada. El modo del punto 8 lo reemplaza el [ADR-0160](0160-el-usuario-elige-el-modo-claro-u-oscuro-en-cada-dispositivo.md), y el modificador del punto 2 y los puntos 7, 8 y 9, el [ADR-0201](0201-un-producto-elige-sus-temas-y-sus-modos-y-el-modo-es-otro-modificador.md), y el punto 3, el [ADR-0209](0209-un-estado-que-el-colorscheme-no-tiene-lleva-un-custom-color-de-material.md)
 - **Fecha:** 2026-10-17
 - **Alcance:** la sección «Tema» de [plataformas/transversal.md](../plataformas/transversal.md#tema)
   y la de cada cliente; `brand/`, `scripts/` y los clientes de cada repositorio

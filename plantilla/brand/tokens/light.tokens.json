@@ -46,6 +46,14 @@
     "outline": { "$value": "{palette.neutralVariant.50}" },
     "outlineVariant": { "$value": "{palette.neutralVariant.80}" },
     "shadow": { "$value": "{palette.neutral.0}" },
-    "scrim": { "$value": "{palette.neutral.0}" }
+    "scrim": { "$value": "{palette.neutral.0}" },
+    "success": { "$value": "{palette.success.40}" },
+    "onSuccess": { "$value": "{palette.success.100}" },
+    "successContainer": { "$value": "{palette.success.90}" },
+    "onSuccessContainer": { "$value": "{palette.success.10}" },
+    "warning": { "$value": "{palette.warning.40}" },
+    "onWarning": { "$value": "{palette.warning.100}" },
+    "warningContainer": { "$value": "{palette.warning.90}" },
+    "onWarningContainer": { "$value": "{palette.warning.10}" }
   }
 }

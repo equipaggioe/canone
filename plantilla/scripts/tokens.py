@@ -119,12 +119,41 @@ PAIRS = [
 
 ALIAS = re.compile(r"\{palette(?:\.[^.{}]+)+\}")
 HEX = re.compile(r"#[0-9a-f]{6}")
-# A theme is named in every client: an enum member, a CSS attribute.
+# A theme and a custom color are named in every client: an enum member,
+# a field, a CSS attribute.
 NAME = re.compile(r"[a-z][a-z0-9]*")
 
 type Scheme = dict[str, str]
 type Themes = dict[str, dict[str, Scheme]]
 type Files = dict[str, dict[str, list[Path]]]
+
+
+def family(name: str) -> tuple[str, str, str, str]:
+    """Return the four roles of a custom color.
+
+    They are the color, onColor, colorContainer and onColorContainer of
+    ColorGroup, in theme_utils.ts of material-color-utilities.
+    """
+    capital = name[0].upper() + name[1:]
+    return name, f"on{capital}", f"{name}Container", f"on{capital}Container"
+
+
+def customs(colors: Scheme) -> list[str]:
+    """Return the names of the custom colors of a scheme."""
+    return [role for role in colors if role not in ROLES and NAME.fullmatch(role)]
+
+
+def pairs(names: list[str]) -> list[tuple[str, str, float]]:
+    """Return the pairs of a scheme with these custom colors.
+
+    The color of a custom color is text on a surface, as error is.
+    """
+    found = list(PAIRS)
+    for name in names:
+        color, on_color, container, on_container = family(name)
+        found += [(on_color, color, TEXT), (on_container, container, TEXT)]
+        found += [(color, surface, TEXT) for surface in SURFACES]
+    return found
 
 
 class TokenError(Exception):
@@ -331,11 +360,14 @@ def scheme(files: list[Path]) -> Scheme:
     found = tokens(mapping(tree.get("palette", {}), "palette"), "palette", None)
     palette = {path: color(value, path) for path, value in found.items()}
     roles = tokens(mapping(tree.get("color", {}), "color"), "color", None)
-    expected = {f"color.{role}" for role in ROLES}
-    if set(roles) != expected:
-        missing = sorted(expected - set(roles))
-        extra = sorted(set(roles) - expected)
-        raise TokenError(f"color: missing {missing}, unknown {extra}")
+    names = {path.removeprefix("color.") for path in roles}
+    # A role outside ColorScheme belongs to a whole custom color.
+    extra = sorted(name for name in names - set(ROLES) if NAME.fullmatch(name))
+    listed = [*ROLES, *(role for name in extra for role in family(name))]
+    if names != set(listed):
+        missing = sorted(set(listed) - names)
+        unknown = sorted(names - set(listed))
+        raise TokenError(f"color: missing {missing}, unknown {unknown}")
     result: Scheme = {}
     for path, value in roles.items():
         if not isinstance(value, str) or not ALIAS.fullmatch(value):
@@ -344,7 +376,7 @@ def scheme(files: list[Path]) -> Scheme:
         if target not in palette:
             raise TokenError(f"{path}: {value} does not exist")
         result[path.removeprefix("color.")] = palette[target]
-    return {role: result[role] for role in ROLES}
+    return {role: result[role] for role in listed}
 
 
 def luminance(hex_color: str) -> float:
@@ -361,14 +393,19 @@ def contrast(first: str, second: str) -> float:
 
 
 def check(themes: Themes) -> None:
-    """Fail on a pair under its minimum ratio or on two equal themes."""
+    """Fail on a pair under its minimum ratio or on two equal themes.
+
+    It also fails when the themes or the modes differ in custom colors.
+    """
     failures = [
         f"{name} {mode}: {front} on {back} is {ratio:.2f}:1, under {minimum}:1"
         for name, modes in themes.items()
         for mode, colors in modes.items()
-        for front, back, minimum in PAIRS
+        for front, back, minimum in pairs(customs(colors))
         if (ratio := contrast(colors[front], colors[back])) < minimum
     ]
+    if len({tuple(colors) for modes in themes.values() for colors in modes.values()}) > 1:
+        failures.append("the themes and modes do not have the same custom colors")
     names = list(themes)
     failures += [
         f"{first} and {second} are the same theme"
@@ -400,29 +437,103 @@ def modes_of(themes: Themes) -> list[str]:
     return list(next(iter(themes.values())))
 
 
+def roles_of(themes: Themes) -> list[str]:
+    """Return the roles of the product, the same in every scheme."""
+    return list(next(iter(next(iter(themes.values())).values())))
+
+
+def custom_roles(themes: Themes) -> list[str]:
+    """Return the roles of the custom colors of the product."""
+    return [role for role in roles_of(themes) if role not in ROLES]
+
+
+# The line width and the indent of what dart format and ktlint write,
+# and whether a list split into lines ends in a comma.
+LAYOUT = {"dart": (99, "  ", ","), "kotlin": (100, "    ", "")}
+
+
+def wrap(language: str, indent: str, head: str, items: list[str], tail: str) -> str:
+    """Write a list on one line, or an item per line if it does not fit."""
+    width, step, last = LAYOUT[language]
+    line = f"{indent}{head}{', '.join(items)}{tail}"
+    if len(line) <= width:
+        return line + "\n"
+    inner = ",\n".join(f"{indent}{step}{item}" for item in items)
+    return f"{indent}{head}\n{inner}{last}\n{indent}{tail}\n"
+
+
+def dart_customs(roles: list[str]) -> str:
+    """Write the ThemeExtension of Flutter with the custom colors."""
+    return (
+        "/// The custom colors of brand/tokens/: the roles that ColorScheme lacks.\n"
+        "class CustomColors extends ThemeExtension<CustomColors> {\n"
+        + wrap("dart", "  ", "const CustomColors({", [f"required this.{r}" for r in roles], "});")
+        + "\n"
+        + "".join(f"  final Color {role};\n" for role in roles)
+        + "\n  @override\n"
+        + wrap("dart", "  ", "CustomColors copyWith({", [f"Color? {r}" for r in roles], "}) {")
+        + wrap(
+            "dart", "    ", "return CustomColors(", [f"{r}: {r} ?? this.{r}" for r in roles], ");"
+        )
+        + "  }\n\n"
+        "  @override\n"
+        "  CustomColors lerp(CustomColors? other, double t) {\n"
+        "    if (other == null) {\n"
+        "      throw ArgumentError.notNull('other');\n"
+        "    }\n"
+        + wrap(
+            "dart",
+            "    ",
+            "return CustomColors(",
+            [f"{r}: Color.lerp({r}, other.{r}, t)!" for r in roles],
+            ");",
+        )
+        + "  }\n"
+        "}\n\n"
+    )
+
+
 def dart(themes: Themes, initial: str) -> str:
-    """Write the ColorTheme enum of Flutter."""
+    """Write the ColorTheme enum of Flutter, and its custom colors."""
+    extra = custom_roles(themes)
     entries = []
     for name, modes in themes.items():
         schemes = "".join(
             f"    {mode}: ColorScheme(\n"
             f"      brightness: Brightness.{mode},\n"
-            + "".join(f"      {role}: Color({argb(value)}),\n" for role, value in colors.items())
+            + "".join(f"      {role}: Color({argb(colors[role])}),\n" for role in ROLES)
             + "    ),\n"
             for mode, colors in modes.items()
         )
+        schemes += "".join(
+            wrap(
+                "dart",
+                "    ",
+                f"{mode}Custom: CustomColors(",
+                [f"{role}: Color({argb(colors[role])})" for role in extra],
+                "),",
+            )
+            for mode, colors in modes.items()
+            if extra
+        )
         entries.append(f"  {name}(\n{schemes}  )")
+    fields = [(mode, "ColorScheme") for mode in modes_of(themes)]
+    fields += [(f"{mode}Custom", "CustomColors") for mode in modes_of(themes) if extra]
     return (
         f"// {HEADER}\n\n"
         "import 'package:flutter/material.dart';\n\n"
-        "/// The color themes of brand/tokens/, each with a scheme per mode.\n"
-        "enum ColorTheme {\n" + ",\n".join(entries) + ";\n\n"
-        "  const ColorTheme({"
-        + ", ".join(f"required this.{mode}" for mode in modes_of(themes))
-        + "});\n\n"
+        + (dart_customs(extra) if extra else "")
+        + "/// The color themes of brand/tokens/, each with a scheme per mode.\n"
+        "enum ColorTheme {\n"
+        + ",\n".join(entries)
+        + ";\n\n"
+        + wrap(
+            "dart", "  ", "const ColorTheme({", [f"required this.{f}" for f, _ in fields], "});"
+        )
+        + "\n"
         "  /// The theme the app starts with.\n"
         f"  static const initial = ColorTheme.{initial};\n\n"
-        + "".join(f"  final ColorScheme {mode};\n" for mode in modes_of(themes))
+        + "".join(f"  final {kind} {field};\n" for field, kind in fields)
         + "}\n"
     )
 
@@ -438,23 +549,44 @@ COMPOSE_EXTRA = {
 }
 
 
+def kotlin_argument(name: str, call: str, colors: dict[str, str]) -> str:
+    """Write a named argument of an enum entry that builds the colors."""
+    fields = ",\n".join(
+        f"                {role} = Color({argb(value)})" for role, value in colors.items()
+    )
+    return f"        {name} =\n            {call}(\n{fields}\n            )"
+
+
+def kotlin_customs(roles: list[str]) -> str:
+    """Write the custom colors of Compose and the local that holds them."""
+    return (
+        "// The custom colors of brand/tokens/: the roles that ColorScheme lacks.\n"
+        + wrap("kotlin", "", "data class CustomColors(", [f"val {r}: Color" for r in roles], ")")
+        + "\n// The custom colors of the theme and the mode the user chose.\n"
+        "val LocalCustomColors =\n"
+        '    staticCompositionLocalOf<CustomColors> { error("No CustomColors provided") }\n\n'
+    )
+
+
 def kotlin(themes: Themes, initial: str, package: str) -> str:
     """Write the ColorTheme enum of Compose, as ktlint formats it."""
+    extra = custom_roles(themes)
     entries = []
     for name, modes in themes.items():
-        schemes = []
+        arguments = []
         for mode, colors in modes.items():
-            names = {COMPOSE.get(role, role): value for role, value in colors.items()}
-            names |= {extra: colors[role] for extra, role in COMPOSE_EXTRA.items()}
-            fields = ",\n".join(
-                f"                {role} = Color({argb(value)})"
-                for role, value in names.items()
-                if role is not None
-            )
-            schemes.append(
-                f"        {mode} =\n            {mode}ColorScheme(\n{fields}\n            )"
-            )
-        entries.append(f"    {name.upper()}(\n" + ",\n".join(schemes) + "\n    )")
+            names = {new: colors[role] for role in ROLES if (new := COMPOSE.get(role, role))}
+            names |= {old: colors[role] for old, role in COMPOSE_EXTRA.items()}
+            arguments.append(kotlin_argument(mode, f"{mode}ColorScheme", names))
+        arguments += [
+            kotlin_argument(f"{mode}Custom", "CustomColors", {r: colors[r] for r in extra})
+            for mode, colors in modes.items()
+            if extra
+        ]
+        entries.append(f"    {name.upper()}(\n" + ",\n".join(arguments) + "\n    )")
+    fields = [f"val {mode}: ColorScheme" for mode in modes_of(themes)]
+    fields += [f"val {mode}Custom: CustomColors" for mode in modes_of(themes) if extra]
+    runtime = "import androidx.compose.runtime.staticCompositionLocalOf\n" if extra else ""
     return (
         f"// {HEADER}\n"
         f"package {package}\n\n"
@@ -463,11 +595,11 @@ def kotlin(themes: Themes, initial: str, package: str) -> str:
             f"import androidx.compose.material3.{mode}ColorScheme\n"
             for mode in sorted(modes_of(themes))
         )
+        + runtime
         + "import androidx.compose.ui.graphics.Color\n\n"
-        "// The color themes of brand/tokens/, each with a scheme per mode.\n"
-        "enum class ColorTheme("
-        + ", ".join(f"val {mode}: ColorScheme" for mode in modes_of(themes))
-        + ") {\n"
+        + (kotlin_customs(extra) if extra else "")
+        + "// The color themes of brand/tokens/, each with a scheme per mode.\n"
+        + wrap("kotlin", "", "enum class ColorTheme(", fields, ") {")
         + ",\n".join(entries)
         + "\n    ;\n\n"
         "    companion object {\n"
@@ -478,40 +610,64 @@ def kotlin(themes: Themes, initial: str, package: str) -> str:
     )
 
 
-def python_enum(themes: Themes, initial: str, kind: str, scheme: Callable[[Scheme], str]) -> str:
+# A field of the enum in every mode: its suffix, its type, and how it is
+# written from a scheme.
+type Field = tuple[str, str, Callable[[Scheme], str]]
+
+
+def python_enum(themes: Themes, initial: str, fields: list[Field]) -> str:
     """Write the ColorTheme enum of a Python client."""
+    modes = modes_of(themes)
     members = "".join(
         f"    {name.upper()} = (\n"
-        + "".join(scheme(colors) for colors in modes.values())
+        + "".join(write(modes[mode]) for _, _, write in fields for mode in modes)
         + "    )\n"
         for name, modes in themes.items()
     )
-    modes = modes_of(themes)
+    names = [(f"{mode}{suffix}", kind) for suffix, kind, _ in fields for mode in modes]
+    items = ["self", *(f"{name}: {kind}" for name, kind in names)]
+    parameters = ", ".join(items)
+    if len(names) > 2:
+        # A trailing comma keeps ruff format from joining the lines.
+        parameters = "".join(f"\n        {item}," for item in items) + "\n    "
     return (
         "class ColorTheme(Enum):\n"
         '    """The color themes of brand/tokens/, a scheme per mode."""\n\n'
         + members
-        + "\n    def __init__(self, "
-        + ", ".join(f"{mode}: {kind}" for mode in modes)
-        + ") -> None:\n"
+        + f"\n    def __init__({parameters}) -> None:\n"
         '        """Name the schemes of a theme, one per mode."""\n'
-        + "".join(f"        self.{mode} = {mode}\n" for mode in modes)
+        + "".join(f"        self.{name} = {name}\n" for name, _ in names)
         + f"\n\nINITIAL = ColorTheme.{initial.upper()}\n"
     )
 
 
 def flet(themes: Themes, initial: str) -> str:
-    """Write the ColorTheme enum of Flet."""
+    """Write the ColorTheme enum of Flet, and its custom colors."""
+    extra = custom_roles(themes)
 
-    def scheme(colors: Scheme) -> str:
-        fields = "".join(
-            f'            {snake(role)}="{value}",\n' for role, value in colors.items()
+    def build(call: str, roles: list[str]) -> Callable[[Scheme], str]:
+        def write(colors: Scheme) -> str:
+            fields = "".join(f'            {snake(r)}="{colors[r]}",\n' for r in roles)
+            return f"        {call}(\n{fields}        ),\n"
+
+        return write
+
+    fields: list[Field] = [("", "ft.ColorScheme", build("ft.ColorScheme", list(ROLES)))]
+    header = f'"""{HEADER}"""\n\nfrom enum import Enum\n\nimport flet as ft\n\n\n'
+    if extra:
+        fields.append(("_custom", "CustomColors", build("CustomColors", extra)))
+        header = (
+            f'"""{HEADER}"""\n\n'
+            "from dataclasses import dataclass\n"
+            "from enum import Enum\n\n"
+            "import flet as ft\n\n\n"
+            "@dataclass(frozen=True)\n"
+            "class CustomColors:\n"
+            '    """The custom colors: the roles that ColorScheme lacks."""\n\n'
+            + "".join(f"    {snake(role)}: str\n" for role in extra)
+            + "\n\n"
         )
-        return f"        ft.ColorScheme(\n{fields}        ),\n"
-
-    return f'"""{HEADER}"""\n\nfrom enum import Enum\n\nimport flet as ft\n\n\n' + python_enum(
-        themes, initial, "ft.ColorScheme", scheme
-    )
+    return header + python_enum(themes, initial, fields)
 
 
 # The palette of Fusion. Dark draws the shade of a sunken frame, and
@@ -560,7 +716,7 @@ def qt(themes: Themes, initial: str) -> str:
         f'"""{HEADER}"""\n\n'
         "from enum import Enum\n\n"
         "from PySide6.QtGui import QColor, QPalette\n\n\n"
-        + python_enum(themes, initial, "dict[str, str]", scheme)
+        + python_enum(themes, initial, [("", "dict[str, str]", scheme)])
         + f"\nROLES = {{\n{roles}}}\n\n\n"
         "def palette(colors: dict[str, str]) -> QPalette:\n"
         '    """Build the palette of one scheme."""\n'
@@ -601,7 +757,9 @@ def typescript(themes: Themes, initial: str) -> str:
             + css(f"{root}:not([data-mode])", "dark", modes["dark"], "\t")
             + "}\n",
         ]
-    names = ",\n".join(f"\t{quote(kebab(role))}: 'var(--color-{kebab(role)})'" for role in ROLES)
+    names = ",\n".join(
+        f"\t{quote(kebab(role))}: 'var(--color-{kebab(role)})'" for role in roles_of(themes)
+    )
     listed = ", ".join(f"'{name}'" for name in themes)
     return (
         f"// {HEADER}\n\n"

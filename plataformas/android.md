@@ -318,6 +318,7 @@ Contrato: [transversal.md](transversal.md#reintentos).
 Contrato: [transversal.md](transversal.md#tema).
 
 - `MaterialTheme` toma el esquema del modo, `light` o `dark`, del `ColorTheme` elegido, generado en `ui/theme/ColorTheme.kt`. El tema, y el modo cuando el producto tiene los dos, salen de la elección del usuario, guardada en Preferences DataStore: `ColorTheme.initial` mientras no elija otro tema, y con «sistema», `isSystemInDarkTheme()`.
+- Con custom colors, el tema provee `LocalCustomColors` con el `CustomColors` del mismo modo, `lightCustom` o `darkCustom`, junto a `MaterialTheme`.
 - Los tamaños van en `ui/theme/`, sin tamaños literales fuera de él.
 
 ## Versión mínima de cliente

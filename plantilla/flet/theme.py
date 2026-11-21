@@ -2,7 +2,7 @@
 
 import flet as ft
 
-from colors import INITIAL, ColorTheme
+from colors import INITIAL, ColorTheme, CustomColors
 
 MODE = "mode"
 THEME = "theme"
@@ -44,3 +44,15 @@ def paint(page: ft.Page, theme: ColorTheme) -> None:
     """Set the light and the dark scheme of one color theme."""
     page.theme = ft.Theme(color_scheme=theme.light)
     page.dark_theme = ft.Theme(color_scheme=theme.dark)
+
+
+def custom(page: ft.Page, theme: ColorTheme) -> CustomColors:
+    """Return the custom colors of the mode that the page shows.
+
+    The theme of Flet does not hold them, so they do not follow the mode
+    by themselves.
+    """
+    dark = page.theme_mode == ft.ThemeMode.DARK or (
+        page.theme_mode == ft.ThemeMode.SYSTEM and page.platform_brightness == ft.Brightness.DARK
+    )
+    return theme.dark_custom if dark else theme.light_custom

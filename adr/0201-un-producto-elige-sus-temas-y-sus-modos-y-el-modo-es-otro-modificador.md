@@ -2,7 +2,8 @@
 
 - **Estado:** Aceptada. El usuario pidió que cada repositorio pueda tener un tema con un modo, con
   los dos o varios temas, y reevaluar, con pruebas y con la literatura, e implementar las demás
-  recomendaciones (2026-11-20)
+  recomendaciones (2026-11-20). El punto 5 lo reemplaza el
+  [ADR-0209](0209-un-estado-que-el-colorscheme-no-tiene-lleva-un-custom-color-de-material.md)
 - **Fecha:** 2026-11-20
 - **Alcance:** «Tema» de [plataformas/transversal.md](../plataformas/transversal.md#tema) y de cada
   cliente, «Accesibilidad» de `transversal.md`, «Estilos» de

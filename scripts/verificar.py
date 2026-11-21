@@ -1136,10 +1136,16 @@ def revisar(repo: Path) -> list[str]:
             r"\bseparators\s*:\s*\[\s*['\"]:['\"]\s*\]", sin_comentarios(uno.read_text(encoding="utf-8"))
         ):
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/uno.config.ts no fija separators: [':']")
-        for nombre in (".prettierrc", "knip.json", "pnpm-workspace.yaml", "static/theme.js"):
+        for nombre in (".prettierrc", "knip.json", "pnpm-workspace.yaml", "static/theme.js", "src/lib/version.ts"):
             fallas.extend(
                 comparar(superficie / nombre, PLANTILLA / "sveltekit" / nombre, f"{superficie.name}/{nombre}")
             )
+        # sveltekit.md, «Carga de datos»: el layout raíz recarga la página cuando sale un build nuevo.
+        layout = superficie / "src/routes/+layout.svelte"
+        texto = layout.read_text(encoding="utf-8") if layout.exists() else ""
+        codigo = sin_comentarios(re.sub(r"<!--.*?-->", "", texto, flags=re.S))
+        if not re.search(r"\breloadOnNewVersion\s*\(\s*\)", codigo):
+            fallas.append(f"plataformas/sveltekit.md: {superficie.name}/src/routes/+layout.svelte no llama a reloadOnNewVersion()")
 
     # Flutter: solo para las apps que existan.
     for pubspec in repo.glob("*/pubspec.yaml") if "flutter.md" in paginas else []:

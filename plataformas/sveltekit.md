@@ -50,6 +50,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
     lib/
       colors.ts
       theme.ts        la elección del modo y del tema
+      version.ts      la recarga cuando sale un build nuevo
       api/            los tipos de openapi-typescript y el cliente de openapi-fetch
       components/
       state/          las clases con $state, en módulos .svelte.ts
@@ -60,7 +61,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
   tests/
 ```
 
-Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, `knip.json`, `pnpm-workspace.yaml` y `static/theme.js`, que se copian sin editar, y `vite.config.ts`, `playwright.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore`, `.prettierignore` y `src/lib/theme.ts`, puntos de partida.
+Plantilla: [plantilla/sveltekit/](../plantilla/sveltekit/): `.prettierrc`, `knip.json`, `pnpm-workspace.yaml`, `static/theme.js` y `src/lib/version.ts`, que se copian sin editar, y `vite.config.ts`, `playwright.config.ts`, `uno.config.ts`, `eslint.config.js`, `.gitignore`, `.prettierignore` y `src/lib/theme.ts`, puntos de partida.
 
 ## Estilo
 
@@ -92,7 +93,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - Una página prerenderizada no carga datos de la API en su `load`: el build llama a la API y falla si no responde, y el HTML muestra el dato del momento del build hasta que el navegador vuelve a correr el `load`.
 - Los tipos de la API se generan con `openapi-typescript` en `src/lib/api/schema.d.ts`, que no se versiona: generados, no pasan `prettier --check`. El script `api` de `package.json` es `openapi-typescript ../server/openapi.json -o src/lib/api/schema.d.ts`, y `dev` y `check` empiezan por `pnpm api && `. CI lo corre antes de `svelte-check`.
 - Las llamadas se hacen con `openapi-fetch`, sin una función por ruta escrita a mano.
-- El `+layout.svelte` raíz hace una navegación completa con `beforeNavigate` cuando `updated.current` es `true`: SvelteKit recarga solo cuando la navegación falla, y una pestaña abierta o la PWA seguirían corriendo el build viejo contra el servidor nuevo, que `openapi-fetch` no valida. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs%2Fkit%403.2.0/packages/kit/src/exports/vite/public.d.ts)
+- El `+layout.svelte` raíz llama a `reloadOnNewVersion()` de `src/lib/version.ts`, que con `beforeNavigate` hace una navegación completa cuando `updated.current` es `true`: SvelteKit recarga solo cuando la navegación falla, y una pestaña abierta o la PWA seguirían corriendo el build viejo contra el servidor nuevo, que `openapi-fetch` no valida. [SvelteKit 3.2.0](https://raw.githubusercontent.com/sveltejs/kit/%40sveltejs%2Fkit%403.2.0/packages/kit/src/exports/vite/public.d.ts)
 - El cliente no lleva `baseUrl`: las rutas del OpenAPI ya empiezan por `/api`, en el mismo origen que la web ([despliegue.md](despliegue.md#caddy)). En desarrollo, `server.proxy` de `vite.config.ts` manda `/api` a `http://localhost:8000` con `ws: true`, para que también pase el WebSocket.
 - Los datos de la API se cargan en `load` universales, en `+page.ts` y `+layout.ts`: en producción no hay servidor de SvelteKit que corra un `load` de servidor ([Loading data, *When to use which*](../fuentes/sveltekit/load.md)).
 - En un `load`, el cliente de `openapi-fetch` recibe el `fetch` del evento: solo ese `fetch` registra la URL con la que `invalidate(url)` vuelve a correr el `load` ([Loading data, *Making fetch requests*](../fuentes/sveltekit/load.md) y [*Manual invalidation*](../fuentes/sveltekit/load.md)).
@@ -274,6 +275,7 @@ Estándar: [*Static site generation*](../fuentes/sveltekit/adapter-static.md) de
 | Todo paquete que importa el código está declarado, y toda dependencia declarada se usa | `pnpm exec knip --dependencies` en CI |
 | `knip.json` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
 | `pnpm-workspace.yaml` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
+| `src/lib/version.ts` igual al de la plantilla, y el `+layout.svelte` raíz llama a `reloadOnNewVersion()` | [scripts/verificar.py](../scripts/verificar.py) |
 | Ningún `svelte-ignore` de una advertencia `a11y_*` | [scripts/verificar.py](../scripts/verificar.py) |
 | La misma versión de Playwright en todo `package.json` | [scripts/verificar.py](../scripts/verificar.py) |
 | pnpm en `packageManager`, y las versiones de [stack.md](../stack.md), exactas | [scripts/verificar.py](../scripts/verificar.py) |

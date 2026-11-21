@@ -1,6 +1,6 @@
 # ADR-0213 · La web no falla ante un campo desconocido: se recarga al cambiar de versión, y todo el problem+json queda abierto
 
-- **Estado:** Aceptada. El usuario eligió que la web se recargue al cambiar de versión, y pidió comprobar y arreglar lo que hiciera falta (2026-11-21)
+- **Estado:** Aceptada. El usuario eligió que la web se recargue al cambiar de versión, y pidió comprobar y arreglar lo que hiciera falta (2026-11-21). Su consecuencia de que ninguna herramienta comprueba la recarga la deja atrás el [ADR-0214](0214-la-recarga-de-la-web-es-un-modulo-canonico-que-verificar-comprueba.md)
 - **Fecha:** 2026-11-21
 - **Alcance:** [plataformas/transversal.md](../plataformas/transversal.md), `sveltekit.md`, `fastapi.md`, `android.md` y con `server/`
 

@@ -10,6 +10,9 @@ from app import theme
 SRC = Path(__file__).parents[1] / "src"
 PACKAGE = SRC / "app"
 COLORS = PACKAGE / "colors.py"
+# pyside6-rcc writes it from resources.qrc, and git ignores it: its
+# bytes are images and translations, and can match a pattern by chance.
+RESOURCES = PACKAGE / "rc_resources.py"
 # A CSS rgb(), and not QColor.rgb().
 COLOR = re.compile(r"#[0-9a-fA-F]{3,8}\b|(?<!\.)\brgba?\(|\bQColor\(")
 
@@ -19,7 +22,7 @@ def lines_outside(pattern: re.Pattern[str], allowed: set[Path]) -> list[str]:
     return [
         f"{path.relative_to(SRC)}:{number}"
         for path in sorted(PACKAGE.rglob("*.py"))
-        if path not in allowed
+        if path not in allowed | {RESOURCES}
         for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1)
         if pattern.search(line)
     ]

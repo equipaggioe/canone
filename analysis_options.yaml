@@ -1,0 +1,4 @@
+# Canone is not a Flutter package: the template's options only resolve inside an app.
+analyzer:
+  exclude:
+    - plantilla/flutter/**

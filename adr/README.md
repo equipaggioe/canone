@@ -222,3 +222,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0214](0214-la-recarga-de-la-web-es-un-modulo-canonico-que-verificar-comprueba.md) | La recarga de la web es un módulo canónico que `verificar.py` comprueba | `sveltekit.md`, `plantilla/sveltekit/` y `scripts/verificar.py` |
 | [0215](0215-una-fecha-sin-hora-entra-solo-como-aaaa-mm-dd.md) | Una fecha sin hora entra al servidor solo como `AAAA-MM-DD` | `fastapi.md` y con `server/` |
 | [0216](0216-un-cliente-de-qt-mide-su-accesibilidad-con-una-prueba-canonica.md) | Un cliente de Qt mide su accesibilidad con una prueba canónica, y cada repositorio da su ventana | `qt.md`, `plantilla/qt/tests/` y `scripts/verificar.py` |
+| [0217](0217-en-una-app-que-solo-se-usa-con-el-puntero-un-objetivo-mide-24-x-24.md) | En una app que solo se usa con el puntero, un objetivo mide 24 × 24 | `transversal.md` |

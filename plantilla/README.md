@@ -28,7 +28,8 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `qt/pyproject.toml`<br>`pysidedeploy.spec` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
 | `qt/src/app/api/ruff.toml`<br>`services/ruff.toml` | `desktop/src/app/` | Canónico | [qt.md](../plataformas/qt.md) |
 | `qt/theme.py` | `desktop/src/app/` | Punto de partida | [qt.md](../plataformas/qt.md) |
-| `qt/tests/test_theme.py` | `desktop/tests/` | Canónico | [qt.md](../plataformas/qt.md) |
+| `qt/tests/test_theme.py`<br>`test_accessibility.py` | `desktop/tests/` | Canónico | [qt.md](../plataformas/qt.md) |
+| `qt/tests/conftest.py` | `desktop/tests/` | Punto de partida: el fixture `screen` con la ventana y las bandas de la app | [qt.md](../plataformas/qt.md) |
 | `flet/pyproject.toml`<br>`installer.iss`<br>`build-appimage.sh` | La pieza Flet | Punto de partida | [python.md](../plataformas/python.md), [flet.md](../plataformas/flet.md) |
 | `flet/src/api/ruff.toml` | `src/` de la pieza | Canónico | [flet.md](../plataformas/flet.md) |
 | `flet/theme.py` | `src/` de la pieza | Punto de partida | [flet.md](../plataformas/flet.md) |

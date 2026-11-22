@@ -48,10 +48,12 @@ desktop/
       <clase>.py
   tests/
     __init__.py
+    conftest.py         el fixture screen que mide test_accessibility.py
+    test_accessibility.py
     test_theme.py
 ```
 
-Plantilla: [plantilla/qt/](../plantilla/qt/), el job `desktop` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y el job `desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `tests/test_theme.py` es canónico y se copia sin editar; `theme.py` es un punto de partida para los dos modos, y con uno se le quita la elección del modo. `src/app/api/ruff.toml`, `src/app/services/ruff.toml` y `src/app/services/language.py` se copian sin editar.
+Plantilla: [plantilla/qt/](../plantilla/qt/), el job `desktop` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml) y el job `desktop` de [plantilla/.github/workflows/release.yml](../plantilla/.github/workflows/release.yml). `tests/test_theme.py` y `tests/test_accessibility.py` son canónicos y se copian sin editar, y `tests/conftest.py` es un punto de partida; `theme.py` es un punto de partida para los dos modos, y con uno se le quita la elección del modo. `src/app/api/ruff.toml`, `src/app/services/ruff.toml` y `src/app/services/language.py` se copian sin editar.
 
 ## PySide6
 
@@ -110,6 +112,8 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 - Un widget propio que dibuja su contenido implementa su `QAccessibleInterface` y envía sus eventos de accesibilidad ([Accessibility, *Implementing Accessibility*](../fuentes/qt/accessible.qdoc)).
 - Una función de uso frecuente tiene un atajo de teclado ([Accessibility, *Keyboard Navigation*](../fuentes/qt/accessible.qdoc)).
 - `accessibleName` es corto, y `accessibleDescription` dice qué hace el widget ([QWidget, *accessibleName*](../fuentes/qt/qwidget.qdoc) y [*accessibleDescription*](../fuentes/qt/qwidget.qdoc)).
+- `tests/test_accessibility.py` mide en la ventana principal lo que una herramienta puede medir de [transversal.md](transversal.md#accesibilidad): el contraste del texto y de los glifos, los objetivos de 24 × 24, que todo lo que responde al ratón reciba el foco de Tab, que Tab salga de cada control, se vea y siga el orden de lectura, que lo que se mueve se detenga, que los cambios de estado se anuncien y que la ventana quepa al 200 % en una pantalla de 1920 × 1080. Lo demás se comprueba a mano.
+- `tests/conftest.py` da el fixture `screen`, con lo que solo el repositorio sabe (`Screen`, de `test_accessibility.py`): la ventana abierta con el contenido que se usa, sus bandas en orden de lectura, lo que detiene lo que se mueve y lo que cambia un estado.
 
 ## Almacenamiento
 
@@ -227,4 +231,5 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 | Fusion, a través del `QProxyStyle` de `theme.py` | `test_style_is_fusion`, de `tests/test_theme.py` |
 | Ninguna hoja de estilo | `test_no_style_sheet`, de `tests/test_theme.py` |
 | Pruebas sin pantalla | `QT_QPA_PLATFORM=offscreen` en el job de CI |
+| Lo que una herramienta mide de «Accesibilidad» de `transversal.md` | `tests/test_accessibility.py`, que [scripts/verificar.py](../scripts/verificar.py) compara con el de la plantilla |
 | `src/app/api/models.py` al día con `../server/openapi.json` | `uv run datamodel-codegen` y `git diff --exit-code src/app/api/models.py` en CI |

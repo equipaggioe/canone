@@ -805,6 +805,7 @@ COPIAS_SRC = {
         Path("src/app/services/ruff.toml"),
         Path("src/app/services/language.py"),
         Path("tests/test_theme.py"),
+        Path("tests/test_accessibility.py"),
     ],
     "flet.md": [Path("src/api/ruff.toml"), Path("tests/test_theme.py")],
 }

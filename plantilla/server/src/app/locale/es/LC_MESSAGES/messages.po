@@ -4,3 +4,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "Sign in"
+msgstr "Entrar"
+
+msgid "Sign in with a passkey"
+msgstr "Entrar con passkey"
+
+msgid "The passkey did not sign in. Try again."
+msgstr "La passkey no pudo entrar. Vuelve a intentarlo."
+
+msgid "This sign-in request is not valid. Go back to the app and try again."
+msgstr "Esta solicitud para entrar no es válida. Vuelve a la app e inténtalo de nuevo."

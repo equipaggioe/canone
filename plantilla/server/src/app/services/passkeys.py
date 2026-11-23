@@ -26,7 +26,7 @@ from app.models.account.account import Account
 from app.models.account.passkey import Passkey
 from app.models.event.event_log import EventLog
 from app.schemas.auth import PasskeyCredential, PasskeyOptions
-from app.services import authenticators, events
+from app.services import authenticators, clients, events
 from app.services.authenticators import WAIT_FROM
 from app.services.sessions import Client
 
@@ -44,8 +44,7 @@ class Refused(Exception):
 
 def origins() -> list[str]:
     """Return the origins of a ceremony: the web and the apps."""
-    hosts = (settings.domain, f"app.{settings.domain}", f"panel.{settings.domain}")
-    return [f"https://{host}" for host in hosts] + settings.app_origins
+    return [f"https://{host}" for host in clients.surfaces()] + settings.app_origins
 
 
 def challenge_key(challenge: bytes) -> str:

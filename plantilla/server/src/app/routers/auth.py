@@ -17,7 +17,7 @@ from app.schemas.auth import (
     TokenError,
     TokenResponse,
 )
-from app.services import passkeys, passwords, sessions
+from app.services import authorization, passkeys, passwords, sessions
 from app.services.sessions import Client
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -34,10 +34,17 @@ TOKEN_FORM: dict[str, Any] = {
                 "schema": {
                     "type": "object",
                     "properties": {
-                        "grant_type": {"type": "string", "enum": ["refresh_token"]},
+                        "grant_type": {
+                            "type": "string",
+                            "enum": ["authorization_code", "refresh_token"],
+                        },
+                        "code": {"type": "string"},
+                        "client_id": {"type": "string"},
+                        "redirect_uri": {"type": "string"},
+                        "code_verifier": {"type": "string"},
                         "refresh_token": {"type": "string"},
                     },
-                    "required": ["grant_type", "refresh_token"],
+                    "required": ["grant_type"],
                 }
             }
         },
@@ -83,17 +90,15 @@ async def read_form(request: Request) -> dict[str, str]:
     return {name: value for name, value in pairs if value}
 
 
-def refresh_token(params: dict[str, str]) -> str:
-    """Return the refresh token of a request, or refuse it."""
+def grant_type(params: dict[str, str]) -> str:
+    """Return the grant of a request, or refuse it."""
     if "grant_type" not in params:
         raise TokenRefusal(TokenErrorCode.INVALID_REQUEST)
     if "scope" in params:
         raise TokenRefusal(TokenErrorCode.INVALID_SCOPE)
-    if params["grant_type"] != "refresh_token":
+    if params["grant_type"] not in ("authorization_code", "refresh_token"):
         raise TokenRefusal(TokenErrorCode.UNSUPPORTED_GRANT_TYPE)
-    if "refresh_token" not in params:
-        raise TokenRefusal(TokenErrorCode.INVALID_REQUEST)
-    return params["refresh_token"]
+    return params["grant_type"]
 
 
 async def open_cookie(
@@ -106,7 +111,8 @@ async def open_cookie(
     presented = request.cookies.get(sessions.COOKIE)
     if presented is not None:
         await sessions.discard(session, presented, SessionKind.WEB)
-    sessions.set_cookie(response, await sessions.open_web(session, account, caller))
+    token, _ = await sessions.open_web(session, account, caller)
+    sessions.set_cookie(response, token)
 
 
 async def open_token(
@@ -186,9 +192,15 @@ async def passkey_token(
 async def token(
     request: Request, response: Response, session: SessionDep, caller: ClientDep
 ) -> TokenResponse:
-    """Refresh the session of an app, rotating its refresh token."""
-    presented = refresh_token(await read_form(request))
-    return token_response(await sessions.refresh(session, presented, caller), response)
+    """Exchange a code, or refresh a session, rotating its secret."""
+    params = await read_form(request)
+    if grant_type(params) == "refresh_token":
+        presented = authorization.required(params, "refresh_token")
+        return token_response(await sessions.refresh(session, presented, caller), response)
+    account = await authorization.redeem(session, params)
+    issued = await sessions.open_app(session, account, caller)
+    await authorization.spent(params["code"], issued.session_id)
+    return token_response(issued, response)
 
 
 @router.post("/logout", status_code=HTTPStatus.NO_CONTENT)

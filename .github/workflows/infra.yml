@@ -372,6 +372,7 @@ jobs:
       - run: uv run alembic check
         env:
           CREDENTIALS_DIRECTORY: ${{ runner.temp }}/owner
+      - run: uv run pybabel compile -d src/app/locale
       - run: uv run pytest
         env:
           PYTHONDEVMODE: "1"

@@ -106,6 +106,8 @@ jobs:
       - run: uv run alembic check
         env:
           CREDENTIALS_DIRECTORY: ${{ runner.temp }}/owner
+      # The pages of the server read the catalogs that release.yml compiles.
+      - run: uv run pybabel compile -d src/app/locale
       # A piece in Java runs in the step of pytest, without depending on a process that outlives
       # its step.
       - run: |

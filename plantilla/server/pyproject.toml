@@ -5,6 +5,7 @@ requires-python = "==3.13.*"
 dependencies = [
   "alembic>=1.20.1",
   "asyncpg>=0.32.0",
+  "babel>=2.18.0",
   "cryptography>=50.0.2",
   "fastapi>=0.165.0",
   "opentelemetry-api>=1.45.2",
@@ -23,7 +24,6 @@ dependencies = [
 [dependency-groups]
 dev = [
   "anyio>=4.16.0",
-  "babel>=2.18.0",
   "deptry>=0.25.1",
   "httpx>=0.28.1",
   "pip-audit>=2.10.1",
@@ -80,6 +80,8 @@ ban-relative-imports = "all"
 [tool.pyrefly]
 preset = "strict"
 project-includes = ["src", "tests"]
+# tests/authenticator.py is imported as tests.authenticator.
+search-path = ["src", "."]
 enabled-ignores = ["pyrefly"]
 # models/base.py imports geoalchemy2 only where it is installed.
 ignore-missing-imports = ["geoalchemy2", "geoalchemy2.*"]
@@ -93,6 +95,8 @@ unreachable-except-clause = "error"
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
+# The tests share the authenticator of tests/authenticator.py.
+pythonpath = ["."]
 strict = true
 filterwarnings = ["error"]
 anyio_mode = "auto"

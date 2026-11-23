@@ -726,6 +726,7 @@ source = { editable = "." }
 dependencies = [
     { name = "alembic" },
     { name = "asyncpg" },
+    { name = "babel" },
     { name = "cryptography" },
     { name = "fastapi" },
     { name = "opentelemetry-api" },
@@ -744,7 +745,6 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "anyio" },
-    { name = "babel" },
     { name = "deptry" },
     { name = "httpx" },
     { name = "pip-audit" },
@@ -757,6 +757,7 @@ dev = [
 requires-dist = [
     { name = "alembic", specifier = ">=1.20.1" },
     { name = "asyncpg", specifier = ">=0.32.0" },
+    { name = "babel", specifier = ">=2.18.0" },
     { name = "cryptography", specifier = ">=50.0.2" },
     { name = "fastapi", specifier = ">=0.165.0" },
     { name = "opentelemetry-api", specifier = ">=1.45.2" },
@@ -775,7 +776,6 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "anyio", specifier = ">=4.16.0" },
-    { name = "babel", specifier = ">=2.18.0" },
     { name = "deptry", specifier = ">=0.25.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pip-audit", specifier = ">=2.10.1" },

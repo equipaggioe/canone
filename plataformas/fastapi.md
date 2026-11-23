@@ -32,6 +32,8 @@ server/
     tracing.py
     enums.py
     tasks.py
+    pages.py
+    translations.py
     seeders/
       __init__.py
       <datos>.py
@@ -60,17 +62,21 @@ server/
       base.py
       page.py
       auth.py
+      authorization.py
       health.py
       <recurso>.py
     routers/
       __init__.py
       auth.py
+      authorization.py
       health.py
       problems.py
       <recurso>.py
     services/
       __init__.py
       authenticators.py
+      authorization.py
+      clients.py
       events.py
       files.py
       health.py
@@ -85,6 +91,8 @@ server/
   tests/
     __init__.py
     conftest.py
+    authenticator.py
+    test_authorization.py
     test_conventions.py
     test_events.py
     test_files.py
@@ -262,6 +270,7 @@ Contrato: [transversal.md](transversal.md#fechas).
 Contrato: [transversal.md](transversal.md#idiomas).
 
 - El servidor traduce con Babel.
+- Las pruebas leen los catálogos compilados: el job `server` de CI los compila con `pybabel compile` antes de pytest.
 - El `.mo` no se versiona: `release.yml` lo compila del `.po` con `pybabel compile -d src/app/locale` y viaja en el artefacto.
 - El servidor guarda el idioma de `Accept-Language` con el FID de cada instalación de la app, y en el usuario el último elegido, para el correo.
 

@@ -357,7 +357,7 @@
           "auth"
         ],
         "summary": "Token",
-        "description": "Refresh the session of an app, rotating its refresh token.",
+        "description": "Exchange a code, or refresh a session, rotating its secret.",
         "operationId": "authToken",
         "parameters": [
           {
@@ -438,16 +438,28 @@
                   "grant_type": {
                     "type": "string",
                     "enum": [
+                      "authorization_code",
                       "refresh_token"
                     ]
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "redirect_uri": {
+                    "type": "string"
+                  },
+                  "code_verifier": {
+                    "type": "string"
                   },
                   "refresh_token": {
                     "type": "string"
                   }
                 },
                 "required": [
-                  "grant_type",
-                  "refresh_token"
+                  "grant_type"
                 ]
               }
             }

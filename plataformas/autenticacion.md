@@ -11,6 +11,10 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 - En ese flujo, el endpoint que lo inicia guarda el `state` y el `code_verifier` en Valkey, bajo un id que deja en una cookie `__Host-` `Secure`, `HttpOnly` y `SameSite=Strict`, y el endpoint de retorno los toma una sola vez y borra la cookie.
 - El código vive en Valkey, con la cuenta.
 - Una app de escritorio recibe el retorno solo en `http://127.0.0.1:{puerto}/<ruta>`, y no en `[::1]`: toda máquina de escritorio tiene loopback IPv4.
+- El servidor sirve la página de autorización en `GET /api/auth/authorize`, con su estilo y su script en la misma página y el texto traducido con su catálogo. La petición espera en Valkey 10 minutos la passkey, que la página manda a `POST /api/auth/authorize`; el servidor responde la URI de retorno con el código, y la página va a ella.
+- Los clientes son la constante `CLIENTS` de `services/clients.py`, cada uno con su `client_id` y su URI de retorno. La web es el cliente `web`, con una URI de retorno por superficie de `domain`: `https://<superficie>/api/auth/web/return`.
+- El flujo de la web empieza en `GET /api/auth/web/start`, su cookie es `__Host-flow`, y al volver la app va a `/` de su superficie.
+- Un `client_id` o una `redirect_uri` repetidos muestran el error en el navegador y no redirigen: no se sabe a dónde volver.
 - El endpoint de autorización autentica al usuario en cada petición, aunque el navegador tenga abierta una sesión de la web ([RFC 8252 §8.6](../fuentes/rfc/rfc8252.txt)).
 - La petición de autorización lleva `code_challenge` con `code_challenge_method` `S256`. Sin él, o con `plain`, responde `invalid_request` ([RFC 7636 §4.2](../fuentes/rfc/rfc7636.txt) y [§4.4.1](../fuentes/rfc/rfc7636.txt)).
 - El código son 256 bits aleatorios, vence a los 10 minutos, queda ligado al `client_id` y a la URI de retorno, y vale una sola vez. Al canjearlo queda marcado como usado, con el id de la sesión que creó, y presentarlo de nuevo responde `invalid_grant` y borra esa sesión ([RFC 6749 §4.1.2](../fuentes/rfc/rfc6749.txt) y [§10.10](../fuentes/rfc/rfc6749.txt)).
@@ -32,6 +36,8 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 - Un error del endpoint de token es un 400 en JSON con `error`, uno de los códigos de su lista ([RFC 6749 §5.2](../fuentes/rfc/rfc6749.txt)).
 - Una respuesta que redirige después de recibir una credencial usa 303, nunca 307 ([RFC 9700 §4.12](../fuentes/rfc/rfc9700.txt)).
 - Ni el servidor ni la web redirigen a una URL que llega en un parámetro y no está registrada ([RFC 9700 §2.1](../fuentes/rfc/rfc9700.txt) y [§4.11.1](../fuentes/rfc/rfc9700.txt)).
+
+Plantilla: de [plantilla/server/](../plantilla/server/), `pages.py`, `translations.py`, `schemas/authorization.py`, `routers/authorization.py`, `services/authorization.py`, `services/clients.py` y `tests/test_authorization.py`.
 
 ## Código por SMS
 
@@ -275,3 +281,17 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Si el `signCount` de la aserción o el guardado no es cero y el nuevo no es mayor, el login falla | `test_sign_count_that_does_not_grow_fails` |
 | El login guarda el `signCount`, el `backupState` y el último uso después de las demás comprobaciones, y `uvInitialized` queda como se registró | `test_login_stores_sign_count_and_backup_state_after_the_checks` |
 | Una passkey antes de su espera responde 429, y deshabilitada, 403 de tipo `authenticator-disabled`, y un login exitoso pone en cero sus fallos | `test_passkey_waits_and_disables_like_any_authenticator` |
+| El servidor sirve la página de autorización solo a un cliente y una URI de retorno registrados, y si no, o si vienen repetidos, muestra el error sin redirigir | `test_unregistered_client_or_return_shows_the_error` y `test_repeated_client_or_return_shows_the_error` |
+| Una URI de loopback acepta cualquier puerto, y solo en `127.0.0.1` | `test_loopback_return_takes_any_port` y `test_unregistered_client_or_return_shows_the_error` |
+| `response_type` distinto de `code` responde `unsupported_response_type`, `scope` responde `invalid_scope`, y sin `code_challenge` `S256` responde `invalid_request`, de vuelta a la URI de retorno con el `state` | `test_authorization_errors_go_back_with_the_state` |
+| El endpoint de autorización toma un parámetro sin valor como ausente, ignora el que no conoce y responde `invalid_request` a uno repetido | `test_authorization_parameters` |
+| La página de autorización no carga recursos ni enlaces de otros sitios | `test_page_loads_nothing_from_other_sites` |
+| La página toma su texto del catálogo del idioma pedido, o del español | `test_page_speaks_the_language_asked_or_the_base` |
+| El endpoint de autorización pide la passkey aunque el navegador tenga una sesión de la web | `test_page_asks_the_passkey_with_a_web_session` |
+| El código son 256 bits aleatorios que viven 10 minutos, vuelve con el `state`, y el canje responde los tokens con `Cache-Control: no-store` y `Pragma: no-cache` | `test_code_goes_back_with_the_state_and_gives_the_tokens` |
+| El código queda ligado al `client_id`, a la URI de retorno y al `code_challenge`, y si no coinciden el canje responde `invalid_grant` | `test_code_is_bound_to_client_return_and_verifier` |
+| El canje sin un parámetro obligatorio, también `redirect_uri` si la petición lo llevó, responde `invalid_request` | `test_exchange_without_a_parameter_is_invalid_request` |
+| Un código presentado dos veces responde `invalid_grant` y borra la sesión que creó | `test_code_presented_twice_deletes_its_session` |
+| El flujo de la web guarda el `state` y un `code_verifier` de 32 bytes en Valkey, bajo un id en una cookie `__Host-` `Secure`, `HttpOnly` y `SameSite=Strict`, y pide `S256` | `test_web_flow_keeps_state_and_verifier_behind_a_cookie` |
+| El retorno de la web toma el flujo una sola vez, borra su cookie, deja la cookie de sesión y vuelve a la app con un 303 | `test_web_flow_returns_with_the_cookie_of_the_session` |
+| El retorno de la web rechaza un `state` que no es el de su flujo | `test_web_return_with_another_state_fails` |

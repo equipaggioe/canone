@@ -51,6 +51,7 @@ class Issued:
 
     access_token: str
     refresh_token: str
+    session_id: UUID
 
 
 def new_token() -> str:
@@ -115,14 +116,14 @@ def clear_cookie(response: Response) -> None:
     response.delete_cookie(COOKIE, path="/", secure=True, httponly=True, samesite="strict")
 
 
-async def open_web(session: AsyncSession, account: Account, client: Client) -> str:
-    """Open a session of the web and return the token of its cookie."""
+async def open_web(session: AsyncSession, account: Account, client: Client) -> tuple[str, UUID]:
+    """Open a session of the web; return its cookie token and its ID."""
     token = new_token()
     row = AccountSession(account_id=account.id, kind=SessionKind.WEB, token_digest=digest(token))
     session.add(row)
     await session.flush()
     session.add(event("session_created", EventLevel.INFO, row, client))
-    return token
+    return token, row.id
 
 
 async def open_app(session: AsyncSession, account: Account, client: Client) -> Issued:
@@ -140,7 +141,7 @@ async def open_app(session: AsyncSession, account: Account, client: Client) -> I
     session.add(row)
     await session.flush()
     session.add(event("session_created", EventLevel.INFO, row, client))
-    return Issued(access, sign(row.id, secret))
+    return Issued(access, sign(row.id, secret), row.id)
 
 
 async def discard(session: AsyncSession, token: str, kind: SessionKind) -> None:
@@ -215,7 +216,7 @@ async def refresh(session: AsyncSession, token: str, client: Client) -> Issued:
     row.secret_digest = digest(new_secret)
     row.last_used_at = now
     session.add(event("session_renewed", EventLevel.INFO, row, client))
-    return Issued(access, sign(row.id, new_secret))
+    return Issued(access, sign(row.id, new_secret), row.id)
 
 
 async def close(session: AsyncSession, row: AccountSession, client: Client) -> None:

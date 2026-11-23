@@ -1,6 +1,6 @@
 # ADR-0133 · La autenticación tiene su página, y el servidor comprueba aparte lo que sus bibliotecas no miran
 
-- **Estado:** Aceptada; el punto 6 es propuesta. Los puntos 11 y 12, en el código por SMS, los reemplaza el [ADR-0185](0185-una-cuenta-entra-con-passkey-o-contrasena-y-cada-repositorio-elige-cuales-ofrece.md), y lo del JWT y PyJWT de los puntos 3 y 7, el [ADR-0219](0219-una-app-presenta-un-token-de-acceso-opaco-y-el-login-tiene-una-ruta-por-metodo-y-forma.md)
+- **Estado:** Aceptada; el punto 6 es propuesta. Los puntos 11 y 12, en el código por SMS, los reemplaza el [ADR-0185](0185-una-cuenta-entra-con-passkey-o-contrasena-y-cada-repositorio-elige-cuales-ofrece.md), el flutter_appauth del punto 10, el [ADR-0222](0222-las-apps-de-flutter-y-flet-usan-la-passkey-con-un-plugin-de-la-plantilla.md), y lo del JWT y PyJWT de los puntos 3 y 7, el [ADR-0219](0219-una-app-presenta-un-token-de-acceso-opaco-y-el-login-tiene-una-ruta-por-metodo-y-forma.md)
 - **Fecha:** 2026-11-09
 - **Alcance:** `plataformas/autenticacion.md`, `fastapi.md`, `transversal.md`, `flutter.md`, `qt.md`,
   `flet.md`, `plataformas/README.md` y `scripts/verificar.py`; el servidor y sus clientes

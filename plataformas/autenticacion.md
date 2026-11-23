@@ -6,7 +6,7 @@ Cómo se registra una cuenta, cómo entra y cómo mantiene su sesión: lo que ha
 
 Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y [RFC 9700](../fuentes/rfc/rfc9700.txt).
 
-- Una app que ofrece la passkey la usa con la API de su sistema operativo cuando su framework la ofrece de forma oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización.
+- Una app del teléfono usa la passkey con la API de su sistema: una de Android, con Credential Manager, y una de Flutter o de Flet, con el plugin `passkey` de la plantilla, que llama a Credential Manager en Android y a AuthenticationServices en iOS. Una app de escritorio la usa en el navegador del sistema, que le devuelve un código de autorización.
 - Una app que corre en el navegador hace el flujo por el servidor, en su misma pestaña: abre un endpoint del servidor que crea el `state` y el `code_verifier` y redirige a la petición de autorización, y la URI de retorno es otro endpoint del servidor, que canjea el código, deja la cookie de sesión de la web y vuelve a la app con un 303.
 - En ese flujo, el endpoint que lo inicia guarda el `state` y el `code_verifier` en Valkey, bajo un id que deja en una cookie `__Host-` `Secure`, `HttpOnly` y `SameSite=Strict`, y el endpoint de retorno los toma una sola vez y borra la cookie.
 - El código vive en Valkey, con la cuenta.
@@ -18,9 +18,8 @@ Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/r
 - El endpoint de autorización acepta `GET`, y el de token, solo `POST` en `application/x-www-form-urlencoded` ([RFC 6749 §3.1](../fuentes/rfc/rfc6749.txt), [§3.2](../fuentes/rfc/rfc6749.txt) y [§4.1.3](../fuentes/rfc/rfc6749.txt)).
 - `response_type` es `code`, y otro valor responde `unsupported_response_type` ([RFC 6749 §3.1.1](../fuentes/rfc/rfc6749.txt) y [§4.1.2.1](../fuentes/rfc/rfc6749.txt)).
 - El canje responde un 200 en JSON con `access_token`, `token_type` `Bearer`, `expires_in` con lo que dura el token de acceso y `refresh_token`, y con `Cache-Control: no-store` y `Pragma: no-cache` ([RFC 6749 §5.1](../fuentes/rfc/rfc6749.txt)).
-- Una app del teléfono recibe el retorno en una URI `https` que reclama, donde su sistema y su biblioteca lo permiten, y si no, en un esquema propio con su dominio al revés, como `com.example.app:/oauth2redirect` ([RFC 8252 §7.1](../fuentes/rfc/rfc8252.txt) y [§7.2](../fuentes/rfc/rfc8252.txt)).
 - Una app de escritorio abre el puerto en la interfaz de loopback al empezar la petición y lo cierra al recibir la respuesta ([RFC 8252 §8.3](../fuentes/rfc/rfc8252.txt)).
-- La app abre la petición de autorización en el navegador del sistema, en una pestaña dentro de la app donde el sistema la ofrece, y nunca en un web-view ([RFC 8252 §5](../fuentes/rfc/rfc8252.txt), [§6](../fuentes/rfc/rfc8252.txt) y [§8.12](../fuentes/rfc/rfc8252.txt)).
+- La app abre la petición de autorización en el navegador del sistema, y nunca en un web-view ([RFC 8252 §5](../fuentes/rfc/rfc8252.txt), [§6](../fuentes/rfc/rfc8252.txt) y [§8.12](../fuentes/rfc/rfc8252.txt)).
 - La página de autorización no carga recursos ni enlaces de otros sitios ([RFC 9700 §4.2.4](../fuentes/rfc/rfc9700.txt)).
 - Quien inicia el flujo crea el `code_verifier` con 32 bytes aleatorios en base64url ([RFC 7636 §4.1](../fuentes/rfc/rfc7636.txt) y [§7.1](../fuentes/rfc/rfc7636.txt)).
 - La app manda un `state` aleatorio y rechaza la respuesta que no llega a la URI de retorno o con el `state` de su petición ([RFC 8252 §8.9](../fuentes/rfc/rfc8252.txt) y [§8.10](../fuentes/rfc/rfc8252.txt)).
@@ -123,6 +122,7 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 - El dominio es `domain` de `Settings`: cada máquina tiene el suyo.
 - La lista de origins es `https://<dominio>`, `https://app.<dominio>` y `https://panel.<dominio>`, y los `android:apk-key-hash:…` de `app_origins` de `Settings`, los de las llaves que firman las apps de ese despliegue.
 - El login con passkey pide antes sus opciones en `POST /api/auth/passkey/options`, y el servidor busca el challenge por el que trae `clientDataJSON`.
+- Una app de iOS declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`, y la landing sirve `https://<dominio>/.well-known/apple-app-site-association` con el app ID de cada app de iOS en `webcredentials`, como archivo estático desde `static/.well-known/apple-app-site-association`.
 - El RP ID es `<dominio>` ([WebAuthn §5.4.2](../fuentes/w3c/webauthn-3.html)).
 - Toda passkey es descubrible, con `residentKey` `required` y `requireResidentKey` `true` ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html)).
 - `userVerification` es `preferred` ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html) y [§5.5](../fuentes/w3c/webauthn-3.html)).
@@ -145,7 +145,7 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 - Cada passkey guarda su credential ID, su clave pública, `signCount`, `uvInitialized`, `transports`, `backupEligible`, `backupState`, su nombre, su creación y su último uso ([WebAuthn §6.1.3](../fuentes/w3c/webauthn-3.html) y [§7.1](../fuentes/w3c/webauthn-3.html)).
 - El titular ve sus passkeys, con su nombre y su último uso, y borra la que quiera: así revoca la de un dispositivo perdido ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt)).
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey.py`, `services/passkeys.py` y `tests/test_passkeys.py`.
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey.py`, `services/passkeys.py` y `tests/test_passkeys.py`; [plantilla/packages/passkey/](../plantilla/packages/passkey/), con el plugin `passkey` de Flutter y la extensión `flet_passkey` de Flet.
 
 ## Recuperación
 

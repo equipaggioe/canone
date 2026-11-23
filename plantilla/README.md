@@ -35,6 +35,7 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `flet/theme.py` | `src/` de la pieza | Punto de partida | [flet.md](../plataformas/flet.md) |
 | `flet/tests/test_theme.py` | `tests/` de la pieza | Canónico | [flet.md](../plataformas/flet.md) |
 | `packages/sms/` | `packages/sms/`, si una app de Flet lee el código por SMS | Canónico | [flet.md](../plataformas/flet.md#código-por-sms) |
+| `packages/passkey/` | `packages/passkey/`, si una app de Flutter o de Flet usa la passkey en el teléfono | Canónico | [autenticacion.md](../plataformas/autenticacion.md#passkeys), [flutter.md](../plataformas/flutter.md#passkeys), [flet.md](../plataformas/flet.md#passkeys) |
 | `sveltekit/.prettierrc`<br>`knip.json`<br>`pnpm-workspace.yaml`<br>`static/theme.js`<br>`src/lib/version.ts` | Cada superficie SvelteKit | Canónico | [sveltekit.md](../plataformas/sveltekit.md) |
 | `sveltekit/.gitignore` | Cada superficie SvelteKit | Punto de partida | [repositorio.md](../repositorio.md), [sveltekit.md](../plataformas/sveltekit.md) |
 | `sveltekit/.prettierignore`<br>`eslint.config.js`<br>`vite.config.ts`<br>`playwright.config.ts`<br>`uno.config.ts`<br>`src/lib/theme.ts` | Cada superficie SvelteKit | Punto de partida | [sveltekit.md](../plataformas/sveltekit.md) |

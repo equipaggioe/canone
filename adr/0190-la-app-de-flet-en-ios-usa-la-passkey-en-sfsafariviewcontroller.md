@@ -1,7 +1,6 @@
 # ADR-0190 · La app de Flet en iOS usa la passkey en `SFSafariViewController` y recibe el retorno en un esquema propio
 
-- **Estado:** Aceptada. El usuario pidió confirmar con la documentación si se puede y, si se puede,
-  dar la passkey a Flet en iOS, y cambiar la regla si después resulta que no (2026-11-18)
+- **Estado:** Reemplazada por [ADR-0222](0222-las-apps-de-flutter-y-flet-usan-la-passkey-con-un-plugin-de-la-plantilla.md)
 - **Fecha:** 2026-11-18
 - **Alcance:** [`plataformas/flet.md`](../plataformas/flet.md), «Código de autorización», y
   [`plataformas/autenticacion.md`](../plataformas/autenticacion.md), «Cuentas»

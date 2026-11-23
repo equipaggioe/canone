@@ -123,10 +123,6 @@ Estándar: [*Packaging app for Windows*](../fuentes/flet/publish-windows.md) de 
 
 Contrato: [autenticacion.md](autenticacion.md#código-de-autorización).
 
-- En el teléfono, la app abre la petición de autorización con `UrlLauncher().launch_url()` en `LaunchMode.IN_APP_BROWSER_VIEW`: es una pestaña del navegador en Android y `SFSafariViewController` en iOS, donde la passkey funciona. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/services/url_launcher.py), [url_launcher_ios 6.4.2](https://raw.githubusercontent.com/flutter/packages/url_launcher_ios-v6.4.2/packages/url_launcher/url_launcher_ios/ios/url_launcher_ios/Sources/url_launcher_ios/URLLaunchSession.swift), [WebKit](https://webkit.org/blog/11312/meet-face-id-and-touch-id-for-the-web/)
-- En Android, la URI `https` de retorno se declara en `[[tool.flet.android.activity.intent_filter]]`, con `autoVerify = true`, y no en `[tool.flet.deep_linking]`, cuyo filtro no lleva `android:autoVerify`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/publish/index.md)
-- En iOS, el retorno llega a un esquema propio con el dominio al revés, declarado en `[tool.flet.ios.deep_linking]`: iOS abre en Safari un Universal Link del mismo dominio que la página. [Apple](https://developer.apple.com/documentation/xcode/allowing-apps-and-websites-to-link-to-your-content)
-- En iOS, la app cierra la pestaña con `UrlLauncher().close_in_app_web_view()` cuando recibe el retorno: `SFSafariViewController` se abre sobre la app y no se cierra solo. [url_launcher_ios 6.4.2](https://raw.githubusercontent.com/flutter/packages/url_launcher_ios-v6.4.2/packages/url_launcher/url_launcher_ios/lib/url_launcher_ios.dart)
 - En escritorio, la app recibe el retorno en un servidor de `asyncio.start_server`, abierto en `127.0.0.1` con el puerto 0, y lo cierra al recibir la respuesta. Abre la petición con `UrlLauncher().launch_url()` sin `mode`, que en escritorio la abre en el navegador del sistema, y vuelve al frente con `page.window.to_front()`.
 - En la web, la app abre el endpoint del servidor que empieza el flujo con `UrlLauncher().launch_url()` y `web_only_window_name="_self"`, en su misma pestaña. No canjea el código ni guarda tokens: sus peticiones llevan la cookie, y ante un 401 vuelve a entrar.
 - En la web, el `base_url` del `httpx.AsyncClient` es el origen de `page.url`: en el navegador, httpx no acepta una URL relativa.
@@ -172,6 +168,14 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - `src/api/models.py` se versiona, y CI lo vuelve a generar y falla si cambia: `flet build` empaqueta `src/` tal como está.
 - `src/api/models.py` no lleva docstrings propios: los suyos son las descripciones de los esquemas del servidor, y ruff no le exige las reglas `D1`.
 - Las llamadas a la API se escriben a mano en `api/client.py`, con el `httpx.AsyncClient` de [Red](#red): datamodel-code-generator genera solo los modelos.
+
+## Passkeys
+
+Contrato: [autenticacion.md](autenticacion.md#passkeys).
+
+- En el teléfono, la app usa la passkey con el servicio `Passkey` de la extensión `flet_passkey`, que la plantilla copia en `packages/passkey/`: Flet no tiene una API oficial de passkeys.
+- En Android, el `minSdk` de la app no baja de 28, el del plugin.
+- En iOS, `[tool.flet.ios.entitlement]` declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`.
 
 ## Red
 

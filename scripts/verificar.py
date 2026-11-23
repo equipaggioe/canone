@@ -82,6 +82,29 @@ SMS = [
     Path("packages/sms/src/flutter/flet_sms/lib/src/sms_code.dart"),
 ]
 
+# plataformas/autenticacion.md, «Passkeys»: el plugin de Flutter y la extensión de Flet que usan la
+# passkey con la API del sistema.
+PASSKEY = [
+    Path("packages/passkey/.gitignore"),
+    Path("packages/passkey/pyproject.toml"),
+    Path("packages/passkey/src/flet_passkey/__init__.py"),
+    Path("packages/passkey/src/flet_passkey/passkey.py"),
+    Path("packages/passkey/src/flutter/flet_passkey/pubspec.yaml"),
+    Path("packages/passkey/src/flutter/flet_passkey/lib/flet_passkey.dart"),
+    Path("packages/passkey/src/flutter/flet_passkey/lib/src/extension.dart"),
+    Path("packages/passkey/src/flutter/flet_passkey/lib/src/passkey_service.dart"),
+    Path("packages/passkey/src/flutter/passkey/pubspec.yaml"),
+    Path("packages/passkey/src/flutter/passkey/analysis_options.yaml"),
+    Path("packages/passkey/src/flutter/passkey/lib/passkey.dart"),
+    Path("packages/passkey/src/flutter/passkey/android/build.gradle.kts"),
+    Path("packages/passkey/src/flutter/passkey/android/settings.gradle.kts"),
+    Path("packages/passkey/src/flutter/passkey/android/src/main/AndroidManifest.xml"),
+    Path("packages/passkey/src/flutter/passkey/android/src/main/kotlin/canone/passkey/PasskeyPlugin.kt"),
+    Path("packages/passkey/src/flutter/passkey/ios/passkey.podspec"),
+    Path("packages/passkey/src/flutter/passkey/ios/passkey/Package.swift"),
+    Path("packages/passkey/src/flutter/passkey/ios/passkey/Sources/passkey/PasskeyPlugin.swift"),
+]
+
 # Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del
 # dominio. `panel` y `landing` son las dos excepciones, con el nombre que ya usa la industria.
 PREFIJOS = ("server", "web", "mobile", "desktop")
@@ -578,7 +601,6 @@ PUB = {
     "dependency_validator": "5.1.0",
     "firebase_core": "5.2.0",
     "firebase_messaging": "17.1.0",
-    "flutter_appauth": "13.0.0",
     "flutter_lints": "6.0.0",
     "flutter_riverpod": "3.5.0",
     "flutter_secure_storage": "11.2.0",
@@ -1057,6 +1079,10 @@ def revisar(repo: Path) -> list[str]:
 
     if (repo / "packages/sms").is_dir():
         for rel in SMS:
+            fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
+
+    if (repo / "packages/passkey").is_dir():
+        for rel in PASSKEY:
             fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
 
     for carpeta in sorted(p for p in repo.iterdir() if p.is_dir()):

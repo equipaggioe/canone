@@ -1,6 +1,6 @@
 # ADR-0054 · Las passkeys son un contrato de transversal, y una app usa la API de su sistema
 
-- **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0133](0133-la-autenticacion-tiene-su-pagina-y-el-servidor-comprueba-aparte-lo-que-sus-bibliotecas-no-miran.md)
+- **Estado:** Aceptada. El punto 1 lo reemplaza el [ADR-0133](0133-la-autenticacion-tiene-su-pagina-y-el-servidor-comprueba-aparte-lo-que-sus-bibliotecas-no-miran.md), y el 4, en el teléfono, el [ADR-0222](0222-las-apps-de-flutter-y-flet-usan-la-passkey-con-un-plugin-de-la-plantilla.md)
 - **Fecha:** 2026-10-15
 - **Alcance:** la sección «Passkeys» de [plataformas/transversal.md](../plataformas/transversal.md),
   [plataformas/fastapi.md](../plataformas/fastapi.md) y

@@ -107,6 +107,7 @@ Estándares: [RFC 9457](../fuentes/rfc/rfc9457.txt) y [RFC 9110](../fuentes/rfc/
 
 Estándar: [I-JSON](../fuentes/rfc/rfc7493.txt), RFC 7493.
 
+- Un cliente muestra una fecha con hora en la zona horaria del dispositivo, salvo la de un dato que viaja con su zona horaria, que se muestra en esa zona.
 - Una duración viaja como un entero de segundos: una duración en meses o en días no equivale a una cantidad fija de segundos.
 - Una fecha sin hora viaja como una cadena `full-date` de RFC 3339, como `2026-01-08`.
 - Una zona horaria viaja con su nombre de la base IANA, como `America/Mexico_City`.
@@ -185,7 +186,7 @@ Plantilla: [ijson.py](../plantilla/server/src/app/ijson.py), del servidor de [fa
 
 ## Paginación
 
-Estándar: [*Pagination*](../fuentes/google-aip/aip-0158.md), la AIP-158 de Google.
+Estándares: [*Pagination*](../fuentes/google-aip/aip-0158.md) y [*Standard methods: List*](../fuentes/google-aip/aip-0132.md), las AIP-158 y AIP-132 de Google.
 
 - La respuesta es `{"items": [...], "nextPageToken": "..."}`, y el campo `nextPageToken` siempre está.
 - Con `skip`, un `pageSize` mayor que 100 responde 422: el cliente calcula `skip` con el tamaño que pidió, y un recorte se saltaría filas.
@@ -199,6 +200,7 @@ Estándar: [*Pagination*](../fuentes/google-aip/aip-0158.md), la AIP-158 de Goog
 - La respuesta no es un stream ([AIP-158, *Guidance*](../fuentes/google-aip/aip-0158.md)).
 - `skip` cuenta elementos, no páginas, y se suma a la posición del `pageToken`. Uno que pasa del total responde 200 con `items` vacío y `nextPageToken` vacío ([AIP-158, *Skipping results*](../fuentes/google-aip/aip-0158.md)).
 - El `pageToken` es opaco y apto para una URL, y el cliente no lo interpreta: codificarlo en base64 no lo vuelve opaco ([AIP-158, *Opacity*](../fuentes/google-aip/aip-0158.md)).
+- Una lista acepta un orden solo si un caso de uso lo pide, y lo recibe en `orderBy`: los campos separados por coma, en orden ascendente salvo el que lleva ` desc` ([AIP-132, *Ordering*](../fuentes/google-aip/aip-0132.md)).
 - El `pageToken` solo dice dónde seguir: no da acceso a nada, y cada petición comprueba sus permisos como cualquier otra ([AIP-158, *Opacity*](../fuentes/google-aip/aip-0158.md)).
 
 ## Pagos

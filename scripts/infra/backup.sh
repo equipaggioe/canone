@@ -3,7 +3,8 @@
 # with plantilla/receiver/backup.sh: without the tunnel nothing starts, the receiver keeps the dump
 # and the files and the server cannot delete them, the key of the receiver opens no shell nor
 # another tunnel, a backup cut in the middle does not stop the next, a backup cut by its time limit
-# fails, and what restic restores goes back on the database install.py creates. The receiver logs
+# fails, what restic restores goes back on the database install.py creates, the receiver forgets
+# a backup older than a year, and its check fails without a pack of its copy. The receiver logs
 # in as the account receptora, with the rest-server 0.14.0 of its release, and the server is 192.0.2.2.
 #
 #     sh backup.sh <canone>
@@ -31,6 +32,8 @@ fails() { if "$@" > "$work/error" 2>&1; then exit 1; fi; }
 receptora() { ip netns exec receiver runuser -u receptora -- "$@"; }
 ssh_receiver() { receptora ssh -T -o BatchMode=yes "$@" demo-receiver@192.0.2.2; }
 backups() { RESTIC_PASSWORD=$password restic --no-cache --repo "$repo/demo" snapshots --json | python3 -c 'import json, sys; print(len(json.load(sys.stdin)))'; }
+hosts() { RESTIC_PASSWORD=$password restic --no-cache --repo "$repo/demo" snapshots --json | python3 -c 'import json, sys; print(" ".join(sorted({s["hostname"] for s in json.load(sys.stdin)})))'; }
+latest() { RESTIC_PASSWORD=$password restic --no-cache --repo "$repo/demo" snapshots --json | python3 -c 'import json, sys; print(max(json.load(sys.stdin), key=lambda s: s["time"])["id"])'; }
 invocation() { systemctl show --property=InvocationID --value demo-backup.service; }
 for name in a b s1 s2; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
 key() { cat "$work/$1.pub"; }
@@ -54,6 +57,9 @@ cat ~receptora/.ssh/id_ed25519.pub >> /etc/demo/receivers
 echo "192.0.2.2 $(cat /etc/ssh/ssh_host_ed25519_key.pub)" > ~receptora/.ssh/known_hosts
 chown receptora: ~receptora/.ssh/known_hosts
 install -d -o receptora "$repo"
+printf %s "$password" > "$work/password"
+chown receptora "$work/password"
+chmod 600 "$work/password"
 chmod 755 "$work"
 
 step "Data in the database and in the files"
@@ -70,15 +76,18 @@ test "$(invocation)" = "$before"
 test ! -e /var/lib/demo/last-backup
 
 step "The receiver asks, and keeps the dump and the files"
-receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" | tee "$work/first"
+receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" "$work/password" > "$work/first" 2>&1 \
+    || { cat "$work/first"; exit 1; }
 grep -qxF 'backup: success' "$work/first"
 test "$(backups)" = 1
 first=$(stat -c %Y /var/lib/demo/last-backup)
+one=$(latest)
 
 step "A second backup adds a snapshot and moves last-backup"
 sleep 1
-receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" > /dev/null
-test "$(backups)" = 2
+receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" "$work/password" > /dev/null
+test "$(latest)" != "$one"
+two=$(latest)
 test "$(stat -c %Y /var/lib/demo/last-backup)" -gt "$first"
 
 step "With the flags of backup.sh, rest-server lets restic add but not delete"
@@ -92,8 +101,9 @@ rest=$!
 pids="$pids $rest"
 until receptora curl -s -o /dev/null http://127.0.0.1:8001/; do sleep 0.2; done
 remote=rest:http://127.0.0.1:8001/demo/
-fails receptora env RESTIC_PASSWORD="$password" restic --no-cache --repo "$remote" forget --keep-last 1 --prune
-test "$(backups)" = 2
+count=$(backups)
+fails receptora env RESTIC_PASSWORD="$password" restic --no-cache --repo "$remote" forget "$two" --prune
+test "$(backups)" = "$count"
 kill "$rest"
 
 step "The key of the receiver opens no shell nor another tunnel"
@@ -106,7 +116,7 @@ grep -qF 'administratively prohibited' "$work/error"
 
 step "A backup cut while it holds its lock, as by a reboot, does not stop the next one"
 head -c 200000000 /dev/urandom > /var/lib/demo/files/big
-receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" > "$work/cut" 2>&1 &
+receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" "$work/password" > "$work/cut" 2>&1 &
 cut=$!
 i=0
 until [ -n "$(ls "$repo/demo/locks")" ]; do
@@ -117,9 +127,10 @@ done
 systemctl kill --signal=SIGKILL demo-backup.service
 if wait "$cut"; then exit 1; fi
 rm /var/lib/demo/files/big
-receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" | tee "$work/next"
+receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" "$work/password" > "$work/next" 2>&1 \
+    || { cat "$work/next"; exit 1; }
 grep -qxF 'backup: success' "$work/next"
-test "$(backups)" = 3
+test "$(latest)" != "$two"
 
 step "A backup that reaches its time limit fails, scaled down from 4 h to 5 s"
 mkdir -p "$(dirname "$limit")"
@@ -140,3 +151,13 @@ runuser -u demo_owner -- pg_restore --single-transaction --dbname=demo "$work/re
 runuser -u demo_owner -- psql -X -v ON_ERROR_STOP=1 --dbname=demo -c ANALYZE
 test "$(runuser -u demo_owner -- psql -XAt --dbname=demo -c "SELECT name FROM place")" = "first-$$"
 test "$(cat "$work/restore/var/lib/demo/files/one")" = "file-$$"
+
+step "The receiver forgets a backup older than a year"
+receptora env RESTIC_PASSWORD_FILE="$work/password" restic --no-cache --repo "$repo/demo" backup --quiet --host old --time "2020-01-01 00:00:00" /etc/hostname
+test "$(hosts)" = "demo old"
+receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" "$work/password" > /dev/null
+test "$(hosts)" = demo
+
+step "The check of the receiver fails when a pack of its copy is missing"
+rm "$(find "$repo/demo/data" -type f | head -n 1)"
+fails receptora sh "$canone/plantilla/receiver/backup.sh" demo 192.0.2.2 "$repo" "$work/password"

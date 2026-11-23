@@ -246,6 +246,8 @@ Ningún elemento queda fuera de la revisión sin que conste que no fue evaluado.
 - **Leído:** se verificó directamente en una fuente. Se indica la sección o el fragmento que lo respalda.
 - **Sin confirmar:** no fue posible verificarlo. Se identifica expresamente como tal; no se presenta como un hecho.
 
+Un «Se queda» de una convención propia nombra lo que empeora sin ella, según la segunda condición de [Qué entra en una página](#qué-entra-en-una-página), y uno de una convención adoptada lleva «Leído» con su origen. Lo que la convención afirma como hecho lleva además su evidencia.
+
 Las herramientas que hacen cumplir las convenciones se comprueban mediante experimentos, no de memoria ni por lo que aparentan hacer según su documentación.
 
 Antes de comprobar algo, se busca si ya está comprobado en las pruebas de CI de Canone o en un ADR. Si lo está, se usa su resultado, con sus versiones, y no se repite, salvo que haya cambiado una versión de la que depende. La decisión del ADR no es argumento: solo cuenta el resultado.

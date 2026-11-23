@@ -41,6 +41,7 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [rfc/rfc9457.txt](rfc/rfc9457.txt) | [URL](https://www.rfc-editor.org/rfc/rfc9457.txt) |  |
 | [rfc/rfc9700.txt](rfc/rfc9700.txt) | [URL](https://www.rfc-editor.org/rfc/rfc9700.txt) |  |
 | [openapi/openapi-3.1.2.md](openapi/openapi-3.1.2.md) | [URL](https://raw.githubusercontent.com/OAI/OpenAPI-Specification/3.1.2/versions/3.1.2.md) | Línea 3.1, la versión que genera FastAPI |
+| [google-aip/aip-0132.md](google-aip/aip-0132.md) | [URL](https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0132.md) |  |
 | [google-aip/aip-0158.md](google-aip/aip-0158.md) | [URL](https://raw.githubusercontent.com/aip-dev/google.aip.dev/2ccc61a4e09882bdd63aea1a42dceebc37bf3bd5/aip/general/0158.md) |  |
 | [w3c/webauthn-3.html](w3c/webauthn-3.html) | [URL](https://www.w3.org/TR/2026/REC-webauthn-3-20260825/) | Recomendación del 2026-08-25 |
 | [w3c/push-api.html](w3c/push-api.html) | [URL](https://www.w3.org/TR/2026/WD-push-api-20261005/) | Borrador de trabajo del 2026-10-05 |

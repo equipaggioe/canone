@@ -2,7 +2,7 @@
 
 - **Estado:** Aceptada. El 2026-11-22 el usuario pidió aplicar las recomendaciones de la revisión de lo que faltaba en cada página. Lo que es preferencia suya queda en «Abierto»
 - **Fecha:** 2026-11-22
-- **Alcance:** `despliegue.md`, `postgres.md`, `fastapi.md`, `autenticacion.md`, `java.md`, `sveltekit.md`, `flet.md`, `qt.md`, `python.md`, `transversal.md`, `stack.md`, con `plantilla/infra/`, `plantilla/server/`, `plantilla/qt/tests/`, `plantilla/flet/tests/`, `scripts/verificar.py`, `scripts/infra/` y `fuentes/README.md`
+- **Alcance:** `plataformas/README.md`, `despliegue.md`, `postgres.md`, `fastapi.md`, `autenticacion.md`, `java.md`, `sveltekit.md`, `flet.md`, `qt.md`, `python.md`, `transversal.md`, `stack.md`, con `plantilla/infra/`, `plantilla/receiver/`, `plantilla/server/`, `plantilla/qt/tests/`, `plantilla/flet/tests/`, `scripts/verificar.py`, `scripts/infra/` y `fuentes/README.md`
 
 ## Contexto
 
@@ -69,6 +69,37 @@ experimentos de varias filas de «Cumplimiento». Al completarlos aparecieron es
     `json_schema_serialization_defaults_required=True`, y `Problem` y `FieldError`, `False`: sin
     eso, FastAPI 0.165.0 escribe `null` pero el OpenAPI no declara requerido el campo, y un cliente
     generado lo tipa como opcional. Lo confirmó el usuario el 2026-11-22.
+14. El servidor sigue solo agregando, y la receptora guarda la contraseña del repositorio. Después
+    de cada respaldo bueno olvida lo que pasó la retención, con `--keep-within-daily 7d
+    --keep-within-weekly 1m --keep-within-monthly 1y` y `--group-by=`, y corre `restic check
+    --read-data-subset 5%`. Es lo que recomiendan la guía #StopRansomware de CISA (respaldos
+    cifrados, fuera del alcance de quien ataca, y probados) y la comunidad de restic (un servidor
+    que solo agrega, y la poda desde otra máquina de confianza). Ningún respaldo pasa de un año,
+    como pide *Disposal of logs*, y `event_log` sigue en 365 días. Con `--group-by=` se agrupan
+    todos los respaldos, y uno de otro host también se olvida. En Windows PowerShell 5.1 un
+    argumento `""` no llega al programa, así que los dos scripts usan `--group-by=`. Antes de
+    olvidar, la receptora corre `restic unlock --remove-all`: un respaldo cortado deja su lock, y
+    `forget --prune`, que pide uno exclusivo, falla con él. Cuando corre, el servidor ya terminó.
+    Comprobado con `scripts/infra/backup.sh` en el Debian 13 de la distro Testing: pasan todos sus
+    pasos, entre ellos que la receptora olvida un respaldo de 2020 y que su revisión falla si a su
+    copia le falta un pack. Lo confirmó el usuario el 2026-11-22.
+15. Un «Se queda» de una convención propia nombra lo que empeora sin ella, y uno de una adoptada
+    lleva «Leído» con su origen (`plataformas/README.md`, «Evidencia»). Lo pidió el usuario el
+    2026-11-22.
+16. A los 100 fallos consecutivos de la recuperación, la cuenta deja de recuperarse con el código y
+    la recupera un administrador, y un inicio de sesión exitoso la vuelve a habilitar. Un
+    administrador recupera una cuenta que no es de administración cambiando su correo o su
+    teléfono por uno que tiene el titular.
+17. El servidor sigue con `httpx`. firebase-admin 7.8.0 exige `httpx` 0.28.1, y stripe 17.1.0 lo
+    usa si no está `httpx2`. Comprobado que los dos conviven: con los dos instalados, stripe usa
+    `httpx2` y firebase-admin, `httpx`. Cuando stripe deje `httpx`, entra `httpx2` solo para él.
+18. Un cliente muestra una fecha con hora en la zona del dispositivo, salvo la de un dato que viaja
+    con su zona horaria.
+19. Una lista acepta un orden solo si un caso de uso lo pide, y lo recibe en `orderBy`, como dice la
+    AIP-132 de Google, *Ordering*. Se copió en `fuentes/` del mismo commit que la AIP-158, y cuenta
+    junto con ella para «Aporta».
+
+Los puntos 16 a 19 los confirmó el usuario el 2026-11-22.
 
 ## Razones que salen de `fastapi.md`
 
@@ -94,14 +125,8 @@ Salen por «Redacción»: no se apartan de ninguna fuente.
 
 ## Abierto
 
-- **Retención de los respaldos.** `fastapi.md` adopta *Disposal of logs*, que no deja guardar las
-  copias más allá del plazo, y la receptora guarda `event_log` para siempre. La receptora no puede
-  correr `restic forget` porque no tiene la contraseña del repositorio, y el servidor tampoco,
-  porque `rest-server` corre con `--append-only`.
-- **Qué deshabilitan los 100 fallos de la recuperación**, y cómo verifica el administrador a quien
-  recupera la cuenta.
-- **`httpx2` en el servidor:** stripe 17.1.0 lo prefiere para lo asíncrono, y marca `httpx` como
-  obsoleto para su próxima versión mayor.
+- **«Cumplimiento» de `autenticacion.md`**, que necesita escribir la autenticación del servidor en
+  la plantilla (`pendientes/autenticacion-sin-cumplimiento.md`).
 
 ## Consecuencias
 

@@ -150,6 +150,8 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 - El código vale una sola vez.
 - Una cuenta con passkey que se recupera con el código del correo lo aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela desde la app. El código del teléfono se aplica en el momento.
 - Una cuenta de administración no se recupera con el código: la recupera otro administrador.
+- A los 100 fallos consecutivos de la recuperación, la cuenta deja de recuperarse con el código, y la recupera un administrador. Un inicio de sesión exitoso la vuelve a habilitar.
+- Un administrador recupera una cuenta que no es de administración cambiando su correo o su teléfono por uno que tiene el titular, que sigue con el código.
 - El código vence a los 10 minutos, también el que va al correo ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Quien no puede entrar ni recibir el código recupera la cuenta con un administrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - El código tiene 6 dígitos ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).

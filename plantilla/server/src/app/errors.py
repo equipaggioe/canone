@@ -53,7 +53,15 @@ CLIENT_OUTDATED = ProblemType(
     HTTPStatus.BAD_REQUEST,
     "Install the latest version of the app.",
 )
-TYPES = {problem.name: problem for problem in (VALIDATION, CLIENT_OUTDATED)}
+AUTHENTICATOR_DISABLED = ProblemType(
+    "authenticator-disabled",
+    "Authenticator disabled",
+    HTTPStatus.FORBIDDEN,
+    "Sign in another way and enable it again, or reset the password.",
+)
+TYPES = {
+    problem.name: problem for problem in (VALIDATION, CLIENT_OUTDATED, AUTHENTICATOR_DISABLED)
+}
 
 
 class FieldError(Schema):

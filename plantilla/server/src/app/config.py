@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     health_token: str
     min_client_versions: dict[str, Annotated[str, StringConstraints(pattern=f"^{VERSION}$")]]
     page_token_key: str
+    # autenticacion.md: 256 random bits that sign the refresh tokens.
+    refresh_key: str
     valkey_url: str
 
     @classmethod

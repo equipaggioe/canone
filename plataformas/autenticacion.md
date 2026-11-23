@@ -52,6 +52,7 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 Estándares: de ASVS 5.0, los capítulos [V6 *Authentication*](../fuentes/owasp/ASVS_V6_Authentication.md) y [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md).
 
 - La contraseña la elige el titular.
+- El login con contraseña identifica la cuenta con su correo o con su teléfono, uno solo.
 - La lista de bloqueo es un archivo del servidor.
 - Una contraseña se guarda con `PasswordHash.recommended()` de pwdlib: Argon2id con 64 MiB, 3 pasadas y 4 carriles.
 - Al medir el largo de una contraseña, cada punto de código cuenta como un carácter.
@@ -79,6 +80,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el viejo recibe un aviso.
 - El titular ve en la app cada intento fallido y cada autenticador deshabilitado.
 - Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
+- Un login con un autenticador deshabilitado responde 403, de tipo `authenticator-disabled`, sin verificar la credencial.
 - Los fallos consecutivos y la hora del siguiente intento viven en la base.
 - El servidor acepta en toda cuenta los métodos para entrar, y cada repositorio elige cuáles ofrece cada pieza, de los disponibles en su plataforma.
 - La pantalla para entrar ofrece primero la passkey, si el dispositivo la tiene, y luego el código por SMS y la contraseña, entre los que elige el usuario.
@@ -181,6 +183,9 @@ Estándares: de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes
 - El token de refresco es el id de su sesión y un secreto aleatorio de 256 bits, firmados con HMAC.
 - Iniciar sesión o volver a autenticarse crea o renueva la fila de sesión, con su creación y su último uso.
 - La API, bajo `/api`, y las apps que corren en el navegador se sirven en el mismo origen que la web, sin `Access-Control-Allow-Origin`.
+- Cada método para entrar tiene dos rutas: `/api/auth/<método>/cookie`, que deja la cookie de la web, y `/api/auth/<método>/token`, que responde los tokens de una app. El endpoint de token es `POST /api/auth/token`, y cerrar sesión, `POST /api/auth/logout`, con la cookie o con el token de acceso.
+- La clave del HMAC del token de refresco son 256 bits aleatorios, `refresh_key` de `Settings`.
+- El `Origin` del servidor es `https://` seguido del `Host` de la petición: vale igual en cada superficie.
 - Cerrar sesión borra la fila ([RFC 9700 §4.14.2](../fuentes/rfc/rfc9700.txt)).
 - El token de la web es un valor aleatorio de 256 bits ([ASVS 5.0 §7.2.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - La cookie de la web es `__Host-session`, `Secure`, `HttpOnly` y `SameSite=Strict`, con `Path=/`: ningún script la lee, ninguna petición de otro sitio la lleva y ningún subdominio la reemplaza ([ASVS 5.0 §3.3.1](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), [§3.3.2](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md), [§3.3.3](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md) y [§3.3.4](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md)).
@@ -195,17 +200,17 @@ Estándares: de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes
 - Ningún token viaja en la URL ([RFC 9700 §4.3.2](../fuentes/rfc/rfc9700.txt)).
 - Ni los logs ni `event_log` guardan un token ([RFC 9700 §4.9.3](../fuentes/rfc/rfc9700.txt)).
 
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/`, la migración `<revisión>_accounts.py`, `schemas/auth.py`, `services/sessions.py`, `services/passwords.py`, `routers/auth.py`, `client`, `check_origin` y `signed_in` de `dependencies.py`, y `tests/test_sessions.py`.
+
 ## Token de acceso
 
 Estándar: el capítulo [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) de ASVS 5.0.
 
-- El servidor firma y valida el JWT con PyJWT: `jwt.decode` recibe `algorithms=["HS256"]` y exige `exp` y `sid`. PyJWT acepta cualquier `typ` y parámetros como `kid` o `jku`, así que el servidor compara antes la cabecera entera. [PyJWT 2.15.1](https://raw.githubusercontent.com/jpadilla/pyjwt/2.15.1/jwt/api_jws.py)
-- El token de acceso de una app es un JWT en la serialización compacta de JWS, firmado con HS256, que vence en 15 minutos. Lleva el id de su sesión en `sid` y el vencimiento en `exp`.
-- La cabecera del JWT es `{"alg": "HS256", "typ": "at+jwt"}`.
-- La clave del JWT son 256 bits aleatorios, nunca una contraseña, y solo firma con HS256.
-- El servidor rechaza el JWT entero si no es un JWS compacto, si la firma no vale o si `exp` ya pasó, e ignora una claim que no conoce.
-- La lista de sesiones cerradas vive en Valkey, y cada id queda en ella 15 minutos, lo que dura el último token de acceso de su sesión.
-- El servidor rechaza el JWT de una sesión de una app que se cerró o se borró: su id va a una lista de sesiones cerradas ([ASVS 5.0 §7.4.1](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+- El token de acceso de una app es opaco y vence en 15 minutos. La fila de su sesión guarda su SHA-256 y su vencimiento.
+- Refrescar la sesión reemplaza el token de acceso: el anterior deja de valer.
+- El token de acceso no vale como cookie de la web, ni el token de la web como token de acceso.
+- El token de acceso es un valor aleatorio de 256 bits ([ASVS 5.0 §7.2.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+- Cerrar o borrar una sesión deja sin efecto en el momento su token de acceso: el servidor busca la sesión en cada petición ([ASVS 5.0 §7.4.1](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 
 ## WebSocket
 
@@ -218,3 +223,34 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 - El servidor no revalida cada cierto tiempo la sesión de una conexión abierta: el cierre llega con el borrado de la sesión, no en la siguiente revisión.
 - Al refrescar la sesión, una app manda el token nuevo por la misma conexión ([WebSocket Security, *Session Management*](../fuentes/owasp/WebSocket_Security.md)).
 - Cerrar o borrar una sesión cierra en el momento sus conexiones, y una sesión que vence también las cierra ([WebSocket Security, *Session Management*](../fuentes/owasp/WebSocket_Security.md)).
+
+## Cumplimiento
+
+| Convención | Herramienta |
+| :--- | :--- |
+| La cookie de la web es `__Host-session`, `Secure`, `HttpOnly` y `SameSite=Strict`, con `Path=/` y 30 días de `Max-Age` | `test_cookie_is_host_secure_httponly_strict` |
+| El token de la web es un valor aleatorio de 256 bits, y la fila guarda su SHA-256 | `test_web_token_is_random_and_hashed` |
+| Un 401 a la cookie de la web no lleva `WWW-Authenticate` | `test_cookie_without_session_is_401_without_challenge` |
+| La web actualiza el último uso, y renueva el `Max-Age` de la cookie, a lo sumo cada 15 minutos | `test_web_writes_last_use_every_15_minutes` |
+| La sesión vence tras 30 días sin uso | `test_session_expires_after_30_days_without_use` |
+| La tarea periódica borra las sesiones vencidas | `test_purge_deletes_sessions_unused_for_30_days` y `test_purge_task_deletes_expired_sessions` |
+| Una petición con la cookie y un método que no es seguro responde 403 si su `Origin` falta o no es `https://` y el `Host` | `test_unsafe_request_with_cookie_needs_the_origin` |
+| Una app que entra con contraseña recibe la respuesta del canje del código, con `Cache-Control: no-store` y `Pragma: no-cache` | `test_app_signs_in_as_the_token_endpoint` |
+| El token de refresco es el id de su sesión y un secreto aleatorio de 256 bits, firmados con HMAC con `refresh_key` | `test_refresh_token_is_the_session_and_a_secret` |
+| El token de acceso es un valor aleatorio de 256 bits que vence en 15 minutos, la fila guarda su SHA-256, y un 401 a un token en `Authorization` lleva `WWW-Authenticate: Bearer` | `test_access_token_lasts_15_minutes` |
+| El token de acceso no vale como cookie, ni el token de la web como token de acceso | `test_tokens_are_not_interchangeable` |
+| El refresco rota el secreto, reemplaza el token de acceso, actualiza el último uso y responde como el canje | `test_refresh_rotates_the_secret` |
+| El secreto anterior vale mientras el vigente no se usó, reemplaza el vigente y no cambia | `test_previous_secret_replaces_the_current_one` |
+| Un secreto que no es el vigente ni el anterior borra la sesión | `test_reused_secret_deletes_the_session` |
+| Un token de refresco con la firma inválida o de una sesión que no existe responde `invalid_grant`, sin borrar nada | `test_forged_refresh_token_is_invalid_grant_without_notice` |
+| El endpoint de token toma un parámetro sin valor como ausente, ignora el que no conoce, responde `invalid_request` a uno repetido o a uno obligatorio que falta y `invalid_scope` a `scope`, y cada error es un 400 en JSON con `error` | `test_token_endpoint_parameters` |
+| El endpoint de token acepta solo `POST` en `application/x-www-form-urlencoded` | `test_token_endpoint_takes_only_a_form_post` |
+| Cerrar sesión borra la fila y deja sin efecto el token de acceso | `test_logout_deletes_the_session` |
+| Iniciar sesión deja sin efecto la cookie o el token de acceso que el cliente traía | `test_sign_in_discards_the_tokens_it_brings` |
+| El login con contraseña identifica la cuenta con su correo o con su teléfono, uno solo | `test_login_takes_the_email_or_the_phone` |
+| El login compara el correo en minúsculas | `test_login_lowers_the_email` |
+| La contraseña se verifica en NFC, sin truncarla ni cambiar sus mayúsculas | `test_password_is_checked_in_nfc_as_it_comes` |
+| Los fallos consecutivos viven en la base: una contraseña equivocada responde 401 y cuenta uno | `test_wrong_password_is_a_401_and_a_failure` |
+| Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429 con `Retry-After` | `test_wait_doubles_from_the_fifth_failure_up_to_an_hour` y `test_attempt_before_the_wait_is_a_429` |
+| Un inicio de sesión exitoso pone en cero los fallos de la contraseña | `test_success_resets_the_failures` |
+| La contraseña se deshabilita a los 100 fallos consecutivos, un login con ella responde 403 de tipo `authenticator-disabled` sin verificarla, y las sesiones abiertas siguen | `test_hundredth_failure_disables_the_password` |

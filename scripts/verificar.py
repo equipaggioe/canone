@@ -492,7 +492,6 @@ PYPROJECT = {
     "autenticacion.md": {
         "phonenumbers": ">=9.0.44",
         "pwdlib": ">=0.4.2",
-        "pyjwt": ">=2.15.1",
         "webauthn": ">=3.0.1",
     },
     "fastapi.md": {

@@ -10,6 +10,7 @@ dependencies = [
   "opentelemetry-api>=1.45.2",
   "opentelemetry-sdk>=1.45.2",
   "pillow>=13.0.0",
+  "pwdlib[argon2]>=0.4.2",
   "pydantic>=2.14.4",
   "pydantic-settings>=2.16.3",
   "sqlalchemy[asyncio]>=2.1.9",

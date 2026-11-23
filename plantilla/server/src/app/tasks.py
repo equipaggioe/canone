@@ -5,12 +5,19 @@ import asyncio
 from collections.abc import Awaitable, Callable
 
 from app.database import engine, migrate, mock
-from app.services import events, files
+from app.services import events, files, sessions
+
+
+async def purge() -> None:
+    """Delete the expired events and sessions."""
+    await events.purge()
+    await sessions.purge()
+
 
 TASKS: dict[str, Callable[[], Awaitable[None]]] = {
     "migrate": migrate,
     "mock": mock,
-    "purge": events.purge,
+    "purge": purge,
     "sweep": files.sweep,
 }
 

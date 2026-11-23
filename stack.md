@@ -79,7 +79,6 @@ Página: [autenticacion.md](plataformas/autenticacion.md). Son paquetes del serv
 | pwdlib | 0.4.2 | [Contraseñas](plataformas/autenticacion.md#contraseñas) |
 | phonenumbers | 9.0.44 | [Código por SMS](plataformas/autenticacion.md#código-por-sms) |
 | webauthn | 3.0.1 | [Passkeys](plataformas/autenticacion.md#passkeys) |
-| PyJWT | 2.15.1 | [Token de acceso](plataformas/autenticacion.md#token-de-acceso) |
 
 ## PostgreSQL
 

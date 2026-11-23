@@ -704,11 +704,23 @@ def problem_schema(status: str) -> dict[str, Any]:
     return {errors.PROBLEM_JSON: {"schema": {"$ref": f"#/components/schemas/{name}"}}}
 
 
+# transversal.md: the token endpoint answers its errors as RFC 6749.
+TOKEN_ENDPOINT = "/api/auth/token"
+
+
+def error_schema(path: str, status: str) -> dict[str, Any]:
+    """Return the content an error of a path may declare."""
+    if path == TOKEN_ENDPOINT and status == "400":
+        token_error = {"schema": {"$ref": "#/components/schemas/TokenError"}}
+        return {"application/json": token_error, **problem_schema(status)}
+    return problem_schema(status)
+
+
 def test_errors_are_problems() -> None:
     """Every operation declares its errors as problem+json.
 
     Each with the schema of its problem: a 422 with the validation
-    one.
+    one. The token endpoint adds its own errors to its 400.
     """
     document = main_app.openapi()
     offenders = [
@@ -717,7 +729,7 @@ def test_errors_are_problems() -> None:
         for method, operation in operations.items()
         for status in {"4XX", "5XX"} | set(operation["responses"])
         if status[0] in "45"
-        and operation["responses"].get(status, {}).get("content") != problem_schema(status)
+        and operation["responses"].get(status, {}).get("content") != error_schema(path, status)
     ]
     assert not offenders
 

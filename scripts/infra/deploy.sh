@@ -58,6 +58,7 @@ python3 "$canone/plantilla/infra/credentials.py" demo <<'EOF'
 health_token=test-health-token
 min_client_versions={}
 page_token_key=0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY=
+refresh_key=3q6Yv1nOQ9i1mXk0jv4XrQ7Wl8l7z3p2c4b5a6d7e8E
 EOF
 deploy() { UV_OFFLINE=1 python3 "$work/deploy.py" "$1"; }
 

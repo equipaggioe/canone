@@ -339,6 +339,7 @@ jobs:
           printf %s test-health-token > "$folder/app_health_token"
           printf %s "{}" > "$folder/app_min_client_versions"
           printf %s 0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY= > "$folder/app_page_token_key"
+          printf %s 3q6Yv1nOQ9i1mXk0jv4XrQ7Wl8l7z3p2c4b5a6d7e8E > "$folder/app_refresh_key"
           printf %s valkey://localhost:6379/0 > "$folder/app_valkey_url"
           echo "CREDENTIALS_DIRECTORY=$folder" >> "$GITHUB_ENV"
           cp -r "$folder" "$RUNNER_TEMP/owner"

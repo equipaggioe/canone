@@ -17,6 +17,7 @@ server/
     script.py.mako
     versions/
       <revisión>_event_log.py
+      <revisión>_accounts.py
       <revisión>_<cambio>.py
   src/app/
     __init__.py
@@ -41,6 +42,11 @@ server/
       __init__.py
       base.py
       ruff.toml
+      account/
+        __init__.py
+        account.py
+        account_session.py
+        password.py
       event/
         __init__.py
         event_log.py
@@ -51,10 +57,12 @@ server/
       __init__.py
       base.py
       page.py
+      auth.py
       health.py
       <recurso>.py
     routers/
       __init__.py
+      auth.py
       health.py
       problems.py
       <recurso>.py
@@ -63,6 +71,8 @@ server/
       events.py
       files.py
       health.py
+      passwords.py
+      sessions.py
       <recurso>.py
     locale/
       <idioma>/
@@ -75,6 +85,7 @@ server/
     test_events.py
     test_files.py
     test_health.py
+    test_sessions.py
     test_tasks.py
     test_<recurso>.py
 ```
@@ -232,6 +243,7 @@ Estándar: el [*Webhook Security Cheat Sheet*](../fuentes/owasp/Webhook_Security
 Contrato: [transversal.md](transversal.md#errores).
 
 - Un error con tipo propio se lanza con `AppError`; uno que su código de estado ya explica, con `HTTPException`, y sale como `about:blank`.
+- Un error que tiene que dejar escrito un cambio, como el fallo de una contraseña o el borrado de una sesión por reúso, se responde sin lanzarlo: la transacción de la petición hace commit.
 
 ## Fechas
 

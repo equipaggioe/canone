@@ -17,6 +17,7 @@ dependencies = [
   "starlette>=1.10.0",
   "uvicorn[standard]>=0.54.0",
   "valkey>=6.2.0",
+  "webauthn>=3.0.1",
 ]
 
 [dependency-groups]

@@ -1,6 +1,6 @@
 """The bodies and responses of signing in."""
 
-from typing import Annotated, Literal, Self
+from typing import Annotated, Any, Literal, Self
 
 from pydantic import AfterValidator, Field, StringConstraints, model_validator
 
@@ -41,3 +41,40 @@ class TokenError(Schema):
     """An error of the token endpoint, as RFC 6749 writes it."""
 
     error: TokenErrorCode
+
+
+class CredentialDescriptor(Schema):
+    """A passkey the ceremony may use, by its ID in base64url."""
+
+    type: Literal["public-key"]
+    id: str
+    transports: list[str]
+
+
+class PasskeyOptions(Schema):
+    """The options of navigator.credentials.get(), in base64url."""
+
+    challenge: str
+    rp_id: str
+    allow_credentials: list[CredentialDescriptor]
+    user_verification: Literal["preferred"]
+
+
+class AssertionResponse(InputSchema):
+    """What the authenticator signed, in base64url."""
+
+    client_data_json: str = Field(alias="clientDataJSON")
+    authenticator_data: str
+    signature: str
+    user_handle: str | None = None
+
+
+class PasskeyCredential(InputSchema):
+    """The whole response of navigator.credentials.get()."""
+
+    id: str
+    raw_id: str
+    type: Literal["public-key"]
+    response: AssertionResponse
+    client_extension_results: dict[str, Any]
+    authenticator_attachment: str | None = None

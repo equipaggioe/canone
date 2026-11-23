@@ -19,7 +19,12 @@ class Settings(BaseSettings):
     # ADR-0070: the units load the credentials folder with this prefix.
     model_config = SettingsConfigDict(env_prefix="app_")
 
+    # autenticacion.md: the Android origins of the keys that sign
+    # the apps of this deployment.
+    app_origins: list[str]
     database_url: str
+    # The domain of this machine: the RP ID of the passkeys.
+    domain: str
     health_token: str
     min_client_versions: dict[str, Annotated[str, StringConstraints(pattern=f"^{VERSION}$")]]
     page_token_key: str

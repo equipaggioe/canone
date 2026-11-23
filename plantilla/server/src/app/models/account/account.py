@@ -1,5 +1,7 @@
 """An account, identified by its email or its phone."""
 
+import secrets
+
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -17,4 +19,6 @@ class Account(Base):
     email: Mapped[str | None] = mapped_column(unique=True)
     # A + and digits only.
     phone: Mapped[str | None] = mapped_column(unique=True)
+    # The user handle of its passkeys: 64 random bytes.
+    user_handle: Mapped[bytes] = mapped_column(default=lambda: secrets.token_bytes(64))
     created_at: Mapped[CreatedAt]

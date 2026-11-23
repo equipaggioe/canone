@@ -110,14 +110,19 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 | Una app de Flutter o de Flet, en el teléfono | Sí | Sí | Sí, se completa solo |
 | Una app de Flutter, de Flet o de Qt, en escritorio | Sí, por el navegador del sistema | Sí | Sí |
 
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/throttled.py` y `services/authenticators.py`.
+
 ## Passkeys
 
 Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C y [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
-- El servidor verifica las passkeys con `verify_registration_response` y `verify_authentication_response` de `webauthn`, de Duo, con `supported_pub_key_algs` igual a `pubKeyCredParams`. La biblioteca no mira el largo del credential ID, `crossOrigin`, `topOrigin`, las extensiones, la atestación que se acepta ni que BE sea el guardado: lo comprueba el servidor. [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/registration/verify_registration_response.py)
+- El servidor verifica las passkeys con `verify_registration_response` y `verify_authentication_response` de `webauthn`, de Duo, con `supported_pub_key_algs` igual a `pubKeyCredParams`. La biblioteca no mira el largo del credential ID, `crossOrigin`, `topOrigin`, las extensiones, la atestación que se acepta, que BE sea el guardado ni el user handle, y compara el `signCount` antes que la firma: el servidor comprueba lo que ella no mira, y le pasa el `signCount` en 0 para compararlo él después de la firma, así una aserción falsa no denuncia una passkey clonada. [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/registration/verify_registration_response.py), [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/authentication/verify_authentication_response.py)
 - El servidor no pide extensiones.
 - El cliente le manda al servidor la respuesta de `create()` o de `get()` entera, con `clientExtensionResults` y `transports`.
 - La landing sirve `https://<dominio>/.well-known/assetlinks.json` como archivo estático, desde `static/.well-known/assetlinks.json`.
+- El dominio es `domain` de `Settings`: cada máquina tiene el suyo.
+- La lista de origins es `https://<dominio>`, `https://app.<dominio>` y `https://panel.<dominio>`, y los `android:apk-key-hash:…` de `app_origins` de `Settings`, los de las llaves que firman las apps de ese despliegue.
+- El login con passkey pide antes sus opciones en `POST /api/auth/passkey/options`, y el servidor busca el challenge por el que trae `clientDataJSON`.
 - El RP ID es `<dominio>` ([WebAuthn §5.4.2](../fuentes/w3c/webauthn-3.html)).
 - Toda passkey es descubrible, con `residentKey` `required` y `requireResidentKey` `true` ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html)).
 - `userVerification` es `preferred` ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html) y [§5.5](../fuentes/w3c/webauthn-3.html)).
@@ -139,6 +144,8 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 - Si el `backupState` de una passkey pasa de 1 a 0, la app le pide al titular revisar sus otros autenticadores y, si no tiene otro, agregar uno ([WebAuthn §6.1.3](../fuentes/w3c/webauthn-3.html)).
 - Cada passkey guarda su credential ID, su clave pública, `signCount`, `uvInitialized`, `transports`, `backupEligible`, `backupState`, su nombre, su creación y su último uso ([WebAuthn §6.1.3](../fuentes/w3c/webauthn-3.html) y [§7.1](../fuentes/w3c/webauthn-3.html)).
 - El titular ve sus passkeys, con su nombre y su último uso, y borra la que quiera: así revoca la de un dispositivo perdido ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt)).
+
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey.py`, `services/passkeys.py` y `tests/test_passkeys.py`.
 
 ## Recuperación
 
@@ -254,3 +261,17 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429 con `Retry-After` | `test_wait_doubles_from_the_fifth_failure_up_to_an_hour` y `test_attempt_before_the_wait_is_a_429` |
 | Un inicio de sesión exitoso pone en cero los fallos de la contraseña | `test_success_resets_the_failures` |
 | La contraseña se deshabilita a los 100 fallos consecutivos, un login con ella responde 403 de tipo `authenticator-disabled` sin verificarla, y las sesiones abiertas siguen | `test_hundredth_failure_disables_the_password` |
+| Una passkey abre la sesión por sus dos rutas, la de la cookie y la de los tokens | `test_passkey_signs_in_the_web_and_the_app` |
+| Las opciones del login llevan un challenge de 16 bytes que vive 10 minutos en Valkey, el RP ID igual a `domain`, `userVerification` `preferred`, `allowCredentials` vacío y ninguna extensión | `test_options_ask_a_challenge_of_16_bytes_for_10_minutes` |
+| El challenge se borra al usarlo, y uno que el servidor no generó no vale | `test_challenge_is_used_once` |
+| El servidor compara `origin` exacto con las superficies de `domain` y `app_origins` | `test_origin_is_a_web_surface_or_an_app` |
+| El RP ID es `domain` | `test_rp_id_is_the_domain` |
+| Una ceremonia con `crossOrigin` verdadero o con `topOrigin` se rechaza | `test_cross_origin_and_top_origin_are_refused` |
+| Un `clientExtensionResults` que no está vacío hace fallar el login | `test_client_extension_results_must_be_empty` |
+| En el login, el `authData` no acepta ninguna extensión, y la que llega va al registro de eventos con su nombre | `test_authenticator_extension_fails_and_is_named` |
+| El servidor comprueba que BE sea el guardado | `test_backup_eligibility_must_be_the_stored_one` |
+| El servidor comprueba que el user handle sea el de la cuenta de la passkey | `test_user_handle_must_be_the_account` |
+| Una aserción que falla cuenta un fallo de su passkey, que queda | `test_bad_signature_is_a_failure_that_stays` |
+| Si el `signCount` de la aserción o el guardado no es cero y el nuevo no es mayor, el login falla | `test_sign_count_that_does_not_grow_fails` |
+| El login guarda el `signCount`, el `backupState` y el último uso después de las demás comprobaciones, y `uvInitialized` queda como se registró | `test_login_stores_sign_count_and_backup_state_after_the_checks` |
+| Una passkey antes de su espera responde 429, y deshabilitada, 403 de tipo `authenticator-disabled`, y un login exitoso pone en cero sus fallos | `test_passkey_waits_and_disables_like_any_authenticator` |

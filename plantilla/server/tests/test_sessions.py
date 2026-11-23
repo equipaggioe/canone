@@ -22,7 +22,7 @@ from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.account.password import Password
 from app.models.event.event_log import EventLog
-from app.services import events, passwords, sessions
+from app.services import authenticators, events, passwords, sessions
 
 PASSWORD = "Correct horse battery"
 EMAIL = "ana@example.com"
@@ -511,12 +511,12 @@ async def test_wrong_password_is_a_401_and_a_failure(
 
 def test_wait_doubles_from_the_fifth_failure_up_to_an_hour() -> None:
     """No wait before the fifth failure; 30 s doubling up to an hour."""
-    assert [passwords.wait(failures) for failures in (1, 4)] == [None, None]
-    assert passwords.wait(5) == timedelta(seconds=30)
-    assert passwords.wait(6) == timedelta(seconds=60)
-    assert passwords.wait(11) == timedelta(seconds=1920)
-    assert passwords.wait(12) == timedelta(hours=1)
-    assert passwords.wait(99) == timedelta(hours=1)
+    assert [authenticators.wait(failures) for failures in (1, 4)] == [None, None]
+    assert authenticators.wait(5) == timedelta(seconds=30)
+    assert authenticators.wait(6) == timedelta(seconds=60)
+    assert authenticators.wait(11) == timedelta(seconds=1920)
+    assert authenticators.wait(12) == timedelta(hours=1)
+    assert authenticators.wait(99) == timedelta(hours=1)
 
 
 async def test_attempt_before_the_wait_is_a_429(

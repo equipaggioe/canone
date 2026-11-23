@@ -1,4 +1,4 @@
-"""The accounts, their passwords and their sessions.
+"""The accounts, their passwords, their passkeys and their sessions.
 
 Revision ID: 82f87036a005
 Revises: d34c1b992b0b
@@ -28,6 +28,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False),
         sa.Column("email", sa.TEXT(), nullable=True),
         sa.Column("phone", sa.TEXT(), nullable=True),
+        sa.Column("user_handle", sa.LargeBinary(), nullable=False),
         sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
         sa.CheckConstraint("email IS NOT NULL OR phone IS NOT NULL", name=op.f("ck_account_identified")),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_account")),
@@ -69,11 +70,36 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["account_id"], ["account.id"], name=op.f("fk_password_account_id_account"), ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("account_id", name=op.f("pk_password")),
     )
-    op.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON account, account_session, password TO {ROLE}")
+    op.create_table(
+        "passkey",
+        sa.Column("id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False),
+        sa.Column("account_id", sa.Uuid(), nullable=False),
+        sa.Column("credential_id", sa.LargeBinary(), nullable=False),
+        sa.Column("public_key", sa.LargeBinary(), nullable=False),
+        sa.Column("sign_count", sa.BigInteger(), nullable=False),
+        sa.Column("uv_initialized", sa.Boolean(), nullable=False),
+        sa.Column("transports", postgresql.ARRAY(sa.TEXT()), nullable=False),
+        sa.Column("backup_eligible", sa.Boolean(), nullable=False),
+        sa.Column("backup_state", sa.Boolean(), nullable=False),
+        sa.Column("name", sa.TEXT(), nullable=False),
+        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column("changed_at", postgresql.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column("last_used_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.Column("failures", sa.Integer(), server_default=sa.text("0"), nullable=False),
+        sa.Column("retry_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.Column("disabled_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.ForeignKeyConstraint(["account_id"], ["account.id"], name=op.f("fk_passkey_account_id_account"), ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_passkey")),
+        sa.UniqueConstraint("credential_id", name=op.f("uq_passkey_credential_id")),
+    )
+    op.create_index(op.f("ix_passkey_account_id"), "passkey", ["account_id"])
+    op.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON account, account_session, passkey, password TO {ROLE}")
 
 
 def downgrade() -> None:
     """Downgrade schema."""
+    op.drop_index(op.f("ix_passkey_account_id"), table_name="passkey")
+    op.drop_table("passkey")
     op.drop_table("password")
     op.drop_index(op.f("ix_account_session_last_used_at"), table_name="account_session")
     op.drop_index(op.f("ix_account_session_account_id"), table_name="account_session")

@@ -46,7 +46,9 @@ server/
         __init__.py
         account.py
         account_session.py
+        passkey.py
         password.py
+        throttled.py
       event/
         __init__.py
         event_log.py
@@ -68,9 +70,11 @@ server/
       <recurso>.py
     services/
       __init__.py
+      authenticators.py
       events.py
       files.py
       health.py
+      passkeys.py
       passwords.py
       sessions.py
       <recurso>.py
@@ -85,6 +89,7 @@ server/
     test_events.py
     test_files.py
     test_health.py
+    test_passkeys.py
     test_sessions.py
     test_tasks.py
     test_<recurso>.py

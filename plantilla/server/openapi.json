@@ -11,7 +11,7 @@
           "auth"
         ],
         "summary": "Password Cookie",
-        "description": "Sign in the web with a password, in its cookie.\n\nThe cookie it brings is read from the request: the route does not\nrequire it.",
+        "description": "Sign in the web with a password, in its cookie.",
         "operationId": "authPasswordCookie",
         "parameters": [
           {
@@ -78,7 +78,7 @@
           "auth"
         ],
         "summary": "Password Token",
-        "description": "Sign in an app with a password, as the token endpoint answers.\n\nThe access token it brings is read from the request: the route does\nnot require it.",
+        "description": "Sign in an app with a password, as the token endpoint answers.",
         "operationId": "authPasswordToken",
         "parameters": [
           {
@@ -98,6 +98,211 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PasswordLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/passkey/options": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Passkey Options",
+        "description": "Start a login with a passkey: its challenge lives 10 minutes.",
+        "operationId": "authPasskeyOptions",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyOptions"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/passkey/cookie": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Passkey Cookie",
+        "description": "Sign in the web with a passkey, in its cookie.",
+        "operationId": "authPasskeyCookie",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasskeyCredential"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/passkey/token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Passkey Token",
+        "description": "Sign in an app with the passkey of its system.",
+        "operationId": "authPasskeyToken",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasskeyCredential"
               }
             }
           }
@@ -534,6 +739,71 @@
   },
   "components": {
     "schemas": {
+      "AssertionResponse": {
+        "properties": {
+          "clientDataJSON": {
+            "type": "string",
+            "title": "Clientdatajson"
+          },
+          "authenticatorData": {
+            "type": "string",
+            "title": "Authenticatordata"
+          },
+          "signature": {
+            "type": "string",
+            "title": "Signature"
+          },
+          "userHandle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Userhandle"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clientDataJSON",
+          "authenticatorData",
+          "signature"
+        ],
+        "title": "AssertionResponse",
+        "description": "What the authenticator signed, in base64url."
+      },
+      "CredentialDescriptor": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "public-key",
+            "title": "Type"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "transports": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Transports"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "transports"
+        ],
+        "title": "CredentialDescriptor",
+        "description": "A passkey the ceremony may use, by its ID in base64url."
+      },
       "EventLevel": {
         "type": "string",
         "enum": [
@@ -743,6 +1013,87 @@
           "nextPageToken"
         ],
         "title": "Page[LoggedEvent]"
+      },
+      "PasskeyCredential": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "rawId": {
+            "type": "string",
+            "title": "Rawid"
+          },
+          "type": {
+            "type": "string",
+            "const": "public-key",
+            "title": "Type"
+          },
+          "response": {
+            "$ref": "#/components/schemas/AssertionResponse"
+          },
+          "clientExtensionResults": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Clientextensionresults"
+          },
+          "authenticatorAttachment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Authenticatorattachment"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "rawId",
+          "type",
+          "response",
+          "clientExtensionResults"
+        ],
+        "title": "PasskeyCredential",
+        "description": "The whole response of navigator.credentials.get()."
+      },
+      "PasskeyOptions": {
+        "properties": {
+          "challenge": {
+            "type": "string",
+            "title": "Challenge"
+          },
+          "rpId": {
+            "type": "string",
+            "title": "Rpid"
+          },
+          "allowCredentials": {
+            "items": {
+              "$ref": "#/components/schemas/CredentialDescriptor"
+            },
+            "type": "array",
+            "title": "Allowcredentials"
+          },
+          "userVerification": {
+            "type": "string",
+            "const": "preferred",
+            "title": "Userverification"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "challenge",
+          "rpId",
+          "allowCredentials",
+          "userVerification"
+        ],
+        "title": "PasskeyOptions",
+        "description": "The options of navigator.credentials.get(), in base64url."
       },
       "PasswordLogin": {
         "properties": {

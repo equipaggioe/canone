@@ -83,7 +83,7 @@ SMS = [
 ]
 
 # plataformas/autenticacion.md, «Passkeys»: el plugin de Flutter y la extensión de Flet que usan la
-# passkey con la API del sistema.
+# passkey con la API del sistema, en Android, iOS, macOS y Windows.
 PASSKEY = [
     Path("packages/passkey/.gitignore"),
     Path("packages/passkey/pyproject.toml"),
@@ -100,9 +100,15 @@ PASSKEY = [
     Path("packages/passkey/src/flutter/passkey/android/settings.gradle.kts"),
     Path("packages/passkey/src/flutter/passkey/android/src/main/AndroidManifest.xml"),
     Path("packages/passkey/src/flutter/passkey/android/src/main/kotlin/canone/passkey/PasskeyPlugin.kt"),
-    Path("packages/passkey/src/flutter/passkey/ios/passkey.podspec"),
-    Path("packages/passkey/src/flutter/passkey/ios/passkey/Package.swift"),
-    Path("packages/passkey/src/flutter/passkey/ios/passkey/Sources/passkey/PasskeyPlugin.swift"),
+    Path("packages/passkey/src/flutter/passkey/darwin/passkey.podspec"),
+    Path("packages/passkey/src/flutter/passkey/darwin/passkey/Package.swift"),
+    Path("packages/passkey/src/flutter/passkey/darwin/passkey/Sources/passkey/PasskeyPlugin.swift"),
+    Path("packages/passkey/src/flutter/passkey/windows/CMakeLists.txt"),
+    Path("packages/passkey/src/flutter/passkey/windows/include/passkey/passkey_plugin_c_api.h"),
+    Path("packages/passkey/src/flutter/passkey/windows/passkey_plugin.cpp"),
+    Path("packages/passkey/src/flutter/passkey/windows/passkey_plugin.h"),
+    Path("packages/passkey/src/flutter/passkey/windows/passkey_plugin_c_api.cpp"),
+    Path("packages/passkey/src/flutter/passkey/test/windows_test.dart"),
 ]
 
 # Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del

@@ -6,7 +6,7 @@ Cómo se registra una cuenta, cómo entra y cómo mantiene su sesión: lo que ha
 
 Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y [RFC 9700](../fuentes/rfc/rfc9700.txt).
 
-- Una app del teléfono usa la passkey con la API de su sistema: una de Android, con Credential Manager, y una de Flutter o de Flet, con el plugin `passkey` de la plantilla, que llama a Credential Manager en Android y a AuthenticationServices en iOS. Una app de escritorio la usa en el navegador del sistema, que le devuelve un código de autorización.
+- Una app usa la passkey con la API de su sistema: una de Android, con Credential Manager, y una de Flutter o de Flet en el teléfono, en Windows o en macOS, con el plugin `passkey` de la plantilla, que llama a Credential Manager en Android, a AuthenticationServices en iOS y en macOS y a la API de WebAuthn en Windows. Una app de Linux o de Qt la usa en el navegador del sistema, que le devuelve un código de autorización.
 - Una app que corre en el navegador hace el flujo por el servidor, en su misma pestaña: abre un endpoint del servidor que crea el `state` y el `code_verifier` y redirige a la petición de autorización, y la URI de retorno es otro endpoint del servidor, que canjea el código, deja la cookie de sesión de la web y vuelve a la app con un 303.
 - En ese flujo, el endpoint que lo inicia guarda el `state` y el `code_verifier` en Valkey, bajo un id que deja en una cookie `__Host-` `Secure`, `HttpOnly` y `SameSite=Strict`, y el endpoint de retorno los toma una sola vez y borra la cookie.
 - El código vive en Valkey, con la cuenta.
@@ -113,7 +113,8 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 | Una app de Flutter o de Flet, en la web | Sí, en la misma pestaña | Sí | Sí, con WebOTP |
 | Una app de Android | Sí | Sí | Sí, se completa solo |
 | Una app de Flutter o de Flet, en el teléfono | Sí | Sí | Sí, se completa solo |
-| Una app de Flutter, de Flet o de Qt, en escritorio | Sí, por el navegador del sistema | Sí | Sí |
+| Una app de Flutter o de Flet, en Windows o en macOS | Sí | Sí | Sí |
+| Una app de Flutter o de Flet en Linux, o de Qt | Sí, por el navegador del sistema | Sí | Sí |
 
 Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/throttled.py` y `services/authenticators.py`.
 
@@ -128,7 +129,8 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 - El dominio es `domain` de `Settings`: cada máquina tiene el suyo.
 - La lista de origins es `https://<dominio>`, `https://app.<dominio>` y `https://panel.<dominio>`, y los `android:apk-key-hash:…` de `app_origins` de `Settings`, los de las llaves que firman las apps de ese despliegue.
 - El login con passkey pide antes sus opciones en `POST /api/auth/passkey/options`, y el servidor busca el challenge por el que trae `clientDataJSON`.
-- Una app de iOS declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`, y la landing sirve `https://<dominio>/.well-known/apple-app-site-association` con el app ID de cada app de iOS en `webcredentials`, como archivo estático desde `static/.well-known/apple-app-site-association`.
+- Una app de iOS o de macOS declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`, y la landing sirve `https://<dominio>/.well-known/apple-app-site-association` con el app ID de cada app de iOS y de macOS en `webcredentials`, como archivo estático desde `static/.well-known/apple-app-site-association`.
+- En Windows, la app escribe el `clientDataJSON` que firma la API del sistema, con el origin `https://<dominio>`, como un navegador en ese dominio.
 - El RP ID es `<dominio>` ([WebAuthn §5.4.2](../fuentes/w3c/webauthn-3.html)).
 - Toda passkey es descubrible, con `residentKey` `required` y `requireResidentKey` `true` ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html)).
 - `userVerification` es `preferred` ([WebAuthn §5.4.4](../fuentes/w3c/webauthn-3.html) y [§5.5](../fuentes/w3c/webauthn-3.html)).

@@ -1,8 +1,15 @@
 import AuthenticationServices
-import Flutter
-import UIKit
 
-/// Runs the ceremonies of WebAuthn with AuthenticationServices, over the app.
+#if os(iOS)
+  import Flutter
+  import UIKit
+#else
+  import AppKit
+  import FlutterMacOS
+#endif
+
+/// Runs the ceremonies of WebAuthn with AuthenticationServices, over the app,
+/// on iOS and on macOS.
 ///
 /// It reads the options of WebAuthn and writes the response as the JSON
 /// that the browser gives, with the binary fields in base64url.
@@ -10,7 +17,12 @@ public class PasskeyPlugin: NSObject, FlutterPlugin {
   private var ceremony: Ceremony?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "passkey", binaryMessenger: registrar.messenger())
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #else
+      let messenger = registrar.messenger
+    #endif
+    let channel = FlutterMethodChannel(name: "passkey", binaryMessenger: messenger)
     registrar.addMethodCallDelegate(PasskeyPlugin(), channel: channel)
   }
 
@@ -95,7 +107,7 @@ func registrationRequest(_ options: [String: Any]) throws -> ASAuthorizationRequ
   request.attestationPreference = .none
   request.userVerificationPreference = preference(
     options["authenticatorSelection"] as? [String: Any] ?? [:])
-  if #available(iOS 17.4, *) {
+  if #available(iOS 17.4, macOS 14.4, *) {
     request.excludedCredentials = try descriptors(options, "excludeCredentials").map {
       ASAuthorizationPlatformPublicKeyCredentialDescriptor(credentialID: $0)
     }
@@ -123,8 +135,12 @@ final class Ceremony: NSObject, ASAuthorizationControllerDelegate,
   }
 
   func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-    let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-    return scenes.flatMap(\.windows).first(where: \.isKeyWindow) ?? ASPresentationAnchor()
+    #if os(iOS)
+      let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+      return scenes.flatMap(\.windows).first(where: \.isKeyWindow) ?? ASPresentationAnchor()
+    #else
+      return NSApplication.shared.keyWindow ?? ASPresentationAnchor()
+    #endif
   }
 
   func authorizationController(

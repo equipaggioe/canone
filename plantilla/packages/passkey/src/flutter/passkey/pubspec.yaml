@@ -1,5 +1,5 @@
 name: passkey
-description: The passkeys of the system, Credential Manager on Android and AuthenticationServices on iOS.
+description: The passkeys of the system, Credential Manager on Android, AuthenticationServices on iOS and macOS, and the WebAuthn API on Windows.
 version: 0.1.0
 publish_to: none
 
@@ -24,3 +24,9 @@ flutter:
         pluginClass: PasskeyPlugin
       ios:
         pluginClass: PasskeyPlugin
+        sharedDarwinSource: true
+      macos:
+        pluginClass: PasskeyPlugin
+        sharedDarwinSource: true
+      windows:
+        pluginClass: PasskeyPluginCApi

@@ -173,9 +173,10 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 Contrato: [autenticacion.md](autenticacion.md#passkeys).
 
-- En el teléfono, la app usa la passkey con el servicio `Passkey` de la extensión `flet_passkey`, que la plantilla copia en `packages/passkey/`: Flet no tiene una API oficial de passkeys.
+- En el teléfono, en Windows y en macOS, la app usa la passkey con el servicio `Passkey` de la extensión `flet_passkey`, que la plantilla copia en `packages/passkey/`: Flet no tiene una API oficial de passkeys.
 - En Android, el `minSdk` de la app no baja de 28, el del plugin.
 - En iOS, `[tool.flet.ios.entitlement]` declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`.
+- En macOS, la app declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`.
 
 ## Red
 

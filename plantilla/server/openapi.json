@@ -152,7 +152,7 @@
           "auth"
         ],
         "summary": "Token",
-        "description": "Refresh the session of an app, rotating its refresh token.\n\nA reuse deletes the session in the transaction of the request: the\nerror is answered, not raised.",
+        "description": "Refresh the session of an app, rotating its refresh token.",
         "operationId": "authToken",
         "parameters": [
           {

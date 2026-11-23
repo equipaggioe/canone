@@ -11,6 +11,7 @@ import subprocess
 import sys
 from datetime import UTC, date, datetime
 from enum import Enum, StrEnum
+from http import HTTPStatus
 from pathlib import Path
 from types import ModuleType
 from typing import Annotated, Any, TypeIs, get_args
@@ -18,13 +19,14 @@ from urllib.parse import urlsplit
 
 import pytest
 import sqlalchemy as sa
-from fastapi import APIRouter, Depends, FastAPI, Query
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query
 from fastapi.routing import APIRoute
 from httpx import ASGITransport, AsyncClient
 from pydantic import AwareDatetime, BaseModel, ValidationError
 from pydantic_settings import BaseSettings
 from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import app
 import app.models
@@ -34,10 +36,13 @@ from app import errors, ijson, openapi, tracing
 from app.config import Settings, settings
 from app.database import engine
 from app.dependencies import SessionDep, declares_access, deny_by_default, public
+from app.enums import EventLevel
 from app.main import app as main_app
 from app.models.base import Base
+from app.models.event.event_log import EventLog
 from app.schemas.base import Day, InputSchema, Schema, Timestamp
 from app.schemas.page import decode_token, encode_token
+from app.services import events
 
 
 def import_all(package: ModuleType) -> list[ModuleType]:
@@ -1054,3 +1059,27 @@ async def test_failed_commit_is_a_server_error() -> None:
         await engine.dispose()
     assert response.status_code == 500
     assert response.headers["content-type"] == errors.PROBLEM_JSON
+
+
+async def test_kept_error_commits_what_the_request_wrote(session: AsyncSession) -> None:
+    """A KeptError commits the writes of the request; another error not.
+
+    Both leave as the error they carry.
+    """
+    probe = FastAPI()
+    errors.install(probe)
+
+    @probe.post("/events/{kept}")
+    async def write_event(kept: bool, session: SessionDep) -> None:
+        """Write an event, and refuse the request."""
+        session.add(events.event("authz_fail", EventLevel.WARN, target_id=str(kept)))
+        await session.flush()
+        refusal = HTTPException(HTTPStatus.CONFLICT)
+        raise errors.KeptError(refusal) if kept else refusal
+
+    async with AsyncClient(transport=ASGITransport(app=probe), base_url="http://test") as client:
+        for kept in ("true", "false"):
+            response = await client.post(f"/events/{kept}")
+            assert response.status_code == 409
+            assert response.headers["content-type"] == errors.PROBLEM_JSON
+    assert list(await session.scalars(sa.select(EventLog.target_id))) == ["True"]

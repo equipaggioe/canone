@@ -13,7 +13,7 @@ from pydantic import ConfigDict
 from pydantic.json_schema import models_json_schema
 from starlette.exceptions import HTTPException
 
-from app.enums import EventLevel
+from app.enums import EventLevel, TokenErrorCode
 from app.schemas.base import Schema
 from app.services import events
 from app.tracing import trace_id
@@ -123,6 +123,28 @@ class AppError(Exception):
         self.detail = detail
 
 
+class KeptError(Exception):
+    """An error that keeps what the request wrote before it.
+
+    The session of the request commits, and then error leaves as if it
+    had been raised alone: the failure of a password stays counted.
+    """
+
+    def __init__(self, error: Exception) -> None:
+        """Keep the error that answers the request."""
+        super().__init__(str(error))
+        self.error = error
+
+
+class TokenRefusal(Exception):
+    """An error of the token endpoint, as RFC 6749 writes it."""
+
+    def __init__(self, code: TokenErrorCode) -> None:
+        """Keep the error code."""
+        super().__init__(code.value)
+        self.code = code
+
+
 def respond(problem: Problem, headers: Mapping[str, str] | None = None) -> JSONResponse:
     """Serialize a problem with its media type."""
     return JSONResponse(
@@ -168,6 +190,12 @@ async def app_error(_: Request, exc: Exception) -> JSONResponse:
             traceId=trace_id(),
         )
     )
+
+
+async def token_refusal(_: Request, exc: Exception) -> JSONResponse:
+    """Answer an error of the token endpoint: a 400 with its code."""
+    assert isinstance(exc, TokenRefusal)
+    return JSONResponse({"error": exc.code.value}, status_code=HTTPStatus.BAD_REQUEST)
 
 
 async def http_error(_: Request, exc: Exception) -> JSONResponse:
@@ -248,6 +276,7 @@ def with_problems(build: Callable[[], dict[str, Any]]) -> Callable[[], dict[str,
 def install(app: FastAPI) -> None:
     """Register the handlers, and the schemas of the problems."""
     app.add_exception_handler(AppError, app_error)
+    app.add_exception_handler(TokenRefusal, token_refusal)
     app.add_exception_handler(HTTPException, http_error)
     app.add_exception_handler(RequestValidationError, validation_error)
     app.add_exception_handler(Exception, server_error)

@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.concurrency import run_in_threadpool
 
 from app.enums import EventLevel
-from app.errors import AUTHENTICATOR_DISABLED, AppError
+from app.errors import AUTHENTICATOR_DISABLED, AppError, KeptError
 from app.models.account.account import Account
 from app.models.account.password import Password
 from app.models.event.event_log import EventLog
@@ -85,16 +85,16 @@ def fail(password: Password, now: datetime) -> None:
         password.disabled_at = now
 
 
-async def check(session: AsyncSession, login: PasswordLogin, client: Client) -> Account | None:
-    """Return the account of a right password, or none.
+async def check(session: AsyncSession, login: PasswordLogin, client: Client) -> Account:
+    """Return the account of a right password, or answer 401.
 
-    A wrong password counts a failure in session: the caller commits
-    and answers 401 without raising.
+    A wrong password, or an unknown account, raises a KeptError: the
+    failure and its event stay.
     """
     found = await find(session, login)
     if found is None:
-        await events.record(event("authn_login_fail", EventLevel.WARN, login, client))
-        return None
+        session.add(event("authn_login_fail", EventLevel.WARN, login, client))
+        raise KeptError(HTTPException(HTTPStatus.UNAUTHORIZED))
     account, password = found
     if password.disabled_at is not None:
         raise AppError(AUTHENTICATOR_DISABLED)
@@ -121,7 +121,7 @@ async def check(session: AsyncSession, login: PasswordLogin, client: Client) -> 
                     "authn_login_lock", EventLevel.WARN, login, client, account, reason="failures"
                 )
             )
-        return None
+        raise KeptError(HTTPException(HTTPStatus.UNAUTHORIZED))
     retries = password.failures
     password.failures = 0
     password.retry_at = None

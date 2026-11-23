@@ -14,7 +14,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import SessionFactory
-from app.enums import EventLevel, SessionKind
+from app.enums import EventLevel, SessionKind, TokenErrorCode
+from app.errors import KeptError, TokenRefusal
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.event.event_log import EventLog
@@ -184,27 +185,28 @@ def touch(row: AccountSession) -> bool:
     return True
 
 
-async def refresh(session: AsyncSession, token: str, client: Client) -> Issued | None:
-    """Rotate the secret of an app session, or none for invalid_grant.
+async def refresh(session: AsyncSession, token: str, client: Client) -> Issued:
+    """Rotate the secret of an app session, or answer invalid_grant.
 
     A secret that is neither the current one nor the previous one is a
-    reuse, and deletes the session; the caller commits.
+    reuse: it deletes the session, and the refusal keeps that.
     """
+    refused = TokenRefusal(TokenErrorCode.INVALID_GRANT)
     unsigned = unsign(token)
     if unsigned is None:
-        return None
+        raise refused
     session_id, secret = unsigned
     row = await session.get(AccountSession, session_id, with_for_update=True)
     now = datetime.now(UTC)
     if row is None or row.secret_digest is None or now - row.last_used_at > IDLE:
-        return None
+        raise refused
     presented = digest(secret)
     if hmac.compare_digest(presented, row.secret_digest):
         row.previous_digest = row.secret_digest
     elif row.previous_digest is None or not hmac.compare_digest(presented, row.previous_digest):
         await session.delete(row)
         session.add(event("authn_token_reuse", EventLevel.CRITICAL, row, client))
-        return None
+        raise KeptError(refused)
     # Presenting the previous secret replaces the current one, and the
     # previous one stays.
     access, new_secret = new_token(), new_token()

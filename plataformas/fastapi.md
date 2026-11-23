@@ -243,7 +243,7 @@ Estándar: el [*Webhook Security Cheat Sheet*](../fuentes/owasp/Webhook_Security
 Contrato: [transversal.md](transversal.md#errores).
 
 - Un error con tipo propio se lanza con `AppError`; uno que su código de estado ya explica, con `HTTPException`, y sale como `about:blank`.
-- Un error que tiene que dejar escrito un cambio, como el fallo de una contraseña o el borrado de una sesión por reúso, se responde sin lanzarlo: la transacción de la petición hace commit.
+- Un error que tiene que dejar escrito un cambio, como el fallo de una contraseña o el borrado de una sesión por reúso, se lanza envuelto en `KeptError`: la dependencia de la sesión hace commit y después deja salir el error que envuelve. Es la excepción al rollback de [Base de datos](#base-de-datos).
 
 ## Fechas
 
@@ -378,7 +378,7 @@ Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) y el [*Appl
 - Detectar que una fila de `event_log` se cambió o se borró le toca a quien la copia fuera de la máquina por la ruta de [Salud](#salud): en la máquina, solo el dueño y `root` pueden cambiarla, y `root` también cambia lo que lo detectaría ([Logging Cheat Sheet, *Protection*](../fuentes/owasp/Logging.md)).
 - Cada evento guarda cuándo, desde dónde, quién y qué: `occurred_at`, `ip_address`, `user_agent`, `actor_id`, `actor_label`, `action`, `level`, `target_type`, `target_id` y `details` en `jsonb` y, si el repositorio es multi-tenant, `tenant_id` ([Logging Cheat Sheet, *Event attributes*](../fuentes/owasp/Logging.md)).
 - `trace_id` es el trace-id del span actual, el mismo del log y del `traceId` del error ([Logging Cheat Sheet, *Event attributes*](../fuentes/owasp/Logging.md)).
-- Se registran los inicios de sesión, buenos y fallidos, como `authn_login_success`, `authn_login_successafterfail`, `authn_login_fail` y `authn_login_fail_max`; el bloqueo de un autenticador, como `authn_login_lock`; el cambio de contraseña, como `authn_password_change` o `authn_password_change_fail`, y cada token que se crea, se revoca, se vuelve a presentar o se borra, como `authn_token_created`, `authn_token_revoked`, `authn_token_reuse` y `authn_token_delete` ([Logging Vocabulary, *Authentication*](../fuentes/owasp/Logging_Vocabulary.md)).
+- Se registran los inicios de sesión, buenos y fallidos, como `authn_login_success`, `authn_login_successafterfail`, `authn_login_fail` y `authn_login_fail_max`; el bloqueo de un autenticador, como `authn_login_lock`; el cambio de contraseña, como `authn_password_change` o `authn_password_change_fail`, cada token para acceder a un servicio que se crea, se revoca o se borra, como `authn_token_created`, `authn_token_revoked` y `authn_token_delete`, y el token revocado que se vuelve a presentar, como `authn_token_reuse`, también el secreto de refresco que ya rotó. Los tokens de una sesión registran los eventos de la sesión ([Logging Vocabulary, *Authentication*](../fuentes/owasp/Logging_Vocabulary.md)).
 - Se registran el acceso denegado, como `authz_fail`; el cambio de los permisos de una cuenta, como `authz_change`, y cada acción de un administrador, como `authz_admin` ([Logging Vocabulary, *Authorization*](../fuentes/owasp/Logging_Vocabulary.md)).
 - Se registran la sesión que se crea, se renueva, vence, se cierra o se usa vencida, como `session_created`, `session_renewed`, `session_expired`, `session_logout` y `session_use_after_expire`, y la cuenta que pasa su máximo de sesiones, como `excess_sessions_exceeded` ([Logging Vocabulary, *Session Management*](../fuentes/owasp/Logging_Vocabulary.md) y [*Excessive Use*](../fuentes/owasp/Logging_Vocabulary.md)).
 - Se registran el fallo de validación de la entrada, como `input_validation_fail`, el de un valor que no está en su lista, como `input_validation_discrete_fail`, y el campo que el servidor no espera, como `malicious_extraneous` ([Logging Vocabulary, *Input Validation*](../fuentes/owasp/Logging_Vocabulary.md) y [*Malicious Behavior*](../fuentes/owasp/Logging_Vocabulary.md)).
@@ -458,6 +458,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Todo campo de `Settings` es obligatorio | `test_settings_are_required` |
 | Las dependencias y los parámetros con `Depends`, `Query`, `Path`, `Header`, `Cookie`, `Body`, `Form` o `File` se declaran con `Annotated` | ruff `FAST002` |
 | El commit corre antes de enviar la respuesta | `test_failed_commit_is_a_server_error` |
+| Un `KeptError` hace commit de lo que escribió la petición y sale como el error que envuelve, y otro error lo deshace | `test_kept_error_commits_what_the_request_wrote` |
 | Los nombres en camelCase: todo esquema de la app hereda del esquema base | `test_schemas_inherit_schema` |
 | El esquema base lee por nombre, y el de entrada solo por alias | `test_schemas_read_rows_by_name` |
 | `lazy="raise"` | `test_relationships_raise` |

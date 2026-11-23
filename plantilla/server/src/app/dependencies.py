@@ -14,15 +14,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import VERSION, settings
 from app.database import SessionFactory
 from app.enums import EventLevel, SessionKind
-from app.errors import CLIENT_OUTDATED, AppError
+from app.errors import CLIENT_OUTDATED, AppError, KeptError
 from app.services import events, sessions
 from app.services.sessions import Client, Principal
 
 
 async def get_session() -> AsyncIterator[AsyncSession]:
-    """Open one session and one transaction per request."""
+    """Open one session and one transaction per request.
+
+    The transaction commits if the route ends or raises a KeptError, and
+    rolls back on any other error.
+    """
+    kept: KeptError | None = None
     async with SessionFactory.begin() as session:
-        yield session
+        try:
+            yield session
+        except KeptError as error:
+            kept = error
+    if kept is not None:
+        raise kept.error
 
 
 # Commit before the response, so a failed commit reaches the client.

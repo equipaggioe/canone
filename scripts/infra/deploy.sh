@@ -35,6 +35,23 @@ trap cleanup EXIT
 step() { printf '\n== %s\n' "$*"; }
 fails() { if "$@" > "$work/error" 2>&1; then exit 1; fi; }
 current() { basename "$(readlink /srv/demo/current)"; }
+# The last migration of the template, which the migrations of the test follow.
+head=$(python3 - "$canone/plantilla/server/alembic/versions" <<'HEAD'
+import re
+import sys
+from pathlib import Path
+
+revisions, downs = set(), set()
+for path in Path(sys.argv[1]).glob("*.py"):
+    text = path.read_text(encoding="utf-8")
+    revisions.add(re.search(r"^revision: str = '(\w+)'", text, re.M).group(1))
+    down = re.search(r"^down_revision: .*= '(\w+)'", text, re.M)
+    if down:
+        downs.add(down.group(1))
+(last,) = revisions - downs
+print(last)
+HEAD
+)
 healthy() { test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/api/health)" = 204; }
 for name in a b s1 s2 x; do ssh-keygen -q -t ed25519 -N '' -f "$work/$name"; done
 key() { cat "$work/$1.pub"; }
@@ -69,7 +86,7 @@ release() {
     mkdir -p "$tree/web" "$assets"
     tar -C "$canone/plantilla" --exclude=.venv --exclude=__pycache__ --exclude=.pytest_cache \
         --exclude=.ruff_cache -cf - server | tar -C "$tree" -xf -
-    sed -i 's/PRODUCTO/demo/' "$tree/server/alembic/versions/d34c1b992b0b_event_log.py"
+    sed -i 's/PRODUCTO/demo/' "$tree"/server/alembic/versions/*.py
     echo "$1" > "$tree/web/index.html"
     if [ $# -ge 3 ]; then "$3" "$tree"; fi
     tar -czf "$assets/demo-$1.tar.gz" -C "$tree" .
@@ -121,11 +138,11 @@ path.write_text(text, encoding="utf-8")
 EOF
 }
 failing() {
-    cat > "$1/server/alembic/versions/ffffffffffff_fail.py" <<'EOF'
+    cat > "$1/server/alembic/versions/ffffffffffff_fail.py" <<EOF
 """A migration that fails."""
 
 revision = "ffffffffffff"
-down_revision = "d34c1b992b0b"
+down_revision = "$head"
 branch_labels = None
 depends_on = None
 
@@ -192,11 +209,11 @@ async def seed_broken(session: AsyncSession) -> None:
 EOF2
 }
 migrating() {
-    cat > "$1/server/alembic/versions/eeeeeeeeeeee_noop.py" <<'EOF'
+    cat > "$1/server/alembic/versions/eeeeeeeeeeee_noop.py" <<EOF
 """A migration that changes nothing."""
 
 revision = "eeeeeeeeeeee"
-down_revision = "d34c1b992b0b"
+down_revision = "$head"
 branch_labels = None
 depends_on = None
 

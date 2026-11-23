@@ -1,6 +1,6 @@
 # ADR-0219 · Una app presenta un token de acceso opaco, y el login tiene una ruta por método y forma
 
-- **Estado:** Aceptada; los puntos 6 a 9 son propuesta
+- **Estado:** Aceptada. El punto 8, que era propuesta, lo reemplaza el [ADR-0220](0220-un-error-que-deja-escrito-su-cambio-se-lanza-envuelto-en-kepterror.md)
 - **Fecha:** 2026-11-22
 - **Alcance:** `plataformas/autenticacion.md`, `fastapi.md`, `stack.md`, `scripts/verificar.py` y
   `plantilla/server/`; el servidor y sus clientes
@@ -18,6 +18,12 @@ RFC 6749 §1.4 admite un token que es un identificador y uno que lleva su autori
 ASVS 5.0 §7.2.2 acepta los dos. §7.4.1 dice que, con un token autocontenido, cerrar una sesión
 necesita una medida aparte, como una lista de tokens terminados.
 
+RFC 9068 §1 dice que el JWT de acceso existe para que el servidor de recursos lo valide «without
+further authorization server involvement», y que es común donde los dos servidores «are not
+co-located». Aquí son el mismo proceso. RFC 9700 §2.2.1 recomienda atar el token de acceso al
+dispositivo, con DPoP o TLS mutuo; ni AppAuth ni flutter_appauth documentan DPoP (pedidos abiertos
+en AppAuth-Android #1158 y AppAuth-iOS #856, verificado el 2026-11-23).
+
 ## Decisión
 
 1. El token de acceso de una app es opaco: 256 bits aleatorios que vencen en 15 minutos, con su
@@ -32,12 +38,16 @@ necesita una medida aparte, como una lista de tokens terminados.
 4. El login con contraseña identifica la cuenta con su correo o con su teléfono, uno solo.
 5. Un login con un autenticador deshabilitado responde 403, de tipo `authenticator-disabled`, sin
    verificar la credencial.
-6. *(propuesta)* El `Origin` del servidor es `https://` y el `Host` de la petición, y la comprobación
+6. El `Origin` del servidor es `https://` y el `Host` de la petición, y la comprobación
    es una dependencia del router de `/api`.
-7. *(propuesta)* La clave del HMAC del token de refresco es `refresh_key` de `Settings`.
+7. La clave del HMAC del token de refresco es `refresh_key` de `Settings`.
 8. *(propuesta)* Un error que tiene que dejar escrito un cambio, como el fallo de una contraseña o el
    borrado de una sesión por reúso, se responde sin lanzarlo.
-9. *(propuesta)* La purga diaria borra también las sesiones vencidas.
+9. La purga diaria borra también las sesiones vencidas.
+10. Los tokens de una sesión registran los eventos `session_*`, y el secreto de refresco que ya
+    rotó, `authn_token_reuse`. `authn_token_created`, `authn_token_revoked` y `authn_token_delete`
+    son de los tokens para acceder a un servicio.
+11. Los tokens de una app son bearer, sin atarlos al dispositivo.
 
 ## Consecuencias
 
@@ -58,5 +68,9 @@ necesita una medida aparte, como una lista de tokens terminados.
 - **Una ruta por forma, con el método en el cuerpo.** El cuerpo es una unión con discriminador, que
   los cuatro generadores de clientes tienen que manejar, y los pasos previos del SMS y de la passkey
   siguen siendo rutas aparte.
+- **DPoP ahora.** Lo que agrega sobre lo que la página ya pide es poco: el token de acceso vive solo
+  en memoria y el de refresco en el almacenamiento seguro del sistema, y sacar cualquiera de los dos
+  exige un dispositivo comprometido, donde la clave también firma. Cada cliente firmaría cada
+  petición a mano. Se suma sin descartar nada: la fila de la sesión guardaría la huella de la clave.
 - **401 al autenticador deshabilitado.** El titular no sabe por qué no entra. 423 es de WebDAV y
   trata de recursos bloqueados.

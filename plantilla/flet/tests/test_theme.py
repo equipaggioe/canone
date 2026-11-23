@@ -5,7 +5,8 @@ from pathlib import Path
 
 SRC = Path(__file__).parents[1] / "src"
 COLORS = SRC / "colors.py"
-COLOR = re.compile(r"#[0-9a-fA-F]{3,8}\b|\bColors\.[A-Z]")
+# ft.Colors and ft.CupertinoColors.
+COLOR = re.compile(r"#[0-9a-fA-F]{3,8}\b|Colors\.[A-Z]")
 
 
 def test_colors_only_generated() -> None:

@@ -160,6 +160,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - `alias_generator=to_camel` y `serialize_by_alias=True` en el esquema base.
 - `validate_by_name=True` en el esquema base: el código y las filas usan los nombres de Python, en snake_case. Sin él, `from_attributes` busca en una fila el alias, `createdAt`, y no encuentra `created_at`.
 - `extra="forbid"` en el esquema base: el OpenAPI declara `additionalProperties: false` en cada esquema, también en los de respuesta, y con eso el cliente generado falla ante un campo que no conoce. Los esquemas del problem+json, `Problem`, `ValidationProblem` y `FieldError`, llevan `extra="ignore"`: el cliente ignora un miembro que no conoce ([transversal.md](transversal.md#errores)).
+- `json_schema_serialization_defaults_required=True` en el esquema base, y `False` en `Problem` y `FieldError`: el OpenAPI de una respuesta declara requerido un campo con valor por defecto, y el de un problem+json, no.
 - `validate_by_name=False` en los esquemas de entrada: el cliente escribe solo en camelCase, y un campo en snake_case responde 422 en vez de aceptarse con dos nombres.
 - Los parámetros de query se declaran en un esquema de entrada. Un parámetro desconocido responde 422 en vez de ignorarse.
 
@@ -224,7 +225,7 @@ Estándar: el [*Webhook Security Cheat Sheet*](../fuentes/owasp/Webhook_Security
 ## Envíos al exterior
 
 - Primero la evidencia en la base, después el envío best-effort. Un fallo de entrega no tumba la operación.
-- El servidor llama a otro servicio, como Nominatim o la API de correo, con un solo `httpx.AsyncClient` para toda la app, salvo FCM y Web Push, que van por sus bibliotecas: reutiliza las conexiones, y es el cliente de las pruebas.
+- El servidor llama a otro servicio, como Nominatim o la API de correo, con un solo `httpx.AsyncClient` para toda la app, salvo FCM y Web Push, que van por sus bibliotecas.
 
 ## Errores
 
@@ -244,7 +245,7 @@ Contrato: [transversal.md](transversal.md#fechas).
 Contrato: [transversal.md](transversal.md#idiomas).
 
 - El servidor traduce con Babel.
-- El `.mo` no se versiona: `release.yml` lo compila del `.po` con `pybabel compile -d src/app/locale` y viaja en el artefacto. Un `.mo` versionado puede quedar desfasado de su `.po`, y el código de una versión no cambia en el servidor.
+- El `.mo` no se versiona: `release.yml` lo compila del `.po` con `pybabel compile -d src/app/locale` y viaja en el artefacto.
 - El servidor guarda el idioma de `Accept-Language` con el FID de cada instalación de la app, y en el usuario el último elegido, para el correo.
 
 ## Límite de tasa
@@ -287,9 +288,9 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 - Cada router lleva un solo tag.
 - El OpenAPI se exporta a `server/openapi.json`, versionado, y una prueba falla si no coincide con la app. Un cambio de contrato se ve en el diff.
-- En producción no se sirven el OpenAPI ni su documentación. El contrato está en el repositorio, y nadie de afuera necesita el mapa de la API.
+- En producción no se sirven el OpenAPI ni su documentación.
 - El `operationId` es el tag seguido del nombre de la función, en camelCase: el tag lo hace único en toda la API ([OpenAPI, *Operation Object*](../fuentes/openapi/openapi-3.1.2.md)).
-- Cada operación declara sus errores como `application/problem+json` con el esquema del problema, y el 422 con el del problema `validation`: un cliente generado tipa el error que de verdad recibe ([OpenAPI, *Responses Object*](../fuentes/openapi/openapi-3.1.2.md)).
+- Cada operación declara sus errores como `application/problem+json` con el esquema del problema, y el 422 con el del problema `validation` ([OpenAPI, *Responses Object*](../fuentes/openapi/openapi-3.1.2.md)).
 - Un `GET`, un `HEAD` o un `DELETE` no lleva cuerpo ([OpenAPI, *Operation Object*](../fuentes/openapi/openapi-3.1.2.md)).
 
 ## Paginación
@@ -318,11 +319,11 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 Estándares: el [*Authorization Cheat Sheet*](../fuentes/owasp/Authorization.md) de OWASP y [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
-- Cada ruta declara con una dependencia de FastAPI el permiso que exige. El permiso queda a la vista en la ruta.
+- Cada ruta declara quién la llama con una dependencia: `public`, o la de su permiso, marcada con `@access` de `dependencies.py`.
 - Una sola consulta, filtrada por el usuario, decide entre el 404 y el 403 de un recurso, y no confirma que exista uno ajeno.
 - Un recurso que no pertenece al usuario responde 404, como si no existiera; uno que el usuario ve pero sobre el que no puede hacer esa acción responde 403 ([RFC 9110 §15.5.4](../fuentes/rfc/rfc9110.txt) y [§15.5.5](../fuentes/rfc/rfc9110.txt)).
 - Un permiso combina el rol y la relación: el rol de la cuenta da las acciones que puede hacer, y su relación con el recurso, como ser su dueño o miembro de su organización, los recursos sobre los que las hace ([Authorization Cheat Sheet, *Prefer Attribute and Relationship Based Access Control over RBAC*](../fuentes/owasp/Authorization.md)).
-- El servidor comprueba el permiso en cada petición, sobre el objeto concreto que pide: lo que oculta un cliente no cuenta como control ([Authorization Cheat Sheet, *Validate the Permissions on Every Request*](../fuentes/owasp/Authorization.md) y [*Verify that Authorization Checks are Performed in the Right Location*](../fuentes/owasp/Authorization.md)).
+- El servidor comprueba el permiso en cada petición, sobre el objeto concreto que pide, con una configuración global: el router de `/api` lleva `deny_by_default`, que responde 404 a una ruta que no declara quién la llama. Lo que oculta un cliente no cuenta como control ([Authorization Cheat Sheet, *Validate the Permissions on Every Request*](../fuentes/owasp/Authorization.md) y [*Verify that Authorization Checks are Performed in the Right Location*](../fuentes/owasp/Authorization.md)).
 - Ninguna ruta queda abierta por omisión, ni por la configuración por defecto de una biblioteca: el acceso que da cada una está escrito en ella ([Authorization Cheat Sheet, *Deny by Default*](../fuentes/owasp/Authorization.md)).
 - Una cuenta tiene solo los permisos que necesita ([Authorization Cheat Sheet, *Enforce Least Privileges*](../fuentes/owasp/Authorization.md)).
 - Un permiso que falla lanza una excepción que responde el manejador de errores de la app, sin datos internos ([Authorization Cheat Sheet, *Exit Safely when Authorization Checks Fail*](../fuentes/owasp/Authorization.md)).
@@ -383,20 +384,20 @@ Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) y el [*Appl
 
 ## Salud
 
-- `GET /api/health` responde 204, o 503 si la base o Valkey no contestan: un servidor con una dependencia caída no está vivo aunque el proceso responda.
+- `GET /api/health` responde 204, o 503 si la base o Valkey no contestan.
 - `GET /api/health/events` responde `lastCriticalAt`, la hora del último evento `critical` de `event_log`, y `lastBackupAt`, la fecha de `last-backup` de [despliegue.md](despliegue.md#respaldos), o `null` si no hay. Quien lo consulta decide cuándo avisar: el servidor no fija umbrales.
-- La misma ruta responde `lastEventAt`, la hora del último evento de `event_log` de cualquier nivel, o `null`: si `event_log` deja de recibir eventos, `lastCriticalAt` sigue en `null`, como cuando no pasó nada grave.
-- La misma ruta responde `diskFreeBytes` y `diskTotalBytes`, del disco de su `StateDirectory=`: con el disco lleno PostgreSQL deja de escribir, y `SELECT 1` sigue respondiendo. El libre es el que puede escribir un usuario sin privilegios, como PostgreSQL.
+- La misma ruta responde `lastEventAt`, la hora del último evento de `event_log` de cualquier nivel, o `null`.
+- La misma ruta responde `diskFreeBytes` y `diskTotalBytes`, del disco de su `StateDirectory=`. El libre es el que puede escribir un usuario sin privilegios, como PostgreSQL.
 - La ruta exige el token de `health_token` en `Authorization: Bearer`, comparado en tiempo constante, y sin él responde 401.
-- Un token equivocado deja un evento `authn_login_fail`, de nivel `warn`: un escaneo no mueve `lastCriticalAt`.
+- Un token equivocado deja un evento `authn_login_fail`, de nivel `warn`.
 - El servidor lee `last-backup` en la carpeta padre de su `StateDirectory=`, sin otra configuración.
-- `GET /api/health/event-log`, con el mismo token, responde las filas de `event_log` en un `Page` de [Paginación](#paginación), en orden de transacción: quien vigila las copia fuera de la máquina y nota si una se cambió o se borró.
-- `event_log` tiene la columna `xid`, un `xid8` con `pg_current_xact_id()` por defecto, y la ruta solo responde las filas con un `xid` menor que `pg_snapshot_xmin(pg_current_snapshot())`: una transacción que confirma tarde deja filas con un `xid` menor que el de las ya leídas, y un cursor por `id` o por hora se las saltaría.
+- `GET /api/health/event-log`, con el mismo token, responde las filas de `event_log` en un `Page` de [Paginación](#paginación), en orden de transacción.
+- `event_log` tiene la columna `xid`, un `xid8` con `pg_current_xact_id()` por defecto, y la ruta solo responde las filas con un `xid` menor que `pg_snapshot_xmin(pg_current_snapshot())`.
 
 ## Trazas
 
 - La app configura un `TracerProvider` del SDK de OpenTelemetry: sin él, FastAPI no crea spans y no hay trace-id.
-- La telemetría no sale del proceso: el `TracerProvider` no tiene exportador, y la app crea FastAPI con `telemetry={"auto_configure": False}`. Una traza no ve la base ni sigue a otro servicio, y su trace-id ya está en cada log y en cada error. Sin ese parámetro, si el exportador OTLP llega instalado, como con `fastapi[standard]`, `FASTAPI_OTEL_AUTO_CONFIGURE=true` y `OTEL_EXPORTER_OTLP_ENDPOINT` le agregan uno sin cambiar el código. [FastAPI 0.163.1](https://raw.githubusercontent.com/fastapi/fastapi/0.163.1/fastapi/telemetry/_runtime.py)
+- La telemetría no sale del proceso: el `TracerProvider` no tiene exportador, y la app crea FastAPI con `telemetry={"auto_configure": False}`. Una traza no ve la base ni sigue a otro servicio, y su trace-id ya está en cada log y en cada error. Sin ese parámetro, si el exportador OTLP llega instalado, como con `fastapi[standard]`, `FASTAPI_OTEL_AUTO_CONFIGURE=true` y `OTEL_EXPORTER_OTLP_ENDPOINT` le agregan uno sin cambiar el código. [FastAPI 0.165.0](https://raw.githubusercontent.com/fastapi/fastapi/0.165.0/fastapi/telemetry/_runtime.py)
 - El propagador global de OpenTelemetry ignora `traceparent`: cada petición y cada WebSocket empiezan una traza nueva. El cliente no elige el id con el que se buscan sus registros. Es un propagador propio: con `OTEL_PROPAGATORS=none`, FastAPI falla en cada petición.
 - Cada vuelta de una tarea periódica empieza su propia traza.
 - Cada línea de log lleva el trace-id del span actual.
@@ -418,7 +419,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 - Una conexión sin mensajes no se cierra: la conexión existe para esperar eventos del servidor, y el ping de Uvicorn ya cierra la que se cayó.
 - Los mensajes no llevan nonce: WSS ya impide que alguien fuera de la conexión repita un mensaje.
 - Los contadores de los límites del WebSocket viven en Valkey, compartidos por todos los procesos.
-- Un usuario tiene a lo sumo 10 conexiones abiertas, y la siguiente se rechaza en el handshake: alcanza para varias pestañas y dispositivos ([WebSocket Security, *Denial-of-Service Protection*](../fuentes/owasp/WebSocket_Security.md)).
+- Un usuario tiene a lo sumo 10 conexiones abiertas, y la siguiente se rechaza en el handshake ([WebSocket Security, *Denial-of-Service Protection*](../fuentes/owasp/WebSocket_Security.md)).
 - Un usuario manda a lo sumo 100 mensajes por minuto, y la conexión que se pasa se cierra con 1008 ([WebSocket Security, *Denial-of-Service Protection*](../fuentes/owasp/WebSocket_Security.md) y [*Input Validation*](../fuentes/owasp/WebSocket_Security.md)).
 - Cada mensaje que pide una acción comprueba su permiso, como la ruta que haría lo mismo ([WebSocket Security, *Message-Level Authorization*](../fuentes/owasp/WebSocket_Security.md)).
 - Cada mensaje que llega se valida con su esquema ([WebSocket Security, *Input Validation*](../fuentes/owasp/WebSocket_Security.md)).
@@ -458,6 +459,8 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | Cada operación declara sus errores solo como problem+json, con el esquema de su problema, y el 422 con el de `validation` | `test_errors_are_problems` |
 | `Problem`, `ValidationProblem` y `FieldError` sin `additionalProperties: false` | `test_problems_let_extensions_through` |
+| El OpenAPI de una respuesta declara requerido cada campo de su esquema | `test_response_fields_are_required` |
+| Cada ruta de `routers/` declara quién la llama, y el router de `/api` responde 404 a la que no lo declara | `test_routes_declare_access` y `test_undeclared_route_is_not_found` |
 | `server/openapi.json` coincide con la app | `test_openapi_file_is_current` |
 | Un cambio de modelo que la autogeneración detecta, también de un `server_default`, sin su migración | `uv run alembic check` después de las migraciones, en el job `server` de CI |
 | La base de prueba con las migraciones | `uv run python -m app.tasks migrate` antes de pytest en el job `server` de CI |

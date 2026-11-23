@@ -28,6 +28,7 @@ Convenciones que una prueba del servidor verifica sin un navegador ni una llave:
 | Un `POST` con la cookie sin `Origin` del servidor responde 403 | Petición sin `Origin` |
 | El JWT con otra cabecera, otra firma o `exp` vencido se rechaza | Tokens armados a mano |
 | Desde el quinto fallo, un intento antes de tiempo responde 429 | Fallos seguidos |
+| Una cuenta de administración no entra con contraseña ni con código por SMS, ni con una passkey sin el flag UV, y no se recupera con el código | Login con cada método y respuesta de WebAuthn armada sin UV |
 
 ## Qué haría falta
 

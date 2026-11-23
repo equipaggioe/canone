@@ -93,6 +93,7 @@ Estándares: [*Data Types*](../fuentes/postgresql/datatype.sgml) y [*Arrays*](..
 
 - Un largo máximo que pida el dominio va en un `CHECK`: la restricción tiene nombre, admite también un mínimo y nunca recorta, como `varchar(n)` al convertir. [PostgreSQL 17](https://www.postgresql.org/docs/17/datatype-character.html)
 - Las fechas con hora son `timestamptz`, y no `timestamp`: es el par de las `datetime` aware de [python.md](python.md#fechas), y `timestamp` descarta la zona sin avisar. [PostgreSQL 17](https://www.postgresql.org/docs/17/datatype-datetime.html#DATATYPE-DATETIME-INPUT-TIME-STAMPS)
+- Una fecha sin hora es `date`, y no un `timestamptz` a medianoche.
 - Las duraciones son segundos enteros, y no `interval`, que guarda meses y días aparte y no equivale a una cantidad fija de segundos. [PostgreSQL 17](https://www.postgresql.org/docs/17/datatype-datetime.html#DATATYPE-INTERVAL-INPUT)
 - Un valor enumerado es `text` con un `CHECK` que lista los valores, y una lista de ellos, `text[]` con un `CHECK` que use `<@`. Quitar un valor de un `enum` obliga a recrear el tipo; un `CHECK` se reemplaza en una migración. [PostgreSQL 17](https://www.postgresql.org/docs/17/datatype-enum.html#DATATYPE-ENUM-IMPLEMENTATION-DETAILS)
 - Un `numeric` va sin precisión ni escala. Con escala declarada, redondea sin avisar lo que la excede. [PostgreSQL 17](https://www.postgresql.org/docs/17/datatype-numeric.html#DATATYPE-NUMERIC-DECIMAL)

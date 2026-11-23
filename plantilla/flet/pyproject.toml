@@ -13,13 +13,13 @@ dependencies = [
 [dependency-groups]
 dev = [
   "babel>=2.18.0",
-  "datamodel-code-generator[ruff]>=0.97.0",
+  "datamodel-code-generator[ruff]>=0.100.0",
   "flet[cli,test]>=1.1.2",
   "deptry>=0.25.1",
   "pip-audit>=2.10.1",
-  "pyrefly>=1.4.1",
+  "pyrefly>=1.5.0",
   "pytest>=9.2.0",
-  "ruff>=0.17.5",
+  "ruff>=0.17.6",
 ]
 
 [tool.flet]

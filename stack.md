@@ -36,11 +36,11 @@ Página: [python.md](plataformas/python.md). Vale para toda pieza en Python.
 | uv | 0.13.9 | [Proyecto](plataformas/python.md#proyecto) |
 | `uv_build` | 0.13.9 | [Proyecto](plataformas/python.md#proyecto) |
 | pytest | 9.2.0 | [Pruebas](plataformas/python.md#pruebas) |
-| ruff | 0.17.5 | [Estilo](plataformas/python.md#estilo) |
-| Pyrefly | 1.4.1 | [Tipos](plataformas/python.md#tipos) |
+| ruff | 0.17.6 | [Estilo](plataformas/python.md#estilo) |
+| Pyrefly | 1.5.0 | [Tipos](plataformas/python.md#tipos) |
 | deptry | 0.25.1 | [Proyecto](plataformas/python.md#proyecto) |
 | pip-audit | 2.10.1 | [Cumplimiento](plataformas/python.md#cumplimiento) |
-| Pydantic | 2.14.3 | [Esquemas](plataformas/fastapi.md#esquemas) |
+| Pydantic | 2.14.4 | [Esquemas](plataformas/fastapi.md#esquemas) |
 | httpx | 0.28.1, la que fija firebase-admin | [Envíos al exterior](plataformas/fastapi.md#envíos-al-exterior) y [Pruebas](plataformas/fastapi.md#pruebas) del servidor, y [Red](plataformas/flet.md#red) de Flet |
 
 ## FastAPI
@@ -49,7 +49,7 @@ Página: [fastapi.md](plataformas/fastapi.md).
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
-| FastAPI | 0.163.1 | — |
+| FastAPI | 0.165.0 | — |
 | Starlette | 1.10.0 | — |
 | pydantic-settings | 2.16.3 | [Configuración](plataformas/fastapi.md#configuración) |
 | SQLAlchemy | 2.1.9 | [Base de datos](plataformas/fastapi.md#base-de-datos) |
@@ -64,7 +64,7 @@ Página: [fastapi.md](plataformas/fastapi.md).
 | pywebpush | 2.5.0 | [Push](plataformas/fastapi.md#push) |
 | aiohttp | 3.14.5 | [Push](plataformas/fastapi.md#push) |
 | firebase-admin | 7.8.0 | [Push](plataformas/fastapi.md#push) |
-| stripe, con el extra `async`, con Stripe | 17.0.0 | [Pagos](plataformas/fastapi.md#pagos) |
+| stripe, con el extra `async`, con Stripe | 17.1.0 | [Pagos](plataformas/fastapi.md#pagos) |
 | OpenTelemetry | 1.45.2 | [Trazas](plataformas/fastapi.md#trazas) |
 | AnyIO | 4.16.0 | [Pruebas](plataformas/fastapi.md#pruebas) |
 | httpx-ws | 0.10.0 | [Pruebas](plataformas/fastapi.md#pruebas) |
@@ -77,7 +77,7 @@ Página: [autenticacion.md](plataformas/autenticacion.md). Son paquetes del serv
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | pwdlib | 0.4.2 | [Contraseñas](plataformas/autenticacion.md#contraseñas) |
-| phonenumbers | 9.0.43 | [Código por SMS](plataformas/autenticacion.md#código-por-sms) |
+| phonenumbers | 9.0.44 | [Código por SMS](plataformas/autenticacion.md#código-por-sms) |
 | webauthn | 3.0.1 | [Passkeys](plataformas/autenticacion.md#passkeys) |
 | PyJWT | 2.15.1 | [Token de acceso](plataformas/autenticacion.md#token-de-acceso) |
 
@@ -126,18 +126,18 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | Node | 26.13.1 | [Proyecto](plataformas/sveltekit.md#proyecto) |
-| pnpm | 12.18.0 | [Proyecto](plataformas/sveltekit.md#proyecto) |
-| SvelteKit | 3.2.0 | — |
-| Svelte | 5.57.3 | — |
+| pnpm | 12.21.0 | [Proyecto](plataformas/sveltekit.md#proyecto) |
+| SvelteKit | 3.4.0 | — |
+| Svelte | 5.59.1 | — |
 | Vite | 8.3.8 | — |
 | `@sveltejs/vite-plugin-svelte` | 7.3.1 | — |
 | `@sveltejs/adapter-static` | 4.0.1 | [Entrega](plataformas/sveltekit.md#entrega) |
 | TypeScript | 6.0.3 | [Tipos](plataformas/sveltekit.md#tipos) |
 | `svelte-check` | 4.7.8 | [Tipos](plataformas/sveltekit.md#tipos) |
 | `@types/node` | 26.6.6 | [Proyecto](plataformas/sveltekit.md#proyecto) |
-| knip | 6.45.1 | [Proyecto](plataformas/sveltekit.md#proyecto) |
+| knip | 6.48.0 | [Proyecto](plataformas/sveltekit.md#proyecto) |
 | Prettier | 3.10.1 | [Estilo](plataformas/sveltekit.md#estilo) |
-| `prettier-plugin-svelte` | 4.1.1 | [Estilo](plataformas/sveltekit.md#estilo) |
+| `prettier-plugin-svelte` | 4.2.0 | [Estilo](plataformas/sveltekit.md#estilo) |
 | ESLint | 10.15.0 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `eslint-plugin-svelte` | 3.24.1 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `typescript-eslint` | 8.73.0 | [Estilo](plataformas/sveltekit.md#estilo) |
@@ -148,9 +148,9 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | Paraglide | 3.2.2 | [Idiomas](plataformas/sveltekit.md#idiomas) |
 | `openapi-typescript` | 7.13.0 | [Carga de datos](plataformas/sveltekit.md#carga-de-datos) |
 | `openapi-fetch` | 0.17.0 | [Carga de datos](plataformas/sveltekit.md#carga-de-datos) |
-| MapLibre GL JS, `maplibre-gl` | 6.18.0 | [Mapas](plataformas/sveltekit.md#mapas) |
+| MapLibre GL JS, `maplibre-gl` | 6.19.0 | [Mapas](plataformas/sveltekit.md#mapas) |
 | `@stripe/stripe-js`, con Stripe | 10.3.0 | [Pagos](plataformas/sveltekit.md#pagos) |
-| Vitest | 5.1.0 | [Pruebas](plataformas/sveltekit.md#pruebas) |
+| Vitest | 5.1.1 | [Pruebas](plataformas/sveltekit.md#pruebas) |
 | Playwright | 1.65.1 | [Pruebas](plataformas/sveltekit.md#pruebas) |
 | `@axe-core/playwright` | 4.14.0 | [Accesibilidad](plataformas/sveltekit.md#accesibilidad) |
 
@@ -184,6 +184,7 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | web | 1.1.2 | [Código de autorización](plataformas/flutter.md#código-de-autorización) |
 | sms_autofill | 2.6.1 | [Código por SMS](plataformas/flutter.md#código-por-sms) |
 | flutter_stripe, con Stripe | 15.0.0 | [Pagos](plataformas/flutter.md#pagos) |
+| flutter_webrtc | 1.6.3 | [Llamadas de voz y video](plataformas/flutter.md#llamadas-de-voz-y-video) |
 | firebase_core | 5.2.0 | — |
 | firebase_messaging | 17.1.0 | [Push](plataformas/flutter.md#push) |
 | flutter_localizations | el de Flutter 3.47.9 | — |
@@ -252,7 +253,7 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter 
 | smart_auth, en `packages/sms/` | 4.0.0 | [Código por SMS](plataformas/flet.md#código-por-sms) |
 | httpx-ws | 0.10.0 | [WebSocket](plataformas/flet.md#websocket) |
 | Babel | 2.18.0 | [Idiomas](plataformas/flet.md#idiomas) |
-| datamodel-code-generator, con el extra `ruff` | 0.97.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |
+| datamodel-code-generator, con el extra `ruff` | 0.100.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |
 | Pydantic, en lugar de la de [Python](#python) | 2.13.4 | [Proyecto](plataformas/flet.md#proyecto) |
 | jni, en el `pubspec.yaml` que genera `flet build` | 1.1.2 | [Proyecto](plataformas/flet.md#proyecto) |
 | jni_flutter, en el `pubspec.yaml` que genera `flet build` | 1.0.4+1 | [Proyecto](plataformas/flet.md#proyecto) |
@@ -265,7 +266,7 @@ Página: [qt.md](plataformas/qt.md). Se suma a [Python](#python).
 | :--- | :--- | :--- |
 | PySide6 y Qt | 6.12.0 | [Proyecto](plataformas/qt.md#proyecto) |
 | keyring | 25.7.0 | [Almacenamiento](plataformas/qt.md#almacenamiento) |
-| datamodel-code-generator, con el extra `ruff` | 0.97.0 | [OpenAPI y clientes](plataformas/qt.md#openapi-y-clientes) |
+| datamodel-code-generator, con el extra `ruff` | 0.100.0 | [OpenAPI y clientes](plataformas/qt.md#openapi-y-clientes) |
 | pytest-qt | 4.5.0 | [Pruebas](plataformas/qt.md#pruebas) |
 | Nuitka | 4.3.5 | [Entrega](plataformas/qt.md#entrega) |
 | imageio | 2.38.2 | [Entrega](plataformas/qt.md#entrega) |

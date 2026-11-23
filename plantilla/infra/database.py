@@ -53,9 +53,12 @@ def create_database(app: str, extensions: list[str]) -> None:
         for role in (app, owner, reader)
     ]
     script += [
+        # despliegue.md, «PostgreSQL»: the order of the text is the one of
+        # Spanish, and not the one of the locale of the machine.
         (
-            f"SELECT 'CREATE DATABASE {app} OWNER {owner}' WHERE NOT EXISTS "
-            f"(SELECT FROM pg_database WHERE datname = '{app}') \\gexec"
+            f"SELECT 'CREATE DATABASE {app} OWNER {owner} TEMPLATE template0 "
+            "ENCODING ''UTF8'' LOCALE ''C.UTF-8'' LOCALE_PROVIDER icu ICU_LOCALE ''es''' "
+            f"WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{app}') \\gexec"
         ),
         f"\\connect {app}",
         # An extension that is not trusted, like postgis, needs a

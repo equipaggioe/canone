@@ -8,7 +8,7 @@ from fastapi.routing import APIRoute
 
 from app import errors, ijson, store, tracing
 from app.database import engine
-from app.dependencies import check_client_version
+from app.dependencies import check_client_version, deny_by_default
 from app.enums import EventLevel
 from app.routers import health, problems
 from app.services import events
@@ -33,7 +33,9 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
 
 
 api = APIRouter(
-    prefix="/api", dependencies=[Depends(check_client_version)], responses=errors.RESPONSES
+    prefix="/api",
+    dependencies=[Depends(check_client_version), Depends(deny_by_default)],
+    responses=errors.RESPONSES,
 )
 api.include_router(health.router)
 api.include_router(problems.router)

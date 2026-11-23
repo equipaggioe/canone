@@ -69,14 +69,14 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [owasp/Webhook_Security.md](owasp/Webhook_Security.md) | [URL](https://raw.githubusercontent.com/OWASP/CheatSheetSeries/89bb89baf52774a8e6f2b87fb1cf9b2a6825f58c/cheatsheets/Webhook_Security_Cheat_Sheet.md) |  |
 | [valkey/admin.md](valkey/admin.md) | [URL](https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/admin.md) | Valkey 8.1, la versión de Debian 13 |
 | [valkey/security.md](valkey/security.md) | [URL](https://raw.githubusercontent.com/valkey-io/valkey-doc/8.1.1/topics/security.md) | Valkey 8.1, la versión de Debian 13 |
-| [sveltekit/project-structure.md](sveltekit/project-structure.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/10-getting-started/30-project-structure.md) |  |
-| [sveltekit/load.md](sveltekit/load.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/20-core-concepts/20-load.md) |  |
-| [sveltekit/page-options.md](sveltekit/page-options.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/20-core-concepts/40-page-options.md) |  |
-| [sveltekit/state-management.md](sveltekit/state-management.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/20-core-concepts/50-state-management.md) |  |
-| [sveltekit/adapter-static.md](sveltekit/adapter-static.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/25-build-and-deploy/50-adapter-static.md) |  |
-| [sveltekit/accessibility.md](sveltekit/accessibility.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.2.0/documentation/docs/40-best-practices/10-accessibility.md) |  |
-| [svelte/best-practices.md](svelte/best-practices.md) | [URL](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/07-misc/01-best-practices.md) |  |
-| [svelte/props.md](svelte/props.md) | [URL](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.57.3/documentation/docs/02-runes/05-$props.md) |  |
+| [sveltekit/project-structure.md](sveltekit/project-structure.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.4.0/documentation/docs/10-getting-started/30-project-structure.md) |  |
+| [sveltekit/load.md](sveltekit/load.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.4.0/documentation/docs/20-core-concepts/20-load.md) |  |
+| [sveltekit/page-options.md](sveltekit/page-options.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.4.0/documentation/docs/20-core-concepts/40-page-options.md) |  |
+| [sveltekit/state-management.md](sveltekit/state-management.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.4.0/documentation/docs/20-core-concepts/50-state-management.md) |  |
+| [sveltekit/adapter-static.md](sveltekit/adapter-static.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.4.0/documentation/docs/25-build-and-deploy/50-adapter-static.md) |  |
+| [sveltekit/accessibility.md](sveltekit/accessibility.md) | [URL](https://raw.githubusercontent.com/sveltejs/kit/@sveltejs%2Fkit@3.4.0/documentation/docs/40-best-practices/10-accessibility.md) |  |
+| [svelte/best-practices.md](svelte/best-practices.md) | [URL](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.59.1/documentation/docs/07-misc/01-best-practices.md) |  |
+| [svelte/props.md](svelte/props.md) | [URL](https://raw.githubusercontent.com/sveltejs/svelte/svelte@5.59.1/documentation/docs/02-runes/05-$props.md) |  |
 | [unocss/presets-wind4.md](unocss/presets-wind4.md) | [URL](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/presets/wind4.md) |  |
 | [unocss/integrations-vite.md](unocss/integrations-vite.md) | [URL](https://raw.githubusercontent.com/unocss/unocss/v66.13.0/docs/integrations/vite.md) |  |
 | [paraglide/basics.md](paraglide/basics.md) | [URL](https://raw.githubusercontent.com/generaltranslation/paraglide-js/7d207f935af539ad1113d4f00563258caf5dc040/docs/basics.md) | Commit de la versión 3.2.2 |

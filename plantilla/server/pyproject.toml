@@ -6,11 +6,11 @@ dependencies = [
   "alembic>=1.20.1",
   "asyncpg>=0.32.0",
   "cryptography>=50.0.2",
-  "fastapi>=0.163.1",
+  "fastapi>=0.165.0",
   "opentelemetry-api>=1.45.2",
   "opentelemetry-sdk>=1.45.2",
   "pillow>=13.0.0",
-  "pydantic>=2.14.3",
+  "pydantic>=2.14.4",
   "pydantic-settings>=2.16.3",
   "sqlalchemy[asyncio]>=2.1.9",
   "starlette>=1.10.0",
@@ -25,9 +25,9 @@ dev = [
   "deptry>=0.25.1",
   "httpx>=0.28.1",
   "pip-audit>=2.10.1",
-  "pyrefly>=1.4.1",
+  "pyrefly>=1.5.0",
   "pytest>=9.2.0",
-  "ruff>=0.17.5",
+  "ruff>=0.17.6",
 ]
 
 [build-system]

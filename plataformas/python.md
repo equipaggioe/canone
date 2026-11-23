@@ -88,7 +88,7 @@ Estándares: [*Typing Best Practices*](../fuentes/typing/best_practices.rst), [*
 
 - Pyrefly en modo strict, salvo `missing-override-decorator`.
 - Toda función va anotada.
-- Un error de tipos se ignora con `# pyrefly: ignore[<código>]`: Pyrefly aplica `# type: ignore` a toda la línea sin mirar el código. [Pyrefly 1.4.1](https://raw.githubusercontent.com/facebook/pyrefly/1.4.1/website/docs/configuration.mdx)
+- Un error de tipos se ignora con `# pyrefly: ignore[<código>]`: Pyrefly aplica `# type: ignore` a toda la línea sin mirar el código. [Pyrefly 1.5.0](https://raw.githubusercontent.com/facebook/pyrefly/1.5.0/website/docs/configuration.mdx)
 - Todo ignore y todo `# noqa` llevan el código del error.
 - El código no usa lo que está marcado con `@deprecated`.
 - Lo que el `typing` de Python 3.13 trae no se importa de `typing_extensions`.

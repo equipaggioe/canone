@@ -54,6 +54,8 @@ class Schema(BaseModel):
         validate_by_name=True,
         from_attributes=True,
         extra="forbid",
+        # transversal.md: a response carries every field, null if empty.
+        json_schema_serialization_defaults_required=True,
     )
 
 

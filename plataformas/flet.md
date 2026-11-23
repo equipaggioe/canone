@@ -148,6 +148,12 @@ Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 - Los campos para entrar y para elegir una contraseña van en un `AutofillGroup`, y los gestores de contraseñas los completan por sus `autofill_hints`: al entrar, `AutofillHint.USERNAME` en el del correo o el teléfono y `AutofillHint.PASSWORD` en el de la contraseña, y al elegir una, `AutofillHint.NEW_PASSWORD`.
 - El campo de la contraseña lleva `password` y `can_reveal_password`.
 
+## Errores
+
+Contrato: [transversal.md](transversal.md#errores).
+
+- `api/client.py` lanza una respuesta de error como `ApiError`, con el `Problem` de `api/models.py`, y una sin problem+json, con un `Problem` de tipo `about:blank` y su `status`.
+
 ## Idiomas
 
 Contrato: [transversal.md](transversal.md#idiomas).
@@ -155,6 +161,7 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - Los textos usan `gettext` de la biblioteca estándar de Python, con catálogos `.po`. Flet no trae un sistema de traducción.
 - Babel compila el `.mo` de cada catálogo, con `pybabel compile -d src/locales -D <pieza>`, y va en el grupo `dev`: `gettext` lee solo el `.mo`. [Python 3.13](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/gettext.rst)
 - Los catálogos van en `src/locales/<idioma>/LC_MESSAGES/<pieza>.po`. El `.mo` se genera antes de `flet build` y de `flet test`, y no va en git: sale del `.po`, y en git quedaría desfasado.
+- El `httpx.AsyncClient` de [Red](#red) manda en `Accept-Language` el `current_locale` de `page.locale_configuration`, y lo cambia cuando el usuario elige otro idioma.
 - `page.locale_configuration` declara en `supported_locales` los idiomas de la app, con el base primero, y en `current_locale`, el que eligió el usuario: sin ella, los controles de Flutter quedan en `en-US`, y un idioma que no está en la lista cae en el primero. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/types.py)
 
 ## Mapas
@@ -260,3 +267,5 @@ Contrato: [transversal.md](transversal.md#distribución).
 | `src/api/models.py` al día con `../server/openapi.json` | `uv run datamodel-codegen` y `git diff --exit-code src/api/models.py` en CI |
 | El árbol de «Proyecto» en `src/` | [scripts/verificar.py](../scripts/verificar.py), que falla con un archivo o una carpeta que el árbol no tiene |
 | HTTP solo en `api/` | ruff `TID251` sobre httpx y httpx-ws, que `src/api/ruff.toml` permite |
+| `src/api/ruff.toml` y `tests/test_theme.py`, sin editar | [scripts/verificar.py](../scripts/verificar.py), que los compara con los de la plantilla |
+| Los colores, solo los de `colors.py`, que genera [transversal.md](transversal.md#tema): fuera de él, ni un color hexadecimal, ni `ft.Colors`, ni `ft.CupertinoColors` | `test_colors_only_generated`, de `tests/test_theme.py` |

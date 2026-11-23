@@ -7,7 +7,7 @@ Cómo se registra una cuenta, cómo entra y cómo mantiene su sesión: lo que ha
 Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y [RFC 9700](../fuentes/rfc/rfc9700.txt).
 
 - Una app que ofrece la passkey la usa con la API de su sistema operativo cuando su framework la ofrece de forma oficial. Si no, la usa en el navegador del sistema, que le devuelve un código de autorización.
-- Una app que corre en el navegador hace el flujo por el servidor, en su misma pestaña: abre un endpoint del servidor que crea el `state` y el `code_verifier` y redirige a la petición de autorización, y la URI de retorno es otro endpoint del servidor, que canjea el código, deja la cookie de sesión de la web y vuelve a la app con un 303. Ningún token llega al navegador.
+- Una app que corre en el navegador hace el flujo por el servidor, en su misma pestaña: abre un endpoint del servidor que crea el `state` y el `code_verifier` y redirige a la petición de autorización, y la URI de retorno es otro endpoint del servidor, que canjea el código, deja la cookie de sesión de la web y vuelve a la app con un 303.
 - En ese flujo, el endpoint que lo inicia guarda el `state` y el `code_verifier` en Valkey, bajo un id que deja en una cookie `__Host-` `Secure`, `HttpOnly` y `SameSite=Strict`, y el endpoint de retorno los toma una sola vez y borra la cookie.
 - El código vive en Valkey, con la cuenta.
 - Una app de escritorio recibe el retorno solo en `http://127.0.0.1:{puerto}/<ruta>`, y no en `[::1]`: toda máquina de escritorio tiene loopback IPv4.
@@ -84,6 +84,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - La pantalla para entrar ofrece primero la passkey, si el dispositivo la tiene, y luego el código por SMS y la contraseña, entre los que elige el usuario.
 - La app guarda en el dispositivo el último método con que entró, y lo ofrece primero la próxima vez.
 - Mientras no hay una cuenta de administración, el registro acepta el código de instalación, `setup_code` de `Settings`, y la cuenta que se registra con él es de administración. Con la primera, el registro deja de aceptarlo.
+- Una cuenta de administración entra solo con una passkey que verificó al usuario, con el flag UV en los datos del autenticador, y la que se registra con el código de instalación vincula una al registrarse ([NIST SP 800-63B-4 §2.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta entra con una contraseña, una passkey o un código por SMS ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
 - Las direcciones de aviso son el correo, el teléfono y el push a las apps con sesión abierta ([NIST SP 800-63B-4 §4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429 ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
@@ -142,12 +143,13 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
 - La solicitud del código responde 404 si la cuenta no existe, y una IP que recibe 10 en 15 minutos queda bloqueada 30 minutos.
-- Cada correo y cada número reciben un código por minuto, y hasta 5 por hora.
+- Cada correo recibe un código por minuto, y hasta 5 por hora. Los SMS siguen los límites de [Código por SMS](#código-por-sms).
 - Un código se invalida al tercer intento fallido.
 - Con el código, una cuenta con contraseña la restablece, y una sin contraseña vincula una passkey o una contraseña.
 - El código vive en Valkey, y uno nuevo reemplaza al anterior.
 - El código vale una sola vez.
 - Una cuenta con passkey que se recupera con el código del correo lo aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela desde la app. El código del teléfono se aplica en el momento.
+- Una cuenta de administración no se recupera con el código: la recupera otro administrador.
 - El código vence a los 10 minutos, también el que va al correo ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Quien no puede entrar ni recibir el código recupera la cuenta con un administrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - El código tiene 6 dígitos ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
@@ -209,7 +211,7 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 
 - La web se autentica con la cookie de sesión del handshake, y una app, con `Authorization: Bearer` en el handshake, como en REST.
 - Un handshake con la cookie exige un `Origin` igual al de la web, y uno con `Authorization` no lo revisa.
-- Una sesión que no vale o un token vencido cierran la conexión con 4401, del rango de códigos de cierre privados: un código propio separa la sesión de cualquier otro cierre. En el handshake, el servidor acepta la conexión para cerrarla: el navegador no le muestra a la web el código de un rechazo, que ve como un cierre 1006, igual que una caída de la red. [RFC 6455 §7.4.2](https://www.rfc-editor.org/rfc/rfc6455.txt), [WHATWG WebSockets](https://raw.githubusercontent.com/whatwg/websockets/7f25d7dc8c2598ebca795ce4af68909d913a3888/index.bs)
+- Una sesión que no vale o un token vencido cierran la conexión con 4401, del rango de códigos de cierre privados. En el handshake, el servidor acepta la conexión para cerrarla: el navegador no le muestra a la web el código de un rechazo, que ve como un cierre 1006, igual que una caída de la red. [RFC 6455 §7.4.2](https://www.rfc-editor.org/rfc/rfc6455.txt), [WHATWG WebSockets](https://raw.githubusercontent.com/whatwg/websockets/7f25d7dc8c2598ebca795ce4af68909d913a3888/index.bs)
 - Ante un 4401, una app refresca la sesión una sola vez y reconecta, y la web vuelve al inicio de sesión.
 - El servidor no revalida cada cierto tiempo la sesión de una conexión abierta: el cierre llega con el borrado de la sesión, no en la siguiente revisión.
 - Al refrescar la sesión, una app manda el token nuevo por la misma conexión ([WebSocket Security, *Session Management*](../fuentes/owasp/WebSocket_Security.md)).

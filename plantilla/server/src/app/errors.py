@@ -59,7 +59,8 @@ TYPES = {problem.name: problem for problem in (VALIDATION, CLIENT_OUTDATED)}
 class FieldError(Schema):
     """One invalid field or parameter, open to new members."""
 
-    model_config = ConfigDict(extra="ignore")
+    # A problem leaves out a member without a value, instead of null.
+    model_config = ConfigDict(extra="ignore", json_schema_serialization_defaults_required=False)
 
     detail: str
     pointer: str | None = None
@@ -73,7 +74,7 @@ class Problem(Schema):
     does not know (transversal.md, «Errores»).
     """
 
-    model_config = ConfigDict(extra="ignore")
+    model_config = ConfigDict(extra="ignore", json_schema_serialization_defaults_required=False)
 
     type: str
     title: str

@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.config import settings
+from app.dependencies import access, public
 from app.enums import EventLevel
 from app.schemas.health import HealthEvents, LoggedEvent
 from app.schemas.page import Page, PageParams, decode_token, encode_token
@@ -18,13 +19,14 @@ router = APIRouter(prefix="/health", tags=["health"])
 bearer = HTTPBearer(auto_error=False)
 
 
-@router.get("", status_code=HTTPStatus.NO_CONTENT)
+@router.get("", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
 async def check() -> None:
     """Answer 503 when the database or Valkey does not."""
     if not await health.database_answers() or not await health.valkey_answers():
         raise HTTPException(HTTPStatus.SERVICE_UNAVAILABLE)
 
 
+@access
 async def check_health_token(
     request: Request,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)],

@@ -305,6 +305,12 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - En iOS, el proyecto de Xcode declara en *Localizations* los idiomas de los ARB: la App Store los toma de ahí. [Internationalizing Flutter apps](https://raw.githubusercontent.com/flutter/website/5aa5d3cfa2c41558b22516125c73d7a5efc4ce15/sites/docs/src/content/ui/internationalization/index.md)
 - `Accept-Language` lleva el idioma con que la app muestra sus textos, el que `MaterialApp` resuelve entre sus `supportedLocales`, y lo pone el `http.Client` de la app.
 
+## Llamadas de voz y video
+
+Contrato: [transversal.md](transversal.md#llamadas-de-voz-y-video).
+
+- Las llamadas usan el `RTCPeerConnection` y el `getUserMedia` de flutter_webrtc.
+
 ## Mapas
 
 Contrato: [transversal.md](transversal.md#mapas).

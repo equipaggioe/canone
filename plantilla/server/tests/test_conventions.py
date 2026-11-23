@@ -18,7 +18,8 @@ from urllib.parse import urlsplit
 
 import pytest
 import sqlalchemy as sa
-from fastapi import FastAPI, Query
+from fastapi import APIRouter, Depends, FastAPI, Query
+from fastapi.routing import APIRoute
 from httpx import ASGITransport, AsyncClient
 from pydantic import AwareDatetime, BaseModel, ValidationError
 from pydantic_settings import BaseSettings
@@ -32,7 +33,7 @@ import app.schemas
 from app import errors, ijson, openapi, tracing
 from app.config import Settings, settings
 from app.database import engine
-from app.dependencies import SessionDep
+from app.dependencies import SessionDep, declares_access, deny_by_default, public
 from app.main import app as main_app
 from app.models.base import Base
 from app.schemas.base import Day, InputSchema, Schema, Timestamp
@@ -924,6 +925,56 @@ async def test_outdated_client_is_rejected(
     assert response.status_code == 400
     assert response.headers["content-type"] == errors.PROBLEM_JSON
     assert response.json()["type"] == errors.CLIENT_OUTDATED.uri
+
+
+def test_response_fields_are_required() -> None:
+    """A response declares every field of a schema, null if empty."""
+    probe = FastAPI()
+
+    class Note(Schema):
+        """A schema with a field that may have no value."""
+
+        name: str
+        text: str | None = None
+
+    @probe.get("/note")
+    async def read() -> Note:
+        """Return a note without text."""
+        return Note(name="a")
+
+    assert probe.openapi()["components"]["schemas"]["Note"]["required"] == ["name", "text"]
+
+
+def test_routes_declare_access() -> None:
+    """Each route of app.routers says who may call it."""
+    undeclared = [
+        f"{module.name}: {route.path}"
+        for module in pkgutil.iter_modules(app.routers.__path__)
+        for route in importlib.import_module(f"app.routers.{module.name}").router.routes
+        if isinstance(route, APIRoute) and not declares_access(route.dependant)
+    ]
+    assert not undeclared
+
+
+async def test_undeclared_route_is_not_found() -> None:
+    """A route that does not say who may call it answers 404."""
+    probe = FastAPI()
+    errors.install(probe)
+    router = APIRouter(dependencies=[Depends(deny_by_default)])
+
+    @router.get("/undeclared")
+    async def undeclared() -> None:
+        """Say nothing about who calls it."""
+
+    @router.get("/declared", dependencies=[Depends(public)])
+    async def declared() -> None:
+        """Let anyone call it."""
+
+    probe.include_router(router)
+    transport = ASGITransport(app=probe)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        assert (await client.get("/undeclared")).status_code == 404
+        assert (await client.get("/declared")).status_code == 200
 
 
 async def test_problem_types_are_documented() -> None:

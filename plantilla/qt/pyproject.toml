@@ -4,19 +4,19 @@ version = "0.1.0"
 requires-python = "==3.13.*"
 dependencies = [
   "keyring>=25.7.0",
-  "pydantic>=2.14.3",
+  "pydantic>=2.14.4",
   "pyside6>=6.12.0",
 ]
 
 [dependency-groups]
 dev = [
-  "datamodel-code-generator[ruff]>=0.97.0",
+  "datamodel-code-generator[ruff]>=0.100.0",
   "deptry>=0.25.1",
   "pip-audit>=2.10.1",
-  "pyrefly>=1.4.1",
+  "pyrefly>=1.5.0",
   "pytest>=9.2.0",
   "pytest-qt>=4.5.0",
-  "ruff>=0.17.5",
+  "ruff>=0.17.6",
 ]
 deploy = [
   "imageio>=2.38.2",

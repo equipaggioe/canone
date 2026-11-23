@@ -139,6 +139,12 @@ Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
 - El campo de la contraseña es un `QLineEdit` en `EchoMode.Password`, con una acción al final que lo pasa a `EchoMode.Normal` mientras está marcada.
 
+## Errores
+
+Contrato: [transversal.md](transversal.md#errores).
+
+- `api/client.py` lanza una respuesta de error como `ApiError`, con el `Problem` de `api/models.py`, y una sin problem+json, con un `Problem` de tipo `about:blank` y su `status`.
+
 ## Idiomas
 
 Contrato: [transversal.md](transversal.md#idiomas).
@@ -167,6 +173,7 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - La app no llama a `ignoreSslErrors()`: un certificado que no vale termina la conexión, como fija [python.md](python.md#seguridad).
 - La app tiene un solo `QNetworkAccessManager`.
 - El `QNetworkAccessManager` libera cada respuesta al terminar, con `setAutoDeleteReplies(True)`.
+- Los reintentos de [transversal.md](transversal.md#reintentos) se escriben a mano en `api/client.py`.
 
 ## Tema
 
@@ -231,6 +238,7 @@ Estándar: [pyside6-deploy](../fuentes/pyside6/deployment-pyside6-deploy.rst) de
 | Los `ruff.toml` de `src/` y `services/language.py`, sin editar | [scripts/verificar.py](../scripts/verificar.py), que los compara con los de la plantilla |
 | Fusion, a través del `QProxyStyle` de `theme.py` | `test_style_is_fusion`, de `tests/test_theme.py` |
 | Ninguna hoja de estilo | `test_no_style_sheet`, de `tests/test_theme.py` |
+| Los colores, solo los de `colors.py`, que genera [transversal.md](transversal.md#tema): fuera de él, ni un color hexadecimal, ni `rgb()`, ni un `QColor` de un literal, ni `QColorConstants`, ni `Qt.GlobalColor` salvo `transparent` | `test_colors_only_generated`, de `tests/test_theme.py` |
 | Pruebas sin pantalla | `QT_QPA_PLATFORM=offscreen` en el job de CI |
 | Lo que una herramienta mide de «Accesibilidad» de `transversal.md` | `tests/test_accessibility.py`, que [scripts/verificar.py](../scripts/verificar.py) compara con el de la plantilla |
 | `src/app/api/models.py` al día con `../server/openapi.json` | `uv run datamodel-codegen` y `git diff --exit-code src/app/api/models.py` en CI |

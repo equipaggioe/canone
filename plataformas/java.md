@@ -30,6 +30,7 @@ Plantilla: [plantilla/scripts/java.py](../plantilla/scripts/java.py), los pasos 
 ## Red
 
 - La pieza escucha solo en loopback, en un puerto fijo de su código, y el servidor la llama en esa dirección, una constante suya.
+- La pieza sirve HTTP con `com.sun.net.httpserver` del JDK, recibe y responde JSON, y responde 400 a una entrada que no puede procesar.
 
 ## Pruebas
 

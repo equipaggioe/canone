@@ -3,12 +3,15 @@
 from html import escape
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 
+from app.dependencies import public
 from app.errors import TYPES
 
-router = APIRouter(prefix="/problems", tags=["problems"], include_in_schema=False)
+router = APIRouter(
+    prefix="/problems", tags=["problems"], include_in_schema=False, dependencies=[Depends(public)]
+)
 
 
 @router.get("/{name}", response_class=HTMLResponse)

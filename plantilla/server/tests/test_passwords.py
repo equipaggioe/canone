@@ -435,16 +435,19 @@ async def test_hundredth_failure_disables_the_password(
 async def test_admin_does_not_sign_in_with_a_password(
     client: AsyncClient, session: AsyncSession, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """An admin's password is not looked at: a 401 without a failure."""
+    """An admin's failures count; the right password is a 403."""
     monkeypatch.setattr(methods, "METHODS", WITH_PASSKEY)
     account = Account(email="ana.admin@example.com", role=Role.ADMIN, language="es")
     session.add(account)
     await session.flush()
     session.add(Password(account_id=account.id, hash=passwords.hash_password("Correct horse")))
     await session.flush()
+    wrong = {"email": "ana.admin@example.com", "password": "Wrong horse"}
+    assert (await client.post("/api/auth/password/token", json=wrong)).status_code == 401
+    assert await session.scalar(sa.select(Password.failures)) == 1
     login = {"email": "ana.admin@example.com", "password": "Correct horse"}
-    assert (await client.post("/api/auth/password/token", json=login)).status_code == 401
-    assert await session.scalar(sa.select(Password.failures)) == 0
+    assert (await client.post("/api/auth/password/token", json=login)).status_code == 403
+    assert await session.scalar(sa.select(Password.failures)) == 1
     await session.execute(sa.update(Account).values(role=Role.USER))
     assert (await client.post("/api/auth/password/token", json=login)).status_code == 200
 

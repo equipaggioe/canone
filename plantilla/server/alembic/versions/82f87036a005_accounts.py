@@ -1,4 +1,4 @@
-"""The accounts, their passwords, their passkeys and their sessions.
+"""The accounts, their passwords, passkeys and phones, and their sessions.
 
 Revision ID: 82f87036a005
 Revises: d34c1b992b0b
@@ -19,6 +19,36 @@ depends_on: Union[str, Sequence[str], None] = None
 
 # The role of the server, named as the app.
 ROLE = "PRODUCTO"
+# ADR-0232: an account with a number has its row in phone, checked at the
+# commit, when the registration or the change has written both.
+PHONE_BOUND = (
+    """
+CREATE FUNCTION phone_bound() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE
+    owner uuid;
+BEGIN
+    IF TG_TABLE_NAME = 'account' THEN
+        owner := NEW.id;
+    ELSE
+        owner := OLD.account_id;
+    END IF;
+    IF EXISTS (
+        SELECT FROM account
+        WHERE id = owner AND phone IS NOT NULL
+          AND NOT EXISTS (SELECT FROM phone WHERE phone.account_id = owner)
+    ) THEN
+        RAISE EXCEPTION 'account % has a phone without its row in phone', owner
+            USING ERRCODE = 'integrity_constraint_violation';
+    END IF;
+    RETURN NULL;
+END
+$$
+""",
+    "CREATE CONSTRAINT TRIGGER account_phone_bound AFTER INSERT OR UPDATE OF phone ON account"
+    " DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION phone_bound()",
+    "CREATE CONSTRAINT TRIGGER phone_phone_bound AFTER DELETE ON phone"
+    " DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION phone_bound()",
+)
 
 
 def upgrade() -> None:
@@ -75,6 +105,17 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("account_id", name=op.f("pk_password")),
     )
     op.create_table(
+        "phone",
+        sa.Column("account_id", sa.Uuid(), nullable=False),
+        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column("changed_at", postgresql.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column("failures", sa.Integer(), server_default=sa.text("0"), nullable=False),
+        sa.Column("retry_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.Column("disabled_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.ForeignKeyConstraint(["account_id"], ["account.id"], name=op.f("fk_phone_account_id_account"), ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("account_id", name=op.f("pk_phone")),
+    )
+    op.create_table(
         "passkey",
         sa.Column("id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False),
         sa.Column("account_id", sa.Uuid(), nullable=False),
@@ -97,13 +138,19 @@ def upgrade() -> None:
         sa.UniqueConstraint("credential_id", name=op.f("uq_passkey_credential_id")),
     )
     op.create_index(op.f("ix_passkey_account_id"), "passkey", ["account_id"])
-    op.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON account, account_session, passkey, password TO {ROLE}")
+    for statement in PHONE_BOUND:
+        op.execute(statement)
+    op.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON account, account_session, passkey, password, phone TO {ROLE}")
 
 
 def downgrade() -> None:
     """Downgrade schema."""
+    op.execute("DROP TRIGGER phone_phone_bound ON phone")
+    op.execute("DROP TRIGGER account_phone_bound ON account")
+    op.execute("DROP FUNCTION phone_bound()")
     op.drop_index(op.f("ix_passkey_account_id"), table_name="passkey")
     op.drop_table("passkey")
+    op.drop_table("phone")
     op.drop_table("password")
     op.drop_index(op.f("ix_account_session_last_used_at"), table_name="account_session")
     op.drop_index(op.f("ix_account_session_account_id"), table_name="account_session")

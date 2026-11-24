@@ -179,7 +179,7 @@ async def register_cookie(
     body: Registration,
     caller: ClientDep,
 ) -> None:
-    """Register an account with its passkey, and sign in the web."""
+    """Register an account, and sign in the web."""
     account = await registration.register(session, body, caller, accepted(request))
     await open_cookie(request, response, session, account, caller)
 
@@ -192,7 +192,7 @@ async def register_token(
     body: Registration,
     caller: ClientDep,
 ) -> TokenResponse:
-    """Register an account with its passkey, and sign in an app."""
+    """Register an account, and sign in an app."""
     account = await registration.register(session, body, caller, accepted(request))
     return await open_token(request, response, session, account, caller)
 

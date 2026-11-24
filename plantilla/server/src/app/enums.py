@@ -23,6 +23,7 @@ class Method(StrEnum):
 
     PASSKEY = "passkey"
     PASSWORD = "password"
+    SMS = "sms"
 
 
 class SessionKind(StrEnum):

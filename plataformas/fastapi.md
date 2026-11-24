@@ -52,6 +52,7 @@ server/
         account_session.py
         passkey.py
         password.py
+        phone.py
         throttled.py
       event/
         __init__.py
@@ -77,6 +78,7 @@ server/
       passkey.py
       password.py
       problems.py
+      sms.py
       <recurso>.py
     services/
       __init__.py
@@ -96,6 +98,7 @@ server/
       passwords.py
       registration.py
       sessions.py
+      sms.py
       <recurso>.py
     locale/
       <idioma>/
@@ -117,6 +120,7 @@ server/
     test_passwords.py
     test_registration.py
     test_sessions.py
+    test_sms.py
     test_tasks.py
     test_<recurso>.py
 ```

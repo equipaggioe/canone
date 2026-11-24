@@ -559,7 +559,7 @@
           "auth"
         ],
         "summary": "Register Cookie",
-        "description": "Register an account with its passkey, and sign in the web.",
+        "description": "Register an account, and sign in the web.",
         "operationId": "authRegisterCookie",
         "parameters": [
           {
@@ -626,7 +626,7 @@
           "auth"
         ],
         "summary": "Register Token",
-        "description": "Register an account with its passkey, and sign in an app.",
+        "description": "Register an account, and sign in an app.",
         "operationId": "authRegisterToken",
         "parameters": [
           {
@@ -1989,6 +1989,364 @@
           }
         }
       }
+    },
+    "/api/auth/sms/code": {
+      "post": {
+        "tags": [
+          "sms"
+        ],
+        "summary": "Code",
+        "description": "Send the code to sign in to the phone of an account.",
+        "operationId": "smsCode",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmsCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/sms/cookie": {
+      "post": {
+        "tags": [
+          "sms"
+        ],
+        "summary": "Cookie",
+        "description": "Sign in the web with the code of an SMS, in its cookie.",
+        "operationId": "smsCookie",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmsLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/sms/token": {
+      "post": {
+        "tags": [
+          "sms"
+        ],
+        "summary": "Token",
+        "description": "Sign in an app with an SMS code, as the token endpoint.",
+        "operationId": "smsToken",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmsLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/reauth/sms/code": {
+      "post": {
+        "tags": [
+          "sms"
+        ],
+        "summary": "Reauth Code",
+        "description": "Send a code to the phone of the account, to reauthenticate.",
+        "operationId": "smsReauthCode",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/reauth/sms": {
+      "post": {
+        "tags": [
+          "sms"
+        ],
+        "summary": "Reauth",
+        "description": "Authenticate again with the code of the phone of the account.",
+        "operationId": "smsReauth",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmsReauth"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "The web session, renewed in its cookie"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2893,7 +3251,7 @@
           "code"
         ],
         "title": "Registration",
-        "description": "A new account: its verified address and its first authenticator.\n\nThe authenticator is a named passkey or a password. The setup code\nregisters the first admin."
+        "description": "A new account: its verified address and its first authenticator.\n\nThe authenticator is a named passkey or a password; a phone may come\nwithout one, where the product offers the SMS code. The setup code\nregisters the first admin."
       },
       "RelyingParty": {
         "properties": {
@@ -2914,6 +3272,60 @@
         ],
         "title": "RelyingParty",
         "description": "The RP of a registration: the domain is its ID and its name."
+      },
+      "SmsCode": {
+        "properties": {
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+[0-9]+$",
+            "title": "Phone"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "phone"
+        ],
+        "title": "SmsCode",
+        "description": "The phone of an account, which receives the code to sign in."
+      },
+      "SmsLogin": {
+        "properties": {
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+[0-9]+$",
+            "title": "Phone"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$",
+            "title": "Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "phone",
+          "code"
+        ],
+        "title": "SmsLogin",
+        "description": "The phone of an account, and the code its SMS brought."
+      },
+      "SmsReauth": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$",
+            "title": "Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "title": "SmsReauth",
+        "description": "The code that the SMS brought to the phone of the account."
       },
       "TokenError": {
         "properties": {

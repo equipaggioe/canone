@@ -15,7 +15,7 @@ from app.models.account.account import Account
 from app.models.account.passkey import Passkey
 from app.models.event.event_log import EventLog
 from app.schemas.account import PasskeyLink
-from app.services import attestation, codes, events, limits, notices
+from app.services import attestation, codes, events, limits, notices, sms
 from app.services.sessions import Client
 
 PURPOSE = "change"
@@ -137,6 +137,7 @@ async def change_phone(
         raise AppError(INVALID_CODE)
     await check_free(session, Account.phone == phone)
     previous, account.phone = account.phone, phone
+    await sms.rebind(session, account)
     details = events.changes("account", {"phone": phone})
     target = ("account", str(account.id))
     session.add(event("user_updated", account, client, target, details))

@@ -31,6 +31,11 @@ async def test_a_method_the_product_does_not_use_has_no_routes() -> None:
             "/api/auth/register/options",
             "/api/account/passkeys/options",
             "/api/auth/authorize",
+            "/api/auth/sms/code",
+            "/api/auth/sms/cookie",
+            "/api/auth/sms/token",
+            "/api/auth/reauth/sms/code",
+            "/api/auth/reauth/sms",
         ):
             assert (await client.post(path, json={})).status_code == 404, path
         assert (await client.put("/api/account/password", json={})).status_code == 404

@@ -5,4 +5,4 @@ autenticacion.md: each repository chooses them, any of them.
 
 from app.enums import Method
 
-METHODS: frozenset[Method] = frozenset({Method.PASSKEY, Method.PASSWORD})
+METHODS: frozenset[Method] = frozenset({Method.PASSKEY, Method.PASSWORD, Method.SMS})

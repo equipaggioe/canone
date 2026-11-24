@@ -1,4 +1,4 @@
-"""Register an account: its code, its first passkey and its role."""
+"""Register an account: its code, its authenticator and its role."""
 
 import hmac
 from datetime import timedelta
@@ -18,7 +18,7 @@ from app.errors import INVALID_CODE, PASSWORD_BLOCKED, USER_VERIFICATION_REQUIRE
 from app.models.account.account import Account
 from app.models.account.password import Password
 from app.schemas.auth import Identifier, Registration
-from app.services import attestation, codes, events, limits, passwords
+from app.services import attestation, codes, events, limits, passwords, sms
 from app.services.limits import Rule
 from app.services.sessions import Client
 
@@ -94,6 +94,25 @@ async def role(session: AsyncSession, setup_code: str | None) -> Role:
     return Role.ADMIN
 
 
+def check_offered(body: Registration) -> None:
+    """Answer 422 to an authenticator the product does not offer.
+
+    Without one, the account signs in with the code to its phone, where
+    the product offers it.
+    """
+    if body.credential is not None:
+        offered, field = Method.PASSKEY, "credential"
+    elif body.password is not None:
+        offered, field = Method.PASSWORD, "password"
+    else:
+        offered, field = Method.SMS, ""
+    if offered in methods.METHODS and (offered != Method.SMS or body.phone is not None):
+        return
+    location = ("body", field) if field else ("body",)
+    message = f"The product takes no {offered}" if field else "send a passkey or a password"
+    raise RequestValidationError([{"loc": location, "msg": message, "type": "value_error"}])
+
+
 async def register(
     session: AsyncSession, body: Registration, client: Client, language: str
 ) -> Account:
@@ -104,15 +123,7 @@ async def register(
     """
     await check_open(client)
     created = None
-    offered = Method.PASSKEY if body.credential is not None else Method.PASSWORD
-    if offered not in methods.METHODS:
-        field = "credential" if offered == Method.PASSKEY else "password"
-        error = {
-            "loc": ("body", field),
-            "msg": f"The product takes no {offered}",
-            "type": "value_error",
-        }
-        raise RequestValidationError([error])
+    check_offered(body)
     if body.credential is not None:
         created = await attestation.create(session, body.credential, client)
     elif body.setup_code is not None and Method.PASSKEY in methods.METHODS:
@@ -143,6 +154,8 @@ async def register(
             details=events.changes("account", {"identifier": body.address, "role": account_role}),
         )
     )
+    if body.phone is not None:
+        sms.bind(session, account)
     if created is not None and body.passkey_name is not None:
         attestation.keep(session, account, created, body.passkey_name, uuid4(), client)
     if body.password is not None:

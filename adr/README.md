@@ -237,3 +237,5 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0229](0229-un-separador-se-agarra-en-una-franja-de-24-px-encima-de-su-linea.md) | Un separador se agarra en una franja de 24 px puesta encima de su línea | `transversal.md`, `qt.md` y `plantilla/qt/tests/` |
 | [0230](0230-un-separador-se-agarra-en-5-px.md) | Un separador se agarra en 5 px | `transversal.md`, `qt.md` y `plantilla/qt/tests/` |
 | [0231](0231-cada-producto-elige-sus-metodos-para-entrar.md) | Cada producto elige sus métodos para entrar | `autenticacion.md`, `fastapi.md` y con `server/` |
+| [0232](0232-el-codigo-por-sms-se-pide-aparte-vuelve-a-autenticar-y-cuenta-sus-fallos-en-phone.md) | El código por SMS se pide aparte, vuelve a autenticar y cuenta sus fallos en `phone` | `autenticacion.md`, `fastapi.md` y con `server/` |
+| [0233](0233-una-cuenta-de-administracion-cuenta-sus-fallos-como-cualquier-otra.md) | Una cuenta de administración cuenta sus fallos como cualquier otra | `autenticacion.md` y con `server/` |

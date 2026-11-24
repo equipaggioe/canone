@@ -55,7 +55,15 @@ Las reglas del código para entrar valen si el producto lo usa; las demás, para
 - La web donde se escribe el código sirve `/.well-known/apple-app-site-association` como archivo estático, desde `static/.well-known/apple-app-site-association`, y una app de iOS declara ese host entre sus dominios asociados. [Apple](https://developer.apple.com/documentation/security/enabling-autofill-for-domain-bound-sms-codes)
 - Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta 10 por hora.
 - El código para entrar sigue las reglas del de [Recuperación](#recuperación).
+- El código para entrar se pide en `POST /api/auth/sms/code` con el teléfono, y abre la sesión por `POST /api/auth/sms/cookie` o `/token` con el teléfono y el código.
+- Los 404 de la solicitud del código para entrar cuentan con los de la solicitud del código de recuperación para bloquear la IP.
+- El teléfono es el autenticador del código para entrar: sus fallos viven en la tabla `phone`, una fila por cuenta con teléfono, que la base exige con un trigger diferido al commit: una cuenta con número y sin su fila no pasa, y no queda sin poder entrar en silencio.
+- Con el teléfono deshabilitado, pedir el código para entrar responde 403 de tipo `authenticator-disabled`, y antes de su espera, 429, sin enviar el SMS.
+- Si el producto usa la passkey, una cuenta de administración que pide el código para entrar o para volver a autenticarse recibe 403, sin SMS. Un código equivocado cuenta su fallo como en cualquier cuenta, y uno correcto responde 403.
 - Cada fallo del código para entrar cuenta entre los fallos consecutivos del teléfono, y un código nuevo no los reinicia ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
+- Cambiar el teléfono pone en cero sus fallos y lo vuelve a habilitar: otro número es otro autenticador ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
+
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/phone.py`, `routers/sms.py`, `services/sms.py` y `tests/test_sms.py`.
 
 ## Contraseñas
 
@@ -97,14 +105,14 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Una cuenta no tiene nombre de usuario.
 - Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos.
 - El registro pide el código en `POST /api/auth/register/code`, que ya responde 409 si la cuenta existe, y las opciones de la passkey en `POST /api/auth/register/options`, con un user handle nuevo.
-- El registro lleva el código y el primer autenticador en la misma petición: una passkey o una contraseña, de las que usa el producto. Abre la sesión por `POST /api/auth/register/cookie` o `/token`, como un login. Si el producto usa el código por SMS, una cuenta con teléfono puede registrarse sin autenticador: entra con ese código.
+- El registro lleva el código y el primer autenticador en la misma petición: una passkey o una contraseña, de las que usa el producto. Abre la sesión por `POST /api/auth/register/cookie` o `/token`, como un login. Si el producto usa el código por SMS, una cuenta con teléfono puede registrarse sin autenticador: entra con ese código. Sin autenticador, una cuenta con correo, o una con teléfono en un producto sin el código por SMS, responde 422.
 - El registro verifica la passkey antes que el código: una ceremonia que falla no gasta un intento del código.
 - El correo se cambia pidiendo el código para el nuevo en `POST /api/account/email/code` y presentándolo en `PUT /api/account/email`, y el teléfono, en `POST /api/account/phone/code` y `PUT /api/account/phone`. Un correo o un teléfono que tiene otra cuenta responde 409.
-- Volver a autenticarse es un paso aparte, con la sesión abierta: `POST /api/auth/reauth/options` lista en `allowCredentials` las passkeys de la cuenta, y `POST /api/auth/reauth/passkey` y `/reauth/password` verifican una credencial de la cuenta de la sesión. Renuevan la misma fila, escriben su `authenticated_at` y responden como se presenta la sesión: los tokens nuevos de una app, o la cookie nueva de la web.
+- Volver a autenticarse es un paso aparte, con la sesión abierta: `POST /api/auth/reauth/options` lista en `allowCredentials` las passkeys de la cuenta, `POST /api/auth/reauth/sms/code` envía el código al teléfono de la cuenta, o responde 409 si no tiene, y `POST /api/auth/reauth/passkey`, `/reauth/password` y `/reauth/sms` verifican una credencial de la cuenta de la sesión. Renuevan la misma fila, escriben su `authenticated_at` y responden como se presenta la sesión: los tokens nuevos de una app, o la cookie nueva de la web.
 - Una operación que pide volver a autenticarse lo acepta durante 5 minutos desde `authenticated_at`; después responde 403 de tipo `reauthentication-required`.
 - La cuenta de administración tiene `role` `admin`.
 - Si el producto usa la passkey, el registro con el código de instalación no acepta contraseña. Si no la usa, la cuenta de administración se registra y entra con los métodos del producto. Un código de instalación equivocado, o uno que llega cuando ya hay una cuenta de administración, responde 403, y dos registros con el código se esperan con un candado de PostgreSQL: solo uno queda como la primera.
-- Si el producto usa la passkey, una cuenta de administración que entra con contraseña recibe 401, sin que se verifique ni se cuente un fallo: no revela que es de administración. Con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo: la firma vale, y quien la presenta tiene la passkey. Lo mismo al volver a autenticarse.
+- Una cuenta de administración cuenta sus fallos, espera y se deshabilita como cualquier cuenta. Si el producto usa la passkey, con una contraseña correcta recibe 403: solo la ve quien la sabe. Con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo: la firma vale, y quien la presenta tiene la passkey. Lo mismo al volver a autenticarse.
 - El aviso dice a quién escribir con `contact` de `Settings`, y va en el idioma de la cuenta.
 - Registrarse no avisa: la passkey se vincula a una cuenta que acaba de nacer.
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el viejo recibe un aviso.
@@ -349,7 +357,7 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Un código equivocado responde 400 de tipo `invalid-code`, y una passkey que falla no gasta un intento del código | `test_wrong_code_fails_and_a_failed_passkey_keeps_the_code` |
 | El código de instalación registra la cuenta de administración mientras no hay otra, y uno equivocado responde 403 | `test_setup_code_registers_the_first_admin_once` |
 | La cuenta de administración que se registra con el código de instalación vincula una passkey con el flag UV | `test_admin_registers_a_passkey_that_verified_the_user` |
-| Una cuenta de administración que entra con contraseña recibe 401, sin que se verifique ni se cuente un fallo | `test_admin_does_not_sign_in_with_a_password` |
+| Si el producto usa la passkey, una contraseña equivocada de una cuenta de administración cuenta su fallo como en cualquier cuenta, y la correcta responde 403 | `test_admin_does_not_sign_in_with_a_password` |
 | Una cuenta de administración que entra con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo | `test_admin_passkey_needs_the_uv_flag` |
 | Si el `signCount` no crece, el titular recibe un aviso | `test_sign_count_that_does_not_grow_notifies_the_holder` |
 | Al volver a autenticarse, `allowCredentials` lista las passkeys de la cuenta con sus `transports` | `test_reauth_options_list_the_passkeys_with_transports` |
@@ -378,3 +386,12 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | El registro acepta solo los autenticadores que usa el producto, y otro responde 422 | `test_registration_takes_only_the_methods_of_the_product` |
 | Si el producto no usa la passkey, la cuenta de administración se registra con el código de instalación y una contraseña, y entra y la cambia | `test_admin_without_passkey_uses_the_password` |
 | Volver a autenticarse con la contraseña renueva la sesión, y una equivocada responde 401 | `test_reauth_with_the_password_renews_the_session` |
+| El código del SMS abre la sesión por sus dos rutas, y una app recibe la respuesta del canje del código | `test_sms_signs_in_the_web_and_the_app` |
+| Pedir el código para entrar con un teléfono sin cuenta responde 404, y una IP que recibe 10 en 15 minutos queda bloqueada 30 minutos | `test_code_to_an_unknown_phone_is_a_404` |
+| Un código para entrar equivocado responde 400 de tipo `invalid-code` y cuenta un fallo del teléfono, que un código nuevo no reinicia y un inicio de sesión sí | `test_wrong_code_is_invalid_code_and_a_failure_of_the_phone` |
+| El teléfono espera desde el quinto fallo y se deshabilita al centésimo; en espera o deshabilitado no recibe el SMS, y deshabilitado no acepta el código | `test_phone_waits_and_disables_like_any_authenticator` |
+| Si el producto usa la passkey, una cuenta de administración que pide el código recibe 403 sin SMS, uno equivocado cuenta su fallo como en cualquier cuenta, y uno correcto responde 403 | `test_admin_does_not_sign_in_with_sms` |
+| Volver a autenticarse con el código del teléfono renueva la sesión, y una cuenta sin teléfono que lo pide recibe 409 | `test_reauth_with_sms_renews_the_session` |
+| Una cuenta con teléfono se registra sin autenticador si el producto usa el código por SMS; con correo, o sin el código, responde 422 | `test_registration_by_phone_takes_no_authenticator` |
+| Cambiar el teléfono pone en cero sus fallos y lo vuelve a habilitar | `test_new_phone_resets_its_failures` |
+| La base rechaza una cuenta con número sin su fila en `phone`, y borrar la fila de una cuenta con número | `test_the_database_refuses_a_phone_without_its_row` |

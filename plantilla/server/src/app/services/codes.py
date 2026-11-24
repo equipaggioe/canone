@@ -22,6 +22,29 @@ LIFETIME = timedelta(minutes=10)
 # The third failed attempt invalidates the code.
 ATTEMPTS = 3
 MINUTE, HOUR, DAY = timedelta(minutes=1), timedelta(hours=1), timedelta(days=1)
+# The tenth 404 to the codes asked by an IP in 15 minutes blocks it 30
+# minutes: the code to sign in and the code to recover count together.
+UNKNOWN = 10
+UNKNOWN_WINDOW = timedelta(minutes=15)
+BLOCK = timedelta(minutes=30)
+
+
+def block_key(client: Client) -> str:
+    """Name the block of the codes of an IP."""
+    return f"code:{client.ip_address}"
+
+
+async def check_open(client: Client) -> None:
+    """Answer 429 to an IP blocked by its 404 answers."""
+    await limits.check_block(block_key(client), "Too many codes asked for unknown accounts")
+
+
+async def unknown(client: Client) -> HTTPException:
+    """Count a 404 of an IP, blocking it on the tenth, and return it."""
+    rule = Rule(f"code:unknown:{client.ip_address}", UNKNOWN, UNKNOWN_WINDOW, "")
+    if await limits.hit(rule):
+        await limits.block(block_key(client), BLOCK)
+    return HTTPException(HTTPStatus.NOT_FOUND, "No account has it")
 
 
 def key(purpose: str, address: str) -> str:

@@ -1,6 +1,6 @@
 # ADR-0226 · El registro trae el código y la passkey, y volver a autenticarse renueva la sesión
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 2, en lo que responde a la contraseña de una cuenta de administración, lo reemplaza el [ADR-0233](0233-una-cuenta-de-administracion-cuenta-sus-fallos-como-cualquier-otra.md)
 - **Fecha:** 2026-11-23
 - **Alcance:** `autenticacion.md`, `fastapi.md`, `plantilla/server/` y los workflows
 

@@ -76,6 +76,24 @@ class PasswordReauth(InputSchema):
     password: str
 
 
+class SmsCode(InputSchema):
+    """The phone of an account, which receives the code to sign in."""
+
+    phone: Phone
+
+
+class SmsLogin(SmsCode):
+    """The phone of an account, and the code its SMS brought."""
+
+    code: Code
+
+
+class SmsReauth(InputSchema):
+    """The code that the SMS brought to the phone of the account."""
+
+    code: Code
+
+
 class TokenResponse(Schema):
     """The tokens of an app, with the member names of RFC 6749."""
 
@@ -195,7 +213,8 @@ class PasskeyRegistration(InputSchema):
 class Registration(Identifier):
     """A new account: its verified address and its first authenticator.
 
-    The authenticator is a named passkey or a password. The setup code
+    The authenticator is a named passkey or a password; a phone may come
+    without one, where the product offers the SMS code. The setup code
     registers the first admin.
     """
 
@@ -208,10 +227,9 @@ class Registration(Identifier):
     @model_validator(mode="after")
     def one_authenticator(self) -> Self:
         """Take a named passkey or a password, not both."""
-        passkey = self.credential is not None and self.passkey_name is not None
         if (self.credential is None) != (self.passkey_name is None):
             raise ValueError("send the credential with its name")
-        if passkey == (self.password is not None):
+        if self.credential is not None and self.password is not None:
             raise ValueError("send either a passkey or a password")
         return self
 

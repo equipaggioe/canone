@@ -48,11 +48,7 @@ def hash_password(password: str) -> str:
 
 
 async def find(session: AsyncSession, login: PasswordLogin) -> tuple[Account, Password] | None:
-    """Find the account of the login and lock its password.
-
-    Where the product offers the passkey, an admin signs in only with
-    it: its password is ignored.
-    """
+    """Find the account of the login and lock its password."""
     identifier = Account.email == login.email if login.email else Account.phone == login.phone
     query = (
         sa.select(Account, Password)
@@ -60,8 +56,6 @@ async def find(session: AsyncSession, login: PasswordLogin) -> tuple[Account, Pa
         .where(identifier)
         .with_for_update(of=Password)
     )
-    if Method.PASSKEY in methods.METHODS:
-        query = query.where(Account.role != Role.ADMIN)
     return (await session.execute(query)).one_or_none()
 
 
@@ -90,7 +84,9 @@ async def check(session: AsyncSession, login: PasswordLogin, client: Client) -> 
     """Return the account of a right password, or answer 401.
 
     A wrong password, or an unknown account, raises a KeptError: the
-    failure and its event stay.
+    failure and its event stay. Where the product offers the passkey,
+    an admin with the right password gets 403: only whoever knows the
+    password sees it.
     """
     found = await find(session, login)
     if found is None:
@@ -113,6 +109,8 @@ async def check(session: AsyncSession, login: PasswordLogin, client: Client) -> 
                 )
             )
         raise KeptError(HTTPException(HTTPStatus.UNAUTHORIZED))
+    if account.role == Role.ADMIN and Method.PASSKEY in methods.METHODS:
+        raise HTTPException(HTTPStatus.FORBIDDEN, "An admin signs in only with a passkey")
     retries = authenticators.succeed(password)
     if retries:
         session.add(

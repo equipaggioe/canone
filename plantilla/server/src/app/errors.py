@@ -69,7 +69,7 @@ REAUTHENTICATION_REQUIRED = ProblemType(
     "reauthentication-required",
     "Reauthentication required",
     HTTPStatus.FORBIDDEN,
-    "Authenticate again with a passkey or the password, and repeat the request.",
+    "Authenticate again with a way to sign in of the account, and repeat the request.",
 )
 INVALID_CODE = ProblemType(
     "invalid-code",

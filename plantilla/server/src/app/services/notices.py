@@ -22,6 +22,8 @@ class Notice(StrEnum):
     PASSKEY_LINKED = "passkey_linked"
     PASSKEY_DELETED = "passkey_deleted"
     PASSKEY_CLONED = "passkey_cloned"
+    PASSWORD_ADDED = "password_added"
+    PASSWORD_CHANGED = "password_changed"
     EMAIL_CHANGED = "email_changed"
     PHONE_CHANGED = "phone_changed"
 
@@ -43,6 +45,16 @@ TEXTS = {
         "A passkey of your account may be copied",
         "A sign-in with the passkey {name} was refused: the passkey may be copied. "
         "Delete it in the app, add a new one and write to {contact}.",
+    ),
+    Notice.PASSWORD_ADDED: (
+        "A password was added to your account",
+        "A password was added to your account. If you did not add it, "
+        "delete your sessions in the app, reset the password and write to {contact}.",
+    ),
+    Notice.PASSWORD_CHANGED: (
+        "The password of your account changed",
+        "The password of your account changed, and your other sessions were closed. "
+        "If you did not change it, reset the password and write to {contact}.",
     ),
     Notice.EMAIL_CHANGED: (
         "The email of your account changed",

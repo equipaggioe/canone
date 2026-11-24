@@ -8,13 +8,15 @@ from uuid import uuid4
 import sqlalchemy as sa
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.concurrency import run_in_threadpool
 
 from app.config import settings
 from app.enums import EventLevel, Role
-from app.errors import INVALID_CODE, USER_VERIFICATION_REQUIRED, AppError
+from app.errors import INVALID_CODE, PASSWORD_BLOCKED, USER_VERIFICATION_REQUIRED, AppError
 from app.models.account.account import Account
+from app.models.account.password import Password
 from app.schemas.auth import Identifier, Registration
-from app.services import attestation, codes, events, limits
+from app.services import attestation, codes, events, limits, passwords
 from app.services.limits import Rule
 from app.services.sessions import Client
 
@@ -98,20 +100,22 @@ async def register(
     The passkey is checked first: a failed ceremony leaves the code.
     """
     await check_open(client)
-    created = await attestation.create(session, body.credential, client)
+    created = None
+    if body.credential is not None:
+        created = await attestation.create(session, body.credential, client)
+    elif body.setup_code is not None:
+        raise HTTPException(HTTPStatus.FORBIDDEN, "An admin registers with a passkey")
+    elif body.password is not None and passwords.blocked(body.password):
+        raise AppError(PASSWORD_BLOCKED)
     if not await codes.take(PURPOSE, body.address, body.code):
         raise AppError(INVALID_CODE)
     await check_new(session, body, client)
     account_role = await role(session, body.setup_code)
-    if account_role == Role.ADMIN and not created.user_verified:
+    if account_role == Role.ADMIN and created is not None and not created.user_verified:
         raise AppError(USER_VERIFICATION_REQUIRED)
-    account = Account(
-        email=body.email,
-        phone=body.phone,
-        user_handle=created.user_handle,
-        role=account_role,
-        language=language,
-    )
+    account = Account(email=body.email, phone=body.phone, role=account_role, language=language)
+    if created is not None:
+        account.user_handle = created.user_handle
     session.add(account)
     await session.flush()
     session.add(
@@ -127,5 +131,10 @@ async def register(
             details=events.changes("account", {"identifier": body.address, "role": account_role}),
         )
     )
-    attestation.keep(session, account, created, body.passkey_name, uuid4(), client)
+    if created is not None and body.passkey_name is not None:
+        attestation.keep(session, account, created, body.passkey_name, uuid4(), client)
+    if body.password is not None:
+        digest = await run_in_threadpool(passwords.hash_password, body.password)
+        session.add(Password(account_id=account.id, hash=digest))
+        passwords.changed(session, account, client)
     return account

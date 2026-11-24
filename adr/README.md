@@ -233,4 +233,5 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0225](0225-equipaggio-y-consola-son-instrumentos-de-canone.md) | Equipaggio y consola son instrumentos de Canone | `README.md`, `fastapi.md` y con `server/` |
 | [0226](0226-el-registro-trae-el-codigo-y-la-passkey-y-volver-a-autenticarse-renueva-la-sesion.md) | El registro trae el código y la passkey, y volver a autenticarse renueva la sesión | `autenticacion.md`, `fastapi.md` y con `server/` |
 | [0227](0227-un-objetivo-mas-chico-que-24-x-24-vale-con-su-circulo-de-24-libre.md) | Un objetivo más chico que 24 × 24 vale si su círculo de 24 no toca otro, y un separador puede ser más fino | `transversal.md`, `qt.md` y `plantilla/qt/tests/` |
+| [0228](0228-la-lista-de-bloqueo-sale-del-ncsc.md) | La lista de bloqueo sale del NCSC | `autenticacion.md`, `fastapi.md`, `fuentes/`, `scripts/` y con `server/` |
 | [0229](0229-un-separador-se-agarra-en-una-franja-de-24-px-encima-de-su-linea.md) | Un separador se agarra en una franja de 24 px puesta encima de su línea | `transversal.md`, `qt.md` y `plantilla/qt/tests/` |

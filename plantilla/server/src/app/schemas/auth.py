@@ -1,5 +1,6 @@
 """The bodies and responses of signing in."""
 
+import unicodedata
 from typing import Annotated, Any, Literal, Self
 
 import phonenumbers
@@ -27,6 +28,17 @@ def valid_number(phone: str) -> str:
 Phone = Annotated[str, StringConstraints(pattern=r"^\+[0-9]+$"), AfterValidator(valid_number)]
 # The 6 digits of a code that verifies an email or a phone.
 Code = Annotated[str, StringConstraints(pattern=r"^[0-9]{6}$")]
+
+
+def fit_length(password: str) -> str:
+    """Let through 8 to 128 code points, counted in NFC."""
+    if not 8 <= len(unicodedata.normalize("NFC", password)) <= 128:
+        raise ValueError("a password has 8 to 128 characters")
+    return password
+
+
+# autenticacion.md: a new password, counted as it is stored.
+NewPassword = Annotated[str, AfterValidator(fit_length)]
 # What the holder calls a passkey.
 PasskeyName = Annotated[str, StringConstraints(min_length=1, max_length=64)]
 
@@ -181,12 +193,30 @@ class PasskeyRegistration(InputSchema):
 
 
 class Registration(Identifier):
-    """A new account: its verified address and its first passkey.
+    """A new account: its verified address and its first authenticator.
 
-    The setup code registers the first admin.
+    The authenticator is a named passkey or a password. The setup code
+    registers the first admin.
     """
 
     code: Code
-    passkey_name: PasskeyName
-    credential: PasskeyRegistration
+    passkey_name: PasskeyName | None = None
+    credential: PasskeyRegistration | None = None
+    password: NewPassword | None = None
     setup_code: str | None = None
+
+    @model_validator(mode="after")
+    def one_authenticator(self) -> Self:
+        """Take a named passkey or a password, not both."""
+        passkey = self.credential is not None and self.passkey_name is not None
+        if (self.credential is None) != (self.passkey_name is None):
+            raise ValueError("send the credential with its name")
+        if passkey == (self.password is not None):
+            raise ValueError("send either a passkey or a password")
+        return self
+
+
+class PasswordChange(InputSchema):
+    """The new password of the account."""
+
+    password: NewPassword

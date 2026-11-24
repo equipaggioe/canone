@@ -34,6 +34,7 @@ server/
     tasks.py
     pages.py
     translations.py
+    blocklist.txt
     seeders/
       __init__.py
       <datos>.py
@@ -109,13 +110,14 @@ server/
     test_health.py
     test_messages.py
     test_passkeys.py
+    test_passwords.py
     test_registration.py
     test_sessions.py
     test_tasks.py
     test_<recurso>.py
 ```
 
-Plantilla: [plantilla/server/](../plantilla/server/) y el job `server` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml). Se copian sin editar `alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako`, cada `__init__.py`, `database.py`, `openapi.py`, `store.py`, `tracing.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py`, `services/files.py`, `tests/test_conventions.py`, `tests/test_events.py`, `tests/test_files.py` y `tests/test_tasks.py`. Los demás se copian y se completan.
+Plantilla: [plantilla/server/](../plantilla/server/) y el job `server` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml). Se copian sin editar `blocklist.txt`, `alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako`, cada `__init__.py`, `database.py`, `openapi.py`, `store.py`, `tracing.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py`, `services/files.py`, `tests/test_conventions.py`, `tests/test_events.py`, `tests/test_files.py` y `tests/test_tasks.py`. Los demás se copian y se completan.
 
 ## Estilo
 

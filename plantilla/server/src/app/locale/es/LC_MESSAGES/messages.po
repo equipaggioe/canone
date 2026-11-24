@@ -55,3 +55,15 @@ msgstr "Cambió el teléfono de tu cuenta"
 
 msgid "The phone of your account changed. If you did not change it, write to {contact}."
 msgstr "Cambió el teléfono de tu cuenta. Si no lo cambiaste tú, escribe a {contact}."
+
+msgid "A password was added to your account"
+msgstr "Se agregó una contraseña a tu cuenta"
+
+msgid "A password was added to your account. If you did not add it, delete your sessions in the app, reset the password and write to {contact}."
+msgstr "Se agregó una contraseña a tu cuenta. Si no la agregaste tú, cierra tus sesiones en la app, restablece la contraseña y escribe a {contact}."
+
+msgid "The password of your account changed"
+msgstr "Cambió la contraseña de tu cuenta"
+
+msgid "The password of your account changed, and your other sessions were closed. If you did not change it, reset the password and write to {contact}."
+msgstr "Cambió la contraseña de tu cuenta, y se cerraron tus otras sesiones. Si no la cambiaste tú, restablece la contraseña y escribe a {contact}."

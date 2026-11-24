@@ -16,13 +16,16 @@ from app.schemas.account import (
     PhoneChange,
     PhoneCode,
 )
-from app.schemas.auth import PasskeyCreationOptions
+from app.schemas.auth import PasskeyCreationOptions, PasswordChange
 from app.schemas.page import Page, PageParams, decode_token, encode_token
-from app.services import account, attestation
+from app.services import account, attestation, passwords
 
 router = APIRouter(prefix="/account", tags=["account"])
 
 # transversal.md: a PUT that creates answers 201, and one repeated, 200.
+ADDED: dict[int | str, dict[str, Any]] = {
+    HTTPStatus.CREATED.value: {"description": "The account had no password"}
+}
 FOUND: dict[int | str, dict[str, Any]] = {
     HTTPStatus.OK.value: {"model": PasskeyView, "description": "The passkey, already linked"}
 }
@@ -73,6 +76,19 @@ async def delete_passkey(
 ) -> None:
     """Delete a passkey of the account: a lost one stops working."""
     await account.unlink(session, principal.account, passkey_id, caller)
+
+
+@router.put("/password", status_code=HTTPStatus.NO_CONTENT, responses=ADDED)
+async def put_password(
+    response: Response,
+    session: SessionDep,
+    principal: ReauthenticatedDep,
+    body: PasswordChange,
+    caller: ClientDep,
+) -> None:
+    """Add a password, or change it and close the other sessions."""
+    if await passwords.put(session, principal, body.password, caller):
+        response.status_code = HTTPStatus.CREATED
 
 
 @router.post("/email/code", status_code=HTTPStatus.NO_CONTENT)

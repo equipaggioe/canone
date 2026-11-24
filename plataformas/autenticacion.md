@@ -59,21 +59,28 @@ Estándares: de ASVS 5.0, los capítulos [V6 *Authentication*](../fuentes/owasp/
 
 - La contraseña la elige el titular.
 - El login con contraseña identifica la cuenta con su correo o con su teléfono, uno solo.
-- La lista de bloqueo es un archivo del servidor.
+- La lista de bloqueo es un archivo del servidor, `blocklist.txt`: las contraseñas de 8 caracteres o más de la lista de las 100.000 más usadas en las filtraciones de Have I Been Pwned, que publicó el NCSC del Reino Unido. `scripts/bloqueo.py` de Canone la deriva de `fuentes/`, y se copia sin editar.
+- La contraseña se compara entera contra la lista, sin distinguir mayúsculas: en NFC y con `casefold`.
+- Una contraseña tiene a lo sumo 128 caracteres.
+- Una contraseña de la lista se rechaza con 422 de tipo `password-blocked`, y una corta o larga, con 422 de tipo `validation`.
+- La contraseña se agrega o se cambia por `PUT /api/account/password`, que responde 201 si la cuenta no tenía.
+- Cambiar la contraseña pone en cero sus fallos y la vuelve a habilitar: es otro secreto.
+- Una cuenta de administración que intenta agregar una contraseña recibe 403.
 - Una contraseña se guarda con `PasswordHash.recommended()` de pwdlib: Argon2id con 64 MiB, 3 pasadas y 4 carriles.
 - Al medir el largo de una contraseña, cada punto de código cuenta como un carácter.
 - La contraseña se normaliza a NFC antes del hash y al verificarla: el mismo texto escrito en otro dispositivo puede llegar en otra forma Unicode.
 - El cliente muestra una guía para elegir una contraseña fuerte, que avisa que un carácter fuera de ASCII puede escribirse distinto en otro dispositivo. Al rechazar una de la lista de bloqueo, dice por qué y repite la guía.
-- El servidor obliga a cambiar una contraseña cuando hay evidencia de que se comprometió.
 - Toda contraseña tiene al menos 8 caracteres ([ASVS 5.0 §6.2.1](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - El campo de la contraseña la oculta y ofrece mostrarla entera mientras se escribe ([ASVS 5.0 §6.2.6](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - Cambiar la contraseña cierra las demás sesiones, y restablecerla, todas: quien la cambia porque la cree robada no deja abierta la sesión del ladrón ([ASVS 5.0 §7.4.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - Una contraseña admite cualquier carácter, sin reglas de composición ([ASVS 5.0 §6.2.5](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - El servidor admite contraseñas de al menos 64 caracteres ([ASVS 5.0 §6.2.9](../fuentes/owasp/ASVS_V6_Authentication.md)).
-- Crear o cambiar una contraseña la compara contra la lista de bloqueo, que tiene al menos las 3000 contraseñas más comunes de 8 caracteres o más, contraseñas filtradas y las palabras propias del producto, como su nombre ([ASVS 5.0 §6.1.2](../fuentes/owasp/ASVS_V6_Authentication.md), [§6.2.4](../fuentes/owasp/ASVS_V6_Authentication.md), [§6.2.11](../fuentes/owasp/ASVS_V6_Authentication.md) y [§6.2.12](../fuentes/owasp/ASVS_V6_Authentication.md)).
+- Crear o cambiar una contraseña la compara contra la lista de bloqueo, que tiene al menos las 3000 contraseñas más comunes de 8 caracteres o más, sacadas de filtraciones ([ASVS 5.0 §6.2.4](../fuentes/owasp/ASVS_V6_Authentication.md) y [§6.2.12](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - El servidor verifica la contraseña tal como llega, salvo la normalización a NFC, sin truncarla ni cambiar sus mayúsculas ([ASVS 5.0 §6.2.8](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - El campo de la contraseña admite pegar, el autocompletado del navegador y los gestores de contraseñas ([ASVS 5.0 §6.2.7](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - No hay cambio periódico de la contraseña, ni pistas, ni preguntas de seguridad ([ASVS 5.0 §6.2.10](../fuentes/owasp/ASVS_V6_Authentication.md) y [§6.4.2](../fuentes/owasp/ASVS_V6_Authentication.md)).
+
+Plantilla: de [plantilla/server/](../plantilla/server/), `blocklist.txt`, `services/passwords.py` y `tests/test_passwords.py`; de Canone, [scripts/bloqueo.py](../scripts/bloqueo.py).
 
 ## Cuentas
 
@@ -344,3 +351,14 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | El teléfono se cambia con un SMS al nuevo, y el viejo recibe un aviso | `test_phone_changes_with_an_sms_to_the_new_one` |
 | Un correo o un teléfono que tiene otra cuenta responde 409 | `test_email_or_phone_of_another_account_is_a_409` |
 | Una cuenta se registra con un teléfono, verificado con el código de su SMS | `test_registration_by_phone_verifies_the_phone` |
+| La lista de bloqueo tiene al menos las 3000 contraseñas más comunes de 8 caracteres o más, en NFC y con `casefold` | `test_blocklist_holds_the_common_passwords_of_8_or_more` |
+| `blocklist.txt` sale de la lista del NCSC de `fuentes/` | `verificar.py --canone` |
+| Crear o cambiar una contraseña la compara entera contra la lista, sin distinguir mayúsculas, y la rechaza con 422 de tipo `password-blocked` y el evento `authn_password_change_fail` | `test_password_on_the_blocklist_is_refused_with_its_type` |
+| Una contraseña tiene de 8 a 128 caracteres, y cada punto de código cuenta como uno, en NFC | `test_password_has_8_to_128_code_points_in_nfc` |
+| Agregar una contraseña responde 201, avisa a cada dirección y deja `authn_password_change` | `test_password_is_added_and_notifies` |
+| Cambiar la contraseña cierra las demás sesiones | `test_change_closes_the_other_sessions` |
+| Cambiar la contraseña pone en cero sus fallos y la vuelve a habilitar | `test_change_resets_the_failures_and_enables` |
+| Una cuenta de administración que intenta agregar una contraseña recibe 403 | `test_admin_does_not_add_a_password` |
+| Agregar o cambiar la contraseña pide volver a autenticarse | `test_password_change_needs_a_reauth` |
+| El registro acepta una contraseña: una de la lista no gasta el código, y con el código de instalación responde 403 | `test_registration_takes_a_password` |
+| El registro lleva una passkey con su nombre o una contraseña, no las dos | `test_registration_takes_one_authenticator` |

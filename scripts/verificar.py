@@ -20,6 +20,7 @@ import re
 import subprocess
 import sys
 import tomllib
+import unicodedata
 from pathlib import Path
 
 CANONE = Path(__file__).resolve().parent.parent
@@ -1296,6 +1297,29 @@ def variables_release(repo: Path, variables: dict[str, str]) -> list[str]:
     return fallas
 
 
+# autenticacion.md, «Contraseñas»: la lista de bloqueo de la plantilla son las contraseñas de la lista del
+# NCSC con 8 puntos de código o más después de NFC, en minúsculas de casefold, sin repetir y en orden.
+NCSC = CANONE / "fuentes" / "seclists" / "100k-most-used-passwords-NCSC.txt"
+BLOQUEO = PLANTILLA / "server" / "src" / "app" / "blocklist.txt"
+
+
+def lista_de_bloqueo() -> str:
+    """Deriva de la lista del NCSC el texto de la lista de bloqueo."""
+    contrasenas = set()
+    for linea in NCSC.read_text(encoding="utf-8").splitlines():
+        normalizada = unicodedata.normalize("NFC", linea)
+        if len(normalizada) >= 8:
+            contrasenas.add(normalizada.casefold())
+    return "".join(f"{contrasena}\n" for contrasena in sorted(contrasenas))
+
+
+def bloqueo() -> list[str]:
+    """Comprueba que la lista de bloqueo de la plantilla salga de la del NCSC."""
+    if BLOQUEO.read_text(encoding="utf-8") != lista_de_bloqueo():
+        return ["autenticacion.md: plantilla/server/src/app/blocklist.txt no sale de la lista del NCSC; se escribe con scripts/bloqueo.py"]
+    return []
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", type=Path)
@@ -1314,6 +1338,7 @@ def main() -> int:
         fallas += versiones_workflows(PLANTILLA, PAGINAS)
         fallas += versiones_workflows(CANONE, PAGINAS)
         fallas += negaciones(CANONE, listar(CANONE))
+        fallas += bloqueo()
         print(f"\ncanone: {len(fallas)} incumplimientos")
         for falla in fallas:
             print(f"  - {falla}")

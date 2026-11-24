@@ -345,6 +345,84 @@
         }
       }
     },
+    "/api/account/password": {
+      "put": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Put Password",
+        "description": "Add a password, or change it and close the other sessions.",
+        "operationId": "accountPutPassword",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordChange"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "The account had no password"
+          }
+        }
+      }
+    },
     "/api/account/email/code": {
       "post": {
         "tags": [
@@ -2627,6 +2705,21 @@
         "title": "PasskeyView",
         "description": "A passkey of the account, by its name and its last use."
       },
+      "PasswordChange": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "title": "PasswordChange",
+        "description": "The new password of the account."
+      },
       "PasswordLogin": {
         "properties": {
           "email": {
@@ -2749,13 +2842,38 @@
             "title": "Code"
           },
           "passkeyName": {
-            "type": "string",
-            "maxLength": 64,
-            "minLength": 1,
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Passkeyname"
           },
           "credential": {
-            "$ref": "#/components/schemas/PasskeyRegistration"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PasskeyRegistration"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
           },
           "setupCode": {
             "anyOf": [
@@ -2772,12 +2890,10 @@
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "code",
-          "passkeyName",
-          "credential"
+          "code"
         ],
         "title": "Registration",
-        "description": "A new account: its verified address and its first passkey.\n\nThe setup code registers the first admin."
+        "description": "A new account: its verified address and its first authenticator.\n\nThe authenticator is a named passkey or a password. The setup code\nregisters the first admin."
       },
       "RelyingParty": {
         "properties": {

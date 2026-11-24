@@ -77,6 +77,12 @@ INVALID_CODE = ProblemType(
     HTTPStatus.BAD_REQUEST,
     "Check the code, or ask for a new one: a code lasts 10 minutes and three attempts.",
 )
+PASSWORD_BLOCKED = ProblemType(
+    "password-blocked",
+    "Password blocked",
+    HTTPStatus.UNPROCESSABLE_CONTENT,
+    "Choose another password: this one is common or leaked.",
+)
 TYPES = {
     problem.name: problem
     for problem in (
@@ -86,6 +92,7 @@ TYPES = {
         USER_VERIFICATION_REQUIRED,
         REAUTHENTICATION_REQUIRED,
         INVALID_CODE,
+        PASSWORD_BLOCKED,
     )
 }
 

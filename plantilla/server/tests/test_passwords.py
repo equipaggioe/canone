@@ -194,26 +194,38 @@ async def test_password_is_added_and_notifies(
     assert (await sign_in(client, NEW)).status_code == 200
 
 
-async def test_change_closes_the_other_sessions(
+async def test_change_keeps_the_sessions_and_the_holder_closes_the_others(
     client: AsyncClient,
     guarded: AsyncClient,
     session: AsyncSession,
     account: Account,
     sent: list[httpx.Request],
 ) -> None:
-    """Changing the password keeps this session and closes the rest."""
+    """A password change closes no session, which a thief would abuse.
+
+    The holder closes the others afterwards, having authenticated again.
+    """
     other = (await sign_in(client)).json()
     tokens = (await sign_in(client)).json()
     assert (await put(client, tokens, NEW)).status_code == 204
-    assert (await guarded.get("/whoami", headers=bearer(other))).status_code == 401
-    assert (await guarded.get("/whoami", headers=bearer(tokens))).status_code == 200
-    assert await session.scalar(sa.select(sa.func.count()).select_from(AccountSession)) == 1
-    expired = await session.scalars(
-        sa.select(EventLog.details).where(EventLog.action == "session_expired")
-    )
-    assert list(expired) == [{"reason": "password_change"}]
+    assert (await guarded.get("/whoami", headers=bearer(other))).status_code == 200
     assert (await sign_in(client, PASSWORD)).status_code == 401
     assert len(sent) == 2
+    moment = datetime.now(UTC) - timedelta(minutes=10)
+    await session.execute(sa.update(AccountSession).values(authenticated_at=moment))
+    response = await client.delete("/api/account/sessions", headers=bearer(tokens))
+    assert response.status_code == 403
+    assert response.json()["type"] == errors.REAUTHENTICATION_REQUIRED.uri
+    await session.execute(sa.update(AccountSession).values(authenticated_at=datetime.now(UTC)))
+    assert (
+        await client.delete("/api/account/sessions", headers=bearer(tokens))
+    ).status_code == 204
+    assert (await guarded.get("/whoami", headers=bearer(other))).status_code == 401
+    assert (await guarded.get("/whoami", headers=bearer(tokens))).status_code == 200
+    closed = await session.scalars(
+        sa.select(EventLog.details).where(EventLog.action == "session_logout")
+    )
+    assert list(closed) == [{"reason": "closed_by_holder"}]
 
 
 async def test_change_resets_the_failures_and_enables(

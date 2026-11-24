@@ -26,6 +26,13 @@ class Method(StrEnum):
     SMS = "sms"
 
 
+class Address(StrEnum):
+    """Where a code of the account goes: its email or its phone."""
+
+    EMAIL = "email"
+    PHONE = "phone"
+
+
 class SessionKind(StrEnum):
     """How a session is presented: a cookie, or the tokens of an app."""
 

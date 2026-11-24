@@ -68,11 +68,12 @@ async def issue(purpose: str, address: str) -> str:
     return code
 
 
-async def take(purpose: str, address: str, code: str) -> bool:
+async def take(purpose: str, address: str, code: str, *, keep: bool = False) -> bool:
     """Tell whether a code is the live one, and spend it.
 
     Each attempt counts before the comparison, so a code is compared at
-    most three times, and only one attempt deletes it.
+    most three times, and only one attempt deletes it. A code kept for a
+    later step forgets its attempts: whoever sent it knows it.
     """
     name = key(purpose, address)
     attempts = await store.client.incr(f"{name}:attempts")
@@ -81,11 +82,20 @@ async def take(purpose: str, address: str, code: str) -> bool:
     stored = await store.client.get(name)
     if stored is None or attempts > ATTEMPTS:
         return False
+    if hmac.compare_digest(stored, digest(code)) and keep:
+        await store.client.delete(f"{name}:attempts")
+        return True
     if hmac.compare_digest(stored, digest(code)):
         return bool(await store.client.delete(name))
     if attempts == ATTEMPTS:
         await store.client.delete(name)
     return False
+
+
+async def drop(purpose: str, address: str) -> None:
+    """Spend a code that a step kept."""
+    name = key(purpose, address)
+    await store.client.delete(name, f"{name}:attempts")
 
 
 def email_rules(email: str) -> list[Rule]:

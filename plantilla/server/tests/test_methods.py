@@ -36,10 +36,16 @@ async def test_a_method_the_product_does_not_use_has_no_routes() -> None:
             "/api/auth/sms/token",
             "/api/auth/reauth/sms/code",
             "/api/auth/reauth/sms",
+            "/api/auth/recovery/code",
+            "/api/auth/recovery/password",
+            "/api/auth/recovery/options",
+            "/api/auth/recovery/passkey",
         ):
             assert (await client.post(path, json={})).status_code == 404, path
         assert (await client.put("/api/account/password", json={})).status_code == 404
         assert (await client.get("/api/auth/web/start")).status_code == 404
+        assert (await client.put("/api/account/recovery-code", json={})).status_code == 404
+        assert (await client.get("/api/account/recovery")).status_code == 404
         assert (await client.get("/api/health")).status_code == 204
 
 

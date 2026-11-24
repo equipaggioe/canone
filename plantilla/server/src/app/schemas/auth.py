@@ -4,7 +4,7 @@ import unicodedata
 from typing import Annotated, Any, Literal, Self
 
 import phonenumbers
-from pydantic import AfterValidator, Field, StringConstraints, model_validator
+from pydantic import AfterValidator, BeforeValidator, Field, StringConstraints, model_validator
 
 from app.enums import TokenErrorCode
 from app.schemas.base import InputSchema, Schema
@@ -41,6 +41,17 @@ def fit_length(password: str) -> str:
 NewPassword = Annotated[str, AfterValidator(fit_length)]
 # What the holder calls a passkey.
 PasskeyName = Annotated[str, StringConstraints(min_length=1, max_length=64)]
+
+
+def plain(code: object) -> object:
+    """Read a saved code in any case, with spaces or dashes."""
+    if not isinstance(code, str):
+        return code
+    return code.replace(" ", "").replace("-", "").upper()
+
+
+# The saved recovery code: 80 bits in 16 characters of base32.
+SavedCode = Annotated[str, BeforeValidator(plain), StringConstraints(pattern=r"^[A-Z2-7]{16}$")]
 
 
 class Identifier(InputSchema):
@@ -232,6 +243,33 @@ class Registration(Identifier):
         if self.credential is not None and self.password is not None:
             raise ValueError("send either a passkey or a password")
         return self
+
+
+class RecoveryProof(Identifier):
+    """An email or a phone of an account, and the code it received."""
+
+    code: Code
+
+
+class PasswordRecovery(RecoveryProof):
+    """The code, the saved code if any, and the new password."""
+
+    recovery_code: SavedCode | None = None
+    password: NewPassword
+
+
+class PasskeyRecovery(RecoveryProof):
+    """The code, the saved code if any, and the new passkey."""
+
+    recovery_code: SavedCode | None = None
+    passkey_name: PasskeyName
+    credential: PasskeyRegistration
+
+
+class RecoveryCodeView(Schema):
+    """A saved recovery code, shown once."""
+
+    recovery_code: str
 
 
 class PasswordChange(InputSchema):

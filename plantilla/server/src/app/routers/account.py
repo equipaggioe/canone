@@ -1,4 +1,4 @@
-"""The account of the session: its email and its phone."""
+"""The account of the session: its email, its phone, its sessions."""
 
 from http import HTTPStatus
 
@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request
 
 from app.dependencies import ClientDep, PrincipalDep, ReauthenticatedDep, SessionDep
 from app.schemas.account import EmailChange, EmailCode, PhoneChange, PhoneCode
-from app.services import account
+from app.services import account, sessions
 
 router = APIRouter(prefix="/account", tags=["account"])
 
@@ -46,3 +46,11 @@ async def put_phone(
 ) -> None:
     """Change the phone with the code it received."""
     await account.change_phone(session, principal.account, body.phone, body.code, caller)
+
+
+@router.delete("/sessions", status_code=HTTPStatus.NO_CONTENT)
+async def close_others(
+    session: SessionDep, principal: ReauthenticatedDep, caller: ClientDep
+) -> None:
+    """Close every session of the account but the one that calls."""
+    await sessions.close_others(session, principal.session, caller)

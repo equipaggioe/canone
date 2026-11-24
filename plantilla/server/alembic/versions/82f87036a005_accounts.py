@@ -1,4 +1,4 @@
-"""The accounts, their passwords, passkeys and phones, and their sessions.
+"""The accounts, their authenticators, their recovery and their sessions.
 
 Revision ID: 82f87036a005
 Revises: d34c1b992b0b
@@ -138,9 +138,59 @@ def upgrade() -> None:
         sa.UniqueConstraint("credential_id", name=op.f("uq_passkey_credential_id")),
     )
     op.create_index(op.f("ix_passkey_account_id"), "passkey", ["account_id"])
+    op.create_table(
+        "recovery",
+        sa.Column("account_id", sa.Uuid(), nullable=False),
+        sa.Column("address", sa.TEXT(), nullable=False),
+        sa.Column("applies_at", postgresql.TIMESTAMP(timezone=True), nullable=False),
+        sa.Column("password_hash", sa.TEXT(), nullable=True),
+        sa.Column("credential_id", sa.LargeBinary(), nullable=True),
+        sa.Column("public_key", sa.LargeBinary(), nullable=True),
+        sa.Column("sign_count", sa.BigInteger(), nullable=True),
+        sa.Column("uv_initialized", sa.Boolean(), nullable=True),
+        sa.Column("transports", postgresql.ARRAY(sa.TEXT()), nullable=True),
+        sa.Column("backup_eligible", sa.Boolean(), nullable=True),
+        sa.Column("backup_state", sa.Boolean(), nullable=True),
+        sa.Column("passkey_name", sa.TEXT(), nullable=True),
+        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.CheckConstraint("address IN ('email', 'phone')", name=op.f("ck_recovery_address")),
+        sa.CheckConstraint(
+            "(password_hash IS NOT NULL AND credential_id IS NULL AND public_key IS NULL AND sign_count IS NULL"
+            " AND uv_initialized IS NULL AND transports IS NULL AND backup_eligible IS NULL AND backup_state IS NULL"
+            " AND passkey_name IS NULL) OR (password_hash IS NULL AND credential_id IS NOT NULL AND public_key IS NOT NULL"
+            " AND sign_count IS NOT NULL AND uv_initialized IS NOT NULL AND transports IS NOT NULL"
+            " AND backup_eligible IS NOT NULL AND backup_state IS NOT NULL AND passkey_name IS NOT NULL)",
+            name=op.f("ck_recovery_authenticator"),
+        ),
+        sa.ForeignKeyConstraint(["account_id"], ["account.id"], name=op.f("fk_recovery_account_id_account"), ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("account_id", name=op.f("pk_recovery")),
+    )
+    op.create_index(op.f("ix_recovery_applies_at"), "recovery", ["applies_at"])
+    op.create_table(
+        "recovery_address",
+        sa.Column("account_id", sa.Uuid(), nullable=False),
+        sa.Column("address", sa.TEXT(), nullable=False),
+        sa.Column("failures", sa.Integer(), server_default=sa.text("0"), nullable=False),
+        sa.Column("retry_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.Column("disabled_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.CheckConstraint("address IN ('email', 'phone')", name=op.f("ck_recovery_address_address")),
+        sa.ForeignKeyConstraint(["account_id"], ["account.id"], name=op.f("fk_recovery_address_account_id_account"), ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("account_id", "address", name=op.f("pk_recovery_address")),
+    )
+    op.create_table(
+        "recovery_code",
+        sa.Column("account_id", sa.Uuid(), nullable=False),
+        sa.Column("hash", sa.TEXT(), nullable=False),
+        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column("failures", sa.Integer(), server_default=sa.text("0"), nullable=False),
+        sa.Column("retry_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.Column("disabled_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.ForeignKeyConstraint(["account_id"], ["account.id"], name=op.f("fk_recovery_code_account_id_account"), ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("account_id", name=op.f("pk_recovery_code")),
+    )
     for statement in PHONE_BOUND:
         op.execute(statement)
-    op.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON account, account_session, passkey, password, phone TO {ROLE}")
+    op.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON account, account_session, passkey, password, phone, recovery, recovery_address, recovery_code TO {ROLE}")
 
 
 def downgrade() -> None:
@@ -148,6 +198,10 @@ def downgrade() -> None:
     op.execute("DROP TRIGGER phone_phone_bound ON phone")
     op.execute("DROP TRIGGER account_phone_bound ON account")
     op.execute("DROP FUNCTION phone_bound()")
+    op.drop_table("recovery_code")
+    op.drop_table("recovery_address")
+    op.drop_index(op.f("ix_recovery_applies_at"), table_name="recovery")
+    op.drop_table("recovery")
     op.drop_index(op.f("ix_passkey_account_id"), table_name="passkey")
     op.drop_table("passkey")
     op.drop_table("phone")

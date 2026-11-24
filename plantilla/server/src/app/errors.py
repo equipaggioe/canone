@@ -83,6 +83,12 @@ PASSWORD_BLOCKED = ProblemType(
     HTTPStatus.UNPROCESSABLE_CONTENT,
     "Choose another password: this one is common or leaked.",
 )
+RECOVERY_DISABLED = ProblemType(
+    "recovery-disabled",
+    "Recovery disabled",
+    HTTPStatus.FORBIDDEN,
+    "Recover the account another way, or ask the administrator.",
+)
 TYPES = {
     problem.name: problem
     for problem in (
@@ -93,6 +99,7 @@ TYPES = {
         REAUTHENTICATION_REQUIRED,
         INVALID_CODE,
         PASSWORD_BLOCKED,
+        RECOVERY_DISABLED,
     )
 }
 

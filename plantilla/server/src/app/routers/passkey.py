@@ -1,4 +1,4 @@
-"""The passkey: signing in, authenticating again, linking and deleting.
+"""The passkey: signing in, again, linking, deleting and recovering.
 
 main.py mounts these routes, and those of the authorization code, only
 if the product offers the passkey.
@@ -14,16 +14,20 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 
 from app.dependencies import ClientDep, PrincipalDep, ReauthenticatedDep, SessionDep, public
 from app.routers.auth import RENEWED, open_cookie, open_token, renew
+from app.routers.recovery import RECOVERED, answer
 from app.schemas.account import PasskeyLink, PasskeyView
 from app.schemas.auth import (
     Identifier,
     PasskeyCreationOptions,
     PasskeyCredential,
     PasskeyOptions,
+    PasskeyRecovery,
+    RecoveryCodeView,
+    RecoveryProof,
     TokenResponse,
 )
 from app.schemas.page import Page, PageParams, decode_token, encode_token
-from app.services import account, attestation, passkeys
+from app.services import account, attestation, passkeys, recovery
 
 router = APIRouter(tags=["passkey"])
 
@@ -137,3 +141,22 @@ async def delete(
 ) -> None:
     """Delete a passkey of the account: a lost one stops working."""
     await account.unlink(session, principal.account, passkey_id, caller)
+
+
+@router.post("/auth/recovery/options", dependencies=[Depends(public)])
+async def recovery_options(
+    session: SessionDep, body: RecoveryProof, caller: ClientDep
+) -> PasskeyCreationOptions:
+    """Start the passkey of a recovery; the code stays for the next."""
+    return await recovery.options(session, body, caller)
+
+
+@router.post(
+    "/auth/recovery/passkey",
+    response_model=RecoveryCodeView,
+    responses=RECOVERED,
+    dependencies=[Depends(public)],
+)
+async def recover(session: SessionDep, body: PasskeyRecovery, caller: ClientDep) -> Response:
+    """Link a passkey with the code of the recovery."""
+    return answer(await recovery.passkey(session, body, caller))

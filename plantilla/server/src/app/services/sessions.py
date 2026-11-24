@@ -282,6 +282,28 @@ async def close(session: AsyncSession, row: AccountSession, client: Client) -> N
     session.add(event("session_logout", EventLevel.INFO, row, client))
 
 
+async def close_others(session: AsyncSession, row: AccountSession, client: Client) -> None:
+    """Close every session of the account but the one that calls."""
+    closed = await session.execute(
+        sa.delete(AccountSession)
+        .where(AccountSession.account_id == row.account_id, AccountSession.id != row.id)
+        .returning(AccountSession.id)
+    )
+    for (session_id,) in closed:
+        session.add(
+            events.event(
+                "session_logout",
+                EventLevel.INFO,
+                actor_id=row.account_id,
+                target_type="account_session",
+                target_id=str(session_id),
+                ip_address=client.ip_address,
+                user_agent=client.user_agent,
+                details={"reason": "closed_by_holder"},
+            )
+        )
+
+
 async def purge() -> None:
     """Delete the sessions unused for longer than IDLE."""
     cutoff = datetime.now(UTC) - IDLE

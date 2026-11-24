@@ -239,3 +239,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0231](0231-cada-producto-elige-sus-metodos-para-entrar.md) | Cada producto elige sus métodos para entrar | `autenticacion.md`, `fastapi.md` y con `server/` |
 | [0232](0232-el-codigo-por-sms-se-pide-aparte-vuelve-a-autenticar-y-cuenta-sus-fallos-en-phone.md) | El código por SMS se pide aparte, vuelve a autenticar y cuenta sus fallos en `phone` | `autenticacion.md`, `fastapi.md` y con `server/` |
 | [0233](0233-una-cuenta-de-administracion-cuenta-sus-fallos-como-cualquier-otra.md) | Una cuenta de administración cuenta sus fallos como cualquier otra | `autenticacion.md` y con `server/` |
+| [0234](0234-la-recuperacion-suma-el-codigo-guardado-y-espera-solo-con-el-correo-de-una-cuenta-con-passkey.md) | La recuperación suma el código guardado y espera solo con el correo de una cuenta con passkey | `autenticacion.md`, `fastapi.md` y con `server/` |

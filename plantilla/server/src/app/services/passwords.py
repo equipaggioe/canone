@@ -15,7 +15,6 @@ from app import methods
 from app.enums import EventLevel, Method, Role
 from app.errors import PASSWORD_BLOCKED, AppError, KeptError
 from app.models.account.account import Account
-from app.models.account.account_session import AccountSession
 from app.models.account.password import Password
 from app.models.event.event_log import EventLog
 from app.schemas.auth import PasswordLogin
@@ -162,37 +161,12 @@ def changed(session: AsyncSession, account: Account, client: Client) -> None:
     )
 
 
-async def close_others(session: AsyncSession, principal: Principal, client: Client) -> None:
-    """Close every other session of the account."""
-    closed = await session.execute(
-        sa.delete(AccountSession)
-        .where(
-            AccountSession.account_id == principal.account.id,
-            AccountSession.id != principal.session.id,
-        )
-        .returning(AccountSession.id)
-    )
-    for (session_id,) in closed:
-        session.add(
-            events.event(
-                "session_expired",
-                EventLevel.INFO,
-                actor_id=principal.account.id,
-                target_type="account_session",
-                target_id=str(session_id),
-                ip_address=client.ip_address,
-                user_agent=client.user_agent,
-                details={"reason": "password_change"},
-            )
-        )
-
-
 async def put(session: AsyncSession, principal: Principal, password: str, client: Client) -> bool:
     """Add or change the password of the account; tell if it is new.
 
-    A change is another secret: it waits nothing and closes the other
-    sessions. Where the product offers the passkey, an admin signs in
-    only with it.
+    A change is another secret: it waits nothing. The sessions stay, and
+    the app offers to close the others. Where the product offers the
+    passkey, an admin signs in only with it.
     """
     account = principal.account
     if account.role == Role.ADMIN and Method.PASSKEY in methods.METHODS:
@@ -206,7 +180,6 @@ async def put(session: AsyncSession, principal: Principal, password: str, client
     else:
         row.hash, row.changed_at = digest, now
         row.failures, row.retry_at, row.disabled_at = 0, None, None
-        await close_others(session, principal, client)
     changed(session, account, client)
     notice = notices.Notice.PASSWORD_ADDED if row is None else notices.Notice.PASSWORD_CHANGED
     notices.notify(session, account, notice)

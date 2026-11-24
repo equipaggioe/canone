@@ -11,7 +11,17 @@ from app.database import engine
 from app.dependencies import check_client_version, check_origin, deny_by_default
 from app.enums import EventLevel, Method
 from app.methods import METHODS
-from app.routers import account, auth, authorization, health, passkey, password, problems, sms
+from app.routers import (
+    account,
+    auth,
+    authorization,
+    health,
+    passkey,
+    password,
+    problems,
+    recovery,
+    sms,
+)
 from app.services import events, messages
 
 
@@ -55,6 +65,9 @@ def api_router(methods: frozenset[Method]) -> APIRouter:
         api.include_router(password.router)
     if Method.SMS in methods:
         api.include_router(sms.router)
+    # A recovery restores a passkey or a password.
+    if methods & {Method.PASSKEY, Method.PASSWORD}:
+        api.include_router(recovery.router)
     return api
 
 

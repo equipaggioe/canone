@@ -2,6 +2,7 @@
 
 from uuid import UUID
 
+from app.enums import Address
 from app.schemas.auth import Code, Email, PasskeyName, PasskeyRegistration, Phone
 from app.schemas.base import InputSchema, Schema, Timestamp
 
@@ -13,6 +14,13 @@ class PasskeyView(Schema):
     name: str
     created_at: Timestamp
     last_used_at: Timestamp | None
+
+
+class RecoveryView(Schema):
+    """The pending recovery of the account: its address and its time."""
+
+    address: Address
+    applies_at: Timestamp
 
 
 class PasskeyLink(InputSchema):

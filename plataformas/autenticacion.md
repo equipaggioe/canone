@@ -86,7 +86,7 @@ Vale si el producto usa la contraseña.
 - El cliente muestra una guía para elegir una contraseña fuerte, que avisa que un carácter fuera de ASCII puede escribirse distinto en otro dispositivo. Al rechazar una de la lista de bloqueo, dice por qué y repite la guía.
 - Toda contraseña tiene al menos 8 caracteres ([ASVS 5.0 §6.2.1](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - El campo de la contraseña la oculta y ofrece mostrarla entera mientras se escribe ([ASVS 5.0 §6.2.6](../fuentes/owasp/ASVS_V6_Authentication.md)).
-- Cambiar la contraseña cierra las demás sesiones, y restablecerla, todas: quien la cambia porque la cree robada no deja abierta la sesión del ladrón ([ASVS 5.0 §7.4.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+- Cambiar o restablecer la contraseña, o recuperar la cuenta, no cierra sesiones: si el cambio es de un ladrón, cerrarlas dejaría afuera al dueño. Después del cambio, la app ofrece cerrar las demás ([ASVS 5.0 §7.4.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - Una contraseña admite cualquier carácter, sin reglas de composición ([ASVS 5.0 §6.2.5](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - El servidor admite contraseñas de al menos 64 caracteres ([ASVS 5.0 §6.2.9](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - Crear o cambiar una contraseña la compara contra la lista de bloqueo, que tiene al menos las 3000 contraseñas más comunes de 8 caracteres o más, sacadas de filtraciones ([ASVS 5.0 §6.2.4](../fuentes/owasp/ASVS_V6_Authentication.md) y [§6.2.12](../fuentes/owasp/ASVS_V6_Authentication.md)).
@@ -101,6 +101,7 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `blocklist.txt`, `route
 Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) de ASVS 5.0.
 
 - El correo y el teléfono identifican la cuenta: cada uno pertenece a una sola, y el registro responde 409 si la cuenta ya existe.
+- Que una cuenta exista no es secreto: el registro responde 409, las solicitudes de código responden 404, y las esperas de los fallos responden 429 solo a una cuenta que existe. Ninguna respuesta se cambia para ocultarlo, y una cuenta de administración no tiene respuestas propias para ocultar su rol.
 - El servidor pasa el correo a minúsculas al recibirlo, y así lo guarda, lo compara y le envía.
 - Una cuenta no tiene nombre de usuario.
 - Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos.
@@ -111,6 +112,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Volver a autenticarse es un paso aparte, con la sesión abierta: `POST /api/auth/reauth/options` lista en `allowCredentials` las passkeys de la cuenta, `POST /api/auth/reauth/sms/code` envía el código al teléfono de la cuenta, o responde 409 si no tiene, y `POST /api/auth/reauth/passkey`, `/reauth/password` y `/reauth/sms` verifican una credencial de la cuenta de la sesión. Renuevan la misma fila, escriben su `authenticated_at` y responden como se presenta la sesión: los tokens nuevos de una app, o la cookie nueva de la web.
 - Una operación que pide volver a autenticarse lo acepta durante 5 minutos desde `authenticated_at`; después responde 403 de tipo `reauthentication-required`.
 - La cuenta de administración tiene `role` `admin`.
+- El administrador de una organización cliente es una cuenta común: administrar su organización es una relación con ella, no `role` `admin`, y entra y se recupera como cualquier cuenta.
 - Si el producto usa la passkey, el registro con el código de instalación no acepta contraseña. Si no la usa, la cuenta de administración se registra y entra con los métodos del producto. Un código de instalación equivocado, o uno que llega cuando ya hay una cuenta de administración, responde 403, y dos registros con el código se esperan con un candado de PostgreSQL: solo uno queda como la primera.
 - Una cuenta de administración cuenta sus fallos, espera y se deshabilita como cualquier cuenta. Si el producto usa la passkey, con una contraseña correcta recibe 403: solo la ve quien la sabe. Con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo: la firma vale, y quien la presenta tiene la passkey. Lo mismo al volver a autenticarse.
 - El aviso dice a quién escribir con `contact` de `Settings`, y va en el idioma de la cuenta.
@@ -122,6 +124,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Los fallos consecutivos y la hora del siguiente intento viven en la base.
 - Cada repositorio elige qué métodos para entrar usa su producto: la passkey, el código por SMS y la contraseña, en cualquier combinación.
 - El repositorio declara sus métodos en `METHODS` de `methods.py`. El servidor monta solo las rutas de esos métodos, y el registro acepta solo esos: un método que el producto no usa no tiene rutas que un atacante pueda llamar.
+- `METHODS` de la plantilla lleva los tres métodos: el CI de Canone prueba todas sus rutas, y cada repositorio deja los suyos.
 - Cada pieza ofrece los métodos del producto que tiene su plataforma, según la tabla de esta sección.
 - La pantalla para entrar ofrece primero la passkey, si el producto la usa y el dispositivo la tiene, y luego los demás métodos del producto, entre los que elige el usuario.
 - La app guarda en el dispositivo el último método con que entró, y lo ofrece primero la próxima vez.
@@ -200,22 +203,37 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey
 
 Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
-- La solicitud del código responde 404 si la cuenta no existe, y una IP que recibe 10 en 15 minutos queda bloqueada 30 minutos.
+Vale si el producto usa la passkey o la contraseña: un producto que solo usa el código por SMS entra con él, y no tiene qué restablecer.
+
+- La solicitud del código es `POST /api/auth/recovery/code`, con el correo o el teléfono. Responde 404 si la cuenta no existe, y una IP que recibe 10 en 15 minutos, contando los del código para entrar, queda bloqueada 30 minutos.
 - Cada correo recibe un código por minuto, y hasta 5 por hora. Los SMS siguen los límites de [Código por SMS](#código-por-sms).
 - Un código se invalida al tercer intento fallido.
-- Con el código, una cuenta con contraseña la restablece, y una sin contraseña vincula una passkey o una contraseña, de las que usa el producto.
 - El código vive en Valkey, y uno nuevo reemplaza al anterior.
 - El código vale una sola vez.
 - Un código equivocado o vencido responde 400 de tipo `invalid-code`.
-- Una cuenta con passkey que se recupera con el código del correo lo aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela desde la app. El código del teléfono se aplica en el momento.
-- Una cuenta de administración no se recupera con el código: la recupera otro administrador.
-- A los 100 fallos consecutivos de la recuperación, la cuenta deja de recuperarse con el código, y la recupera un administrador. Un inicio de sesión exitoso la vuelve a habilitar.
+- Con el código, cualquier cuenta restablece o agrega la contraseña, en `POST /api/auth/recovery/password`, o vincula una passkey, con las opciones de `POST /api/auth/recovery/options` y la passkey en `POST /api/auth/recovery/passkey`, de los métodos que usa el producto.
+- Las opciones verifican el código sin gastarlo, y llevan el user handle y las passkeys de la cuenta en `excludeCredentials`: sin el código, cualquiera que sepa el correo vería los credential ID de la cuenta.
+- Verificar el código sin gastarlo pone en cero sus intentos: quien lo mandó lo sabe, y el paso siguiente lo vuelve a presentar.
+- `POST /api/auth/recovery/passkey` verifica la passkey antes que el código: una ceremonia que falla no gasta un intento.
+- El titular tiene un código guardado, que crea `PUT /api/account/recovery-code` después de volver a autenticarse. La respuesta lo trae una sola vez, con 201 si la cuenta no tenía o 200 si reemplaza al anterior. Son 80 bits aleatorios, 16 caracteres en base32, y el servidor guarda su hash Argon2. El código se acepta con cualquier caja, con espacios o con guiones.
+- La recuperación se aplica en el momento con el código del teléfono, con el código guardado o en una cuenta sin passkey, y responde 204, o 200 con el código guardado nuevo si usó el anterior. Una cuenta con passkey que llega solo con el código del correo la aplica 24 horas después, y responde 202: quien tomó el correo no toma en el acto una cuenta protegida con passkey.
+- Una recuperación pendiente vive en la tabla `recovery`, una por cuenta, y una nueva la reemplaza. La tarea `recover` la aplica, cada minuto, con su calendario en `TIMERS`. Si al aplicarla la passkey pendiente ya es de otra cuenta, la recuperación se descarta y va al registro de eventos.
+- El titular ve la recuperación pendiente en `GET /api/account/recovery`, que responde 404 si no hay, y la cancela con `DELETE /api/account/recovery`. Un inicio de sesión suyo también la cancela: quien entra tiene un autenticador. [Apple](https://support.apple.com/en-us/118574)
+- Recuperar la cuenta no abre una sesión: el titular entra después con el autenticador nuevo. [OWASP Forgot Password](https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html)
+- Una cuenta de administración no se recupera con el código: pedirlo o presentarlo responde 403. La recupera otro administrador, y la primera, quien opera el servidor.
+- El correo, el teléfono y el código guardado cuentan sus fallos consecutivos cada uno aparte, con las esperas de [Cuentas](#cuentas). A los 100, ese camino deja de servir, y pedir o presentar su código responde 403 de tipo `recovery-disabled`. Un inicio de sesión exitoso los vuelve a habilitar, y un código guardado nuevo empieza habilitado.
+- Los fallos del correo y del teléfono viven en la tabla `recovery_address`, y el código guardado, con los suyos, en `recovery_code`.
 - Un administrador recupera una cuenta que no es de administración cambiando su correo o su teléfono por uno que tiene el titular, que sigue con el código.
 - El código vence a los 10 minutos, también el que va al correo ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
-- Quien no puede entrar ni recibir el código recupera la cuenta con un administrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
+- Quien no puede entrar, ni recibir el código, ni tiene el código guardado, recupera la cuenta con un administrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - El código tiene 6 dígitos ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta se recupera con un código que recibe, a su elección, en el correo o en el teléfono que registró ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt) y [§4.2.2.1](../fuentes/nist/sp800-63b-4.txt)).
-- Cada fallo cuenta entre los fallos consecutivos de la recuperación de la cuenta, tenga o no contraseña, con las esperas y el límite de [Cuentas](#cuentas) ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
+- El código guardado tiene al menos 64 bits, se guarda como hash, vale una sola vez y se reemplaza al usarlo, y crearlo avisa a todas las direcciones ([NIST SP 800-63B-4 §4.2.1.1](../fuentes/nist/sp800-63b-4.txt)).
+- El código enviado y el código guardado son dos métodos distintos: juntos recuperan en el momento una cuenta con passkey ([NIST SP 800-63B-4 §4.2.2.2](../fuentes/nist/sp800-63b-4.txt)).
+- Cada fallo de un código cuenta entre los fallos consecutivos de su camino ([NIST SP 800-63B-4 §4.2.1.1](../fuentes/nist/sp800-63b-4.txt) y [§4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
+- Una recuperación puede esperar, y siempre avisa a todas las direcciones ([NIST SP 800-63B-4 §4.2](../fuentes/nist/sp800-63b-4.txt) y [§4.2.3](../fuentes/nist/sp800-63b-4.txt)).
+
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/recovery.py`, `models/account/recovery_address.py`, `models/account/recovery_code.py`, `routers/recovery.py`, `services/recovery.py` y `tests/test_recovery.py`.
 
 ## Sesión
 
@@ -250,6 +268,7 @@ Estándares: de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes
 - El secreto del token de refresco rota en cada uso ([RFC 9700 §2.2.2](../fuentes/rfc/rfc9700.txt) y [§4.14.2](../fuentes/rfc/rfc9700.txt)).
 - Cualquier otro secreto de la sesión es un reúso: borra la sesión, y el titular lo ve en la app. Un token robado se descubre cuando el dueño vuelve a refrescar ([RFC 9700 §4.14.2](../fuentes/rfc/rfc9700.txt)).
 - Iniciar sesión o volver a autenticarse emite tokens nuevos y deja sin efecto los que el cliente traía ([ASVS 5.0 §7.2.4](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+- `DELETE /api/account/sessions` cierra todas las sesiones de la cuenta menos la que llama, después de volver a autenticarse.
 - El titular ve sus sesiones abiertas y, después de volver a autenticarse, cierra la que quiera o todas ([ASVS 5.0 §7.5.2](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - El refresco va al endpoint de token con `grant_type=refresh_token` y el `refresh_token`, y responde como el canje del código, con el `refresh_token` nuevo ([RFC 6749 §5.1](../fuentes/rfc/rfc6749.txt) y [§6](../fuentes/rfc/rfc6749.txt)).
 - Una operación que cambia algo no usa `GET`, `HEAD` ni `OPTIONS` ([ASVS 5.0 §3.5.3](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md)).
@@ -376,7 +395,7 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Crear o cambiar una contraseña la compara entera contra la lista, sin distinguir mayúsculas, y la rechaza con 422 de tipo `password-blocked` y el evento `authn_password_change_fail` | `test_password_on_the_blocklist_is_refused_with_its_type` |
 | Una contraseña tiene de 8 a 128 caracteres, y cada punto de código cuenta como uno, en NFC | `test_password_has_8_to_128_code_points_in_nfc` |
 | Agregar una contraseña responde 201, avisa a cada dirección y deja `authn_password_change` | `test_password_is_added_and_notifies` |
-| Cambiar la contraseña cierra las demás sesiones | `test_change_closes_the_other_sessions` |
+| Cambiar la contraseña no cierra sesiones, y `DELETE /api/account/sessions` cierra las demás después de volver a autenticarse | `test_change_keeps_the_sessions_and_the_holder_closes_the_others` |
 | Cambiar la contraseña pone en cero sus fallos y la vuelve a habilitar | `test_change_resets_the_failures_and_enables` |
 | Una cuenta de administración que intenta agregar una contraseña recibe 403 | `test_admin_does_not_add_a_password` |
 | Agregar o cambiar la contraseña pide volver a autenticarse | `test_password_change_needs_a_reauth` |
@@ -395,3 +414,15 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Una cuenta con teléfono se registra sin autenticador si el producto usa el código por SMS; con correo, o sin el código, responde 422 | `test_registration_by_phone_takes_no_authenticator` |
 | Cambiar el teléfono pone en cero sus fallos y lo vuelve a habilitar | `test_new_phone_resets_its_failures` |
 | La base rechaza una cuenta con número sin su fila en `phone`, y borrar la fila de una cuenta con número | `test_the_database_refuses_a_phone_without_its_row` |
+| El código para recuperar va, a elección, al correo o al teléfono, con el `Host` en la última línea del SMS | `test_recovery_code_goes_to_the_email_or_the_phone` |
+| Los 404 de la solicitud del código para recuperar y del código para entrar bloquean juntos la IP al décimo | `test_unknown_address_is_a_404_counted_with_the_sms_code` |
+| Sin passkey, el código del correo restablece la contraseña en el momento, habilitada, sin abrir ni cerrar sesiones, avisa a todas las direcciones y vale una sola vez | `test_password_recovery_resets_it_and_keeps_the_sessions` |
+| Un código equivocado responde 400 de tipo `invalid-code` y cuenta un fallo de su dirección; a los 100 responde 403 de tipo `recovery-disabled`, la otra dirección sigue, y un inicio de sesión las vuelve a habilitar | `test_wrong_code_counts_against_its_address` |
+| Una cuenta con passkey que llega solo con el código del correo responde 202 y la tarea la aplica 24 horas después; el titular la ve, y cada vez avisa a todas las direcciones | `test_passkey_account_waits_24_hours_with_the_email_code` |
+| El código del teléfono, o el del correo con el código guardado, se aplica en el momento, y el código guardado se gasta y vuelve uno nuevo con 200 | `test_phone_code_or_saved_code_applies_at_once` |
+| El titular cancela la recuperación pendiente, y un inicio de sesión suyo también | `test_holder_or_a_sign_in_cancels_what_waits` |
+| Las opciones de la recuperación piden el código, llevan el user handle y las passkeys de la cuenta, y una ceremonia que falla no gasta el código | `test_recovery_links_a_passkey` |
+| Una cuenta de administración que pide o presenta el código para recuperar recibe 403 | `test_admin_does_not_recover_with_a_code` |
+| El código guardado son 80 bits en 16 caracteres de base32, que pide volver a autenticarse, responde 201 o 200, se guarda como hash Argon2id, reemplaza al anterior y avisa a todas las direcciones | `test_saved_code_is_80_bits_shown_once_and_notifies` |
+| Un código guardado equivocado cuenta su fallo aparte, a los 100 responde `recovery-disabled`, y el código enviado sigue | `test_saved_code_counts_its_failures_and_keeps_the_sent_one` |
+| Una contraseña de la lista de bloqueo en la recuperación responde 422 y no gasta el código | `test_blocked_password_keeps_the_code` |

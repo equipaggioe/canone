@@ -53,6 +53,9 @@ server/
         passkey.py
         password.py
         phone.py
+        recovery.py
+        recovery_address.py
+        recovery_code.py
         throttled.py
       event/
         __init__.py
@@ -78,6 +81,7 @@ server/
       passkey.py
       password.py
       problems.py
+      recovery.py
       sms.py
       <recurso>.py
     services/
@@ -96,6 +100,7 @@ server/
       notices.py
       passkeys.py
       passwords.py
+      recovery.py
       registration.py
       sessions.py
       sms.py
@@ -118,6 +123,7 @@ server/
     test_methods.py
     test_passkeys.py
     test_passwords.py
+    test_recovery.py
     test_registration.py
     test_sessions.py
     test_sms.py

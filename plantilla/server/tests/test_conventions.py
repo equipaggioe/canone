@@ -102,8 +102,9 @@ def is_allowed_primary_key(table: sa.Table) -> bool:
         return bool(columns) and rest == partition and is_allowed_key(columns[0])
     if len(columns) == 1:
         return is_allowed_key(columns[0]) or extends_parent(columns[0])
+    # A StrEnum is a text with its CHECK, as models/base.py compiles it.
     return len(columns) == 2 and all(
-        column.foreign_keys or isinstance(column.type, sa.Text) for column in columns
+        column.foreign_keys or isinstance(column.type, (sa.Text, sa.Enum)) for column in columns
     )
 
 

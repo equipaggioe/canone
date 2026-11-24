@@ -26,6 +26,9 @@ class Notice(StrEnum):
     PASSWORD_CHANGED = "password_changed"
     EMAIL_CHANGED = "email_changed"
     PHONE_CHANGED = "phone_changed"
+    RECOVERY_CODE_CREATED = "recovery_code_created"
+    RECOVERY_PENDING = "recovery_pending"
+    RECOVERED = "recovered"
 
 
 # Each notice says what happened, what to do and whom to write to, if
@@ -53,8 +56,8 @@ TEXTS = {
     ),
     Notice.PASSWORD_CHANGED: (
         "The password of your account changed",
-        "The password of your account changed, and your other sessions were closed. "
-        "If you did not change it, reset the password and write to {contact}.",
+        "The password of your account changed. If you did not change it, close your "
+        "other sessions in the app, reset the password and write to {contact}.",
     ),
     Notice.EMAIL_CHANGED: (
         "The email of your account changed",
@@ -63,6 +66,23 @@ TEXTS = {
     Notice.PHONE_CHANGED: (
         "The phone of your account changed",
         "The phone of your account changed. If you did not change it, write to {contact}.",
+    ),
+    Notice.RECOVERY_CODE_CREATED: (
+        "A recovery code was created for your account",
+        "A new recovery code was created for your account, and the previous one stopped "
+        "working. If you did not create it, review your account in the app and write to "
+        "{contact}.",
+    ),
+    Notice.RECOVERY_PENDING: (
+        "Your account will be recovered in 24 hours",
+        "Someone asked to recover your account with the code sent to your email, and it "
+        "applies in 24 hours. If it was not you, sign in or cancel it in the app, and write "
+        "to {contact}.",
+    ),
+    Notice.RECOVERED: (
+        "Your account was recovered",
+        "Your account was recovered with a code. If you did not do it, sign in, close your "
+        "other sessions in the app and write to {contact}.",
     ),
 }
 

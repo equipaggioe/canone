@@ -5,7 +5,7 @@ import asyncio
 from collections.abc import Awaitable, Callable
 
 from app.database import engine, migrate, mock
-from app.services import events, files, sessions
+from app.services import events, files, recovery, sessions
 
 
 async def purge() -> None:
@@ -18,8 +18,11 @@ TASKS: dict[str, Callable[[], Awaitable[None]]] = {
     "migrate": migrate,
     "mock": mock,
     "purge": purge,
+    "recover": recovery.apply_due,
     "sweep": files.sweep,
 }
+# fastapi.md: the calendar of each other task, as OnCalendar=.
+TIMERS: dict[str, str] = {"recover": "minutely"}
 
 
 async def run(task: str) -> None:

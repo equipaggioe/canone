@@ -65,5 +65,23 @@ msgstr "Se agregó una contraseña a tu cuenta. Si no la agregaste tú, cierra t
 msgid "The password of your account changed"
 msgstr "Cambió la contraseña de tu cuenta"
 
-msgid "The password of your account changed, and your other sessions were closed. If you did not change it, reset the password and write to {contact}."
-msgstr "Cambió la contraseña de tu cuenta, y se cerraron tus otras sesiones. Si no la cambiaste tú, restablece la contraseña y escribe a {contact}."
+msgid "The password of your account changed. If you did not change it, close your other sessions in the app, reset the password and write to {contact}."
+msgstr "Cambió la contraseña de tu cuenta. Si no la cambiaste tú, cierra tus otras sesiones en la app, restablece la contraseña y escribe a {contact}."
+
+msgid "A recovery code was created for your account"
+msgstr "Se creó un código de recuperación para tu cuenta"
+
+msgid "A new recovery code was created for your account, and the previous one stopped working. If you did not create it, review your account in the app and write to {contact}."
+msgstr "Se creó un código de recuperación nuevo para tu cuenta, y el anterior dejó de servir. Si no lo creaste tú, revisa tu cuenta en la app y escribe a {contact}."
+
+msgid "Your account will be recovered in 24 hours"
+msgstr "Tu cuenta se recuperará en 24 horas"
+
+msgid "Someone asked to recover your account with the code sent to your email, and it applies in 24 hours. If it was not you, sign in or cancel it in the app, and write to {contact}."
+msgstr "Alguien pidió recuperar tu cuenta con el código enviado a tu correo, y se aplica en 24 horas. Si no fuiste tú, entra o cancélala en la app, y escribe a {contact}."
+
+msgid "Your account was recovered"
+msgstr "Se recuperó tu cuenta"
+
+msgid "Your account was recovered with a code. If you did not do it, sign in, close your other sessions in the app and write to {contact}."
+msgstr "Se recuperó tu cuenta con un código. Si no fuiste tú, entra, cierra tus otras sesiones en la app y escribe a {contact}."

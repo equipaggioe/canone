@@ -12,7 +12,7 @@ from app.enums import SessionKind, TokenErrorCode
 from app.errors import PROBLEM_JSON, TokenRefusal
 from app.models.account.account import Account
 from app.schemas.auth import Identifier, Registration, TokenError, TokenResponse
-from app.services import authorization, registration, sessions
+from app.services import authorization, recovery, registration, sessions
 from app.services.sessions import Client, Principal
 from app.translations import language
 
@@ -118,6 +118,7 @@ async def open_cookie(
     if presented is not None:
         await sessions.discard(session, presented, SessionKind.WEB)
     token, _ = await sessions.open_web(session, account, caller, accepted(request))
+    await recovery.signed_in(session, account, caller)
     sessions.set_cookie(response, token)
 
 
@@ -132,6 +133,7 @@ async def open_token(
     if scheme.lower() == "bearer" and presented:
         await sessions.discard(session, presented, SessionKind.APP)
     issued = await sessions.open_app(session, account, caller, accepted(request))
+    await recovery.signed_in(session, account, caller)
     return token_response(issued, response)
 
 
@@ -148,6 +150,7 @@ async def token(
         return token_response(await sessions.refresh(session, presented, caller), response)
     account = await authorization.redeem(session, params)
     issued = await sessions.open_app(session, account, caller, accepted(request))
+    await recovery.signed_in(session, account, caller)
     await authorization.spent(params["code"], issued.session_id)
     return token_response(issued, response)
 

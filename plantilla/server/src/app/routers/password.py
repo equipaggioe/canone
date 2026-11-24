@@ -1,4 +1,4 @@
-"""The password: signing in, authenticating again, adding it.
+"""The password: signing in, authenticating again, adding, recovering.
 
 main.py mounts these routes only if the product offers the password.
 """
@@ -10,8 +10,16 @@ from fastapi import APIRouter, Depends, Request, Response
 
 from app.dependencies import ClientDep, PrincipalDep, ReauthenticatedDep, SessionDep, public
 from app.routers.auth import RENEWED, open_cookie, open_token, renew
-from app.schemas.auth import PasswordChange, PasswordLogin, PasswordReauth, TokenResponse
-from app.services import passwords
+from app.routers.recovery import RECOVERED, answer
+from app.schemas.auth import (
+    PasswordChange,
+    PasswordLogin,
+    PasswordReauth,
+    PasswordRecovery,
+    RecoveryCodeView,
+    TokenResponse,
+)
+from app.services import passwords, recovery
 
 router = APIRouter(tags=["password"])
 
@@ -71,3 +79,14 @@ async def change(
     """Add a password, or change it and close the other sessions."""
     if await passwords.put(session, principal, body.password, caller):
         response.status_code = HTTPStatus.CREATED
+
+
+@router.post(
+    "/auth/recovery/password",
+    response_model=RecoveryCodeView,
+    responses=RECOVERED,
+    dependencies=[Depends(public)],
+)
+async def recover(session: SessionDep, body: PasswordRecovery, caller: ClientDep) -> Response:
+    """Reset or add the password with the code of the recovery."""
+    return answer(await recovery.password(session, body, caller))

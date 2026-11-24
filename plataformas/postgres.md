@@ -26,7 +26,7 @@ Estándares: [*Data Definition*](../fuentes/postgresql/ddl.sgml) y [*Data Types*
 - `text` con un `CHECK` de su formato, en una tabla de valores que codifica un estándar, como los países de ISO 3166-1, con su código como clave: es el mismo en todos los entornos y se lee sin unir tablas.
 - `uuid` con `gen_random_uuid()`, en una tabla cuyas filas crea el cliente, que genera el id para crear por `PUT`, como fija [transversal.md](transversal.md#reintentos), o cuyas filas pertenecen a un usuario y no deben poder enumerarse.
 - Una tabla particionada lleva como clave su id, de una de estas convenciones, seguido de las columnas de partición: `(id, created_at)`.
-- Una tabla cuyas filas se identifican por un par de valores, como `(role, permission)`, lleva ese par como clave, sin id propio. Cada columna es una clave foránea o un `text`.
+- Una tabla cuyas filas se identifican por un par de valores, como `(role, permission)`, lleva ese par como clave, sin id propio. Cada columna es una clave foránea o un `text`, también el de un `StrEnum`, que la base guarda como `text` con su `CHECK`.
 - Una tabla cuyas filas amplían una a una las de otra lleva como clave la clave foránea a esa tabla, con `ON DELETE CASCADE`, sin id propio.
 - Una clave foránea tiene el tipo de la clave a la que apunta.
 - `integer` identity, en una lista propia del equipo, igual para todos los usuarios, cuyo tope cabe en `integer` ([Data Types, *Integer Types*](../fuentes/postgresql/datatype.sgml)).

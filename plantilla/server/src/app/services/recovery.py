@@ -91,10 +91,10 @@ async def find(session: AsyncSession, identifier: Identifier) -> Account | None:
     return await session.scalar(sa.select(Account).where(column))
 
 
-def refuse_admin(account: Account) -> None:
-    """Answer 403 to an admin: another admin recovers it."""
-    if account.role == Role.ADMIN:
-        raise HTTPException(HTTPStatus.FORBIDDEN, "An admin does not recover with a code")
+def refuse_superadmin(account: Account) -> None:
+    """Answer 403 to a superadmin: another superadmin recovers it."""
+    if account.role == Role.SUPERADMIN:
+        raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin does not recover with a code")
 
 
 async def way(session: AsyncSession, account: Account, address: Address) -> RecoveryAddress:
@@ -134,7 +134,7 @@ async def send_code(
     account = await find(session, identifier)
     if account is None:
         raise await codes.unknown(client)
-    refuse_admin(account)
+    refuse_superadmin(account)
     address = address_of(identifier)
     await admit(await way(session, account, address), client, account)
     if address == Address.EMAIL:
@@ -176,7 +176,7 @@ async def check(
     if account is None:
         session.add(event("authn_login_fail", EventLevel.WARN, client, None))
         raise KeptError(AppError(INVALID_CODE))
-    refuse_admin(account)
+    refuse_superadmin(account)
     row = await way(session, account, address_of(proof))
     await admit(row, client, account)
     if not await codes.take(PURPOSE, proof.address, proof.code, keep=True):

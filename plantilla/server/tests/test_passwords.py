@@ -35,7 +35,7 @@ pytestmark = pytest.mark.skipif(
 
 EMAIL = "ana@example.com"
 ORIGIN = {"Origin": "https://test"}
-# Where the product offers the passkey, an admin signs in only with it.
+# With the passkey in the product, a superadmin signs in with it only.
 WITH_PASSKEY = frozenset({Method.PASSKEY, Method.PASSWORD})
 PHONE = "+56221234567"
 PASSWORD = "Correct horse battery"
@@ -243,13 +243,13 @@ async def test_change_resets_the_failures_and_enables(
     assert (row.failures, row.retry_at, row.disabled_at) == (0, None, None)
 
 
-async def test_admin_does_not_add_a_password(
+async def test_superadmin_does_not_add_a_password(
     client: AsyncClient, session: AsyncSession, account: Account, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """An admin signs in only with a passkey: a password is a 403."""
+    """A superadmin signs in with a passkey: a password is a 403."""
     monkeypatch.setattr(methods, "METHODS", WITH_PASSKEY)
     tokens = (await sign_in(client)).json()
-    await session.execute(sa.update(Account).values(role=Role.ADMIN))
+    await session.execute(sa.update(Account).values(role=Role.SUPERADMIN))
     assert (await put(client, tokens, NEW)).status_code == 403
 
 
@@ -297,7 +297,7 @@ async def test_registration_takes_a_password(
     body = {"email": email, "code": code, "password": COMMON}
     response = await client.post("/api/auth/register/token", json=body)
     assert response.json()["type"] == errors.PASSWORD_BLOCKED.uri
-    with_setup = {**body, "password": NEW, "setupCode": settings.setup_code}
+    with_setup = {"email": email, "password": NEW, "setupCode": settings.setup_code}
     assert (await client.post("/api/auth/register/token", json=with_setup)).status_code == 403
     response = await client.post("/api/auth/register/token", json={**body, "password": NEW})
     assert response.status_code == 200
@@ -444,12 +444,12 @@ async def test_hundredth_failure_disables_the_password(
     assert (await guarded.get("/whoami", headers=with_cookie(token))).status_code == 200
 
 
-async def test_admin_does_not_sign_in_with_a_password(
+async def test_superadmin_does_not_sign_in_with_a_password(
     client: AsyncClient, session: AsyncSession, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """An admin's failures count; the right password is a 403."""
+    """A superadmin's failures count; the right password is a 403."""
     monkeypatch.setattr(methods, "METHODS", WITH_PASSKEY)
-    account = Account(email="ana.admin@example.com", role=Role.ADMIN, language="es")
+    account = Account(email="ana.admin@example.com", role=Role.SUPERADMIN, language="es")
     session.add(account)
     await session.flush()
     session.add(Password(account_id=account.id, hash=passwords.hash_password("Correct horse")))
@@ -485,23 +485,22 @@ async def test_reauth_with_the_password_renews_the_session(
     assert datetime.now(UTC) - renewed < timedelta(minutes=1)
 
 
-async def test_admin_without_passkey_uses_the_password(
+async def test_superadmin_without_passkey_uses_the_password(
     client: AsyncClient,
     session: AsyncSession,
     sent: list[httpx.Request],
     clock: list[int],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Where the product offers no passkey, the admin has a password.
+    """Without the passkey in the product, a superadmin has a password.
 
     The setup code registers it, and it signs in and changes it.
     """
     monkeypatch.setattr(methods, "METHODS", frozenset({Method.PASSWORD}))
     email = "admin@example.com"
-    code = await code_for(client, sent, email)
-    body = {"email": email, "code": code, "password": NEW, "setupCode": settings.setup_code}
+    body = {"email": email, "password": NEW, "setupCode": settings.setup_code}
     assert (await client.post("/api/auth/register/token", json=body)).status_code == 200
-    assert await session.scalar(sa.select(Account.role)) == Role.ADMIN
+    assert await session.scalar(sa.select(Account.role)) == Role.SUPERADMIN
     login = {"email": email, "password": NEW}
     response = await client.post("/api/auth/password/token", json=login)
     assert response.status_code == 200

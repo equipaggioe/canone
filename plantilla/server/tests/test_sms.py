@@ -175,19 +175,19 @@ async def test_phone_waits_and_disables_like_any_authenticator(
     assert sent == []
 
 
-async def test_admin_does_not_sign_in_with_sms(
+async def test_superadmin_does_not_sign_in_with_sms(
     client: AsyncClient,
     session: AsyncSession,
     sent: list[httpx.Request],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Where the product offers the passkey, no code goes to an admin.
+    """With the passkey in the product, no code goes to a superadmin.
 
     Asking one is a 403, a wrong code counts as anyone's, and a right
     one is a 403 too.
     """
     monkeypatch.setattr(methods, "METHODS", WITH_PASSKEY)
-    await holder(session, Role.ADMIN)
+    await holder(session, Role.SUPERADMIN)
     assert (await ask(client)).status_code == 403
     assert sent == []
     code = await codes.issue(sms.PURPOSE, PHONE)

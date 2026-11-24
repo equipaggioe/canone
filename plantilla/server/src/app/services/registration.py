@@ -27,7 +27,7 @@ CONFLICTS = 10
 CONFLICT_WINDOW = timedelta(minutes=15)
 BLOCK = timedelta(minutes=30)
 # Two registrations with the setup code wait for each other, so only
-# one becomes the first admin.
+# one becomes the first superadmin.
 SETUP_LOCK = 1
 
 
@@ -83,15 +83,15 @@ async def send_code(
 async def role(session: AsyncSession, setup_code: str | None) -> Role:
     """Return the role of a new account.
 
-    The setup code makes an admin while there is none.
+    The setup code makes a superadmin while there is none.
     """
     if setup_code is None:
         return Role.USER
     await session.execute(sa.select(sa.func.pg_advisory_xact_lock(SETUP_LOCK)))
-    admin = await session.scalar(sa.select(sa.exists().where(Account.role == Role.ADMIN)))
-    if admin or not hmac.compare_digest(setup_code.encode(), settings.setup_code.encode()):
+    taken = await session.scalar(sa.select(sa.exists().where(Account.role == Role.SUPERADMIN)))
+    if taken or not hmac.compare_digest(setup_code.encode(), settings.setup_code.encode()):
         raise HTTPException(HTTPStatus.FORBIDDEN, "The setup code is not accepted")
-    return Role.ADMIN
+    return Role.SUPERADMIN
 
 
 def check_offered(body: Registration) -> None:
@@ -119,7 +119,9 @@ async def register(
     """Create an account with its verified address and authenticator.
 
     Each authenticator only if the product offers it. The passkey is
-    checked first: a failed ceremony leaves the code.
+    checked first: a failed ceremony leaves the code. The first
+    superadmin brings the setup code instead of the code, and its
+    address stays unverified.
     """
     await check_open(client)
     created = None
@@ -127,14 +129,14 @@ async def register(
     if body.credential is not None:
         created = await attestation.create(session, body.credential, client)
     elif body.setup_code is not None and Method.PASSKEY in methods.METHODS:
-        raise HTTPException(HTTPStatus.FORBIDDEN, "An admin registers with a passkey")
+        raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin registers with a passkey")
     elif body.password is not None and passwords.blocked(body.password):
         raise AppError(PASSWORD_BLOCKED)
-    if not await codes.take(PURPOSE, body.address, body.code):
+    if body.code is not None and not await codes.take(PURPOSE, body.address, body.code):
         raise AppError(INVALID_CODE)
     await check_new(session, body, client)
     account_role = await role(session, body.setup_code)
-    if account_role == Role.ADMIN and created is not None and not created.user_verified:
+    if account_role == Role.SUPERADMIN and created is not None and not created.user_verified:
         raise AppError(USER_VERIFICATION_REQUIRED)
     account = Account(email=body.email, phone=body.phone, role=account_role, language=language)
     if created is not None:

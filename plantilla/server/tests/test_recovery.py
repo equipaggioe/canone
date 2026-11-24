@@ -340,11 +340,11 @@ async def test_recovery_links_a_passkey(
     assert (await client.post("/api/auth/passkey/token", json=credential)).status_code == 200
 
 
-async def test_admin_does_not_recover_with_a_code(
+async def test_superadmin_does_not_recover_with_a_code(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
 ) -> None:
-    """Asking or presenting a code is a 403: an admin recovers it."""
-    await holder(session, Role.ADMIN)
+    """Asking or presenting a code is a 403 to a superadmin."""
+    await holder(session, Role.SUPERADMIN)
     assert (await ask(client, clock, email=EMAIL)).status_code == 403
     assert sent == []
     assert (await recover(client, "123456")).status_code == 403

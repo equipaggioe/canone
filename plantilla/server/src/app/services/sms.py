@@ -20,10 +20,10 @@ from app.services.sessions import Client
 PURPOSE = "sms"
 
 
-def refuse_admin(account: Account) -> None:
-    """Answer 403 to an admin, where it signs in only with a passkey."""
-    if account.role == Role.ADMIN and Method.PASSKEY in methods.METHODS:
-        raise HTTPException(HTTPStatus.FORBIDDEN, "An admin signs in only with a passkey")
+def refuse_superadmin(account: Account) -> None:
+    """Answer 403 to a superadmin, who signs in only with a passkey."""
+    if account.role == Role.SUPERADMIN and Method.PASSKEY in methods.METHODS:
+        raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin signs in only with a passkey")
 
 
 def event(
@@ -64,15 +64,15 @@ async def send_code(
 ) -> None:
     """Send the code to sign in, or answer 404 to an unknown phone.
 
-    A disabled phone, one before its wait, or the phone of an admin that
-    signs in only with a passkey gets no SMS.
+    A disabled phone, one before its wait, or the phone of a superadmin
+    that signs in only with a passkey gets no SMS.
     """
     await codes.check_open(client)
     found = await find(session, phone)
     if found is None:
         raise await codes.unknown(client)
     account, row = found
-    refuse_admin(account)
+    refuse_superadmin(account)
     early = event(
         "authn_login_fail_max", EventLevel.WARN, phone, client, account, maxlimit=WAIT_FROM
     )
@@ -108,7 +108,7 @@ async def check(session: AsyncSession, phone: str, code: str, client: Client) ->
                 )
             )
         raise KeptError(AppError(INVALID_CODE))
-    refuse_admin(account)
+    refuse_superadmin(account)
     retries = authenticators.succeed(row)
     if retries:
         session.add(

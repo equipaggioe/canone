@@ -3977,8 +3977,15 @@
             "title": "Phone"
           },
           "code": {
-            "type": "string",
-            "pattern": "^[0-9]{6}$",
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9]{6}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Code"
           },
           "passkeyName": {
@@ -4029,11 +4036,8 @@
         },
         "additionalProperties": false,
         "type": "object",
-        "required": [
-          "code"
-        ],
         "title": "Registration",
-        "description": "A new account: its verified address and its first authenticator.\n\nThe authenticator is a named passkey or a password; a phone may come\nwithout one, where the product offers the SMS code. The setup code\nregisters the first admin."
+        "description": "A new account: its verified address and its first authenticator.\n\nThe authenticator is a named passkey or a password; a phone may come\nwithout one, where the product offers the SMS code. The setup code\nregisters the first superadmin, instead of the code."
       },
       "RelyingParty": {
         "properties": {

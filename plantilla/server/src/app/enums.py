@@ -12,9 +12,13 @@ class EventLevel(StrEnum):
 
 
 class Role(StrEnum):
-    """What an account may do; an admin signs in only with a passkey."""
+    """What an account may do.
 
-    ADMIN = "admin"
+    The superadmin operates the installation; the admin of a client is
+    a user (autenticacion.md, «Superadministrador»).
+    """
+
+    SUPERADMIN = "superadmin"
     USER = "user"
 
 

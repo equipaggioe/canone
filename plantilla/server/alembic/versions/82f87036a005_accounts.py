@@ -63,7 +63,7 @@ def upgrade() -> None:
         sa.Column("language", sa.TEXT(), nullable=False),
         sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
         sa.CheckConstraint("email IS NOT NULL OR phone IS NOT NULL", name=op.f("ck_account_identified")),
-        sa.CheckConstraint("role IN ('admin', 'user')", name=op.f("ck_account_role")),
+        sa.CheckConstraint("role IN ('superadmin', 'user')", name=op.f("ck_account_role")),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_account")),
         sa.UniqueConstraint("email", name=op.f("uq_account_email")),
         sa.UniqueConstraint("phone", name=op.f("uq_account_phone")),

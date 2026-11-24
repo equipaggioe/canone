@@ -100,15 +100,20 @@ async def options(client: AsyncClient, **identifier: str) -> dict[str, Any]:
 async def register(
     client: AsyncClient,
     authenticator: Authenticator,
-    code: str,
+    code: str | None,
     form: str = "token",
     create: dict[str, Any] | None = None,
     **extra: object,
 ) -> Response:
-    """Register an account by email with a new passkey."""
+    """Register an account by email with a new passkey.
+
+    Without the code, the registration brings the setup code in extra.
+    """
     challenge = (await options(client, email=EMAIL))["challenge"]
     credential = authenticator.create(challenge, **(create or {}))
-    sent = {"email": EMAIL, "code": code, "passkeyName": "Phone", "credential": credential}
+    sent: dict[str, object] = {"email": EMAIL, "passkeyName": "Phone", "credential": credential}
+    if code is not None:
+        sent["code"] = code
     return await client.post(
         f"/api/auth/register/{form}", json={**sent, **extra}, headers={"Accept-Language": "es"}
     )
@@ -451,34 +456,49 @@ async def test_wrong_code_fails_and_a_failed_passkey_keeps_the_code(
 
 
 @needs_passkey
-async def test_setup_code_registers_the_first_admin_once(
+async def test_setup_code_registers_the_first_superadmin_once(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
 ) -> None:
-    """The setup code makes an admin while there is none."""
-    code = await new_code(client, sent, clock, email=EMAIL)
-    response = await register(client, Authenticator(), code, setupCode="wrong")
+    """The setup code makes a superadmin while there is none."""
+    response = await register(client, Authenticator(), None, setupCode="wrong")
     assert response.status_code == 403
-    code = await new_code(client, sent, clock, email=EMAIL)
-    response = await register(client, Authenticator(), code, setupCode=settings.setup_code)
+    response = await register(client, Authenticator(), None, setupCode=settings.setup_code)
     assert response.status_code == 200
-    assert await session.scalar(sa.select(Account.role)) == Role.ADMIN
+    assert await session.scalar(sa.select(Account.role)) == Role.SUPERADMIN
     await session.execute(sa.update(Account).values(email="first@example.com"))
-    code = await new_code(client, sent, clock, email=EMAIL)
-    response = await register(client, Authenticator(), code, setupCode=settings.setup_code)
+    response = await register(client, Authenticator(), None, setupCode=settings.setup_code)
     assert response.status_code == 403
     code = await new_code(client, sent, clock, email=EMAIL)
     assert (await register(client, Authenticator(), code)).status_code == 200
     roles = await session.scalars(sa.select(Account.role).order_by(Account.created_at))
-    assert sorted(roles) == [Role.ADMIN, Role.USER]
+    assert sorted(roles) == [Role.SUPERADMIN, Role.USER]
 
 
 @needs_passkey
-async def test_admin_registers_a_passkey_that_verified_the_user(
+async def test_setup_code_replaces_the_code(
+    client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
+) -> None:
+    """The superadmin registers without a code sent to its address.
+
+    With the code and the setup code, or with neither, it is a 422.
+    """
+    code = await new_code(client, sent, clock, email=EMAIL)
+    both = await register(client, Authenticator(), code, setupCode=settings.setup_code)
+    assert both.status_code == 422
+    assert (await register(client, Authenticator(), None)).status_code == 422
+    sent.clear()
+    response = await register(client, Authenticator(), None, setupCode=settings.setup_code)
+    assert response.status_code == 200
+    assert sent == []
+    assert await session.scalar(sa.select(Account.role)) == Role.SUPERADMIN
+
+
+@needs_passkey
+async def test_superadmin_registers_a_passkey_that_verified_the_user(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
 ) -> None:
     """With the setup code, a passkey without the UV flag fails."""
-    code = await new_code(client, sent, clock, email=EMAIL)
-    response = await register(client, Authenticator(flags=UP), code, setupCode=settings.setup_code)
+    response = await register(client, Authenticator(flags=UP), None, setupCode=settings.setup_code)
     assert response.status_code == 403
     assert response.json()["type"] == errors.USER_VERIFICATION_REQUIRED.uri
     assert await session.scalar(sa.select(sa.func.count()).select_from(Account)) == 0

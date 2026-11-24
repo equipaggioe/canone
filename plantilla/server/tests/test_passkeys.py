@@ -301,11 +301,11 @@ async def test_passkey_waits_and_disables_like_any_authenticator(
     assert response.json()["type"] == errors.AUTHENTICATOR_DISABLED.uri
 
 
-async def test_admin_passkey_needs_the_uv_flag(
+async def test_superadmin_passkey_needs_the_uv_flag(
     client: AsyncClient, session: AsyncSession, account: Account
 ) -> None:
-    """An admin's passkey without UV is a 403 that counts no failure."""
-    account.role = Role.ADMIN
+    """A superadmin's passkey without UV is a 403 with no failure."""
+    account.role = Role.SUPERADMIN
     authenticator = Authenticator(flags=UP)
     await register(session, account, authenticator)
     credential = authenticator.sign(await challenge(client), account.user_handle)

@@ -226,10 +226,10 @@ class Registration(Identifier):
 
     The authenticator is a named passkey or a password; a phone may come
     without one, where the product offers the SMS code. The setup code
-    registers the first admin.
+    registers the first superadmin, instead of the code.
     """
 
-    code: Code
+    code: Code | None = None
     passkey_name: PasskeyName | None = None
     credential: PasskeyRegistration | None = None
     password: NewPassword | None = None
@@ -242,6 +242,8 @@ class Registration(Identifier):
             raise ValueError("send the credential with its name")
         if self.credential is not None and self.password is not None:
             raise ValueError("send either a passkey or a password")
+        if (self.code is None) == (self.setup_code is None):
+            raise ValueError("send either the code or the setup code")
         return self
 
 

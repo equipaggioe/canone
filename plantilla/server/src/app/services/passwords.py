@@ -84,8 +84,8 @@ async def check(session: AsyncSession, login: PasswordLogin, client: Client) -> 
 
     A wrong password, or an unknown account, raises a KeptError: the
     failure and its event stay. Where the product offers the passkey,
-    an admin with the right password gets 403: only whoever knows the
-    password sees it.
+    a superadmin with the right password gets 403: only whoever knows
+    the password sees it.
     """
     found = await find(session, login)
     if found is None:
@@ -108,8 +108,8 @@ async def check(session: AsyncSession, login: PasswordLogin, client: Client) -> 
                 )
             )
         raise KeptError(HTTPException(HTTPStatus.UNAUTHORIZED))
-    if account.role == Role.ADMIN and Method.PASSKEY in methods.METHODS:
-        raise HTTPException(HTTPStatus.FORBIDDEN, "An admin signs in only with a passkey")
+    if account.role == Role.SUPERADMIN and Method.PASSKEY in methods.METHODS:
+        raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin signs in only with a passkey")
     retries = authenticators.succeed(password)
     if retries:
         session.add(
@@ -166,11 +166,11 @@ async def put(session: AsyncSession, principal: Principal, password: str, client
 
     A change is another secret: it waits nothing. The sessions stay, and
     the app offers to close the others. Where the product offers the
-    passkey, an admin signs in only with it.
+    passkey, a superadmin signs in only with it.
     """
     account = principal.account
-    if account.role == Role.ADMIN and Method.PASSKEY in methods.METHODS:
-        raise HTTPException(HTTPStatus.FORBIDDEN, "An admin signs in only with a passkey")
+    if account.role == Role.SUPERADMIN and Method.PASSKEY in methods.METHODS:
+        raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin signs in only with a passkey")
     check_new(session, account, password, client)
     digest = await run_in_threadpool(hash_password, password)
     now = datetime.now(UTC)

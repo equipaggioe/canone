@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     page_token_key: str
     # autenticacion.md: 256 random bits that sign the refresh tokens.
     refresh_key: str
-    # autenticacion.md: the code that registers the first admin.
+    # autenticacion.md: the code that registers the first superadmin.
     setup_code: str
     # The SMS hash of each Android app, by the piece of its User-Agent.
     sms_hashes: dict[str, str]

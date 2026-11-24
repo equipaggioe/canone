@@ -59,7 +59,7 @@ Las reglas del código para entrar valen si el producto lo usa; las demás, para
 - Los 404 de la solicitud del código para entrar cuentan con los de la solicitud del código de recuperación para bloquear la IP.
 - El teléfono es el autenticador del código para entrar: sus fallos viven en la tabla `phone`, una fila por cuenta con teléfono, que la base exige con un trigger diferido al commit: una cuenta con número y sin su fila no pasa, y no queda sin poder entrar en silencio.
 - Con el teléfono deshabilitado, pedir el código para entrar responde 403 de tipo `authenticator-disabled`, y antes de su espera, 429, sin enviar el SMS.
-- Si el producto usa la passkey, una cuenta de administración que pide el código para entrar o para volver a autenticarse recibe 403, sin SMS. Un código equivocado cuenta su fallo como en cualquier cuenta, y uno correcto responde 403.
+- Si el producto usa la passkey, el [superadministrador](#superadministrador) que pide el código para entrar o para volver a autenticarse recibe 403, sin SMS. Un código equivocado cuenta su fallo como en cualquier cuenta, y uno correcto responde 403.
 - Cada fallo del código para entrar cuenta entre los fallos consecutivos del teléfono, y un código nuevo no los reinicia ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
 - Cambiar el teléfono pone en cero sus fallos y lo vuelve a habilitar: otro número es otro autenticador ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 
@@ -79,7 +79,7 @@ Vale si el producto usa la contraseña.
 - Una contraseña de la lista se rechaza con 422 de tipo `password-blocked`, y una corta o larga, con 422 de tipo `validation`.
 - La contraseña se agrega o se cambia por `PUT /api/account/password`, que responde 201 si la cuenta no tenía.
 - Cambiar la contraseña pone en cero sus fallos y la vuelve a habilitar: es otro secreto.
-- Si el producto usa la passkey, una cuenta de administración que intenta agregar una contraseña recibe 403.
+- Si el producto usa la passkey, el [superadministrador](#superadministrador) que intenta agregar una contraseña recibe 403.
 - Una contraseña se guarda con `PasswordHash.recommended()` de pwdlib: Argon2id con 64 MiB, 3 pasadas y 4 carriles.
 - Al medir el largo de una contraseña, cada punto de código cuenta como un carácter.
 - La contraseña se normaliza a NFC antes del hash y al verificarla: el mismo texto escrito en otro dispositivo puede llegar en otra forma Unicode.
@@ -101,20 +101,16 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `blocklist.txt`, `route
 Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) de ASVS 5.0.
 
 - El correo y el teléfono identifican la cuenta: cada uno pertenece a una sola, y el registro responde 409 si la cuenta ya existe.
-- Que una cuenta exista no es secreto: el registro responde 409, las solicitudes de código responden 404, y las esperas de los fallos responden 429 solo a una cuenta que existe. Ninguna respuesta se cambia para ocultarlo, y una cuenta de administración no tiene respuestas propias para ocultar su rol.
+- Que una cuenta exista no es secreto: el registro responde 409, las solicitudes de código responden 404, y las esperas de los fallos responden 429 solo a una cuenta que existe. Ninguna respuesta se cambia para ocultarlo, y el [superadministrador](#superadministrador) no tiene respuestas propias para ocultar su rol.
 - El servidor pasa el correo a minúsculas al recibirlo, y así lo guarda, lo compara y le envía.
 - Una cuenta no tiene nombre de usuario.
 - Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos.
 - El registro pide el código en `POST /api/auth/register/code`, que ya responde 409 si la cuenta existe, y las opciones de la passkey en `POST /api/auth/register/options`, con un user handle nuevo.
-- El registro lleva el código y el primer autenticador en la misma petición: una passkey o una contraseña, de las que usa el producto. Abre la sesión por `POST /api/auth/register/cookie` o `/token`, como un login. Si el producto usa el código por SMS, una cuenta con teléfono puede registrarse sin autenticador: entra con ese código. Sin autenticador, una cuenta con correo, o una con teléfono en un producto sin el código por SMS, responde 422.
+- El registro lleva el código y el primer autenticador en la misma petición: una passkey o una contraseña, de las que usa el producto. El primer [superadministrador](#superadministrador) lleva el código de instalación en lugar del código. Abre la sesión por `POST /api/auth/register/cookie` o `/token`, como un login. Si el producto usa el código por SMS, una cuenta con teléfono puede registrarse sin autenticador: entra con ese código. Sin autenticador, una cuenta con correo, o una con teléfono en un producto sin el código por SMS, responde 422.
 - El registro verifica la passkey antes que el código: una ceremonia que falla no gasta un intento del código.
 - El correo se cambia pidiendo el código para el nuevo en `POST /api/account/email/code` y presentándolo en `PUT /api/account/email`, y el teléfono, en `POST /api/account/phone/code` y `PUT /api/account/phone`. Un correo o un teléfono que tiene otra cuenta responde 409.
 - Volver a autenticarse es un paso aparte, con la sesión abierta: `POST /api/auth/reauth/options` lista en `allowCredentials` las passkeys de la cuenta, `POST /api/auth/reauth/sms/code` envía el código al teléfono de la cuenta, o responde 409 si no tiene, y `POST /api/auth/reauth/passkey`, `/reauth/password` y `/reauth/sms` verifican una credencial de la cuenta de la sesión. Renuevan la misma fila, escriben su `authenticated_at` y responden como se presenta la sesión: los tokens nuevos de una app, o la cookie nueva de la web.
 - Una operación que pide volver a autenticarse lo acepta durante 5 minutos desde `authenticated_at`; después responde 403 de tipo `reauthentication-required`.
-- La cuenta de administración tiene `role` `admin`.
-- El administrador de una organización cliente es una cuenta común: administrar su organización es una relación con ella, no `role` `admin`, y entra y se recupera como cualquier cuenta.
-- Si el producto usa la passkey, el registro con el código de instalación no acepta contraseña. Si no la usa, la cuenta de administración se registra y entra con los métodos del producto. Un código de instalación equivocado, o uno que llega cuando ya hay una cuenta de administración, responde 403, y dos registros con el código se esperan con un candado de PostgreSQL: solo uno queda como la primera.
-- Una cuenta de administración cuenta sus fallos, espera y se deshabilita como cualquier cuenta. Si el producto usa la passkey, con una contraseña correcta recibe 403: solo la ve quien la sabe. Con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo: la firma vale, y quien la presenta tiene la passkey. Lo mismo al volver a autenticarse.
 - El aviso dice a quién escribir con `contact` de `Settings`, y va en el idioma de la cuenta.
 - Registrarse no avisa: la passkey se vincula a una cuenta que acaba de nacer.
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el viejo recibe un aviso.
@@ -128,14 +124,12 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Cada pieza ofrece los métodos del producto que tiene su plataforma, según la tabla de esta sección.
 - La pantalla para entrar ofrece primero la passkey, si el producto la usa y el dispositivo la tiene, y luego los demás métodos del producto, entre los que elige el usuario.
 - La app guarda en el dispositivo el último método con que entró, y lo ofrece primero la próxima vez.
-- Mientras no hay una cuenta de administración, el registro acepta el código de instalación, `setup_code` de `Settings`, y la cuenta que se registra con él es de administración. Con la primera, el registro deja de aceptarlo.
-- Si el producto usa la passkey, una cuenta de administración entra solo con una passkey que verificó al usuario, con el flag UV en los datos del autenticador, y la que se registra con el código de instalación vincula una al registrarse ([NIST SP 800-63B-4 §2.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta entra con los métodos del producto: una passkey, una contraseña o un código por SMS ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
 - Las direcciones de aviso son el correo, el teléfono y el push a las apps con sesión abierta ([NIST SP 800-63B-4 §4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429 ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - Cada autenticador guarda cuándo se vinculó y cuándo cambió, y cada uno de esos eventos va al registro de eventos con su IP y su user agent ([NIST SP 800-63B-4 §4.1](../fuentes/nist/sp800-63b-4.txt)).
 - Un inicio de sesión exitoso pone en cero los fallos de los autenticadores que usó ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
-- Una cuenta se registra con un correo o con un teléfono, verificado con un código como el de [Recuperación](#recuperación) ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
+- Una cuenta se registra con un correo o con un teléfono, verificado con un código como el de [Recuperación](#recuperación), salvo el primer [superadministrador](#superadministrador) ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta puede tener un correo, un teléfono, varias passkeys y una contraseña ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Agregar o borrar una passkey, agregar o cambiar la contraseña y cambiar el correo o el teléfono piden volver a autenticarse en ese momento ([ASVS 5.0 §7.5.1](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - Vincular, cambiar o borrar un autenticador, y recuperar la cuenta, avisa a todas las direcciones de aviso. El aviso dice qué hacer, y a quién escribir, si el titular no lo hizo ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt), [§4.2.3](../fuentes/nist/sp800-63b-4.txt), [§4.5](../fuentes/nist/sp800-63b-4.txt) y [§4.6](../fuentes/nist/sp800-63b-4.txt)).
@@ -220,12 +214,12 @@ Vale si el producto usa la passkey o la contraseña: un producto que solo usa el
 - Una recuperación pendiente vive en la tabla `recovery`, una por cuenta, y una nueva la reemplaza. La tarea `recover` la aplica, cada minuto, con su calendario en `TIMERS`. Si al aplicarla la passkey pendiente ya es de otra cuenta, la recuperación se descarta y va al registro de eventos.
 - El titular ve la recuperación pendiente en `GET /api/account/recovery`, que responde 404 si no hay, y la cancela con `DELETE /api/account/recovery`. Un inicio de sesión suyo también la cancela: quien entra tiene un autenticador. [Apple](https://support.apple.com/en-us/118574)
 - Recuperar la cuenta no abre una sesión: el titular entra después con el autenticador nuevo. [OWASP Forgot Password](https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html)
-- Una cuenta de administración no se recupera con el código: pedirlo o presentarlo responde 403. La recupera otro administrador, y la primera, quien opera el servidor.
+- Un [superadministrador](#superadministrador) no se recupera con el código: pedirlo o presentarlo responde 403. Lo recupera otro superadministrador, y al primero, quien opera el servidor.
 - El correo, el teléfono y el código guardado cuentan sus fallos consecutivos cada uno aparte, con las esperas de [Cuentas](#cuentas). A los 100, ese camino deja de servir, y pedir o presentar su código responde 403 de tipo `recovery-disabled`. Un inicio de sesión exitoso los vuelve a habilitar, y un código guardado nuevo empieza habilitado.
 - Los fallos del correo y del teléfono viven en la tabla `recovery_address`, y el código guardado, con los suyos, en `recovery_code`.
-- Un administrador recupera una cuenta que no es de administración cambiando su correo o su teléfono por uno que tiene el titular, que sigue con el código.
+- Un superadministrador recupera una cuenta que no es de superadministrador, también la de un administrador de cliente, cambiando su correo o su teléfono por uno que tiene el titular, que sigue con el código.
 - El código vence a los 10 minutos, también el que va al correo ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
-- Quien no puede entrar, ni recibir el código, ni tiene el código guardado, recupera la cuenta con un administrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
+- Quien no puede entrar, ni recibir el código, ni tiene el código guardado, recupera la cuenta con un superadministrador ([NIST SP 800-63B-4 §4.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - El código tiene 6 dígitos ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta se recupera con un código que recibe, a su elección, en el correo o en el teléfono que registró ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt) y [§4.2.2.1](../fuentes/nist/sp800-63b-4.txt)).
 - El código guardado tiene al menos 64 bits, se guarda como hash, vale una sola vez y se reemplaza al usarlo, y crearlo avisa a todas las direcciones ([NIST SP 800-63B-4 §4.2.1.1](../fuentes/nist/sp800-63b-4.txt)).
@@ -277,6 +271,28 @@ Estándares: de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes
 - Ni los logs ni `event_log` guardan un token ([RFC 9700 §4.9.3](../fuentes/rfc/rfc9700.txt)).
 
 Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/`, la migración `<revisión>_accounts.py`, `schemas/auth.py`, `services/sessions.py`, `services/passwords.py`, `routers/auth.py`, `client`, `check_origin` y `signed_in` de `dependencies.py`, y `tests/test_sessions.py`.
+
+## Superadministrador
+
+Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
+
+- Un producto tiene dos clases de administración, y esta sección vale solo para la primera:
+
+  | Clase | Quién es | `role` | Cómo se registra, entra y se recupera |
+  |---|---|---|---|
+  | **Superadministrador** | Quien opera la instalación del producto | `superadmin` | Con las reglas de esta sección |
+  | **Administrador de cliente** | Quien administra lo suyo dentro del producto, como su organización o su negocio | `user` | Como cualquier cuenta: administrar su organización es una relación con ella, no un rol, y ninguna regla de esta sección le aplica |
+
+- Donde esta página dice superadministrador, no incluye al administrador de cliente.
+- El primer superadministrador se registra con el código de instalación, `setup_code` de `Settings`, en lugar del código que se envía al correo o al teléfono: no pide `POST /api/auth/register/code`, y su registro lleva el código de instalación, su correo o su teléfono y su primer autenticador. Su correo o su teléfono quedan sin verificar: los da quien sabe el código.
+- Quien administra define el código de instalación en la configuración del repositorio en Consola, uno por repositorio, el mismo en todas sus instalaciones, y llega al servidor por `credentials.py`, como las demás credenciales.
+- Mientras no hay un superadministrador, el registro acepta el código de instalación, y con el primero deja de aceptarlo. Uno equivocado, o uno que llega cuando ya hay un superadministrador, responde 403, y dos registros con él se esperan con un candado de PostgreSQL: solo uno queda como el primero.
+- Un registro con el código de instalación y el código a la vez, o sin ninguno de los dos, responde 422.
+- Si el producto usa la passkey, el registro con el código de instalación no acepta contraseña. Si no la usa, el superadministrador se registra y entra con los métodos del producto.
+- El superadministrador cuenta sus fallos, espera y se deshabilita como cualquier cuenta. Si el producto usa la passkey, con una contraseña correcta recibe 403: solo la ve quien la sabe. Con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo: la firma vale, y quien la presenta tiene la passkey. Lo mismo al volver a autenticarse.
+- Si el producto usa la passkey, el superadministrador entra solo con una passkey que verificó al usuario, con el flag UV en los datos del autenticador, y el que se registra con el código de instalación vincula una al registrarse ([NIST SP 800-63B-4 §2.2.1](../fuentes/nist/sp800-63b-4.txt)).
+
+Plantilla: de [plantilla/server/](../plantilla/server/), `services/registration.py` y `tests/test_registration.py`.
 
 ## Token de acceso
 
@@ -374,10 +390,11 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | En el registro, un `clientExtensionResults` que no está vacío, `crossOrigin` verdadero u otro `origin` hacen fallar la ceremonia | `test_registration_client_must_be_clean` |
 | Un credential ID de más de 1023 bytes, o que ya es de otra passkey, hace fallar el registro | `test_credential_id_longer_than_1023_bytes_or_taken_fails` |
 | Un código equivocado responde 400 de tipo `invalid-code`, y una passkey que falla no gasta un intento del código | `test_wrong_code_fails_and_a_failed_passkey_keeps_the_code` |
-| El código de instalación registra la cuenta de administración mientras no hay otra, y uno equivocado responde 403 | `test_setup_code_registers_the_first_admin_once` |
-| La cuenta de administración que se registra con el código de instalación vincula una passkey con el flag UV | `test_admin_registers_a_passkey_that_verified_the_user` |
-| Si el producto usa la passkey, una contraseña equivocada de una cuenta de administración cuenta su fallo como en cualquier cuenta, y la correcta responde 403 | `test_admin_does_not_sign_in_with_a_password` |
-| Una cuenta de administración que entra con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo | `test_admin_passkey_needs_the_uv_flag` |
+| El código de instalación registra al superadministrador mientras no hay otro, y uno equivocado responde 403 | `test_setup_code_registers_the_first_superadmin_once` |
+| El superadministrador se registra con el código de instalación sin el código, y con los dos, o sin ninguno, responde 422 | `test_setup_code_replaces_the_code` |
+| El superadministrador que se registra con el código de instalación vincula una passkey con el flag UV | `test_superadmin_registers_a_passkey_that_verified_the_user` |
+| Si el producto usa la passkey, una contraseña equivocada del superadministrador cuenta su fallo como en cualquier cuenta, y la correcta responde 403 | `test_superadmin_does_not_sign_in_with_a_password` |
+| El superadministrador que entra con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo | `test_superadmin_passkey_needs_the_uv_flag` |
 | Si el `signCount` no crece, el titular recibe un aviso | `test_sign_count_that_does_not_grow_notifies_the_holder` |
 | Al volver a autenticarse, `allowCredentials` lista las passkeys de la cuenta con sus `transports` | `test_reauth_options_list_the_passkeys_with_transports` |
 | Volver a autenticarse renueva la misma fila con tokens nuevos y su `authenticated_at`, y los que el cliente traía dejan de valer | `test_reauth_renews_the_app_session_and_its_tokens` y `test_reauth_renews_the_web_session_in_its_cookie` |
@@ -397,19 +414,19 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Agregar una contraseña responde 201, avisa a cada dirección y deja `authn_password_change` | `test_password_is_added_and_notifies` |
 | Cambiar la contraseña no cierra sesiones, y `DELETE /api/account/sessions` cierra las demás después de volver a autenticarse | `test_change_keeps_the_sessions_and_the_holder_closes_the_others` |
 | Cambiar la contraseña pone en cero sus fallos y la vuelve a habilitar | `test_change_resets_the_failures_and_enables` |
-| Una cuenta de administración que intenta agregar una contraseña recibe 403 | `test_admin_does_not_add_a_password` |
+| El superadministrador que intenta agregar una contraseña recibe 403 | `test_superadmin_does_not_add_a_password` |
 | Agregar o cambiar la contraseña pide volver a autenticarse | `test_password_change_needs_a_reauth` |
 | El registro acepta una contraseña: una de la lista no gasta el código, y con el código de instalación responde 403 | `test_registration_takes_a_password` |
 | El registro lleva una passkey con su nombre o una contraseña, no las dos | `test_registration_takes_one_authenticator` |
 | Un método que el producto no usa no tiene rutas, y el código de autorización va con la passkey | `test_a_method_the_product_does_not_use_has_no_routes` |
 | El registro acepta solo los autenticadores que usa el producto, y otro responde 422 | `test_registration_takes_only_the_methods_of_the_product` |
-| Si el producto no usa la passkey, la cuenta de administración se registra con el código de instalación y una contraseña, y entra y la cambia | `test_admin_without_passkey_uses_the_password` |
+| Si el producto no usa la passkey, el superadministrador se registra con el código de instalación y una contraseña, y entra y la cambia | `test_superadmin_without_passkey_uses_the_password` |
 | Volver a autenticarse con la contraseña renueva la sesión, y una equivocada responde 401 | `test_reauth_with_the_password_renews_the_session` |
 | El código del SMS abre la sesión por sus dos rutas, y una app recibe la respuesta del canje del código | `test_sms_signs_in_the_web_and_the_app` |
 | Pedir el código para entrar con un teléfono sin cuenta responde 404, y una IP que recibe 10 en 15 minutos queda bloqueada 30 minutos | `test_code_to_an_unknown_phone_is_a_404` |
 | Un código para entrar equivocado responde 400 de tipo `invalid-code` y cuenta un fallo del teléfono, que un código nuevo no reinicia y un inicio de sesión sí | `test_wrong_code_is_invalid_code_and_a_failure_of_the_phone` |
 | El teléfono espera desde el quinto fallo y se deshabilita al centésimo; en espera o deshabilitado no recibe el SMS, y deshabilitado no acepta el código | `test_phone_waits_and_disables_like_any_authenticator` |
-| Si el producto usa la passkey, una cuenta de administración que pide el código recibe 403 sin SMS, uno equivocado cuenta su fallo como en cualquier cuenta, y uno correcto responde 403 | `test_admin_does_not_sign_in_with_sms` |
+| Si el producto usa la passkey, el superadministrador que pide el código recibe 403 sin SMS, uno equivocado cuenta su fallo como en cualquier cuenta, y uno correcto responde 403 | `test_superadmin_does_not_sign_in_with_sms` |
 | Volver a autenticarse con el código del teléfono renueva la sesión, y una cuenta sin teléfono que lo pide recibe 409 | `test_reauth_with_sms_renews_the_session` |
 | Una cuenta con teléfono se registra sin autenticador si el producto usa el código por SMS; con correo, o sin el código, responde 422 | `test_registration_by_phone_takes_no_authenticator` |
 | Cambiar el teléfono pone en cero sus fallos y lo vuelve a habilitar | `test_new_phone_resets_its_failures` |
@@ -422,7 +439,7 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | El código del teléfono, o el del correo con el código guardado, se aplica en el momento, y el código guardado se gasta y vuelve uno nuevo con 200 | `test_phone_code_or_saved_code_applies_at_once` |
 | El titular cancela la recuperación pendiente, y un inicio de sesión suyo también | `test_holder_or_a_sign_in_cancels_what_waits` |
 | Las opciones de la recuperación piden el código, llevan el user handle y las passkeys de la cuenta, y una ceremonia que falla no gasta el código | `test_recovery_links_a_passkey` |
-| Una cuenta de administración que pide o presenta el código para recuperar recibe 403 | `test_admin_does_not_recover_with_a_code` |
+| El superadministrador que pide o presenta el código para recuperar recibe 403 | `test_superadmin_does_not_recover_with_a_code` |
 | El código guardado son 80 bits en 16 caracteres de base32, que pide volver a autenticarse, responde 201 o 200, se guarda como hash Argon2id, reemplaza al anterior y avisa a todas las direcciones | `test_saved_code_is_80_bits_shown_once_and_notifies` |
 | Un código guardado equivocado cuenta su fallo aparte, a los 100 responde `recovery-disabled`, y el código enviado sigue | `test_saved_code_counts_its_failures_and_keeps_the_sent_one` |
 | Una contraseña de la lista de bloqueo en la recuperación responde 422 y no gasta el código | `test_blocked_password_keeps_the_code` |

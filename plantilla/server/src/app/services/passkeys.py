@@ -233,8 +233,8 @@ async def check(session: AsyncSession, credential: PasskeyCredential, client: Cl
     """Return the account of a valid assertion, or answer 401.
 
     The challenge goes on its first use. A failure that blames a passkey
-    counts against it, and stays with its event. An admin needs the UV
-    flag.
+    counts against it, and stays with its event. A superadmin needs the
+    UV flag.
     """
     try:
         data = client_data(credential)
@@ -258,7 +258,7 @@ async def check(session: AsyncSession, credential: PasskeyCredential, client: Cl
         sign_count, backed_up, user_verified = verify(credential, challenge, passkey)
     except Refused as refused:
         raise fail(session, client, passkey, account, refused, now) from refused
-    if account.role == Role.ADMIN and not user_verified:
+    if account.role == Role.SUPERADMIN and not user_verified:
         # The signature is valid: whoever presents it holds the passkey.
         details: dict[str, object] = {"reason": "user_verification"}
         session.add(event("authn_login_fail", EventLevel.WARN, client, passkey, details))

@@ -1,6 +1,6 @@
 # ADR-0227 · Un objetivo más chico que 24 × 24 vale si su círculo de 24 no toca otro, y un separador puede ser más fino
 
-- **Estado:** Aceptada. El usuario pidió el 2026-11-23, en Consola, el punto 1 al ver controles demasiado grandes para el escritorio, y el 2 al rechazar los separadores de 24 px
+- **Estado:** Aceptada. El usuario pidió el 2026-11-23, en Consola, el punto 1 al ver controles demasiado grandes para el escritorio, y el 2 al rechazar los separadores de 24 px. El punto 2, y el 3 en lo que no mide de un `QSplitterHandle`, los reemplaza el [ADR-0229](0229-un-separador-se-agarra-en-una-franja-de-24-px-encima-de-su-linea.md)
 - **Fecha:** 2026-11-23
 - **Alcance:** `transversal.md`, `qt.md` y `plantilla/qt/tests/test_accessibility.py`
 

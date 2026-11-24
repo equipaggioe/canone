@@ -1,28 +1,42 @@
-"""Adding and changing a password, and its blocklist."""
+"""The password: signing in, adding and changing it, its blocklist.
+
+The product may not offer the password: then these tests skip.
+"""
 
 import json
 import re
 import unicodedata
+from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
+from http.cookies import SimpleCookie
 from pathlib import Path
 
 import httpx
 import pytest
 import sqlalchemy as sa
-from httpx import AsyncClient, Response
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import FastAPI
+from httpx import ASGITransport, AsyncClient, Response
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
 
-from app import errors
+from app import errors, methods
 from app.config import settings
-from app.enums import Role
+from app.dependencies import PrincipalDep
+from app.enums import Method, Role
+from app.methods import METHODS
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.account.password import Password
 from app.models.event.event_log import EventLog
-from app.services import limits, passwords
-from tests.authenticator import Authenticator, register
+from app.services import events, limits, passwords, sessions
+
+pytestmark = pytest.mark.skipif(
+    Method.PASSWORD not in METHODS, reason="the product offers no password"
+)
 
 EMAIL = "ana@example.com"
+ORIGIN = {"Origin": "https://test"}
+# Where the product offers the passkey, an admin signs in only with it.
+WITH_PASSKEY = frozenset({Method.PASSKEY, Method.PASSWORD})
 PHONE = "+56221234567"
 PASSWORD = "Correct horse battery"
 NEW = "Staple of a purple ocean"
@@ -39,6 +53,55 @@ async def account(session: AsyncSession) -> Account:
     session.add(Password(account_id=row.id, hash=passwords.hash_password(PASSWORD)))
     await session.flush()
     return row
+
+
+probe = FastAPI()
+errors.install(probe)
+
+
+@probe.get("/whoami")
+async def whoami(principal: PrincipalDep) -> dict[str, str]:
+    """Answer the account of the session that calls."""
+    return {"account": str(principal.account.id)}
+
+
+@pytest.fixture
+async def guarded(database: AsyncConnection) -> AsyncIterator[AsyncClient]:
+    """Call a route that only a signed-in account reaches."""
+    async with AsyncClient(transport=ASGITransport(app=probe), base_url="http://test") as client:
+        yield client
+
+
+@pytest.fixture
+def recorded(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    """Collect the events written in their own transaction."""
+    found: list[str] = []
+
+    async def record(row: EventLog) -> None:
+        """Keep the action of the event."""
+        found.append(row.action)
+
+    monkeypatch.setattr(events, "record", record)
+    return found
+
+
+def with_cookie(token: str) -> dict[str, str]:
+    """Send a session cookie: the client does not keep a Secure one."""
+    return {"Cookie": f"{sessions.COOKIE}={token}"}
+
+
+async def sign_in_web(client: AsyncClient) -> str:
+    """Sign in the web with the password and return its cookie."""
+    response = await client.post(
+        "/api/auth/password/cookie", json={"email": EMAIL, "password": PASSWORD}
+    )
+    assert response.status_code == 204
+    return SimpleCookie(response.headers["set-cookie"])[sessions.COOKIE].value
+
+
+async def actions(session: AsyncSession) -> list[str]:
+    """Return the actions of the events, in order."""
+    return list(await session.scalars(sa.select(EventLog.action).order_by(EventLog.id)))
 
 
 async def sign_in(client: AsyncClient, password: str = PASSWORD) -> Response:
@@ -118,11 +181,10 @@ async def test_password_is_added_and_notifies(
 ) -> None:
     """An account without a password adds one: a 201 and a notice."""
     await session.execute(sa.delete(Password))
-    authenticator = Authenticator()
-    await register(session, account, authenticator)
-    options = await client.post("/api/auth/passkey/options")
-    credential = authenticator.sign(options.json()["challenge"], account.user_handle)
-    tokens = (await client.post("/api/auth/passkey/token", json=credential)).json()
+    caller = sessions.Client(ip_address="127.0.0.1", user_agent="test")
+    issued = await sessions.open_app(session, account, caller, "es")
+    await session.flush()
+    tokens = {"access_token": issued.access_token}
     assert (await put(client, tokens, NEW)).status_code == 201
     row = await session.get_one(Password, account.id)
     assert row.created_at == row.changed_at
@@ -133,15 +195,18 @@ async def test_password_is_added_and_notifies(
 
 
 async def test_change_closes_the_other_sessions(
-    client: AsyncClient, session: AsyncSession, account: Account, sent: list[httpx.Request]
+    client: AsyncClient,
+    guarded: AsyncClient,
+    session: AsyncSession,
+    account: Account,
+    sent: list[httpx.Request],
 ) -> None:
     """Changing the password keeps this session and closes the rest."""
     other = (await sign_in(client)).json()
     tokens = (await sign_in(client)).json()
     assert (await put(client, tokens, NEW)).status_code == 204
-    passkeys = "/api/account/passkeys"
-    assert (await client.get(passkeys, headers=bearer(other))).status_code == 401
-    assert (await client.get(passkeys, headers=bearer(tokens))).status_code == 200
+    assert (await guarded.get("/whoami", headers=bearer(other))).status_code == 401
+    assert (await guarded.get("/whoami", headers=bearer(tokens))).status_code == 200
     assert await session.scalar(sa.select(sa.func.count()).select_from(AccountSession)) == 1
     expired = await session.scalars(
         sa.select(EventLog.details).where(EventLog.action == "session_expired")
@@ -167,9 +232,10 @@ async def test_change_resets_the_failures_and_enables(
 
 
 async def test_admin_does_not_add_a_password(
-    client: AsyncClient, session: AsyncSession, account: Account
+    client: AsyncClient, session: AsyncSession, account: Account, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """An admin signs in only with a passkey: a password is a 403."""
+    monkeypatch.setattr(methods, "METHODS", WITH_PASSKEY)
     tokens = (await sign_in(client)).json()
     await session.execute(sa.update(Account).values(role=Role.ADMIN))
     assert (await put(client, tokens, NEW)).status_code == 403
@@ -203,12 +269,17 @@ async def code_for(client: AsyncClient, sent: list[httpx.Request], email: str) -
 
 
 async def test_registration_takes_a_password(
-    client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
+    client: AsyncClient,
+    session: AsyncSession,
+    sent: list[httpx.Request],
+    clock: list[int],
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """An account registers with its code and a password.
 
     One on the blocklist spends no code; with the setup code, a 403.
     """
+    monkeypatch.setattr(methods, "METHODS", WITH_PASSKEY)
     email = "bea@example.com"
     code = await code_for(client, sent, email)
     body = {"email": email, "code": code, "password": COMMON}
@@ -235,3 +306,188 @@ async def test_registration_takes_one_authenticator(
     """A registration brings a named passkey or a password, not both."""
     body = {"email": "bea@example.com", "code": "123456", **extra}
     assert (await client.post("/api/auth/register/token", json=body)).status_code == 422
+
+
+async def test_app_signs_in_as_the_token_endpoint(client: AsyncClient, account: Account) -> None:
+    """The app gets the tokens of RFC 6749, not to be cached."""
+    response = await client.post(
+        "/api/auth/password/token", json={"phone": PHONE, "password": PASSWORD}
+    )
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
+    assert response.headers["pragma"] == "no-cache"
+    body = response.json()
+    assert set(body) == {"access_token", "token_type", "expires_in", "refresh_token"}
+    assert (body["token_type"], body["expires_in"]) == ("Bearer", 900)
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {"password": PASSWORD},
+        {"email": EMAIL, "phone": PHONE, "password": PASSWORD},
+        {"phone": "56912345678", "password": PASSWORD},
+    ],
+)
+async def test_login_takes_the_email_or_the_phone(
+    client: AsyncClient, account: Account, body: dict[str, str]
+) -> None:
+    """The login takes exactly one of the email and the phone."""
+    response = await client.post("/api/auth/password/cookie", json=body)
+    assert response.status_code == 422
+
+
+async def test_login_lowers_the_email(client: AsyncClient, account: Account) -> None:
+    """The email signs in whatever its case."""
+    response = await client.post(
+        "/api/auth/password/cookie", json={"email": EMAIL.upper(), "password": PASSWORD}
+    )
+    assert response.status_code == 204
+
+
+async def test_password_is_checked_in_nfc_as_it_comes(
+    client: AsyncClient, session: AsyncSession, account: Account
+) -> None:
+    """The NFD form signs in; another case or a cut does not."""
+    word = "contraseña ñandú"
+    hashed = passwords.hash_password(unicodedata.normalize("NFD", word))
+    await session.execute(sa.update(Password).values(hash=hashed))
+    for password, status in [
+        (unicodedata.normalize("NFD", word), 204),
+        (unicodedata.normalize("NFC", word), 204),
+        (word.upper(), 401),
+        (word[:-1], 401),
+    ]:
+        body = {"email": EMAIL, "password": password}
+        assert (await client.post("/api/auth/password/cookie", json=body)).status_code == status
+
+
+async def test_wrong_password_is_a_401_and_a_failure(
+    client: AsyncClient, session: AsyncSession, account: Account
+) -> None:
+    """A wrong password or an unknown account: a 401 and an event."""
+    for email in (EMAIL, "nobody@example.com"):
+        response = await client.post(
+            "/api/auth/password/token", json={"email": email, "password": "wrong"}
+        )
+        assert response.status_code == 401
+        assert response.headers["content-type"] == errors.PROBLEM_JSON
+    assert await session.scalar(sa.select(Password.failures)) == 1
+    assert await actions(session) == ["authn_login_fail", "authn_login_fail"]
+
+
+async def test_attempt_before_the_wait_is_a_429(
+    client: AsyncClient, session: AsyncSession, account: Account, recorded: list[str]
+) -> None:
+    """From the fifth failure, an early attempt is a 429.
+
+    It carries Retry-After, even with the right password, which it
+    does not check.
+    """
+    wrong = {"email": EMAIL, "password": "wrong"}
+    for _ in range(5):
+        assert (await client.post("/api/auth/password/cookie", json=wrong)).status_code == 401
+    right = {"email": EMAIL, "password": PASSWORD}
+    response = await client.post("/api/auth/password/cookie", json=right)
+    assert response.status_code == 429
+    assert 29 <= int(response.headers["retry-after"]) <= 30
+    assert response.json()["detail"]
+    assert await session.scalar(sa.select(Password.failures)) == 5
+    assert recorded == ["authn_login_fail_max"]
+
+
+async def test_success_resets_the_failures(
+    client: AsyncClient, session: AsyncSession, account: Account
+) -> None:
+    """A login after the wait passes resets the failures."""
+    await session.execute(
+        sa.update(Password).values(failures=7, retry_at=datetime.now(UTC) - timedelta(seconds=1))
+    )
+    await sign_in_web(client)
+    password = (await session.execute(sa.select(Password.failures, Password.retry_at))).one()
+    assert tuple(password) == (0, None)
+    assert "authn_login_successafterfail" in await actions(session)
+
+
+async def test_hundredth_failure_disables_the_password(
+    client: AsyncClient, guarded: AsyncClient, session: AsyncSession, account: Account
+) -> None:
+    """At 100 failures the password is disabled: a 403 of its type.
+
+    The right password does not pass, and the sessions stay.
+    """
+    token = await sign_in_web(client)
+    await session.execute(
+        sa.update(Password).values(failures=99, retry_at=datetime.now(UTC) - timedelta(seconds=1))
+    )
+    wrong = {"email": EMAIL, "password": "wrong"}
+    assert (await client.post("/api/auth/password/cookie", json=wrong)).status_code == 401
+    assert await session.scalar(sa.select(Password.disabled_at)) is not None
+    assert "authn_login_lock" in await actions(session)
+    await session.execute(sa.update(Password).values(retry_at=None))
+    right = {"email": EMAIL, "password": PASSWORD}
+    response = await client.post("/api/auth/password/cookie", json=right)
+    assert response.status_code == 403
+    assert response.json()["type"] == errors.AUTHENTICATOR_DISABLED.uri
+    assert (await guarded.get("/whoami", headers=with_cookie(token))).status_code == 200
+
+
+async def test_admin_does_not_sign_in_with_a_password(
+    client: AsyncClient, session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An admin's password is not looked at: a 401 without a failure."""
+    monkeypatch.setattr(methods, "METHODS", WITH_PASSKEY)
+    account = Account(email="ana.admin@example.com", role=Role.ADMIN, language="es")
+    session.add(account)
+    await session.flush()
+    session.add(Password(account_id=account.id, hash=passwords.hash_password("Correct horse")))
+    await session.flush()
+    login = {"email": "ana.admin@example.com", "password": "Correct horse"}
+    assert (await client.post("/api/auth/password/token", json=login)).status_code == 401
+    assert await session.scalar(sa.select(Password.failures)) == 0
+    await session.execute(sa.update(Account).values(role=Role.USER))
+    assert (await client.post("/api/auth/password/token", json=login)).status_code == 200
+
+
+async def test_reauth_with_the_password_renews_the_session(
+    client: AsyncClient, session: AsyncSession, account: Account
+) -> None:
+    """The password authenticates the session again; a wrong one, no."""
+    tokens = (await sign_in(client)).json()
+    moment = datetime.now(UTC) - timedelta(minutes=10)
+    await session.execute(sa.update(AccountSession).values(authenticated_at=moment))
+    headers = bearer(tokens)
+    wrong = await client.post(
+        "/api/auth/reauth/password", json={"password": "wrong"}, headers=headers
+    )
+    assert wrong.status_code == 401
+    response = await client.post(
+        "/api/auth/reauth/password", json={"password": PASSWORD}, headers=headers
+    )
+    assert response.status_code == 200
+    renewed = await session.scalar(sa.select(AccountSession.authenticated_at))
+    assert renewed is not None
+    assert datetime.now(UTC) - renewed < timedelta(minutes=1)
+
+
+async def test_admin_without_passkey_uses_the_password(
+    client: AsyncClient,
+    session: AsyncSession,
+    sent: list[httpx.Request],
+    clock: list[int],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Where the product offers no passkey, the admin has a password.
+
+    The setup code registers it, and it signs in and changes it.
+    """
+    monkeypatch.setattr(methods, "METHODS", frozenset({Method.PASSWORD}))
+    email = "admin@example.com"
+    code = await code_for(client, sent, email)
+    body = {"email": email, "code": code, "password": NEW, "setupCode": settings.setup_code}
+    assert (await client.post("/api/auth/register/token", json=body)).status_code == 200
+    assert await session.scalar(sa.select(Account.role)) == Role.ADMIN
+    login = {"email": email, "password": NEW}
+    response = await client.post("/api/auth/password/token", json=login)
+    assert response.status_code == 200
+    assert (await put(client, response.json(), PASSWORD)).status_code == 204

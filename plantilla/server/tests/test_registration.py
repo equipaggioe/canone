@@ -15,18 +15,22 @@ from webauthn.helpers import base64url_to_bytes
 
 from app import errors, store
 from app.config import settings
-from app.enums import Role
+from app.enums import Method, Role
+from app.methods import METHODS
 from app.models.account.account import Account
 from app.models.account.passkey import Passkey
-from app.models.account.password import Password
 from app.models.event.event_log import EventLog
-from app.services import attestation, codes, events, limits, passwords, sessions
+from app.services import attestation, codes, events, limits, sessions
 from tests.authenticator import UP, Authenticator
 
 EMAIL = "bea@example.com"
 PHONE = "+56221234567"
 HOST = f"app.{settings.domain}"
 ANDROID = "PRODUCTO-android/1.0.0"
+# A test that registers a passkey needs the method.
+needs_passkey = pytest.mark.skipif(
+    Method.PASSKEY not in METHODS, reason="the product offers no passkey"
+)
 
 
 @pytest.fixture
@@ -247,6 +251,7 @@ async def test_ip_asks_ten_sms_an_hour(client: AsyncClient) -> None:
     assert answers == [204] * 10 + [429]
 
 
+@needs_passkey
 async def test_existing_account_is_a_409(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
 ) -> None:
@@ -276,6 +281,7 @@ async def test_ten_conflicts_block_the_ip_for_30_minutes(
     assert 1790 <= int(response.headers["retry-after"]) <= 1800
 
 
+@needs_passkey
 async def test_creation_options_ask_a_discoverable_passkey(client: AsyncClient) -> None:
     """The options of create() follow autenticacion.md, «Passkeys».
 
@@ -307,6 +313,7 @@ async def test_creation_options_ask_a_discoverable_passkey(client: AsyncClient) 
     assert 590 <= await store.client.ttl(attestation.creation_key(raw)) <= 600
 
 
+@needs_passkey
 @pytest.mark.parametrize("form", ["cookie", "token"])
 async def test_registration_links_the_passkey_and_opens_the_session(
     client: AsyncClient,
@@ -351,6 +358,7 @@ async def test_registration_links_the_passkey_and_opens_the_session(
     assert (await client.post("/api/auth/passkey/token", json=credential)).status_code == 200
 
 
+@needs_passkey
 @pytest.mark.parametrize(
     ("fmt", "status"), [("none", 200), ("packed", 200), ("packed-x5c", 400), ("fido-u2f", 400)]
 )
@@ -367,6 +375,7 @@ async def test_registration_takes_none_and_self_attestation(
     assert response.status_code == status
 
 
+@needs_passkey
 @pytest.mark.parametrize(
     ("extensions", "status"),
     [
@@ -392,6 +401,7 @@ async def test_registration_takes_only_cred_protect(
         assert recorded[-1].details == {"reason": "extensions", "extensions": ["hmac-secret"]}
 
 
+@needs_passkey
 async def test_registration_client_must_be_clean(
     client: AsyncClient, sent: list[httpx.Request], clock: list[int]
 ) -> None:
@@ -406,6 +416,7 @@ async def test_registration_client_must_be_clean(
         assert (await register(client, Authenticator(), code, create=create)).status_code == 400
 
 
+@needs_passkey
 async def test_credential_id_longer_than_1023_bytes_or_taken_fails(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
 ) -> None:
@@ -423,6 +434,7 @@ async def test_credential_id_longer_than_1023_bytes_or_taken_fails(
     assert (await register(client, copy, code)).status_code == 400
 
 
+@needs_passkey
 async def test_wrong_code_fails_and_a_failed_passkey_keeps_the_code(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
 ) -> None:
@@ -438,6 +450,7 @@ async def test_wrong_code_fails_and_a_failed_passkey_keeps_the_code(
     assert await session.scalar(sa.select(sa.func.count()).select_from(Account)) == 1
 
 
+@needs_passkey
 async def test_setup_code_registers_the_first_admin_once(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
 ) -> None:
@@ -459,6 +472,7 @@ async def test_setup_code_registers_the_first_admin_once(
     assert sorted(roles) == [Role.ADMIN, Role.USER]
 
 
+@needs_passkey
 async def test_admin_registers_a_passkey_that_verified_the_user(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
 ) -> None:
@@ -470,22 +484,7 @@ async def test_admin_registers_a_passkey_that_verified_the_user(
     assert await session.scalar(sa.select(sa.func.count()).select_from(Account)) == 0
 
 
-async def test_admin_does_not_sign_in_with_a_password(
-    client: AsyncClient, session: AsyncSession
-) -> None:
-    """An admin's password is not looked at: a 401 without a failure."""
-    account = Account(email=EMAIL, role=Role.ADMIN, language="es")
-    session.add(account)
-    await session.flush()
-    session.add(Password(account_id=account.id, hash=passwords.hash_password("Correct horse")))
-    await session.flush()
-    login = {"email": EMAIL, "password": "Correct horse"}
-    assert (await client.post("/api/auth/password/token", json=login)).status_code == 401
-    assert await session.scalar(sa.select(Password.failures)) == 0
-    await session.execute(sa.update(Account).values(role=Role.USER))
-    assert (await client.post("/api/auth/password/token", json=login)).status_code == 200
-
-
+@needs_passkey
 async def test_registration_by_phone_verifies_the_phone(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
 ) -> None:

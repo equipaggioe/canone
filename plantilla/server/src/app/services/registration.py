@@ -7,11 +7,13 @@ from uuid import uuid4
 
 import sqlalchemy as sa
 from fastapi import HTTPException
+from fastapi.exceptions import RequestValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.concurrency import run_in_threadpool
 
+from app import methods
 from app.config import settings
-from app.enums import EventLevel, Role
+from app.enums import EventLevel, Method, Role
 from app.errors import INVALID_CODE, PASSWORD_BLOCKED, USER_VERIFICATION_REQUIRED, AppError
 from app.models.account.account import Account
 from app.models.account.password import Password
@@ -95,15 +97,25 @@ async def role(session: AsyncSession, setup_code: str | None) -> Role:
 async def register(
     session: AsyncSession, body: Registration, client: Client, language: str
 ) -> Account:
-    """Create an account with its verified address and its passkey.
+    """Create an account with its verified address and authenticator.
 
-    The passkey is checked first: a failed ceremony leaves the code.
+    Each authenticator only if the product offers it. The passkey is
+    checked first: a failed ceremony leaves the code.
     """
     await check_open(client)
     created = None
+    offered = Method.PASSKEY if body.credential is not None else Method.PASSWORD
+    if offered not in methods.METHODS:
+        field = "credential" if offered == Method.PASSKEY else "password"
+        error = {
+            "loc": ("body", field),
+            "msg": f"The product takes no {offered}",
+            "type": "value_error",
+        }
+        raise RequestValidationError([error])
     if body.credential is not None:
         created = await attestation.create(session, body.credential, client)
-    elif body.setup_code is not None:
+    elif body.setup_code is not None and Method.PASSKEY in methods.METHODS:
         raise HTTPException(HTTPStatus.FORBIDDEN, "An admin registers with a passkey")
     elif body.password is not None and passwords.blocked(body.password):
         raise AppError(PASSWORD_BLOCKED)

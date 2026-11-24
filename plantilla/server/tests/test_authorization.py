@@ -14,12 +14,17 @@ from webauthn.helpers import base64url_to_bytes
 
 from app import store
 from app.config import settings
-from app.enums import Role
+from app.enums import Method, Role
 from app.main import app
+from app.methods import METHODS
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.services import authorization, clients, sessions
 from tests.authenticator import Authenticator, register
+
+pytestmark = pytest.mark.skipif(
+    Method.PASSKEY not in METHODS, reason="the product offers no passkey"
+)
 
 HOST = f"app.{settings.domain}"
 DESKTOP = clients.Registration("desktop", frozenset({"http://127.0.0.1/callback"}))

@@ -22,6 +22,7 @@ server/
   src/app/
     __init__.py
     main.py
+    methods.py
     openapi.py
     config.py
     database.py
@@ -73,6 +74,8 @@ server/
       auth.py
       authorization.py
       health.py
+      passkey.py
+      password.py
       problems.py
       <recurso>.py
     services/
@@ -109,6 +112,7 @@ server/
     test_files.py
     test_health.py
     test_messages.py
+    test_methods.py
     test_passkeys.py
     test_passwords.py
     test_registration.py

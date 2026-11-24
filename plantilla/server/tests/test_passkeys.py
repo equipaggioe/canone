@@ -15,12 +15,17 @@ from webauthn.helpers import base64url_to_bytes, bytes_to_base64url
 
 from app import errors, store
 from app.config import settings
-from app.enums import Role
+from app.enums import Method, Role
+from app.methods import METHODS
 from app.models.account.account import Account
 from app.models.account.passkey import Passkey
 from app.models.event.event_log import EventLog
 from app.services import events, passkeys, sessions
 from tests.authenticator import BE, BS, UP, UV, Authenticator, register
+
+pytestmark = pytest.mark.skipif(
+    Method.PASSKEY not in METHODS, reason="the product offers no passkey"
+)
 
 
 @pytest.fixture

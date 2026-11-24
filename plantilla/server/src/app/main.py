@@ -9,8 +9,9 @@ from fastapi.routing import APIRoute
 from app import errors, ijson, store, tracing
 from app.database import engine
 from app.dependencies import check_client_version, check_origin, deny_by_default
-from app.enums import EventLevel
-from app.routers import account, auth, authorization, health, problems
+from app.enums import EventLevel, Method
+from app.methods import METHODS
+from app.routers import account, auth, authorization, health, passkey, password, problems
 from app.services import events, messages
 
 
@@ -33,16 +34,27 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
         await messages.client.aclose()
 
 
-api = APIRouter(
-    prefix="/api",
-    dependencies=[Depends(check_client_version), Depends(check_origin), Depends(deny_by_default)],
-    responses=errors.RESPONSES,
-)
-api.include_router(account.router)
-api.include_router(auth.router)
-api.include_router(authorization.router)
-api.include_router(health.router)
-api.include_router(problems.router)
+def api_router(methods: frozenset[Method]) -> APIRouter:
+    """Mount the routers of /api: a method if the product has it."""
+    api = APIRouter(
+        prefix="/api",
+        dependencies=[
+            Depends(check_client_version),
+            Depends(check_origin),
+            Depends(deny_by_default),
+        ],
+        responses=errors.RESPONSES,
+    )
+    for router in (account.router, auth.router, health.router, problems.router):
+        api.include_router(router)
+    # The authorization code signs in with the passkey, on its page.
+    if Method.PASSKEY in methods:
+        api.include_router(passkey.router)
+        api.include_router(authorization.router)
+    if Method.PASSWORD in methods:
+        api.include_router(password.router)
+    return api
+
 
 # ADR-0099: the telemetry stays in the process, whatever the
 # environment says.
@@ -54,4 +66,4 @@ app = FastAPI(
 errors.install(app)
 ijson.install(app)
 tracing.install()
-app.include_router(api)
+app.include_router(api_router(METHODS))

@@ -19,19 +19,25 @@ from webauthn.helpers import base64url_to_bytes
 
 from app import errors
 from app.config import settings
-from app.enums import Role
+from app.enums import Method, Role
+from app.methods import METHODS
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.account.passkey import Passkey
 from app.models.account.password import Password
 from app.models.event.event_log import EventLog
 from app.services import limits, passwords, sessions
+from app.services.sessions import Client
 from tests.authenticator import Authenticator, register
 
 EMAIL = "ana@example.com"
 PHONE = "+56221234567"
 PASSWORD = "Correct horse battery"
 HOST = f"app.{settings.domain}"
+# A test of the passkey needs the method.
+needs_passkey = pytest.mark.skipif(
+    Method.PASSKEY not in METHODS, reason="the product offers no passkey"
+)
 
 
 @pytest.fixture
@@ -54,13 +60,15 @@ async def passkey(session: AsyncSession, account: Account) -> Authenticator:
 
 
 @pytest.fixture
-async def app_tokens(client: AsyncClient, account: Account) -> dict[str, str]:
-    """Sign in an app with the password and return its tokens."""
-    response = await client.post(
-        "/api/auth/password/token", json={"email": EMAIL, "password": PASSWORD}
-    )
-    found: dict[str, str] = response.json()
-    return found
+async def app_tokens(session: AsyncSession, account: Account) -> dict[str, str]:
+    """Open an app session as a login would, and return its tokens.
+
+    The session opens without a method: a product chooses its own.
+    """
+    client = Client(ip_address="127.0.0.1", user_agent="test")
+    issued = await sessions.open_app(session, account, client, "es")
+    await session.flush()
+    return {"access_token": issued.access_token, "refresh_token": issued.refresh_token}
 
 
 @pytest.fixture
@@ -119,6 +127,7 @@ async def link(
     )
 
 
+@needs_passkey
 async def test_reauth_options_list_the_passkeys_with_transports(
     client: AsyncClient, passkey: Authenticator, app_tokens: dict[str, str]
 ) -> None:
@@ -134,6 +143,7 @@ async def test_reauth_options_list_the_passkeys_with_transports(
     ]
 
 
+@needs_passkey
 async def test_reauth_renews_the_app_session_and_its_tokens(
     client: AsyncClient,
     session: AsyncSession,
@@ -164,31 +174,29 @@ async def test_reauth_renews_the_app_session_and_its_tokens(
     }
 
 
+@needs_passkey
 async def test_reauth_renews_the_web_session_in_its_cookie(
-    client: AsyncClient, session: AsyncSession, account: Account
+    client: AsyncClient, session: AsyncSession, account: Account, passkey: Authenticator
 ) -> None:
-    """The web authenticates again with the password: a new cookie."""
-    login = await client.post(
-        "/api/auth/password/cookie", json={"email": EMAIL, "password": PASSWORD}
-    )
+    """The web authenticates again with its passkey: a new cookie."""
+    options = await client.post("/api/auth/passkey/options")
+    signed = passkey.sign(options.json()["challenge"], account.user_handle)
+    login = await client.post("/api/auth/passkey/cookie", json=signed)
     cookie = SimpleCookie(login.headers["set-cookie"])[sessions.COOKIE].value
     await age(session, timedelta(minutes=10))
     headers = {"Cookie": f"{sessions.COOKIE}={cookie}", "Origin": "https://test"}
-    response = await client.post(
-        "/api/auth/reauth/password", json={"password": PASSWORD}, headers=headers
-    )
+    options = await client.post("/api/auth/reauth/options", headers=headers)
+    signed = passkey.sign(options.json()["challenge"], account.user_handle)
+    response = await client.post("/api/auth/reauth/passkey", json=signed, headers=headers)
     assert response.status_code == 204
     renewed = SimpleCookie(response.headers["set-cookie"])[sessions.COOKIE].value
     assert renewed != cookie
     assert (await client.get("/api/account/passkeys", headers=headers)).status_code == 401
     headers["Cookie"] = f"{sessions.COOKIE}={renewed}"
     assert (await client.get("/api/account/passkeys", headers=headers)).status_code == 200
-    wrong = await client.post(
-        "/api/auth/reauth/password", json={"password": "wrong"}, headers=headers
-    )
-    assert wrong.status_code == 401
 
 
+@needs_passkey
 async def test_reauth_with_the_passkey_of_another_account_is_refused(
     client: AsyncClient, session: AsyncSession, account: Account, app_tokens: dict[str, str]
 ) -> None:
@@ -201,6 +209,7 @@ async def test_reauth_with_the_passkey_of_another_account_is_refused(
     assert (await reauth(client, app_tokens, authenticator, other)).status_code == 403
 
 
+@needs_passkey
 async def test_changes_need_a_reauth_within_5_minutes(
     client: AsyncClient,
     session: AsyncSession,
@@ -231,6 +240,7 @@ async def test_changes_need_a_reauth_within_5_minutes(
     assert (await link(client, app_tokens, Authenticator(), uuid4())).status_code == 201
 
 
+@needs_passkey
 async def test_link_is_idempotent_and_notifies_every_address(
     client: AsyncClient,
     session: AsyncSession,
@@ -276,6 +286,7 @@ async def test_link_is_idempotent_and_notifies_every_address(
     assert linked.created_at == linked.changed_at
 
 
+@needs_passkey
 async def test_link_refuses_the_options_of_another_account(
     client: AsyncClient, account: Account, app_tokens: dict[str, str]
 ) -> None:
@@ -290,6 +301,7 @@ async def test_link_refuses_the_options_of_another_account(
     assert response.status_code == 400
 
 
+@needs_passkey
 async def test_passkeys_are_listed_and_deleted(
     client: AsyncClient,
     session: AsyncSession,

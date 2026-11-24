@@ -6,6 +6,8 @@ Cómo se registra una cuenta, cómo entra y cómo mantiene su sesión: lo que ha
 
 Estándares: [RFC 6749](../fuentes/rfc/rfc6749.txt), [RFC 7636](../fuentes/rfc/rfc7636.txt), [RFC 8252](../fuentes/rfc/rfc8252.txt) y [RFC 9700](../fuentes/rfc/rfc9700.txt).
 
+Vale si el producto usa la passkey: la página de autorización la pide.
+
 - Una app usa la passkey con la API de su sistema: una de Android, con Credential Manager, y una de Flutter o de Flet en el teléfono, en Windows o en macOS, con el plugin `passkey` de la plantilla, que llama a Credential Manager en Android, a AuthenticationServices en iOS y en macOS y a la API de WebAuthn en Windows. Una app de Linux o de Qt la usa en el navegador del sistema, que le devuelve un código de autorización.
 - Una app que corre en el navegador hace el flujo por el servidor, en su misma pestaña: abre un endpoint del servidor que crea el `state` y el `code_verifier` y redirige a la petición de autorización, y la URI de retorno es otro endpoint del servidor, que canjea el código, deja la cookie de sesión de la web y vuelve a la app con un 303.
 - En ese flujo, el endpoint que lo inicia guarda el `state` y el `code_verifier` en Valkey, bajo un id que deja en una cookie `__Host-` `Secure`, `HttpOnly` y `SameSite=Strict`, y el endpoint de retorno los toma una sola vez y borra la cookie.
@@ -43,6 +45,8 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `pages.py`, `translatio
 
 Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
+Las reglas del código para entrar valen si el producto lo usa; las demás, para todo SMS que lleva un código.
+
 - El número viaja y se guarda con `+`, el código de país y solo dígitos.
 - El servidor valida el número con `phonenumbers`.
 - Si un cliente es una app de Android, su hash va en la penúltima línea del SMS.
@@ -57,6 +61,8 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 
 Estándares: de ASVS 5.0, los capítulos [V6 *Authentication*](../fuentes/owasp/ASVS_V6_Authentication.md) y [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md).
 
+Vale si el producto usa la contraseña.
+
 - La contraseña la elige el titular.
 - El login con contraseña identifica la cuenta con su correo o con su teléfono, uno solo.
 - La lista de bloqueo es un archivo del servidor, `blocklist.txt`: las contraseñas de 8 caracteres o más de la lista de las 100.000 más usadas en las filtraciones de Have I Been Pwned, que publicó el NCSC del Reino Unido. `scripts/bloqueo.py` de Canone la deriva de `fuentes/`, y se copia sin editar.
@@ -65,7 +71,7 @@ Estándares: de ASVS 5.0, los capítulos [V6 *Authentication*](../fuentes/owasp/
 - Una contraseña de la lista se rechaza con 422 de tipo `password-blocked`, y una corta o larga, con 422 de tipo `validation`.
 - La contraseña se agrega o se cambia por `PUT /api/account/password`, que responde 201 si la cuenta no tenía.
 - Cambiar la contraseña pone en cero sus fallos y la vuelve a habilitar: es otro secreto.
-- Una cuenta de administración que intenta agregar una contraseña recibe 403.
+- Si el producto usa la passkey, una cuenta de administración que intenta agregar una contraseña recibe 403.
 - Una contraseña se guarda con `PasswordHash.recommended()` de pwdlib: Argon2id con 64 MiB, 3 pasadas y 4 carriles.
 - Al medir el largo de una contraseña, cada punto de código cuenta como un carácter.
 - La contraseña se normaliza a NFC antes del hash y al verificarla: el mismo texto escrito en otro dispositivo puede llegar en otra forma Unicode.
@@ -80,7 +86,7 @@ Estándares: de ASVS 5.0, los capítulos [V6 *Authentication*](../fuentes/owasp/
 - El campo de la contraseña admite pegar, el autocompletado del navegador y los gestores de contraseñas ([ASVS 5.0 §6.2.7](../fuentes/owasp/ASVS_V6_Authentication.md)).
 - No hay cambio periódico de la contraseña, ni pistas, ni preguntas de seguridad ([ASVS 5.0 §6.2.10](../fuentes/owasp/ASVS_V6_Authentication.md) y [§6.4.2](../fuentes/owasp/ASVS_V6_Authentication.md)).
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `blocklist.txt`, `services/passwords.py` y `tests/test_passwords.py`; de Canone, [scripts/bloqueo.py](../scripts/bloqueo.py).
+Plantilla: de [plantilla/server/](../plantilla/server/), `blocklist.txt`, `routers/password.py`, `services/passwords.py` y `tests/test_passwords.py`; de Canone, [scripts/bloqueo.py](../scripts/bloqueo.py).
 
 ## Cuentas
 
@@ -91,14 +97,14 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Una cuenta no tiene nombre de usuario.
 - Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos.
 - El registro pide el código en `POST /api/auth/register/code`, que ya responde 409 si la cuenta existe, y las opciones de la passkey en `POST /api/auth/register/options`, con un user handle nuevo.
-- El registro lleva el código y el primer autenticador, una passkey o una contraseña, en la misma petición, y abre la sesión por `POST /api/auth/register/cookie` o `/token`, como un login. Una cuenta con teléfono puede registrarse sin autenticador: entra con el código por SMS.
+- El registro lleva el código y el primer autenticador en la misma petición: una passkey o una contraseña, de las que usa el producto. Abre la sesión por `POST /api/auth/register/cookie` o `/token`, como un login. Si el producto usa el código por SMS, una cuenta con teléfono puede registrarse sin autenticador: entra con ese código.
 - El registro verifica la passkey antes que el código: una ceremonia que falla no gasta un intento del código.
 - El correo se cambia pidiendo el código para el nuevo en `POST /api/account/email/code` y presentándolo en `PUT /api/account/email`, y el teléfono, en `POST /api/account/phone/code` y `PUT /api/account/phone`. Un correo o un teléfono que tiene otra cuenta responde 409.
 - Volver a autenticarse es un paso aparte, con la sesión abierta: `POST /api/auth/reauth/options` lista en `allowCredentials` las passkeys de la cuenta, y `POST /api/auth/reauth/passkey` y `/reauth/password` verifican una credencial de la cuenta de la sesión. Renuevan la misma fila, escriben su `authenticated_at` y responden como se presenta la sesión: los tokens nuevos de una app, o la cookie nueva de la web.
 - Una operación que pide volver a autenticarse lo acepta durante 5 minutos desde `authenticated_at`; después responde 403 de tipo `reauthentication-required`.
 - La cuenta de administración tiene `role` `admin`.
-- El registro con el código de instalación no acepta contraseña. Un código de instalación equivocado, o uno que llega cuando ya hay una cuenta de administración, responde 403, y dos registros con el código se esperan con un candado de PostgreSQL: solo uno queda como la primera.
-- Una cuenta de administración que entra con contraseña recibe 401, sin que se verifique ni se cuente un fallo: no revela que es de administración. Con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo: la firma vale, y quien la presenta tiene la passkey. Lo mismo al volver a autenticarse.
+- Si el producto usa la passkey, el registro con el código de instalación no acepta contraseña. Si no la usa, la cuenta de administración se registra y entra con los métodos del producto. Un código de instalación equivocado, o uno que llega cuando ya hay una cuenta de administración, responde 403, y dos registros con el código se esperan con un candado de PostgreSQL: solo uno queda como la primera.
+- Si el producto usa la passkey, una cuenta de administración que entra con contraseña recibe 401, sin que se verifique ni se cuente un fallo: no revela que es de administración. Con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo: la firma vale, y quien la presenta tiene la passkey. Lo mismo al volver a autenticarse.
 - El aviso dice a quién escribir con `contact` de `Settings`, y va en el idioma de la cuenta.
 - Registrarse no avisa: la passkey se vincula a una cuenta que acaba de nacer.
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el viejo recibe un aviso.
@@ -106,12 +112,14 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
 - Un login con un autenticador deshabilitado responde 403, de tipo `authenticator-disabled`, sin verificar la credencial.
 - Los fallos consecutivos y la hora del siguiente intento viven en la base.
-- El servidor acepta en toda cuenta los métodos para entrar, y cada repositorio elige cuáles ofrece cada pieza, de los disponibles en su plataforma.
-- La pantalla para entrar ofrece primero la passkey, si el dispositivo la tiene, y luego el código por SMS y la contraseña, entre los que elige el usuario.
+- Cada repositorio elige qué métodos para entrar usa su producto: la passkey, el código por SMS y la contraseña, en cualquier combinación.
+- El repositorio declara sus métodos en `METHODS` de `methods.py`. El servidor monta solo las rutas de esos métodos, y el registro acepta solo esos: un método que el producto no usa no tiene rutas que un atacante pueda llamar.
+- Cada pieza ofrece los métodos del producto que tiene su plataforma, según la tabla de esta sección.
+- La pantalla para entrar ofrece primero la passkey, si el producto la usa y el dispositivo la tiene, y luego los demás métodos del producto, entre los que elige el usuario.
 - La app guarda en el dispositivo el último método con que entró, y lo ofrece primero la próxima vez.
 - Mientras no hay una cuenta de administración, el registro acepta el código de instalación, `setup_code` de `Settings`, y la cuenta que se registra con él es de administración. Con la primera, el registro deja de aceptarlo.
-- Una cuenta de administración entra solo con una passkey que verificó al usuario, con el flag UV en los datos del autenticador, y la que se registra con el código de instalación vincula una al registrarse ([NIST SP 800-63B-4 §2.2.1](../fuentes/nist/sp800-63b-4.txt)).
-- Una cuenta entra con una contraseña, una passkey o un código por SMS ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
+- Si el producto usa la passkey, una cuenta de administración entra solo con una passkey que verificó al usuario, con el flag UV en los datos del autenticador, y la que se registra con el código de instalación vincula una al registrarse ([NIST SP 800-63B-4 §2.2.1](../fuentes/nist/sp800-63b-4.txt)).
+- Una cuenta entra con los métodos del producto: una passkey, una contraseña o un código por SMS ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
 - Las direcciones de aviso son el correo, el teléfono y el push a las apps con sesión abierta ([NIST SP 800-63B-4 §4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429 ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - Cada autenticador guarda cuándo se vinculó y cuándo cambió, y cada uno de esos eventos va al registro de eventos con su IP y su user agent ([NIST SP 800-63B-4 §4.1](../fuentes/nist/sp800-63b-4.txt)).
@@ -126,6 +134,8 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Una cuenta que se borra o se deshabilita pierde en el momento sus autenticadores ([NIST SP 800-63B-4 §4.5](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta que se borra o se deshabilita pierde en el momento sus sesiones ([ASVS 5.0 §7.4.2](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 
+Qué métodos puede ofrecer cada pieza en su plataforma:
+
 | Pieza | Passkey | Contraseña | Código por SMS |
 | :--- | :--- | :--- | :--- |
 | La web | Sí | Sí | Sí, con WebOTP |
@@ -135,11 +145,13 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 | Una app de Flutter o de Flet, en Windows o en macOS | Sí | Sí | Sí |
 | Una app de Flutter o de Flet en Linux, o de Qt | Sí, por el navegador del sistema | Sí | Sí |
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/throttled.py`, `schemas/account.py`, `routers/account.py`, `services/authenticators.py`, `services/registration.py`, `services/account.py`, `services/codes.py`, `services/limits.py`, `services/messages.py`, `services/notices.py`, `tests/test_registration.py` y `tests/test_account.py`.
+Plantilla: de [plantilla/server/](../plantilla/server/), `methods.py`, `models/account/throttled.py`, `schemas/account.py`, `routers/account.py`, `services/authenticators.py`, `services/registration.py`, `services/account.py`, `services/codes.py`, `services/limits.py`, `services/messages.py`, `services/notices.py`, `tests/test_registration.py`, `tests/test_account.py` y `tests/test_methods.py`.
 
 ## Passkeys
 
 Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W3C y [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
+
+Vale si el producto usa la passkey.
 
 - El servidor verifica las passkeys con `verify_registration_response` y `verify_authentication_response` de `webauthn`, de Duo, con `supported_pub_key_algs` igual a `pubKeyCredParams`. La biblioteca no mira el largo del credential ID, `crossOrigin`, `topOrigin`, las extensiones, la atestación que se acepta, que BE sea el guardado ni el user handle, y compara el `signCount` antes que la firma: el servidor comprueba lo que ella no mira, y le pasa el `signCount` en 0 para compararlo él después de la firma, así una aserción falsa no denuncia una passkey clonada. [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/registration/verify_registration_response.py), [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/authentication/verify_authentication_response.py)
 - El servidor no pide extensiones.
@@ -174,7 +186,7 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 - Cada passkey guarda su credential ID, su clave pública, `signCount`, `uvInitialized`, `transports`, `backupEligible`, `backupState`, su nombre, su creación y su último uso ([WebAuthn §6.1.3](../fuentes/w3c/webauthn-3.html) y [§7.1](../fuentes/w3c/webauthn-3.html)).
 - El titular ve sus passkeys, con su nombre y su último uso, y borra la que quiera: así revoca la de un dispositivo perdido ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt)).
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey.py`, `services/passkeys.py`, `services/attestation.py` y `tests/test_passkeys.py`; [plantilla/packages/passkey/](../plantilla/packages/passkey/), con el plugin `passkey` de Flutter y la extensión `flet_passkey` de Flet.
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey.py`, `routers/passkey.py`, `services/passkeys.py`, `services/attestation.py` y `tests/test_passkeys.py`; [plantilla/packages/passkey/](../plantilla/packages/passkey/), con el plugin `passkey` de Flutter y la extensión `flet_passkey` de Flet.
 
 ## Recuperación
 
@@ -183,7 +195,7 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 - La solicitud del código responde 404 si la cuenta no existe, y una IP que recibe 10 en 15 minutos queda bloqueada 30 minutos.
 - Cada correo recibe un código por minuto, y hasta 5 por hora. Los SMS siguen los límites de [Código por SMS](#código-por-sms).
 - Un código se invalida al tercer intento fallido.
-- Con el código, una cuenta con contraseña la restablece, y una sin contraseña vincula una passkey o una contraseña.
+- Con el código, una cuenta con contraseña la restablece, y una sin contraseña vincula una passkey o una contraseña, de las que usa el producto.
 - El código vive en Valkey, y uno nuevo reemplaza al anterior.
 - El código vale una sola vez.
 - Un código equivocado o vencido responde 400 de tipo `invalid-code`.
@@ -362,3 +374,7 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Agregar o cambiar la contraseña pide volver a autenticarse | `test_password_change_needs_a_reauth` |
 | El registro acepta una contraseña: una de la lista no gasta el código, y con el código de instalación responde 403 | `test_registration_takes_a_password` |
 | El registro lleva una passkey con su nombre o una contraseña, no las dos | `test_registration_takes_one_authenticator` |
+| Un método que el producto no usa no tiene rutas, y el código de autorización va con la passkey | `test_a_method_the_product_does_not_use_has_no_routes` |
+| El registro acepta solo los autenticadores que usa el producto, y otro responde 422 | `test_registration_takes_only_the_methods_of_the_product` |
+| Si el producto no usa la passkey, la cuenta de administración se registra con el código de instalación y una contraseña, y entra y la cambia | `test_admin_without_passkey_uses_the_password` |
+| Volver a autenticarse con la contraseña renueva la sesión, y una equivocada responde 401 | `test_reauth_with_the_password_renews_the_session` |

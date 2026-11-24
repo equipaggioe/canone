@@ -11,7 +11,8 @@ from pwdlib import PasswordHash
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.concurrency import run_in_threadpool
 
-from app.enums import EventLevel, Role
+from app import methods
+from app.enums import EventLevel, Method, Role
 from app.errors import PASSWORD_BLOCKED, AppError, KeptError
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
@@ -49,15 +50,18 @@ def hash_password(password: str) -> str:
 async def find(session: AsyncSession, login: PasswordLogin) -> tuple[Account, Password] | None:
     """Find the account of the login and lock its password.
 
-    An admin signs in only with a passkey: its password is ignored.
+    Where the product offers the passkey, an admin signs in only with
+    it: its password is ignored.
     """
     identifier = Account.email == login.email if login.email else Account.phone == login.phone
     query = (
         sa.select(Account, Password)
         .join(Password, Password.account_id == Account.id)
-        .where(identifier, Account.role != Role.ADMIN)
+        .where(identifier)
         .with_for_update(of=Password)
     )
+    if Method.PASSKEY in methods.METHODS:
+        query = query.where(Account.role != Role.ADMIN)
     return (await session.execute(query)).one_or_none()
 
 
@@ -189,10 +193,11 @@ async def put(session: AsyncSession, principal: Principal, password: str, client
     """Add or change the password of the account; tell if it is new.
 
     A change is another secret: it waits nothing and closes the other
-    sessions. An admin signs in only with a passkey.
+    sessions. Where the product offers the passkey, an admin signs in
+    only with it.
     """
     account = principal.account
-    if account.role == Role.ADMIN:
+    if account.role == Role.ADMIN and Method.PASSKEY in methods.METHODS:
         raise HTTPException(HTTPStatus.FORBIDDEN, "An admin signs in only with a passkey")
     check_new(session, account, password, client)
     digest = await run_in_threadpool(hash_password, password)

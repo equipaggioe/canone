@@ -18,6 +18,13 @@ class Role(StrEnum):
     USER = "user"
 
 
+class Method(StrEnum):
+    """A way to sign in that a product may offer."""
+
+    PASSKEY = "passkey"
+    PASSWORD = "password"
+
+
 class SessionKind(StrEnum):
     """How a session is presented: a cookie, or the tokens of an app."""
 

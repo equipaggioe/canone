@@ -1,37 +1,18 @@
-"""Registering, signing in, authenticating again and signing out."""
+"""Registering, refreshing, signing out, and what methods share."""
 
-import secrets
 from http import HTTPStatus
 from typing import Any
 from urllib.parse import parse_qsl
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import JSONResponse
 
 from app.dependencies import ClientDep, PrincipalDep, SessionDep, public
 from app.enums import SessionKind, TokenErrorCode
 from app.errors import PROBLEM_JSON, TokenRefusal
 from app.models.account.account import Account
-from app.schemas.auth import (
-    Identifier,
-    PasskeyCreationOptions,
-    PasskeyCredential,
-    PasskeyOptions,
-    PasswordLogin,
-    PasswordReauth,
-    Registration,
-    TokenError,
-    TokenResponse,
-)
-from app.services import account as account_service
-from app.services import (
-    attestation,
-    authorization,
-    passkeys,
-    passwords,
-    registration,
-    sessions,
-)
+from app.schemas.auth import Identifier, Registration, TokenError, TokenResponse
+from app.services import authorization, registration, sessions
 from app.services.sessions import Client, Principal
 from app.translations import language
 
@@ -154,64 +135,6 @@ async def open_token(
     return token_response(issued, response)
 
 
-@router.post("/password/cookie", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
-async def password_cookie(
-    request: Request,
-    response: Response,
-    session: SessionDep,
-    body: PasswordLogin,
-    caller: ClientDep,
-) -> None:
-    """Sign in the web with a password, in its cookie."""
-    account = await passwords.check(session, body, caller)
-    await open_cookie(request, response, session, account, caller)
-
-
-@router.post("/password/token", dependencies=[Depends(public)])
-async def password_token(
-    request: Request,
-    response: Response,
-    session: SessionDep,
-    body: PasswordLogin,
-    caller: ClientDep,
-) -> TokenResponse:
-    """Sign in an app with a password, as the token endpoint answers."""
-    account = await passwords.check(session, body, caller)
-    return await open_token(request, response, session, account, caller)
-
-
-@router.post("/passkey/options", dependencies=[Depends(public)])
-async def passkey_options() -> PasskeyOptions:
-    """Start a login with a passkey: its challenge lives 10 minutes."""
-    return await passkeys.options([])
-
-
-@router.post("/passkey/cookie", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
-async def passkey_cookie(
-    request: Request,
-    response: Response,
-    session: SessionDep,
-    body: PasskeyCredential,
-    caller: ClientDep,
-) -> None:
-    """Sign in the web with a passkey, in its cookie."""
-    account = await passkeys.check(session, body, caller)
-    await open_cookie(request, response, session, account, caller)
-
-
-@router.post("/passkey/token", dependencies=[Depends(public)])
-async def passkey_token(
-    request: Request,
-    response: Response,
-    session: SessionDep,
-    body: PasskeyCredential,
-    caller: ClientDep,
-) -> TokenResponse:
-    """Sign in an app with the passkey of its system."""
-    account = await passkeys.check(session, body, caller)
-    return await open_token(request, response, session, account, caller)
-
-
 @router.post(
     "/token", responses=TOKEN_ERRORS, openapi_extra=TOKEN_FORM, dependencies=[Depends(public)]
 )
@@ -246,12 +169,6 @@ async def register_code(
     """Send the code of a new account to its email or its phone."""
     host = request.headers.get("host", "")
     await registration.send_code(session, body, caller, accepted(request), host)
-
-
-@router.post("/register/options", dependencies=[Depends(public)])
-async def register_options(body: Identifier) -> PasskeyCreationOptions:
-    """Start the passkey of a new account, with a new user handle."""
-    return await attestation.options(secrets.token_bytes(64), body.address, [])
 
 
 @router.post("/register/cookie", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
@@ -289,32 +206,3 @@ def renew(session: SessionDep, principal: Principal, caller: Client) -> Response
     issued = sessions.renew_app(session, principal.session, caller)
     body = token_response(issued, Response())
     return JSONResponse(body.model_dump(mode="json"), headers=NO_STORE)
-
-
-@router.post("/reauth/options")
-async def reauth_options(session: SessionDep, principal: PrincipalDep) -> PasskeyOptions:
-    """Start authenticating again: the passkeys of the account."""
-    return await passkeys.options(await account_service.all_passkeys(session, principal.account))
-
-
-@router.post("/reauth/passkey", response_model=TokenResponse, responses=RENEWED)
-async def reauth_passkey(
-    session: SessionDep, principal: PrincipalDep, body: PasskeyCredential, caller: ClientDep
-) -> Response:
-    """Authenticate again with a passkey of the account."""
-    account = await passkeys.check(session, body, caller)
-    if account.id != principal.account.id:
-        raise HTTPException(HTTPStatus.FORBIDDEN, "The passkey is of another account")
-    return renew(session, principal, caller)
-
-
-@router.post("/reauth/password", response_model=TokenResponse, responses=RENEWED)
-async def reauth_password(
-    session: SessionDep, principal: PrincipalDep, body: PasswordReauth, caller: ClientDep
-) -> Response:
-    """Authenticate again with the password of the account."""
-    holder = principal.account
-    identifier = {"email": holder.email} if holder.email else {"phone": holder.phone}
-    login = PasswordLogin.model_validate({**identifier, "password": body.password})
-    await passwords.check(session, login, caller)
-    return renew(session, principal, caller)

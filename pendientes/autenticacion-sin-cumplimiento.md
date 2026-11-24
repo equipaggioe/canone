@@ -20,7 +20,7 @@ Tema pendiente: la plantilla de autenticación se escribe por partes, y cada par
 
 | # | Parte | Pruebas que se podrían sumar |
 | :--- | :--- | :--- |
-| 7 | Gestión de la cuenta: ver cada intento fallido y cada autenticador deshabilitado, volver a habilitarlo, ver las sesiones y cerrar una, borrar o deshabilitar una cuenta, y que un administrador recupere una cuenta cambiando su correo o su teléfono. Va después de la 6: el teléfono, el tercer autenticador, cuenta sus fallos desde ella | — |
+| 7 | Gestión de la cuenta: ver cada intento fallido y cada autenticador deshabilitado, volver a habilitarlo, ver las sesiones y cerrar una, borrar o deshabilitar una cuenta, y que un superadministrador recupere una cuenta cambiando su correo o su teléfono. Va después de la 6: el teléfono, el tercer autenticador, cuenta sus fallos desde ella | — |
 | 8 | WebSocket: el handshake con la cookie o el token, el cierre 4401 | — |
 | 9 | Push en los avisos: FCM, Web Push, y el FID y la suscripción de cada sesión | — |
 | 10 | `verificar.py` compara los archivos de autenticación que se copian sin editar | Después de las partes anteriores, igual que el resto de la plantilla del servidor |

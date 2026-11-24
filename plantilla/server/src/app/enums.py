@@ -14,8 +14,8 @@ class EventLevel(StrEnum):
 class Role(StrEnum):
     """What an account may do.
 
-    The superadmin operates the installation; the admin of a client is
-    a user (autenticacion.md, «Superadministrador»).
+    The superadmin owns the product (autenticacion.md,
+    «Superadministrador»).
     """
 
     SUPERADMIN = "superadmin"

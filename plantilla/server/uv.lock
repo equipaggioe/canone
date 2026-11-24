@@ -627,6 +627,15 @@ wheels = [
 ]
 
 [[package]]
+name = "phonenumbers"
+version = "9.0.44"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ca/8e/ba0442ff8d93cc667c971fb592f5414a562481ff9d86855802719cbe7c00/phonenumbers-9.0.44.tar.gz", hash = "sha256:91f44c4085afcb86418b6339502a0957cd643238fad23dee314ea2008c0eaaa4", size = 2314610, upload-time = "2026-11-20T14:25:04.818Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d2/90/84558cf9f1be59a04f3e76788d65e2c68c980ac0895ec9438fae2ebf2c6c/phonenumbers-9.0.44-py2.py3-none-any.whl", hash = "sha256:8fddbbf98e6b7c4be02f96c132df6b9b1ff6a6976e6a338155bc79c04e5a509e", size = 2596212, upload-time = "2026-11-20T14:24:55.296Z" },
+]
+
+[[package]]
 name = "pillow"
 version = "13.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -729,8 +738,10 @@ dependencies = [
     { name = "babel" },
     { name = "cryptography" },
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "opentelemetry-api" },
     { name = "opentelemetry-sdk" },
+    { name = "phonenumbers" },
     { name = "pillow" },
     { name = "pwdlib", extra = ["argon2"] },
     { name = "pydantic" },
@@ -746,7 +757,6 @@ dependencies = [
 dev = [
     { name = "anyio" },
     { name = "deptry" },
-    { name = "httpx" },
     { name = "pip-audit" },
     { name = "pyrefly" },
     { name = "pytest" },
@@ -760,8 +770,10 @@ requires-dist = [
     { name = "babel", specifier = ">=2.18.0" },
     { name = "cryptography", specifier = ">=50.0.2" },
     { name = "fastapi", specifier = ">=0.165.0" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "opentelemetry-api", specifier = ">=1.45.2" },
     { name = "opentelemetry-sdk", specifier = ">=1.45.2" },
+    { name = "phonenumbers", specifier = ">=9.0.44" },
     { name = "pillow", specifier = ">=13.0.0" },
     { name = "pwdlib", extras = ["argon2"], specifier = ">=0.4.2" },
     { name = "pydantic", specifier = ">=2.14.4" },
@@ -777,7 +789,6 @@ requires-dist = [
 dev = [
     { name = "anyio", specifier = ">=4.16.0" },
     { name = "deptry", specifier = ">=0.25.1" },
-    { name = "httpx", specifier = ">=0.28.1" },
     { name = "pip-audit", specifier = ">=2.10.1" },
     { name = "pyrefly", specifier = ">=1.5.0" },
     { name = "pytest", specifier = ">=9.2.0" },

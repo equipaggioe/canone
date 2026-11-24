@@ -20,13 +20,18 @@ from webauthn.helpers.exceptions import WebAuthnException
 
 from app import store
 from app.config import settings
-from app.enums import EventLevel
-from app.errors import KeptError
+from app.enums import EventLevel, Role
+from app.errors import USER_VERIFICATION_REQUIRED, AppError, KeptError
 from app.models.account.account import Account
 from app.models.account.passkey import Passkey
 from app.models.event.event_log import EventLog
-from app.schemas.auth import PasskeyCredential, PasskeyOptions
-from app.services import authenticators, clients, events
+from app.schemas.auth import (
+    CredentialDescriptor,
+    PasskeyCredential,
+    PasskeyOptions,
+    PasskeyRegistration,
+)
+from app.services import authenticators, clients, events, notices
 from app.services.authenticators import WAIT_FROM
 from app.services.sessions import Client
 
@@ -52,14 +57,27 @@ def challenge_key(challenge: bytes) -> str:
     return f"passkey:challenge:{bytes_to_base64url(challenge)}"
 
 
-async def options() -> PasskeyOptions:
-    """Make the options of a login: a challenge, and no passkey."""
+def descriptor(passkey: Passkey) -> CredentialDescriptor:
+    """Name a passkey to a ceremony, with its transports."""
+    return CredentialDescriptor(
+        type="public-key",
+        id=bytes_to_base64url(passkey.credential_id),
+        transports=passkey.transports,
+    )
+
+
+async def options(allowed: list[Passkey]) -> PasskeyOptions:
+    """Make the options of an assertion and keep its challenge.
+
+    A login allows no passkey; authenticating again, the passkeys of the
+    account.
+    """
     challenge = secrets.token_bytes(16)
     await store.client.set(challenge_key(challenge), b"", ex=CHALLENGE_LIFETIME)
     return PasskeyOptions(
         challenge=bytes_to_base64url(challenge),
         rp_id=settings.domain,
-        allow_credentials=[],
+        allow_credentials=[descriptor(passkey) for passkey in allowed],
         user_verification="preferred",
     )
 
@@ -90,7 +108,7 @@ def refuse(session: AsyncSession, client: Client, reason: str) -> KeptError:
     return KeptError(HTTPException(HTTPStatus.UNAUTHORIZED))
 
 
-def client_data(credential: PasskeyCredential) -> dict[str, Any]:
+def client_data(credential: PasskeyCredential | PasskeyRegistration) -> dict[str, Any]:
     """Read clientDataJSON: the library ignores topOrigin."""
     try:
         data = json.loads(base64url_to_bytes(credential.response.client_data_json))
@@ -129,9 +147,9 @@ async def find(
     return (await session.execute(query)).one_or_none()
 
 
-def check_client(credential: PasskeyCredential, data: dict[str, Any]) -> None:
+def check_client(extension_results: dict[str, Any], data: dict[str, Any]) -> None:
     """Refuse what the library does not look at in the client."""
-    if credential.client_extension_results:
+    if extension_results:
         raise Refused("client_extensions")
     if data.get("crossOrigin") is True or "topOrigin" in data:
         raise Refused("cross_origin")
@@ -160,8 +178,12 @@ def check_authenticator(credential: PasskeyCredential, passkey: Passkey, account
         raise Refused("user_handle")
 
 
-def verify(credential: PasskeyCredential, challenge: bytes, passkey: Passkey) -> tuple[int, bool]:
+def verify(
+    credential: PasskeyCredential, challenge: bytes, passkey: Passkey
+) -> tuple[int, bool, bool]:
     """Check the signature and the sign count; return the new ones.
+
+    Return also whether the authenticator verified the user.
 
     The library compares the sign count before the signature, so it
     gets none: a forged assertion does not report a clone.
@@ -181,14 +203,38 @@ def verify(credential: PasskeyCredential, challenge: bytes, passkey: Passkey) ->
     if (new != 0 or passkey.sign_count != 0) and new <= passkey.sign_count:
         # The passkey may be cloned.
         raise Refused("sign_count", stored=passkey.sign_count, presented=new)
-    return new, verified.credential_backed_up
+    return new, verified.credential_backed_up, verified.user_verified
+
+
+def fail(
+    session: AsyncSession,
+    client: Client,
+    passkey: Passkey,
+    account: Account,
+    refused: Refused,
+    now: datetime,
+) -> KeptError:
+    """Count a failure against the passkey, and answer 401.
+
+    A sign count that does not grow notifies the holder.
+    """
+    disabled = authenticators.fail(passkey, now)
+    session.add(event("authn_login_fail", EventLevel.WARN, client, passkey, refused.details))
+    if disabled:
+        session.add(
+            event("authn_login_lock", EventLevel.WARN, client, passkey, {"reason": "failures"})
+        )
+    if refused.details["reason"] == "sign_count":
+        notices.notify(session, account, notices.Notice.PASSKEY_CLONED, name=passkey.name)
+    return KeptError(HTTPException(HTTPStatus.UNAUTHORIZED))
 
 
 async def check(session: AsyncSession, credential: PasskeyCredential, client: Client) -> Account:
     """Return the account of a valid assertion, or answer 401.
 
     The challenge goes on its first use. A failure that blames a passkey
-    counts against it, and stays with its event.
+    counts against it, and stays with its event. An admin needs the UV
+    flag.
     """
     try:
         data = client_data(credential)
@@ -207,17 +253,16 @@ async def check(session: AsyncSession, credential: PasskeyCredential, client: Cl
     )
     await authenticators.admit(passkey, now, early)
     try:
-        check_client(credential, data)
+        check_client(credential.client_extension_results, data)
         check_authenticator(credential, passkey, account)
-        sign_count, backed_up = verify(credential, challenge, passkey)
+        sign_count, backed_up, user_verified = verify(credential, challenge, passkey)
     except Refused as refused:
-        disabled = authenticators.fail(passkey, now)
-        session.add(event("authn_login_fail", EventLevel.WARN, client, passkey, refused.details))
-        if disabled:
-            session.add(
-                event("authn_login_lock", EventLevel.WARN, client, passkey, {"reason": "failures"})
-            )
-        raise KeptError(HTTPException(HTTPStatus.UNAUTHORIZED)) from refused
+        raise fail(session, client, passkey, account, refused, now) from refused
+    if account.role == Role.ADMIN and not user_verified:
+        # The signature is valid: whoever presents it holds the passkey.
+        details: dict[str, object] = {"reason": "user_verification"}
+        session.add(event("authn_login_fail", EventLevel.WARN, client, passkey, details))
+        raise KeptError(AppError(USER_VERIFICATION_REQUIRED))
     passkey.sign_count = sign_count
     passkey.backup_state = backed_up
     passkey.last_used_at = now

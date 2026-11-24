@@ -5,6 +5,646 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/api/account/passkeys/options": {
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Passkey Options",
+        "description": "Start a new passkey of the account.",
+        "operationId": "accountPasskeyOptions",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyCreationOptions"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/passkeys": {
+      "get": {
+        "tags": [
+          "account"
+        ],
+        "summary": "List Passkeys",
+        "description": "Page the passkeys of the account, with name and last use.",
+        "operationId": "accountListPasskeys",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 50,
+              "title": "Pagesize"
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Pagetoken"
+            }
+          },
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_PasskeyView_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/passkeys/{passkey_id}": {
+      "put": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Put Passkey",
+        "description": "Link a passkey, by the ID the client made.",
+        "operationId": "accountPutPasskey",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "passkey_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Passkey Id"
+            }
+          },
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasskeyLink"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "The passkey, already linked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Delete Passkey",
+        "description": "Delete a passkey of the account: a lost one stops working.",
+        "operationId": "accountDeletePasskey",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "passkey_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Passkey Id"
+            }
+          },
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/email/code": {
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Email Code",
+        "description": "Send a code to the new email of the account.",
+        "operationId": "accountEmailCode",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/email": {
+      "put": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Put Email",
+        "description": "Change the email with the code it received.",
+        "operationId": "accountPutEmail",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailChange"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/phone/code": {
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Phone Code",
+        "description": "Send a code to the new phone of the account.",
+        "operationId": "accountPhoneCode",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhoneCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/phone": {
+      "put": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Put Phone",
+        "description": "Change the phone with the code it received.",
+        "operationId": "accountPutPhone",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhoneChange"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/password/cookie": {
       "post": {
         "tags": [
@@ -532,6 +1172,530 @@
         }
       }
     },
+    "/api/auth/register/code": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register Code",
+        "description": "Send the code of a new account to its email or its phone.",
+        "operationId": "authRegisterCode",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identifier"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register/options": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register Options",
+        "description": "Start the passkey of a new account, with a new user handle.",
+        "operationId": "authRegisterOptions",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identifier"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyCreationOptions"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register/cookie": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register Cookie",
+        "description": "Register an account with its passkey, and sign in the web.",
+        "operationId": "authRegisterCookie",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Registration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register/token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register Token",
+        "description": "Register an account with its passkey, and sign in an app.",
+        "operationId": "authRegisterToken",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Registration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/reauth/options": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Reauth Options",
+        "description": "Start authenticating again: the passkeys of the account.",
+        "operationId": "authReauthOptions",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyOptions"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/reauth/passkey": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Reauth Passkey",
+        "description": "Authenticate again with a passkey of the account.",
+        "operationId": "authReauthPasskey",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasskeyCredential"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "The web session, renewed in its cookie"
+          }
+        }
+      }
+    },
+    "/api/auth/reauth/password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Reauth Password",
+        "description": "Authenticate again with the password of the account.",
+        "operationId": "authReauthPassword",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordReauth"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "The web session, renewed in its cookie"
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "tags": [
@@ -787,6 +1951,95 @@
         "title": "AssertionResponse",
         "description": "What the authenticator signed, in base64url."
       },
+      "AttestationResponse": {
+        "properties": {
+          "clientDataJSON": {
+            "type": "string",
+            "title": "Clientdatajson"
+          },
+          "attestationObject": {
+            "type": "string",
+            "title": "Attestationobject"
+          },
+          "transports": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Transports"
+          },
+          "authenticatorData": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Authenticatordata"
+          },
+          "publicKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publickey"
+          },
+          "publicKeyAlgorithm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publickeyalgorithm"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clientDataJSON",
+          "attestationObject",
+          "transports"
+        ],
+        "title": "AttestationResponse",
+        "description": "What the authenticator created, in base64url, and transports."
+      },
+      "AuthenticatorSelection": {
+        "properties": {
+          "residentKey": {
+            "type": "string",
+            "const": "required",
+            "title": "Residentkey"
+          },
+          "requireResidentKey": {
+            "type": "boolean",
+            "const": true,
+            "title": "Requireresidentkey"
+          },
+          "userVerification": {
+            "type": "string",
+            "const": "preferred",
+            "title": "Userverification"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "residentKey",
+          "requireResidentKey",
+          "userVerification"
+        ],
+        "title": "AuthenticatorSelection",
+        "description": "A discoverable passkey, and UV preferred."
+      },
       "CredentialDescriptor": {
         "properties": {
           "type": {
@@ -815,6 +2068,63 @@
         ],
         "title": "CredentialDescriptor",
         "description": "A passkey the ceremony may use, by its ID in base64url."
+      },
+      "CredentialParameters": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "public-key",
+            "title": "Type"
+          },
+          "alg": {
+            "type": "integer",
+            "title": "Alg"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "alg"
+        ],
+        "title": "CredentialParameters",
+        "description": "An algorithm that the server accepts, by its COSE number."
+      },
+      "EmailChange": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$",
+            "title": "Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email",
+          "code"
+        ],
+        "title": "EmailChange",
+        "description": "The new email, and the code it received."
+      },
+      "EmailCode": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "EmailCode",
+        "description": "The new email, which receives the code."
       },
       "EventLevel": {
         "type": "string",
@@ -884,6 +2194,37 @@
         ],
         "title": "HealthEvents",
         "description": "The last events, the last good backup and the disk."
+      },
+      "Identifier": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\+[0-9]+$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Identifier",
+        "description": "Either the email or the phone of an account."
       },
       "LoggedEvent": {
         "properties": {
@@ -1026,6 +2367,77 @@
         ],
         "title": "Page[LoggedEvent]"
       },
+      "Page_PasskeyView_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PasskeyView"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "nextPageToken": {
+            "type": "string",
+            "title": "Nextpagetoken"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "nextPageToken"
+        ],
+        "title": "Page[PasskeyView]"
+      },
+      "PasskeyCreationOptions": {
+        "properties": {
+          "challenge": {
+            "type": "string",
+            "title": "Challenge"
+          },
+          "rp": {
+            "$ref": "#/components/schemas/RelyingParty"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserEntity"
+          },
+          "pubKeyCredParams": {
+            "items": {
+              "$ref": "#/components/schemas/CredentialParameters"
+            },
+            "type": "array",
+            "title": "Pubkeycredparams"
+          },
+          "authenticatorSelection": {
+            "$ref": "#/components/schemas/AuthenticatorSelection"
+          },
+          "attestation": {
+            "type": "string",
+            "const": "none",
+            "title": "Attestation"
+          },
+          "excludeCredentials": {
+            "items": {
+              "$ref": "#/components/schemas/CredentialDescriptor"
+            },
+            "type": "array",
+            "title": "Excludecredentials"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "challenge",
+          "rp",
+          "user",
+          "pubKeyCredParams",
+          "authenticatorSelection",
+          "attestation",
+          "excludeCredentials"
+        ],
+        "title": "PasskeyCreationOptions",
+        "description": "The options of navigator.credentials.create(), in base64url."
+      },
       "PasskeyCredential": {
         "properties": {
           "id": {
@@ -1073,6 +2485,27 @@
         "title": "PasskeyCredential",
         "description": "The whole response of navigator.credentials.get()."
       },
+      "PasskeyLink": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "credential": {
+            "$ref": "#/components/schemas/PasskeyRegistration"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "credential"
+        ],
+        "title": "PasskeyLink",
+        "description": "A new passkey of the account, and its name."
+      },
       "PasskeyOptions": {
         "properties": {
           "challenge": {
@@ -1106,6 +2539,93 @@
         ],
         "title": "PasskeyOptions",
         "description": "The options of navigator.credentials.get(), in base64url."
+      },
+      "PasskeyRegistration": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "rawId": {
+            "type": "string",
+            "title": "Rawid"
+          },
+          "type": {
+            "type": "string",
+            "const": "public-key",
+            "title": "Type"
+          },
+          "response": {
+            "$ref": "#/components/schemas/AttestationResponse"
+          },
+          "clientExtensionResults": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Clientextensionresults"
+          },
+          "authenticatorAttachment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Authenticatorattachment"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "rawId",
+          "type",
+          "response",
+          "clientExtensionResults"
+        ],
+        "title": "PasskeyRegistration",
+        "description": "The whole response of navigator.credentials.create()."
+      },
+      "PasskeyView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          },
+          "lastUsedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastusedat"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "createdAt",
+          "lastUsedAt"
+        ],
+        "title": "PasskeyView",
+        "description": "A passkey of the account, by its name and its last use."
       },
       "PasswordLogin": {
         "properties": {
@@ -1144,6 +2664,140 @@
         ],
         "title": "PasswordLogin",
         "description": "A password, and either the email or the phone of the account."
+      },
+      "PasswordReauth": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "title": "PasswordReauth",
+        "description": "The password of the account of the session."
+      },
+      "PhoneChange": {
+        "properties": {
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+[0-9]+$",
+            "title": "Phone"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$",
+            "title": "Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "phone",
+          "code"
+        ],
+        "title": "PhoneChange",
+        "description": "The new phone, and the code it received."
+      },
+      "PhoneCode": {
+        "properties": {
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+[0-9]+$",
+            "title": "Phone"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "phone"
+        ],
+        "title": "PhoneCode",
+        "description": "The new phone, which receives the code."
+      },
+      "Registration": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\+[0-9]+$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$",
+            "title": "Code"
+          },
+          "passkeyName": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Passkeyname"
+          },
+          "credential": {
+            "$ref": "#/components/schemas/PasskeyRegistration"
+          },
+          "setupCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Setupcode"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "passkeyName",
+          "credential"
+        ],
+        "title": "Registration",
+        "description": "A new account: its verified address and its first passkey.\n\nThe setup code registers the first admin."
+      },
+      "RelyingParty": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "RelyingParty",
+        "description": "The RP of a registration: the domain is its ID and its name."
       },
       "TokenError": {
         "properties": {
@@ -1200,6 +2854,32 @@
         ],
         "title": "TokenResponse",
         "description": "The tokens of an app, with the member names of RFC 6749."
+      },
+      "UserEntity": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "displayName": {
+            "type": "string",
+            "const": "",
+            "title": "Displayname"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "displayName"
+        ],
+        "title": "UserEntity",
+        "description": "The account of a registration: its handle, no display name."
       },
       "FieldError": {
         "description": "One invalid field or parameter, open to new members.",

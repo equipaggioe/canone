@@ -58,6 +58,15 @@ Por ejemplo, `install.py` recibe valores como el dominio y la memoria mediante a
 
 Canone define cómo se reciben esos valores, pero no dónde los almacena quien despliega.
 
+## Instrumentos
+
+Canone tiene instrumentos propios: se construyen para servir a sus convenciones, y una página los nombra como nombra a Canone, sin una condición.
+
+| Instrumento | Qué hace |
+| :--- | :--- |
+| **Equipaggio** | El servicio que usan las máquinas: el correo y el SMS de cada producto, el registro central del journal y el monitor de salud. Su API es la misma para todo despliegue, y cada uno entra con la clave de su cliente. |
+| **Consola** | Una herramienta que corre los programas de Canone. No es obligatoria: quien despliega elige con qué los corre. |
+
 ## Documentación y recursos
 
 El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herramientas en los siguientes archivos y directorios.

@@ -2,6 +2,7 @@
 
 import re
 from collections.abc import AsyncIterator, Callable
+from datetime import UTC, datetime
 from http import HTTPStatus
 from typing import Annotated
 
@@ -14,8 +15,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import VERSION, settings
 from app.database import SessionFactory
 from app.enums import EventLevel, SessionKind
-from app.errors import CLIENT_OUTDATED, AppError, KeptError
-from app.services import events, sessions
+from app.errors import CLIENT_OUTDATED, REAUTHENTICATION_REQUIRED, AppError, KeptError
+from app.services import events, messages, sessions
 from app.services.sessions import Client, Principal
 
 
@@ -23,7 +24,8 @@ async def get_session() -> AsyncIterator[AsyncSession]:
     """Open one session and one transaction per request.
 
     The transaction commits if the route ends or raises a KeptError, and
-    rolls back on any other error.
+    rolls back on any other error. After the commit go the messages the
+    request queued.
     """
     kept: KeptError | None = None
     async with SessionFactory.begin() as session:
@@ -31,6 +33,7 @@ async def get_session() -> AsyncIterator[AsyncSession]:
             yield session
         except KeptError as error:
             kept = error
+    await messages.flush(session)
     if kept is not None:
         raise kept.error
 
@@ -150,3 +153,14 @@ async def signed_in(
 
 
 PrincipalDep = Annotated[Principal, Depends(signed_in)]
+
+
+@access
+async def reauthenticated(principal: PrincipalDep) -> Principal:
+    """Require a session that authenticated within the last minutes."""
+    if datetime.now(UTC) - principal.session.authenticated_at > sessions.REAUTHENTICATION:
+        raise AppError(REAUTHENTICATION_REQUIRED)
+    return principal
+
+
+ReauthenticatedDep = Annotated[Principal, Depends(reauthenticated)]

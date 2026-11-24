@@ -16,3 +16,42 @@ msgstr "La passkey no pudo entrar. Vuelve a intentarlo."
 
 msgid "This sign-in request is not valid. Go back to the app and try again."
 msgstr "Esta solicitud para entrar no es válida. Vuelve a la app e inténtalo de nuevo."
+
+msgid "Your code"
+msgstr "Tu código"
+
+msgid "Your code is {code}. It lasts 10 minutes."
+msgstr "Tu código es {code}. Vence en 10 minutos."
+
+msgid "Your code is {code}."
+msgstr "Tu código es {code}."
+
+msgid "A passkey was added to your account"
+msgstr "Se agregó una passkey a tu cuenta"
+
+msgid "The passkey {name} was added to your account. If you did not add it, delete it in the app and write to {contact}."
+msgstr "Se agregó la passkey {name} a tu cuenta. Si no la agregaste tú, bórrala en la app y escribe a {contact}."
+
+msgid "A passkey was deleted from your account"
+msgstr "Se borró una passkey de tu cuenta"
+
+msgid "The passkey {name} was deleted from your account. If you did not delete it, review your passkeys in the app and write to {contact}."
+msgstr "Se borró la passkey {name} de tu cuenta. Si no la borraste tú, revisa tus passkeys en la app y escribe a {contact}."
+
+msgid "A passkey of your account may be copied"
+msgstr "Una passkey de tu cuenta puede estar copiada"
+
+msgid "A sign-in with the passkey {name} was refused: the passkey may be copied. Delete it in the app, add a new one and write to {contact}."
+msgstr "Se rechazó un inicio de sesión con la passkey {name}: puede estar copiada. Bórrala en la app, agrega otra y escribe a {contact}."
+
+msgid "The email of your account changed"
+msgstr "Cambió el correo de tu cuenta"
+
+msgid "The email of your account changed. If you did not change it, write to {contact}."
+msgstr "Cambió el correo de tu cuenta. Si no lo cambiaste tú, escribe a {contact}."
+
+msgid "The phone of your account changed"
+msgstr "Cambió el teléfono de tu cuenta"
+
+msgid "The phone of your account changed. If you did not change it, write to {contact}."
+msgstr "Cambió el teléfono de tu cuenta. Si no lo cambiaste tú, escribe a {contact}."

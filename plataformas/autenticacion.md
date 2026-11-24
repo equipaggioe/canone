@@ -46,7 +46,8 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 - El número viaja y se guarda con `+`, el código de país y solo dígitos.
 - El servidor valida el número con `phonenumbers`.
 - Si un cliente es una app de Android, su hash va en la penúltima línea del SMS.
-- El host de la línea del código es el de la web donde se escribe el código.
+- El host de la línea del código es el de la web donde se escribe el código: el `Host` de la petición que pide el código, que tiene que ser una superficie de `domain`. Otro responde 400.
+- El hash de cada app de Android es `sms_hashes` de `Settings`, por la pieza de su `User-Agent`: cambia con la llave que firma la app.
 - La web donde se escribe el código sirve `/.well-known/apple-app-site-association` como archivo estático, desde `static/.well-known/apple-app-site-association`, y una app de iOS declara ese host entre sus dominios asociados. [Apple](https://developer.apple.com/documentation/security/enabling-autofill-for-domain-bound-sms-codes)
 - Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta 10 por hora.
 - El código para entrar sigue las reglas del de [Recuperación](#recuperación).
@@ -82,6 +83,17 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - El servidor pasa el correo a minúsculas al recibirlo, y así lo guarda, lo compara y le envía.
 - Una cuenta no tiene nombre de usuario.
 - Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos.
+- El registro pide el código en `POST /api/auth/register/code`, que ya responde 409 si la cuenta existe, y las opciones de la passkey en `POST /api/auth/register/options`, con un user handle nuevo.
+- El registro lleva el código y el primer autenticador, una passkey o una contraseña, en la misma petición, y abre la sesión por `POST /api/auth/register/cookie` o `/token`, como un login. Una cuenta con teléfono puede registrarse sin autenticador: entra con el código por SMS.
+- El registro verifica la passkey antes que el código: una ceremonia que falla no gasta un intento del código.
+- El correo se cambia pidiendo el código para el nuevo en `POST /api/account/email/code` y presentándolo en `PUT /api/account/email`, y el teléfono, en `POST /api/account/phone/code` y `PUT /api/account/phone`. Un correo o un teléfono que tiene otra cuenta responde 409.
+- Volver a autenticarse es un paso aparte, con la sesión abierta: `POST /api/auth/reauth/options` lista en `allowCredentials` las passkeys de la cuenta, y `POST /api/auth/reauth/passkey` y `/reauth/password` verifican una credencial de la cuenta de la sesión. Renuevan la misma fila, escriben su `authenticated_at` y responden como se presenta la sesión: los tokens nuevos de una app, o la cookie nueva de la web.
+- Una operación que pide volver a autenticarse lo acepta durante 5 minutos desde `authenticated_at`; después responde 403 de tipo `reauthentication-required`.
+- La cuenta de administración tiene `role` `admin`.
+- El registro con el código de instalación no acepta contraseña. Un código de instalación equivocado, o uno que llega cuando ya hay una cuenta de administración, responde 403, y dos registros con el código se esperan con un candado de PostgreSQL: solo uno queda como la primera.
+- Una cuenta de administración que entra con contraseña recibe 401, sin que se verifique ni se cuente un fallo: no revela que es de administración. Con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo: la firma vale, y quien la presenta tiene la passkey. Lo mismo al volver a autenticarse.
+- El aviso dice a quién escribir con `contact` de `Settings`, y va en el idioma de la cuenta.
+- Registrarse no avisa: la passkey se vincula a una cuenta que acaba de nacer.
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el viejo recibe un aviso.
 - El titular ve en la app cada intento fallido y cada autenticador deshabilitado.
 - Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
@@ -116,7 +128,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 | Una app de Flutter o de Flet, en Windows o en macOS | Sí | Sí | Sí |
 | Una app de Flutter o de Flet en Linux, o de Qt | Sí, por el navegador del sistema | Sí | Sí |
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/throttled.py` y `services/authenticators.py`.
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/throttled.py`, `schemas/account.py`, `routers/account.py`, `services/authenticators.py`, `services/registration.py`, `services/account.py`, `services/codes.py`, `services/limits.py`, `services/messages.py`, `services/notices.py`, `tests/test_registration.py` y `tests/test_account.py`.
 
 ## Passkeys
 
@@ -129,6 +141,8 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 - El dominio es `domain` de `Settings`: cada máquina tiene el suyo.
 - La lista de origins es `https://<dominio>`, `https://app.<dominio>` y `https://panel.<dominio>`, y los `android:apk-key-hash:…` de `app_origins` de `Settings`, los de las llaves que firman las apps de ese despliegue.
 - El login con passkey pide antes sus opciones en `POST /api/auth/passkey/options`, y el servidor busca el challenge por el que trae `clientDataJSON`.
+- Las passkeys de la cuenta se ven en `GET /api/account/passkeys`, se vinculan por `PUT /api/account/passkeys/{id}` después de pedir las opciones en `POST /api/account/passkeys/options`, y se borran por `DELETE /api/account/passkeys/{id}`.
+- El challenge de un registro guarda el user handle para el que se pidió: una cuenta nueva toma ese handle, y vincular una passkey exige el de la cuenta.
 - Una app de iOS o de macOS declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`, y la landing sirve `https://<dominio>/.well-known/apple-app-site-association` con el app ID de cada app de iOS y de macOS en `webcredentials`, como archivo estático desde `static/.well-known/apple-app-site-association`.
 - En Windows, la app escribe el `clientDataJSON` que firma la API del sistema, con el origin `https://<dominio>`, como un navegador en ese dominio.
 - El RP ID es `<dominio>` ([WebAuthn §5.4.2](../fuentes/w3c/webauthn-3.html)).
@@ -153,7 +167,7 @@ Estándares: [*Web Authentication Level 3*](../fuentes/w3c/webauthn-3.html) de W
 - Cada passkey guarda su credential ID, su clave pública, `signCount`, `uvInitialized`, `transports`, `backupEligible`, `backupState`, su nombre, su creación y su último uso ([WebAuthn §6.1.3](../fuentes/w3c/webauthn-3.html) y [§7.1](../fuentes/w3c/webauthn-3.html)).
 - El titular ve sus passkeys, con su nombre y su último uso, y borra la que quiera: así revoca la de un dispositivo perdido ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt)).
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey.py`, `services/passkeys.py` y `tests/test_passkeys.py`; [plantilla/packages/passkey/](../plantilla/packages/passkey/), con el plugin `passkey` de Flutter y la extensión `flet_passkey` de Flet.
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey.py`, `services/passkeys.py`, `services/attestation.py` y `tests/test_passkeys.py`; [plantilla/packages/passkey/](../plantilla/packages/passkey/), con el plugin `passkey` de Flutter y la extensión `flet_passkey` de Flet.
 
 ## Recuperación
 
@@ -165,6 +179,7 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 - Con el código, una cuenta con contraseña la restablece, y una sin contraseña vincula una passkey o una contraseña.
 - El código vive en Valkey, y uno nuevo reemplaza al anterior.
 - El código vale una sola vez.
+- Un código equivocado o vencido responde 400 de tipo `invalid-code`.
 - Una cuenta con passkey que se recupera con el código del correo lo aplica 24 horas después, sin cerrar las sesiones, y el titular la cancela desde la app. El código del teléfono se aplica en el momento.
 - Una cuenta de administración no se recupera con el código: la recupera otro administrador.
 - A los 100 fallos consecutivos de la recuperación, la cuenta deja de recuperarse con el código, y la recupera un administrador. Un inicio de sesión exitoso la vuelve a habilitar.
@@ -297,3 +312,35 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | El flujo de la web guarda el `state` y un `code_verifier` de 32 bytes en Valkey, bajo un id en una cookie `__Host-` `Secure`, `HttpOnly` y `SameSite=Strict`, y pide `S256` | `test_web_flow_keeps_state_and_verifier_behind_a_cookie` |
 | El retorno de la web toma el flujo una sola vez, borra su cookie, deja la cookie de sesión y vuelve a la app con un 303 | `test_web_flow_returns_with_the_cookie_of_the_session` |
 | El retorno de la web rechaza un `state` que no es el de su flujo | `test_web_return_with_another_state_fails` |
+| El código para registrarse son 6 dígitos que viven 10 minutos en Valkey, por un correo con texto y HTML, y el correo pasa a minúsculas | `test_email_code_is_6_digits_for_10_minutes` |
+| El SMS del código lleva el hash de la app de Android en la penúltima línea, y en la última el `Host` de la petición, que tiene que ser una superficie de `domain` | `test_sms_code_binds_the_host_and_the_android_hash` |
+| El servidor valida el número con `phonenumbers` | `test_phone_is_validated_with_phonenumbers` |
+| Un código se invalida al tercer intento fallido | `test_code_fails_on_the_third_attempt` |
+| El código vale una sola vez, y uno nuevo reemplaza al anterior | `test_code_is_used_once_and_a_new_one_replaces_it` |
+| Cada correo recibe un código por minuto y hasta 5 por hora, también el correo nuevo de una cuenta | `test_email_gets_one_code_a_minute_and_five_an_hour` y `test_email_change_codes_follow_the_limits` |
+| Cada número recibe un SMS por minuto, hasta 5 por hora y hasta 10 por día, y cada IP pide hasta 10 por hora | `test_number_gets_one_sms_a_minute_five_an_hour_and_ten_a_day` y `test_ip_asks_ten_sms_an_hour` |
+| El registro responde 409 si la cuenta existe, al pedir el código y al registrarse | `test_existing_account_is_a_409` |
+| Una IP que recibe 10 respuestas 409 del registro en 15 minutos queda bloqueada 30 minutos | `test_ten_conflicts_block_the_ip_for_30_minutes` |
+| Las opciones del registro llevan un challenge de 16 bytes que vive 10 minutos en Valkey, `rp` con el RP ID como nombre, `user.name` el correo, `user.displayName` vacío, un user handle de 64 bytes, EdDSA, ES256 y RS256 en ese orden, una passkey descubrible, `userVerification` `preferred`, `attestation` `none` y ninguna extensión | `test_creation_options_ask_a_discoverable_passkey` |
+| El registro lleva el código y la passkey, abre la sesión por sus dos rutas y guarda la passkey con sus campos y su vínculo | `test_registration_links_the_passkey_and_opens_the_session` |
+| El registro acepta la atestación `none` y la propia, `packed` sin `x5c`, y rechaza otra aunque la biblioteca la acepte | `test_registration_takes_none_and_self_attestation` |
+| En el registro, el `authData` acepta solo `credProtect`, de 1 a 3, y otra extensión va al registro de eventos con su nombre | `test_registration_takes_only_cred_protect` |
+| En el registro, un `clientExtensionResults` que no está vacío, `crossOrigin` verdadero u otro `origin` hacen fallar la ceremonia | `test_registration_client_must_be_clean` |
+| Un credential ID de más de 1023 bytes, o que ya es de otra passkey, hace fallar el registro | `test_credential_id_longer_than_1023_bytes_or_taken_fails` |
+| Un código equivocado responde 400 de tipo `invalid-code`, y una passkey que falla no gasta un intento del código | `test_wrong_code_fails_and_a_failed_passkey_keeps_the_code` |
+| El código de instalación registra la cuenta de administración mientras no hay otra, y uno equivocado responde 403 | `test_setup_code_registers_the_first_admin_once` |
+| La cuenta de administración que se registra con el código de instalación vincula una passkey con el flag UV | `test_admin_registers_a_passkey_that_verified_the_user` |
+| Una cuenta de administración que entra con contraseña recibe 401, sin que se verifique ni se cuente un fallo | `test_admin_does_not_sign_in_with_a_password` |
+| Una cuenta de administración que entra con una passkey sin el flag UV recibe 403 de tipo `user-verification-required`, sin contar un fallo | `test_admin_passkey_needs_the_uv_flag` |
+| Si el `signCount` no crece, el titular recibe un aviso | `test_sign_count_that_does_not_grow_notifies_the_holder` |
+| Al volver a autenticarse, `allowCredentials` lista las passkeys de la cuenta con sus `transports` | `test_reauth_options_list_the_passkeys_with_transports` |
+| Volver a autenticarse renueva la misma fila con tokens nuevos y su `authenticated_at`, y los que el cliente traía dejan de valer | `test_reauth_renews_the_app_session_and_its_tokens` y `test_reauth_renews_the_web_session_in_its_cookie` |
+| Una passkey de otra cuenta no vuelve a autenticar la sesión | `test_reauth_with_the_passkey_of_another_account_is_refused` |
+| Agregar o borrar una passkey y cambiar el correo o el teléfono piden haber vuelto a autenticarse en los últimos 5 minutos, o responden 403 de tipo `reauthentication-required` | `test_changes_need_a_reauth_within_5_minutes` |
+| Vincular una passkey es un `PUT` que responde 201 y, repetido, 200; `excludeCredentials` lista las passkeys de la cuenta; la passkey guarda cuándo se vinculó, su evento lleva la IP, y el correo y el teléfono reciben un aviso con qué hacer y a quién escribir | `test_link_is_idempotent_and_notifies_every_address` |
+| Vincular una passkey con las opciones de otra cuenta falla | `test_link_refuses_the_options_of_another_account` |
+| El titular ve sus passkeys, en páginas, con su nombre y su último uso, y borra la que quiera, con aviso; la de otra cuenta responde 404 | `test_passkeys_are_listed_and_deleted` |
+| El correo se cambia con un código enviado al nuevo, y el viejo recibe un aviso | `test_email_changes_with_a_code_to_the_new_one` |
+| El teléfono se cambia con un SMS al nuevo, y el viejo recibe un aviso | `test_phone_changes_with_an_sms_to_the_new_one` |
+| Un correo o un teléfono que tiene otra cuenta responde 409 | `test_email_or_phone_of_another_account_is_a_409` |
+| Una cuenta se registra con un teléfono, verificado con el código de su SMS | `test_registration_by_phone_verifies_the_phone` |

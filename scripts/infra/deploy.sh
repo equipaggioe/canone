@@ -78,6 +78,10 @@ page_token_key=0FDyrOoVgPY9sMS6gmeGBYIwTWh_I11LIzZMzu4z4wY=
 refresh_key=3q6Yv1nOQ9i1mXk0jv4XrQ7Wl8l7z3p2c4b5a6d7e8E
 domain=demo.example
 app_origins=[]
+contact=ayuda@demo.example
+equipaggio_key=test-equipaggio-key
+setup_code=test-setup-code
+sms_hashes={}
 EOF
 deploy() { UV_OFFLINE=1 python3 "$work/deploy.py" "$1"; }
 

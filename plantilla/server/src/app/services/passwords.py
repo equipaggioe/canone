@@ -10,7 +10,7 @@ from pwdlib import PasswordHash
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.concurrency import run_in_threadpool
 
-from app.enums import EventLevel
+from app.enums import EventLevel, Role
 from app.errors import KeptError
 from app.models.account.account import Account
 from app.models.account.password import Password
@@ -30,12 +30,15 @@ def hash_password(password: str) -> str:
 
 
 async def find(session: AsyncSession, login: PasswordLogin) -> tuple[Account, Password] | None:
-    """Find the account of the login and lock its password."""
+    """Find the account of the login and lock its password.
+
+    An admin signs in only with a passkey: its password is ignored.
+    """
     identifier = Account.email == login.email if login.email else Account.phone == login.phone
     query = (
         sa.select(Account, Password)
         .join(Password, Password.account_id == Account.id)
-        .where(identifier)
+        .where(identifier, Account.role != Role.ADMIN)
         .with_for_update(of=Password)
     )
     return (await session.execute(query)).one_or_none()

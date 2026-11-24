@@ -10,8 +10,8 @@ from app import errors, ijson, store, tracing
 from app.database import engine
 from app.dependencies import check_client_version, check_origin, deny_by_default
 from app.enums import EventLevel
-from app.routers import auth, authorization, health, problems
-from app.services import events
+from app.routers import account, auth, authorization, health, problems
+from app.services import events, messages
 
 
 def operation_id(route: APIRoute) -> str:
@@ -30,6 +30,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
     finally:
         await engine.dispose()
         await store.client.aclose()
+        await messages.client.aclose()
 
 
 api = APIRouter(
@@ -37,6 +38,7 @@ api = APIRouter(
     dependencies=[Depends(check_client_version), Depends(check_origin), Depends(deny_by_default)],
     responses=errors.RESPONSES,
 )
+api.include_router(account.router)
 api.include_router(auth.router)
 api.include_router(authorization.router)
 api.include_router(health.router)

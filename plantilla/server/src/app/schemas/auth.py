@@ -2,6 +2,7 @@
 
 from typing import Annotated, Any, Literal, Self
 
+import phonenumbers
 from pydantic import AfterValidator, Field, StringConstraints, model_validator
 
 from app.enums import TokenErrorCode
@@ -9,16 +10,32 @@ from app.schemas.base import InputSchema, Schema
 
 # autenticacion.md: the server lowers the email when it receives it.
 Email = Annotated[str, AfterValidator(str.lower)]
-# A +, the country code and digits only.
-Phone = Annotated[str, StringConstraints(pattern=r"^\+[0-9]+$")]
 
 
-class PasswordLogin(InputSchema):
-    """A password, and either the email or the phone of the account."""
+def valid_number(phone: str) -> str:
+    """Let through a number that phonenumbers takes as valid."""
+    try:
+        valid = phonenumbers.is_valid_number(phonenumbers.parse(phone))
+    except phonenumbers.NumberParseException as error:
+        raise ValueError("not a phone number") from error
+    if not valid:
+        raise ValueError("not a valid phone number")
+    return phone
+
+
+# A +, the country code and digits only, of a valid number.
+Phone = Annotated[str, StringConstraints(pattern=r"^\+[0-9]+$"), AfterValidator(valid_number)]
+# The 6 digits of a code that verifies an email or a phone.
+Code = Annotated[str, StringConstraints(pattern=r"^[0-9]{6}$")]
+# What the holder calls a passkey.
+PasskeyName = Annotated[str, StringConstraints(min_length=1, max_length=64)]
+
+
+class Identifier(InputSchema):
+    """Either the email or the phone of an account."""
 
     email: Email | None = None
     phone: Phone | None = None
-    password: str
 
     @model_validator(mode="after")
     def one_identifier(self) -> Self:
@@ -26,6 +43,25 @@ class PasswordLogin(InputSchema):
         if (self.email is None) == (self.phone is None):
             raise ValueError("send either email or phone")
         return self
+
+    @property
+    def address(self) -> str:
+        """Return the email or the phone that came."""
+        address = self.email or self.phone
+        assert address is not None
+        return address
+
+
+class PasswordLogin(Identifier):
+    """A password, and either the email or the phone of the account."""
+
+    password: str
+
+
+class PasswordReauth(InputSchema):
+    """The password of the account of the session."""
+
+    password: str
 
 
 class TokenResponse(Schema):
@@ -78,3 +114,79 @@ class PasskeyCredential(InputSchema):
     response: AssertionResponse
     client_extension_results: dict[str, Any]
     authenticator_attachment: str | None = None
+
+
+class RelyingParty(Schema):
+    """The RP of a registration: the domain is its ID and its name."""
+
+    id: str
+    name: str
+
+
+class UserEntity(Schema):
+    """The account of a registration: its handle, no display name."""
+
+    id: str
+    name: str
+    display_name: Literal[""]
+
+
+class CredentialParameters(Schema):
+    """An algorithm that the server accepts, by its COSE number."""
+
+    type: Literal["public-key"]
+    alg: int
+
+
+class AuthenticatorSelection(Schema):
+    """A discoverable passkey, and UV preferred."""
+
+    resident_key: Literal["required"]
+    require_resident_key: Literal[True]
+    user_verification: Literal["preferred"]
+
+
+class PasskeyCreationOptions(Schema):
+    """The options of navigator.credentials.create(), in base64url."""
+
+    challenge: str
+    rp: RelyingParty
+    user: UserEntity
+    pub_key_cred_params: list[CredentialParameters]
+    authenticator_selection: AuthenticatorSelection
+    attestation: Literal["none"]
+    exclude_credentials: list[CredentialDescriptor]
+
+
+class AttestationResponse(InputSchema):
+    """What the authenticator created, in base64url, and transports."""
+
+    client_data_json: str = Field(alias="clientDataJSON")
+    attestation_object: str
+    transports: list[str]
+    authenticator_data: str | None = None
+    public_key: str | None = None
+    public_key_algorithm: int | None = None
+
+
+class PasskeyRegistration(InputSchema):
+    """The whole response of navigator.credentials.create()."""
+
+    id: str
+    raw_id: str
+    type: Literal["public-key"]
+    response: AttestationResponse
+    client_extension_results: dict[str, Any]
+    authenticator_attachment: str | None = None
+
+
+class Registration(Identifier):
+    """A new account: its verified address and its first passkey.
+
+    The setup code registers the first admin.
+    """
+
+    code: Code
+    passkey_name: PasskeyName
+    credential: PasskeyRegistration
+    setup_code: str | None = None

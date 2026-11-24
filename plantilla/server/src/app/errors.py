@@ -59,8 +59,34 @@ AUTHENTICATOR_DISABLED = ProblemType(
     HTTPStatus.FORBIDDEN,
     "Sign in another way and enable it again, or reset the password.",
 )
+USER_VERIFICATION_REQUIRED = ProblemType(
+    "user-verification-required",
+    "User verification required",
+    HTTPStatus.FORBIDDEN,
+    "Unlock the passkey with its PIN or biometrics, or use a passkey that does.",
+)
+REAUTHENTICATION_REQUIRED = ProblemType(
+    "reauthentication-required",
+    "Reauthentication required",
+    HTTPStatus.FORBIDDEN,
+    "Authenticate again with a passkey or the password, and repeat the request.",
+)
+INVALID_CODE = ProblemType(
+    "invalid-code",
+    "Invalid code",
+    HTTPStatus.BAD_REQUEST,
+    "Check the code, or ask for a new one: a code lasts 10 minutes and three attempts.",
+)
 TYPES = {
-    problem.name: problem for problem in (VALIDATION, CLIENT_OUTDATED, AUTHENTICATOR_DISABLED)
+    problem.name: problem
+    for problem in (
+        VALIDATION,
+        CLIENT_OUTDATED,
+        AUTHENTICATOR_DISABLED,
+        USER_VERIFICATION_REQUIRED,
+        REAUTHENTICATION_REQUIRED,
+        INVALID_CODE,
+    )
 }
 
 

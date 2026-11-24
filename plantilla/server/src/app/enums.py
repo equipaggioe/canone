@@ -11,6 +11,13 @@ class EventLevel(StrEnum):
     CRITICAL = "critical"
 
 
+class Role(StrEnum):
+    """What an account may do; an admin signs in only with a passkey."""
+
+    ADMIN = "admin"
+    USER = "user"
+
+
 class SessionKind(StrEnum):
     """How a session is presented: a cookie, or the tokens of an app."""
 

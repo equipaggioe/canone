@@ -1,10 +1,12 @@
 """Signing in with a passkey, against an authenticator of software."""
 
+import json
 import secrets
 from datetime import UTC, datetime, timedelta
 from http.cookies import SimpleCookie
 from typing import Any
 
+import httpx
 import pytest
 import sqlalchemy as sa
 from httpx import AsyncClient, Response
@@ -13,6 +15,7 @@ from webauthn.helpers import base64url_to_bytes, bytes_to_base64url
 
 from app import errors, store
 from app.config import settings
+from app.enums import Role
 from app.models.account.account import Account
 from app.models.account.passkey import Passkey
 from app.models.event.event_log import EventLog
@@ -23,7 +26,7 @@ from tests.authenticator import BE, BS, UP, UV, Authenticator, register
 @pytest.fixture
 async def account(session: AsyncSession) -> Account:
     """Create an account with an email."""
-    row = Account(email="ana@example.com")
+    row = Account(email="ana@example.com", role=Role.USER, language="es")
     session.add(row)
     await session.flush()
     return row
@@ -291,3 +294,38 @@ async def test_passkey_waits_and_disables_like_any_authenticator(
     response = await sign_in(client, passkey.sign(await challenge(client), account.user_handle))
     assert response.status_code == 403
     assert response.json()["type"] == errors.AUTHENTICATOR_DISABLED.uri
+
+
+async def test_admin_passkey_needs_the_uv_flag(
+    client: AsyncClient, session: AsyncSession, account: Account
+) -> None:
+    """An admin's passkey without UV is a 403 that counts no failure."""
+    account.role = Role.ADMIN
+    authenticator = Authenticator(flags=UP)
+    await register(session, account, authenticator)
+    credential = authenticator.sign(await challenge(client), account.user_handle)
+    response = await sign_in(client, credential)
+    assert response.status_code == 403
+    assert response.json()["type"] == errors.USER_VERIFICATION_REQUIRED.uri
+    assert await failures(session) == 0
+    assert await session.scalar(sa.select(EventLog.details)) == {"reason": "user_verification"}
+    authenticator.flags |= UV
+    credential = authenticator.sign(await challenge(client), account.user_handle)
+    assert (await sign_in(client, credential)).status_code == 200
+
+
+async def test_sign_count_that_does_not_grow_notifies_the_holder(
+    client: AsyncClient,
+    session: AsyncSession,
+    account: Account,
+    passkey: Authenticator,
+    sent: list[httpx.Request],
+) -> None:
+    """A passkey that may be cloned notifies the holder."""
+    await session.execute(sa.update(Passkey).values(sign_count=10))
+    credential = passkey.sign(await challenge(client), account.user_handle)
+    assert (await sign_in(client, credential)).status_code == 401
+    assert [json.loads(request.content)["to"] for request in sent] == ["ana@example.com"]
+    text = json.loads(sent[0].content)["text"]
+    assert "Phone" in text
+    assert settings.contact in text

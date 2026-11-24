@@ -14,6 +14,7 @@ from webauthn.helpers import base64url_to_bytes
 
 from app import store
 from app.config import settings
+from app.enums import Role
 from app.main import app
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
@@ -43,7 +44,7 @@ def desktop(monkeypatch: pytest.MonkeyPatch) -> None:
 @pytest.fixture
 async def passkey(session: AsyncSession) -> tuple[Account, Authenticator]:
     """Create an account with a passkey."""
-    account = Account(email="ana@example.com")
+    account = Account(email="ana@example.com", role=Role.USER, language="es")
     session.add(account)
     await session.flush()
     authenticator = Authenticator()

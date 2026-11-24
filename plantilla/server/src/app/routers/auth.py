@@ -1,24 +1,39 @@
-"""Signing in, refreshing and signing out."""
+"""Registering, signing in, authenticating again and signing out."""
 
+import secrets
 from http import HTTPStatus
 from typing import Any
 from urllib.parse import parse_qsl
 
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import JSONResponse
 
 from app.dependencies import ClientDep, PrincipalDep, SessionDep, public
 from app.enums import SessionKind, TokenErrorCode
 from app.errors import PROBLEM_JSON, TokenRefusal
 from app.models.account.account import Account
 from app.schemas.auth import (
+    Identifier,
+    PasskeyCreationOptions,
     PasskeyCredential,
     PasskeyOptions,
     PasswordLogin,
+    PasswordReauth,
+    Registration,
     TokenError,
     TokenResponse,
 )
-from app.services import authorization, passkeys, passwords, sessions
-from app.services.sessions import Client
+from app.services import account as account_service
+from app.services import (
+    attestation,
+    authorization,
+    passkeys,
+    passwords,
+    registration,
+    sessions,
+)
+from app.services.sessions import Client, Principal
+from app.translations import language
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -59,6 +74,16 @@ TOKEN_ERRORS: dict[int | str, dict[str, Any]] = {
         "content": {PROBLEM_JSON: {"schema": {"$ref": "#/components/schemas/Problem"}}},
     }
 }
+# Authenticating again answers as the session it renews: the tokens of
+# an app, or the cookie of the web.
+RENEWED: dict[int | str, dict[str, Any]] = {
+    HTTPStatus.NO_CONTENT.value: {"description": "The web session, renewed in its cookie"}
+}
+
+
+def accepted(request: Request) -> str:
+    """Choose the language of Accept-Language, or the base."""
+    return language(request.headers.get("accept-language", ""))
 
 
 def token_response(issued: sessions.Issued, response: Response) -> TokenResponse:
@@ -111,7 +136,7 @@ async def open_cookie(
     presented = request.cookies.get(sessions.COOKIE)
     if presented is not None:
         await sessions.discard(session, presented, SessionKind.WEB)
-    token, _ = await sessions.open_web(session, account, caller)
+    token, _ = await sessions.open_web(session, account, caller, accepted(request))
     sessions.set_cookie(response, token)
 
 
@@ -125,7 +150,8 @@ async def open_token(
     scheme, _, presented = request.headers.get("authorization", "").partition(" ")
     if scheme.lower() == "bearer" and presented:
         await sessions.discard(session, presented, SessionKind.APP)
-    return token_response(await sessions.open_app(session, account, caller), response)
+    issued = await sessions.open_app(session, account, caller, accepted(request))
+    return token_response(issued, response)
 
 
 @router.post("/password/cookie", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
@@ -157,7 +183,7 @@ async def password_token(
 @router.post("/passkey/options", dependencies=[Depends(public)])
 async def passkey_options() -> PasskeyOptions:
     """Start a login with a passkey: its challenge lives 10 minutes."""
-    return await passkeys.options()
+    return await passkeys.options([])
 
 
 @router.post("/passkey/cookie", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
@@ -198,7 +224,7 @@ async def token(
         presented = authorization.required(params, "refresh_token")
         return token_response(await sessions.refresh(session, presented, caller), response)
     account = await authorization.redeem(session, params)
-    issued = await sessions.open_app(session, account, caller)
+    issued = await sessions.open_app(session, account, caller, accepted(request))
     await authorization.spent(params["code"], issued.session_id)
     return token_response(issued, response)
 
@@ -211,3 +237,84 @@ async def logout(
     await sessions.close(session, principal.session, caller)
     if principal.session.kind == SessionKind.WEB:
         sessions.clear_cookie(response)
+
+
+@router.post("/register/code", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
+async def register_code(
+    request: Request, session: SessionDep, body: Identifier, caller: ClientDep
+) -> None:
+    """Send the code of a new account to its email or its phone."""
+    host = request.headers.get("host", "")
+    await registration.send_code(session, body, caller, accepted(request), host)
+
+
+@router.post("/register/options", dependencies=[Depends(public)])
+async def register_options(body: Identifier) -> PasskeyCreationOptions:
+    """Start the passkey of a new account, with a new user handle."""
+    return await attestation.options(secrets.token_bytes(64), body.address, [])
+
+
+@router.post("/register/cookie", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
+async def register_cookie(
+    request: Request,
+    response: Response,
+    session: SessionDep,
+    body: Registration,
+    caller: ClientDep,
+) -> None:
+    """Register an account with its passkey, and sign in the web."""
+    account = await registration.register(session, body, caller, accepted(request))
+    await open_cookie(request, response, session, account, caller)
+
+
+@router.post("/register/token", dependencies=[Depends(public)])
+async def register_token(
+    request: Request,
+    response: Response,
+    session: SessionDep,
+    body: Registration,
+    caller: ClientDep,
+) -> TokenResponse:
+    """Register an account with its passkey, and sign in an app."""
+    account = await registration.register(session, body, caller, accepted(request))
+    return await open_token(request, response, session, account, caller)
+
+
+def renew(session: SessionDep, principal: Principal, caller: Client) -> Response:
+    """Renew the session that authenticated again, by its kind."""
+    if principal.session.kind == SessionKind.WEB:
+        response = Response(status_code=HTTPStatus.NO_CONTENT)
+        sessions.set_cookie(response, sessions.renew_web(session, principal.session, caller))
+        return response
+    issued = sessions.renew_app(session, principal.session, caller)
+    body = token_response(issued, Response())
+    return JSONResponse(body.model_dump(mode="json"), headers=NO_STORE)
+
+
+@router.post("/reauth/options")
+async def reauth_options(session: SessionDep, principal: PrincipalDep) -> PasskeyOptions:
+    """Start authenticating again: the passkeys of the account."""
+    return await passkeys.options(await account_service.all_passkeys(session, principal.account))
+
+
+@router.post("/reauth/passkey", response_model=TokenResponse, responses=RENEWED)
+async def reauth_passkey(
+    session: SessionDep, principal: PrincipalDep, body: PasskeyCredential, caller: ClientDep
+) -> Response:
+    """Authenticate again with a passkey of the account."""
+    account = await passkeys.check(session, body, caller)
+    if account.id != principal.account.id:
+        raise HTTPException(HTTPStatus.FORBIDDEN, "The passkey is of another account")
+    return renew(session, principal, caller)
+
+
+@router.post("/reauth/password", response_model=TokenResponse, responses=RENEWED)
+async def reauth_password(
+    session: SessionDep, principal: PrincipalDep, body: PasswordReauth, caller: ClientDep
+) -> Response:
+    """Authenticate again with the password of the account."""
+    holder = principal.account
+    identifier = {"email": holder.email} if holder.email else {"phone": holder.phone}
+    login = PasswordLogin.model_validate({**identifier, "password": body.password})
+    await passwords.check(session, login, caller)
+    return renew(session, principal, caller)

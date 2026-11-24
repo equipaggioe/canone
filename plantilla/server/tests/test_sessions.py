@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
 from app import errors, tasks
 from app.config import settings
 from app.dependencies import PrincipalDep
+from app.enums import Role
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.account.password import Password
@@ -26,7 +27,7 @@ from app.services import authenticators, events, passwords, sessions
 
 PASSWORD = "Correct horse battery"
 EMAIL = "ana@example.com"
-PHONE = "+56912345678"
+PHONE = "+56221234567"
 ORIGIN = {"Origin": "https://test"}
 
 probe = FastAPI()
@@ -42,7 +43,7 @@ async def whoami(principal: PrincipalDep) -> dict[str, str]:
 @pytest.fixture
 async def account(session: AsyncSession) -> Account:
     """Create an account with an email, a phone and a password."""
-    row = Account(email=EMAIL, phone=PHONE)
+    row = Account(email=EMAIL, phone=PHONE, role=Role.USER, language="es")
     session.add(row)
     await session.flush()
     session.add(Password(account_id=row.id, hash=passwords.hash_password(PASSWORD)))
@@ -573,3 +574,17 @@ async def test_hundredth_failure_disables_the_password(
     assert response.status_code == 403
     assert response.json()["type"] == errors.AUTHENTICATOR_DISABLED.uri
     assert (await guarded.get("/whoami", headers=with_cookie(token))).status_code == 200
+
+
+async def test_sign_in_keeps_the_language_of_the_account(
+    client: AsyncClient, session: AsyncSession, account: Account
+) -> None:
+    """A login keeps the language of Accept-Language, or the base."""
+    account.language = "xx"
+    await session.flush()
+    headers = {"Accept-Language": "en;q=0.9, es-CL"}
+    await client.post(
+        "/api/auth/password/token", json={"email": EMAIL, "password": PASSWORD}, headers=headers
+    )
+    await session.refresh(account)
+    assert account.language == "es"

@@ -61,12 +61,14 @@ server/
       __init__.py
       base.py
       page.py
+      account.py
       auth.py
       authorization.py
       health.py
       <recurso>.py
     routers/
       __init__.py
+      account.py
       auth.py
       authorization.py
       health.py
@@ -74,14 +76,21 @@ server/
       <recurso>.py
     services/
       __init__.py
+      account.py
+      attestation.py
       authenticators.py
       authorization.py
       clients.py
+      codes.py
       events.py
       files.py
       health.py
+      limits.py
+      messages.py
+      notices.py
       passkeys.py
       passwords.py
+      registration.py
       sessions.py
       <recurso>.py
     locale/
@@ -92,12 +101,15 @@ server/
     __init__.py
     conftest.py
     authenticator.py
+    test_account.py
     test_authorization.py
     test_conventions.py
     test_events.py
     test_files.py
     test_health.py
+    test_messages.py
     test_passkeys.py
+    test_registration.py
     test_sessions.py
     test_tasks.py
     test_<recurso>.py
@@ -237,6 +249,7 @@ Contrato: [transversal.md](transversal.md#archivos).
 Estándar: el [*Webhook Security Cheat Sheet*](../fuentes/owasp/Webhook_Security.md) de OWASP.
 
 - El correo sale por la API de correo de Equipaggio, `PUT /email/{id}`, y el SMS, por su pasarela, `PUT /sms/{id}`.
+- La URL de la API de Equipaggio es la constante `API` de `services/messages.py`, la misma en todo despliegue, y la clave del cliente, `equipaggio_key` de `Settings`.
 - Cada correo lleva una parte en texto y otra en HTML.
 - Un correo rebotado llega por el webhook de Equipaggio. El servidor marca la dirección como inválida, y la app le dice al usuario que su correo no llega.
 - La clave pública de una firma asimétrica sale de `Settings`, nunca de la petición.
@@ -249,6 +262,7 @@ Estándar: el [*Webhook Security Cheat Sheet*](../fuentes/owasp/Webhook_Security
 ## Envíos al exterior
 
 - Primero la evidencia en la base, después el envío best-effort. Un fallo de entrega no tumba la operación.
+- Un correo o un SMS de una petición se encola con `messages.later` en su sesión, y `get_session` lo envía después del commit, también el de un `KeptError`: una petición que se deshace no envía nada, y un envío que falla va al log con su traceback.
 - El servidor llama a otro servicio, como Nominatim o la API de correo, con un solo `httpx.AsyncClient` para toda la app, salvo FCM y Web Push, que van por sus bibliotecas.
 
 ## Errores
@@ -279,6 +293,7 @@ Contrato: [transversal.md](transversal.md#idiomas).
 Estándar: [RFC 6585](../fuentes/rfc/rfc6585.txt).
 
 - Los contadores viven en Valkey, compartidos por todos los procesos.
+- Cada límite es una ventana deslizante, en `services/limits.py`: un sorted set por clave guarda la hora de cada intento, y un script de Lua cuenta el intento en todos los límites de la petición solo si ninguno está lleno.
 - Todo 429 lleva `Retry-After`: el cliente sabe cuándo reintentar ([RFC 6585 §4](../fuentes/rfc/rfc6585.txt)).
 - Una petición que pasa su límite responde 429 ([RFC 6585 §4](../fuentes/rfc/rfc6585.txt)).
 - El `detail` de un 429 dice qué límite se pasó ([RFC 6585 §4](../fuentes/rfc/rfc6585.txt)).
@@ -511,3 +526,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Cada tamaño de una imagen es un WebP derecho y sin metadatos, con su lado mayor, en la carpeta de su fila, y el barrido borra la carpeta sin fila | `test_sizes_keep_the_ratio_turn_the_image_and_drop_the_metadata`, `test_sizes_reject_a_format_off_the_list` y `test_sweep_deletes_only_old_files_without_row` |
 | Una subida que pasa el tamaño máximo responde 413 | `test_read_rejects_a_file_past_the_limit` |
 | Un archivo se responde como `attachment`, y de tipo desconocido como `application/octet-stream` | `test_download_is_an_attachment` |
+| Un correo o un SMS sale después del commit, también el de un `KeptError`, y una petición que se deshace no envía nada | `test_messages_go_after_the_commit` |
+| Un envío que falla va al log y no cambia la respuesta | `test_failed_delivery_does_not_fail_the_request` |
+| Una petición que pasa su límite responde 429 con `Retry-After`, el `detail` del límite y el evento `excess_rate_limit_exceeded`, en una ventana deslizante | `test_email_gets_one_code_a_minute_and_five_an_hour` |
+| La cuenta guarda el idioma de `Accept-Language` al entrar | `test_sign_in_keeps_the_language_of_the_account` |

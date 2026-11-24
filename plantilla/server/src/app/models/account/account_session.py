@@ -29,4 +29,6 @@ class AccountSession(Base):
     secret_digest: Mapped[bytes | None]
     previous_digest: Mapped[bytes | None]
     created_at: Mapped[CreatedAt]
+    # When the holder last proved who they are: signing in or again.
+    authenticated_at: Mapped[datetime]
     last_used_at: Mapped[datetime] = mapped_column(server_default=sa.text("now()"), index=True)

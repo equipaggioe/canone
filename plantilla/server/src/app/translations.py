@@ -1,4 +1,4 @@
-"""The texts of the pages the server shows, in the language asked."""
+"""The texts the server shows and sends, in the language asked."""
 
 import gettext
 from pathlib import Path
@@ -25,11 +25,20 @@ def languages(header: str) -> list[str]:
     return [tag for _, _, tag in sorted(ranked)]
 
 
-def translation(header: str) -> gettext.GNUTranslations:
-    """Load the catalog of the language asked, or of the base.
+def language(header: str) -> str:
+    """Choose the catalog of the language asked, or the base."""
+    available = sorted(path.name for path in LOCALES.iterdir() if path.is_dir())
+    return negotiate_locale(languages(header), available, sep="-") or BASE
+
+
+def catalog(name: str) -> gettext.GNUTranslations:
+    """Load the catalog of a language that language() chose.
 
     A catalog that was not compiled fails: release.yml compiles them.
     """
-    available = sorted(path.name for path in LOCALES.iterdir() if path.is_dir())
-    chosen = negotiate_locale(languages(header), available, sep="-") or BASE
-    return gettext.translation("messages", LOCALES, languages=[chosen])
+    return gettext.translation("messages", LOCALES, languages=[name])
+
+
+def translation(header: str) -> gettext.GNUTranslations:
+    """Load the catalog of the language asked, or of the base."""
+    return catalog(language(header))

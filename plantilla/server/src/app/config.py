@@ -22,14 +22,22 @@ class Settings(BaseSettings):
     # autenticacion.md: the Android origins of the keys that sign
     # the apps of this deployment.
     app_origins: list[str]
+    # autenticacion.md: where a notice tells the holder to write.
+    contact: str
     database_url: str
     # The domain of this machine: the RP ID of the passkeys.
     domain: str
+    # The key of this deployment as a client of Equipaggio.
+    equipaggio_key: str
     health_token: str
     min_client_versions: dict[str, Annotated[str, StringConstraints(pattern=f"^{VERSION}$")]]
     page_token_key: str
     # autenticacion.md: 256 random bits that sign the refresh tokens.
     refresh_key: str
+    # autenticacion.md: the code that registers the first admin.
+    setup_code: str
+    # The SMS hash of each Android app, by the piece of its User-Agent.
+    sms_hashes: dict[str, str]
     valkey_url: str
 
     @classmethod

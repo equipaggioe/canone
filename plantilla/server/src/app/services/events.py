@@ -18,7 +18,7 @@ RETENTION_DAYS = 365
 
 # The fields whose value a row change keeps, by table: a new column is
 # not logged by itself.
-LOGGED_FIELDS: dict[str, frozenset[str]] = {}
+LOGGED_FIELDS: dict[str, frozenset[str]] = {"account": frozenset({"role"})}
 
 
 def event(

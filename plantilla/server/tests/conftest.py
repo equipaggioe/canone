@@ -2,6 +2,7 @@
 
 from collections.abc import AsyncIterator
 
+import httpx
 import pytest
 import sqlalchemy as sa
 from httpx import ASGITransport, AsyncClient
@@ -14,6 +15,7 @@ from app import store
 from app.database import SessionFactory, engine
 from app.main import app
 from app.models.event.event_log import EventLog
+from app.services import messages
 
 # The roles of the server and of the owner of the schema, as
 # install.py creates them.
@@ -84,3 +86,21 @@ async def committed() -> AsyncIterator[list[int]]:
     async with engine.begin() as connection:
         await connection.exec_driver_sql(f"SET LOCAL ROLE {OWNER}")
         await connection.execute(sa.delete(EventLog).where(EventLog.id.in_(ids)))
+
+
+@pytest.fixture(autouse=True)
+def sent(monkeypatch: pytest.MonkeyPatch) -> list[httpx.Request]:
+    """Answer and keep each call to Equipaggio: no test sends one."""
+    requests: list[httpx.Request] = []
+
+    def answer(request: httpx.Request) -> httpx.Response:
+        """Accept the message, as Equipaggio queues it."""
+        requests.append(request)
+        return httpx.Response(200, json={})
+
+    headers = dict(messages.client.headers)
+    fake = httpx.AsyncClient(
+        base_url=messages.API, transport=httpx.MockTransport(answer), headers=headers
+    )
+    monkeypatch.setattr(messages, "client", fake)
+    return requests

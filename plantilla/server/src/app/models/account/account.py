@@ -5,6 +5,7 @@ import secrets
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.enums import Role
 from app.models.base import Base, CreatedAt, UuidPk
 
 
@@ -21,4 +22,7 @@ class Account(Base):
     phone: Mapped[str | None] = mapped_column(unique=True)
     # The user handle of its passkeys: 64 random bytes.
     user_handle: Mapped[bytes] = mapped_column(default=lambda: secrets.token_bytes(64))
+    role: Mapped[Role]
+    # The language of its notices: the last one it signed in with.
+    language: Mapped[str]
     created_at: Mapped[CreatedAt]

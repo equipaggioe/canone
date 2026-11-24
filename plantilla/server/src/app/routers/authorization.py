@@ -10,7 +10,7 @@ from typing import Annotated
 from fastapi import APIRouter, Cookie, Depends, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
-from app import pages
+from app import pages, translations
 from app.dependencies import ClientDep, SessionDep, public
 from app.schemas.authorization import Grant, Redirect
 from app.services import authorization, clients, sessions
@@ -116,7 +116,8 @@ async def web_return(
         "code_verifier": flow.verifier,
     }
     account = await authorization.redeem(session, {k: v for k, v in exchange.items() if v})
-    token, session_id = await sessions.open_web(session, account, caller)
+    language = translations.language(request.headers.get("accept-language", ""))
+    token, session_id = await sessions.open_web(session, account, caller, language)
     await authorization.spent(exchange["code"], session_id)
     response = see_other("/")
     response.delete_cookie(FLOW_COOKIE, path="/", secure=True, httponly=True, samesite="strict")

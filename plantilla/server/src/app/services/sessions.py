@@ -27,6 +27,9 @@ IDLE = timedelta(days=30)
 # would load the database without moving the expiry.
 TOUCH = timedelta(minutes=15)
 ACCESS_LIFETIME = timedelta(minutes=15)
+# autenticacion.md: an operation that asks to authenticate again takes
+# it within this span.
+REAUTHENTICATION = timedelta(minutes=5)
 
 
 @dataclass(frozen=True)
@@ -35,6 +38,11 @@ class Client:
 
     ip_address: str | None
     user_agent: str | None
+
+    @property
+    def piece(self) -> str:
+        """Name the piece that calls: the first product of its agent."""
+        return (self.user_agent or "").split(" ", 1)[0].partition("/")[0]
 
 
 @dataclass(frozen=True)
@@ -116,18 +124,35 @@ def clear_cookie(response: Response) -> None:
     response.delete_cookie(COOKIE, path="/", secure=True, httponly=True, samesite="strict")
 
 
-async def open_web(session: AsyncSession, account: Account, client: Client) -> tuple[str, UUID]:
-    """Open a session of the web; return its cookie token and its ID."""
+async def open_web(
+    session: AsyncSession, account: Account, client: Client, language: str
+) -> tuple[str, UUID]:
+    """Open a session of the web; return its cookie token and its ID.
+
+    The account keeps the language it signed in with, for its notices.
+    """
+    account.language = language
     token = new_token()
-    row = AccountSession(account_id=account.id, kind=SessionKind.WEB, token_digest=digest(token))
+    row = AccountSession(
+        account_id=account.id,
+        kind=SessionKind.WEB,
+        token_digest=digest(token),
+        authenticated_at=datetime.now(UTC),
+    )
     session.add(row)
     await session.flush()
     session.add(event("session_created", EventLevel.INFO, row, client))
     return token, row.id
 
 
-async def open_app(session: AsyncSession, account: Account, client: Client) -> Issued:
-    """Open a session of an app and return its tokens."""
+async def open_app(
+    session: AsyncSession, account: Account, client: Client, language: str
+) -> Issued:
+    """Open a session of an app and return its tokens.
+
+    The account keeps the language it signed in with, for its notices.
+    """
+    account.language = language
     access, secret = new_token(), new_token()
     now = datetime.now(UTC)
     row = AccountSession(
@@ -136,6 +161,7 @@ async def open_app(session: AsyncSession, account: Account, client: Client) -> I
         token_digest=digest(access),
         token_expires_at=now + ACCESS_LIFETIME,
         secret_digest=digest(secret),
+        authenticated_at=now,
         last_used_at=now,
     )
     session.add(row)
@@ -217,6 +243,37 @@ async def refresh(session: AsyncSession, token: str, client: Client) -> Issued:
     row.last_used_at = now
     session.add(event("session_renewed", EventLevel.INFO, row, client))
     return Issued(access, sign(row.id, new_secret), row.id)
+
+
+def renew_web(session: AsyncSession, row: AccountSession, client: Client) -> str:
+    """Renew a web session that authenticated again; return its token.
+
+    The cookie it brought stops working.
+    """
+    token = new_token()
+    now = datetime.now(UTC)
+    row.token_digest = digest(token)
+    row.authenticated_at = now
+    row.last_used_at = now
+    session.add(event("session_renewed", EventLevel.INFO, row, client))
+    return token
+
+
+def renew_app(session: AsyncSession, row: AccountSession, client: Client) -> Issued:
+    """Renew an app session that authenticated again: new tokens.
+
+    The access token and both secrets it had stop working.
+    """
+    access, secret = new_token(), new_token()
+    now = datetime.now(UTC)
+    row.token_digest = digest(access)
+    row.token_expires_at = now + ACCESS_LIFETIME
+    row.secret_digest = digest(secret)
+    row.previous_digest = None
+    row.authenticated_at = now
+    row.last_used_at = now
+    session.add(event("session_renewed", EventLevel.INFO, row, client))
+    return Issued(access, sign(row.id, secret), row.id)
 
 
 async def close(session: AsyncSession, row: AccountSession, client: Client) -> None:

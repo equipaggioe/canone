@@ -22,6 +22,8 @@ class Notice(StrEnum):
     PASSKEY_LINKED = "passkey_linked"
     PASSKEY_DELETED = "passkey_deleted"
     PASSKEY_CLONED = "passkey_cloned"
+    PASSKEY_ENABLED = "passkey_enabled"
+    PHONE_ENABLED = "phone_enabled"
     PASSWORD_ADDED = "password_added"
     PASSWORD_CHANGED = "password_changed"
     EMAIL_CHANGED = "email_changed"
@@ -29,6 +31,8 @@ class Notice(StrEnum):
     RECOVERY_CODE_CREATED = "recovery_code_created"
     RECOVERY_PENDING = "recovery_pending"
     RECOVERED = "recovered"
+    ACCOUNT_DISABLED = "account_disabled"
+    ACCOUNT_DELETED = "account_deleted"
 
 
 # Each notice says what happened, what to do and whom to write to, if
@@ -48,6 +52,16 @@ TEXTS = {
         "A passkey of your account may be copied",
         "A sign-in with the passkey {name} was refused: the passkey may be copied. "
         "Delete it in the app, add a new one and write to {contact}.",
+    ),
+    Notice.PASSKEY_ENABLED: (
+        "A passkey of your account was enabled again",
+        "The passkey {name} of your account was enabled again. If you did not enable it, "
+        "delete it in the app and write to {contact}.",
+    ),
+    Notice.PHONE_ENABLED: (
+        "The phone of your account was enabled again",
+        "The phone of your account signs in with its code again. If you did not enable it, "
+        "change the phone in the app and write to {contact}.",
     ),
     Notice.PASSWORD_ADDED: (
         "A password was added to your account",
@@ -83,6 +97,15 @@ TEXTS = {
         "Your account was recovered",
         "Your account was recovered with a code. If you did not do it, sign in, close your "
         "other sessions in the app and write to {contact}.",
+    ),
+    Notice.ACCOUNT_DISABLED: (
+        "Your account was disabled",
+        "An administrator disabled your account: its passkeys, its password and its sessions "
+        "were deleted. Write to {contact} to know why.",
+    ),
+    Notice.ACCOUNT_DELETED: (
+        "Your account was deleted",
+        "Your account was deleted. If you did not delete it, write to {contact}.",
     ),
 }
 

@@ -167,7 +167,11 @@ async def redeem(session: AsyncSession, params: dict[str, str]) -> Account:
     claimed = await store.client.set(f"auth:claim:{digest(code)}", b"", nx=True, ex=LIFETIME)
     if not claimed:
         raise refused
-    return await session.get_one(Account, UUID(record["account_id"]))
+    account = await session.get(Account, UUID(record["account_id"]))
+    # Deleted or disabled since it got the code.
+    if account is None or account.disabled_at is not None:
+        raise refused
+    return account
 
 
 async def spent(code: str, session_id: UUID) -> None:

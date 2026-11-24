@@ -68,6 +68,7 @@ server/
       base.py
       page.py
       account.py
+      accounts.py
       auth.py
       authorization.py
       health.py
@@ -75,6 +76,7 @@ server/
     routers/
       __init__.py
       account.py
+      accounts.py
       auth.py
       authorization.py
       health.py
@@ -87,6 +89,7 @@ server/
     services/
       __init__.py
       account.py
+      accounts.py
       attestation.py
       authenticators.py
       authorization.py
@@ -114,6 +117,7 @@ server/
     conftest.py
     authenticator.py
     test_account.py
+    test_accounts.py
     test_authorization.py
     test_conventions.py
     test_events.py

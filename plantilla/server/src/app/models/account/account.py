@@ -1,6 +1,7 @@
 """An account, identified by its email or its phone."""
 
 import secrets
+from datetime import datetime
 
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
@@ -26,3 +27,5 @@ class Account(Base):
     # The language of its notices: the last one it signed in with.
     language: Mapped[str]
     created_at: Mapped[CreatedAt]
+    # A disabled account keeps its email and phone, and nothing else.
+    disabled_at: Mapped[datetime | None]

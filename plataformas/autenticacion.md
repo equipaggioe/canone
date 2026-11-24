@@ -59,6 +59,7 @@ Las reglas del código para entrar valen si el producto lo usa; las demás, para
 - Los 404 de la solicitud del código para entrar cuentan con los de la solicitud del código de recuperación para bloquear la IP.
 - El teléfono es el autenticador del código para entrar: sus fallos viven en la tabla `phone`, una fila por cuenta con teléfono, que la base exige con un trigger diferido al commit.
 - Con el teléfono deshabilitado, pedir el código para entrar responde 403 de tipo `authenticator-disabled`, y antes de su espera, 429: el SMS sale a un teléfono habilitado y fuera de su espera.
+- El teléfono se vuelve a habilitar por `POST /api/account/phone/enable`, que responde 409 si la cuenta no tiene.
 - Si el producto usa la passkey, el [superadministrador](#superadministrador) que pide el código para entrar o para volver a autenticarse recibe 403. Un código equivocado cuenta su fallo como en cualquier cuenta, y uno correcto responde 403.
 - Cada fallo del código para entrar cuenta entre los fallos consecutivos del teléfono, y un código nuevo no los reinicia ([NIST SP 800-63B-4 §3.1.3.2](../fuentes/nist/sp800-63b-4.txt)).
 - Cambiar el teléfono pone en cero sus fallos y lo vuelve a habilitar ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
@@ -114,6 +115,14 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Registrarse no avisa: la passkey se vincula a una cuenta que acaba de nacer.
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el viejo recibe un aviso.
 - El titular ve en la app cada intento fallido y cada autenticador deshabilitado.
+- `GET /api/account` responde la cuenta: su correo, su teléfono, su rol, su creación, y cuándo cambió y cuándo se deshabilitó la contraseña o el teléfono.
+- `GET /api/account/failures` responde los intentos fallidos de la cuenta en `event_log`, del más nuevo al más viejo: los `authn_login_fail` y los `authn_token_reuse`, cada uno con su hora, la credencial que falló, el id de la passkey si fue una, la IP y el user agent.
+- Volver a habilitar un autenticador pone en cero sus fallos. Uno que no está deshabilitado queda como está.
+- La contraseña se vuelve a habilitar al cambiarla o al restablecerla.
+- El titular borra su cuenta por `DELETE /api/account`.
+- Una cuenta deshabilitada tiene `disabled_at` y conserva su correo y su teléfono. Pierde sus passkeys, su contraseña, su código guardado, los fallos de sus caminos de recuperación, su recuperación pendiente y sus sesiones.
+- Pedir o presentar el código por SMS o el de recuperación de una cuenta deshabilitada responde 403 de tipo `account-disabled`. El canje de un código de autorización responde `invalid_grant`, y una sesión suya no vale.
+- Una cuenta que se vuelve a habilitar no recupera lo que perdió: el titular entra con el código por SMS, si el producto lo usa, o la recupera.
 - Un autenticador deshabilitado cierra solo el login con él: las sesiones abiertas siguen.
 - Un login con un autenticador deshabilitado responde 403, de tipo `authenticator-disabled`, sin verificar la credencial.
 - Los fallos consecutivos y la hora del siguiente intento viven en la base.
@@ -129,10 +138,11 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Un inicio de sesión exitoso pone en cero los fallos de los autenticadores que usó ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta se registra con un correo o con un teléfono, verificado con un código como el de [Recuperación](#recuperación), salvo el primer [superadministrador](#superadministrador) ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta puede tener un correo, un teléfono, varias passkeys y una contraseña ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
-- Agregar o borrar una passkey, agregar o cambiar la contraseña y cambiar el correo o el teléfono piden volver a autenticarse en ese momento ([ASVS 5.0 §7.5.1](../fuentes/owasp/ASVS_V7_Session_Management.md)).
-- Vincular, cambiar o borrar un autenticador, y recuperar la cuenta, avisa a todas las direcciones de aviso. El aviso dice qué hacer, y a quién escribir, si el titular no lo hizo ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt), [§4.2.3](../fuentes/nist/sp800-63b-4.txt), [§4.5](../fuentes/nist/sp800-63b-4.txt) y [§4.6](../fuentes/nist/sp800-63b-4.txt)).
+- Agregar, borrar o volver a habilitar una passkey, agregar o cambiar la contraseña, volver a habilitar el teléfono y cambiar el correo o el teléfono piden volver a autenticarse en ese momento ([ASVS 5.0 §7.5.1](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+- Borrar la cuenta pide volver a autenticarse en ese momento ([ASVS 5.0 §7.5.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+- Vincular, volver a habilitar, cambiar o borrar un autenticador, recuperar la cuenta y deshabilitarla o borrarla, avisa a todas las direcciones de aviso. El aviso dice qué hacer, y a quién escribir, si el titular no lo hizo ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt), [§4.2.3](../fuentes/nist/sp800-63b-4.txt), [§4.5](../fuentes/nist/sp800-63b-4.txt) y [§4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Un autenticador se deshabilita a los 100 fallos consecutivos. Si los fallos involucran dos autenticadores, se deshabilitan los dos ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
-- El titular vuelve a habilitarlo desde una sesión abierta o, si es la contraseña, restableciéndola ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
+- El titular vuelve a habilitarlo, que es vincularlo de nuevo, desde una sesión abierta o, si es la contraseña, restableciéndola ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - El titular invalida en el acto un autenticador perdido o robado, borrando la passkey o cambiando el teléfono, y la app le explica cómo protegerlos ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.3](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta que se borra o se deshabilita pierde en el momento sus autenticadores ([NIST SP 800-63B-4 §4.5](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta que se borra o se deshabilita pierde en el momento sus sesiones ([ASVS 5.0 §7.4.2](../fuentes/owasp/ASVS_V7_Session_Management.md)).
@@ -163,7 +173,7 @@ Vale si el producto usa la passkey.
 - El dominio es `domain` de `Settings`: cada máquina tiene el suyo.
 - La lista de origins es `https://<dominio>`, `https://app.<dominio>` y `https://panel.<dominio>`, y los `android:apk-key-hash:…` de `app_origins` de `Settings`, los de las llaves que firman las apps de ese despliegue.
 - El login con passkey pide antes sus opciones en `POST /api/auth/passkey/options`, y el servidor busca el challenge por el que trae `clientDataJSON`.
-- Las passkeys de la cuenta se ven en `GET /api/account/passkeys`, se vinculan por `PUT /api/account/passkeys/{id}` después de pedir las opciones en `POST /api/account/passkeys/options`, y se borran por `DELETE /api/account/passkeys/{id}`.
+- Las passkeys de la cuenta se ven en `GET /api/account/passkeys`, con cuándo se deshabilitó cada una, se vinculan por `PUT /api/account/passkeys/{id}` después de pedir las opciones en `POST /api/account/passkeys/options`, se borran por `DELETE /api/account/passkeys/{id}` y se vuelven a habilitar por `POST /api/account/passkeys/{id}/enable`.
 - El challenge de un registro guarda el user handle para el que se pidió: una cuenta nueva toma ese handle, y vincular una passkey exige el de la cuenta.
 - Una app de iOS o de macOS declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`, y la landing sirve `https://<dominio>/.well-known/apple-app-site-association` con el app ID de cada app de iOS y de macOS en `webcredentials`, como archivo estático desde `static/.well-known/apple-app-site-association`.
 - En Windows, la app escribe el `clientDataJSON` que firma la API del sistema, con el origin `https://<dominio>`, como un navegador en ese dominio.
@@ -212,8 +222,8 @@ Vale si el producto usa la passkey o la contraseña.
 - Una recuperación pendiente vive en la tabla `recovery`, una por cuenta, y una nueva la reemplaza. La tarea `recover` la aplica, cada minuto, con su calendario en `TIMERS`. Si al aplicarla la passkey pendiente ya es de otra cuenta, la recuperación se descarta y va al registro de eventos.
 - El titular ve la recuperación pendiente en `GET /api/account/recovery`, que responde 404 si no hay, y la cancela con `DELETE /api/account/recovery`. Un inicio de sesión suyo también la cancela.
 - Después de recuperar la cuenta, el titular entra con el autenticador nuevo.
-- Un [superadministrador](#superadministrador) lo recupera otro superadministrador, y al primero, quien opera el servidor: pedir o presentar el código para él responde 403.
-- El correo, el teléfono y el código guardado cuentan sus fallos consecutivos cada uno aparte, con las esperas de [Cuentas](#cuentas). Desde el fallo 100, pedir o presentar el código de uno de ellos responde 403 de tipo `recovery-disabled`, hasta un inicio de sesión exitoso, que pone en cero los fallos de los tres, o, en el código guardado, hasta crear uno nuevo.
+- Al [superadministrador](#superadministrador) lo recupera otro superadministrador, y al único, quien opera el servidor. Pedir o presentar el código para él responde 403, salvo en el correo o el teléfono que le puso otro superadministrador, hasta que entra.
+- El correo, el teléfono y el código guardado cuentan sus fallos consecutivos cada uno aparte, con las esperas de [Cuentas](#cuentas). Desde el fallo 100, pedir o presentar el código de uno de ellos responde 403 de tipo `recovery-disabled`, hasta un inicio de sesión exitoso, que pone en cero los fallos de los tres; o hasta cambiar ese correo o ese teléfono, o crear un código guardado nuevo, que pone en cero los de ese camino.
 - Los fallos del correo y del teléfono viven en la tabla `recovery_address`, y el código guardado, con los suyos, en `recovery_code`.
 - Un superadministrador recupera cualquier otra cuenta cambiando su correo o su teléfono por uno que tiene el titular, que sigue con el código.
 - El código vence a los 10 minutos, también el que va al correo ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
@@ -251,6 +261,10 @@ Estándares: de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes
 - La API, bajo `/api`, y las apps que corren en el navegador se sirven en el mismo origen que la web, sin `Access-Control-Allow-Origin`.
 - Cada método para entrar tiene dos rutas: `/api/auth/<método>/cookie`, que deja la cookie de la web, y `/api/auth/<método>/token`, que responde los tokens de una app. El endpoint de token es `POST /api/auth/token`, y cerrar sesión, `POST /api/auth/logout`, con la cookie o con el token de acceso.
 - La clave del HMAC del token de refresco son 256 bits aleatorios, `refresh_key` de `Settings`.
+- `DELETE /api/account/sessions` cierra todas las sesiones de la cuenta menos la que llama, después de volver a autenticarse.
+- La fila de la sesión guarda el user agent de la petición que la abrió.
+- Las sesiones de la cuenta se ven en `GET /api/account/sessions`, de la más nueva a la más vieja, cada una con su forma, su user agent, su creación, su último uso y si es la que llama.
+- `DELETE /api/account/sessions/{id}` cierra una sesión de la cuenta, y la de otra cuenta responde 404. Cerrar ahí la que llama es cerrar sesión.
 - El `Origin` del servidor es `https://` seguido del `Host` de la petición: vale igual en cada superficie.
 - Cerrar sesión borra la fila ([RFC 9700 §4.14.2](../fuentes/rfc/rfc9700.txt)).
 - El token de la web es un valor aleatorio de 256 bits ([ASVS 5.0 §7.2.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
@@ -259,7 +273,6 @@ Estándares: de ASVS 5.0, los capítulos [V3 *Web Frontend Security*](../fuentes
 - El secreto del token de refresco rota en cada uso ([RFC 9700 §2.2.2](../fuentes/rfc/rfc9700.txt) y [§4.14.2](../fuentes/rfc/rfc9700.txt)).
 - Cualquier otro secreto de la sesión es un reúso: borra la sesión, y el titular lo ve en la app. Un token robado se descubre cuando el dueño vuelve a refrescar ([RFC 9700 §4.14.2](../fuentes/rfc/rfc9700.txt)).
 - Iniciar sesión o volver a autenticarse emite tokens nuevos y deja sin efecto los que el cliente traía ([ASVS 5.0 §7.2.4](../fuentes/owasp/ASVS_V7_Session_Management.md)).
-- `DELETE /api/account/sessions` cierra todas las sesiones de la cuenta menos la que llama, después de volver a autenticarse.
 - El titular ve sus sesiones abiertas y, después de volver a autenticarse, cierra la que quiera o todas ([ASVS 5.0 §7.5.2](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - El refresco va al endpoint de token con `grant_type=refresh_token` y el `refresh_token`, y responde como el canje del código, con el `refresh_token` nuevo ([RFC 6749 §5.1](../fuentes/rfc/rfc6749.txt) y [§6](../fuentes/rfc/rfc6749.txt)).
 - Una operación que cambia algo no usa `GET`, `HEAD` ni `OPTIONS` ([ASVS 5.0 §3.5.3](../fuentes/owasp/ASVS_V3_Web_Frontend_Security.md)).
@@ -271,7 +284,7 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/`, la m
 
 ## Superadministrador
 
-Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
+Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo [V7 *Session Management*](../fuentes/owasp/ASVS_V7_Session_Management.md) de ASVS 5.0.
 
 - El superadministrador es el dueño del producto, que lo administra para todos sus clientes: su cuenta tiene `role` `superadmin`. El administrador de una empresa cliente tiene una cuenta como las demás.
 - El registro del primer superadministrador lleva el código de instalación, `setup_code` de `Settings`, en lugar del código enviado, con su correo o su teléfono y su primer autenticador. El correo o el teléfono quedan como los escribe quien tiene el código de instalación.
@@ -280,9 +293,18 @@ Estándar: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt).
 - Un registro lleva el código enviado o el código de instalación: con los dos o con ninguno responde 422.
 - Si el producto usa la passkey, el registro con el código de instalación lleva una passkey, y con una contraseña o sin autenticador responde 403. Si no la usa, el superadministrador se registra y entra con los métodos del producto.
 - Si el producto usa la passkey, el superadministrador que presenta una contraseña correcta recibe 403, y con una passkey sin el flag UV, 403 de tipo `user-verification-required`, sin contar un fallo. Lo mismo al volver a autenticarse.
+- Si el producto usa la passkey, el superadministrador que recupera su cuenta con una contraseña recibe 403, y con una passkey sin el flag UV, 403 de tipo `user-verification-required`.
+- El superadministrador ve las cuentas en `GET /api/accounts`, de la más vieja a la más nueva, cada una con su correo, su teléfono, su rol, su creación y cuándo se deshabilitó, y la busca con `email` o `phone` exactos.
+- El superadministrador deshabilita otra cuenta por `POST /api/accounts/{id}/disable`, la vuelve a habilitar por `POST /api/accounts/{id}/enable` y la borra por `DELETE /api/accounts/{id}`.
+- El superadministrador le pone a otra cuenta un correo por `PUT /api/accounts/{id}/email`, o un teléfono por `PUT /api/accounts/{id}/phone`, sin código: lo verifica el de [Recuperación](#recuperación).
+- El superadministrador cierra las sesiones de otra cuenta por `DELETE /api/accounts/{id}/sessions`, y las de todas menos la que llama, por `DELETE /api/accounts/sessions`.
+- Sobre su propia cuenta, las rutas de `/api/accounts/{id}` y `DELETE /api/account` le responden 403 al superadministrador.
+- Una cuenta sin `role` `superadmin` recibe 403 en `/api/accounts`.
+- Cada cambio del superadministrador sobre otra cuenta pide volver a autenticarse en ese momento ([ASVS 5.0 §7.5.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
+- El superadministrador cierra las sesiones de una cuenta o las de todas ([ASVS 5.0 §7.4.5](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - Si el producto usa la passkey, el superadministrador entra solo con una passkey que verificó al usuario, con el flag UV en los datos del autenticador, y el que se registra con el código de instalación vincula una al registrarse ([NIST SP 800-63B-4 §2.2.1](../fuentes/nist/sp800-63b-4.txt)).
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `services/registration.py` y `tests/test_registration.py`.
+Plantilla: de [plantilla/server/](../plantilla/server/), `schemas/accounts.py`, `routers/accounts.py`, `services/accounts.py`, `superadmin` y `reauthenticated_superadmin` de `dependencies.py`, `tests/test_accounts.py`, `services/registration.py` y `tests/test_registration.py`.
 
 ## Token de acceso
 
@@ -433,3 +455,26 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | El código guardado son 80 bits en 16 caracteres de base32, que pide volver a autenticarse, responde 201 o 200, se guarda como hash Argon2id, reemplaza al anterior y avisa a todas las direcciones | `test_saved_code_is_80_bits_shown_once_and_notifies` |
 | Un código guardado equivocado cuenta su fallo aparte, a los 100 responde `recovery-disabled`, y el código enviado sigue | `test_saved_code_counts_its_failures_and_keeps_the_sent_one` |
 | Una contraseña de la lista de bloqueo en la recuperación responde 422, y el código sigue | `test_blocked_password_keeps_the_code` |
+| `GET /api/account` responde la cuenta, con cuándo cambió y cuándo se deshabilitó la contraseña o el teléfono, y la lista de passkeys, cuándo se deshabilitó cada una | `test_account_shows_its_authenticators_and_which_are_disabled` |
+| `GET /api/account/failures` responde en páginas los `authn_login_fail` y los `authn_token_reuse` de la cuenta, del más nuevo al más viejo, con su hora, la credencial, la IP y el user agent | `test_failures_list_each_failed_attempt_newest_first` |
+| Un intento fallido con una passkey lleva su id | `test_failures_name_the_passkey` |
+| Volver a habilitar una passkey pide volver a autenticarse, pone en cero sus fallos, escribe su cambio y avisa a todas las direcciones; una que no está deshabilitada queda como está | `test_enabling_a_passkey_binds_it_again` |
+| Volver a habilitar el teléfono pide volver a autenticarse, pone en cero sus fallos, escribe su cambio y avisa a todas las direcciones; sin teléfono responde 409 | `test_enabling_the_phone_binds_it_again` |
+| La fila de la sesión guarda el user agent, y las sesiones se ven en páginas, de la más nueva a la más vieja, con su forma, su user agent, su creación, su último uso y si es la que llama | `test_sessions_are_listed_with_their_device` |
+| Cerrar una sesión pide volver a autenticarse, la de otra cuenta responde 404 y cerrar la que llama es cerrar sesión | `test_holder_closes_one_session` y `test_closing_the_web_session_that_calls_clears_its_cookie` |
+| Borrar la cuenta pide volver a autenticarse, borra sus autenticadores y sus sesiones, avisa a todas las direcciones y deja `user_deleted` | `test_holder_deletes_the_account` |
+| `DELETE /api/account` le responde 403 al superadministrador | `test_superadmin_does_not_delete_its_own_account` |
+| Cambiar el correo o el teléfono pone en cero los fallos de su camino de recuperación y lo vuelve a habilitar | `test_new_address_starts_its_recovery_with_no_failures` |
+| Una cuenta sin `role` `superadmin` recibe 403 en `/api/accounts` | `test_only_a_superadmin_manages_the_accounts` |
+| Cada cambio del superadministrador sobre otra cuenta pide volver a autenticarse | `test_superadmin_changes_ask_a_fresh_authentication` |
+| Sobre su propia cuenta, las rutas de `/api/accounts/{id}` le responden 403 al superadministrador | `test_superadmin_does_not_act_on_itself` |
+| El superadministrador ve las cuentas en páginas, de la más vieja a la más nueva, y las busca con `email` o `phone` exactos | `test_superadmin_finds_the_accounts` |
+| Una cuenta deshabilitada conserva su correo y su teléfono, pierde sus autenticadores, lo que la recupera y sus sesiones, avisa a todas las direcciones y, al volver a habilitarla, no recupera lo que perdió | `test_disabling_takes_the_authenticators_and_the_sessions` |
+| Una sesión de una cuenta deshabilitada no vale ni se refresca | `test_disabled_account_opens_no_session` |
+| El canje de un código de autorización de una cuenta deshabilitada responde `invalid_grant` | `test_code_of_an_account_that_ended_is_invalid_grant` |
+| Pedir o presentar el código de recuperación de una cuenta deshabilitada responde 403 de tipo `account-disabled` | `test_disabled_account_recovers_nothing` |
+| Pedir o presentar el código por SMS de una cuenta deshabilitada responde 403 de tipo `account-disabled` | `test_disabled_account_gets_no_code_to_sign_in` |
+| El superadministrador borra otra cuenta, con aviso a todas las direcciones | `test_superadmin_deletes_another_account` |
+| El superadministrador le pone a otra cuenta un correo o un teléfono sin código, el viejo recibe un aviso, y uno de otra cuenta responde 409 | `test_superadmin_gives_an_address_the_holder_has` |
+| Un superadministrador recupera a otro: el código vale solo en la dirección que le puso, hasta que entra; con una contraseña responde 403, y con una passkey sin el flag UV, 403 de tipo `user-verification-required` | `test_superadmin_recovers_another_superadmin` |
+| El superadministrador cierra las sesiones de otra cuenta, o las de todas menos la que llama | `test_superadmin_closes_the_sessions_of_an_account_or_of_all` |

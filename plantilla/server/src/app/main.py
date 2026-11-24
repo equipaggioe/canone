@@ -13,6 +13,7 @@ from app.enums import EventLevel, Method
 from app.methods import METHODS
 from app.routers import (
     account,
+    accounts,
     auth,
     authorization,
     health,
@@ -55,7 +56,13 @@ def api_router(methods: frozenset[Method]) -> APIRouter:
         ],
         responses=errors.RESPONSES,
     )
-    for router in (account.router, auth.router, health.router, problems.router):
+    for router in (
+        account.router,
+        accounts.router,
+        auth.router,
+        health.router,
+        problems.router,
+    ):
         api.include_router(router)
     # The authorization code signs in with the passkey, on its page.
     if Method.PASSKEY in methods:

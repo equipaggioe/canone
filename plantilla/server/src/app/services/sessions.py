@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.database import SessionFactory
 from app.enums import EventLevel, SessionKind, TokenErrorCode
-from app.errors import KeptError, TokenRefusal
+from app.errors import ACCOUNT_DISABLED, AppError, KeptError, TokenRefusal
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.event.event_log import EventLog
@@ -124,6 +124,12 @@ def clear_cookie(response: Response) -> None:
     response.delete_cookie(COOKIE, path="/", secure=True, httponly=True, samesite="strict")
 
 
+def check_enabled(account: Account) -> None:
+    """Answer 403 to a disabled account: it opens no session."""
+    if account.disabled_at is not None:
+        raise AppError(ACCOUNT_DISABLED)
+
+
 async def open_web(
     session: AsyncSession, account: Account, client: Client, language: str
 ) -> tuple[str, UUID]:
@@ -131,6 +137,7 @@ async def open_web(
 
     The account keeps the language it signed in with, for its notices.
     """
+    check_enabled(account)
     account.language = language
     token = new_token()
     row = AccountSession(
@@ -138,6 +145,7 @@ async def open_web(
         kind=SessionKind.WEB,
         token_digest=digest(token),
         authenticated_at=datetime.now(UTC),
+        user_agent=client.user_agent,
     )
     session.add(row)
     await session.flush()
@@ -152,6 +160,7 @@ async def open_app(
 
     The account keeps the language it signed in with, for its notices.
     """
+    check_enabled(account)
     account.language = language
     access, secret = new_token(), new_token()
     now = datetime.now(UTC)
@@ -163,6 +172,7 @@ async def open_app(
         secret_digest=digest(secret),
         authenticated_at=now,
         last_used_at=now,
+        user_agent=client.user_agent,
     )
     session.add(row)
     await session.flush()
@@ -192,6 +202,9 @@ async def resolve(
     if found is None:
         return None
     row, account = found
+    # A login that raced with the disabling may have left one.
+    if account.disabled_at is not None:
+        return None
     now = datetime.now(UTC)
     if row.token_expires_at is not None and row.token_expires_at <= now:
         return None
@@ -226,6 +239,9 @@ async def refresh(session: AsyncSession, token: str, client: Client) -> Issued:
     row = await session.get(AccountSession, session_id, with_for_update=True)
     now = datetime.now(UTC)
     if row is None or row.secret_digest is None or now - row.last_used_at > IDLE:
+        raise refused
+    account = await session.get_one(Account, row.account_id)
+    if account.disabled_at is not None:
         raise refused
     presented = digest(secret)
     if hmac.compare_digest(presented, row.secret_digest):
@@ -282,26 +298,46 @@ async def close(session: AsyncSession, row: AccountSession, client: Client) -> N
     session.add(event("session_logout", EventLevel.INFO, row, client))
 
 
-async def close_others(session: AsyncSession, row: AccountSession, client: Client) -> None:
-    """Close every session of the account but the one that calls."""
-    closed = await session.execute(
+async def close_where(
+    session: AsyncSession, closed: sa.ColumnElement[bool], client: Client, reason: str
+) -> None:
+    """Close the sessions that match, each with its event."""
+    rows = await session.execute(
         sa.delete(AccountSession)
-        .where(AccountSession.account_id == row.account_id, AccountSession.id != row.id)
-        .returning(AccountSession.id)
+        .where(closed)
+        .returning(AccountSession.id, AccountSession.account_id)
     )
-    for (session_id,) in closed:
+    for session_id, account_id in rows:
         session.add(
             events.event(
                 "session_logout",
                 EventLevel.INFO,
-                actor_id=row.account_id,
+                actor_id=account_id,
                 target_type="account_session",
                 target_id=str(session_id),
                 ip_address=client.ip_address,
                 user_agent=client.user_agent,
-                details={"reason": "closed_by_holder"},
+                details={"reason": reason},
             )
         )
+
+
+async def close_others(session: AsyncSession, row: AccountSession, client: Client) -> None:
+    """Close every session of the account but the one that calls."""
+    others = (AccountSession.account_id == row.account_id) & (AccountSession.id != row.id)
+    await close_where(session, others, client, "closed_by_holder")
+
+
+async def page(
+    session: AsyncSession, account_id: UUID, after: tuple[datetime, UUID] | None, size: int
+) -> list[AccountSession]:
+    """Return a page of the sessions of an account, newest first."""
+    query = sa.select(AccountSession).where(AccountSession.account_id == account_id)
+    if after is not None:
+        position = sa.tuple_(AccountSession.created_at, AccountSession.id)
+        query = query.where(position < sa.tuple_(*after))
+    order = (AccountSession.created_at.desc(), AccountSession.id.desc())
+    return list(await session.scalars(query.order_by(*order).limit(size)))
 
 
 async def purge() -> None:

@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import VERSION, settings
 from app.database import SessionFactory
-from app.enums import EventLevel, SessionKind
+from app.enums import EventLevel, Role, SessionKind
 from app.errors import CLIENT_OUTDATED, REAUTHENTICATION_REQUIRED, AppError, KeptError
 from app.services import events, messages, sessions
 from app.services.sessions import Client, Principal
@@ -164,3 +164,35 @@ async def reauthenticated(principal: PrincipalDep) -> Principal:
 
 
 ReauthenticatedDep = Annotated[Principal, Depends(reauthenticated)]
+
+
+@access
+async def superadmin(request: Request, principal: PrincipalDep, caller: ClientDep) -> Principal:
+    """Require the session of a superadmin; another account gets 403."""
+    if principal.account.role != Role.SUPERADMIN:
+        await events.record(
+            events.event(
+                "authz_fail",
+                EventLevel.CRITICAL,
+                actor_id=principal.account.id,
+                target_type="route",
+                target_id=request.url.path,
+                ip_address=caller.ip_address,
+                user_agent=caller.user_agent,
+            )
+        )
+        raise HTTPException(HTTPStatus.FORBIDDEN, "Only a superadmin may do this")
+    return principal
+
+
+SuperadminDep = Annotated[Principal, Depends(superadmin)]
+
+
+@access
+async def reauthenticated_superadmin(principal: SuperadminDep) -> Principal:
+    """Require a superadmin that authenticated within minutes."""
+    return await reauthenticated(principal)
+
+
+# ADR-0236: each change a superadmin makes asks a fresh authentication.
+ActingSuperadminDep = Annotated[Principal, Depends(reauthenticated_superadmin)]

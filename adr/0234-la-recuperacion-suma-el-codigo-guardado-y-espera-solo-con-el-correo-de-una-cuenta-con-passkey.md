@@ -1,6 +1,6 @@
 # ADR-0234 · La recuperación suma el código guardado y espera solo con el correo de una cuenta con passkey
 
-- **Estado:** Aceptada. Los puntos 11 a 14 son *(propuesta)*.
+- **Estado:** Aceptada. Los puntos 11 a 14 son *(propuesta)*. El [ADR-0236](0236-el-titular-y-el-superadministrador-gestionan-la-cuenta.md) reemplaza parte del punto 6.
 - **Fecha:** 2026-11-24
 - **Alcance:** `autenticacion.md`, `fastapi.md` y `plantilla/server/`
 

@@ -28,6 +28,8 @@ class AccountSession(Base):
     token_expires_at: Mapped[datetime | None]
     secret_digest: Mapped[bytes | None]
     previous_digest: Mapped[bytes | None]
+    # The User-Agent that opened it: the holder tells it by this.
+    user_agent: Mapped[str | None]
     created_at: Mapped[CreatedAt]
     # When the holder last proved who they are: signing in or again.
     authenticated_at: Mapped[datetime]

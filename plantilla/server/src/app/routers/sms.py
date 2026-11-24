@@ -7,7 +7,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 
-from app.dependencies import ClientDep, PrincipalDep, SessionDep, public
+from app.dependencies import ClientDep, PrincipalDep, ReauthenticatedDep, SessionDep, public
 from app.routers.auth import RENEWED, accepted, open_cookie, open_token, renew
 from app.schemas.auth import SmsCode, SmsLogin, SmsReauth, TokenResponse
 from app.services import sms
@@ -70,3 +70,9 @@ async def reauth(
         raise HTTPException(HTTPStatus.CONFLICT, "The account has no phone")
     await sms.check(session, phone, body.code, caller)
     return renew(session, principal, caller)
+
+
+@router.post("/account/phone/enable", status_code=HTTPStatus.NO_CONTENT)
+async def enable(session: SessionDep, principal: ReauthenticatedDep, caller: ClientDep) -> None:
+    """Enable the disabled phone again: it binds it again."""
+    await sms.enable(session, principal.account, caller)

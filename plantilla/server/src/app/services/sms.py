@@ -13,7 +13,7 @@ from app.errors import INVALID_CODE, AppError, KeptError
 from app.models.account.account import Account
 from app.models.account.phone import Phone
 from app.models.event.event_log import EventLog
-from app.services import authenticators, codes, events, limits
+from app.services import authenticators, codes, events, limits, notices, sessions
 from app.services.authenticators import WAIT_FROM
 from app.services.sessions import Client
 
@@ -72,6 +72,7 @@ async def send_code(
     if found is None:
         raise await codes.unknown(client)
     account, row = found
+    sessions.check_enabled(account)
     refuse_superadmin(account)
     early = event(
         "authn_login_fail_max", EventLevel.WARN, phone, client, account, maxlimit=WAIT_FROM
@@ -93,6 +94,7 @@ async def check(session: AsyncSession, phone: str, code: str, client: Client) ->
         session.add(event("authn_login_fail", EventLevel.WARN, phone, client))
         raise KeptError(AppError(INVALID_CODE))
     account, row = found
+    sessions.check_enabled(account)
     now = datetime.now(UTC)
     early = event(
         "authn_login_fail_max", EventLevel.WARN, phone, client, account, maxlimit=WAIT_FROM
@@ -143,3 +145,30 @@ async def rebind(session: AsyncSession, account: Account) -> None:
         return
     row.changed_at = datetime.now(UTC)
     row.failures, row.retry_at, row.disabled_at = 0, None, None
+
+
+async def enable(session: AsyncSession, account: Account, client: Client) -> None:
+    """Enable the disabled phone of the account again.
+
+    It binds the phone again: its failures go to zero, and every address
+    hears. A phone that is not disabled stays as it is.
+    """
+    if account.phone is None:
+        raise HTTPException(HTTPStatus.CONFLICT, "The account has no phone")
+    row = await session.get_one(Phone, account.id, with_for_update=True)
+    if row.disabled_at is None:
+        return
+    authenticators.enable(row)
+    row.changed_at = datetime.now(UTC)
+    session.add(
+        events.event(
+            "sensitive_update",
+            EventLevel.INFO,
+            actor_id=account.id,
+            target_type="phone",
+            target_id=str(account.id),
+            ip_address=client.ip_address,
+            user_agent=client.user_agent,
+        )
+    )
+    notices.notify(session, account, notices.Notice.PHONE_ENABLED)

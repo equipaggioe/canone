@@ -1,6 +1,6 @@
-"""The account of the session: its passkeys, its email and its phone."""
+"""The account of the session: its authenticators, failures and end."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from http import HTTPStatus
 from uuid import UUID
 
@@ -9,16 +9,33 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from webauthn.helpers import base64url_to_bytes
 
-from app.enums import EventLevel
+from app.enums import Address, Credential, EventLevel
 from app.errors import INVALID_CODE, AppError
 from app.models.account.account import Account
 from app.models.account.passkey import Passkey
+from app.models.account.password import Password
+from app.models.account.phone import Phone
 from app.models.event.event_log import EventLog
-from app.schemas.account import PasskeyLink
-from app.services import attestation, codes, events, limits, notices, sms
+from app.schemas.account import AccountView, FailureView, PasskeyLink, PasswordView, PhoneView
+from app.services import attestation, authenticators, codes, events, limits, notices, recovery, sms
 from app.services.sessions import Client
 
 PURPOSE = "change"
+# The events the holder sees as failed attempts.
+FAILURES = ("authn_login_fail", "authn_token_reuse")
+# The credential of a failure, by the target of its event.
+TARGETS = {
+    "password": Credential.PASSWORD,
+    "passkey": Credential.PASSKEY,
+    "phone": Credential.SMS_CODE,
+    "account_session": Credential.REFRESH_TOKEN,
+}
+# The credential of a failure of the recovery, by its way.
+WAYS = {
+    "email": Credential.EMAIL_RECOVERY,
+    "phone": Credential.PHONE_RECOVERY,
+    "saved_code": Credential.SAVED_CODE,
+}
 
 
 def event(
@@ -39,6 +56,58 @@ def event(
         user_agent=client.user_agent,
         details=details,
     )
+
+
+async def view(session: AsyncSession, account: Account) -> AccountView:
+    """Show the account, with its password and its phone."""
+    phone = None
+    if account.phone is not None:
+        row = await session.get_one(Phone, account.id)
+        phone = PhoneView(
+            number=account.phone, changed_at=row.changed_at, disabled_at=row.disabled_at
+        )
+    password = await session.get(Password, account.id)
+    return AccountView(
+        id=account.id,
+        email=account.email,
+        phone=phone,
+        role=account.role,
+        created_at=account.created_at,
+        password=PasswordView.model_validate(password) if password else None,
+    )
+
+
+def failure(row: EventLog) -> FailureView:
+    """Show a failed attempt by what it presented."""
+    if row.target_type == "recovery":
+        credential = WAYS[row.details["way"]]
+    else:
+        credential = TARGETS[str(row.target_type)]
+    passkey_id = (
+        UUID(row.target_id) if credential == Credential.PASSKEY and row.target_id else None
+    )
+    return FailureView.model_validate(
+        {
+            "occurred_at": row.occurred_at,
+            "credential": credential,
+            "passkey_id": passkey_id,
+            "ip_address": row.ip_address,
+            "user_agent": row.user_agent,
+        }
+    )
+
+
+async def failures(
+    session: AsyncSession, account: Account, after: tuple[datetime, int] | None, size: int
+) -> list[EventLog]:
+    """Return a page of the failed attempts newest first."""
+    query = sa.select(EventLog).where(
+        EventLog.actor_id == account.id, EventLog.action.in_(FAILURES)
+    )
+    if after is not None:
+        query = query.where(sa.tuple_(EventLog.occurred_at, EventLog.id) < sa.tuple_(*after))
+    order = (EventLog.occurred_at.desc(), EventLog.id.desc())
+    return list(await session.scalars(query.order_by(*order).limit(size)))
 
 
 async def passkeys(
@@ -91,6 +160,46 @@ async def unlink(
     notices.notify(session, account, notices.Notice.PASSKEY_DELETED, name=row.name)
 
 
+async def enable(
+    session: AsyncSession, account: Account, passkey_id: UUID, client: Client
+) -> None:
+    """Enable a disabled passkey of the account again, or answer 404.
+
+    It binds the passkey again: its failures go to zero, and every
+    address hears. One that is not disabled stays as it is.
+    """
+    row = await session.get(Passkey, passkey_id, with_for_update=True)
+    if row is None or row.account_id != account.id:
+        raise HTTPException(HTTPStatus.NOT_FOUND)
+    if row.disabled_at is None:
+        return
+    authenticators.enable(row)
+    row.changed_at = datetime.now(UTC)
+    session.add(event("sensitive_update", account, client, ("passkey", str(row.id))))
+    notices.notify(session, account, notices.Notice.PASSKEY_ENABLED, name=row.name)
+
+
+async def erase(session: AsyncSession, account: Account, client: Client, actor: Account) -> None:
+    """Delete an account, its authenticators and its sessions.
+
+    Every address hears it.
+    """
+    notices.notify(session, account, notices.Notice.ACCOUNT_DELETED)
+    target = ("account", str(account.id))
+    session.add(
+        events.event(
+            "user_deleted",
+            EventLevel.WARN,
+            actor_id=actor.id,
+            target_type=target[0],
+            target_id=target[1],
+            ip_address=client.ip_address,
+            user_agent=client.user_agent,
+        )
+    )
+    await session.delete(account)
+
+
 async def check_free(session: AsyncSession, column: sa.ColumnElement[bool]) -> None:
     """Answer 409 if an account already has the email or the phone."""
     if await session.scalar(sa.select(Account.id).where(column)) is not None:
@@ -123,6 +232,7 @@ async def change_email(
         raise AppError(INVALID_CODE)
     await check_free(session, Account.email == email)
     previous, account.email = account.email, email
+    await recovery.reopen(session, account, Address.EMAIL, granted=False)
     details = events.changes("account", {"email": email})
     target = ("account", str(account.id))
     session.add(event("user_updated", account, client, target, details))
@@ -138,6 +248,7 @@ async def change_phone(
     await check_free(session, Account.phone == phone)
     previous, account.phone = account.phone, phone
     await sms.rebind(session, account)
+    await recovery.reopen(session, account, Address.PHONE, granted=False)
     details = events.changes("account", {"phone": phone})
     target = ("account", str(account.id))
     session.add(event("user_updated", account, client, target, details))

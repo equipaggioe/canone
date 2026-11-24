@@ -59,3 +59,10 @@ def succeed(row: Throttled) -> int:
     row.failures = 0
     row.retry_at = None
     return retries
+
+
+def enable(row: Throttled) -> None:
+    """Enable a disabled authenticator again, with no failures."""
+    row.failures = 0
+    row.retry_at = None
+    row.disabled_at = None

@@ -143,6 +143,14 @@ async def delete(
     await account.unlink(session, principal.account, passkey_id, caller)
 
 
+@router.post("/account/passkeys/{passkey_id}/enable", status_code=HTTPStatus.NO_CONTENT)
+async def enable(
+    passkey_id: UUID, session: SessionDep, principal: ReauthenticatedDep, caller: ClientDep
+) -> None:
+    """Enable a disabled passkey again: it binds it again."""
+    await account.enable(session, principal.account, passkey_id, caller)
+
+
 @router.post("/auth/recovery/options", dependencies=[Depends(public)])
 async def recovery_options(
     session: SessionDep, body: RecoveryProof, caller: ClientDep

@@ -13,9 +13,16 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.concurrency import run_in_threadpool
 
+from app import methods
 from app.database import SessionFactory
-from app.enums import Address, EventLevel, Role
-from app.errors import INVALID_CODE, RECOVERY_DISABLED, AppError, KeptError
+from app.enums import Address, EventLevel, Method, Role
+from app.errors import (
+    INVALID_CODE,
+    RECOVERY_DISABLED,
+    USER_VERIFICATION_REQUIRED,
+    AppError,
+    KeptError,
+)
 from app.models.account.account import Account
 from app.models.account.passkey import Passkey
 from app.models.account.password import Password
@@ -40,6 +47,7 @@ from app.services import (
     messages,
     notices,
     passwords,
+    sessions,
 )
 from app.services.attestation import Created
 from app.services.authenticators import WAIT_FROM
@@ -91,9 +99,14 @@ async def find(session: AsyncSession, identifier: Identifier) -> Account | None:
     return await session.scalar(sa.select(Account).where(column))
 
 
-def refuse_superadmin(account: Account) -> None:
-    """Answer 403 to a superadmin: another superadmin recovers it."""
-    if account.role == Role.SUPERADMIN:
+def refuse_closed(account: Account, row: RecoveryAddress) -> None:
+    """Answer 403 to a disabled account, or to a superadmin.
+
+    Another superadmin recovers a superadmin: only the address it set
+    takes the code.
+    """
+    sessions.check_enabled(account)
+    if account.role == Role.SUPERADMIN and row.granted_at is None:
         raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin does not recover with a code")
 
 
@@ -117,13 +130,35 @@ async def admit(row: Throttled, client: Client, account: Account) -> None:
     await authenticators.admit(row, datetime.now(UTC), early)
 
 
-def fail(session: AsyncSession, row: Throttled, client: Client, account: Account) -> KeptError:
+def fail(
+    session: AsyncSession, row: Throttled, client: Client, account: Account, way: str
+) -> KeptError:
     """Count a failure of a way, and answer 400 invalid-code."""
     disabled = authenticators.fail(row, datetime.now(UTC))
-    session.add(event("authn_login_fail", EventLevel.WARN, client, account))
+    session.add(event("authn_login_fail", EventLevel.WARN, client, account, way=way))
     if disabled:
-        session.add(event("authn_login_lock", EventLevel.WARN, client, account, reason="failures"))
+        session.add(
+            event("authn_login_lock", EventLevel.WARN, client, account, reason="failures", way=way)
+        )
     return KeptError(AppError(INVALID_CODE))
+
+
+async def reopen(
+    session: AsyncSession, account: Account, address: Address, *, granted: bool
+) -> None:
+    """Start the way of a new address with no failures.
+
+    The address another superadmin set takes the code of a superadmin.
+    """
+    granted_at = datetime.now(UTC) if granted else None
+    await session.execute(
+        insert(RecoveryAddress)
+        .values(account_id=account.id, address=address, granted_at=granted_at)
+        .on_conflict_do_update(
+            index_elements=[RecoveryAddress.account_id, RecoveryAddress.address],
+            set_={"failures": 0, "retry_at": None, "disabled_at": None, "granted_at": granted_at},
+        )
+    )
 
 
 async def send_code(
@@ -134,9 +169,10 @@ async def send_code(
     account = await find(session, identifier)
     if account is None:
         raise await codes.unknown(client)
-    refuse_superadmin(account)
     address = address_of(identifier)
-    await admit(await way(session, account, address), client, account)
+    row = await way(session, account, address)
+    refuse_closed(account, row)
+    await admit(row, client, account)
     if address == Address.EMAIL:
         assert identifier.email is not None
         await limits.take(client, *codes.email_rules(identifier.email))
@@ -155,11 +191,20 @@ async def check_saved(
     """Return the saved code of the account if it is this one."""
     row = await session.get(RecoveryCode, account.id, with_for_update=True)
     if row is None:
-        session.add(event("authn_login_fail", EventLevel.WARN, client, account, reason="no_code"))
+        session.add(
+            event(
+                "authn_login_fail",
+                EventLevel.WARN,
+                client,
+                account,
+                reason="no_code",
+                way="saved_code",
+            )
+        )
         raise KeptError(AppError(INVALID_CODE))
     await admit(row, client, account)
     if not await run_in_threadpool(passwords.hasher.verify, saved, row.hash):
-        raise fail(session, row, client, account)
+        raise fail(session, row, client, account, "saved_code")
     authenticators.succeed(row)
     return row
 
@@ -176,11 +221,11 @@ async def check(
     if account is None:
         session.add(event("authn_login_fail", EventLevel.WARN, client, None))
         raise KeptError(AppError(INVALID_CODE))
-    refuse_superadmin(account)
     row = await way(session, account, address_of(proof))
+    refuse_closed(account, row)
     await admit(row, client, account)
     if not await codes.take(PURPOSE, proof.address, proof.code, keep=True):
-        raise fail(session, row, client, account)
+        raise fail(session, row, client, account, address_of(proof).value)
     authenticators.succeed(row)
     found = await check_saved(session, account, saved, client) if saved is not None else None
     return account, found
@@ -298,6 +343,8 @@ async def password(session: AsyncSession, body: PasswordRecovery, client: Client
     A password on the blocklist keeps the code.
     """
     account, saved = await check(session, body, body.recovery_code, client)
+    if account.role == Role.SUPERADMIN and Method.PASSKEY in methods.METHODS:
+        raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin signs in only with a passkey")
     passwords.check_new(session, account, body.password, client)
     digest = await run_in_threadpool(passwords.hash_password, body.password)
     return await settle(session, account, body, saved, client, (digest, None, None))
@@ -323,6 +370,8 @@ async def passkey(session: AsyncSession, body: PasskeyRecovery, client: Client) 
     account, saved = await check(session, body, body.recovery_code, client)
     if created.user_handle != account.user_handle:
         raise HTTPException(HTTPStatus.BAD_REQUEST, "The options were of another account")
+    if account.role == Role.SUPERADMIN and not created.user_verified:
+        raise AppError(USER_VERIFICATION_REQUIRED)
     new = (None, created, body.passkey_name)
     return await settle(session, account, body, saved, client, new)
 
@@ -390,6 +439,10 @@ async def apply(session: AsyncSession, row: Recovery, client: Client) -> None:
     account = await session.get(Account, row.account_id)
     assert account is not None
     await session.delete(row)
+    # A recovery that raced with the disabling may have left one.
+    if account.disabled_at is not None:
+        session.add(event("sensitive_delete", EventLevel.INFO, client, account, reason="disabled"))
+        return
     if row.password_hash is not None:
         await apply_password(session, account, row.password_hash, client)
     elif row.credential_id is not None:

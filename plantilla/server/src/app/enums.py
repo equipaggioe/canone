@@ -37,6 +37,18 @@ class Address(StrEnum):
     PHONE = "phone"
 
 
+class Credential(StrEnum):
+    """What a failed attempt presented: an authenticator or a code."""
+
+    PASSWORD = "password"
+    PASSKEY = "passkey"
+    SMS_CODE = "sms_code"
+    EMAIL_RECOVERY = "email_recovery"
+    PHONE_RECOVERY = "phone_recovery"
+    SAVED_CODE = "saved_code"
+    REFRESH_TOKEN = "refresh_token"
+
+
 class SessionKind(StrEnum):
     """How a session is presented: a cookie, or the tokens of an app."""
 

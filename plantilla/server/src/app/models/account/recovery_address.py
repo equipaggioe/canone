@@ -1,5 +1,6 @@
 """The failures of the recovery codes to an address of an account."""
 
+from datetime import datetime
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -17,3 +18,5 @@ class RecoveryAddress(Throttled, Base):
 
     account_id: Mapped[UUID] = mapped_column(sa.ForeignKey("account.id", ondelete="CASCADE"), primary_key=True)
     address: Mapped[Address] = mapped_column(primary_key=True)
+    # When another superadmin set it: it recovers a superadmin.
+    granted_at: Mapped[datetime | None]

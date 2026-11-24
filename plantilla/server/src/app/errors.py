@@ -89,12 +89,19 @@ RECOVERY_DISABLED = ProblemType(
     HTTPStatus.FORBIDDEN,
     "Recover the account another way, or ask the administrator.",
 )
+ACCOUNT_DISABLED = ProblemType(
+    "account-disabled",
+    "Account disabled",
+    HTTPStatus.FORBIDDEN,
+    "Write to the administrator of the product, who disabled the account.",
+)
 TYPES = {
     problem.name: problem
     for problem in (
         VALIDATION,
         CLIENT_OUTDATED,
         AUTHENTICATOR_DISABLED,
+        ACCOUNT_DISABLED,
         USER_VERIFICATION_REQUIRED,
         REAUTHENTICATION_REQUIRED,
         INVALID_CODE,

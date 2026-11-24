@@ -31,6 +31,8 @@ class EventLog(Base):
         sa.Index("ix_event_log_critical", "occurred_at", postgresql_where=sa.text("level = 'critical'")),
         # The event log route pages by transaction.
         sa.Index("ix_event_log_xid", "xid", "id"),
+        # The holder pages the failures of the account.
+        sa.Index("ix_event_log_failures", "actor_id", "occurred_at", "id", postgresql_where=sa.text("action IN ('authn_login_fail', 'authn_token_reuse')")),
     )
 
     id: Mapped[BigIntPk]

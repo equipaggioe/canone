@@ -85,3 +85,27 @@ msgstr "Se recuperó tu cuenta"
 
 msgid "Your account was recovered with a code. If you did not do it, sign in, close your other sessions in the app and write to {contact}."
 msgstr "Se recuperó tu cuenta con un código. Si no fuiste tú, entra, cierra tus otras sesiones en la app y escribe a {contact}."
+
+msgid "A passkey of your account was enabled again"
+msgstr "Se volvió a habilitar una passkey de tu cuenta"
+
+msgid "The passkey {name} of your account was enabled again. If you did not enable it, delete it in the app and write to {contact}."
+msgstr "Se volvió a habilitar la passkey {name} de tu cuenta. Si no la habilitaste tú, bórrala en la app y escribe a {contact}."
+
+msgid "The phone of your account was enabled again"
+msgstr "Se volvió a habilitar el teléfono de tu cuenta"
+
+msgid "The phone of your account signs in with its code again. If you did not enable it, change the phone in the app and write to {contact}."
+msgstr "El teléfono de tu cuenta vuelve a entrar con su código. Si no lo habilitaste tú, cambia el teléfono en la app y escribe a {contact}."
+
+msgid "Your account was disabled"
+msgstr "Se deshabilitó tu cuenta"
+
+msgid "An administrator disabled your account: its passkeys, its password and its sessions were deleted. Write to {contact} to know why."
+msgstr "Un administrador deshabilitó tu cuenta: se borraron sus passkeys, su contraseña y sus sesiones. Escribe a {contact} para saber por qué."
+
+msgid "Your account was deleted"
+msgstr "Se borró tu cuenta"
+
+msgid "Your account was deleted. If you did not delete it, write to {contact}."
+msgstr "Se borró tu cuenta. Si no la borraste tú, escribe a {contact}."

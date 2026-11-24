@@ -1,6 +1,6 @@
 # ADR-0229 · Un separador se agarra en una franja de 24 px puesta encima de su línea
 
-- **Estado:** Aceptada. El usuario la pidió el 2026-11-23, en Consola, en lugar de exceptuar los separadores
+- **Estado:** Aceptada. El usuario la pidió el 2026-11-23, en Consola, en lugar de exceptuar los separadores. Los puntos 2 y 4 los reemplaza el [ADR-0230](0230-un-separador-se-agarra-en-5-px.md)
 - **Fecha:** 2026-11-23
 - **Alcance:** `transversal.md`, `qt.md` y `plantilla/qt/tests/test_accessibility.py`
 

@@ -232,3 +232,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0224](0224-el-plugin-de-passkeys-cubre-windows-11-y-macos.md) | El plugin de passkeys cubre Windows 11 y macOS, y el navegador queda para Linux y Qt | `autenticacion.md`, `flutter.md`, `flet.md`, `plantilla/packages/passkey/` y `scripts/verificar.py` |
 | [0225](0225-equipaggio-y-consola-son-instrumentos-de-canone.md) | Equipaggio y consola son instrumentos de Canone | `README.md`, `fastapi.md` y con `server/` |
 | [0226](0226-el-registro-trae-el-codigo-y-la-passkey-y-volver-a-autenticarse-renueva-la-sesion.md) | El registro trae el código y la passkey, y volver a autenticarse renueva la sesión | `autenticacion.md`, `fastapi.md` y con `server/` |
+| [0227](0227-un-objetivo-mas-chico-que-24-x-24-vale-con-su-circulo-de-24-libre.md) | Un objetivo más chico que 24 × 24 vale si su círculo de 24 no toca otro, y un separador puede ser más fino | `transversal.md`, `qt.md` y `plantilla/qt/tests/` |

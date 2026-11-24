@@ -1,6 +1,6 @@
 # ADR-0217 · En una app que solo se usa con el puntero, un objetivo mide 24 × 24
 
-- **Estado:** Aceptada. El usuario pidió el 2026-11-21 aplicar lo que recomendara la literatura
+- **Estado:** Aceptada. El usuario pidió el 2026-11-21 aplicar lo que recomendara la literatura. El punto 2 lo reemplaza el [ADR-0227](0227-un-objetivo-mas-chico-que-24-x-24-vale-con-su-circulo-de-24-libre.md)
 - **Fecha:** 2026-11-21
 - **Alcance:** `transversal.md`
 

@@ -9,7 +9,7 @@ Una app en Flutter.
 - Las demás dependencias van exactas o con `^`.
 - CI corre `dart run dependency_validator`, que falla con un paquete importado sin declarar o una dependencia que no se usa ([stack.md](../stack.md#qué-entra)). `pubspec.yaml` lleva `dependency_validator:` con `allow_pins: true`: sin él, también falla con cada versión exacta, y las de Riverpod lo son.
 - `environment.sdk` de `pubspec.yaml` es `^` y la versión de Dart de [stack.md](../stack.md#flutter), la que trae Flutter: fija la versión del lenguaje con que se compila el código.
-- Gradle, AGP y Kotlin son los de Android en [stack.md](../stack.md#android), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
+- El JDK, Gradle, AGP y Kotlin son los de Android en [stack.md](../stack.md#android), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
 - Lo que genera build_runner, `*.g.dart` y `*.freezed.dart`, y lo que genera swagger_parser, en `lib/data/services/api/`, no se versiona, y CI revisa el formato antes de generarlo: riverpod_generator no escribe con líneas de 99.
 - `analysis_options.yaml` excluye del análisis `lib/data/services/api/`: lo que genera swagger_parser no pasa las reglas de «Nombres» ni de «Estilo».
 - `analysis_options.yaml` excluye del análisis `lib/l10n/app_localizations*.dart`: lo que genera `gen-l10n` usa los delegados de flutter_localizations, obsoletos en Flutter 3.50.
@@ -339,7 +339,7 @@ Contrato: [transversal.md](transversal.md#pagos).
 
 Contrato: [autenticacion.md](autenticacion.md#passkeys).
 
-- En el teléfono, en Windows y en macOS, la app usa la passkey con `getPasskey` y `createPasskey` del plugin `passkey`, que la plantilla copia en `packages/passkey/src/flutter/passkey/` y la app declara como dependencia por `path`: Flutter no tiene una API oficial de passkeys.
+- En el teléfono, en Windows y en macOS, la app usa la passkey con `getPasskey` y `createPasskey` del plugin `passkey`, que la plantilla copia en `packages/passkey/src/flutter/flet_passkey/passkey/` y la app declara como dependencia por `path`: Flutter no tiene una API oficial de passkeys.
 - En Android, `minSdk` no baja de 28, el del plugin.
 - En iOS, la versión mínima de la app no baja de 16, y en macOS, de 13, las del plugin: son las primeras que sincronizan las passkeys. [Apple](https://support.apple.com/guide/iphone/passkeys-passwords-devices-iph82d6721b2/16.0/ios/16.0)
 - En iOS, `ios/Runner/Runner.entitlements` declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`.

@@ -195,22 +195,22 @@ PASSKEY = [
     Path("packages/passkey/src/flutter/flet_passkey/lib/flet_passkey.dart"),
     Path("packages/passkey/src/flutter/flet_passkey/lib/src/extension.dart"),
     Path("packages/passkey/src/flutter/flet_passkey/lib/src/passkey_service.dart"),
-    Path("packages/passkey/src/flutter/passkey/pubspec.yaml"),
-    Path("packages/passkey/src/flutter/passkey/analysis_options.yaml"),
-    Path("packages/passkey/src/flutter/passkey/lib/passkey.dart"),
-    Path("packages/passkey/src/flutter/passkey/android/build.gradle.kts"),
-    Path("packages/passkey/src/flutter/passkey/android/settings.gradle.kts"),
-    Path("packages/passkey/src/flutter/passkey/android/src/main/AndroidManifest.xml"),
-    Path("packages/passkey/src/flutter/passkey/android/src/main/kotlin/canone/passkey/PasskeyPlugin.kt"),
-    Path("packages/passkey/src/flutter/passkey/darwin/passkey.podspec"),
-    Path("packages/passkey/src/flutter/passkey/darwin/passkey/Package.swift"),
-    Path("packages/passkey/src/flutter/passkey/darwin/passkey/Sources/passkey/PasskeyPlugin.swift"),
-    Path("packages/passkey/src/flutter/passkey/windows/CMakeLists.txt"),
-    Path("packages/passkey/src/flutter/passkey/windows/include/passkey/passkey_plugin_c_api.h"),
-    Path("packages/passkey/src/flutter/passkey/windows/passkey_plugin.cpp"),
-    Path("packages/passkey/src/flutter/passkey/windows/passkey_plugin.h"),
-    Path("packages/passkey/src/flutter/passkey/windows/passkey_plugin_c_api.cpp"),
-    Path("packages/passkey/src/flutter/passkey/test/windows_test.dart"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/pubspec.yaml"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/analysis_options.yaml"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/lib/passkey.dart"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/android/build.gradle.kts"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/android/settings.gradle.kts"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/android/src/main/AndroidManifest.xml"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/android/src/main/kotlin/canone/passkey/PasskeyPlugin.kt"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/darwin/passkey.podspec"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/darwin/passkey/Package.swift"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/darwin/passkey/Sources/passkey/PasskeyPlugin.swift"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/windows/CMakeLists.txt"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/windows/include/passkey/passkey_plugin_c_api.h"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/windows/passkey_plugin.cpp"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/windows/passkey_plugin.h"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/windows/passkey_plugin_c_api.cpp"),
+    Path("packages/passkey/src/flutter/flet_passkey/passkey/test/windows_test.dart"),
 ]
 
 # Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del
@@ -882,7 +882,7 @@ ACCIONES = {fila: version for fila, version in CI.items() if not fila.startswith
 CONTENEDORES = {fila.removeprefix(CONTENEDOR): version for fila, version in CI.items() if fila.startswith(CONTENEDOR)}
 # La versión de cada acción la exigen las páginas que la usan.
 ENTRADAS = {
-    "actions/setup-java": ({"android.md", "java.md"}, "java-version", ANDROID["JDK"]),
+    "actions/setup-java": ({"android.md", "flutter.md", "java.md"}, "java-version", ANDROID["JDK"]),
     "actions/setup-node": ({"sveltekit.md"}, "node-version", SVELTEKIT["Node"]),
     "actions/setup-python": ({"python.md"}, "python-version", STACK["Python"]["Python"]),
 }
@@ -902,7 +902,7 @@ PROGRAMAS = [
     ("plantilla/infra/packages.py", r"openjdk-(\d+)-jre", STACK["Java"]["Java"]),
     ("plantilla/infra/uv.py", r'^VERSION = "([^"]+)"', UV),
     (
-        "plantilla/packages/passkey/src/flutter/passkey/android/build.gradle.kts",
+        "plantilla/packages/passkey/src/flutter/flet_passkey/passkey/android/build.gradle.kts",
         r"androidx\.credentials:[\w-]+:([\d.]+)",
         ANDROID["androidx.credentials"],
     ),

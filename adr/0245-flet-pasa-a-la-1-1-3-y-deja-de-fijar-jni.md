@@ -26,6 +26,10 @@ app que muestra las versiones de Pydantic y de httpx y que lleva `flet_sms`:
 | `jni` 1.2.0 y `jni_flutter` 1.1.0 | No arranca: `ClassNotFoundException: Didn't find class "Landroid/content/Context;"` |
 | `jni` 1.2.1 y `jni_flutter` 1.1.0, lo último que admite `path_provider_android` 2.3.1 | Arranca y muestra `2.14.3 0.28.1` |
 
+Comprobado después, el mismo día, con Flet 1.1.3 y Flutter 3.47.5: con el plugin `passkey` dentro de
+`flutter/flet_passkey/`, Flet registra solo `flet_passkey`. `flet build apk` construye y la app arranca
+en el emulador con el servicio `Passkey`, y `flet build windows` construye con `passkey_plugin.dll`.
+
 De las 12 fuentes de Flet cambian 4: `publish`, `publish-macos`, `async-apps` y
 `declarative-vs-imperative`. De sus convenciones cambia una: `page.run_task()` registra la excepción
 de la tarea que nadie espera.

@@ -160,7 +160,7 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 
 ## Flutter
 
-Página: [flutter.md](plataformas/flutter.md). Gradle, AGP, Kotlin y, en `packages/passkey/`, `androidx.credentials` son los de [Android](#android).
+Página: [flutter.md](plataformas/flutter.md). El JDK, Gradle, AGP, Kotlin y, en `packages/passkey/`, `androidx.credentials` son los de [Android](#android).
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |

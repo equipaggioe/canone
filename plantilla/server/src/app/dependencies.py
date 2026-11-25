@@ -8,15 +8,16 @@ from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, Request, Response
 from fastapi.dependencies.models import Dependant
-from fastapi.routing import APIRoute
+from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.security import APIKeyCookie, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.requests import HTTPConnection
 
 from app.config import VERSION, settings
 from app.database import SessionFactory
 from app.enums import EventLevel, Role, SessionKind
 from app.errors import CLIENT_OUTDATED, REAUTHENTICATION_REQUIRED, AppError, KeptError
-from app.services import events, messages, sessions
+from app.services import channel, events, messages, sessions
 from app.services.sessions import Client, Principal
 
 
@@ -24,8 +25,8 @@ async def get_session() -> AsyncIterator[AsyncSession]:
     """Open one session and one transaction per request.
 
     The transaction commits if the route ends or raises a KeptError, and
-    rolls back on any other error. After the commit go the messages the
-    request queued.
+    rolls back on any other error. After the commit goes what the
+    request queued: the WebSockets first, which wait for nobody.
     """
     kept: KeptError | None = None
     async with SessionFactory.begin() as session:
@@ -33,6 +34,7 @@ async def get_session() -> AsyncIterator[AsyncSession]:
             yield session
         except KeptError as error:
             kept = error
+    await channel.flush(session)
     await messages.flush(session)
     if kept is not None:
         raise kept.error
@@ -70,10 +72,13 @@ def declares_access(dependant: Dependant) -> bool:
     )
 
 
-async def deny_by_default(request: Request) -> None:
+async def deny_by_default(connection: HTTPConnection) -> None:
     """Answer 404 to a route that does not say who may call it."""
-    route = request.scope.get("route")
-    if not isinstance(route, APIRoute) or not declares_access(route.dependant):
+    route = connection.scope.get("route")
+    declares = isinstance(route, (APIRoute, APIWebSocketRoute)) and declares_access(
+        route.dependant
+    )
+    if not declares:
         raise HTTPException(HTTPStatus.NOT_FOUND)
 
 
@@ -86,11 +91,11 @@ async def check_client_version(user_agent: Annotated[str, Header()] = "") -> Non
         raise AppError(CLIENT_OUTDATED)
 
 
-def client(request: Request) -> Client:
-    """Tell where a request comes from."""
+def client(connection: HTTPConnection) -> Client:
+    """Tell where a request or a WebSocket comes from."""
     return Client(
-        ip_address=request.client.host if request.client else None,
-        user_agent=request.headers.get("user-agent"),
+        ip_address=connection.client.host if connection.client else None,
+        user_agent=connection.headers.get("user-agent"),
     )
 
 
@@ -99,14 +104,28 @@ ClientDep = Annotated[Client, Depends(client)]
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS", "TRACE"})
 
 
-async def check_origin(request: Request, caller: ClientDep) -> None:
+def needs_origin(connection: HTTPConnection) -> bool:
+    """Tell whether the cookie makes the Origin matter.
+
+    It does in an unsafe request, and in a handshake, unless it brings
+    Authorization: then the cookie opens nothing.
+    """
+    if sessions.COOKIE not in connection.cookies:
+        return False
+    if connection.scope["type"] == "websocket":
+        return "authorization" not in connection.headers
+    return connection.scope["method"] not in SAFE_METHODS
+
+
+async def check_origin(connection: HTTPConnection, caller: ClientDep) -> None:
     """Answer 403 to an unsafe request with the cookie from elsewhere.
 
     The server is the origin the request was sent to.
     """
-    if sessions.COOKIE not in request.cookies or request.method in SAFE_METHODS:
+    if not needs_origin(connection):
         return
-    if request.headers.get("origin") != f"https://{request.headers.get('host')}":
+    headers = connection.headers
+    if headers.get("origin") != f"https://{headers.get('host')}":
         await events.record(
             events.event(
                 "malicious_csrf",
@@ -153,6 +172,28 @@ async def signed_in(
 
 
 PrincipalDep = Annotated[Principal, Depends(signed_in)]
+
+
+@access
+async def handshake(connection: HTTPConnection, caller: ClientDep) -> Principal | None:
+    """Recognize the session of a WebSocket, or none.
+
+    It reads in its own session: one of the request would hold a
+    connection to the database as long as the WebSocket.
+    """
+    header = connection.headers.get("authorization")
+    if header is None:
+        kind, token = SessionKind.WEB, connection.cookies.get(sessions.COOKIE, "")
+    else:
+        scheme, _, token = header.partition(" ")
+        kind = SessionKind.APP
+        if scheme.lower() != "bearer":
+            return None
+    async with SessionFactory.begin() as session:
+        return await sessions.resolve(session, token, kind, caller)
+
+
+HandshakeDep = Annotated[Principal | None, Depends(handshake)]
 
 
 @access

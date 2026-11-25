@@ -281,6 +281,8 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 
 - Los mensajes son JSON `{type, data}`, en camelCase como la API.
 - El valor de `type` va en snake_case, como los valores de un enum.
+- Un mensaje que el servidor no acepta recibe uno de `type` `error`, con su problem+json en `data`, y la conexión sigue.
+- Los esquemas de los mensajes van en `components` del `openapi.json`: los modelos del WebSocket se generan como los demás.
 - Al perder la conexión, el cliente reconecta con espera exponencial y jitter, con hasta 30 segundos entre intentos, y vuelve a pedir el estado por REST. Lo que se envió mientras estaba desconectado no se repite.
 - Un cliente se conecta solo por `wss://` ([WebSocket Security, *Always Use WSS (WebSocket Secure)*](../fuentes/owasp/WebSocket_Security.md)).
 
@@ -301,3 +303,6 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Un cuerpo que no es JSON responde 400 | `test_body_that_is_not_json_is_a_bad_request`, del servidor |
 | Una versión menor que la mínima, o mal formada, recibe un 400 de tipo `client-outdated` | `test_outdated_client_is_rejected`, del servidor |
 | Un `pageToken` ilegible o con otros parámetros que los de su petición responde 422 con `parameter` en `pageToken` | `test_invalid_page_token_points_to_the_parameter`, del servidor |
+| Un mensaje del WebSocket que el servidor no acepta recibe uno de `type` `error` con su problem+json, y la conexión sigue | `test_message_that_is_not_taken_is_an_error`, del servidor |
+| Los esquemas de los mensajes del WebSocket van en `components` del `openapi.json` | `test_messages_are_in_the_openapi`, del servidor |
+| El handshake de una app vieja responde 400 de tipo `client-outdated` | `test_outdated_app_does_not_connect`, del servidor |

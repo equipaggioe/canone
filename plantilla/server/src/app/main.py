@@ -22,7 +22,9 @@ from app.routers import (
     problems,
     recovery,
     sms,
+    websocket,
 )
+from app.schemas.websocket import CLIENT, SERVER
 from app.services import events, messages
 
 
@@ -62,6 +64,7 @@ def api_router(methods: frozenset[Method]) -> APIRouter:
         auth.router,
         health.router,
         problems.router,
+        websocket.router,
     ):
         api.include_router(router)
     # The authorization code signs in with the passkey, on its page.
@@ -86,6 +89,12 @@ app = FastAPI(
     telemetry={"auto_configure": False},
 )
 errors.install(app)
+# The messages of the WebSocket, which no route declares.
+app.openapi = errors.with_schemas(  # pyrefly: ignore[method-assign]
+    app.openapi,
+    [(model, "validation") for model in CLIENT.values()]
+    + [(model, "serialization") for model in SERVER],
+)
 ijson.install(app)
 tracing.install()
 app.include_router(api_router(METHODS))

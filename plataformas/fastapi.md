@@ -72,6 +72,7 @@ server/
       auth.py
       authorization.py
       health.py
+      websocket.py
       <recurso>.py
     routers/
       __init__.py
@@ -85,6 +86,7 @@ server/
       problems.py
       recovery.py
       sms.py
+      websocket.py
       <recurso>.py
     services/
       __init__.py
@@ -93,6 +95,7 @@ server/
       attestation.py
       authenticators.py
       authorization.py
+      channel.py
       clients.py
       codes.py
       events.py
@@ -107,6 +110,7 @@ server/
       registration.py
       sessions.py
       sms.py
+      websocket.py
       <recurso>.py
     locale/
       <idioma>/
@@ -132,6 +136,7 @@ server/
     test_sessions.py
     test_sms.py
     test_tasks.py
+    test_websocket.py
     test_<recurso>.py
 ```
 
@@ -476,7 +481,17 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 
 Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autenticacion.md#websocket).
 
+- El WebSocket es `GET /api/websocket`.
 - Cada proceso se suscribe a Valkey y reenvía a sus conexiones, con un canal por usuario.
+- Un mensaje para un usuario, o el cierre de sus sesiones, se publica después del commit, antes que los correos y los SMS de la petición.
+- Un proceso que pierde su suscripción a Valkey cierra sus conexiones con 1012: lo que se publicó mientras tanto, como el cierre de una sesión, no llega.
+- Una conexión no usa la dependencia de la `AsyncSession`: abre una sesión corta para cada lectura. La dependencia ocupa una conexión del pool mientras dura el WebSocket.
+- La conexión número 11 responde 429 con `Retry-After` de 30 segundos.
+- Cada conexión ocupa un lugar en Valkey que vence a los 60 segundos y se renueva cada 30: el de un proceso que murió se libera solo.
+- Una conexión guarda su lugar hasta que termina su TCP, también la que dejó de leer: Uvicorn no cierra la que tiene datos sin entregar. [Uvicorn 0.54.0](https://raw.githubusercontent.com/encode/uvicorn/0.54.0/uvicorn/protocols/websockets/websockets_sansio_impl.py)
+- Una conexión tiene a lo sumo 100 mensajes por enviar, y la que se pasa se cierra con 1013.
+- Un mensaje binario cierra la conexión con 1003.
+- Un mensaje que no se acepta deja el mismo evento que el cuerpo de una petición.
 - Una conexión sin mensajes no se cierra: la conexión existe para esperar eventos del servidor, y el ping de Uvicorn ya cierra la que se cayó.
 - Los mensajes no llevan nonce: WSS ya impide que alguien fuera de la conexión repita un mensaje.
 - Los contadores de los límites del WebSocket viven en Valkey, compartidos por todos los procesos.
@@ -550,3 +565,15 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Un envío que falla va al log y no cambia la respuesta | `test_failed_delivery_does_not_fail_the_request` |
 | Una petición que pasa su límite responde 429 con `Retry-After`, el `detail` del límite y el evento `excess_rate_limit_exceeded`, en una ventana deslizante | `test_email_gets_one_code_a_minute_and_five_an_hour` |
 | La cuenta guarda el idioma de `Accept-Language` al entrar | `test_sign_in_keeps_the_language_of_the_account` |
+| Un mensaje para un usuario llega a cada conexión suya, y a ninguna de otro | `test_message_reaches_each_connection_of_the_account` |
+| El cierre de una sesión se publica después del commit | `test_close_goes_after_the_commit` |
+| Un proceso que pierde su suscripción a Valkey cierra sus conexiones con 1012, y una conexión en silencio no la pierde | `test_lost_subscription_is_1012`, `test_lost_subscription_starts_over_with_a_stuck_connection` y `test_silent_connection_stays` |
+| Una conexión no ocupa una conexión del pool entre lecturas | `test_connection_holds_no_transaction` |
+| Un usuario tiene a lo sumo 10 conexiones, la número 11 responde 429 con `Retry-After` de 30 segundos, y el lugar que no se renueva se libera | `test_eleventh_connection_is_a_429` |
+| El lugar de una conexión vence a los 60 segundos y se renueva cada 30 | `test_connection_renews_its_place` |
+| Una conexión que dejó de leer guarda su lugar hasta que termina su TCP | `test_stuck_connection_keeps_its_place` |
+| Una conexión con más de 100 mensajes por enviar se cierra con 1013 | `test_connection_with_a_hundred_to_send_is_1013` |
+| Un usuario manda a lo sumo 100 mensajes por minuto, y la conexión que se pasa se cierra con 1008 | `test_message_past_the_hundred_is_1008` |
+| Un mensaje binario cierra la conexión con 1003 | `test_binary_message_is_1003` |
+| Un mensaje que no se acepta deja el evento del cuerpo de una petición | `test_message_that_is_not_taken_is_an_error` |
+| Un mensaje que falla no tumba la app | `test_message_that_fails_is_a_500_and_the_app_goes_on` |

@@ -1,7 +1,7 @@
 """The app error, its problem types and their problem+json handlers."""
 
 import logging
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from http import HTTPStatus
 from typing import Any
@@ -10,7 +10,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import ConfigDict
-from pydantic.json_schema import models_json_schema
+from pydantic.json_schema import JsonSchemaMode, models_json_schema
 from starlette.exceptions import HTTPException
 
 from app.enums import EventLevel, TokenErrorCode
@@ -252,7 +252,7 @@ async def http_error(_: Request, exc: Exception) -> JSONResponse:
     return respond(blank(exc.status_code, detail), exc.headers)
 
 
-def validation_event(found: list[Mapping[str, Any]]) -> tuple[str, EventLevel]:
+def validation_event(found: Sequence[Mapping[str, Any]]) -> tuple[str, EventLevel]:
     """Name the event of a validation error in the OWASP vocabulary.
 
     A field the server does not expect is probing; a value outside its
@@ -266,36 +266,43 @@ def validation_event(found: list[Mapping[str, Any]]) -> tuple[str, EventLevel]:
     return "input_validation_fail", EventLevel.WARN
 
 
-async def validation_error(request: Request, exc: Exception) -> JSONResponse:
-    """Answer a validation error, one entry per field, and log it.
+async def invalid(
+    found: Sequence[Mapping[str, Any]], ip_address: str | None, user_agent: str | None
+) -> Problem:
+    """Build the problem of a validation error, and log it.
 
-    A body that is not JSON is a 400, with no entries.
+    One entry per field; a body that is not JSON is a 400, with no
+    entries.
     """
-    assert isinstance(exc, RequestValidationError)
-    found = list(exc.errors())
     fields = [field_error(error) for error in found]
     action, level = validation_event(found)
     await events.record(
         events.event(
             action,
             level,
-            ip_address=request.client.host if request.client else None,
-            user_agent=request.headers.get("user-agent"),
+            ip_address=ip_address,
+            user_agent=user_agent,
             details={"fields": sorted(field.pointer or field.parameter or "" for field in fields)},
         )
     )
     # RFC 9110: a 422 says the syntax is right, so not JSON is a 400.
     if {error["type"] for error in found} == {"json_invalid"}:
-        return respond(blank(HTTPStatus.BAD_REQUEST, "The body is not JSON"))
-    return respond(
-        ValidationProblem(
-            type=VALIDATION.uri,
-            title=VALIDATION.title,
-            status=VALIDATION.status,
-            errors=fields,
-            traceId=trace_id(),
-        )
+        return blank(HTTPStatus.BAD_REQUEST, "The body is not JSON")
+    return ValidationProblem(
+        type=VALIDATION.uri,
+        title=VALIDATION.title,
+        status=VALIDATION.status,
+        errors=fields,
+        traceId=trace_id(),
     )
+
+
+async def validation_error(request: Request, exc: Exception) -> JSONResponse:
+    """Answer a validation error."""
+    assert isinstance(exc, RequestValidationError)
+    ip_address = request.client.host if request.client else None
+    user_agent = request.headers.get("user-agent")
+    return respond(await invalid(list(exc.errors()), ip_address, user_agent))
 
 
 async def server_error(_: Request, exc: Exception) -> JSONResponse:
@@ -304,16 +311,16 @@ async def server_error(_: Request, exc: Exception) -> JSONResponse:
     return respond(blank(HTTPStatus.INTERNAL_SERVER_ERROR))
 
 
-def with_problems(build: Callable[[], dict[str, Any]]) -> Callable[[], dict[str, Any]]:
-    """Add to the OpenAPI the problem schemas of RESPONSES."""
+def with_schemas(
+    build: Callable[[], dict[str, Any]],
+    models: Sequence[tuple[type[Schema], JsonSchemaMode]],
+) -> Callable[[], dict[str, Any]]:
+    """Add to the OpenAPI schemas that no route declares."""
 
     def openapi() -> dict[str, Any]:
-        """Build the OpenAPI once, with the problem schemas."""
+        """Build the OpenAPI once, with the schemas."""
         document = build()
-        _, schemas = models_json_schema(
-            [(Problem, "serialization"), (ValidationProblem, "serialization")],
-            ref_template="#/components/schemas/{model}",
-        )
+        _, schemas = models_json_schema(models, ref_template="#/components/schemas/{model}")
         document.setdefault("components", {}).setdefault("schemas", {}).update(schemas["$defs"])
         return document
 
@@ -328,4 +335,6 @@ def install(app: FastAPI) -> None:
     app.add_exception_handler(RequestValidationError, validation_error)
     app.add_exception_handler(Exception, server_error)
     # FastAPI documents this way to extend the OpenAPI of an app.
-    app.openapi = with_problems(app.openapi)  # pyrefly: ignore[method-assign]
+    app.openapi = with_schemas(  # pyrefly: ignore[method-assign]
+        app.openapi, [(Problem, "serialization"), (ValidationProblem, "serialization")]
+    )

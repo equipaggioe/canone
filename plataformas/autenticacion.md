@@ -322,11 +322,16 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 
 - La web se autentica con la cookie de sesión del handshake, y una app, con `Authorization: Bearer` en el handshake, como en REST.
 - Un handshake con la cookie exige un `Origin` igual al de la web, y uno con `Authorization` no lo revisa.
-- Una sesión que no vale o un token vencido cierran la conexión con 4401, del rango de códigos de cierre privados. En el handshake, el servidor acepta la conexión para cerrarla: el navegador no le muestra a la web el código de un rechazo, que ve como un cierre 1006, igual que una caída de la red. [RFC 6455 §7.4.2](https://www.rfc-editor.org/rfc/rfc6455.txt), [WHATWG WebSockets](https://raw.githubusercontent.com/whatwg/websockets/7f25d7dc8c2598ebca795ce4af68909d913a3888/index.bs)
+- El WebSocket no cuenta como uso de la sesión.
+- La conexión de una app vence con el último token de acceso que presentó, aunque la app refresque antes, y la de la web, a los 30 días del último uso de su sesión.
+- La app manda el token nuevo en un mensaje de `type` `access_token`, con `accessToken` en `data`, y el servidor no lo contesta. Un token que no vale o que es de otra sesión cierra con 4401.
+- Una sesión que no vale, un token vencido o un handshake sin cookie ni token cierran la conexión con 4401, del rango de códigos de cierre privados. En el handshake, el servidor acepta la conexión para cerrarla: el navegador no le muestra a la web el código de un rechazo, que ve como un cierre 1006, igual que una caída de la red. [RFC 6455 §7.4.2](https://www.rfc-editor.org/rfc/rfc6455.txt), [WHATWG WebSockets](https://raw.githubusercontent.com/whatwg/websockets/7f25d7dc8c2598ebca795ce4af68909d913a3888/index.bs)
 - Ante un 4401, una app refresca la sesión una sola vez y reconecta, y la web vuelve al inicio de sesión.
 - El servidor no revalida cada cierto tiempo la sesión de una conexión abierta: el cierre llega con el borrado de la sesión, no en la siguiente revisión.
 - Al refrescar la sesión, una app manda el token nuevo por la misma conexión ([WebSocket Security, *Session Management*](../fuentes/owasp/WebSocket_Security.md)).
 - Cerrar o borrar una sesión cierra en el momento sus conexiones, y una sesión que vence también las cierra ([WebSocket Security, *Session Management*](../fuentes/owasp/WebSocket_Security.md)).
+
+Plantilla: de [plantilla/server/](../plantilla/server/), `handshake` de `dependencies.py`, `schemas/websocket.py`, `routers/websocket.py`, `services/channel.py`, `services/websocket.py` y `tests/test_websocket.py`.
 
 ## Cumplimiento
 
@@ -478,3 +483,10 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | El superadministrador le pone a otra cuenta un correo o un teléfono sin código, el viejo recibe un aviso, y uno de otra cuenta responde 409 | `test_superadmin_gives_an_address_the_holder_has` |
 | Un superadministrador recupera a otro: el código vale solo en la dirección que le puso, hasta que entra; con una contraseña responde 403, y con una passkey sin el flag UV, 403 de tipo `user-verification-required` | `test_superadmin_recovers_another_superadmin` |
 | El superadministrador cierra las sesiones de otra cuenta, o las de todas menos la que llama | `test_superadmin_closes_the_sessions_of_an_account_or_of_all` |
+| La web se conecta al WebSocket con la cookie, y una app, con `Authorization: Bearer` | `test_the_web_and_an_app_connect` |
+| Una sesión que no vale, un token vencido o un handshake sin cookie ni token aceptan la conexión y la cierran con 4401 | `test_no_session_is_4401` |
+| Un handshake con la cookie exige un `Origin` igual al de la web, y uno con `Authorization` no lo revisa | `test_cookie_needs_the_origin` |
+| Cerrar o borrar una sesión cierra en el momento sus conexiones | `test_ended_session_closes_its_connections` y `test_session_that_ends_during_the_handshake_is_4401` |
+| La conexión de una app vence con el último token de acceso que presentó, en un mensaje `access_token` que el servidor no contesta, aunque la app refresque antes | `test_app_connection_ends_with_its_token` |
+| Un token que no vale o que es de otra sesión cierra con 4401 | `test_token_of_another_session_is_4401` |
+| La conexión de la web vence a los 30 días del último uso de su sesión, y el WebSocket no cuenta como uso | `test_web_connection_ends_30_days_after_the_last_use` |

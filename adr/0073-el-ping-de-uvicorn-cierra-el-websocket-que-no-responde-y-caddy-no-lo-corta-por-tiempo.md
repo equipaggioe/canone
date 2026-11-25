@@ -9,6 +9,9 @@
 «Caddy» cita *Infrastructure Configuration* del *WebSocket Security Cheat Sheet* de OWASP, que pide
 timeouts de lectura apropiados para las conexiones largas, y la página no fijaba ninguno.
 
+Comprobado después (2026-11-24): el ping no cierra una conexión que dejó de leer con datos por
+entregar ([ADR-0237](0237-el-websocket-vive-con-su-sesion-y-una-conexion-trabada-guarda-su-lugar.md)).
+
 ## Decisión
 
 1. Caddy no tiene timeout para una conexión WebSocket.

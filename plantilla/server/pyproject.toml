@@ -27,6 +27,7 @@ dependencies = [
 dev = [
   "anyio>=4.16.0",
   "deptry>=0.25.1",
+  "httpx-ws>=0.10.0",
   "pip-audit>=2.10.1",
   "pyrefly>=1.5.0",
   "pytest>=9.2.0",

@@ -11,7 +11,6 @@ from typing import Any
 from urllib.parse import urlencode
 from uuid import UUID
 
-import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import store
@@ -20,7 +19,7 @@ from app.errors import KeptError, TokenRefusal
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.schemas.auth import PasskeyCredential
-from app.services import clients, passkeys
+from app.services import clients, passkeys, sessions
 from app.services.sessions import Client
 
 LIFETIME = timedelta(minutes=10)
@@ -152,9 +151,7 @@ async def redeem(session: AsyncSession, params: dict[str, str]) -> Account:
         raise refused
     record: dict[str, Any] = json.loads(stored)
     if record["session_id"] is not None:
-        await session.execute(
-            sa.delete(AccountSession).where(AccountSession.id == UUID(record["session_id"]))
-        )
+        await sessions.drop(session, AccountSession.id == UUID(record["session_id"]))
         raise KeptError(refused)
     if record["redirect_given"] and "redirect_uri" not in params:
         raise TokenRefusal(TokenErrorCode.INVALID_REQUEST)

@@ -20,7 +20,7 @@ from urllib.parse import urlsplit
 import pytest
 import sqlalchemy as sa
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query
-from fastapi.routing import APIRoute
+from fastapi.routing import APIRoute, APIWebSocketRoute
 from httpx import ASGITransport, AsyncClient
 from pydantic import AwareDatetime, BaseModel, ValidationError
 from pydantic_settings import BaseSettings
@@ -969,7 +969,8 @@ def test_routes_declare_access() -> None:
         f"{module.name}: {route.path}"
         for module in pkgutil.iter_modules(app.routers.__path__)
         for route in importlib.import_module(f"app.routers.{module.name}").router.routes
-        if isinstance(route, APIRoute) and not declares_access(route.dependant)
+        if isinstance(route, (APIRoute, APIWebSocketRoute))
+        and not declares_access(route.dependant)
     ]
     assert not undeclared
 

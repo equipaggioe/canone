@@ -241,7 +241,7 @@ Estándares: [systemd.exec](../fuentes/systemd/systemd.exec.xml) de systemd y el
 - El servidor arranca con `uvicorn app.main:app`, no con `fastapi run`, que no le pasa a Uvicorn las opciones de WebSocket. [fastapi-cli 0.0.32](https://raw.githubusercontent.com/fastapi/fastapi-cli/0.0.32/src/fastapi_cli/cli.py)
 - `--port` es 8000 en todo producto: la máquina no aloja otro servidor.
 - Caddy le llega al servidor por loopback: nadie salta los límites de Caddy, y Uvicorn cree las cabeceras `X-Forwarded-*` solo de loopback, su valor por defecto. [Uvicorn 0.54.0](https://raw.githubusercontent.com/encode/uvicorn/0.54.0/docs/settings.md)
-- Uvicorn manda un ping cada 20 s y cierra la conexión que no responde en 20 s, sus valores por defecto. [Uvicorn 0.54.0](https://raw.githubusercontent.com/encode/uvicorn/0.54.0/docs/settings.md)
+- Uvicorn manda un ping cada 20 s y cierra la conexión que no responde en 20 s, sus valores por defecto, salvo la que tiene datos sin entregar, que sigue abierta ([fastapi.md](fastapi.md#websocket)). [Uvicorn 0.54.0](https://raw.githubusercontent.com/encode/uvicorn/0.54.0/docs/settings.md)
 - `install.py` falla si `<app>` pasa de 22 caracteres o no cumple el nombre de una cuenta: `<app>-receiver` suma 9.
 - `/run/<app>-receiver/` la crea `tmpfiles.d`: la escribe la cuenta de la receptora, que entra por `ssh`, y no una unidad.
 - El timer del barrido de archivos de [fastapi.md](fastapi.md#archivos) corre `python -m app.tasks sweep` cada día.

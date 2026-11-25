@@ -5956,6 +5956,70 @@
         ],
         "title": "ValidationProblem",
         "type": "object"
+      },
+      "AccessTokenData": {
+        "additionalProperties": false,
+        "description": "The access token of a session that its app refreshed.",
+        "properties": {
+          "accessToken": {
+            "title": "Accesstoken",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessToken"
+        ],
+        "title": "AccessTokenData",
+        "type": "object"
+      },
+      "AccessTokenMessage": {
+        "additionalProperties": false,
+        "description": "An app presents its new access token on its connection.",
+        "properties": {
+          "type": {
+            "const": "access_token",
+            "title": "Type",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/AccessTokenData"
+          }
+        },
+        "required": [
+          "type",
+          "data"
+        ],
+        "title": "AccessTokenMessage",
+        "type": "object"
+      },
+      "ErrorMessage": {
+        "additionalProperties": false,
+        "description": "Why the server did not take a message.",
+        "properties": {
+          "type": {
+            "const": "error",
+            "default": "error",
+            "title": "Type",
+            "type": "string"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValidationProblem"
+              },
+              {
+                "$ref": "#/components/schemas/Problem"
+              }
+            ],
+            "title": "Data"
+          }
+        },
+        "required": [
+          "type",
+          "data"
+        ],
+        "title": "ErrorMessage",
+        "type": "object"
       }
     },
     "securitySchemes": {

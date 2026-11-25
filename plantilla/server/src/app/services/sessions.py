@@ -19,7 +19,7 @@ from app.errors import ACCOUNT_DISABLED, AppError, KeptError, TokenRefusal
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.event.event_log import EventLog
-from app.services import events
+from app.services import channel, events
 
 COOKIE = "__Host-session"
 IDLE = timedelta(days=30)
@@ -180,12 +180,27 @@ async def open_app(
     return Issued(access, sign(row.id, secret), row.id)
 
 
+async def drop(session: AsyncSession, ended: sa.ColumnElement[bool]) -> list[tuple[UUID, UUID]]:
+    """Delete the sessions that match, and close their connections.
+
+    Return the ID and the account of each one.
+    """
+    rows = await session.execute(
+        sa.delete(AccountSession)
+        .where(ended)
+        .returning(AccountSession.id, AccountSession.account_id)
+    )
+    found = [(session_id, account_id) for session_id, account_id in rows]
+    for session_id, account_id in found:
+        channel.close(session, account_id, [session_id])
+    return found
+
+
 async def discard(session: AsyncSession, token: str, kind: SessionKind) -> None:
     """Close the session whose token a client brings to a new login."""
-    await session.execute(
-        sa.delete(AccountSession).where(
-            AccountSession.token_digest == digest(token), AccountSession.kind == kind
-        )
+    await drop(
+        session,
+        (AccountSession.token_digest == digest(token)) & (AccountSession.kind == kind),
     )
 
 
@@ -247,7 +262,7 @@ async def refresh(session: AsyncSession, token: str, client: Client) -> Issued:
     if hmac.compare_digest(presented, row.secret_digest):
         row.previous_digest = row.secret_digest
     elif row.previous_digest is None or not hmac.compare_digest(presented, row.previous_digest):
-        await session.delete(row)
+        await drop(session, AccountSession.id == row.id)
         session.add(event("authn_token_reuse", EventLevel.CRITICAL, row, client))
         raise KeptError(refused)
     # Presenting the previous secret replaces the current one, and the
@@ -294,7 +309,7 @@ def renew_app(session: AsyncSession, row: AccountSession, client: Client) -> Iss
 
 async def close(session: AsyncSession, row: AccountSession, client: Client) -> None:
     """Close a session by deleting its row; the caller commits."""
-    await session.delete(row)
+    await drop(session, AccountSession.id == row.id)
     session.add(event("session_logout", EventLevel.INFO, row, client))
 
 
@@ -302,12 +317,7 @@ async def close_where(
     session: AsyncSession, closed: sa.ColumnElement[bool], client: Client, reason: str
 ) -> None:
     """Close the sessions that match, each with its event."""
-    rows = await session.execute(
-        sa.delete(AccountSession)
-        .where(closed)
-        .returning(AccountSession.id, AccountSession.account_id)
-    )
-    for session_id, account_id in rows:
+    for session_id, account_id in await drop(session, closed):
         session.add(
             events.event(
                 "session_logout",

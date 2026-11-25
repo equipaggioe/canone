@@ -12,12 +12,23 @@ from webauthn.helpers import base64url_to_bytes
 from app.enums import Address, Credential, EventLevel
 from app.errors import INVALID_CODE, AppError
 from app.models.account.account import Account
+from app.models.account.account_session import AccountSession
 from app.models.account.passkey import Passkey
 from app.models.account.password import Password
 from app.models.account.phone import Phone
 from app.models.event.event_log import EventLog
 from app.schemas.account import AccountView, FailureView, PasskeyLink, PasswordView, PhoneView
-from app.services import attestation, authenticators, codes, events, limits, notices, recovery, sms
+from app.services import (
+    attestation,
+    authenticators,
+    codes,
+    events,
+    limits,
+    notices,
+    recovery,
+    sessions,
+    sms,
+)
 from app.services.sessions import Client
 
 PURPOSE = "change"
@@ -197,6 +208,8 @@ async def erase(session: AsyncSession, account: Account, client: Client, actor: 
             user_agent=client.user_agent,
         )
     )
+    # The base deletes the rest; the connections of a session need it.
+    await sessions.drop(session, AccountSession.account_id == account.id)
     await session.delete(account)
 
 

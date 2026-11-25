@@ -155,7 +155,7 @@ async def link(
     if created.user_handle != account.user_handle:
         raise HTTPException(HTTPStatus.BAD_REQUEST, "The options were of another account")
     row = attestation.keep(session, account, created, body.name, passkey_id, client)
-    notices.notify(session, account, notices.Notice.PASSKEY_LINKED, name=body.name)
+    await notices.notify(session, account, notices.Notice.PASSKEY_LINKED, name=body.name)
     return row, True
 
 
@@ -168,7 +168,7 @@ async def unlink(
         raise HTTPException(HTTPStatus.NOT_FOUND)
     await session.delete(row)
     session.add(event("sensitive_delete", account, client, ("passkey", str(row.id))))
-    notices.notify(session, account, notices.Notice.PASSKEY_DELETED, name=row.name)
+    await notices.notify(session, account, notices.Notice.PASSKEY_DELETED, name=row.name)
 
 
 async def enable(
@@ -187,7 +187,7 @@ async def enable(
     authenticators.enable(row)
     row.changed_at = datetime.now(UTC)
     session.add(event("sensitive_update", account, client, ("passkey", str(row.id))))
-    notices.notify(session, account, notices.Notice.PASSKEY_ENABLED, name=row.name)
+    await notices.notify(session, account, notices.Notice.PASSKEY_ENABLED, name=row.name)
 
 
 async def erase(session: AsyncSession, account: Account, client: Client, actor: Account) -> None:
@@ -195,7 +195,7 @@ async def erase(session: AsyncSession, account: Account, client: Client, actor: 
 
     Every address hears it.
     """
-    notices.notify(session, account, notices.Notice.ACCOUNT_DELETED)
+    await notices.notify(session, account, notices.Notice.ACCOUNT_DELETED)
     target = ("account", str(account.id))
     session.add(
         events.event(
@@ -249,7 +249,7 @@ async def change_email(
     details = events.changes("account", {"email": email})
     target = ("account", str(account.id))
     session.add(event("user_updated", account, client, target, details))
-    notices.notify(session, account, notices.Notice.EMAIL_CHANGED, previous=previous)
+    await notices.notify(session, account, notices.Notice.EMAIL_CHANGED, previous=previous)
 
 
 async def change_phone(
@@ -265,4 +265,4 @@ async def change_phone(
     details = events.changes("account", {"phone": phone})
     target = ("account", str(account.id))
     session.add(event("user_updated", account, client, target, details))
-    notices.notify(session, account, notices.Notice.PHONE_CHANGED, previous=previous)
+    await notices.notify(session, account, notices.Notice.PHONE_CHANGED, previous=previous)

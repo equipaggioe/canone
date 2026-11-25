@@ -64,6 +64,8 @@ jobs:
           printf %s ayuda@producto.example > "$folder/app_contact"
           printf %s test-equipaggio-key > "$folder/app_equipaggio_key"
           printf %s test-setup-code > "$folder/app_setup_code"
+          printf %s "{}" > "$folder/app_firebase_credentials"
+          printf %s q83vEjRWeJCrze8SNFZ4kKvN7xI0VniQq83vEjRWeJA > "$folder/app_vapid_key"
           printf %s '{"PRODUCTO-android": "FA+9qCX9VSu"}' > "$folder/app_sms_hashes"
           echo "CREDENTIALS_DIRECTORY=$folder" >> "$GITHUB_ENV"
           # The migrations log in as the owner of the schema, as in production.

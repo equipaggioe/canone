@@ -19,7 +19,7 @@ async def test_a_method_the_product_does_not_use_has_no_routes() -> None:
     """
     probe = FastAPI()
     errors.install(probe)
-    probe.include_router(api_router(frozenset()))
+    probe.include_router(api_router(frozenset(), frozenset()))
     async with AsyncClient(transport=ASGITransport(app=probe), base_url="http://test") as client:
         for path in (
             "/api/auth/password/token",

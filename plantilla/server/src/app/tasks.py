@@ -5,7 +5,7 @@ import asyncio
 from collections.abc import Awaitable, Callable
 
 from app.database import engine, migrate, mock
-from app.services import events, files, recovery, sessions
+from app.services import events, files, recovery, sessions, web_push
 
 
 async def purge() -> None:
@@ -26,11 +26,12 @@ TIMERS: dict[str, str] = {"recover": "minutely"}
 
 
 async def run(task: str) -> None:
-    """Run the task, and close the pooled connections."""
+    """Run the task, and close the connections."""
     try:
         await TASKS[task]()
     finally:
         await engine.dispose()
+        await web_push.client.aclose()
 
 
 def main() -> None:

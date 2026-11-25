@@ -30,6 +30,13 @@ class Method(StrEnum):
     SMS = "sms"
 
 
+class Push(StrEnum):
+    """A service that a product may send a push through."""
+
+    FCM = "fcm"
+    WEB = "web"
+
+
 class Address(StrEnum):
     """Where a code of the account goes: its email or its phone."""
 

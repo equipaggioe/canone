@@ -16,11 +16,11 @@ Tema pendiente: la plantilla de autenticación se escribe por partes, y cada par
 | Parte 6b, recuperación | Hecha: el código por correo o por SMS, que vincula cualquier autenticador del producto; el código guardado; la espera de 24 horas solo con el correo de una cuenta con passkey, que el titular o un inicio de sesión cancelan y la tarea `recover` aplica; los fallos por camino, y cerrar las demás sesiones a elección del titular, en `plantilla/server/`, `tests/test_recovery.py` y `tests/test_passwords.py` ([ADR-0234](../adr/0234-la-recuperacion-suma-el-codigo-guardado-y-espera-solo-con-el-correo-de-una-cuenta-con-passkey.md)) |
 | Parte 7, gestión de la cuenta | Hecha: ver los intentos fallidos y los autenticadores deshabilitados, volver a habilitarlos, ver las sesiones y cerrar una, borrar la cuenta, y lo que hace un superadministrador sobre otra: verla, deshabilitarla, volver a habilitarla, borrarla, cambiarle el correo o el teléfono y cerrar sus sesiones, en `plantilla/server/`, `tests/test_account.py` y `tests/test_accounts.py` ([ADR-0236](../adr/0236-el-titular-y-el-superadministrador-gestionan-la-cuenta.md)) |
 | Parte 8, el WebSocket | Hecha: el handshake con la cookie o el token, el cierre 4401, el vencimiento y el token nuevo, el cierre de una sesión en todos los procesos, los límites y los mensajes de error, en `plantilla/server/` y `tests/test_websocket.py` ([ADR-0237](../adr/0237-el-websocket-vive-con-su-sesion-y-una-conexion-trabada-guarda-su-lugar.md)) |
+| Parte 9, el push en los avisos | Hecha: registrar el FID y la suscripción de cada sesión, la clave de VAPID, el envío por FCM y por Web Push y los avisos en cada dispositivo, en `plantilla/server/` y `tests/test_push.py` ([ADR-0238](../adr/0238-los-avisos-llegan-por-push-y-el-servidor-envia-el-web-push-sin-seguir-ni-leer-la-respuesta.md)). El Web Push llegó a Chrome, a Firefox y a Edge. No se envió por FCM a un dispositivo: pide la cuenta de servicio de un proyecto |
 | `scripts/verificar.py` | Comprueba las versiones de pwdlib, phonenumbers y `webauthn` (`PYPROJECT`), que son de `stack.md`, y con `--canone`, que `blocklist.txt` salga de la lista del NCSC |
 
 ## Qué falta
 
 | # | Parte | Pruebas que se podrían sumar |
 | :--- | :--- | :--- |
-| 9 | Push en los avisos: FCM, Web Push, y el FID y la suscripción de cada sesión | — |
 | 10 | `verificar.py` compara los archivos de autenticación que se copian sin editar | Después de las partes anteriores, igual que el resto de la plantilla del servidor |

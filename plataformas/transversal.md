@@ -212,15 +212,20 @@ Estándares: [*Pagination*](../fuentes/google-aip/aip-0158.md) y [*Standard meth
 Estándares: la [*Push API*](../fuentes/w3c/push-api.html) de W3C, [RFC 8030](../fuentes/rfc/rfc8030.txt) y [RFC 8292](../fuentes/rfc/rfc8292.txt).
 
 - Android y Flutter reciben push por FCM.
-- Un mensaje de FCM lleva `notification` y, en `data`, la ruta que abre al tocarlo, salvo el de una llamada entrante.
+- Un mensaje de FCM lleva `notification`, con `title` y `body`, y, en `navigate` de `data`, la ruta que abre al tocarlo, salvo el de una llamada entrante.
+- Un mensaje de FCM nombra el canal de Android de su tipo de notificación, y cada app crea los canales de los tipos que recibe: FCM manda al canal del manifiesto el que nombra uno que la app no creó. [FCM](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages)
 - Una llamada entrante llega por un mensaje de FCM solo de datos y de prioridad alta.
 - Un push vence cuando caduca lo que avisa; el de una llamada entrante, cuando deja de sonar.
 - El FID y la suscripción web pertenecen a la sesión: se borran cuando la sesión se cierra o vence.
-- Registrar una suscripción web reemplaza la que tenía la sesión, y registrar la misma otra vez no cambia nada: la web la vuelve a mandar al abrir y cuando el navegador la renueva, y no sabe cuál tenía antes.
+- Una app registra su FID por `PUT /api/account/push/fid`, y la web, su suscripción por `PUT /api/account/push/subscription`. Responden 204, y 403 a la sesión de la otra forma.
+- La app manda su FID al iniciar sesión y, con una sesión abierta, cada vez que el SDK se lo entrega: al arrancar y cuando cambia. [FCM](https://firebase.google.com/docs/cloud-messaging/manage-tokens)
+- Un FID o una suscripción que tenía otra sesión pasa a la que lo registra: es el mismo dispositivo, con otra sesión.
+- Registrar un FID o una suscripción web reemplaza el que tenía la sesión, y registrar el mismo otra vez no cambia nada: la web no sabe cuál tenía antes, y la vuelve a mandar al abrir y cuando el navegador la renueva.
 - La web recibe push con la Push API, sin el SDK de FCM: la CSP queda en `'self'`.
+- La web pide la clave pública de VAPID en `GET /api/account/push/key`.
 - En la web, el push de una llamada entrante lleva `Urgency: high` ([RFC 8030 §5.3](../fuentes/rfc/rfc8030.txt)).
 - El JWT lleva en `sub` un `mailto:` de contacto del producto ([RFC 8292 §2.1](../fuentes/rfc/rfc8292.txt)).
-- Un Web Push es un mensaje declarativo: `web_push` vale 8030, y `notification` lleva `title` y, en `navigate`, la ruta que abre ([Push API, *Declarative push message*](../fuentes/w3c/push-api.html)).
+- Un Web Push es un mensaje declarativo: `web_push` vale 8030, y `notification` lleva `title`, `body` y, en `navigate`, la ruta que abre ([Push API, *Declarative push message*](../fuentes/w3c/push-api.html)).
 - La web le manda al servidor su suscripción como la serializa `toJSON()`: `endpoint`, `expirationTime` y, en `keys`, `p256dh` y `auth` en base64url ([Push API, *PushSubscription interface*](../fuentes/w3c/push-api.html) y [*PushEncryptionKeyName enumeration*](../fuentes/w3c/push-api.html)).
 - Cada Web Push lleva el JWT de VAPID del servidor ([RFC 8292 §2](../fuentes/rfc/rfc8292.txt)).
 - La web se suscribe con `applicationServerKey`, la clave pública de VAPID del servidor: un punto de P-256 sin comprimir, en base64url ([Push API, *PushSubscriptionOptions Interface*](../fuentes/w3c/push-api.html)).
@@ -306,3 +311,8 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | Un mensaje del WebSocket que el servidor no acepta recibe uno de `type` `error` con su problem+json, y la conexión sigue | `test_message_that_is_not_taken_is_an_error`, del servidor |
 | Los esquemas de los mensajes del WebSocket van en `components` del `openapi.json` | `test_messages_are_in_the_openapi`, del servidor |
 | El handshake de una app vieja responde 400 de tipo `client-outdated` | `test_outdated_app_does_not_connect`, del servidor |
+| Un FID o una suscripción reemplaza el de su sesión, deja la otra sesión que lo tenía, y otra vez no cambia nada | `test_registering_replaces_the_one_of_the_session`, `test_device_of_another_session_passes_to_the_new_one`, `test_app_registers_its_fid` y `test_web_registers_its_subscription`, del servidor |
+| El FID es de la sesión de una app y la suscripción, de la web; la otra forma responde 403 | `test_session_of_the_other_form_is_a_403`, del servidor |
+| El FID y la suscripción se borran con su sesión | `test_session_that_ends_forgets_its_device`, del servidor |
+| Un mensaje de FCM lleva `title`, `body`, la ruta en `navigate`, el canal y su vencimiento | `test_fcm_message_names_its_channel_its_route_and_its_expiry`, del servidor |
+| Un Web Push es un mensaje declarativo cifrado para el navegador, con el JWT de VAPID: `aud`, `exp` y `sub` | `test_web_push_is_a_declarative_message_encrypted_and_signed`, del servidor |

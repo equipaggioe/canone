@@ -182,5 +182,5 @@ async def put(session: AsyncSession, principal: Principal, password: str, client
         row.failures, row.retry_at, row.disabled_at = 0, None, None
     changed(session, account, client)
     notice = notices.Notice.PASSWORD_ADDED if row is None else notices.Notice.PASSWORD_CHANGED
-    notices.notify(session, account, notice)
+    await notices.notify(session, account, notice)
     return row is None

@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     domain: str
     # The key of this deployment as a client of Equipaggio.
     equipaggio_key: str
+    # The service account of Firebase; {} without FCM.
+    firebase_credentials: dict[str, str]
     health_token: str
     min_client_versions: dict[str, Annotated[str, StringConstraints(pattern=f"^{VERSION}$")]]
     page_token_key: str
@@ -39,6 +41,8 @@ class Settings(BaseSettings):
     # The SMS hash of each Android app, by the piece of its User-Agent.
     sms_hashes: dict[str, str]
     valkey_url: str
+    # fastapi.md: 32 random bytes, the private key of VAPID.
+    vapid_key: str
 
     @classmethod
     def settings_customise_sources(

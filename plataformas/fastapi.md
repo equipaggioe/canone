@@ -23,6 +23,7 @@ server/
     __init__.py
     main.py
     methods.py
+    push.py
     openapi.py
     config.py
     database.py
@@ -53,6 +54,8 @@ server/
         passkey.py
         password.py
         phone.py
+        push_fid.py
+        push_subscription.py
         recovery.py
         recovery_address.py
         recovery_code.py
@@ -71,7 +74,9 @@ server/
       accounts.py
       auth.py
       authorization.py
+      fcm.py
       health.py
+      web_push.py
       websocket.py
       <recurso>.py
     routers/
@@ -80,12 +85,14 @@ server/
       accounts.py
       auth.py
       authorization.py
+      fcm.py
       health.py
       passkey.py
       password.py
       problems.py
       recovery.py
       sms.py
+      web_push.py
       websocket.py
       <recurso>.py
     services/
@@ -99,6 +106,7 @@ server/
       clients.py
       codes.py
       events.py
+      fcm.py
       files.py
       health.py
       limits.py
@@ -106,10 +114,12 @@ server/
       notices.py
       passkeys.py
       passwords.py
+      push.py
       recovery.py
       registration.py
       sessions.py
       sms.py
+      web_push.py
       websocket.py
       <recurso>.py
     locale/
@@ -131,6 +141,7 @@ server/
     test_methods.py
     test_passkeys.py
     test_passwords.py
+    test_push.py
     test_recovery.py
     test_registration.py
     test_sessions.py
@@ -287,8 +298,8 @@ Estándar: el [*Webhook Security Cheat Sheet*](../fuentes/owasp/Webhook_Security
 ## Envíos al exterior
 
 - Primero la evidencia en la base, después el envío best-effort. Un fallo de entrega no tumba la operación.
-- Un correo o un SMS de una petición se encola con `messages.later` en su sesión, y `get_session` lo envía después del commit, también el de un `KeptError`: una petición que se deshace no envía nada, y un envío que falla va al log con su traceback.
-- El servidor llama a otro servicio, como Nominatim o la API de correo, con un solo `httpx.AsyncClient` para toda la app, salvo FCM y Web Push, que van por sus bibliotecas.
+- Un correo, un SMS o un push de una petición se encola con `messages.later` en su sesión, y `get_session` lo envía después del commit, también el de un `KeptError`: una petición que se deshace no envía nada, y un envío que falla va al log con su traceback.
+- El servidor llama a otro servicio, como Nominatim o la API de correo, con un solo `httpx.AsyncClient` para toda la app, salvo FCM, que va por su biblioteca, y Web Push, que va por aiohttp.
 
 ## Errores
 
@@ -311,7 +322,7 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - El servidor traduce con Babel.
 - Las pruebas leen los catálogos compilados: el job `server` de CI los compila con `pybabel compile` antes de pytest.
 - El `.mo` no se versiona: `release.yml` lo compila del `.po` con `pybabel compile -d src/app/locale` y viaja en el artefacto.
-- El servidor guarda el idioma de `Accept-Language` con el FID de cada instalación de la app, y en el usuario el último elegido, para el correo.
+- El servidor guarda el idioma de `Accept-Language` con el FID de cada instalación de la app y con cada suscripción web, y en el usuario el último elegido, para el correo.
 
 ## Límite de tasa
 
@@ -401,11 +412,18 @@ Estándar: [RFC 8030](../fuentes/rfc/rfc8030.txt).
 
 Contrato: [transversal.md](transversal.md#push).
 
-- El servidor envía a FCM con `messaging.send_each_async` del Admin SDK, con el FID en `fid`.
+- El repositorio declara en `PUSH` de `push.py` por dónde envía: FCM, Web Push, los dos o ninguno. El servidor monta solo las rutas de lo que declara, y envía solo por ahí.
+- La credencial de FCM es `firebase_credentials` de `Settings`, el JSON de la cuenta de servicio en una línea, y `{}` en un despliegue sin FCM. La clave privada de VAPID es `vapid_key`: 32 bytes aleatorios en base64url.
+- La clave pública de VAPID sale de la privada.
+- El `sub` del JWT de VAPID es `contact` de `Settings`, que es un correo.
+- El servidor envía a FCM con `messaging.send_each_async` del Admin SDK, con el FID en `fid`, de a 500 mensajes.
+- El token de Google se renueva solo antes de enviar y en un hilo: la credencial es una `service_account.Credentials` de google-auth, con el alcance `firebase.messaging`, que no se renueva durante el envío. `send_each_async` renueva con una llamada síncrona, que detiene el bucle de eventos hasta que Google responde, un token vencido y, dos veces por mensaje, el que recibe 401. FCM responde 401 también cuando falta la clave de APNs o no vale. [firebase-admin 7.8.0](https://raw.githubusercontent.com/firebase/firebase-admin-python/v7.8.0/firebase_admin/_http_client.py) y [FCM](https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode)
+- Los push de un aviso salen a la vez, y cada uno espera a lo sumo 5 segundos: un endpoint que no responde no retiene la petición.
+- El log de un push que falla lleva el id de la sesión y el estado o el tipo del error, sin traceback: su mensaje puede traer el endpoint, y con él se le puede enviar.
 - Un FID al que FCM responde `UNREGISTERED` se borra: FCM ya no le entrega nada. [FCM](https://firebase.google.com/docs/cloud-messaging/manage-tokens)
-- El servidor envía Web Push con `webpush_async` de pywebpush y una sola `aiohttp.ClientSession` para toda la app: sin ella, cada envío abre una sesión nueva.
-- El endpoint de una suscripción web lo elige el cliente, y el servidor le hace un `POST`. Por eso la suscripción se rechaza con 422 si el host de su endpoint es una dirección IP, y la `ClientSession` de Web Push resuelve cada nombre con un resolver que descarta las direcciones que `ipaddress` no marca como globales y se conecta a la que resolvió: un endpoint no lleva al servidor a su propia red, a la máquina ni a los metadatos del proveedor. aiohttp no pasa por el resolver una dirección IP escrita en la URL. [aiohttp 3.14.5](https://raw.githubusercontent.com/aio-libs/aiohttp/v3.14.5/aiohttp/connector.py)
-- Cada Web Push lleva su TTL: pywebpush manda 0 si no se le da otro, y un aviso con TTL 0 se pierde si el navegador no está en línea. [pywebpush 2.5.0](https://raw.githubusercontent.com/web-push-libs/pywebpush/4a2b66dae1408a19eb2c3f724ef0792f5258e72b/pywebpush/__init__.py)
+- El servidor cifra el Web Push con `WebPusher.encode` de pywebpush, lo firma con `Vapid02` de py-vapid y lo envía con una sola `aiohttp.ClientSession` para toda la app.
+- El endpoint de una suscripción web lo elige el cliente, y el servidor le hace un `POST`. Por eso la `ClientSession` abre cada conexión con un `socket_factory` que rechaza la dirección que `ipaddress` no marca como global, y el servidor no sigue una redirección, no lee el cuerpo de la respuesta ni guarda sus cookies: un endpoint no lleva al servidor a su propia red, a la máquina ni a los metadatos del proveedor, ni le llena la memoria. `webpush_async` sigue la redirección y lee el cuerpo entero, descomprimido. [pywebpush 2.5.0](https://raw.githubusercontent.com/web-push-libs/pywebpush/4a2b66dae1408a19eb2c3f724ef0792f5258e72b/pywebpush/__init__.py)
+- Una suscripción web se rechaza con 422 si `p256dh` no es un punto de P-256 o `auth` no mide 16 bytes.
 - Una suscripción web que responde 410 se borra: el servicio de push de Firefox responde 410 a una suscripción que ya no vale. [autopush](https://raw.githubusercontent.com/mozilla-services/autopush-rs/60841760e34878715780bdc57309a31d1d33fd95/docs/src/errors.md)
 - El TTL de un aviso que no caduca es de 28 días ([RFC 8030 §5.2](../fuentes/rfc/rfc8030.txt)).
 - Una suscripción web se rechaza con 422 si su endpoint no es una URL `https` ([RFC 8030 §8](../fuentes/rfc/rfc8030.txt)).
@@ -577,3 +595,16 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Un mensaje binario cierra la conexión con 1003 | `test_binary_message_is_1003` |
 | Un mensaje que no se acepta deja el evento del cuerpo de una petición | `test_message_that_is_not_taken_is_an_error` |
 | Un mensaje que falla no tumba la app | `test_message_that_fails_is_a_500_and_the_app_goes_on` |
+| Un servicio de push que el producto no declara en `PUSH` no tiene rutas ni recibe envíos | `test_service_the_product_does_not_use_has_no_routes` y `test_push_goes_only_through_the_services_of_the_product` |
+| La clave pública de VAPID sale de `vapid_key` | `test_key_is_the_public_one_of_vapid` |
+| El FID y la suscripción guardan el idioma de `Accept-Language` | `test_app_registers_its_fid` y `test_web_registers_its_subscription` |
+| FCM recibe los mensajes de a 500, con el FID en `fid` | `test_fcm_takes_500_messages_at_once` y `test_fcm_message_names_its_channel_its_route_and_its_expiry` |
+| El token de Google se renueva solo antes de enviar y en un hilo, con el alcance `firebase.messaging` | `test_token_of_google_is_renewed_in_a_thread`, `test_token_of_google_stays_while_it_sends` y `test_token_of_google_is_only_for_fcm` |
+| Un FID que responde `UNREGISTERED` y una suscripción que responde 404 o 410 se borran, si nadie los registró de nuevo | `test_device_that_no_longer_receives_is_deleted` y `test_device_that_registered_again_meanwhile_stays` |
+| Los push salen a la vez y esperan a lo sumo 5 segundos | `test_pushes_go_at_once_and_wait_a_little` y `test_push_waits_5_seconds` |
+| El log de un push que falla no lleva el FID, el endpoint ni las claves, y el fallo no tumba la petición | `test_push_that_fails_goes_to_the_log_and_the_device_stays` y `test_push_that_breaks_does_not_fail_the_request` |
+| Un endpoint solo lleva a direcciones globales | `test_endpoint_does_not_reach_the_machine` y `test_only_a_global_address_is_public` |
+| El envío de un Web Push no sigue una redirección, no lee el cuerpo ni guarda cookies | `test_redirection_is_not_followed_and_the_body_is_not_read` |
+| Los Web Push salen por una sola `ClientSession`, que se cierra con el proceso | `test_client_opens_one_session_and_closes_it` y `test_lifespan_and_tasks_close_the_client` |
+| Una suscripción se rechaza con 422 si su endpoint no es `https`, `p256dh` no es un punto de P-256 o `auth` no mide 16 bytes | `test_subscription_that_is_none_is_a_422` |
+| El TTL de un aviso es de 28 días | `test_notice_reaches_every_device` |

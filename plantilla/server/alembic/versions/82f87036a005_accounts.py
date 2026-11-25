@@ -191,9 +191,29 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["account_id"], ["account.id"], name=op.f("fk_recovery_code_account_id_account"), ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("account_id", name=op.f("pk_recovery_code")),
     )
+    op.create_table(
+        "push_fid",
+        sa.Column("session_id", sa.Uuid(), nullable=False),
+        sa.Column("fid", sa.TEXT(), nullable=False),
+        sa.Column("language", sa.TEXT(), nullable=False),
+        sa.ForeignKeyConstraint(["session_id"], ["account_session.id"], name=op.f("fk_push_fid_session_id_account_session"), ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("session_id", name=op.f("pk_push_fid")),
+        sa.UniqueConstraint("fid", name=op.f("uq_push_fid_fid")),
+    )
+    op.create_table(
+        "push_subscription",
+        sa.Column("session_id", sa.Uuid(), nullable=False),
+        sa.Column("endpoint", sa.TEXT(), nullable=False),
+        sa.Column("p256dh", sa.TEXT(), nullable=False),
+        sa.Column("auth", sa.TEXT(), nullable=False),
+        sa.Column("language", sa.TEXT(), nullable=False),
+        sa.ForeignKeyConstraint(["session_id"], ["account_session.id"], name=op.f("fk_push_subscription_session_id_account_session"), ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("session_id", name=op.f("pk_push_subscription")),
+        sa.UniqueConstraint("endpoint", name=op.f("uq_push_subscription_endpoint")),
+    )
     for statement in PHONE_BOUND:
         op.execute(statement)
-    op.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON account, account_session, passkey, password, phone, recovery, recovery_address, recovery_code TO {ROLE}")
+    op.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON account, account_session, passkey, password, phone, push_fid, push_subscription, recovery, recovery_address, recovery_code TO {ROLE}")
 
 
 def downgrade() -> None:
@@ -201,6 +221,8 @@ def downgrade() -> None:
     op.execute("DROP TRIGGER phone_phone_bound ON phone")
     op.execute("DROP TRIGGER account_phone_bound ON account")
     op.execute("DROP FUNCTION phone_bound()")
+    op.drop_table("push_subscription")
+    op.drop_table("push_fid")
     op.drop_table("recovery_code")
     op.drop_table("recovery_address")
     op.drop_index(op.f("ix_recovery_applies_at"), table_name="recovery")

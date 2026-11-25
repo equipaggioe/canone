@@ -111,7 +111,9 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - El correo se cambia pidiendo el código para el nuevo en `POST /api/account/email/code` y presentándolo en `PUT /api/account/email`, y el teléfono, en `POST /api/account/phone/code` y `PUT /api/account/phone`. Un correo o un teléfono que tiene otra cuenta responde 409.
 - Volver a autenticarse es un paso aparte, con la sesión abierta: `POST /api/auth/reauth/options` lista en `allowCredentials` las passkeys de la cuenta, `POST /api/auth/reauth/sms/code` envía el código al teléfono de la cuenta, o responde 409 si no tiene, y `POST /api/auth/reauth/passkey`, `/reauth/password` y `/reauth/sms` verifican una credencial de la cuenta de la sesión. Renuevan la misma fila, escriben su `authenticated_at` y responden como se presenta la sesión: los tokens nuevos de una app, o la cookie nueva de la web.
 - Una operación que pide volver a autenticarse lo acepta durante 5 minutos desde `authenticated_at`; después responde 403 de tipo `reauthentication-required`.
-- El aviso dice a quién escribir con `contact` de `Settings`, y va en el idioma de la cuenta.
+- El aviso dice a quién escribir con `contact` de `Settings`, y va en el idioma de la cuenta. El push va en el idioma del dispositivo, con el asunto del correo en `title` y su texto en `body`.
+- El push de un aviso abre `/account`, la pantalla de la cuenta en cada cliente, y va por el canal `security` de Android.
+- El push de un aviso va a todas las sesiones vigentes, también a la que hizo el cambio y a las que el cambio cierra.
 - Registrarse no avisa: la passkey se vincula a una cuenta que acaba de nacer.
 - El correo y el teléfono se cambian desde una sesión abierta, con un código enviado al nuevo, y el viejo recibe un aviso.
 - El titular ve en la app cada intento fallido y cada autenticador deshabilitado.
@@ -132,7 +134,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - La pantalla para entrar ofrece primero la passkey, si el producto la usa y el dispositivo la tiene, y luego los demás métodos del producto, entre los que elige el usuario.
 - La app guarda en el dispositivo el último método con que entró, y lo ofrece primero la próxima vez.
 - Una cuenta entra con los métodos del producto: una passkey, una contraseña o un código por SMS ([NIST SP 800-63B-4 §2.1.1](../fuentes/nist/sp800-63b-4.txt)).
-- Las direcciones de aviso son el correo, el teléfono y el push a las apps con sesión abierta ([NIST SP 800-63B-4 §4.6](../fuentes/nist/sp800-63b-4.txt)).
+- Las direcciones de aviso son el correo, el teléfono y el push a cada app y a cada web con sesión abierta ([NIST SP 800-63B-4 §4.6](../fuentes/nist/sp800-63b-4.txt)).
 - Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429 ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - Cada autenticador guarda cuándo se vinculó y cuándo cambió, y cada uno de esos eventos va al registro de eventos con su IP y su user agent ([NIST SP 800-63B-4 §4.1](../fuentes/nist/sp800-63b-4.txt)).
 - Un inicio de sesión exitoso pone en cero los fallos de los autenticadores que usó ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
@@ -158,7 +160,7 @@ Qué métodos puede ofrecer cada pieza en su plataforma:
 | Una app de Flutter o de Flet, en Windows o en macOS | Sí | Sí | Sí |
 | Una app de Flutter o de Flet en Linux, o de Qt | Sí, por el navegador del sistema | Sí | Sí |
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `methods.py`, `models/account/throttled.py`, `schemas/account.py`, `routers/account.py`, `services/authenticators.py`, `services/registration.py`, `services/account.py`, `services/codes.py`, `services/limits.py`, `services/messages.py`, `services/notices.py`, `tests/test_registration.py`, `tests/test_account.py` y `tests/test_methods.py`.
+Plantilla: de [plantilla/server/](../plantilla/server/), `methods.py`, `models/account/throttled.py`, `schemas/account.py`, `routers/account.py`, `services/authenticators.py`, `services/registration.py`, `services/account.py`, `services/codes.py`, `services/limits.py`, `services/messages.py`, `services/notices.py`, `tests/test_registration.py`, `tests/test_account.py` y `tests/test_methods.py`; y los de [Push](fastapi.md#push): `push.py`, `models/account/push_fid.py`, `models/account/push_subscription.py`, `schemas/fcm.py`, `schemas/web_push.py`, `routers/fcm.py`, `routers/web_push.py`, `services/push.py`, `services/fcm.py`, `services/web_push.py` y `tests/test_push.py`.
 
 ## Passkeys
 
@@ -490,3 +492,6 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `handshake` de `depende
 | La conexión de una app vence con el último token de acceso que presentó, en un mensaje `access_token` que el servidor no contesta, aunque la app refresque antes | `test_app_connection_ends_with_its_token` |
 | Un token que no vale o que es de otra sesión cierra con 4401 | `test_token_of_another_session_is_4401` |
 | La conexión de la web vence a los 30 días del último uso de su sesión, y el WebSocket no cuenta como uso | `test_web_connection_ends_30_days_after_the_last_use` |
+| El aviso llega por push a cada sesión vigente, también a la que hizo el cambio y a las que el cambio cierra | `test_notice_reaches_every_device`, `test_disabled_account_hears_it_on_the_devices_it_loses` y `test_push_goes_to_the_live_sessions_of_the_account` |
+| El push de un aviso lleva el asunto y el texto del correo, abre `/account` y va por el canal `security` | `test_notice_reaches_every_device` y `test_content_of_a_notice_is_its_email` |
+| El push va en el idioma del dispositivo | `test_push_goes_in_the_language_of_the_device` |

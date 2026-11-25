@@ -1,4 +1,4 @@
-"""The notices to the holder of an account, by email and by SMS."""
+"""The notices to the holder of an account, to every address."""
 
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
@@ -9,11 +9,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.models.account.account import Account
-from app.services import messages
+from app.services import messages, push
+from app.services.fcm import Content
 from app.translations import catalog
 
 # fastapi.md, «Push»: the lifetime of a notice that does not expire.
 LIFETIME = timedelta(days=28)
+# autenticacion.md: what a push opens, and its channel of Android.
+PAGE = "/account"
+CHANNEL = "security"
 
 
 class Notice(StrEnum):
@@ -110,7 +114,15 @@ TEXTS = {
 }
 
 
-def notify(
+def content(language: str, notice: Notice, name: str) -> Content:
+    """Write a notice in a language, as its push."""
+    t = catalog(language).gettext
+    subject, body = TEXTS[notice]
+    text = t(body).format(name=name, contact=settings.contact)
+    return Content(t(subject), text, PAGE, CHANNEL, LIFETIME)
+
+
+async def notify(
     session: AsyncSession,
     account: Account,
     notice: Notice,
@@ -122,9 +134,8 @@ def notify(
 
     The previous email or phone of a change is notified too.
     """
-    t = catalog(account.language).gettext
-    subject, body = TEXTS[notice]
-    text = t(body).format(name=name, contact=settings.contact)
+    written = content(account.language, notice, name)
+    text = written.body
     expires = datetime.now(UTC) + LIFETIME
     addresses = {account.email, account.phone, previous} - {None}
     for address in sorted(address for address in addresses if address is not None):
@@ -132,5 +143,6 @@ def notify(
             messages.later(session, partial(messages.sms, address, text, expires))
         else:
             html = f"<p>{escape(text)}</p>"
-            send = partial(messages.email, address, t(subject), text, html, expires)
+            send = partial(messages.email, address, written.title, text, html, expires)
             messages.later(session, send)
+    await push.later(session, account.id, partial(content, notice=notice, name=name))

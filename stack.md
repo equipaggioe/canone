@@ -64,6 +64,8 @@ Página: [fastapi.md](plataformas/fastapi.md).
 | pywebpush | 2.5.0 | [Push](plataformas/fastapi.md#push) |
 | aiohttp | 3.14.5 | [Push](plataformas/fastapi.md#push) |
 | firebase-admin | 7.8.0 | [Push](plataformas/fastapi.md#push) |
+| google-auth | 2.63.1 | [Push](plataformas/fastapi.md#push) |
+| py-vapid | 1.9.6 | [Push](plataformas/fastapi.md#push) |
 | stripe, con el extra `async`, con Stripe | 17.1.0 | [Pagos](plataformas/fastapi.md#pagos) |
 | OpenTelemetry | 1.45.2 | [Trazas](plataformas/fastapi.md#trazas) |
 | AnyIO | 4.16.0 | [Pruebas](plataformas/fastapi.md#pruebas) |

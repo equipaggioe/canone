@@ -102,6 +102,8 @@ async def disable(
     """
     if target.disabled_at is not None:
         return
+    # Before its sessions end: their devices hear it too.
+    await notices.notify(session, target, notices.Notice.ACCOUNT_DISABLED)
     target.disabled_at = datetime.now(UTC)
     for model in LOST:
         await session.execute(sa.delete(model).where(model.account_id == target.id))
@@ -109,7 +111,6 @@ async def disable(
     await sessions.close_where(session, closed, client, "account_disabled")
     session.add(changed("user_archived", EventLevel.WARN, principal, client, target))
     admin_event(session, principal, client, "user_archived", ("account", str(target.id)))
-    notices.notify(session, target, notices.Notice.ACCOUNT_DISABLED)
 
 
 async def enable(
@@ -163,7 +164,7 @@ async def set_address(
     row.details = events.changes("account", {kind.value: value})
     session.add(row)
     admin_event(session, principal, client, "user_updated", ("account", str(target.id)))
-    notices.notify(session, target, notice, previous=previous)
+    await notices.notify(session, target, notice, previous=previous)
 
 
 async def close_sessions(

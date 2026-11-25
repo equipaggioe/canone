@@ -9,23 +9,27 @@ from fastapi.routing import APIRoute
 from app import errors, ijson, store, tracing
 from app.database import engine
 from app.dependencies import check_client_version, check_origin, deny_by_default
-from app.enums import EventLevel, Method
+from app.enums import EventLevel, Method, Push
 from app.methods import METHODS
+from app.push import PUSH
 from app.routers import (
     account,
     accounts,
     auth,
     authorization,
+    fcm,
     health,
     passkey,
     password,
     problems,
     recovery,
     sms,
+    web_push,
     websocket,
 )
 from app.schemas.websocket import CLIENT, SERVER
 from app.services import events, messages
+from app.services import web_push as web_push_service
 
 
 def operation_id(route: APIRoute) -> str:
@@ -45,10 +49,14 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
         await engine.dispose()
         await store.client.aclose()
         await messages.client.aclose()
+        await web_push_service.client.aclose()
 
 
-def api_router(methods: frozenset[Method]) -> APIRouter:
-    """Mount the routers of /api: a method if the product has it."""
+def api_router(methods: frozenset[Method], push: frozenset[Push]) -> APIRouter:
+    """Mount the routers of /api: a method if the product has it.
+
+    So with each service of push.
+    """
     api = APIRouter(
         prefix="/api",
         dependencies=[
@@ -78,6 +86,10 @@ def api_router(methods: frozenset[Method]) -> APIRouter:
     # A recovery restores a passkey or a password.
     if methods & {Method.PASSKEY, Method.PASSWORD}:
         api.include_router(recovery.router)
+    if Push.FCM in push:
+        api.include_router(fcm.router)
+    if Push.WEB in push:
+        api.include_router(web_push.router)
     return api
 
 
@@ -97,4 +109,4 @@ app.openapi = errors.with_schemas(  # pyrefly: ignore[method-assign]
 )
 ijson.install(app)
 tracing.install()
-app.include_router(api_router(METHODS))
+app.include_router(api_router(METHODS, PUSH))

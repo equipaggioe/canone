@@ -260,7 +260,7 @@ async def create_saved(
     row = await session.get(RecoveryCode, account.id, with_for_update=True)
     code, new = await replace_saved(session, account, row)
     session.add(event("sensitive_create", EventLevel.INFO, client, account, kind="saved_code"))
-    notices.notify(session, account, notices.Notice.RECOVERY_CODE_CREATED)
+    await notices.notify(session, account, notices.Notice.RECOVERY_CODE_CREATED)
     return code, new
 
 
@@ -327,13 +327,13 @@ async def settle(
         await session.execute(sa.delete(Recovery).where(Recovery.account_id == account.id))
         session.add(pend(account, address, password, created, name))
         session.add(event("sensitive_create", EventLevel.WARN, client, account, address=address))
-        notices.notify(session, account, notices.Notice.RECOVERY_PENDING)
+        await notices.notify(session, account, notices.Notice.RECOVERY_PENDING)
         return Outcome(pending=True, recovery_code=None)
     if password is not None:
         await apply_password(session, account, password, client)
     if created is not None and name is not None:
         attestation.keep(session, account, created, name, uuid4(), client)
-    notices.notify(session, account, notices.Notice.RECOVERED)
+    await notices.notify(session, account, notices.Notice.RECOVERED)
     return Outcome(pending=False, recovery_code=replaced)
 
 
@@ -460,7 +460,7 @@ async def apply(session: AsyncSession, row: Recovery, client: Client) -> None:
             return
         name, created = waiting_passkey(row, account)
         attestation.keep(session, account, created, name, uuid4(), client)
-    notices.notify(session, account, notices.Notice.RECOVERED)
+    await notices.notify(session, account, notices.Notice.RECOVERED)
 
 
 async def apply_due() -> None:

@@ -171,4 +171,4 @@ async def enable(session: AsyncSession, account: Account, client: Client) -> Non
             user_agent=client.user_agent,
         )
     )
-    notices.notify(session, account, notices.Notice.PHONE_ENABLED)
+    await notices.notify(session, account, notices.Notice.PHONE_ENABLED)

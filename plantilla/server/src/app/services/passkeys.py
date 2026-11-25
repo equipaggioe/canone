@@ -206,7 +206,7 @@ def verify(
     return new, verified.credential_backed_up, verified.user_verified
 
 
-def fail(
+async def fail(
     session: AsyncSession,
     client: Client,
     passkey: Passkey,
@@ -225,7 +225,7 @@ def fail(
             event("authn_login_lock", EventLevel.WARN, client, passkey, {"reason": "failures"})
         )
     if refused.details["reason"] == "sign_count":
-        notices.notify(session, account, notices.Notice.PASSKEY_CLONED, name=passkey.name)
+        await notices.notify(session, account, notices.Notice.PASSKEY_CLONED, name=passkey.name)
     return KeptError(HTTPException(HTTPStatus.UNAUTHORIZED))
 
 
@@ -257,7 +257,7 @@ async def check(session: AsyncSession, credential: PasskeyCredential, client: Cl
         check_authenticator(credential, passkey, account)
         sign_count, backed_up, user_verified = verify(credential, challenge, passkey)
     except Refused as refused:
-        raise fail(session, client, passkey, account, refused, now) from refused
+        raise await fail(session, client, passkey, account, refused, now) from refused
     if account.role == Role.SUPERADMIN and not user_verified:
         # The signature is valid: whoever presents it holds the passkey.
         details: dict[str, object] = {"reason": "user_verification"}

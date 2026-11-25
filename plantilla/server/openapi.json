@@ -4125,6 +4125,228 @@
           }
         }
       }
+    },
+    "/api/account/push/fid": {
+      "put": {
+        "tags": [
+          "push"
+        ],
+        "summary": "Put Fid",
+        "description": "Send the pushes of the session to this installation.",
+        "operationId": "pushPutFid",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FidRegistration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/push/key": {
+      "get": {
+        "tags": [
+          "push"
+        ],
+        "summary": "Get Key",
+        "description": "Return the key that the web subscribes with.",
+        "operationId": "pushGetKey",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushKey"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/push/subscription": {
+      "put": {
+        "tags": [
+          "push"
+        ],
+        "summary": "Put Subscription",
+        "description": "Send the pushes of the session to this browser.",
+        "operationId": "pushPutSubscription",
+        "security": [
+          {
+            "HTTPBearer": []
+          },
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user-agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "User-Agent"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionRegistration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblem"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -4572,6 +4794,22 @@
         ],
         "title": "FailureView",
         "description": "A failed attempt on the account, from where it came."
+      },
+      "FidRegistration": {
+        "properties": {
+          "fid": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{22}$",
+            "title": "Fid"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "fid"
+        ],
+        "title": "FidRegistration",
+        "description": "The Firebase installation ID of the app of the session."
       },
       "HealthEvents": {
         "properties": {
@@ -5444,6 +5682,21 @@
         "title": "PhoneView",
         "description": "The phone of the account, as the authenticator of its code."
       },
+      "PushKey": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "title": "PushKey",
+        "description": "The public key of VAPID, the applicationServerKey."
+      },
       "RecoveryCodeView": {
         "properties": {
           "recoveryCode": {
@@ -5746,6 +5999,62 @@
         ],
         "title": "SmsReauth",
         "description": "The code that the SMS brought to the phone of the account."
+      },
+      "SubscriptionKeys": {
+        "properties": {
+          "p256dh": {
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "P256Dh"
+          },
+          "auth": {
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Auth"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "p256dh",
+          "auth"
+        ],
+        "title": "SubscriptionKeys",
+        "description": "The keys that encrypt a push for the browser."
+      },
+      "SubscriptionRegistration": {
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^https://[!-~]+$",
+            "title": "Endpoint"
+          },
+          "expirationTime": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expirationtime"
+          },
+          "keys": {
+            "$ref": "#/components/schemas/SubscriptionKeys"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "endpoint",
+          "keys"
+        ],
+        "title": "SubscriptionRegistration",
+        "description": "The subscription of the browser of the session."
       },
       "TokenError": {
         "properties": {

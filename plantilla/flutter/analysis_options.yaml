@@ -6,6 +6,7 @@ analyzer:
     - android/**
     - ios/**
     - lib/data/services/api/**
+    - lib/l10n/app_localizations*.dart
   language:
     strict-casts: true
     strict-inference: true

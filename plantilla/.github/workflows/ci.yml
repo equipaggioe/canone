@@ -251,14 +251,13 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.47.9
+          flutter-version: 3.50.1
       - run: flutter pub get
       - run: dart run dependency_validator
       # plataformas/flutter.md: generated code is not committed, and riverpod_generator ignores page_width.
       - run: dart format --output=none --set-exit-if-changed lib test
       - run: dart run swagger_parser
       - run: dart run build_runner build --delete-conflicting-outputs
-      # plataformas/flutter.md: flutter analyze does not run analyzer plugins such as riverpod_lint.
       - run: dart analyze --fatal-infos
       - run: flutter test
 
@@ -274,7 +273,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.47.9
+          flutter-version: 3.50.1
       - run: flutter pub get
       - run: dart run swagger_parser
       - run: dart run build_runner build --delete-conflicting-outputs

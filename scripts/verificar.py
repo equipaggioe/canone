@@ -848,7 +848,7 @@ def tope(version: str) -> str:
 PYPROJECT = {
     "autenticacion.md": pypi(STACK["Autenticación"]),
     "fastapi.md": pypi(STACK["FastAPI"]),
-    "flet.md": pypi(menos("Flet", "Pydantic", "Inno Setup", "appimagetool", "smart_auth")),
+    "flet.md": pypi(menos("Flet", "Flutter", "Pydantic", "Inno Setup", "appimagetool", "smart_auth")),
     "postgres.md": pypi(menos("PostgreSQL", "PostgreSQL", "PostGIS")),
     "python.md": pypi(menos("Python", "Python", "uv")),
     "qt.md": pypi(STACK["Qt"]),
@@ -880,13 +880,11 @@ EXACTOS = {"flutter_riverpod", "riverpod_annotation", "riverpod_generator"}
 CONTENEDOR = "El contenedor "
 ACCIONES = {fila: version for fila, version in CI.items() if not fila.startswith(CONTENEDOR)}
 CONTENEDORES = {fila.removeprefix(CONTENEDOR): version for fila, version in CI.items() if fila.startswith(CONTENEDOR)}
-# La versión de cada acción la exigen las páginas que la usan: Flet construye con el Flutter de
-# Flutter.
+# La versión de cada acción la exigen las páginas que la usan.
 ENTRADAS = {
     "actions/setup-java": ({"android.md", "java.md"}, "java-version", ANDROID["JDK"]),
     "actions/setup-node": ({"sveltekit.md"}, "node-version", SVELTEKIT["Node"]),
     "actions/setup-python": ({"python.md"}, "python-version", STACK["Python"]["Python"]),
-    "subosito/flutter-action": ({"flutter.md", "flet.md"}, "flutter-version", FLUTTER["Flutter"]),
 }
 # plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de la Pydantic del
 # bloque de Python de stack.md.
@@ -1030,8 +1028,20 @@ def versiones_programas() -> list[str]:
     return fallas
 
 
+def flutters(repo: Path) -> set[str]:
+    """Devuelve el Flutter de cada tipo de pieza del repositorio: Flet construye con el que pide."""
+    versiones = set()
+    if repo == PLANTILLA or any(repo.glob("*/pubspec.yaml")):
+        versiones.add(FLUTTER["Flutter"])
+    for pyproject in repo.glob("*/pyproject.toml"):
+        if "flet" in tomllib.loads(pyproject.read_text(encoding="utf-8")).get("tool", {}):
+            versiones.add(STACK["Flet"]["Flutter"])
+    return versiones
+
+
 def versiones_workflows(repo: Path, paginas: set[str]) -> list[str]:
     fallas = []
+    esperados = flutters(repo)
     for ruta in sorted((repo / ".github/workflows").glob("*.yml")):
         relativo = ruta.relative_to(repo).as_posix()
         texto = ruta.read_text(encoding="utf-8")
@@ -1044,6 +1054,9 @@ def versiones_workflows(repo: Path, paginas: set[str]) -> list[str]:
             valores = re.findall(rf"{entrada}:\s*[\"']?([^\"'\s]+)", texto)
             if exigen & paginas and accion in usadas and set(valores) != {version}:
                 fallas.append(f"stack.md: {relativo} no declara {entrada} {version}")
+        valores = set(re.findall(r"flutter-version:\s*[\"']?([^\"'\s]+)", texto))
+        if esperados and "subosito/flutter-action" in usadas and valores != esperados:
+            fallas.append(f"stack.md: {relativo} no declara flutter-version {' y '.join(sorted(esperados))}")
         for contenedor, etiqueta in re.findall(r"\b(?:image|container):\s*[\"']?([\w./-]+):([\w.-]+)", texto):
             esperada = CONTENEDORES.get(contenedor, etiqueta)
             if etiqueta != esperada:

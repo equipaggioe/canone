@@ -11,7 +11,7 @@ Qué se usa en cada plataforma y en qué versión. Es el único lugar donde se f
 ## Qué entra
 
 - Entra lo que una pieza declara en su manifiesto, con sus extras, o instala, con su versión.
-- Lo que una pieza usa, pero cuya versión fija otra tecnología, entra con una nota que dice cuál, como «3.13.7, el de Flutter 3.47.9» o «0.28.1, la que fija firebase-admin»: su versión no se elige, se sigue.
+- Lo que una pieza usa, pero cuya versión fija otra tecnología, entra con una nota que dice cuál, como «3.14.0, el de Flutter 3.50.1» o «0.28.1, la que fija firebase-admin»: su versión no se elige, se sigue.
 - Todo paquete que importa el código de una pieza está declarado en su manifiesto, aunque otro paquete ya lo traiga: un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia.
 - Toda dependencia declarada se usa. Lo que llega dentro de otro paquete y el código no importa no entra ni se nombra en ningún lado.
 
@@ -60,7 +60,7 @@ Página: [fastapi.md](plataformas/fastapi.md).
 | Pillow | 13.0.0 | [Archivos](plataformas/fastapi.md#archivos) |
 | python-multipart | 0.0.34 | [Archivos](plataformas/fastapi.md#archivos) |
 | Babel | 2.19.0 | [Idiomas](plataformas/fastapi.md#idiomas) |
-| cryptography | 50.0.2 | [Paginación](plataformas/fastapi.md#paginación) |
+| cryptography | 50.0.2 | [Paginación](plataformas/fastapi.md#paginación) y [Push](plataformas/fastapi.md#push) |
 | pywebpush | 2.5.0 | [Push](plataformas/fastapi.md#push) |
 | aiohttp | 3.14.5 | [Push](plataformas/fastapi.md#push) |
 | firebase-admin | 7.8.0 | [Push](plataformas/fastapi.md#push) |
@@ -164,8 +164,8 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP, Kotlin y, en `packag
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
-| Flutter | 3.47.9 | — |
-| Dart | 3.13.7, el de Flutter 3.47.9 | [Proyecto](plataformas/flutter.md#proyecto) |
+| Flutter | 3.50.1 | — |
+| Dart | 3.14.0, el de Flutter 3.50.1 | [Proyecto](plataformas/flutter.md#proyecto) |
 | flutter_riverpod | 3.5.0 | [Estado](plataformas/flutter.md#estado) |
 | riverpod_annotation | 4.0.8 | [Estado](plataformas/flutter.md#estado) |
 | riverpod_generator | 4.0.10 | [Estado](plataformas/flutter.md#estado) |
@@ -190,7 +190,8 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP, Kotlin y, en `packag
 | flutter_webrtc | 1.6.3 | [Llamadas de voz y video](plataformas/flutter.md#llamadas-de-voz-y-video) |
 | firebase_core | 5.2.0 | — |
 | firebase_messaging | 17.1.0 | [Push](plataformas/flutter.md#push) |
-| flutter_localizations | el de Flutter 3.47.9 | — |
+| material_ui | 1.11.1 | [Tema](plataformas/flutter.md#tema) e [Idiomas](plataformas/flutter.md#idiomas) |
+| flutter_localizations | el de Flutter 3.50.1 | — |
 | intl | 0.20.3 | — |
 | uuid | 4.6.0 | — |
 | package_info_plus | 10.2.2 | [Versión mínima de cliente](plataformas/flutter.md#versión-mínima-de-cliente) |
@@ -246,11 +247,12 @@ Página: [android.md](plataformas/android.md).
 
 ## Flet
 
-Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python). Flutter es el de [Flutter](#flutter), y en `packages/passkey/`, `androidx.credentials` es el de [Android](#android).
+Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y en `packages/passkey/`, `androidx.credentials` es el de [Android](#android).
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | Flet, con los extras `cli` y `test` en `dev` | 1.1.3 | — |
+| Flutter, en lugar de la de [Flutter](#flutter) | 3.47.9, la que pide Flet 1.1.3 | [Proyecto](plataformas/flet.md#proyecto) |
 | flet-secure-storage | 1.1.3 | [Almacenamiento](plataformas/flet.md#almacenamiento) |
 | smart_auth, en `packages/sms/` | 4.0.0 | [Código por SMS](plataformas/flet.md#código-por-sms) |
 | httpx-ws | 0.10.0 | [WebSocket](plataformas/flet.md#websocket) |

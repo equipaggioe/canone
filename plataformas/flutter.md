@@ -5,7 +5,6 @@ Una app en Flutter.
 ## Proyecto
 
 - La app es para Android y para iOS, y para escritorio y la web si el repositorio lo elige.
-- Flutter es la 3.47 y no la 3.50: la 3.50 declara obsoleto `package:flutter/material.dart`, y `dart analyze --fatal-infos` falla hasta que la app pase a material_ui, que no está en [stack.md](../stack.md#flutter). [Flutter 3.50.1](https://raw.githubusercontent.com/flutter/flutter/3.50.1/packages/flutter/lib/material.dart)
 - `pubspec.yaml` declara exactos flutter_riverpod y riverpod_annotation, y en `dev_dependencies`, riverpod_generator: las mutations de Riverpod son experimentales y pueden cambiar sin una versión mayor. [Riverpod 3.5.0](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/mutations.mdx)
 - Las demás dependencias van exactas o con `^`.
 - CI corre `dart run dependency_validator`, que falla con un paquete importado sin declarar o una dependencia que no se usa ([stack.md](../stack.md#qué-entra)). `pubspec.yaml` lleva `dependency_validator:` con `allow_pins: true`: sin él, también falla con cada versión exacta, y las de Riverpod lo son.
@@ -13,7 +12,8 @@ Una app en Flutter.
 - Gradle, AGP y Kotlin son los de Android en [stack.md](../stack.md#android), con su `gradle-wrapper.properties` en `android/gradle/wrapper/`. AGP y Kotlin se declaran en `android/settings.gradle.kts`.
 - Lo que genera build_runner, `*.g.dart` y `*.freezed.dart`, y lo que genera swagger_parser, en `lib/data/services/api/`, no se versiona, y CI revisa el formato antes de generarlo: riverpod_generator no escribe con líneas de 99.
 - `analysis_options.yaml` excluye del análisis `lib/data/services/api/`: lo que genera swagger_parser no pasa las reglas de «Nombres» ni de «Estilo».
-- `analysis_options.yaml` excluye del análisis `build/`, `android/` e `ios/`: si falta la exclusión, `flutter pub get` y `flutter analyze` la agregan, y la copia deja de ser la canónica. [Flutter 3.47.9](https://raw.githubusercontent.com/flutter/flutter/3.47.9/packages/flutter_tools/lib/src/migrations/analysis_options_migration.dart)
+- `analysis_options.yaml` excluye del análisis `lib/l10n/app_localizations*.dart`: lo que genera `gen-l10n` usa los delegados de flutter_localizations, obsoletos en Flutter 3.50.
+- `analysis_options.yaml` excluye del análisis `build/`, `android/` e `ios/`: si falta la exclusión, `flutter pub get` y `flutter analyze` la agregan, y la copia deja de ser la canónica. [Flutter 3.50.1](https://raw.githubusercontent.com/flutter/flutter/3.50.1/packages/flutter_tools/lib/src/migrations/analysis_options_migration.dart)
 
 ```text
 <pieza>/
@@ -70,7 +70,7 @@ Plantilla: [plantilla/flutter/](../plantilla/flutter/): `analysis_options.yaml`,
 
 Estándares: de Effective Dart, [*Style*](../fuentes/dart/effective-dart-style.md) y [*Usage*](../fuentes/dart/effective-dart-usage.md).
 
-- El analizador incluye la [lista de flutter_lints](https://raw.githubusercontent.com/flutter/packages/flutter_lints-v6.0.0/packages/flutter_lints/lib/flutter.yaml), y CI corre `dart analyze --fatal-infos`: un aviso de nivel info también rompe CI, y `flutter analyze` no corre los plugins del analizador, como riverpod_lint.
+- El analizador incluye la [lista de flutter_lints](https://raw.githubusercontent.com/flutter/packages/flutter_lints-v6.0.0/packages/flutter_lints/lib/flutter.yaml), y CI corre `dart analyze --fatal-infos`: un aviso de nivel info también rompe CI.
 - Las líneas tienen hasta 99 caracteres, el `page_width` de `dart format`, salvo una URI o una ruta dentro de un comentario o de una cadena, y una cadena de varias líneas: es el ancho de las páginas de Python y de SvelteKit.
 - El código cumple *DO follow a consistent rule for `var` and `final` on local variables* con `final` en toda variable local que no se reasigna, también la de un `for`-`in` y la de un patrón, y `var` en la que se reasigna ([Usage, *DO follow a consistent rule for `var` and `final` on local variables*](../fuentes/dart/effective-dart-usage.md)).
 - El código cumple *PREFER using interpolation to compose strings and values*, *AVOID using curly braces in interpolation when not needed* y *AVOID using `Iterable.forEach()` with a function literal* ([Usage, *PREFER using interpolation to compose strings and values*](../fuentes/dart/effective-dart-usage.md), [*AVOID using curly braces in interpolation when not needed*](../fuentes/dart/effective-dart-usage.md) y [*AVOID using `Iterable.forEach()` with a function literal*](../fuentes/dart/effective-dart-usage.md)).
@@ -248,7 +248,7 @@ Estándares: de Riverpod, [*DO/DON'T*](../fuentes/riverpod/do_dont.mdx), [*Provi
 
 Contrato: [transversal.md](transversal.md#accesibilidad).
 
-- Cada pantalla tiene una prueba de widget con `androidTapTargetGuideline`, `labeledTapTargetGuideline` y una subclase de `MinimumTextContrastGuideline` cuyo `targetContrastRatio` devuelve 4.5: `textContrastGuideline` acepta 3:1 en el texto grande, y la subclase conserva su exención del texto de un componente inactivo. La guía de iOS pide 44 × 44, menos que la de Android. [Flutter 3.47.9](https://raw.githubusercontent.com/flutter/flutter/3.47.9/packages/flutter_test/lib/src/accessibility.dart)
+- Cada pantalla tiene una prueba de widget con `androidTapTargetGuideline`, `labeledTapTargetGuideline` y una subclase de `MinimumTextContrastGuideline` cuyo `targetContrastRatio` devuelve 4.5: `textContrastGuideline` acepta 3:1 en el texto grande, y la subclase conserva su exención del texto de un componente inactivo. La guía de iOS pide 44 × 44, menos que la de Android. [Flutter 3.50.1](https://raw.githubusercontent.com/flutter/flutter/3.50.1/packages/flutter_test/lib/src/accessibility.dart)
 
 ## Almacenamiento
 
@@ -277,7 +277,7 @@ Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
 
 Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
-- Los campos para entrar y para elegir una contraseña van en un `AutofillGroup`, y los gestores de contraseñas los completan por sus `autofillHints`: al entrar, `AutofillHints.username` en el del correo o el teléfono y `AutofillHints.password` en el de la contraseña, y al elegir una contraseña, `AutofillHints.newPassword`. [Flutter 3.47.9](https://github.com/flutter/flutter/blob/3.47.9/packages/flutter/lib/src/widgets/autofill.dart)
+- Los campos para entrar y para elegir una contraseña van en un `AutofillGroup`, y los gestores de contraseñas los completan por sus `autofillHints`: al entrar, `AutofillHints.username` en el del correo o el teléfono y `AutofillHints.password` en el de la contraseña, y al elegir una contraseña, `AutofillHints.newPassword`. [Flutter 3.50.1](https://github.com/flutter/flutter/blob/3.50.1/packages/flutter/lib/src/widgets/autofill.dart)
 
 ## Errores
 
@@ -289,7 +289,7 @@ Contrato: [transversal.md](transversal.md#errores).
 
 Contrato: [transversal.md](transversal.md#fechas).
 
-- Un `DateTime` que va al servidor está en UTC: `toIso8601String()` escribe una hora local sin su desfase. [Dart 3.13.7](https://raw.githubusercontent.com/dart-lang/sdk/3.13.7/sdk/lib/core/date_time.dart)
+- Un `DateTime` que va al servidor está en UTC: `toIso8601String()` escribe una hora local sin su desfase. [Dart 3.14.0](https://raw.githubusercontent.com/dart-lang/sdk/3.14.0/sdk/lib/core/date_time.dart)
 
 ## Idiomas
 
@@ -297,8 +297,9 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 - Lo que genera `gen-l10n`, `lib/l10n/app_localizations*.dart`, no se versiona.
 - Los textos van en archivos ARB de `lib/l10n/`, y la plantilla es `app_es.arb`, la del idioma base: `l10n.yaml` lleva `template-arb-file: app_es.arb`.
+- `localizationsDelegates` de `MaterialApp` lleva `AppLocalizations.delegate` y los de `GlobalMaterialLocalizations.delegates`, de material_ui, y no `AppLocalizations.localizationsDelegates`: con la lista que genera `gen-l10n`, la de flutter_localizations, un widget de material_ui no encuentra sus textos en español y falla. [material_ui 1.11.1](https://raw.githubusercontent.com/flutter/packages/material_ui-v1.11.1/packages/material_ui/README.md)
 - Un `Locale` se crea con `Locale.fromSubtags`, que admite el script.
-- El usuario elige el idioma de la app en los ajustes del sistema, y Flutter lo recibe como el de la configuración de la app. [Flutter 3.47.9](https://raw.githubusercontent.com/flutter/flutter/3.47.9/engine/src/flutter/shell/platform/android/io/flutter/plugin/localization/LocalizationPlugin.java)
+- El usuario elige el idioma de la app en los ajustes del sistema, y Flutter lo recibe como el de la configuración de la app. [Flutter 3.50.1](https://raw.githubusercontent.com/flutter/flutter/3.50.1/engine/src/flutter/shell/platform/android/io/flutter/plugin/localization/LocalizationPlugin.java)
 - En Android, `res/xml/locales_config.xml` lista los idiomas de los ARB, y el manifiesto lo declara en `android:localeConfig`. Va escrito a mano: AGP arma el suyo con las carpetas `res/values-<idioma>/`, y los textos de la app están en los ARB. [Per-app language preferences](https://developer.android.com/guide/topics/resources/app-languages)
 - En iOS, el proyecto de Xcode declara en *Localizations* los idiomas de los ARB: la App Store los toma de ahí. [Internationalizing Flutter apps](https://raw.githubusercontent.com/flutter/website/5aa5d3cfa2c41558b22516125c73d7a5efc4ce15/sites/docs/src/content/ui/internationalization/index.md)
 - `Accept-Language` lleva el idioma con que la app muestra sus textos, el que `MaterialApp` resuelve entre sus `supportedLocales`, y lo pone el `http.Client` de la app.
@@ -372,6 +373,7 @@ Contrato: [autenticacion.md](autenticacion.md#sesión).
 
 Contrato: [transversal.md](transversal.md#tema).
 
+- Los widgets y el tema de Material son los de material_ui, y no los de `package:flutter/material.dart`.
 - `theme` usa el esquema del `ColorTheme` elegido, generado en `ui/core/themes/colors.dart`: `light`, o `dark` si el producto solo tiene ese modo. Con los dos modos, `darkTheme` usa `dark` y `themeMode` sale de la elección del usuario. Las elecciones se guardan con `SharedPreferencesAsync`: `ColorTheme.initial` y `ThemeMode.system` mientras no elija otras.
 - Con custom colors, el `extensions` de cada `ThemeData` lleva el `CustomColors` de su modo, `lightCustom` o `darkCustom`.
 - Los tamaños van en `ui/core/themes/`, sin tamaños literales fuera de él.
@@ -380,7 +382,7 @@ Contrato: [transversal.md](transversal.md#tema).
 
 Contrato: [transversal.md](transversal.md#versión-mínima-de-cliente).
 
-- El `http.Client` de la app pone el `User-Agent` de pieza en cada petición: sin él, `dart:io` manda `Dart/<versión> (dart:io)`. [Dart 3.13.7](https://raw.githubusercontent.com/dart-lang/sdk/3.13.7/sdk/lib/_http/http.dart)
+- El `http.Client` de la app pone el `User-Agent` de pieza en cada petición: sin él, `dart:io` manda `Dart/<versión> (dart:io)`. [Dart 3.14.0](https://raw.githubusercontent.com/dart-lang/sdk/3.14.0/sdk/lib/_http/http.dart)
 - La versión del `User-Agent` sale de `PackageInfo.fromPlatform()`, de package_info_plus: la versión vive solo en `pubspec.yaml`.
 
 ## WebSocket
@@ -412,6 +414,7 @@ Contrato: [transversal.md](transversal.md#distribución).
 
 | Convención | Herramienta |
 | :--- | :--- |
+| Material de material_ui | `deprecated_member_use` de `dart analyze --fatal-infos` en CI |
 | `analysis_options.yaml` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
 | La lista de flutter_lints, riverpod_lint y los tipos estrictos | `dart analyze --fatal-infos` en CI |
 | Las versiones exactas de Riverpod | [scripts/verificar.py](../scripts/verificar.py) |

@@ -2,7 +2,8 @@
 
 - **Estado:** Aceptada. El usuario pidió el 2026-11-25 reevaluar cada razón por la que una versión no
   sube, según describa o no las versiones actuales, y registrarla, y confirmó el punto
-  10, que se eligió al implementar
+  10, que se eligió al implementar. El punto 3 lo reemplaza el
+  [ADR-0246](0246-flutter-pasa-a-la-3-50-con-material-ui.md)
 - **Fecha:** 2026-11-25
 - **Alcance:** [`stack.md`](../stack.md), [`plataformas/README.md`](../plataformas/README.md),
   [`flutter.md`](../plataformas/flutter.md), [`flet.md`](../plataformas/flet.md),

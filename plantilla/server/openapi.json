@@ -6003,15 +6003,7 @@
             "type": "string"
           },
           "data": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ValidationProblem"
-              },
-              {
-                "$ref": "#/components/schemas/Problem"
-              }
-            ],
-            "title": "Data"
+            "$ref": "#/components/schemas/MessageProblem"
           }
         },
         "required": [
@@ -6019,6 +6011,62 @@
           "data"
         ],
         "title": "ErrorMessage",
+        "type": "object"
+      },
+      "MessageProblem": {
+        "description": "The problem of a message, with its errors if it has fields.",
+        "properties": {
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Detail"
+          },
+          "traceId": {
+            "title": "Traceid",
+            "type": "string"
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FieldError"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Errors"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "traceId"
+        ],
+        "title": "MessageProblem",
         "type": "object"
       }
     },

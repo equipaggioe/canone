@@ -22,7 +22,7 @@ from app.errors import Problem
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.schemas.base import InputSchema
-from app.schemas.websocket import CLIENT, AccessTokenMessage, ErrorMessage
+from app.schemas.websocket import CLIENT, AccessTokenMessage, ErrorMessage, MessageProblem
 from app.services import channel, events, limits, sessions
 from app.services.limits import Rule
 from app.services.sessions import Client, Principal
@@ -350,7 +350,7 @@ async def listen(socket: WebSocket, connection: Connection, caller: Client) -> N
 
 def refuse(connection: Connection, problem: Problem) -> None:
     """Tell the client why its message was not taken."""
-    answer = ErrorMessage(data=problem)
+    answer = ErrorMessage(data=MessageProblem.model_validate(problem))
     connection.put(answer.model_dump_json(exclude_none=True))
 
 

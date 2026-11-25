@@ -22,6 +22,15 @@ valkey-py 6.2.0 y el Caddy 2.6.2 de Debian 13:
   conexión en silencio se cerró antes de 15 s. `get_message` con su propio plazo no la pierde.
 - Con dos procesos de Uvicorn, uno detrás de Caddy, cerrar sesión en uno cierra con 4401 la conexión
   del otro. Una conexión trabada siguió ocupando su lugar 75 s y lo soltó al terminar su TCP.
+- Si el proceso de Uvicorn muere, Caddy 2.6.2 no cierra la conexión con un cliente que no lee: seguía
+  abierta 90 s después.
+- Uvicorn 0.54.0 nunca marca como terminado un handshake que se rechaza con su respuesta, y por eso
+  escribe un `ERROR` en cada uno (`run_asgi`, en `websockets_sansio_impl.py`). Era la última versión
+  el 2026-11-24.
+- openapi-typescript 7.13.0, datamodel-code-generator 0.100.0, openapi-generator 7.27.0 y
+  swagger_parser 2.3.0 generan los esquemas que ninguna ruta usa. openapi-generator funde una unión
+  de los dos problemas en una clase con `errors` obligatorio: con un solo esquema, `MessageProblem`,
+  los cuatro dejan `errors` opcional.
 
 ## Decisión
 
@@ -43,7 +52,8 @@ valkey-py 6.2.0 y el Caddy 2.6.2 de Debian 13:
 
 ## Consecuencias
 
-- Un usuario acumula a lo sumo 10 conexiones trabadas, no más: ocupan sus propios lugares.
+- Un usuario acumula a lo sumo 10 conexiones trabadas mientras vive el proceso: ocupan sus propios
+  lugares. Un reinicio del servidor libera los lugares, y Caddy conserva las suyas.
 - El cierre no espera la siguiente revisión, y una publicación perdida se corrige al reconectar.
 - Uvicorn escribe en su log `ASGI callable returned without completing handshake` en cada handshake
   rechazado, aunque el rechazo llega bien.

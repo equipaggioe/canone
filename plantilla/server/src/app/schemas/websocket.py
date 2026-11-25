@@ -6,7 +6,7 @@ SERVER. Both go in the components of the OpenAPI.
 
 from typing import Literal
 
-from app.errors import Problem, ValidationProblem
+from app.errors import FieldError, Problem
 from app.schemas.base import InputSchema, Schema
 
 
@@ -23,11 +23,19 @@ class AccessTokenMessage(InputSchema):
     data: AccessTokenData
 
 
+# ADR-0237: openapi-generator merges a union of problems into one class
+# that requires the errors.
+class MessageProblem(Problem):
+    """The problem of a message, with its errors if it has fields."""
+
+    errors: list[FieldError] | None = None
+
+
 class ErrorMessage(Schema):
     """Why the server did not take a message."""
 
     type: Literal["error"] = "error"
-    data: ValidationProblem | Problem
+    data: MessageProblem
 
 
 CLIENT: dict[str, type[InputSchema]] = {"access_token": AccessTokenMessage}

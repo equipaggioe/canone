@@ -25,7 +25,7 @@ from app.main import app
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.event.event_log import EventLog
-from app.schemas.websocket import ErrorMessage
+from app.schemas.websocket import ErrorMessage, MessageProblem
 from app.services import channel, events, limits, sessions, websocket
 from app.services.sessions import Client, Issued
 
@@ -90,6 +90,11 @@ def web(cookie: str, origin: str | None = "https://test") -> dict[str, str]:
     """Present the cookie of the web, from an origin."""
     headers = {"Cookie": f"{sessions.COOKIE}={cookie}"}
     return headers if origin is None else {**headers, "Origin": origin}
+
+
+def conflict() -> ErrorMessage:
+    """Build a message of the server."""
+    return ErrorMessage(data=MessageProblem.model_validate(errors.blank(409)))
 
 
 async def closed(socket: AsyncWebSocketSession) -> int:
@@ -446,6 +451,7 @@ async def test_message_that_is_not_taken_is_an_error(
         assert set(answer) == {"type", "data"}
         assert (answer["type"], answer["data"]["status"]) == ("error", status)
         assert len(answer["data"]["traceId"]) == 32
+        assert ("errors" in answer["data"]) == (pointer is not None)
         if pointer is not None:
             assert answer["data"]["type"] == errors.VALIDATION.uri
             assert [item["pointer"] for item in answer["data"]["errors"]] == [pointer]
@@ -508,7 +514,7 @@ async def test_message_reaches_each_connection_of_the_account(
     await session.flush()
     theirs = await sessions.open_app(session, other, CLIENT, "es")
     await session.flush()
-    message = ErrorMessage(data=errors.blank(409))
+    message = conflict()
     async with (
         aconnect_ws(URL, wired, headers=bearer(issued)) as app_socket,
         aconnect_ws(URL, wired, headers=web(cookie)) as web_socket,
@@ -558,7 +564,7 @@ async def test_lost_subscription_starts_over_with_a_stuck_connection(
             await asyncio.sleep(0.2)
             async with aconnect_ws(URL, wired, headers=bearer(issued)) as socket:
                 assert await alive(socket)
-                channel.send(session, account.id, ErrorMessage(data=errors.blank(409)))
+                channel.send(session, account.id, conflict())
                 await channel.flush(session)
                 answer = json.loads(await socket.receive_text(timeout=5))
                 assert answer["data"]["status"] == 409
@@ -618,4 +624,9 @@ def test_messages_are_in_the_openapi() -> None:
     schemas = app.openapi()["components"]["schemas"]
     assert schemas["AccessTokenMessage"]["additionalProperties"] is False
     assert set(schemas["ErrorMessage"]["properties"]) == {"type", "data"}
-    assert "ValidationProblem" in schemas
+    # One schema: a generator merges a union and requires its errors.
+    assert schemas["ErrorMessage"]["properties"]["data"] == {
+        "$ref": "#/components/schemas/MessageProblem"
+    }
+    assert "errors" not in schemas["MessageProblem"]["required"]
+    assert "additionalProperties" not in schemas["MessageProblem"]

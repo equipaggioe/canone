@@ -5,6 +5,7 @@ Una app en Flutter.
 ## Proyecto
 
 - La app es para Android y para iOS, y para escritorio y la web si el repositorio lo elige.
+- Flutter es la 3.47 y no la 3.50: la 3.50 declara obsoleto `package:flutter/material.dart`, y `dart analyze --fatal-infos` falla hasta que la app pase a material_ui, que no está en [stack.md](../stack.md#flutter). [Flutter 3.50.1](https://raw.githubusercontent.com/flutter/flutter/3.50.1/packages/flutter/lib/material.dart)
 - `pubspec.yaml` declara exactos flutter_riverpod y riverpod_annotation, y en `dev_dependencies`, riverpod_generator: las mutations de Riverpod son experimentales y pueden cambiar sin una versión mayor. [Riverpod 3.5.0](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/mutations.mdx)
 - Las demás dependencias van exactas o con `^`.
 - CI corre `dart run dependency_validator`, que falla con un paquete importado sin declarar o una dependencia que no se usa ([stack.md](../stack.md#qué-entra)). `pubspec.yaml` lleva `dependency_validator:` con `allow_pins: true`: sin él, también falla con cada versión exacta, y las de Riverpod lo son.
@@ -282,7 +283,7 @@ Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
 Contrato: [transversal.md](transversal.md#errores).
 
-- El `http.Client` de la app convierte una respuesta que no es 2xx en la excepción tipada del sobre antes de devolverla: el cliente que genera swagger_parser descarta el cuerpo de esa respuesta y lanza `ClientException('HTTP <status>')`. [swagger_parser 2.3.0](https://raw.githubusercontent.com/Carapacik/swagger_parser/2.3.0/swagger_parser/lib/src/dart/dart_package_http_builder.dart)
+- El `http.Client` de la app convierte una respuesta que no es 2xx en la excepción tipada del sobre antes de devolverla: el cliente que genera swagger_parser descarta el cuerpo de esa respuesta y lanza `ClientException('HTTP <status>')`. [swagger_parser 2.4.0](https://raw.githubusercontent.com/Carapacik/swagger_parser/2.4.0/swagger_parser/lib/src/dart/dart_package_http_builder.dart)
 
 ## Fechas
 

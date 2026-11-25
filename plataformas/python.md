@@ -16,7 +16,7 @@ Estándar: las [*Good Integration Practices*](../fuentes/pytest/goodpractices.rs
 - uv crea el entorno virtual `.venv` de la pieza, instala en él, bloquea y ejecuta.
 - Ninguna dependencia bloqueada tiene una vulnerabilidad conocida.
 - Una vulnerabilidad se ignora solo por su identificador, con `--ignore-vuln`.
-- Todo paquete que importa el código de `src/` está declarado en `dependencies`, y toda dependencia declarada se usa ([stack.md](../stack.md#qué-entra)).
+- CI corre `deptry`, que falla con un paquete que `src/` importa sin declararlo en `dependencies`, o con una dependencia que no se usa ([stack.md](../stack.md#qué-entra)).
 - Las pruebas van en `tests/`, fuera del código ([Good Integration Practices, *Choosing a test layout*](../fuentes/pytest/goodpractices.rst)).
 - La pieza, sus dependencias y pytest se instalan en un entorno virtual ([Good Integration Practices, *Install package in a virtual environment*](../fuentes/pytest/goodpractices.rst)).
 - Las herramientas de desarrollo van en el grupo `dev` de `[dependency-groups]` ([Good Integration Practices, *Install package in a virtual environment*](../fuentes/pytest/goodpractices.rst)).

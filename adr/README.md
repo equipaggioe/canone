@@ -249,3 +249,5 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0241](0241-el-plugin-de-passkeys-pide-macos-13.md) | El plugin de passkeys pide macOS 13 | `flutter.md`, `flet.md` y con `packages/passkey/` |
 | [0242](0242-copiar-hace-la-copia-de-los-archivos-canonicos.md) | `copiar.py` hace la copia de los archivos canónicos | Todos |
 | [0243](0243-verificar-lee-las-versiones-de-stack-md.md) | `verificar.py` lee las versiones de `stack.md`, y `stack.md` se revisa con los cinco pasos | Todos |
+| [0244](0244-una-version-se-queda-solo-con-una-razon-sobre-la-ultima.md) | Una versión se queda solo con una razón sobre la última, y el stack nombra los extras | Todos |
+| [0245](0245-flet-pasa-a-la-1-1-3-y-deja-de-fijar-jni.md) | Flet pasa a la 1.1.3 con Pydantic 2.14.3, y deja de fijar `jni` | `flet.md` |

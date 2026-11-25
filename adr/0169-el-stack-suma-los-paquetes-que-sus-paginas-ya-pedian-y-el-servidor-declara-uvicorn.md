@@ -3,7 +3,8 @@
 - **Estado:** Aceptada. El usuario pidió implementar las recomendaciones de la revisión de
   `stack.md` (2026-11-16) y, después, cerrar lo abierto con lo recomendado. Los puntos marcados
   *(propuesta)* se definieron al implementar. El punto 8 lo reemplaza el
-  [ADR-0170](0170-cada-app-guarda-su-numero-de-build-en-su-manifiesto.md)
+  [ADR-0170](0170-cada-app-guarda-su-numero-de-build-en-su-manifiesto.md), y lo descartado sobre
+  los extras, el [ADR-0244](0244-una-version-se-queda-solo-con-una-razon-sobre-la-ultima.md)
 - **Fecha:** 2026-11-16
 - **Alcance:** [`stack.md`](../stack.md), `plataformas/`, `plantilla/` y `scripts/verificar.py`
 

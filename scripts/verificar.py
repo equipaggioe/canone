@@ -519,6 +519,13 @@ def leer_stack(texto: str) -> dict[str, dict[str, str]]:
 
 
 STACK = leer_stack((CANONE / "stack.md").read_text(encoding="utf-8"))
+# Los extras de cada fila que los nombra, como «stripe, con el extra `async`».
+EXTRAS = {
+    fila.lower(): set(re.findall(r"`(\w+)`", extras.split(" en ")[0]))
+    for fila, extras in re.findall(
+        r"^\| ([\w-]+), con (?:el extra|los extras) ([^|]+) \|", (CANONE / "stack.md").read_text(encoding="utf-8"), re.M
+    )
+}
 ANDROID = STACK["Android"]
 CI = STACK["CI"]
 DESPLIEGUE = STACK["Despliegue"]
@@ -841,7 +848,7 @@ def tope(version: str) -> str:
 PYPROJECT = {
     "autenticacion.md": pypi(STACK["Autenticación"]),
     "fastapi.md": pypi(STACK["FastAPI"]),
-    "flet.md": pypi(menos("Flet", "Pydantic", "appimagetool", "jni", "jni_flutter", "smart_auth")),
+    "flet.md": pypi(menos("Flet", "Pydantic", "Inno Setup", "appimagetool", "smart_auth")),
     "postgres.md": pypi(menos("PostgreSQL", "PostgreSQL", "PostGIS")),
     "python.md": pypi(menos("Python", "Python", "uv")),
     "qt.md": pypi(STACK["Qt"]),
@@ -884,8 +891,6 @@ ENTRADAS = {
 # plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de la Pydantic del
 # bloque de Python de stack.md.
 FLET = {"pydantic": f"=={STACK['Flet']['Pydantic']}"}
-# plataformas/flet.md, «Proyecto»: con jni 1.2.0 la app de Android no arranca.
-FLET_OVERRIDES = {nombre: STACK["Flet"][nombre] for nombre in ("jni", "jni_flutter")}
 # stack.md, «Versiones»: la plantilla y los scripts de Canone no declaran una versión que stack.md no
 # estipule. Cada archivo lleva la de su fila en el grupo de su expresión.
 PROGRAMAS = [
@@ -934,19 +939,15 @@ def versiones_pyproject(repo: Path, paginas: set[str]) -> list[str]:
         for grupo in datos.get("dependency-groups", {}).values():
             requisitos += [r for r in grupo if isinstance(r, str)]
         es_flet = "flet.md" in paginas and "flet" in datos.get("tool", {})
-        if es_flet:
-            pubspec = datos["tool"]["flet"].get("flutter", {}).get("pubspec", {})
-            overrides = pubspec.get("dependency_overrides", {})
-            for nombre, version in FLET_OVERRIDES.items():
-                if overrides.get(nombre) != version:
-                    fallas.append(
-                        f"stack.md: {relativo.as_posix()} no fija {nombre} {version} en "
-                        "[tool.flet.flutter.pubspec.dependency_overrides]"
-                    )
+        declarados: dict[str, set[str]] = {}
         for requisito in requisitos:
             coincide = REQUISITO.match(requisito)
             nombre = coincide[1].lower().replace("_", "-")
             declarado = coincide[2].replace(" ", "")
+            extras = re.search(r"\[([^\]]*)\]", requisito)
+            declarados.setdefault(nombre, set()).update(
+                extra.strip() for extra in (extras[1].split(",") if extras else [])
+            )
             esperado = versiones.get(nombre)
             if esperado is None:
                 continue
@@ -957,6 +958,12 @@ def versiones_pyproject(repo: Path, paginas: set[str]) -> list[str]:
                 fallas.append(
                     f"stack.md: {relativo.as_posix()} declara {nombre}{declarado}, no {esperado}"
                 )
+        # Solo la pieza: un paquete de packages/ usa lo que le da la pieza que lo instala.
+        if len(relativo.parts) == 2:
+            for nombre, extras in EXTRAS.items():
+                if nombre in declarados and nombre in versiones and not extras <= declarados[nombre]:
+                    faltan = ", ".join(sorted(extras - declarados[nombre]))
+                    fallas.append(f"stack.md: {relativo.as_posix()} declara {nombre} sin el extra {faltan}")
     return fallas
 
 

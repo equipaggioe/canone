@@ -1,8 +1,9 @@
 # ADR-0243 · `verificar.py` lee las versiones de `stack.md`, y `stack.md` se revisa con los cinco pasos
 
 - **Estado:** Aceptada. Lo confirmó el usuario el 2026-11-25, al pedir la revisión repetible y que se
-  aplicaran las recomendaciones sin una razón registrada en contra. Los puntos marcados *(propuesta)*
-  se eligieron al implementar
+  aplicaran las recomendaciones sin una razón registrada en contra. Los puntos 8 a 12, que se eligieron
+  al implementar, los confirmó ese día. Lo descartado sobre los paquetes de `packages.py` lo reemplaza
+  el [ADR-0244](0244-una-version-se-queda-solo-con-una-razon-sobre-la-ultima.md)
 - **Fecha:** 2026-11-25
 - **Alcance:** [`stack.md`](../stack.md), [`plataformas/README.md`](../plataformas/README.md),
   [`plataformas/android.md`](../plataformas/android.md),
@@ -49,16 +50,16 @@ Comprobado el 2026-11-25 con las versiones nuevas:
 7. **Suben a la última estable** uv, Babel, datamodel-code-generator, pnpm, vite-plugin-svelte,
    typescript-eslint, maplibre_gl, swagger_parser, Gradle, AGP, el BOM de Compose, Lifecycle,
    Navigation 3, rest-server y setup-uv.
-8. *(propuesta)* **`@types/node`, `@axe-core/playwright` y `@stripe/stripe-js` no suben hoy:** sus
+8. **`@types/node`, `@axe-core/playwright` y `@stripe/stripe-js` no suben hoy:** sus
    versiones nuevas tienen menos de un día, y con ellas pnpm edita `pnpm-workspace.yaml`, que es
-   canónico.
-9. *(propuesta)* **`--canone` compara además la plantilla y los scripts de Canone** con `stack.md`,
+   canónico. La regla está en el [ADR-0244](0244-una-version-se-queda-solo-con-una-razon-sobre-la-ultima.md).
+9. **`--canone` compara además la plantilla y los scripts de Canone** con `stack.md`,
    y `fuentes.yml` corre cuando cambian.
-10. *(propuesta)* **`espresso-core` sale** de `stack.md` y de `android.md`: con el BOM nuevo llega en
+10. **`espresso-core` sale** de `stack.md` y de `android.md`: con el BOM nuevo llega en
     la 3.7.0, y el código no lo importa.
-11. *(propuesta)* **`play.py` declara `google-auth[requests]`** y no requests, que su código no
+11. **`play.py` declara `google-auth[requests]`** y no requests, que su código no
     importa.
-12. *(propuesta)* **Flutter y Flet toman del bloque de Android el `androidx.credentials` de
+12. **Flutter y Flet toman del bloque de Android el `androidx.credentials` de
     `packages/passkey/`**, sin repetir la fila.
 
 ## Consecuencias

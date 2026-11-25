@@ -1,6 +1,6 @@
 # ADR-0187 · Flet fija `jni` y `jni_flutter` en el `pubspec.yaml` que genera
 
-- **Estado:** Aceptada. El usuario pidió hacer en Canone lo que le corresponde (2026-11-18)
+- **Estado:** Reemplazada por [ADR-0245](0245-flet-pasa-a-la-1-1-3-y-deja-de-fijar-jni.md)
 - **Fecha:** 2026-11-18
 - **Alcance:** [`plataformas/flet.md`](../plataformas/flet.md), «Proyecto»; [`stack.md`](../stack.md),
   «Flet»; `plantilla/flet/pyproject.toml` y `scripts/verificar.py`

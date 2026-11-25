@@ -6,13 +6,12 @@ Una aplicación en Flet. Se suma a [python.md](python.md).
 
 Estándar: [*Publishing a Flet app*](../fuentes/flet/publish.md) de Flet.
 
-- CI pone en el `PATH` el Flutter de [stack.md](../stack.md#flet), con la versión mayor y menor que pide Flet: `flet build` usa el del `PATH` si coinciden, y si no, descarga el suyo. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet-cli/src/flet_cli/commands/flutter_base.py)
+- CI pone en el `PATH` el Flutter de [stack.md](../stack.md#flet), con la versión mayor y menor que pide Flet: `flet build` usa el del `PATH` si coinciden, y si no, descarga el suyo. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/sdk/python/packages/flet-cli/src/flet_cli/commands/flutter_base.py)
 - Pydantic es la que fija [stack.md](../stack.md#flet), y no la del bloque de Python: `flet build apk` instala desde el índice de Flet para Android, y esa es la última Pydantic cuyo `pydantic-core` está en él. [Índice de Flet](https://pypi.flet.dev/pydantic-core/)
-- `[tool.flet.flutter.pubspec.dependency_overrides]` fija `jni` y `jni_flutter` en las versiones de [stack.md](../stack.md#flet): con `jni` 1.2.0 y `jni_flutter` 1.1.0, que `path_provider_android` 2.3.1 resuelve, la app de Android no arranca y muestra `ClassNotFoundException: Landroid/content/Context;`.
-- Las dependencias de `[project]` van exactas, con `==`, en lugar del `>=` de [python.md](python.md): `flet build` no lee `uv.lock` y le pasa a pip las dependencias tal como están escritas. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet-cli/src/flet_cli/commands/build_base.py)
+- Las dependencias de `[project]` van exactas, con `==`, en lugar del `>=` de [python.md](python.md): `flet build` no lee `uv.lock` y le pasa a pip las dependencias tal como están escritas. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/sdk/python/packages/flet-cli/src/flet_cli/commands/build_base.py)
 - `flet build` y `flet test` corren con `PIP_CONSTRAINT` en el `uv.lock` exportado con `uv export --locked --no-dev --no-emit-project --no-emit-local --no-hashes`: así las dependencias transitivas que resuelve pip llevan las versiones de `uv.lock`. Una ruta local en las restricciones hace fallar a pip.
 - Un paquete local del repositorio entra a `flet build` por `[tool.flet].dev_packages`, con la ruta a su wheel, construido antes con `uv build --wheel`: `flet build` no lee `[tool.uv.sources]`, y para Android pip no puede construir una carpeta.
-- El grupo `dev` lleva también `flet` con el extra `cli`, que trae `flet build`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/getting-started/installation.md)
+- El grupo `dev` lleva también `flet` con el extra `cli`, que trae `flet build`. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/getting-started/installation.md)
 - El proyecto no lleva `[build-system]`, en lugar del `uv_build` de [python.md](python.md): sin `src/app/`, no hay paquete que construir.
 - `src/` no lleva `__init__.py`, en lugar de lo que pide [Paquetes](python.md#paquetes): `flet build` empaqueta `src/` como la raíz de la app, y sus módulos de primer nivel no son de ningún paquete.
 - El código va directo en `src/`, sin paquete, en lugar del `src/app/` de [python.md](python.md), y `[tool.flet.app]` lleva `path = "src"`: es la estructura que supone `flet build`, que empaqueta `src/` por su cuenta ([Publishing, *Project structure*](../fuentes/flet/publish.md) y [*How it works*](../fuentes/flet/publish.md)):
@@ -60,9 +59,9 @@ Plantilla: [plantilla/flet/](../plantilla/flet/), el job `flet` de [plantilla/.g
 Estándar: [*Declarative vs Imperative*](../fuentes/flet/declarative-vs-imperative.md) de Flet.
 
 - Una pieza de interfaz reutilizable es un `@ft.component`, y no una subclase de un control con `@ft.control`.
-- Un diálogo se muestra con `ft.use_dialog()`, desde el estado del componente, y no con `page.show_dialog()`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/declarative-dialogs.md)
-- Una lista de cientos de elementos usa `ListView` o `GridView`, que dibujan solo lo visible, y no `Column` ni `Row`, que dibujan todo. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/large-lists.md)
-- Un `ListView` cuyos elementos miden lo mismo lleva `item_extent` o `first_item_prototype`. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/large-lists.md)
+- Un diálogo se muestra con `ft.use_dialog()`, desde el estado del componente, y no con `page.show_dialog()`. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/cookbook/declarative-dialogs.md)
+- Una lista de cientos de elementos usa `ListView` o `GridView`, que dibujan solo lo visible, y no `Column` ni `Row`, que dibujan todo. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/cookbook/large-lists.md)
+- Un `ListView` cuyos elementos miden lo mismo lleva `item_extent` o `first_item_prototype`. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/cookbook/large-lists.md)
 - La interfaz es declarativa: cada pantalla es un `@ft.component` que devuelve sus controles a partir del estado, y ningún handler cambia las propiedades de un control ni `page.controls` ([Declarative vs Imperative, *Declarative*](../fuentes/flet/declarative-vs-imperative.md)).
 - El estado que comparten varios componentes vive en clases `@ft.observable`, y sus cambios son métodos de esas clases ([Declarative vs Imperative, *Observables*](../fuentes/flet/declarative-vs-imperative.md) y [*Example*](../fuentes/flet/declarative-vs-imperative.md)).
 - El estado que es solo de una vista, como si una fila está en edición, vive en un hook como `ft.use_state`, y no en el observable ([Declarative vs Imperative, *Hooks*](../fuentes/flet/declarative-vs-imperative.md) y [*Example*](../fuentes/flet/declarative-vs-imperative.md)).
@@ -71,10 +70,10 @@ Estándar: [*Declarative vs Imperative*](../fuentes/flet/declarative-vs-imperati
 
 Estándar: [*Async apps*](../fuentes/flet/async-apps.md) de Flet.
 
-- Un componente que trabaja en segundo plano al montarse, como cargar datos, lo hace en `ft.use_effect` con un setup `async` y dependencias vacías: Flet cancela el setup al desmontar el componente. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/components/hooks/use_effect.py)
+- Un componente que trabaja en segundo plano al montarse, como cargar datos, lo hace en `ft.use_effect` con un setup `async` y dependencias vacías: Flet cancela el setup al desmontar el componente. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/sdk/python/packages/flet/src/flet/components/hooks/use_effect.py)
 - Ningún handler bloquea, sea síncrono o async: los dos corren en el único bucle de eventos de la app, y mientras uno corre no se despacha otro evento ni se actualiza la pantalla ([Async apps, *Never block the event loop*](../fuentes/flet/async-apps.md) y [*Control event handlers*](../fuentes/flet/async-apps.md)).
 - Un handler que espera algo es `async def` ([Async apps, *Control event handlers*](../fuentes/flet/async-apps.md)).
-- Una tarea que sigue después del handler que la lanza se crea con `page.run_task()`, que recibe la función y sus argumentos, guarda la referencia de la tarea y reporta sus excepciones ([Async apps, *Async lambdas*](../fuentes/flet/async-apps.md) y [*Background tasks*](../fuentes/flet/async-apps.md)).
+- Una tarea que sigue después del handler que la lanza se crea con `page.run_task()`, que recibe la función y sus argumentos, guarda la referencia de la tarea y registra la excepción de la que nadie espera ([Async apps, *Async lambdas*](../fuentes/flet/async-apps.md) y [*Background tasks*](../fuentes/flet/async-apps.md)).
 - Una llamada que bloquea corre con `await asyncio.to_thread()` o, si no hace falta su resultado, con `page.run_thread()` ([Async apps, *Threading*](../fuentes/flet/async-apps.md)).
 
 ## Navegación
@@ -113,10 +112,10 @@ Contrato: [transversal.md](transversal.md#accesibilidad).
 
 Estándar: [*Packaging app for Windows*](../fuentes/flet/publish-windows.md) de Flet.
 
-- Lo sensible, como el token de refresco que pide [autenticacion.md](autenticacion.md#sesión), va en `SecureStorage`, de flet-secure-storage, que usa el almacén de credenciales del sistema: cifrarlo a mano obliga a guardar la clave en algún lado. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/services/securestorage/index.md)
+- Lo sensible, como el token de refresco que pide [autenticacion.md](autenticacion.md#sesión), va en `SecureStorage`, de flet-secure-storage, que usa el almacén de credenciales del sistema: cifrarlo a mano obliga a guardar la clave en algún lado. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/services/securestorage/index.md)
 - En Android, `[tool.flet.android.manifest_application]` lleva `allowBackup = false`: `SecureStorage` usa flutter_secure_storage, y una copia restaurada en otro dispositivo trae datos cuya clave no se puede recuperar. [flutter_secure_storage 10.3.1](https://raw.githubusercontent.com/juliansteenbakker/flutter_secure_storage/v10.3.1/flutter_secure_storage/README.md)
-- `SharedPreferences` guarda solo preferencias, y ningún dato de la app que no pueda perderse. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md)
-- Un servicio, como `SharedPreferences` o `SecureStorage`, se crea una vez, y la app guarda su referencia mientras lo usa: Flet lo da de baja cuando no queda ninguna. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/website/docs/cookbook/client-storage.md)
+- `SharedPreferences` guarda solo preferencias, y ningún dato de la app que no pueda perderse. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/cookbook/client-storage.md)
+- Un servicio, como `SharedPreferences` o `SecureStorage`, se crea una vez, y la app guarda su referencia mientras lo usa: Flet lo da de baja cuando no queda ninguna. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/cookbook/client-storage.md)
 - La app guarda sus archivos en `FLET_APP_STORAGE_DATA`, nunca junto a `__file__`: la carpeta donde se instala la app puede no admitir escritura ([Packaging app for Windows, *Distributing*](../fuentes/flet/publish-windows.md)).
 
 ## Código de autorización
@@ -134,7 +133,7 @@ Estándar: [*Packaging app for iOS*](../fuentes/flet/publish-ios.md) de Flet.
 Contrato: [autenticacion.md](autenticacion.md#código-por-sms).
 
 - En Android, la app lee el código del SMS con `SmsCode`, de la extensión `flet_sms` que copia la plantilla en `packages/sms/`: con el teclado y el autocompletado de Samsung, un `TextField` con `AutofillHint.ONE_TIME_CODE` no ofrece el código.
-- `flet_sms` lee el SMS con smart_auth, y no con el sms_autofill de [flutter.md](flutter.md#código-por-sms): sms_autofill 2.6.1 compila con `compileSdk 37`, y el plugin de Android que usa Flet 1.1.2, AGP 8.13.2, no encuentra esa plataforma, que el SDK publica como `android-37.0`. [sms_autofill 2.6.1](https://pub.dev/api/archives/sms_autofill-2.6.1.tar.gz)
+- `flet_sms` lee el SMS con smart_auth, y no con el sms_autofill de [flutter.md](flutter.md#código-por-sms): sms_autofill 2.6.1 compila con `compileSdk 37`, y el plugin de Android que usa Flet 1.1.3, AGP 8.13.2, no encuentra esa plataforma, que el SDK publica como `android-37.0`. [sms_autofill 2.6.1](https://pub.dev/api/archives/sms_autofill-2.6.1.tar.gz)
 - En iOS, el campo del código es un `TextField` con `AutofillHint.ONE_TIME_CODE`, e iOS ofrece el código sobre el teclado. `[tool.flet.ios.entitlement]` declara el host del SMS en `com.apple.developer.associated-domains` ([Packaging app for iOS, *Entitlements*](../fuentes/flet/publish-ios.md)).
 
 ## Contraseñas
@@ -158,7 +157,7 @@ Contrato: [transversal.md](transversal.md#idiomas).
 - Babel compila el `.mo` de cada catálogo, con `pybabel compile -d src/locales -D <pieza>`, y va en el grupo `dev`: `gettext` lee solo el `.mo`. [Python 3.13](https://raw.githubusercontent.com/python/cpython/3.13/Doc/library/gettext.rst)
 - Los catálogos van en `src/locales/<idioma>/LC_MESSAGES/<pieza>.po`. El `.mo` se genera antes de `flet build` y de `flet test`, y no va en git: sale del `.po`, y en git quedaría desfasado.
 - El `httpx.AsyncClient` de [Red](#red) manda en `Accept-Language` el `current_locale` de `page.locale_configuration`, y lo cambia cuando el usuario elige otro idioma.
-- `page.locale_configuration` declara en `supported_locales` los idiomas de la app, con el base primero, y en `current_locale`, el que eligió el usuario: sin ella, los controles de Flutter quedan en `en-US`, y un idioma que no está en la lista cae en el primero. [Flet 1.1.2](https://raw.githubusercontent.com/flet-dev/flet/v1.1.2/sdk/python/packages/flet/src/flet/controls/types.py)
+- `page.locale_configuration` declara en `supported_locales` los idiomas de la app, con el base primero, y en `current_locale`, el que eligió el usuario: sin ella, los controles de Flutter quedan en `en-US`, y un idioma que no está en la lista cae en el primero. [Flet 1.1.3](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/sdk/python/packages/flet/src/flet/controls/types.py)
 
 ## OpenAPI y clientes
 
@@ -175,6 +174,7 @@ Contrato: [autenticacion.md](autenticacion.md#passkeys).
 
 - En el teléfono, en Windows y en macOS, la app usa la passkey con el servicio `Passkey` de la extensión `flet_passkey`, que la plantilla copia en `packages/passkey/`: Flet no tiene una API oficial de passkeys.
 - En Android, el `minSdk` de la app no baja de 28, el del plugin.
+- El plugin compila con `compileSdk` 36, y no con la de [stack.md](../stack.md#android): AGP 8.13.2, el de Flet 1.1.3, no encuentra la 37, como en [Código por SMS](#código-por-sms).
 - En iOS, la versión mínima de la app no baja de 16, y en macOS, de 13, las del plugin: son las primeras que sincronizan las passkeys. [Apple](https://support.apple.com/guide/iphone/passkeys-passwords-devices-iph82d6721b2/16.0/ios/16.0)
 - En iOS, `[tool.flet.ios.entitlement]` declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`.
 - En macOS, la app declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`.

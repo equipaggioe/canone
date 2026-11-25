@@ -10,7 +10,7 @@ Qué se usa en cada plataforma y en qué versión. Es el único lugar donde se f
 
 ## Qué entra
 
-- Entra lo que una pieza declara en su manifiesto o instala, con su versión.
+- Entra lo que una pieza declara en su manifiesto, con sus extras, o instala, con su versión.
 - Lo que una pieza usa, pero cuya versión fija otra tecnología, entra con una nota que dice cuál, como «3.13.7, el de Flutter 3.47.9» o «0.28.1, la que fija firebase-admin»: su versión no se elige, se sigue.
 - Todo paquete que importa el código de una pieza está declarado en su manifiesto, aunque otro paquete ya lo traiga: un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia.
 - Toda dependencia declarada se usa. Lo que llega dentro de otro paquete y el código no importa no entra ni se nombra en ningún lado.
@@ -20,7 +20,8 @@ Qué se usa en cada plataforma y en qué versión. Es el único lugar donde se f
 - La versión se fija por tecnología, no por pieza: una tecnología lleva la misma versión en todas las piezas que la usan.
 - Lo que el servidor instala desde los paquetes de su sistema, como Python, PostgreSQL o Valkey, usa la versión de esos paquetes en todas las piezas, también en las que no corren en el servidor, en la máquina de desarrollo y en CI: así se desarrolla y se prueba con la misma versión que corre en producción.
 - Lo demás usa la última versión estable, o la última LTS si la tecnología las publica.
-- Una excepción lleva su razón en la página de su plataforma.
+- Una versión nueva se adopta a mano, en una [revisión de este archivo](plataformas/README.md#revisión-de-stackmd): que se publique no la adopta.
+- Una excepción lleva su razón en la página de su plataforma, y la razón es sobre la última versión.
 - La plantilla y las fuentes dependen de este archivo: la plantilla no declara una versión que este archivo no estipule, y las fuentes se descargan de esa versión.
 
 En cada bloque, «Para» enlaza la sección de la página que escribe cómo se usa.
@@ -51,11 +52,11 @@ Página: [fastapi.md](plataformas/fastapi.md).
 | FastAPI | 0.165.0 | — |
 | Starlette | 1.10.0 | — |
 | pydantic-settings | 2.16.3 | [Configuración](plataformas/fastapi.md#configuración) |
-| SQLAlchemy | 2.1.9 | [Base de datos](plataformas/fastapi.md#base-de-datos) |
+| SQLAlchemy, con el extra `asyncio` | 2.1.9 | [Base de datos](plataformas/fastapi.md#base-de-datos) |
 | asyncpg | 0.32.0 | [Base de datos](plataformas/fastapi.md#base-de-datos) |
 | Alembic | 1.20.1 | [Migraciones](plataformas/fastapi.md#migraciones) |
 | valkey-py | 6.2.0 | [Valkey](plataformas/fastapi.md#valkey) |
-| Uvicorn | 0.54.0 | [WebSocket](plataformas/fastapi.md#websocket) y [Procesos](plataformas/despliegue.md#procesos) |
+| Uvicorn, con el extra `standard` | 0.54.0 | [WebSocket](plataformas/fastapi.md#websocket) y [Procesos](plataformas/despliegue.md#procesos) |
 | Pillow | 13.0.0 | [Archivos](plataformas/fastapi.md#archivos) |
 | python-multipart | 0.0.34 | [Archivos](plataformas/fastapi.md#archivos) |
 | Babel | 2.19.0 | [Idiomas](plataformas/fastapi.md#idiomas) |
@@ -77,7 +78,7 @@ Página: [autenticacion.md](plataformas/autenticacion.md). Son paquetes del serv
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
-| pwdlib | 0.4.2 | [Contraseñas](plataformas/autenticacion.md#contraseñas) |
+| pwdlib, con el extra `argon2` | 0.4.2 | [Contraseñas](plataformas/autenticacion.md#contraseñas) |
 | phonenumbers | 9.0.44 | [Código por SMS](plataformas/autenticacion.md#código-por-sms) |
 | webauthn | 3.0.1 | [Passkeys](plataformas/autenticacion.md#passkeys) |
 
@@ -102,7 +103,10 @@ Página: [despliegue.md](plataformas/despliegue.md). Cada programa es el de los 
 | Valkey | 8.1 | [Valkey](plataformas/despliegue.md#valkey) |
 | coturn | 4.6.1 | [Coturn](plataformas/despliegue.md#coturn) |
 | nftables | 1.1.3 | [Firewall](plataformas/despliegue.md#firewall) |
-| systemd | 257 | [Procesos](plataformas/despliegue.md#procesos) |
+| systemd, con systemd-timesyncd y systemd-journal-remote | 257 | [Procesos](plataformas/despliegue.md#procesos), [Máquina](plataformas/despliegue.md#máquina) y [Registros](plataformas/despliegue.md#registros) |
+| sudo | 1.9.16 | [SSH](plataformas/despliegue.md#ssh) |
+| unattended-upgrades | 2.12 | [Máquina](plataformas/despliegue.md#máquina) |
+| ca-certificates | 20250419 | [Máquina](plataformas/despliegue.md#máquina) |
 | OpenSSH | 10.0 | [SSH](plataformas/despliegue.md#ssh) |
 | WireGuard | 1.0.20210914 | [Registros](plataformas/despliegue.md#registros) |
 | restic | 0.18.0 | [Respaldos](plataformas/despliegue.md#respaldos) |
@@ -246,16 +250,15 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python). Flutter es
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
-| Flet | 1.1.2 | — |
-| flet-secure-storage | 1.1.2 | [Almacenamiento](plataformas/flet.md#almacenamiento) |
+| Flet, con los extras `cli` y `test` en `dev` | 1.1.3 | — |
+| flet-secure-storage | 1.1.3 | [Almacenamiento](plataformas/flet.md#almacenamiento) |
 | smart_auth, en `packages/sms/` | 4.0.0 | [Código por SMS](plataformas/flet.md#código-por-sms) |
 | httpx-ws | 0.10.0 | [WebSocket](plataformas/flet.md#websocket) |
 | Babel | 2.19.0 | [Idiomas](plataformas/flet.md#idiomas) |
 | datamodel-code-generator, con el extra `ruff` | 0.102.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |
-| Pydantic, en lugar de la de [Python](#python) | 2.13.4 | [Proyecto](plataformas/flet.md#proyecto) |
-| jni, en el `pubspec.yaml` que genera `flet build` | 1.1.2 | [Proyecto](plataformas/flet.md#proyecto) |
-| jni_flutter, en el `pubspec.yaml` que genera `flet build` | 1.0.4+1 | [Proyecto](plataformas/flet.md#proyecto) |
-| appimagetool, en `build-appimage.sh` | 1.9.1, la del script de Flet 1.1.2 | [Entrega](plataformas/flet.md#entrega) |
+| Pydantic, en lugar de la de [Python](#python) | 2.14.3 | [Proyecto](plataformas/flet.md#proyecto) |
+| appimagetool, en `build-appimage.sh` | 1.9.1, la del script de Flet 1.1.3 | [Entrega](plataformas/flet.md#entrega) |
+| Inno Setup, en el runner de Windows | 6, la que trae el runner | [Entrega](plataformas/flet.md#entrega) |
 
 ## Qt
 
@@ -267,7 +270,7 @@ Página: [qt.md](plataformas/qt.md). Se suma a [Python](#python).
 | keyring | 25.7.0 | [Almacenamiento](plataformas/qt.md#almacenamiento) |
 | datamodel-code-generator, con el extra `ruff` | 0.102.0 | [OpenAPI y clientes](plataformas/qt.md#openapi-y-clientes) |
 | pytest-qt | 4.5.0 | [Pruebas](plataformas/qt.md#pruebas) |
-| Nuitka | 4.3.5 | [Entrega](plataformas/qt.md#entrega) |
+| Nuitka, con el extra `onefile` | 4.3.5 | [Entrega](plataformas/qt.md#entrega) |
 | imageio | 2.38.2 | [Entrega](plataformas/qt.md#entrega) |
 | patchelf | 0.19.3.0 | [Entrega](plataformas/qt.md#entrega) |
 
@@ -294,7 +297,7 @@ Página: [repositorio.md](repositorio.md#ci). Los contenedores corresponden a De
 | Convención | Herramienta |
 | :--- | :--- |
 | Python, Node, Flutter y el JDK, en los workflows de cada repositorio | [scripts/verificar.py](scripts/verificar.py) |
-| Las versiones de los paquetes de Python, FastAPI, Autenticación, PostgreSQL, Flet y Qt, en cada `pyproject.toml` | [scripts/verificar.py](scripts/verificar.py) |
+| Las versiones de los paquetes de Python, FastAPI, Autenticación, PostgreSQL, Flet y Qt, en cada `pyproject.toml`, y sus extras, en el de cada pieza | [scripts/verificar.py](scripts/verificar.py) |
 | Las versiones de los paquetes de SvelteKit y la de pnpm, en cada `package.json` | [scripts/verificar.py](scripts/verificar.py) |
 | Las versiones de los paquetes de Flutter, en cada `pubspec.yaml`, y la de Dart, en el de cada pieza | [scripts/verificar.py](scripts/verificar.py) |
 | Gradle, AGP y Kotlin, en Android y en Flutter | [scripts/verificar.py](scripts/verificar.py) |

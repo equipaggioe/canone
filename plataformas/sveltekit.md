@@ -8,6 +8,7 @@ Estándar: [*Project structure*](../fuentes/sveltekit/project-structure.md) de S
 
 - Node solo se usa para construir.
 - `package.json` declara las versiones exactas, sin `^` ni `~`.
+- Una versión entra en [stack.md](../stack.md#sveltekit) cuando lleva más de un día publicada: antes, `pnpm install` la agrega a `minimumReleaseAgeExclude` de `pnpm-workspace.yaml`, que se copia sin editar. [pnpm](https://raw.githubusercontent.com/pnpm/pnpm.io/29f86c5f4170e6fc0477c5ef90b4d8160f8902aa/docs/settings/dependency-resolution.md)
 - TypeScript es la 6 y no la 7: SvelteKit 3.4.0 y `svelte-check` 4.7.8 piden `^6`, y `svelte-check` solo admite la 7 junto a la 6, con `--tsgo`. [svelte-check 4.7.8](https://raw.githubusercontent.com/sveltejs/language-tools/svelte-check%404.7.8/packages/svelte-check/bin/ts-version-check.js)
 - `@types/node` va en `devDependencies`: el `tsconfig.json` que genera sv declara los tipos de `node`, y sin ellos `svelte-check` avisa. [sv 1.3.0](https://raw.githubusercontent.com/sveltejs/cli/sv%401.3.0/packages/sv/src/addons/eslint.ts)
 - pnpm maneja las dependencias: no deja importar un paquete que no esté declarado ([stack.md](../stack.md#qué-entra)). [pnpm](https://raw.githubusercontent.com/pnpm/pnpm.io/19a2f01816126e8c1140f262674ef9be213ffef1/docs/motivation.md)

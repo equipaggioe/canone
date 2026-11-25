@@ -7,7 +7,7 @@ Una app de Android en Kotlin y Jetpack Compose.
 - `compileSdk`, `targetSdk` y `minSdk` son los de [stack.md](../stack.md#android). `compileSdk` se declara con `release(<API>) { minorApiLevel = <menor> }`.
 - Kotlin es el que integra AGP, sin el plugin `org.jetbrains.kotlin.android`. Su versión la fijan `org.jetbrains.kotlin.plugin.compose` y `org.jetbrains.kotlin.plugin.serialization`, declarados con `apply false` en el `build.gradle.kts` raíz: Gradle usa la versión más alta de las que ve el build raíz, y la que trae AGP es anterior. [Built-in Kotlin](https://developer.android.com/build/migrate-to-built-in-kotlin)
 - Gradle corre con el wrapper y su distribución `-bin`.
-- `gradle.properties` lleva `org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=2g`: con los valores por defecto de Gradle, 512 MiB de heap y 384 MiB de Metaspace, el build de release se queda sin heap y Gradle descarta el daemon al agotarse el Metaspace. [Gradle 9.9.1](https://docs.gradle.org/9.9.1/userguide/build_environment.html#sec:configuring_jvm_memory)
+- `gradle.properties` lleva `org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=2g`: con los valores por defecto de Gradle, 512 MiB de heap y 384 MiB de Metaspace, el build de release se queda sin heap y Gradle descarta el daemon al agotarse el Metaspace. [Gradle 9.9.2](https://docs.gradle.org/9.9.2/userguide/build_environment.html#sec:configuring_jvm_memory)
 - Las dependencias y los plugins se declaran en el catálogo `gradle/libs.versions.toml`, con nombres en kebab-case, como `androidx-ktx`.
 - La versión de ktlint la fija el bloque `ktlint` de `app/build.gradle.kts`.
 - La versión que sube la que trae otra dependencia se fija en un bloque `constraints`, y no con una dependencia declarada.

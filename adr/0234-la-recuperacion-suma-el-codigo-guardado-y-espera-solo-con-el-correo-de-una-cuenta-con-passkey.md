@@ -1,6 +1,6 @@
 # ADR-0234 · La recuperación suma el código guardado y espera solo con el correo de una cuenta con passkey
 
-- **Estado:** Aceptada. Los puntos 11 a 14 son *(propuesta)*. El [ADR-0236](0236-el-titular-y-el-superadministrador-gestionan-la-cuenta.md) reemplaza parte del punto 6.
+- **Estado:** Aceptada. El [ADR-0236](0236-el-titular-y-el-superadministrador-gestionan-la-cuenta.md) reemplaza parte del punto 6.
 - **Fecha:** 2026-11-24
 - **Alcance:** `autenticacion.md`, `fastapi.md` y `plantilla/server/`
 
@@ -36,13 +36,13 @@ y Google hacen esperar la recuperación que llega con poco.
 9. La recuperación pendiente vive en la tabla `recovery`, y la tarea `recover` la aplica cada minuto.
 10. Las rutas de la recuperación se montan si el producto usa la passkey o la contraseña, y cada
     forma, con su método.
-11. *(propuesta)* El código guardado son 80 bits en 16 caracteres de base32, creado por
+11. El código guardado son 80 bits en 16 caracteres de base32, creado por
     `PUT /api/account/recovery-code` después de volver a autenticarse, y el servidor guarda su hash
     Argon2id.
-12. *(propuesta)* Los fallos del correo y del teléfono viven en `recovery_address`, y los del código
+12. Los fallos del correo y del teléfono viven en `recovery_address`, y los del código
     guardado, con su hash, en `recovery_code`.
-13. *(propuesta)* Un inicio de sesión pone en cero los fallos de los tres caminos.
-14. *(propuesta)* `GET /api/account/recovery` muestra la recuperación pendiente, y responde 404 si
+13. Un inicio de sesión pone en cero los fallos de los tres caminos.
+14. `GET /api/account/recovery` muestra la recuperación pendiente, y responde 404 si
     no hay.
 
 ## Consecuencias

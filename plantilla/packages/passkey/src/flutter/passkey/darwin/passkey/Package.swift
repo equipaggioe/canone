@@ -5,9 +5,9 @@ import PackageDescription
 let package = Package(
     name: "passkey",
     platforms: [
-        // Passkeys that sync came with iOS 16; the API is on macOS since 12.
+        // Passkeys that sync came with iOS 16 and macOS 13.
         .iOS("16.0"),
-        .macOS("12.0"),
+        .macOS("13.0"),
     ],
     products: [
         .library(name: "passkey", targets: ["passkey"])

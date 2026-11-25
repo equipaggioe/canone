@@ -1,6 +1,6 @@
 # ADR-0224 · El plugin de passkeys cubre Windows 11 y macOS, y el navegador queda para Linux y Qt
 
-- **Estado:** Aceptada; los puntos 3 y 4 son propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-11-23
 - **Alcance:** `plataformas/autenticacion.md`, `flutter.md`, `flet.md`, `plantilla/packages/passkey/`
   y `scripts/verificar.py`
@@ -20,15 +20,19 @@ extenderlo a Windows 11 y macOS.
 En la máquina de trabajo no hay Visual Studio con C++ ni macOS: la parte de Windows y la de macOS no
 se compilaron. La capa de Dart de Windows se probó con el canal simulado, en Windows.
 
+El 2026-11-24, con Visual Studio Build Tools 2022 17.14, la parte de Windows compiló en una app de
+prueba, en Windows 10 22H2. Ahí `webauthn.dll` da la versión 2 de su API y dice que hay un
+autenticador del sistema con verificación del usuario. No se creó ni se usó una passkey.
+
 ## Decisión
 
 1. El plugin `passkey` llama a la API de WebAuthn de Windows y a AuthenticationServices en macOS. La
    parte de Swift es la misma que la de iOS, en `darwin/`.
 2. Una app de Flutter o de Flet en Windows o en macOS usa la passkey con el plugin, y una de Linux o
    de Qt, en el navegador.
-3. *(propuesta)* En Windows, la app escribe el `clientDataJSON` con el origin `https://<dominio>`, y
+3. En Windows, la app escribe el `clientDataJSON` con el origin `https://<dominio>`, y
    el plugin usa la primera versión de las estructuras de la API, que lee todo Windows que la tiene.
-4. *(propuesta)* Una app de macOS declara `webcredentials:<dominio>`.
+4. Una app de macOS declara `webcredentials:<dominio>`.
 
 ## Consecuencias
 

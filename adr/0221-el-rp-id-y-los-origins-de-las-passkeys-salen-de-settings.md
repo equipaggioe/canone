@@ -1,6 +1,6 @@
 # ADR-0221 · El RP ID y los origins de las passkeys salen de `Settings`
 
-- **Estado:** Aceptada; los puntos 3 a 5 son propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-11-23
 - **Alcance:** `plataformas/autenticacion.md`, `fastapi.md` y `plantilla/server/`
 
@@ -20,11 +20,11 @@ denunciaría una passkey clonada.
 1. El dominio es `domain` de `Settings`, y es el RP ID.
 2. Los origins son `https://<dominio>`, `https://app.<dominio>` y `https://panel.<dominio>`, y los
    de `app_origins` de `Settings`.
-3. *(propuesta)* Las opciones del login se piden en `POST /api/auth/passkey/options`, y el servidor
+3. Las opciones del login se piden en `POST /api/auth/passkey/options`, y el servidor
    busca el challenge por el que trae `clientDataJSON`.
-4. *(propuesta)* El servidor le pasa a la biblioteca el `signCount` en 0 y lo compara él después de
+4. El servidor le pasa a la biblioteca el `signCount` en 0 y lo compara él después de
    la firma, y comprueba el user handle.
-5. *(propuesta)* La contraseña y la passkey comparten las esperas y el límite de sus fallos, en
+5. La contraseña y la passkey comparten las esperas y el límite de sus fallos, en
    `services/authenticators.py`.
 
 ## Consecuencias

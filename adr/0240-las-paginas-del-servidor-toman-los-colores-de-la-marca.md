@@ -1,6 +1,6 @@
 # ADR-0240 · Las páginas del servidor toman los colores de la marca
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-11-24
 - **Alcance:** `autenticacion.md`, `transversal.md`, `plantilla/scripts/tokens.py`,
   `scripts/verificar.py` y `plantilla/server/`

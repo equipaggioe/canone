@@ -246,3 +246,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0238](0238-los-avisos-llegan-por-push-y-el-servidor-envia-el-web-push-sin-seguir-ni-leer-la-respuesta.md) | Los avisos llegan por push, y el servidor envía el Web Push sin seguir ni leer la respuesta | `autenticacion.md`, `transversal.md`, `fastapi.md`, `sveltekit.md` y con `server/` |
 | [0239](0239-verificar-compara-los-archivos-de-las-cuentas.md) | `verificar.py` compara los archivos de las cuentas | `fastapi.md`, `autenticacion.md` y con `server/` |
 | [0240](0240-las-paginas-del-servidor-toman-los-colores-de-la-marca.md) | Las páginas del servidor toman los colores de la marca | `autenticacion.md`, `transversal.md` y con `server/` |
+| [0241](0241-el-plugin-de-passkeys-pide-macos-13.md) | El plugin de passkeys pide macOS 13 | `flutter.md`, `flet.md` y con `packages/passkey/` |

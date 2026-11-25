@@ -1,6 +1,6 @@
 # ADR-0222 · Las apps de Flutter y de Flet usan la passkey en el teléfono con un plugin de la plantilla
 
-- **Estado:** Aceptada; los puntos 4 y 5 son propuesta
+- **Estado:** Aceptada
 - **Fecha:** 2026-11-23
 - **Alcance:** `plataformas/autenticacion.md`, `flutter.md`, `flet.md`, `stack.md`,
   `plantilla/packages/passkey/` y `scripts/verificar.py`
@@ -34,9 +34,9 @@ se probó en un teléfono.
    el flutter_appauth del punto 10.
 3. El plugin recibe las opciones de WebAuthn en JSON y devuelve la respuesta en JSON, la misma que
    da el navegador, y el servidor la verifica como cualquier otra.
-4. *(propuesta)* Una app de iOS declara `webcredentials:<dominio>`, y la landing sirve
+4. Una app de iOS declara `webcredentials:<dominio>`, y la landing sirve
    `apple-app-site-association` con el app ID de cada app de iOS.
-5. *(propuesta)* El plugin pide `minSdk` 28, y en iOS, la versión 16, la de las passkeys que se
+5. El plugin pide `minSdk` 28, y en iOS, la versión 16, la de las passkeys que se
    sincronizan.
 
 ## Consecuencias

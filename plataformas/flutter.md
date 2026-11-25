@@ -339,6 +339,7 @@ Contrato: [autenticacion.md](autenticacion.md#passkeys).
 
 - En el teléfono, en Windows y en macOS, la app usa la passkey con `getPasskey` y `createPasskey` del plugin `passkey`, que la plantilla copia en `packages/passkey/src/flutter/passkey/` y la app declara como dependencia por `path`: Flutter no tiene una API oficial de passkeys.
 - En Android, `minSdk` no baja de 28, el del plugin.
+- En iOS, la versión mínima de la app no baja de 16, y en macOS, de 13, las del plugin: son las primeras que sincronizan las passkeys. [Apple](https://support.apple.com/guide/iphone/passkeys-passwords-devices-iph82d6721b2/16.0/ios/16.0)
 - En iOS, `ios/Runner/Runner.entitlements` declara `webcredentials:<dominio>` en `com.apple.developer.associated-domains`.
 - En macOS, `macos/Runner/Release.entitlements` y `DebugProfile.entitlements` declaran `webcredentials:<dominio>` en `com.apple.developer.associated-domains`.
 

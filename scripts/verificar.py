@@ -873,7 +873,7 @@ NPM = {
     for fila, version in menos("SvelteKit", "Node", "pnpm", "Playwright").items()
 }
 PNPM = SVELTEKIT["pnpm"]
-PUB = menos("Flutter", "Flutter", "Dart", "flutter_localizations") | {"smart_auth": STACK["Flet"]["smart_auth"]}
+PUB = menos("Flutter", "Flutter", "Dart", "flutter_localizations", "flutter_test") | {"smart_auth": STACK["Flet"]["smart_auth"]}
 # plataformas/flutter.md, «Proyecto»: las mutations de Riverpod son experimentales y pueden cambiar
 # sin una versión mayor, así que sus paquetes van sin ^.
 EXACTOS = {"flutter_riverpod", "riverpod_annotation", "riverpod_generator"}

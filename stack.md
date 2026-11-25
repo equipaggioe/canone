@@ -196,6 +196,7 @@ Página: [flutter.md](plataformas/flutter.md). El JDK, Gradle, AGP, Kotlin y, en
 | uuid | 4.6.0 | — |
 | package_info_plus | 10.2.2 | [Versión mínima de cliente](plataformas/flutter.md#versión-mínima-de-cliente) |
 | flutter_lints | 6.0.0 | [Estilo](plataformas/flutter.md#estilo) |
+| flutter_test | el de Flutter 3.50.1 | [Pruebas](plataformas/flutter.md#pruebas) y [Accesibilidad](plataformas/flutter.md#accesibilidad) |
 
 ## Android
 

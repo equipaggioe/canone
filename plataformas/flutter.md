@@ -321,7 +321,7 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
-- swagger_parser genera los modelos del cable y el cliente de la API desde `../server/openapi.json`, en `lib/data/services/api/`. `swagger_parser.yaml` lleva `serializer: freezed` y `http_client: http`.
+- swagger_parser genera los modelos del cable y el cliente de la API desde `../server/openapi.json`, en `lib/data/services/api/`. `swagger_parser.yaml` lleva en `generation` `serializer: freezed` y `http_client: http`.
 
 ## Paginación
 

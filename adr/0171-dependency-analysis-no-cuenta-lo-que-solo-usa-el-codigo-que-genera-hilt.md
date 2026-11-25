@@ -29,6 +29,17 @@ genera Hilt, sino `GatewayService`, porque Kotlin copia en el tipo que infiere d
 `NotificationCompat` su anotación `@NonNull` de jspecify. El código fuente tampoco lo importa, y
 la página lo dice así.
 
+Comprobado el 2026-11-25 con dependency-analysis 3.20.4, AGP 9.5.2, el BOM de Compose 2026.11.01 y una
+prueba instrumentada que llama a `enableAccessibilityChecks()`:
+
+- Con `createAndroidComposeRule`, `buildHealth` pide declarar `androidx.test.ext:junit`: está en el tipo
+  de la regla. La prueba corre en el emulador sin declararla y sin `@RunWith`. Con `createComposeRule`
+  no la pide.
+- Con las dos reglas, pide declarar `accessibility-test-framework` 4.1.1, que el código no importa:
+  es el tipo del parámetro que `enableAccessibilityChecks()` llena por defecto. Con él en el `exclude`,
+  pasa, y la página lo dice así.
+- `androidx.test:runner` y `ui-test-manifest` van con `androidTestRuntimeOnly` y `debugRuntimeOnly`.
+
 ## Decisión
 
 1. **dependency-analysis saca de las transitivas usadas lo que solo usa el código

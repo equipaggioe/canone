@@ -13,8 +13,9 @@ COLORS = PACKAGE / "colors.py"
 # pyside6-rcc writes it from resources.qrc, and git ignores it: its
 # bytes are images and translations, and can match a pattern by chance.
 RESOURCES = PACKAGE / "rc_resources.py"
-# A CSS rgb(), and not QColor.rgb(); a QColor built from a literal, a
-# QColorConstants or a Qt.GlobalColor, save transparent, which is no color.
+# A CSS rgb(), and not QColor.rgb(); a QColor built from a literal,
+# a QColorConstants or a Qt.GlobalColor, save transparent, which is
+# no color.
 COLOR = re.compile(
     r"#[0-9a-fA-F]{3,8}\b|(?<!\.)\brgba?\(|\bQColor\(|\bQColor\.from\w+\(\s*(?:[\d.]|[\"'])"
     r"|\bQColorConstants\.|\bGlobalColor\.(?!transparent\b)"

@@ -82,6 +82,7 @@ El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herr
 | [adr/](adr/) | Registro de las decisiones de Canone, con su alcance y estado. |
 | [pendientes/](pendientes/) | Temas de Canone documentados para retomarlos después, con su estado verificado; cada uno se borra cuando se cierra. |
 | [plantilla/](plantilla/) | Plantillas que se copian a los repositorios o se instalan desde Canone: qué es cada tipo y cómo se mantiene. |
+| [scripts/copiar.py](scripts/copiar.py) | Copia a un repositorio los archivos de la plantilla que se copian sin editar y que le faltan o se separaron. |
 | [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables y los orígenes de `plataformas/` contra `fuentes/`. |
 
 ## Verificación
@@ -105,5 +106,14 @@ Para comprobar los orígenes de `plataformas/` contra `fuentes/`:
 ```bash
 python scripts/verificar.py --canone
 ```
+
+Para copiar a un repositorio los archivos que se copian sin editar, los mismos que compara `verificar.py`:
+
+```bash
+python scripts/copiar.py ../<repo>             # solo los nombra
+python scripts/copiar.py ../<repo> --aplicar
+```
+
+Con `--cuentas` copia también los de un servidor con cuentas a uno que todavía no las tiene. No toca los archivos que cada repositorio completa, y si reemplazaría uno cuyo contenido no está en un commit, no copia nada.
 
 La verificación de cada repositorio considera únicamente las tecnologías que utiliza. Por ejemplo, si no tiene `server/`, no exige las convenciones de FastAPI.

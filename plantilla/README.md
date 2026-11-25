@@ -2,7 +2,7 @@
 
 Los archivos que se copian a un repositorio. No es un proyecto que corra, y **no es una lista de lo que un repositorio debe tener**: se copia solo lo de las plataformas que el producto use.
 
-Cada archivo sale de una convención de [repositorio.md](../repositorio.md) o de una página de [plataformas/](../plataformas/), y esa página lo nombra. Un archivo **canónico** se copia sin editar y `scripts/verificar.py` comprueba que la copia no se haya separado. Un **punto de partida** se copia y después es del repositorio. Un archivo que **se instala** no se copia al repositorio: un script de Canone lo instala en el servidor con los datos de cada app. Un archivo **en desarrollo** todavía no se copia.
+Cada archivo sale de una convención de [repositorio.md](../repositorio.md) o de una página de [plataformas/](../plataformas/), y esa página lo nombra. Un archivo **canónico** se copia sin editar y `scripts/verificar.py` comprueba que la copia no se haya separado; `scripts/copiar.py` hace la copia. Un **punto de partida** se copia y después es del repositorio. Un archivo que **se instala** no se copia al repositorio: un script de Canone lo instala en el servidor con los datos de cada app. Un archivo **en desarrollo** todavía no se copia.
 
 Un archivo canónico tiene una única versión aquí. Toda modificación se hace primero aquí y después se propaga a los repositorios que lo usan; una copia de un repositorio no sirve de origen para actualizar las demás. Lo que se instala se mantiene y se actualiza aquí, sin implementaciones paralelas en los repositorios.
 

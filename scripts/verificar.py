@@ -418,9 +418,7 @@ def colores_generados(repo: Path) -> list[str]:
         return [f"plataformas/transversal.md: {error}"]
     if not clientes:
         return []
-    fallas = comparar(repo / "scripts/tokens.py", PLANTILLA / "scripts/tokens.py", "scripts/tokens.py")
-    fallas.extend(f"plataformas/transversal.md: {falla}" for falla in tokens.stale(repo))
-    return fallas
+    return [f"plataformas/transversal.md: {falla}" for falla in tokens.stale(repo)]
 
 
 def colores_plantilla() -> list[str]:
@@ -529,9 +527,9 @@ def plugins_catalogo(catalogo: Path) -> dict[str, str]:
 
 
 def versiones_gradle(
-    proyecto: Path, nombre: str, declarados: dict[str, str], plugins: dict[str, str]
+    nombre: str, declarados: dict[str, str], plugins: dict[str, str]
 ) -> list[str]:
-    fallas = comparar(proyecto / WRAPPER, PLANTILLA / "android" / WRAPPER, f"{nombre}/{WRAPPER.as_posix()}")
+    fallas: list[str] = []
     for plugin, version in plugins.items():
         if declarados.get(plugin) != version:
             fallas.append(
@@ -1225,44 +1223,85 @@ def permisos(repo: Path) -> list[str]:
     ]
 
 
+def copias(repo: Path, cuentas: bool = False) -> list[tuple[str, Path]]:
+    """Devuelve cada archivo que el repositorio copia sin editar, con su canónico.
+
+    Con `cuentas`, también los de un servidor con cuentas que todavía no las tiene.
+    """
+    paginas = vigentes()
+    pares: list[tuple[str, Path]] = []
+
+    # Un repositorio sin server/ no tiene por qué tener sus archivos canónicos.
+    if (repo / "server").is_dir():
+        pares.extend((rel.as_posix(), PLANTILLA / rel) for rel in CANONICOS)
+    if (repo / "server/src/app/models/account").is_dir() or cuentas:
+        pares.extend((rel.as_posix(), PLANTILLA / rel) for rel in CUENTAS)
+
+    pares.append((".gitattributes", PLANTILLA / ".gitattributes"))
+
+    # despliegue.md, «Versiones», y java.md: el que sube cada app de mobile/ a Play, el que firma y
+    # entrega las versiones de Apple, y el que compila cada pieza en Java.
+    for nombre in ("scripts/play.py", "scripts/apple.py", "scripts/java.py"):
+        if (repo / nombre).exists():
+            pares.append((nombre, PLANTILLA / nombre))
+
+    for carpeta, lista in (("packages/sms", SMS), ("packages/passkey", PASSKEY)):
+        if (repo / carpeta).is_dir():
+            pares.extend((rel.as_posix(), PLANTILLA / rel) for rel in lista)
+
+    # SvelteKit: solo para las superficies web que existan.
+    for paquete in repo.glob("*/package.json") if "sveltekit.md" in paginas else []:
+        datos = json.loads(paquete.read_text(encoding="utf-8"))
+        if "@sveltejs/kit" in {**datos.get("dependencies", {}), **datos.get("devDependencies", {})}:
+            pares.extend(
+                (f"{paquete.parent.name}/{nombre}", PLANTILLA / "sveltekit" / nombre)
+                for nombre in (".prettierrc", "knip.json", "pnpm-workspace.yaml", "static/theme.js", "src/lib/version.ts")
+            )
+
+    # Flutter: solo para las apps que existan.
+    for pubspec in repo.glob("*/pubspec.yaml") if "flutter.md" in paginas else []:
+        app = pubspec.parent
+        pares.append((f"{app.name}/analysis_options.yaml", PLANTILLA / "flutter/analysis_options.yaml"))
+        if (app / "android/settings.gradle.kts").exists():
+            pares.append((f"{app.name}/android/{WRAPPER.as_posix()}", PLANTILLA / "android" / WRAPPER))
+
+    # Android: solo para las apps que existan.
+    for settings in repo.glob("*/settings.gradle.kts") if "android.md" in paginas else []:
+        app = settings.parent
+        pares.append((f"{app.name}/.editorconfig", PLANTILLA / "android/.editorconfig"))
+        pares.append((f"{app.name}/{WRAPPER.as_posix()}", PLANTILLA / "android" / WRAPPER))
+
+    for pieza, pagina in piezas_python(repo).items():
+        if pagina in paginas:
+            plantilla = PLANTILLA / pagina.removesuffix(".md")
+            pares.extend(
+                (f"{pieza}/{rel.as_posix()}", plantilla / rel)
+                for rel in COPIAS_SRC[pagina]
+                if (repo / pieza / rel).parent.is_dir()
+            )
+
+    # transversal.md, «Tema»: con un cliente. Si los colores de la marca no se pueden leer, lo dice
+    # colores_generados().
+    tokens = generador()
+    try:
+        clientes = tokens.outputs(repo)
+    except tokens.TokenError:
+        clientes = {}
+    if clientes:
+        pares.append(("scripts/tokens.py", PLANTILLA / "scripts/tokens.py"))
+    return pares
+
+
 def revisar(repo: Path) -> list[str]:
     fallas: list[str] = []
     paginas = vigentes()
 
-    # Un repositorio sin server/ no tiene por qué tener sus archivos canónicos.
-    if (repo / "server").is_dir():
-        for rel in CANONICOS:
-            fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
+    for nombre, canonico in copias(repo):
+        fallas.extend(comparar(repo / nombre, canonico, nombre))
     if (repo / "server/src/app/models/account").is_dir():
-        for rel in CUENTAS:
-            fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
         fallas.extend(catalogos(repo))
 
-    fallas.extend(comparar(repo / ".gitattributes", PLANTILLA / ".gitattributes", ".gitattributes"))
-
-    # despliegue.md, «Versiones»: the script that uploads each app of mobile/ to Play.
-    play = Path("scripts/play.py")
-    if (repo / play).exists():
-        fallas.extend(comparar(repo / play, PLANTILLA / play, play.as_posix()))
-
-    # despliegue.md, «Versiones»: the script that signs the Apple builds and ships them.
-    apple = Path("scripts/apple.py")
-    if (repo / apple).exists():
-        fallas.extend(comparar(repo / apple, PLANTILLA / apple, apple.as_posix()))
-
-    # java.md: the script that builds each piece in Java.
-    java = Path("scripts/java.py")
-    if (repo / java).exists():
-        fallas.extend(comparar(repo / java, PLANTILLA / java, java.as_posix()))
     fallas.extend(piezas_java(repo))
-
-    if (repo / "packages/sms").is_dir():
-        for rel in SMS:
-            fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
-
-    if (repo / "packages/passkey").is_dir():
-        for rel in PASSKEY:
-            fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
 
     for carpeta in sorted(p for p in repo.iterdir() if p.is_dir()):
         if carpeta.name.startswith("."):
@@ -1342,10 +1381,6 @@ def revisar(repo: Path) -> list[str]:
             r"\bseparators\s*:\s*\[\s*['\"]:['\"]\s*\]", sin_comentarios(uno.read_text(encoding="utf-8"))
         ):
             fallas.append(f"plataformas/sveltekit.md: {superficie.name}/uno.config.ts no fija separators: [':']")
-        for nombre in (".prettierrc", "knip.json", "pnpm-workspace.yaml", "static/theme.js", "src/lib/version.ts"):
-            fallas.extend(
-                comparar(superficie / nombre, PLANTILLA / "sveltekit" / nombre, f"{superficie.name}/{nombre}")
-            )
         # sveltekit.md, «Carga de datos»: el layout raíz recarga la página cuando sale un build nuevo.
         layout = superficie / "src/routes/+layout.svelte"
         texto = layout.read_text(encoding="utf-8") if layout.exists() else ""
@@ -1356,30 +1391,20 @@ def revisar(repo: Path) -> list[str]:
     # Flutter: solo para las apps que existan.
     for pubspec in repo.glob("*/pubspec.yaml") if "flutter.md" in paginas else []:
         app = pubspec.parent
-        fallas.extend(
-            comparar(
-                app / "analysis_options.yaml",
-                PLANTILLA / "flutter/analysis_options.yaml",
-                f"{app.name}/analysis_options.yaml",
-            )
-        )
         settings = app / "android/settings.gradle.kts"
         if settings.exists():
             declarados = dict(PLUGIN_KTS.findall(settings.read_text(encoding="utf-8")))
-            fallas.extend(versiones_gradle(app / "android", f"{app.name}/android", declarados, PLUGINS_FLUTTER))
+            fallas.extend(versiones_gradle(f"{app.name}/android", declarados, PLUGINS_FLUTTER))
 
     # Android: solo para las apps que existan.
     for settings in repo.glob("*/settings.gradle.kts") if "android.md" in paginas else []:
         app = settings.parent
-        fallas.extend(
-            comparar(app / ".editorconfig", PLANTILLA / "android/.editorconfig", f"{app.name}/.editorconfig")
-        )
         catalogo = app / "gradle/libs.versions.toml"
         if not catalogo.exists():
             fallas.append(f"plataformas/android.md: falta {app.name}/gradle/libs.versions.toml")
             continue
         declarados = plugins_catalogo(catalogo)
-        fallas.extend(versiones_gradle(app, app.name, declarados, PLUGINS_ANDROID))
+        fallas.extend(versiones_gradle(app.name, declarados, PLUGINS_ANDROID))
         for plugin, version in KTLINT.items():
             if declarados.get(plugin) != version:
                 fallas.append(
@@ -1399,10 +1424,6 @@ def revisar(repo: Path) -> list[str]:
         fallas.extend(fuera_del_arbol(repo, pieza, pagina))
         if pagina == "qt.md":
             fallas.extend(modulos_por_clase(repo, pieza))
-        plantilla = PLANTILLA / pagina.removesuffix(".md")
-        for rel in COPIAS_SRC[pagina]:
-            if (repo / pieza / rel).parent.is_dir():
-                fallas.extend(comparar(repo / pieza / rel, plantilla / rel, f"{pieza}/{rel.as_posix()}"))
 
     docs = repo / "docs"
     if docs.is_dir():

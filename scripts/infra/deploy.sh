@@ -81,6 +81,8 @@ app_origins=[]
 contact=ayuda@demo.example
 equipaggio_key=test-equipaggio-key
 setup_code=test-setup-code
+firebase_credentials={}
+vapid_key=q83vEjRWeJCrze8SNFZ4kKvN7xI0VniQq83vEjRWeJA
 sms_hashes={}
 EOF
 deploy() { UV_OFFLINE=1 python3 "$work/deploy.py" "$1"; }

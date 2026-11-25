@@ -27,6 +27,8 @@ pytestmark = pytest.mark.skipif(
     Method.PASSKEY not in METHODS, reason="the product offers no passkey"
 )
 
+APP = "android:apk-key-hash:test"
+
 
 @pytest.fixture
 async def account(session: AsyncSession) -> Account:
@@ -120,16 +122,22 @@ async def test_challenge_is_used_once(
         (f"https://{settings.domain}", 200),
         (f"https://app.{settings.domain}", 200),
         (f"https://panel.{settings.domain}", 200),
-        ("android:apk-key-hash:test", 200),
+        (APP, 200),
         ("https://evil.example", 401),
         (f"http://app.{settings.domain}", 401),
         ("android:apk-key-hash:other", 401),
     ],
 )
 async def test_origin_is_a_web_surface_or_an_app(
-    client: AsyncClient, account: Account, passkey: Authenticator, origin: str, status: int
+    client: AsyncClient,
+    account: Account,
+    passkey: Authenticator,
+    monkeypatch: pytest.MonkeyPatch,
+    origin: str,
+    status: int,
 ) -> None:
     """The origin is a surface of domain or one of app_origins."""
+    monkeypatch.setattr(settings, "app_origins", [APP])
     credential = passkey.sign(await challenge(client), account.user_handle, origin=origin)
     assert (await sign_in(client, credential)).status_code == status
 

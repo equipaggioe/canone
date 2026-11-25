@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 
+from app.clients import CLIENTS
 from app.config import settings
 
 LOOPBACK = "127.0.0.1"
@@ -16,11 +17,6 @@ class Registration:
 
     client_id: str
     redirect_uris: frozenset[str]
-
-
-# Each app of the desktop, with the loopback URI it listens on: the
-# port of a loopback URI may be any.
-CLIENTS: dict[str, Registration] = {}
 
 
 def surfaces() -> tuple[str, ...]:
@@ -37,7 +33,8 @@ def registration(client_id: str) -> Registration | None:
     """Find a client: the web, or an app of CLIENTS."""
     if client_id == WEB:
         return Registration(WEB, frozenset(web_return(host) for host in surfaces()))
-    return CLIENTS.get(client_id)
+    uris = CLIENTS.get(client_id)
+    return None if uris is None else Registration(client_id, uris)
 
 
 def is_loopback(uri: str) -> bool:

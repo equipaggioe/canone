@@ -63,7 +63,7 @@ class Credential(service_account.Credentials):
         """Put the token in a message."""
         self.apply(headers)
 
-    # google-auth does not annotate it: pyrefly infers that it never returns.
+    # google-auth does not annotate it: pyrefly infers NoReturn.
     def refresh(self, request: Request) -> None:  # pyrefly: ignore[bad-override]
         """Keep the token: the 401 stays the answer of the message."""
 

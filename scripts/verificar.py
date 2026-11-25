@@ -22,6 +22,7 @@ import sys
 import tomllib
 import unicodedata
 from pathlib import Path
+from types import ModuleType
 
 CANONE = Path(__file__).resolve().parent.parent
 PLANTILLA = CANONE / "plantilla"
@@ -69,6 +70,106 @@ CANONICOS = [
     Path("server/tests/test_events.py"),
     Path("server/tests/test_files.py"),
     Path("server/tests/test_tasks.py"),
+]
+
+# plataformas/fastapi.md, «Proyecto»: los de un servidor con cuentas, que es el que tiene models/account/.
+CUENTAS = [
+    Path("server/src/app/blocklist.txt"),
+    Path("server/src/app/models/account/__init__.py"),
+    Path("server/src/app/models/account/account.py"),
+    Path("server/src/app/models/account/account_session.py"),
+    Path("server/src/app/models/account/passkey.py"),
+    Path("server/src/app/models/account/password.py"),
+    Path("server/src/app/models/account/phone.py"),
+    Path("server/src/app/models/account/push_fid.py"),
+    Path("server/src/app/models/account/push_subscription.py"),
+    Path("server/src/app/models/account/recovery.py"),
+    Path("server/src/app/models/account/recovery_address.py"),
+    Path("server/src/app/models/account/recovery_code.py"),
+    Path("server/src/app/models/account/throttled.py"),
+    Path("server/src/app/pages.py"),
+    Path("server/src/app/routers/account.py"),
+    Path("server/src/app/routers/accounts.py"),
+    Path("server/src/app/routers/auth.py"),
+    Path("server/src/app/routers/authorization.py"),
+    Path("server/src/app/routers/fcm.py"),
+    Path("server/src/app/routers/passkey.py"),
+    Path("server/src/app/routers/password.py"),
+    Path("server/src/app/routers/recovery.py"),
+    Path("server/src/app/routers/sms.py"),
+    Path("server/src/app/routers/web_push.py"),
+    Path("server/src/app/routers/websocket.py"),
+    Path("server/src/app/schemas/account.py"),
+    Path("server/src/app/schemas/accounts.py"),
+    Path("server/src/app/schemas/auth.py"),
+    Path("server/src/app/schemas/authorization.py"),
+    Path("server/src/app/schemas/fcm.py"),
+    Path("server/src/app/schemas/web_push.py"),
+    Path("server/src/app/schemas/websocket.py"),
+    Path("server/src/app/services/account.py"),
+    Path("server/src/app/services/accounts.py"),
+    Path("server/src/app/services/attestation.py"),
+    Path("server/src/app/services/authenticators.py"),
+    Path("server/src/app/services/authorization.py"),
+    Path("server/src/app/services/channel.py"),
+    Path("server/src/app/services/clients.py"),
+    Path("server/src/app/services/codes.py"),
+    Path("server/src/app/services/fcm.py"),
+    Path("server/src/app/services/limits.py"),
+    Path("server/src/app/services/messages.py"),
+    Path("server/src/app/services/notices.py"),
+    Path("server/src/app/services/passkeys.py"),
+    Path("server/src/app/services/passwords.py"),
+    Path("server/src/app/services/push.py"),
+    Path("server/src/app/services/recovery.py"),
+    Path("server/src/app/services/registration.py"),
+    Path("server/src/app/services/sessions.py"),
+    Path("server/src/app/services/sms.py"),
+    Path("server/src/app/services/web_push.py"),
+    Path("server/src/app/services/websocket.py"),
+    Path("server/src/app/translations.py"),
+    Path("server/tests/authenticator.py"),
+    Path("server/tests/test_account.py"),
+    Path("server/tests/test_accounts.py"),
+    Path("server/tests/test_authorization.py"),
+    Path("server/tests/test_messages.py"),
+    Path("server/tests/test_methods.py"),
+    Path("server/tests/test_passkeys.py"),
+    Path("server/tests/test_passwords.py"),
+    Path("server/tests/test_push.py"),
+    Path("server/tests/test_recovery.py"),
+    Path("server/tests/test_registration.py"),
+    Path("server/tests/test_sessions.py"),
+    Path("server/tests/test_sms.py"),
+    Path("server/tests/test_websocket.py"),
+]
+
+# Lo demás de plantilla/server/, que cada repositorio completa.
+COMPLETABLES = [
+    Path("server/alembic/versions/82f87036a005_accounts.py"),
+    Path("server/alembic/versions/d34c1b992b0b_event_log.py"),
+    Path("server/openapi.json"),
+    Path("server/pyproject.toml"),
+    Path("server/src/app/clients.py"),
+    Path("server/src/app/colors.py"),
+    Path("server/src/app/config.py"),
+    Path("server/src/app/dependencies.py"),
+    Path("server/src/app/enums.py"),
+    Path("server/src/app/errors.py"),
+    Path("server/src/app/ijson.py"),
+    Path("server/src/app/locale/es/LC_MESSAGES/messages.po"),
+    Path("server/src/app/main.py"),
+    Path("server/src/app/methods.py"),
+    Path("server/src/app/models/event/event_log.py"),
+    Path("server/src/app/push.py"),
+    Path("server/src/app/routers/health.py"),
+    Path("server/src/app/schemas/health.py"),
+    Path("server/src/app/services/events.py"),
+    Path("server/src/app/services/health.py"),
+    Path("server/src/app/tasks.py"),
+    Path("server/tests/conftest.py"),
+    Path("server/tests/test_health.py"),
+    Path("server/uv.lock"),
 ]
 
 # plataformas/flet.md, «Código por SMS»: la extensión de Flet que lee el código del SMS.
@@ -301,11 +402,16 @@ def configuracion_con_repositorio(repo: Path) -> list[str]:
 # plataformas/transversal.md, «Tema»: los colores de cada cliente se generan desde brand/tokens/ con
 # scripts/tokens.py, y lo generado está al día. Se usa la copia de canone, así una copia editada no
 # se revisa a sí misma.
-def colores_generados(repo: Path) -> list[str]:
+def generador() -> ModuleType:
     especificacion = importlib.util.spec_from_file_location("tokens", PLANTILLA / "scripts/tokens.py")
     assert especificacion and especificacion.loader
     tokens = importlib.util.module_from_spec(especificacion)
     especificacion.loader.exec_module(tokens)
+    return tokens
+
+
+def colores_generados(repo: Path) -> list[str]:
+    tokens = generador()
     try:
         clientes = tokens.outputs(repo)
     except tokens.TokenError as error:
@@ -317,6 +423,15 @@ def colores_generados(repo: Path) -> list[str]:
     return fallas
 
 
+def colores_plantilla() -> list[str]:
+    """Comprueba que los colores de plantilla/server/ salgan de plantilla/brand/tokens/."""
+    tokens = generador()
+    rel = Path("server/src/app/colors.py")
+    if (PLANTILLA / rel).read_text(encoding="utf-8") != tokens.generate(PLANTILLA)[PLANTILLA / rel]:
+        return [f"plataformas/transversal.md: plantilla/{rel.as_posix()} no sale de plantilla/brand/tokens/"]
+    return []
+
+
 def comparar(copia: Path, canonico: Path, nombre: str) -> list[str]:
     if not copia.exists():
         return [f"ADR-0002: falta {nombre}"]
@@ -325,6 +440,57 @@ def comparar(copia: Path, canonico: Path, nombre: str) -> list[str]:
     ):
         return [f"ADR-0002: {nombre} no coincide con el canónico de canone"]
     return []
+
+
+# plataformas/fastapi.md, «Idiomas»: el catálogo de cada idioma traduce los textos de las cuentas.
+LOCALE = Path("server/src/app/locale")
+CATALOGO = Path("LC_MESSAGES/messages.po")
+CADENA = re.compile(r'"((?:[^"\\]|\\.)*)"')
+
+
+def textos(po: Path) -> dict[str, str]:
+    """Devuelve cada msgid de un catálogo con su msgstr, vacío si es fuzzy: pybabel no lo compila."""
+    encontrados: dict[str, str] = {}
+    for entrada in re.split(r"\n\s*\n", po.read_text(encoding="utf-8")):
+        partes: dict[str, str] = {}
+        clave = ""
+        for linea in entrada.splitlines():
+            palabra, _, resto = linea.partition(" ")
+            if not linea.startswith('"'):
+                clave, linea = palabra, resto
+            partes[clave] = partes.get(clave, "") + "".join(CADENA.findall(linea))
+        if "msgid" in partes:
+            fuzzy = re.search(r"^#,.*\bfuzzy\b", entrada, re.M)
+            encontrados[partes["msgid"]] = "" if fuzzy else partes.get("msgstr", "")
+    return encontrados
+
+
+def catalogos(repo: Path) -> list[str]:
+    """Comprueba que el catálogo de cada idioma del repositorio tenga los textos de la plantilla."""
+    esperados = textos(PLANTILLA / LOCALE / "es" / CATALOGO)
+    idiomas = {"es"} | {p.name for p in (repo / LOCALE).glob("*") if p.is_dir()}
+    fallas: list[str] = []
+    for idioma in sorted(idiomas):
+        po = LOCALE / idioma / CATALOGO
+        if not (repo / po).is_file():
+            fallas.append(f"plataformas/fastapi.md: falta {po.as_posix()}")
+            continue
+        hallados = textos(repo / po)
+        fallas.extend(
+            f"plataformas/fastapi.md: {po.as_posix()} no traduce «{texto}»"
+            for texto in esperados
+            if not hallados.get(texto)
+        )
+    return fallas
+
+
+def sin_clasificar() -> list[str]:
+    """Los archivos de plantilla/server/ que ninguna lista nombra: nadie compararía su copia."""
+    listados = {rel.as_posix() for rel in (*CANONICOS, *CUENTAS, *COMPLETABLES)}
+    hallados = {rel for rel in listar(PLANTILLA) if rel.startswith("server/") and (PLANTILLA / rel).is_file()}
+    return [f"plantilla/README.md: plantilla/{rel} no está en ninguna lista de verificar.py" for rel in sorted(hallados - listados)] + [
+        f"plantilla/README.md: verificar.py nombra plantilla/{rel}, que no existe" for rel in sorted(listados - hallados)
+    ]
 
 
 # stack.md, «Android»: una sola versión de Gradle, AGP y Kotlin en Android y en
@@ -1067,6 +1233,10 @@ def revisar(repo: Path) -> list[str]:
     if (repo / "server").is_dir():
         for rel in CANONICOS:
             fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
+    if (repo / "server/src/app/models/account").is_dir():
+        for rel in CUENTAS:
+            fallas.extend(comparar(repo / rel, PLANTILLA / rel, rel.as_posix()))
+        fallas.extend(catalogos(repo))
 
     fallas.extend(comparar(repo / ".gitattributes", PLANTILLA / ".gitattributes", ".gitattributes"))
 
@@ -1341,6 +1511,8 @@ def main() -> int:
         fallas += versiones_workflows(CANONE, PAGINAS)
         fallas += negaciones(CANONE, listar(CANONE))
         fallas += bloqueo()
+        fallas += sin_clasificar()
+        fallas += colores_plantilla()
         print(f"\ncanone: {len(fallas)} incumplimientos")
         for falla in fallas:
             print(f"  - {falla}")

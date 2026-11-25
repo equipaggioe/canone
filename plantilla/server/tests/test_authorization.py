@@ -12,14 +12,16 @@ from httpx import ASGITransport, AsyncClient, Response
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
 from webauthn.helpers import base64url_to_bytes
 
-from app import store
+from app import colors, pages, store
+from app.clients import CLIENTS
 from app.config import settings
 from app.enums import Method, Role
 from app.main import app
 from app.methods import METHODS
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
-from app.services import authorization, clients, sessions
+from app.services import authorization, sessions
+from app.translations import catalog
 from tests.authenticator import Authenticator, register
 
 pytestmark = pytest.mark.skipif(
@@ -27,7 +29,7 @@ pytestmark = pytest.mark.skipif(
 )
 
 HOST = f"app.{settings.domain}"
-DESKTOP = clients.Registration("desktop", frozenset({"http://127.0.0.1/callback"}))
+DESKTOP = "desktop"
 RETURN = "http://127.0.0.1:5555/callback"
 VERIFIER = secrets.token_urlsafe(32)
 
@@ -43,7 +45,7 @@ async def browser(database: AsyncConnection) -> AsyncIterator[AsyncClient]:
 @pytest.fixture(autouse=True)
 def desktop(monkeypatch: pytest.MonkeyPatch) -> None:
     """Register an app of the desktop that returns on loopback."""
-    monkeypatch.setitem(clients.CLIENTS, DESKTOP.client_id, DESKTOP)
+    monkeypatch.setitem(CLIENTS, DESKTOP, frozenset({"http://127.0.0.1/callback"}))
 
 
 @pytest.fixture
@@ -61,7 +63,7 @@ def params(**changes: str | None) -> dict[str, str]:
     """Build a valid request of the desktop app, with changes."""
     base: dict[str, str | None] = {
         "response_type": "code",
-        "client_id": DESKTOP.client_id,
+        "client_id": DESKTOP,
         "redirect_uri": RETURN,
         "code_challenge": authorization.challenge_of(VERIFIER),
         "code_challenge_method": "S256",
@@ -180,6 +182,19 @@ async def test_page_loads_nothing_from_other_sites(browser: AsyncClient) -> None
     assert not re.search(r"https?://", page)
 
 
+async def test_pages_wear_the_colors_of_the_brand(browser: AsyncClient) -> None:
+    """Every color is a variable that tokens.py wrote."""
+    nobody: dict[str, str] = {}
+    for request in (params(), nobody):
+        page = await browser.get("/api/auth/authorize", params=request)
+        assert colors.CSS in page.text
+        assert pages.STYLE in page.text
+    used = set(re.findall(r"(?:color|background): ([^;]+);", pages.STYLE))
+    names = ("surface", "on-surface", "primary", "on-primary", "error")
+    assert used == {f"var(--color-{name})" for name in names}
+    assert all(f"--color-{name}: #" in colors.CSS for name in names)
+
+
 @pytest.mark.parametrize("language", ["es-CL,en;q=0.5", "en", ""])
 async def test_page_speaks_the_language_asked_or_the_base(
     browser: AsyncClient, language: str
@@ -188,7 +203,9 @@ async def test_page_speaks_the_language_asked_or_the_base(
     headers = {"Accept-Language": language}
     page = await browser.get("/api/auth/authorize", params=params(), headers=headers)
     assert '<html lang="es">' in page.text
-    assert "Entrar con passkey" in page.text
+    text = "Sign in with a passkey"
+    assert catalog("es").gettext(text) in page.text
+    assert f">{text}<" not in page.text
 
 
 async def test_page_asks_the_passkey_with_a_web_session(

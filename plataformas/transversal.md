@@ -257,6 +257,7 @@ Estándares: de DTCG 2025.10, el [formato](../fuentes/dtcg/format.html), el [mó
 - Un tema cambia la paleta, y los modos asignan los roles: el mismo rol toma el mismo tono en todos los temas. Los archivos de un tema solo tienen el grupo `palette`, y los de un modo, solo el grupo `color`.
 - Un tema se nombra con minúsculas y dígitos: es un miembro de un enum en cada cliente y un valor de `data-theme` en la web.
 - `scripts/tokens.py` genera en cada cliente el enum `ColorTheme`, con un miembro por tema y un esquema ya armado por modo, y el tema inicial. Si el producto tiene custom colors, genera también la clase `CustomColors`, y cada tema tiene uno por modo, aparte del esquema.
+- `scripts/tokens.py` genera también los colores de las páginas del servidor con cuentas, en `server/src/app/colors.py`: las variables CSS del tema inicial. El navegador que las abre no tiene la elección del usuario.
 - `scripts/tokens.py` falla ante lo que DTCG define fuera de las partes que siguen, ante un color que no cumpla el contraste de [Accesibilidad](#accesibilidad) y ante dos temas iguales: un producto solo usa colores sRGB opacos.
 - Lo generado se commitea: un cliente compila sin correr el generador.
 - Con un solo modo, el cliente lo usa siempre, aunque el sistema esté en el otro.

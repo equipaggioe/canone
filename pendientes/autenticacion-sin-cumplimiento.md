@@ -1,26 +1,17 @@
-# «Cumplimiento» de autenticacion.md
+# Autenticación sin probar en el dispositivo o el servicio
 
-Tema pendiente: la plantilla de autenticación se escribe por partes, y cada parte suma sus filas a «Cumplimiento» de `autenticacion.md`.
+Tema pendiente: la plantilla de autenticación está escrita y con sus filas en «Cumplimiento» de [autenticacion.md](../plataformas/autenticacion.md), y lo que sigue falta probarlo donde corre.
 
 ## Estado (verificado 2026-11-24)
 
-| Pieza | Estado |
-| :--- | :--- |
-| Parte 1, la sesión | Hecha: el login con contraseña, la cookie, el token de acceso, el refresco rotado, el `Origin`, las esperas y el deshabilitado por fallos, cerrar sesión y la purga, en `plantilla/server/` y `tests/test_sessions.py`, con sus filas en «Cumplimiento» ([ADR-0219](../adr/0219-una-app-presenta-un-token-de-acceso-opaco-y-el-login-tiene-una-ruta-por-metodo-y-forma.md)) |
-| Parte 2, las passkeys | Hecha: el login con passkey, por la cookie y por los tokens, con la verificación de `webauthn` y lo que el servidor comprueba aparte, en `plantilla/server/` y `tests/test_passkeys.py` ([ADR-0221](../adr/0221-el-rp-id-y-los-origins-de-las-passkeys-salen-de-settings.md)) |
-| Plugin `passkey` de Flutter y extensión `flet_passkey` | Escritos en `plantilla/packages/passkey/`, para Android, iOS, macOS y Windows ([ADR-0224](../adr/0224-el-plugin-de-passkeys-cubre-windows-11-y-macos.md)). Compila en Android, y la capa de Dart de Windows pasa sus pruebas con el canal simulado. Sin compilar: iOS, macOS y el C++ de Windows. Sin probar en un dispositivo, y Windows 10 sin confirmar |
-| Parte 3, el código de autorización | Hecha para el escritorio y la web: la página que sirve el servidor, el canje en el endpoint de token y el flujo de la web por el servidor, en `plantilla/server/` y `tests/test_authorization.py` ([ADR-0223](../adr/0223-el-servidor-sirve-la-pagina-de-autorizacion-y-el-codigo-queda-para-el-escritorio-y-la-web.md)). Faltan los colores de la marca en la página |
-| Parte 4, registro y cuentas | Hecha: el registro con el código por correo o por SMS y la passkey, el código de instalación y el superadministrador, que se registra con él sin el código enviado ([ADR-0235](../adr/0235-el-superadministrador-se-registra-con-el-codigo-de-instalacion-y-un-administrador-de-cliente-es-una-cuenta-comun.md)), volver a autenticarse, vincular, ver y borrar passkeys, cambiar el correo o el teléfono, y los avisos por correo y por SMS, también el de una passkey posiblemente clonada, en `plantilla/server/`, `tests/test_registration.py`, `tests/test_account.py` y `tests/test_messages.py` ([ADR-0225](../adr/0225-equipaggio-y-consola-son-instrumentos-de-canone.md) y [ADR-0226](../adr/0226-el-registro-trae-el-codigo-y-la-passkey-y-volver-a-autenticarse-renueva-la-sesion.md)). La URL de la API de Equipaggio no se probó contra el servicio |
-| Parte 5, contraseñas | Hecha: agregar y cambiar la contraseña, la lista de bloqueo del NCSC y registrarse con contraseña. Cada producto elige sus métodos: la passkey, la contraseña y el código por SMS se montan solo si los usa, en `plantilla/server/`, `tests/test_passwords.py` y `tests/test_methods.py` ([ADR-0228](../adr/0228-la-lista-de-bloqueo-sale-del-ncsc.md)) |
-| Parte 6a, el código por SMS | Hecha: pedir el código y entrar por la cookie o los tokens, volver a autenticarse con él, los fallos del teléfono en la tabla `phone`, el superadministrador, que si el producto usa la passkey recibe 403 y cuenta sus fallos como cualquiera ([ADR-0233](../adr/0233-una-cuenta-de-administracion-cuenta-sus-fallos-como-cualquier-otra.md)), el bloqueo por los 404 y registrarse con teléfono sin autenticador, en `plantilla/server/` y `tests/test_sms.py` ([ADR-0232](../adr/0232-el-codigo-por-sms-se-pide-aparte-vuelve-a-autenticar-y-cuenta-sus-fallos-en-phone.md)) |
-| Parte 6b, recuperación | Hecha: el código por correo o por SMS, que vincula cualquier autenticador del producto; el código guardado; la espera de 24 horas solo con el correo de una cuenta con passkey, que el titular o un inicio de sesión cancelan y la tarea `recover` aplica; los fallos por camino, y cerrar las demás sesiones a elección del titular, en `plantilla/server/`, `tests/test_recovery.py` y `tests/test_passwords.py` ([ADR-0234](../adr/0234-la-recuperacion-suma-el-codigo-guardado-y-espera-solo-con-el-correo-de-una-cuenta-con-passkey.md)) |
-| Parte 7, gestión de la cuenta | Hecha: ver los intentos fallidos y los autenticadores deshabilitados, volver a habilitarlos, ver las sesiones y cerrar una, borrar la cuenta, y lo que hace un superadministrador sobre otra: verla, deshabilitarla, volver a habilitarla, borrarla, cambiarle el correo o el teléfono y cerrar sus sesiones, en `plantilla/server/`, `tests/test_account.py` y `tests/test_accounts.py` ([ADR-0236](../adr/0236-el-titular-y-el-superadministrador-gestionan-la-cuenta.md)) |
-| Parte 8, el WebSocket | Hecha: el handshake con la cookie o el token, el cierre 4401, el vencimiento y el token nuevo, el cierre de una sesión en todos los procesos, los límites y los mensajes de error, en `plantilla/server/` y `tests/test_websocket.py` ([ADR-0237](../adr/0237-el-websocket-vive-con-su-sesion-y-una-conexion-trabada-guarda-su-lugar.md)) |
-| Parte 9, el push en los avisos | Hecha: registrar el FID y la suscripción de cada sesión, la clave de VAPID, el envío por FCM y por Web Push y los avisos en cada dispositivo, en `plantilla/server/` y `tests/test_push.py` ([ADR-0238](../adr/0238-los-avisos-llegan-por-push-y-el-servidor-envia-el-web-push-sin-seguir-ni-leer-la-respuesta.md)). El Web Push llegó a Chrome, a Firefox y a Edge. No se envió por FCM a un dispositivo: pide la cuenta de servicio de un proyecto |
-| `scripts/verificar.py` | Comprueba las versiones de pwdlib, phonenumbers y `webauthn` (`PYPROJECT`), que son de `stack.md`, y con `--canone`, que `blocklist.txt` salga de la lista del NCSC |
+| Pieza | Comprobado | Falta |
+| :--- | :--- | :--- |
+| Plugin `passkey` de Flutter y extensión `flet_passkey` | Compila en Android. El C++ de Windows compila con Visual Studio Build Tools 2022 17.14 y Flutter en una máquina con Windows 10, y la capa de Dart de Windows pasa sus pruebas con el canal simulado | Compilarlo en iOS y en macOS, y crear y usar una passkey en un dispositivo de cada sistema ([ADR-0224](../adr/0224-el-plugin-de-passkeys-cubre-windows-11-y-macos.md)) |
+| Passkeys en Windows 10 | En Windows 10 22H2, `webauthn.dll` da la versión 2 de su API y dice que hay un autenticador del sistema con verificación del usuario | Crear y usar una passkey |
+| Correo y SMS por Equipaggio | `PUT https://equipaggio.net/api/email/{id}` sin una clave válida responde 401, y los cuerpos son los de su `openapi.json` | Enviar con la clave de un despliegue |
+| Push por FCM | Una cuenta de servicio falsa responde el error esperado | Enviar a un dispositivo con Android y a uno con iOS, con la cuenta de servicio de un proyecto |
+| Web Push | Llegó a Chrome, a Firefox y a Edge en Windows | Safari |
 
 ## Qué falta
 
-| # | Parte | Pruebas que se podrían sumar |
-| :--- | :--- | :--- |
-| 10 | `verificar.py` compara los archivos de autenticación que se copian sin editar | Después de las partes anteriores, igual que el resto de la plantilla del servidor |
+Lo de la última columna. Cada fila se borra cuando se prueba.

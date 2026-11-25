@@ -3,11 +3,17 @@
 from gettext import GNUTranslations
 from html import escape
 
+from app.colors import CSS
+
 STYLE = """
-:root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+:root { font-family: system-ui, sans-serif; }
 body { display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 16px; }
+body { background: var(--color-surface); color: var(--color-on-surface); box-sizing: border-box; }
 main { display: grid; gap: 16px; max-width: 360px; text-align: center; }
 button { min-height: 48px; font: inherit; padding: 0 24px; cursor: pointer; }
+button { background: var(--color-primary); color: var(--color-on-primary); }
+button { border: 0; border-radius: 8px; }
+[role="alert"] { color: var(--color-error); }
 """
 
 FAILED = "The passkey did not sign in. Try again."
@@ -42,7 +48,7 @@ def document(language: str, title: str, body: str) -> str:
     return (
         f'<!doctype html><html lang="{escape(language)}"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
-        f"<title>{escape(title)}</title><style>{STYLE}</style></head>"
+        f"<title>{escape(title)}</title><style>{CSS}{STYLE}</style></head>"
         f"<body>{body}</body></html>"
     )
 

@@ -42,10 +42,13 @@ from app.services import accounts, fcm, messages, notices, sessions, web_push
 from app.services import push as push_service
 from app.services.fcm import Content
 from app.services.sessions import Client, Principal
+from app.translations import catalog
 
 CLIENT = Client("127.0.0.1", "test")
 # The services fixture replaces them.
 SEND, READ, START = messaging.send_each_async, fcm.credential, fcm.app
+# The product words its texts as it wants.
+TEXT = catalog("es").gettext
 FID = "cAAAAAAAAAAAAAAAAAAAAA"
 OTHER_FID = "dBBBBBBBBBBBBBBBBBBBBB"
 ENDPOINT = "https://push.example.com/send/abc"
@@ -764,7 +767,7 @@ async def test_notice_reaches_every_device(
     await messages.flush(session)
     assert row.account_id == account.id
     ((message,),) = services.batches
-    assert message["notification"]["title"] == "Se borró tu cuenta"
+    assert message["notification"]["title"] == TEXT("Your account was deleted")
     assert settings.contact in message["notification"]["body"]
     assert message["data"] == {"navigate": "/account"}
     assert message["android"] == {
@@ -801,7 +804,8 @@ async def test_disabled_account_hears_it_on_the_devices_it_loses(
 async def test_content_of_a_notice_is_its_email() -> None:
     """In its language, with the name of the passkey."""
     found = notices.content("es", notices.Notice.PASSKEY_LINKED, "Teléfono")
-    assert found.title == "Se agregó una passkey a tu cuenta"
+    assert found.title == TEXT("A passkey was added to your account")
+    assert found.title != "A passkey was added to your account"
     assert "Teléfono" in found.body
     assert settings.contact in found.body
 

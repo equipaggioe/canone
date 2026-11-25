@@ -26,7 +26,7 @@ from tests.authenticator import UP, Authenticator
 EMAIL = "bea@example.com"
 PHONE = "+56221234567"
 HOST = f"app.{settings.domain}"
-ANDROID = "PRODUCTO-android/1.0.0"
+ANDROID = "test-android"
 # A test that registers a passkey needs the method.
 needs_passkey = pytest.mark.skipif(
     Method.PASSKEY not in METHODS, reason="the product offers no passkey"
@@ -151,20 +151,25 @@ async def test_email_code_is_6_digits_for_10_minutes(
 
 
 async def test_sms_code_binds_the_host_and_the_android_hash(
-    client: AsyncClient, sent: list[httpx.Request], clock: list[int]
+    client: AsyncClient,
+    sent: list[httpx.Request],
+    clock: list[int],
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """An Android app finds its hash in the second last line.
 
     The last line binds the code to the host of the request, which must
     be a surface of the domain.
     """
-    response = await ask(client, {"Host": HOST, "User-Agent": ANDROID}, phone=PHONE)
+    monkeypatch.setitem(settings.sms_hashes, ANDROID, "FA+9qCX9VSu")
+    agent = f"{ANDROID}/1.0.0"
+    response = await ask(client, {"Host": HOST, "User-Agent": agent}, phone=PHONE)
     assert response.status_code == 204
     sms = body(sent[-1])
     assert re.fullmatch(r"/api/sms/[0-9a-f-]{36}", sent[-1].url.path)
     code = code_in(sent[-1])
     lines = sms["body"].split("\n")
-    assert lines[-2:] == [settings.sms_hashes["PRODUCTO-android"], f"@{HOST} #{code}"]
+    assert lines[-2:] == ["FA+9qCX9VSu", f"@{HOST} #{code}"]
     assert sms["to"] == PHONE
     await store.client.flushdb()
     response = await ask(client, {"Host": settings.domain, "User-Agent": "web"}, phone=PHONE)

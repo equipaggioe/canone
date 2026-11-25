@@ -22,6 +22,7 @@ server/
   src/app/
     __init__.py
     main.py
+    clients.py
     methods.py
     push.py
     openapi.py
@@ -35,6 +36,7 @@ server/
     enums.py
     tasks.py
     pages.py
+    colors.py
     translations.py
     blocklist.txt
     seeders/
@@ -151,7 +153,7 @@ server/
     test_<recurso>.py
 ```
 
-Plantilla: [plantilla/server/](../plantilla/server/) y el job `server` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml). Se copian sin editar `blocklist.txt`, `alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako`, cada `__init__.py`, `database.py`, `openapi.py`, `store.py`, `tracing.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py`, `services/files.py`, `tests/test_conventions.py`, `tests/test_events.py`, `tests/test_files.py` y `tests/test_tasks.py`. Los demás se copian y se completan.
+Plantilla: [plantilla/server/](../plantilla/server/) y el job `server` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml). Se copian sin editar `alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako`, cada `__init__.py`, `database.py`, `openapi.py`, `store.py`, `tracing.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py`, `services/files.py`, `tests/test_conventions.py`, `tests/test_events.py`, `tests/test_files.py` y `tests/test_tasks.py`. Un servidor con cuentas, que es el que tiene `models/account/`, copia sin editar también los archivos que nombra la plantilla de cada sección de [autenticacion.md](autenticacion.md), salvo `clients.py`, `dependencies.py`, `methods.py`, `push.py` y la migración. Los demás se copian y se completan.
 
 ## Estilo
 
@@ -321,6 +323,7 @@ Contrato: [transversal.md](transversal.md#idiomas).
 
 - El servidor traduce con Babel.
 - Las pruebas leen los catálogos compilados: el job `server` de CI los compila con `pybabel compile` antes de pytest.
+- El catálogo de cada idioma traduce todos los textos de los archivos de las cuentas que se copian sin editar: sin su traducción, un texto sale en inglés, sin error.
 - El `.mo` no se versiona: `release.yml` lo compila del `.po` con `pybabel compile -d src/app/locale` y viaja en el artefacto.
 - El servidor guarda el idioma de `Accept-Language` con el FID de cada instalación de la app y con cada suscripción web, y en el usuario el último elegido, para el correo.
 
@@ -537,6 +540,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Convención | Herramienta |
 | :--- | :--- |
 | Los archivos que se copian sin editar coinciden con la plantilla | `verificar.py --repo` |
+| El catálogo de cada idioma traduce los textos de los archivos de las cuentas | `verificar.py --repo` |
 | Todo campo de `Settings` es obligatorio | `test_settings_are_required` |
 | Las dependencias y los parámetros con `Depends`, `Query`, `Path`, `Header`, `Cookie`, `Body`, `Form` o `File` se declaran con `Annotated` | ruff `FAST002` |
 | El commit corre antes de enviar la respuesta | `test_failed_commit_is_a_server_error` |

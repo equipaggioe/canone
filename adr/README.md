@@ -244,3 +244,5 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0236](0236-el-titular-y-el-superadministrador-gestionan-la-cuenta.md) | El titular y el superadministrador gestionan la cuenta, y deshabilitarla le quita sus autenticadores | `autenticacion.md` y con `server/` |
 | [0237](0237-el-websocket-vive-con-su-sesion-y-una-conexion-trabada-guarda-su-lugar.md) | El WebSocket vive con su sesión, y una conexión trabada guarda su lugar | `autenticacion.md`, `transversal.md`, `despliegue.md` y con `server/` |
 | [0238](0238-los-avisos-llegan-por-push-y-el-servidor-envia-el-web-push-sin-seguir-ni-leer-la-respuesta.md) | Los avisos llegan por push, y el servidor envía el Web Push sin seguir ni leer la respuesta | `autenticacion.md`, `transversal.md`, `fastapi.md`, `sveltekit.md` y con `server/` |
+| [0239](0239-verificar-compara-los-archivos-de-las-cuentas.md) | `verificar.py` compara los archivos de las cuentas | `fastapi.md`, `autenticacion.md` y con `server/` |
+| [0240](0240-las-paginas-del-servidor-toman-los-colores-de-la-marca.md) | Las páginas del servidor toman los colores de la marca | `autenticacion.md`, `transversal.md` y con `server/` |

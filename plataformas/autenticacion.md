@@ -14,7 +14,8 @@ Vale si el producto usa la passkey: la página de autorización la pide.
 - El código vive en Valkey, con la cuenta.
 - Una app de escritorio recibe el retorno solo en `http://127.0.0.1:{puerto}/<ruta>`, y no en `[::1]`: toda máquina de escritorio tiene loopback IPv4.
 - El servidor sirve la página de autorización en `GET /api/auth/authorize`, con su estilo y su script en la misma página y el texto traducido con su catálogo. La petición espera en Valkey 10 minutos la passkey, que la página manda a `POST /api/auth/authorize`; el servidor responde la URI de retorno con el código, y la página va a ella.
-- Los clientes son la constante `CLIENTS` de `services/clients.py`, cada uno con su `client_id` y su URI de retorno. La web es el cliente `web`, con una URI de retorno por superficie de `domain`: `https://<superficie>/api/auth/web/return`.
+- Las páginas del servidor toman los colores de `brand/tokens/`: los del tema inicial, en el modo del sistema o en el único del producto. Son `CSS` de `colors.py`, que genera `scripts/tokens.py`.
+- Los clientes son la constante `CLIENTS` de `clients.py`, cada `client_id` con sus URI de retorno. La web es el cliente `web`, con una URI de retorno por superficie de `domain`: `https://<superficie>/api/auth/web/return`.
 - El flujo de la web empieza en `GET /api/auth/web/start`, su cookie es `__Host-flow`, y al volver la app va a `/` de su superficie.
 - Un `client_id` o una `redirect_uri` repetidos muestran el error en el navegador y no redirigen: no se sabe a dónde volver.
 - El endpoint de autorización autentica al usuario en cada petición, aunque el navegador tenga abierta una sesión de la web ([RFC 8252 §8.6](../fuentes/rfc/rfc8252.txt)).
@@ -39,7 +40,7 @@ Vale si el producto usa la passkey: la página de autorización la pide.
 - Una respuesta que redirige después de recibir una credencial usa 303, nunca 307 ([RFC 9700 §4.12](../fuentes/rfc/rfc9700.txt)).
 - Ni el servidor ni la web redirigen a una URL que llega en un parámetro y no está registrada ([RFC 9700 §2.1](../fuentes/rfc/rfc9700.txt) y [§4.11.1](../fuentes/rfc/rfc9700.txt)).
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `pages.py`, `translations.py`, `schemas/authorization.py`, `routers/authorization.py`, `services/authorization.py`, `services/clients.py` y `tests/test_authorization.py`.
+Plantilla: de [plantilla/server/](../plantilla/server/), `clients.py`, `pages.py`, `translations.py`, `schemas/authorization.py`, `routers/authorization.py`, `services/authorization.py`, `services/clients.py` y `tests/test_authorization.py`.
 
 ## Código por SMS
 
@@ -160,7 +161,7 @@ Qué métodos puede ofrecer cada pieza en su plataforma:
 | Una app de Flutter o de Flet, en Windows o en macOS | Sí | Sí | Sí |
 | Una app de Flutter o de Flet en Linux, o de Qt | Sí, por el navegador del sistema | Sí | Sí |
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `methods.py`, `models/account/throttled.py`, `schemas/account.py`, `routers/account.py`, `services/authenticators.py`, `services/registration.py`, `services/account.py`, `services/codes.py`, `services/limits.py`, `services/messages.py`, `services/notices.py`, `tests/test_registration.py`, `tests/test_account.py` y `tests/test_methods.py`; y los de [Push](fastapi.md#push): `push.py`, `models/account/push_fid.py`, `models/account/push_subscription.py`, `schemas/fcm.py`, `schemas/web_push.py`, `routers/fcm.py`, `routers/web_push.py`, `services/push.py`, `services/fcm.py`, `services/web_push.py` y `tests/test_push.py`.
+Plantilla: de [plantilla/server/](../plantilla/server/), `methods.py`, `models/account/throttled.py`, `schemas/account.py`, `routers/account.py`, `services/authenticators.py`, `services/registration.py`, `services/account.py`, `services/codes.py`, `services/limits.py`, `services/messages.py`, `services/notices.py`, `tests/test_registration.py`, `tests/test_account.py`, `tests/test_messages.py` y `tests/test_methods.py`; y los de [Push](fastapi.md#push): `push.py`, `models/account/push_fid.py`, `models/account/push_subscription.py`, `schemas/fcm.py`, `schemas/web_push.py`, `routers/fcm.py`, `routers/web_push.py`, `services/push.py`, `services/fcm.py`, `services/web_push.py` y `tests/test_push.py`.
 
 ## Passkeys
 
@@ -201,7 +202,7 @@ Vale si el producto usa la passkey.
 - Cada passkey guarda su credential ID, su clave pública, `signCount`, `uvInitialized`, `transports`, `backupEligible`, `backupState`, su nombre, su creación y su último uso ([WebAuthn §6.1.3](../fuentes/w3c/webauthn-3.html) y [§7.1](../fuentes/w3c/webauthn-3.html)).
 - El titular ve sus passkeys, con su nombre y su último uso, y borra la que quiera: así revoca la de un dispositivo perdido ([NIST SP 800-63B-4 §3.2.1](../fuentes/nist/sp800-63b-4.txt)).
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey.py`, `routers/passkey.py`, `services/passkeys.py`, `services/attestation.py` y `tests/test_passkeys.py`; [plantilla/packages/passkey/](../plantilla/packages/passkey/), con el plugin `passkey` de Flutter y la extensión `flet_passkey` de Flet.
+Plantilla: de [plantilla/server/](../plantilla/server/), `models/account/passkey.py`, `routers/passkey.py`, `services/passkeys.py`, `services/attestation.py`, `tests/authenticator.py` y `tests/test_passkeys.py`; [plantilla/packages/passkey/](../plantilla/packages/passkey/), con el plugin `passkey` de Flutter y la extensión `flet_passkey` de Flet.
 
 ## Recuperación
 
@@ -384,6 +385,7 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `handshake` de `depende
 | `response_type` distinto de `code` responde `unsupported_response_type`, `scope` responde `invalid_scope`, y sin `code_challenge` `S256` responde `invalid_request`, de vuelta a la URI de retorno con el `state` | `test_authorization_errors_go_back_with_the_state` |
 | El endpoint de autorización toma un parámetro sin valor como ausente, ignora el que no conoce y responde `invalid_request` a uno repetido | `test_authorization_parameters` |
 | La página de autorización no carga recursos ni enlaces de otros sitios | `test_page_loads_nothing_from_other_sites` |
+| Las páginas del servidor toman sus colores de `colors.py` | `test_pages_wear_the_colors_of_the_brand` |
 | La página toma su texto del catálogo del idioma pedido, o del español | `test_page_speaks_the_language_asked_or_the_base` |
 | El endpoint de autorización pide la passkey aunque el navegador tenga una sesión de la web | `test_page_asks_the_passkey_with_a_web_session` |
 | El código son 256 bits aleatorios que viven 10 minutos, vuelve con el `state`, y el canje responde los tokens con `Cache-Control: no-store` y `Pragma: no-cache` | `test_code_goes_back_with_the_state_and_gives_the_tokens` |

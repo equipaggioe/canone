@@ -83,11 +83,11 @@ El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herr
 | [pendientes/](pendientes/) | Temas de Canone documentados para retomarlos después, con su estado verificado; cada uno se borra cuando se cierra. |
 | [plantilla/](plantilla/) | Plantillas que se copian a los repositorios o se instalan desde Canone: qué es cada tipo y cómo se mantiene. |
 | [scripts/copiar.py](scripts/copiar.py) | Copia a un repositorio los archivos de la plantilla que se copian sin editar y que le faltan o se separaron. |
-| [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables y los orígenes de `plataformas/` contra `fuentes/`. |
+| [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables, los orígenes de `plataformas/` contra `fuentes/` y las versiones de la plantilla contra `stack.md`. |
 
 ## Verificación
 
-`scripts/verificar.py` comprueba que los repositorios cumplan las convenciones verificables automáticamente y, con `--canone`, los orígenes de `plataformas/` contra `fuentes/`, y falla si encuentra un incumplimiento.
+`scripts/verificar.py` comprueba que los repositorios cumplan las convenciones verificables automáticamente y, con `--canone`, los orígenes de `plataformas/` contra `fuentes/` y las versiones de la plantilla contra `stack.md`, y falla si encuentra un incumplimiento.
 
 Para comprobar un repositorio:
 
@@ -101,7 +101,7 @@ Para comprobar todos los repositorios dentro de un directorio:
 python scripts/verificar.py --todos ..
 ```
 
-Para comprobar los orígenes de `plataformas/` contra `fuentes/`:
+Para comprobar los orígenes de `plataformas/` y las versiones de la plantilla:
 
 ```bash
 python scripts/verificar.py --canone

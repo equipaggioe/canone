@@ -5,7 +5,7 @@
 # another tunnel, a backup cut in the middle does not stop the next, a backup cut by its time limit
 # fails, what restic restores goes back on the database install.py creates, the receiver forgets
 # a backup older than a year, and its check fails without a pack of its copy. The receiver logs
-# in as the account receptora, with the rest-server 0.14.0 of its release, and the server is 192.0.2.2.
+# in as the account receptora, with the rest-server 0.15.0 of its release, and the server is 192.0.2.2.
 #
 #     sh backup.sh <canone>
 set -eu

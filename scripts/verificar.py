@@ -5,7 +5,7 @@
     python scripts/verificar.py --todos ..
     python scripts/verificar.py --canone
 
-Con --canone revisa los enlaces de plataformas/ a fuentes/.
+Con --canone revisa los enlaces de plataformas/ a fuentes/ y las versiones de la plantilla.
 
 Cada comprobación cita el ADR que la fija. Falla con código 1 y la lista de incumplimientos: una
 regla que no rompe CI es una sugerencia, no una regla.
@@ -491,23 +491,110 @@ def sin_clasificar() -> list[str]:
     ]
 
 
+# stack.md fija las versiones, y aquí no se repiten: se leen de sus tablas. La clave es la primera
+# celda, sin lo que sigue a la coma, y el valor, la primera palabra de «Versión».
+def leer_stack(texto: str) -> dict[str, dict[str, str]]:
+    """Devuelve la versión de cada fila, por bloque."""
+    bloques: dict[str, dict[str, str]] = {}
+    titulo = ""
+    tabla = False
+    for linea in texto.splitlines():
+        if linea.startswith("## "):
+            titulo, tabla = linea[3:].strip(), False
+        elif linea.startswith("| Se usa |"):
+            tabla = True
+        elif not linea.startswith("|"):
+            tabla = False
+        elif tabla and not linea.startswith("| :---"):
+            celdas = [celda.strip() for celda in linea.strip("|").split(" | ")]
+            # «La API de Android, en `compileSdk`» está tres veces: su clave es la celda entera.
+            entera = celdas[0].startswith("La API de Android")
+            clave = celdas[0] if entera else celdas[0].split(",")[0]
+            clave = clave.replace("`", "").strip()
+            filas = bloques.setdefault(titulo, {})
+            if clave in filas:
+                raise ValueError(f"stack.md: «{titulo}» tiene dos filas de {clave}")
+            filas[clave] = celdas[1].split(" ")[0].rstrip(",")
+    return bloques
+
+
+STACK = leer_stack((CANONE / "stack.md").read_text(encoding="utf-8"))
+ANDROID = STACK["Android"]
+CI = STACK["CI"]
+DESPLIEGUE = STACK["Despliegue"]
+FLUTTER = STACK["Flutter"]
+SVELTEKIT = STACK["SvelteKit"]
+
+
+def menos(bloque: str, *fuera: str) -> dict[str, str]:
+    """Devuelve un bloque sin las filas nombradas, que tienen que existir."""
+    filas = dict(STACK[bloque])
+    for fila in fuera:
+        del filas[fila]
+    return filas
+
+
 # stack.md, «Android»: una sola versión de Gradle, AGP y Kotlin en Android y en
 # Flutter. Gradle sale del wrapper canónico; AGP y Kotlin, de los plugins que declara el proyecto:
 # el catálogo de versiones en Android y settings.gradle.kts en Flutter. Kotlin va en el plugin que
 # declara cada pieza: Android usa el Kotlin integrado en AGP, que no admite kotlin.android, y la
 # plantilla de Flutter lo desactiva y declara kotlin.android.
 WRAPPER = Path("gradle/wrapper/gradle-wrapper.properties")
-AGP = "9.5.1"
-KOTLIN = "2.4.21"
+AGP = ANDROID["AGP"]
+KOTLIN = ANDROID["Kotlin"]
 PLUGINS_ANDROID = {
     "com.android.application": AGP,
-    "com.autonomousapps.dependency-analysis": "3.20.4",
+    "com.autonomousapps.dependency-analysis": ANDROID["El plugin com.autonomousapps.dependency-analysis"],
     "org.jetbrains.kotlin.plugin.compose": KOTLIN,
     "org.jetbrains.kotlin.plugin.serialization": KOTLIN,
+    "org.jlleitschuh.gradle.ktlint": ANDROID["El plugin org.jlleitschuh.gradle.ktlint"],
+}
+# Los que una app declara solo si los usa.
+PLUGINS_OPCIONALES = {
+    "com.google.devtools.ksp": ANDROID["KSP"],
+    "com.google.dagger.hilt.android": ANDROID["Hilt"],
+    "com.google.gms.google-services": ANDROID["El plugin com.google.gms.google-services"],
+    "org.openapi.generator": ANDROID["El plugin org.openapi.generator"],
 }
 PLUGINS_FLUTTER = {"com.android.application": AGP, "org.jetbrains.kotlin.android": KOTLIN}
-# stack.md, «Android»: el plugin de ktlint, solo en las apps de Android.
-KTLINT = {"org.jlleitschuh.gradle.ktlint": "14.2.0"}
+# La fila de cada biblioteca del catálogo: gana el prefijo más largo.
+BIBLIOTECAS = {
+    "androidx.activity:": ANDROID["activity-compose"],
+    "androidx.compose:compose-bom": ANDROID["El BOM de Compose"],
+    "androidx.core:core": ANDROID["androidx.core:core"],
+    "androidx.credentials:": ANDROID["androidx.credentials"],
+    "androidx.datastore:": ANDROID["DataStore"],
+    "androidx.hilt:hilt-lifecycle-viewmodel-compose": ANDROID["androidx.hilt:hilt-lifecycle-viewmodel-compose"],
+    "androidx.lifecycle:": ANDROID["Lifecycle"],
+    "androidx.navigation3:": ANDROID["Navigation 3"],
+    "androidx.paging:": ANDROID["Paging"],
+    "androidx.test.ext:junit": ANDROID["androidx.test.ext:junit"],
+    "androidx.test:runner": ANDROID["androidx.test:runner"],
+    "androidx.work:": ANDROID["WorkManager"],
+    "com.google.android.gms:play-services-auth-api-phone": ANDROID["play-services-auth-api-phone"],
+    "com.google.dagger:": ANDROID["Hilt"],
+    "com.google.firebase:firebase-bom": ANDROID["El BOM de Firebase"],
+    "com.squareup.okhttp3:logging-interceptor": ANDROID["logging-interceptor"],
+    "com.squareup.okhttp3:mockwebserver3": ANDROID["mockwebserver3"],
+    "com.squareup.okhttp3:okhttp": ANDROID["OkHttp"],
+    "com.squareup.retrofit2:converter-kotlinx-serialization": ANDROID["converter-kotlinx-serialization"],
+    "com.squareup.retrofit2:converter-scalars": ANDROID["converter-scalars"],
+    "com.squareup.retrofit2:retrofit": ANDROID["Retrofit"],
+    "com.stripe:stripe-android": ANDROID["stripe-android"],
+    "javax.inject:javax.inject": ANDROID["javax.inject"],
+    "junit:junit": ANDROID["JUnit"],
+    "org.jetbrains.kotlinx:kotlinx-coroutines-": ANDROID["kotlinx-coroutines-core"],
+    "org.jetbrains.kotlinx:kotlinx-coroutines-test": ANDROID["kotlinx-coroutines-test"],
+    "org.jetbrains.kotlinx:kotlinx-serialization-": ANDROID["kotlinx-serialization-json"],
+    "org.maplibre.gl:android-sdk": ANDROID["MapLibre Android"],
+}
+# android.md, «Proyecto» y «Estilo»: lo que declara app/build.gradle.kts.
+SDK = {
+    "compileSdk": ANDROID["La API de Android, en compileSdk"],
+    "ktlint": ANDROID["ktlint"],
+    "minSdk": ANDROID["La API de Android, en minSdk"],
+    "targetSdk": ANDROID["La API de Android, en targetSdk"],
+}
 PLUGIN_KTS = re.compile(r'id\("([\w.]+)"\)\s+version\s+"([^"]+)"')
 
 
@@ -526,6 +613,53 @@ def plugins_catalogo(catalogo: Path) -> dict[str, str]:
     return declarados
 
 
+def versiones_bibliotecas(catalogo: Path, nombre: str) -> list[str]:
+    """Compara con stack.md la versión de cada biblioteca y de cada plugin opcional del catálogo."""
+    datos = tomllib.loads(catalogo.read_text(encoding="utf-8"))
+    versiones = datos.get("versions", {})
+    fallas = []
+    for biblioteca in datos.get("libraries", {}).values():
+        if isinstance(biblioteca, str):
+            grupo, artefacto, *resto = biblioteca.split(":")
+            modulo, version = f"{grupo}:{artefacto}", resto[0] if resto else ""
+        else:
+            modulo = biblioteca.get("module") or f"{biblioteca['group']}:{biblioteca['name']}"
+            version = biblioteca.get("version", "")
+            if isinstance(version, dict):
+                version = versiones.get(version.get("ref"), "")
+        prefijos = [prefijo for prefijo in BIBLIOTECAS if modulo.startswith(prefijo)]
+        # Sin versión, la pone el BOM.
+        if prefijos and version:
+            esperada = BIBLIOTECAS[max(prefijos, key=len)]
+            if version != esperada:
+                fallas.append(f"stack.md: {nombre} declara {modulo} {version}, no {esperada}")
+    for plugin, version in plugins_catalogo(catalogo).items():
+        esperada = PLUGINS_OPCIONALES.get(plugin, version)
+        if version != esperada:
+            fallas.append(f"stack.md: {nombre} declara {plugin} {version}, no {esperada}")
+    return fallas
+
+
+def versiones_sdk(app: Path) -> list[str]:
+    """Compara con stack.md las API de Android y el ktlint de app/build.gradle.kts."""
+    build = app / "app/build.gradle.kts"
+    texto = sin_comentarios(build.read_text(encoding="utf-8")) if build.exists() else ""
+    compila = re.search(r"release\((\d+)\)\s*\{\s*minorApiLevel\s*=\s*(\d+)", texto)
+    ktlint = re.search(r"ktlint\s*\{[^}]*\bversion(?:\.set\(|\s*=\s*)\"([^\"]+)\"", texto)
+    declarados = {
+        "compileSdk": f"{compila[1]}.{compila[2]}" if compila else None,
+        "ktlint": ktlint[1] if ktlint else None,
+    }
+    for nivel in ("minSdk", "targetSdk"):
+        coincide = re.search(rf"\b{nivel}\s*=\s*(\d+)", texto)
+        declarados[nivel] = coincide[1] if coincide else None
+    return [
+        f"stack.md: {app.name}/app/build.gradle.kts declara {nombre} {declarados[nombre] or 'sin versión'}, no {version}"
+        for nombre, version in SDK.items()
+        if declarados[nombre] != version
+    ]
+
+
 def versiones_gradle(
     nombre: str, declarados: dict[str, str], plugins: dict[str, str]
 ) -> list[str]:
@@ -540,7 +674,7 @@ def versiones_gradle(
 
 # plataformas/sveltekit.md, «Pruebas»: la versión de Playwright de stack.md en todo package.json
 # del repositorio, porque cada versión descarga sus propios navegadores.
-PLAYWRIGHT = "1.65.1"
+PLAYWRIGHT = SVELTEKIT["Playwright"]
 
 # plataformas/sveltekit.md, «CSP»: lo que vite.config.ts fija de la CSP, con el objeto que lo
 # contiene. script-src admite, además de 'self', los orígenes https de una pasarela de pago, y
@@ -643,7 +777,7 @@ def versiones_playwright(repo: Path) -> list[str]:
 
 # plataformas/python.md, «Proyecto», y stack.md: una sola versión exacta de uv en todo
 # pyproject.toml, la misma con que el servidor crea el entorno.
-UV = "0.13.9"
+UV = STACK["Python"]["uv"]
 
 
 def versiones_uv(repo: Path) -> list[str]:
@@ -682,148 +816,103 @@ def configuracion_suelta(repo: Path) -> list[str]:
 
 # stack.md: fija las versiones, y los manifiestos y los workflows de cada repositorio las siguen.
 # Van por página, para saltar las de las páginas que están en desarrollo.
+PYPI = {
+    "OpenTelemetry": ("opentelemetry-api", "opentelemetry-sdk"),
+    "PySide6 y Qt": ("pyside6",),
+    "valkey-py": ("valkey",),
+}
+
+
+def pypi(filas: dict[str, str]) -> dict[str, str]:
+    """Devuelve el requisito que declara pyproject.toml de cada fila de un bloque."""
+    return {
+        nombre: f">={version}"
+        for fila, version in filas.items()
+        for nombre in PYPI.get(fila, (fila.lower().replace("_", "-"),))
+    }
+
+
+def tope(version: str) -> str:
+    """Devuelve la serie que sigue, con la que pyproject.toml acota uv_build."""
+    mayor, menor, _ = version.split(".")
+    return f"{mayor}.{int(menor) + 1}"
+
+
 PYPROJECT = {
-    "autenticacion.md": {
-        "phonenumbers": ">=9.0.44",
-        "pwdlib": ">=0.4.2",
-        "webauthn": ">=3.0.1",
-    },
-    "fastapi.md": {
-        "aiohttp": ">=3.14.5",
-        "alembic": ">=1.20.1",
-        "anyio": ">=4.16.0",
-        "asyncpg": ">=0.32.0",
-        "babel": ">=2.18.0",
-        "cryptography": ">=50.0.2",
-        "fastapi": ">=0.165.0",
-        "firebase-admin": ">=7.8.0",
-        "google-auth": ">=2.63.1",
-        "httpx-ws": ">=0.10.0",
-        "opentelemetry-api": ">=1.45.2",
-        "opentelemetry-sdk": ">=1.45.2",
-        "pillow": ">=13.0.0",
-        "py-vapid": ">=1.9.6",
-        "pydantic-settings": ">=2.16.3",
-        "python-multipart": ">=0.0.34",
-        "pywebpush": ">=2.5.0",
-        "sqlalchemy": ">=2.1.9",
-        "starlette": ">=1.10.0",
-        "stripe": ">=17.1.0",
-        "uvicorn": ">=0.54.0",
-        "valkey": ">=6.2.0",
-    },
-    "flet.md": {
-        "babel": ">=2.18.0",
-        "datamodel-code-generator": ">=0.100.0",
-        "flet": ">=1.1.2",
-        "flet-secure-storage": ">=1.1.2",
-        "httpx-ws": ">=0.10.0",
-    },
-    "postgres.md": {"geoalchemy2": ">=0.21.0"},
-    "python.md": {
-        "deptry": ">=0.25.1",
-        "httpx": ">=0.28.1",
-        "pip-audit": ">=2.10.1",
-        "pydantic": ">=2.14.4",
-        "pyrefly": ">=1.5.0",
-        "pytest": ">=9.2.0",
-        "ruff": ">=0.17.6",
-        "uv-build": ">=0.13.9,<0.14",
-    },
-    "qt.md": {
-        "datamodel-code-generator": ">=0.100.0",
-        "imageio": ">=2.38.2",
-        "keyring": ">=25.7.0",
-        "nuitka": ">=4.3.5",
-        "patchelf": ">=0.19.3.0",
-        "pyside6": ">=6.12.0",
-        "pytest-qt": ">=4.5.0",
-    },
+    "autenticacion.md": pypi(STACK["Autenticación"]),
+    "fastapi.md": pypi(STACK["FastAPI"]),
+    "flet.md": pypi(menos("Flet", "Pydantic", "appimagetool", "jni", "jni_flutter", "smart_auth")),
+    "postgres.md": pypi(menos("PostgreSQL", "PostgreSQL", "PostGIS")),
+    "python.md": pypi(menos("Python", "Python", "uv")),
+    "qt.md": pypi(STACK["Qt"]),
 }
+PYPROJECT["python.md"]["uv-build"] += f",<{tope(STACK['Python']['uv_build'])}"
 REQUISITO = re.compile(r"^\s*([A-Za-z0-9._-]+)\s*(?:\[[^\]]*\])?\s*([^;]*)")
+NPM_NOMBRES = {
+    "ESLint": "eslint",
+    "MapLibre GL JS": "maplibre-gl",
+    "Paraglide": "@inlang/paraglide-js",
+    "Prettier": "prettier",
+    "Svelte": "svelte",
+    "SvelteKit": "@sveltejs/kit",
+    "TypeScript": "typescript",
+    "UnoCSS": "unocss",
+    "Vite": "vite",
+    "Vitest": "vitest",
+}
+# Playwright va aparte: se exige en todo package.json, no solo en el de una superficie.
 NPM = {
-    "@axe-core/playwright": "4.14.0",
-    "@inlang/paraglide-js": "3.2.2",
-    "@stripe/stripe-js": "10.3.0",
-    "@sveltejs/adapter-static": "4.0.1",
-    "@sveltejs/kit": "3.4.0",
-    "@sveltejs/vite-plugin-svelte": "7.3.1",
-    "@eslint/js": "10.0.1",
-    "@types/node": "26.6.6",
-    "eslint": "10.15.0",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-svelte": "3.24.1",
-    "globals": "17.14.0",
-    "knip": "6.48.0",
-    "maplibre-gl": "6.19.0",
-    "openapi-fetch": "0.17.0",
-    "openapi-typescript": "7.13.0",
-    "prettier": "3.10.1",
-    "prettier-plugin-svelte": "4.2.0",
-    "svelte": "5.59.1",
-    "svelte-check": "4.7.8",
-    "typescript": "6.0.3",
-    "typescript-eslint": "8.73.0",
-    "unocss": "66.13.0",
-    "vite": "8.3.8",
-    "vitest": "5.1.1",
+    NPM_NOMBRES.get(fila, fila): version
+    for fila, version in menos("SvelteKit", "Node", "pnpm", "Playwright").items()
 }
-PNPM = "12.21.0"
-PUB = {
-    "build_runner": "2.17.1",
-    "dependency_validator": "5.1.0",
-    "firebase_core": "5.2.0",
-    "firebase_messaging": "17.1.0",
-    "flutter_lints": "6.0.0",
-    "flutter_riverpod": "3.5.0",
-    "flutter_secure_storage": "11.2.0",
-    "flutter_stripe": "15.0.0",
-    "flutter_webrtc": "1.6.3",
-    "freezed": "4.0.3",
-    "freezed_annotation": "3.1.0",
-    "go_router": "18.1.4",
-    "http": "1.6.0",
-    "intl": "0.20.3",
-    "json_annotation": "4.12.0",
-    "json_serializable": "6.15.2",
-    "maplibre_gl": "0.28.0",
-    "package_info_plus": "10.2.2",
-    "riverpod_annotation": "4.0.8",
-    "riverpod_generator": "4.0.10",
-    "shared_preferences": "2.5.6",
-    "sms_autofill": "2.6.1",
-    "swagger_parser": "2.3.0",
-    "uuid": "4.6.0",
-}
+PNPM = SVELTEKIT["pnpm"]
+PUB = menos("Flutter", "Flutter", "Dart", "flutter_localizations") | {"smart_auth": STACK["Flet"]["smart_auth"]}
 # plataformas/flutter.md, «Proyecto»: las mutations de Riverpod son experimentales y pueden cambiar
 # sin una versión mayor, así que sus paquetes van sin ^.
 EXACTOS = {"flutter_riverpod", "riverpod_annotation", "riverpod_generator"}
-ACCIONES = {
-    "actions/checkout": "v7",
-    "actions/setup-java": "v6",
-    "actions/setup-node": "v7",
-    "actions/setup-python": "v7",
-    "astral-sh/setup-uv": "v10.3.3",
-    "gradle/actions/setup-gradle": "v6",
-    "pnpm/action-setup": "v6",
-    "subosito/flutter-action": "v2",
-}
+CONTENEDOR = "El contenedor "
+ACCIONES = {fila: version for fila, version in CI.items() if not fila.startswith(CONTENEDOR)}
+CONTENEDORES = {fila.removeprefix(CONTENEDOR): version for fila, version in CI.items() if fila.startswith(CONTENEDOR)}
 # La versión de cada acción la exigen las páginas que la usan: Flet construye con el Flutter de
 # Flutter.
 ENTRADAS = {
-    "actions/setup-java": ({"android.md", "java.md"}, "java-version", "25.0.5"),
-    "actions/setup-node": ({"sveltekit.md"}, "node-version", "26.13.1"),
-    "actions/setup-python": ({"python.md"}, "python-version", "3.13"),
-    "subosito/flutter-action": ({"flutter.md", "flet.md"}, "flutter-version", "3.47.9"),
+    "actions/setup-java": ({"android.md", "java.md"}, "java-version", ANDROID["JDK"]),
+    "actions/setup-node": ({"sveltekit.md"}, "node-version", SVELTEKIT["Node"]),
+    "actions/setup-python": ({"python.md"}, "python-version", STACK["Python"]["Python"]),
+    "subosito/flutter-action": ({"flutter.md", "flet.md"}, "flutter-version", FLUTTER["Flutter"]),
 }
 # plataformas/flet.md: el índice de Flet para Android no trae el pydantic-core de la Pydantic del
 # bloque de Python de stack.md.
-FLET = {"pydantic": "==2.13.4"}
+FLET = {"pydantic": f"=={STACK['Flet']['Pydantic']}"}
 # plataformas/flet.md, «Proyecto»: con jni 1.2.0 la app de Android no arranca.
-FLET_OVERRIDES = {"jni": "1.1.2", "jni_flutter": "1.0.4+1"}
-# stack.md, «Despliegue» y «PostgreSQL»: la misma versión, también en el CI.
-VALKEY = "8.1"
-POSTGIS = "17-3.5"
+FLET_OVERRIDES = {nombre: STACK["Flet"][nombre] for nombre in ("jni", "jni_flutter")}
+# stack.md, «Versiones»: la plantilla y los scripts de Canone no declaran una versión que stack.md no
+# estipule. Cada archivo lleva la de su fila en el grupo de su expresión.
+PROGRAMAS = [
+    (".github/workflows/infra.yml", r"rest-server_(\d[\d.]*\d)_linux", DESPLIEGUE["rest-server"]),
+    (".github/workflows/infra.yml", r"playwright==([\d.]+)", STACK["FastAPI"]["Playwright"]),
+    ("plantilla/android/gradle/wrapper/gradle-wrapper.properties", r"gradle-([\d.]+)-bin", ANDROID["Gradle"]),
+    ("plantilla/flet/build-appimage.sh", r"appimagetool/releases/download/([\d.]+)/", STACK["Flet"]["appimagetool"]),
+    ("plantilla/flutter/analysis_options.yaml", r"riverpod_lint: (\S+)", FLUTTER["riverpod_lint"]),
+    ("plantilla/infra/caddy.pref", r"Pin: version (\d+\.\d+)\.\*", DESPLIEGUE["Caddy"]),
+    ("plantilla/infra/packages.py", r"postgresql-(\d+)-postgis", STACK["PostgreSQL"]["PostgreSQL"]),
+    ("plantilla/infra/packages.py", r"openjdk-(\d+)-jre", STACK["Java"]["Java"]),
+    ("plantilla/infra/uv.py", r'^VERSION = "([^"]+)"', UV),
+    (
+        "plantilla/packages/passkey/src/flutter/passkey/android/build.gradle.kts",
+        r"androidx\.credentials:[\w-]+:([\d.]+)",
+        ANDROID["androidx.credentials"],
+    ),
+    ("plantilla/receiver/backup.ps1", r'\$version = "([^"]+)"', DESPLIEGUE["rest-server"]),
+    ("plantilla/receiver/backup.ps1", r"restic (\d[\d.]*\d)", DESPLIEGUE["restic"]),
+    ("plantilla/receiver/backup.sh", r"^version=(\S+)", DESPLIEGUE["rest-server"]),
+    ("plantilla/receiver/backup.sh", r"restic (\d[\d.]*\d)", DESPLIEGUE["restic"]),
+    ("plantilla/scripts/java.py", r'^RELEASE = "(\d+)"', STACK["Java"]["Java"]),
+    ("plantilla/scripts/java.py", r'"google-java-format",\s+"([^"]+)"', STACK["Java"]["google-java-format"]),
+    ("plantilla/scripts/play.py", r"google-auth(?:\[\w+\])?>=([\d.]+)", STACK["FastAPI"]["google-auth"]),
+    ("plantilla/scripts/play.py", r'required-version = "==([^"]+)"', UV),
+    ("scripts/infra/browser.sh", r"playwright==([\d.]+)", STACK["FastAPI"]["Playwright"]),
+]
 METASPACE = "-XX:MaxMetaspaceSize=2g"
 
 
@@ -904,13 +993,33 @@ def versiones_pubspec(repo: Path) -> list[str]:
         relativo = Path(ruta)
         if relativo.name != "pubspec.yaml" or not (repo / relativo).is_file():
             continue
-        texto = (repo / relativo).read_text(encoding="utf-8")
-        for paquete, version in PUB.items():
-            for declarada in re.findall(rf"^\s+{paquete}:[ \t]*[\"']?([^\"'\s#]+)", texto, re.M):
+        seccion = ""
+        for linea in (repo / relativo).read_text(encoding="utf-8").splitlines():
+            if coincide := re.match(r"(\w+):", linea):
+                seccion = coincide[1]
+            coincide = re.match(r"\s+(\w+):[ \t]*[\"']?([^\"'\s#]+)", linea)
+            if not coincide:
+                continue
+            paquete, declarada = coincide.groups()
+            if seccion in {"dependencies", "dev_dependencies", "dependency_overrides"} and paquete in PUB:
+                version = PUB[paquete]
                 if (declarada if paquete in EXACTOS else declarada.lstrip("^")) != version:
                     fallas.append(
                         f"stack.md: {relativo.as_posix()} declara {paquete} {declarada}, no {version}"
                     )
+            # Solo la pieza: un paquete de packages/ declara el rango que admite.
+            elif (seccion, paquete) == ("environment", "sdk") and len(relativo.parts) == 2:
+                if declarada != f"^{FLUTTER['Dart']}":
+                    fallas.append(f"stack.md: {relativo.as_posix()} declara sdk {declarada}, no ^{FLUTTER['Dart']}")
+    return fallas
+
+
+def versiones_programas() -> list[str]:
+    fallas = []
+    for ruta, expresion, version in PROGRAMAS:
+        declaradas = set(re.findall(expresion, (CANONE / ruta).read_text(encoding="utf-8"), re.M))
+        if declaradas != {version}:
+            fallas.append(f"stack.md: {ruta} lleva {', '.join(sorted(declaradas)) or 'ninguna versión'}, no {version}")
     return fallas
 
 
@@ -928,12 +1037,10 @@ def versiones_workflows(repo: Path, paginas: set[str]) -> list[str]:
             valores = re.findall(rf"{entrada}:\s*[\"']?([^\"'\s]+)", texto)
             if exigen & paginas and accion in usadas and set(valores) != {version}:
                 fallas.append(f"stack.md: {relativo} no declara {entrada} {version}")
-        for imagen in re.findall(r"postgis/postgis:(\S+)", texto):
-            if imagen != POSTGIS:
-                fallas.append(f"stack.md: {relativo} usa postgis/postgis:{imagen}, no {POSTGIS}")
-        for imagen in re.findall(r"valkey/valkey:(\S+)", texto):
-            if imagen != VALKEY:
-                fallas.append(f"stack.md: {relativo} usa valkey/valkey:{imagen}, no {VALKEY}")
+        for contenedor, etiqueta in re.findall(r"\b(?:image|container):\s*[\"']?([\w./-]+):([\w.-]+)", texto):
+            esperada = CONTENEDORES.get(contenedor, etiqueta)
+            if etiqueta != esperada:
+                fallas.append(f"stack.md: {relativo} usa {contenedor}:{etiqueta}, no {esperada}")
     return fallas
 
 
@@ -1405,11 +1512,8 @@ def revisar(repo: Path) -> list[str]:
             continue
         declarados = plugins_catalogo(catalogo)
         fallas.extend(versiones_gradle(app.name, declarados, PLUGINS_ANDROID))
-        for plugin, version in KTLINT.items():
-            if declarados.get(plugin) != version:
-                fallas.append(
-                    f"stack.md: {app.name} declara {plugin} {declarados.get(plugin, 'sin versión')}, no {version}"
-                )
+        fallas.extend(versiones_bibliotecas(catalogo, app.name))
+        fallas.extend(versiones_sdk(app))
         fallas.extend(metaspace_lint(app, app.name))
 
     # qt.md, «Widgets»: la interfaz se construye en código, también sin un .ui que compile pyside6-uic.
@@ -1517,7 +1621,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", type=Path)
     parser.add_argument("--todos", type=Path, help="directorio que contiene los repositorios")
-    parser.add_argument("--canone", action="store_true", help="revisa los enlaces de plataformas/ a fuentes/")
+    parser.add_argument("--canone", action="store_true", help="revisa los enlaces de plataformas/ a fuentes/ y las versiones de la plantilla")
     parser.add_argument("--variables", help="las variables de GitHub Actions del repositorio, en JSON")
     args = parser.parse_args()
 
@@ -1528,6 +1632,8 @@ def main() -> int:
         fallas = origenes()
         # La plantilla sigue todas las páginas, también las que están en desarrollo.
         fallas += versiones_pyproject(PLANTILLA, PAGINAS)
+        fallas += versiones_pubspec(PLANTILLA)
+        fallas += versiones_programas()
         fallas += versiones_workflows(PLANTILLA, PAGINAS)
         fallas += versiones_workflows(CANONE, PAGINAS)
         fallas += negaciones(CANONE, listar(CANONE))

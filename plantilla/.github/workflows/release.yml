@@ -36,7 +36,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           version-file: server/pyproject.toml
       - run: uv run --locked pybabel compile -d src/app/locale
@@ -99,7 +99,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           version-file: desktop/pyproject.toml
       # The app installs after rc_resources.py exists: the installation copies src/app/ as it is,
@@ -164,7 +164,7 @@ jobs:
         with:
           channel: stable
           flutter-version: 3.47.9
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           version-file: server/pyproject.toml
       - run: flutter pub get
@@ -245,7 +245,7 @@ jobs:
           distribution: temurin
           java-version: "25.0.5"
       - uses: gradle/actions/setup-gradle@v6
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           version-file: server/pyproject.toml
       - env:
@@ -287,7 +287,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           version-file: PIEZA/pyproject.toml
       - uses: subosito/flutter-action@v2
@@ -332,7 +332,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           version-file: PIEZA/pyproject.toml
       - uses: subosito/flutter-action@v2
@@ -387,7 +387,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           version-file: desktop/pyproject.toml
       - uses: subosito/flutter-action@v2

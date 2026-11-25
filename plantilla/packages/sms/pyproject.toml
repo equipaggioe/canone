@@ -5,12 +5,12 @@ requires-python = "==3.13.*"
 dependencies = ["flet>=1.1.2"]
 
 [build-system]
-requires = ["uv_build>=0.13.9,<0.14"]
+requires = ["uv_build>=0.13.10,<0.14"]
 build-backend = "uv_build"
 
 [tool.uv]
 python-preference = "only-system"
-required-version = "==0.13.9"
+required-version = "==0.13.10"
 
 [tool.uv.build-backend]
 module-name = ["flet_sms", "flutter"]

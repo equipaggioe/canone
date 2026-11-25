@@ -1,9 +1,9 @@
 # /// script
 # requires-python = ">=3.13"
-# dependencies = ["google-auth>=2.62.2", "requests>=2.34.2"]
+# dependencies = ["google-auth[requests]>=2.63.1"]
 #
 # [tool.uv]
-# required-version = "==0.13.9"
+# required-version = "==0.13.10"
 # ///
 """Upload a bundle to Google Play and download its universal APK.
 

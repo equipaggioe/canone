@@ -211,13 +211,13 @@ jobs:
       - if: matrix.script == 'java.sh'
         run: python3 ../../plantilla/scripts/java.py ping Ping ping/build
         working-directory: scripts/infra
-      # The receiver runs rest-server 0.14.0 from its release, the version despliegue.md fixes.
+      # The receiver runs rest-server 0.15.0 from its release, the version stack.md fixes.
       - if: matrix.script == 'backup.sh'
         run: |
-          archive=rest-server_0.14.0_linux_amd64
+          archive=rest-server_0.15.0_linux_amd64
           curl -fsSL -o "$RUNNER_TEMP/$archive.tar.gz" \
-            "https://github.com/restic/rest-server/releases/download/v0.14.0/$archive.tar.gz"
-          echo "4c9c95bc079a0334e81fad379b19dc5c3353c71c2c88d652cafce2081c2b1c66  $RUNNER_TEMP/$archive.tar.gz" | sha256sum -c
+            "https://github.com/restic/rest-server/releases/download/v0.15.0/$archive.tar.gz"
+          echo "822e3d7211077305ec358a8c6548ef46307ae53f71bc6a4a6da72ac53e35e007  $RUNNER_TEMP/$archive.tar.gz" | sha256sum -c
           tar -xzf "$RUNNER_TEMP/$archive.tar.gz" -C "$RUNNER_TEMP"
           sudo install -m 755 "$RUNNER_TEMP/$archive/rest-server" /var/lib/machines/machine/usr/local/bin/rest-server
       # The machine has no internet: deploy.py finds each package of the server in the cache of uv,
@@ -227,7 +227,7 @@ jobs:
         with:
           python-version: "3.13"
       - if: matrix.script == 'deploy.sh' || matrix.script == 'browser.sh'
-        uses: astral-sh/setup-uv@v10.3.3
+        uses: astral-sh/setup-uv@v10.4.0
         with:
           version-file: plantilla/server/pyproject.toml
       - if: matrix.script == 'browser.sh'
@@ -353,7 +353,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           version-file: plantilla/server/pyproject.toml
       - run: uv sync --locked

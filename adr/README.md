@@ -248,3 +248,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0240](0240-las-paginas-del-servidor-toman-los-colores-de-la-marca.md) | Las páginas del servidor toman los colores de la marca | `autenticacion.md`, `transversal.md` y con `server/` |
 | [0241](0241-el-plugin-de-passkeys-pide-macos-13.md) | El plugin de passkeys pide macOS 13 | `flutter.md`, `flet.md` y con `packages/passkey/` |
 | [0242](0242-copiar-hace-la-copia-de-los-archivos-canonicos.md) | `copiar.py` hace la copia de los archivos canónicos | Todos |
+| [0243](0243-verificar-lee-las-versiones-de-stack-md.md) | `verificar.py` lee las versiones de `stack.md`, y `stack.md` se revisa con los cinco pasos | Todos |

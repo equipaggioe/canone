@@ -14,7 +14,6 @@ Qué se usa en cada plataforma y en qué versión. Es el único lugar donde se f
 - Lo que una pieza usa, pero cuya versión fija otra tecnología, entra con una nota que dice cuál, como «3.13.7, el de Flutter 3.47.9» o «0.28.1, la que fija firebase-admin»: su versión no se elige, se sigue.
 - Todo paquete que importa el código de una pieza está declarado en su manifiesto, aunque otro paquete ya lo traiga: un import que funciona porque otro paquete lo trajo se rompe cuando ese paquete cambia.
 - Toda dependencia declarada se usa. Lo que llega dentro de otro paquete y el código no importa no entra ni se nombra en ningún lado.
-- La página de cada plataforma dice con qué herramienta lo comprueba su CI: [python.md](plataformas/python.md#proyecto), [flutter.md](plataformas/flutter.md#proyecto), [sveltekit.md](plataformas/sveltekit.md#proyecto) y [android.md](plataformas/android.md#proyecto).
 
 ## Versiones
 
@@ -33,8 +32,8 @@ Página: [python.md](plataformas/python.md). Vale para toda pieza en Python.
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | Python | 3.13, el de Debian 13 | [Proyecto](plataformas/python.md#proyecto) |
-| uv | 0.13.9 | [Proyecto](plataformas/python.md#proyecto) |
-| `uv_build` | 0.13.9 | [Proyecto](plataformas/python.md#proyecto) |
+| uv | 0.13.10 | [Proyecto](plataformas/python.md#proyecto) |
+| `uv_build` | 0.13.10 | [Proyecto](plataformas/python.md#proyecto) |
 | pytest | 9.2.0 | [Pruebas](plataformas/python.md#pruebas) |
 | ruff | 0.17.6 | [Estilo](plataformas/python.md#estilo) |
 | Pyrefly | 1.5.0 | [Tipos](plataformas/python.md#tipos) |
@@ -59,7 +58,7 @@ Página: [fastapi.md](plataformas/fastapi.md).
 | Uvicorn | 0.54.0 | [WebSocket](plataformas/fastapi.md#websocket) y [Procesos](plataformas/despliegue.md#procesos) |
 | Pillow | 13.0.0 | [Archivos](plataformas/fastapi.md#archivos) |
 | python-multipart | 0.0.34 | [Archivos](plataformas/fastapi.md#archivos) |
-| Babel | 2.18.0 | [Idiomas](plataformas/fastapi.md#idiomas) |
+| Babel | 2.19.0 | [Idiomas](plataformas/fastapi.md#idiomas) |
 | cryptography | 50.0.2 | [Paginación](plataformas/fastapi.md#paginación) |
 | pywebpush | 2.5.0 | [Push](plataformas/fastapi.md#push) |
 | aiohttp | 3.14.5 | [Push](plataformas/fastapi.md#push) |
@@ -107,7 +106,7 @@ Página: [despliegue.md](plataformas/despliegue.md). Cada programa es el de los 
 | OpenSSH | 10.0 | [SSH](plataformas/despliegue.md#ssh) |
 | WireGuard | 1.0.20210914 | [Registros](plataformas/despliegue.md#registros) |
 | restic | 0.18.0 | [Respaldos](plataformas/despliegue.md#respaldos) |
-| rest-server | 0.14.0 | [Respaldos](plataformas/despliegue.md#respaldos) |
+| rest-server | 0.15.0 | [Respaldos](plataformas/despliegue.md#respaldos) |
 | Chromium, en la máquina con una tarea que maneja un navegador | 156 | [Procesos](plataformas/despliegue.md#procesos) |
 
 ## Java
@@ -127,11 +126,11 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | Node | 26.13.1 | [Proyecto](plataformas/sveltekit.md#proyecto) |
-| pnpm | 12.21.0 | [Proyecto](plataformas/sveltekit.md#proyecto) |
+| pnpm | 12.23.0 | [Proyecto](plataformas/sveltekit.md#proyecto) |
 | SvelteKit | 3.4.0 | — |
 | Svelte | 5.59.1 | — |
 | Vite | 8.3.8 | — |
-| `@sveltejs/vite-plugin-svelte` | 7.3.1 | — |
+| `@sveltejs/vite-plugin-svelte` | 7.3.2 | — |
 | `@sveltejs/adapter-static` | 4.0.1 | [Entrega](plataformas/sveltekit.md#entrega) |
 | TypeScript | 6.0.3 | [Tipos](plataformas/sveltekit.md#tipos) |
 | `svelte-check` | 4.7.8 | [Tipos](plataformas/sveltekit.md#tipos) |
@@ -141,7 +140,7 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | `prettier-plugin-svelte` | 4.2.0 | [Estilo](plataformas/sveltekit.md#estilo) |
 | ESLint | 10.15.0 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `eslint-plugin-svelte` | 3.24.1 | [Estilo](plataformas/sveltekit.md#estilo) |
-| `typescript-eslint` | 8.73.0 | [Estilo](plataformas/sveltekit.md#estilo) |
+| `typescript-eslint` | 8.74.0 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `@eslint/js` | 10.0.1 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `globals` | 17.14.0 | [Estilo](plataformas/sveltekit.md#estilo) |
 | `eslint-config-prettier` | 10.1.8 | [Estilo](plataformas/sveltekit.md#estilo) |
@@ -157,7 +156,7 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 
 ## Flutter
 
-Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [Android](#android).
+Página: [flutter.md](plataformas/flutter.md). Gradle, AGP, Kotlin y, en `packages/passkey/`, `androidx.credentials` son los de [Android](#android).
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
@@ -169,14 +168,14 @@ Página: [flutter.md](plataformas/flutter.md). Gradle, AGP y Kotlin son los de [
 | riverpod_lint | 3.2.0 | [Estado](plataformas/flutter.md#estado) |
 | go_router | 18.1.4 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | http | 1.6.0 | [Red](plataformas/flutter.md#red) |
-| maplibre_gl | 0.28.0 | [Mapas](plataformas/flutter.md#mapas) |
+| maplibre_gl | 0.28.1 | [Mapas](plataformas/flutter.md#mapas) |
 | freezed_annotation | 3.1.0 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | freezed | 4.0.3 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | json_annotation | 4.12.0 | [Arquitectura](plataformas/flutter.md#arquitectura) |
 | json_serializable | 6.15.2 | — |
 | build_runner | 2.17.1 | [Proyecto](plataformas/flutter.md#proyecto) |
 | dependency_validator | 5.1.0 | [Proyecto](plataformas/flutter.md#proyecto) |
-| swagger_parser | 2.3.0 | [OpenAPI y clientes](plataformas/flutter.md#openapi-y-clientes) |
+| swagger_parser | 2.4.0 | [OpenAPI y clientes](plataformas/flutter.md#openapi-y-clientes) |
 | shared_preferences | 2.5.6 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
 | flutter_secure_storage | 11.2.0 | [Almacenamiento](plataformas/flutter.md#almacenamiento) |
 | oauth2 | 2.0.5 | [Código de autorización](plataformas/flutter.md#código-de-autorización) |
@@ -200,8 +199,8 @@ Página: [android.md](plataformas/android.md).
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
 | JDK, con el que corre Gradle | 25.0.5 | [Proyecto](plataformas/android.md#proyecto) |
-| Gradle | 9.9.1 | [Proyecto](plataformas/android.md#proyecto) |
-| AGP | 9.5.1 | [Proyecto](plataformas/android.md#proyecto) |
+| Gradle | 9.9.2 | [Proyecto](plataformas/android.md#proyecto) |
+| AGP | 9.5.2 | [Proyecto](plataformas/android.md#proyecto) |
 | Kotlin | 2.4.21 | [Proyecto](plataformas/android.md#proyecto) |
 | La API de Android, en `compileSdk` | 37.2 | [Proyecto](plataformas/android.md#proyecto) |
 | La API de Android, en `targetSdk` | 37 | [Proyecto](plataformas/android.md#proyecto) |
@@ -213,12 +212,12 @@ Página: [android.md](plataformas/android.md).
 | Hilt | 2.60.1 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | `javax.inject` | 1, la que trae Hilt | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
 | `androidx.hilt:hilt-lifecycle-viewmodel-compose` | 1.4.0 | [Inyección de dependencias](plataformas/android.md#inyección-de-dependencias) |
-| El BOM de Compose | 2026.09.00 | [Compose](plataformas/android.md#compose) |
+| El BOM de Compose | 2026.11.01 | [Compose](plataformas/android.md#compose) |
 | `activity-compose` | 1.13.0 | [Compose](plataformas/android.md#compose) |
 | `androidx.core:core` | 1.19.1 | [Idiomas](plataformas/android.md#idiomas) |
-| Lifecycle | 2.11.0 | [Arquitectura](plataformas/android.md#arquitectura) |
+| Lifecycle | 2.11.1 | [Arquitectura](plataformas/android.md#arquitectura) |
 | `kotlinx-coroutines-core` | 1.11.0 | [Corrutinas](plataformas/android.md#corrutinas) |
-| Navigation 3 | 1.2.1 | [Arquitectura](plataformas/android.md#arquitectura) |
+| Navigation 3 | 1.2.2 | [Arquitectura](plataformas/android.md#arquitectura) |
 | Paging, con `paging-common` y `paging-compose` | 3.5.3 | [Paginación](plataformas/android.md#paginación) |
 | WorkManager | 2.12.0 | [Arquitectura](plataformas/android.md#arquitectura) |
 | Retrofit | 3.0.0 | [Arquitectura](plataformas/android.md#arquitectura) |
@@ -240,11 +239,10 @@ Página: [android.md](plataformas/android.md).
 | `mockwebserver3` | 5.5.1 | [Pruebas](plataformas/android.md#pruebas) |
 | `androidx.test:runner` | 1.7.0 | [Pruebas](plataformas/android.md#pruebas) |
 | `androidx.test.ext:junit` | 1.3.0 | [Pruebas](plataformas/android.md#pruebas) |
-| `espresso-core` | 3.7.0 | [Proyecto](plataformas/android.md#proyecto) |
 
 ## Flet
 
-Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter es el de [Flutter](#flutter).
+Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python). Flutter es el de [Flutter](#flutter), y en `packages/passkey/`, `androidx.credentials` es el de [Android](#android).
 
 | Se usa | Versión | Para |
 | :--- | :--- | :--- |
@@ -252,11 +250,12 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y Flutter 
 | flet-secure-storage | 1.1.2 | [Almacenamiento](plataformas/flet.md#almacenamiento) |
 | smart_auth, en `packages/sms/` | 4.0.0 | [Código por SMS](plataformas/flet.md#código-por-sms) |
 | httpx-ws | 0.10.0 | [WebSocket](plataformas/flet.md#websocket) |
-| Babel | 2.18.0 | [Idiomas](plataformas/flet.md#idiomas) |
-| datamodel-code-generator, con el extra `ruff` | 0.100.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |
+| Babel | 2.19.0 | [Idiomas](plataformas/flet.md#idiomas) |
+| datamodel-code-generator, con el extra `ruff` | 0.102.0 | [OpenAPI y clientes](plataformas/flet.md#openapi-y-clientes) |
 | Pydantic, en lugar de la de [Python](#python) | 2.13.4 | [Proyecto](plataformas/flet.md#proyecto) |
 | jni, en el `pubspec.yaml` que genera `flet build` | 1.1.2 | [Proyecto](plataformas/flet.md#proyecto) |
 | jni_flutter, en el `pubspec.yaml` que genera `flet build` | 1.0.4+1 | [Proyecto](plataformas/flet.md#proyecto) |
+| appimagetool, en `build-appimage.sh` | 1.9.1, la del script de Flet 1.1.2 | [Entrega](plataformas/flet.md#entrega) |
 
 ## Qt
 
@@ -266,7 +265,7 @@ Página: [qt.md](plataformas/qt.md). Se suma a [Python](#python).
 | :--- | :--- | :--- |
 | PySide6 y Qt | 6.12.0 | [Proyecto](plataformas/qt.md#proyecto) |
 | keyring | 25.7.0 | [Almacenamiento](plataformas/qt.md#almacenamiento) |
-| datamodel-code-generator, con el extra `ruff` | 0.100.0 | [OpenAPI y clientes](plataformas/qt.md#openapi-y-clientes) |
+| datamodel-code-generator, con el extra `ruff` | 0.102.0 | [OpenAPI y clientes](plataformas/qt.md#openapi-y-clientes) |
 | pytest-qt | 4.5.0 | [Pruebas](plataformas/qt.md#pruebas) |
 | Nuitka | 4.3.5 | [Entrega](plataformas/qt.md#entrega) |
 | imageio | 2.38.2 | [Entrega](plataformas/qt.md#entrega) |
@@ -282,7 +281,7 @@ Página: [repositorio.md](repositorio.md#ci). Los contenedores corresponden a De
 | `actions/setup-python` | v7 |
 | `actions/setup-node` | v7 |
 | `actions/setup-java` | v6 |
-| `astral-sh/setup-uv` | v10.3.3 |
+| `astral-sh/setup-uv` | v10.4.0 |
 | `pnpm/action-setup` | v6 |
 | `gradle/actions/setup-gradle` | v6 |
 | `subosito/flutter-action` | v2 |
@@ -297,7 +296,9 @@ Página: [repositorio.md](repositorio.md#ci). Los contenedores corresponden a De
 | Python, Node, Flutter y el JDK, en los workflows de cada repositorio | [scripts/verificar.py](scripts/verificar.py) |
 | Las versiones de los paquetes de Python, FastAPI, Autenticación, PostgreSQL, Flet y Qt, en cada `pyproject.toml` | [scripts/verificar.py](scripts/verificar.py) |
 | Las versiones de los paquetes de SvelteKit y la de pnpm, en cada `package.json` | [scripts/verificar.py](scripts/verificar.py) |
-| Las versiones de los paquetes de Flutter, en cada `pubspec.yaml` | [scripts/verificar.py](scripts/verificar.py) |
-| Gradle, AGP y Kotlin, en Android y en Flutter, y los plugins de ktlint y de dependency-analysis | [scripts/verificar.py](scripts/verificar.py) |
+| Las versiones de los paquetes de Flutter, en cada `pubspec.yaml`, y la de Dart, en el de cada pieza | [scripts/verificar.py](scripts/verificar.py) |
+| Gradle, AGP y Kotlin, en Android y en Flutter | [scripts/verificar.py](scripts/verificar.py) |
+| Las versiones de los plugins y las bibliotecas de Android, en `libs.versions.toml`, y las API de Android y ktlint, en `app/build.gradle.kts` | [scripts/verificar.py](scripts/verificar.py) |
 | La versión de uv, en cada `pyproject.toml` | [scripts/verificar.py](scripts/verificar.py) |
-| Las acciones de CI y los contenedores `postgis/postgis` y `valkey/valkey` | [scripts/verificar.py](scripts/verificar.py) |
+| Las acciones y los contenedores de CI | [scripts/verificar.py](scripts/verificar.py) |
+| Que la plantilla y los scripts de Canone no declaran otra versión | `scripts/verificar.py --canone` en CI |

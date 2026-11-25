@@ -3,9 +3,9 @@ name: Fuentes
 on:
   push:
     branches: [main]
-    paths: ["plataformas/**", "fuentes/README.md", "scripts/verificar.py", ".github/workflows/fuentes.yml"]
+    paths: ["plataformas/**", "plantilla/**", "stack.md", "fuentes/README.md", "scripts/**", ".github/workflows/**"]
   pull_request:
-    paths: ["plataformas/**", "fuentes/README.md", "scripts/verificar.py", ".github/workflows/fuentes.yml"]
+    paths: ["plataformas/**", "plantilla/**", "stack.md", "fuentes/README.md", "scripts/**", ".github/workflows/**"]
 
 jobs:
   citas:

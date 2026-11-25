@@ -5,10 +5,10 @@
 #
 #     ./backup.sh <app> <host> <folder> <password file>
 #
-# rest-server 0.14.0, from its release on GitHub, restic 0.18.0, ssh and curl are on the PATH.
+# rest-server 0.15.0, from its release on GitHub, restic 0.18.0, ssh and curl are on the PATH.
 # From canone: plataformas/despliegue.md.
 set -eu
-version=0.14.0
+version=0.15.0
 case "$(restic version)" in
     "restic 0.18.0 "*) ;;
     *) echo "restic is not 0.18.0" >&2; exit 1 ;;

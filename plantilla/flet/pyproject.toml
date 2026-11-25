@@ -12,8 +12,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-  "babel>=2.18.0",
-  "datamodel-code-generator[ruff]>=0.100.0",
+  "babel>=2.19.0",
+  "datamodel-code-generator[ruff]>=0.102.0",
   "flet[cli,test]>=1.1.2",
   "deptry>=0.25.1",
   "pip-audit>=2.10.1",
@@ -47,7 +47,7 @@ provisioning_profile = "PERFIL"
 
 [tool.uv]
 python-preference = "only-system"
-required-version = "==0.13.9"
+required-version = "==0.13.10"
 
 [tool.ruff]
 line-length = 99

@@ -251,3 +251,15 @@ Un «Se queda» de una convención propia nombra lo que empeora sin ella, según
 Las herramientas que hacen cumplir las convenciones se comprueban mediante experimentos, no de memoria ni por lo que aparentan hacer según su documentación.
 
 Antes de comprobar algo, se busca si ya está comprobado en las pruebas de CI de Canone o en un ADR. Si lo está, se usa su resultado, con sus versiones, y no se repite, salvo que haya cambiado una versión de la que depende. La decisión del ADR no es argumento: solo cuenta el resultado.
+
+### Revisión de stack.md
+
+[stack.md](../stack.md) se revisa con los cinco pasos, y todo lo demás de [Revisión](#revisión) rige igual:
+
+1. **Decisiones:** qué tiene que declarar o instalar cada pieza, según las páginas y los manifiestos y programas de `plantilla/`.
+2. **Versiones**, en lugar de las fuentes: cada versión contra el registro de su publicador o los paquetes de Debian 13, según «Versiones» de `stack.md`, con la fecha de la consulta. La que fija otra tecnología, contra esa tecnología. Una versión que se propone se resuelve antes junto con las demás de su pieza.
+3. **Contenido:** cada regla como una convención. Cada fila, contra «Qué entra» de `stack.md`, su nota, su enlace de «Para», y si la pieza la necesita o hay una opción mejor.
+4. **Lo que falta y lo que sobra:** lo que una página pide o `plantilla/` declara y no tiene fila, y la fila que ninguna pieza usa.
+5. **Cumplimiento:** cada fila, con un experimento por cada paquete, acción o contenedor que abarca. Se nombra también cada fila del stack que ninguna herramienta comprueba.
+
+Cada versión se compara además entre `stack.md`, `scripts/verificar.py`, `plantilla/`, los workflows de Canone, las páginas y `fuentes/`.

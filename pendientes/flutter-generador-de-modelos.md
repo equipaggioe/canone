@@ -2,21 +2,19 @@
 
 Tema pendiente: se documenta para retomarlo en otra ocasión. **La elección de swagger_parser es provisional**: está aplicada en la página y en la plantilla, pero todavía no se considera una decisión sólida.
 
-## Estado (verificado 2026-11-12)
+## Estado (verificado 2026-11-25)
 
-La convención está escrita en [plataformas/flutter.md](../plataformas/flutter.md#openapi-y-clientes) y la plantilla la sigue, pero **swagger_parser todavía no genera nada con el `openapi.json` del servidor**: falla por un error suyo, el [#489](https://github.com/Carapacik/swagger_parser/issues/489), que sigue abierto y sin respuesta.
+El [#489](https://github.com/Carapacik/swagger_parser/issues/489) se cerró el 2026-11-16, y **swagger_parser 2.4.0 genera con el `openapi.json` del servidor**. Falta confirmar la elección. Lo que sigue a «De dónde sale el tema» es de antes del arreglo.
 
-| Pieza | Estado |
+Comprobado el 2026-11-25 con Flutter 3.47.5, freezed 4.0.3, json_serializable 6.15.2 y `environment.sdk` en `^3.13.0`, con swagger_parser 2.3.0 y 2.4.0:
+
+| Prueba | Resultado |
 | :--- | :--- |
-| `flutter.md`, «OpenAPI y clientes»: swagger_parser 2.1.1 genera desde `../server/openapi.json` los modelos con freezed y el cliente con `package:http`, en `lib/data/services/api/`; `swagger_parser.yaml` lleva `serializer: freezed`, `http_client: http` y `page_width: 99` | Escrito |
-| `flutter.md`, «OpenAPI y clientes»: un modelo generado rechaza un campo y un valor de enum que no conoce, porque el servidor declara `additionalProperties: false` | Escrito |
-| `stack.md`: swagger_parser 2.1.1; `flutter.md`, «Proyecto»: swagger_parser en `dev_dependencies`; `swagger_parser.yaml` y `lib/data/services/api/` en el árbol; lo generado no se versiona y el analizador lo excluye | Escrito |
-| `plantilla/flutter/analysis_options.yaml`: excluye `lib/data/services/api/**` | Hecho |
-| `plantilla/flutter/.gitignore`: ignora `/lib/data/services/api/` | Hecho |
-| `plantilla/.github/workflows/ci.yml`: `dart run swagger_parser` después de revisar el formato y antes de build_runner, en los jobs `flutter` e `ios` | Hecho; **falla** mientras siga el #489 |
-| `scripts/verificar.py`: `swagger_parser` 2.1.1 en `PUB` | Hecho |
-| El servidor declara `additionalProperties: false` en cada esquema: `extra="forbid"` pasó al esquema base ([fastapi.md](../plataformas/fastapi.md#esquemas)) | Hecho |
-| Generar con el `openapi.json` de [plantilla/server/](../plantilla/server/openapi.json) | **Falta**: bloqueado por el #489 |
+| `dart run swagger_parser` con el [openapi.json](../plantilla/server/openapi.json) de la plantilla | Genera 93 archivos, sin errores |
+| `dart run build_runner build` y `dart analyze lib` | Compila, con 0 errores |
+| Un campo opcional | Sale como `T?`: `final String? userAgent` |
+| `FailureView.fromJson` con un campo o un valor de enum que no conoce | Lo rechaza, con la 2.4.0 |
+| `serializer` y `http_client` en el primer nivel de `swagger_parser.yaml` | Falla con `Unknown option`: van en `generation` |
 
 Commits: `9c0aa39` (`extra="forbid"` en el esquema base) y `f0916d0` (swagger_parser en la página, la plantilla y `verificar.py`).
 

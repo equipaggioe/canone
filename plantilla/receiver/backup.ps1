@@ -5,7 +5,7 @@ repository in PasswordFile: the server only adds.
 
     .\backup.ps1 -Product <app> -Server <host> -Repos <folder> -PasswordFile <file>
 
-rest-server 0.14.0, from its release on GitHub, restic 0.18.0 and ssh are on the PATH. From
+rest-server 0.15.0, from its release on GitHub, restic 0.18.0 and ssh are on the PATH. From
 canone: plataformas/despliegue.md.
 #>
 param(
@@ -15,7 +15,7 @@ param(
     [Parameter(Mandatory)] [string] $PasswordFile
 )
 $ErrorActionPreference = "Stop"
-$version = "0.14.0"
+$version = "0.15.0"
 if ((& restic version) -notmatch "^restic 0\.18\.0 ") {
     throw "restic is not 0.18.0"
 }

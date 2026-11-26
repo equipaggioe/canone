@@ -2,4 +2,4 @@
 # el de stack.md.
 peerDependencyRules:
   allowedVersions:
-    openapi-typescript>typescript: "6"
+    openapi-typescript>typescript: '6'

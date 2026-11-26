@@ -16,7 +16,7 @@ from webauthn.helpers import base64url_to_bytes
 from app import errors, methods, store
 from app.config import settings
 from app.enums import Method, Role
-from app.methods import METHODS
+from app.methods import METHODS, OPEN_REGISTRATION
 from app.models.account.account import Account
 from app.models.account.passkey import Passkey
 from app.models.event.event_log import EventLog
@@ -31,6 +31,8 @@ ANDROID = "test-android"
 needs_passkey = pytest.mark.skipif(
     Method.PASSKEY not in METHODS, reason="the product offers no passkey"
 )
+# A test that registers with a code needs the open registration.
+needs_open = pytest.mark.skipif(not OPEN_REGISTRATION, reason="the registration is closed")
 
 
 @pytest.fixture
@@ -124,6 +126,7 @@ async def actions(session: AsyncSession) -> list[str]:
     return list(await session.scalars(sa.select(EventLog.action).order_by(EventLog.id)))
 
 
+@needs_open
 async def test_email_code_is_6_digits_for_10_minutes(
     client: AsyncClient, sent: list[httpx.Request], clock: list[int]
 ) -> None:
@@ -150,6 +153,7 @@ async def test_email_code_is_6_digits_for_10_minutes(
     assert 590_000 <= ttl <= 600_000
 
 
+@needs_open
 async def test_sms_code_binds_the_host_and_the_android_hash(
     client: AsyncClient,
     sent: list[httpx.Request],
@@ -181,6 +185,7 @@ async def test_sms_code_binds_the_host_and_the_android_hash(
     assert (await ask(client, {"Host": "evil.example"}, phone=PHONE)).status_code == 400
 
 
+@needs_open
 async def test_phone_is_validated_with_phonenumbers(client: AsyncClient) -> None:
     """A number that phonenumbers does not take as valid is a 422."""
     assert (await ask(client, {"Host": HOST}, phone="+56912345678")).status_code == 422
@@ -210,6 +215,7 @@ async def test_code_is_used_once_and_a_new_one_replaces_it() -> None:
     assert not await codes.take("register", EMAIL, new)
 
 
+@needs_open
 async def test_email_gets_one_code_a_minute_and_five_an_hour(
     client: AsyncClient, clock: list[int], recorded: list[EventLog]
 ) -> None:
@@ -230,6 +236,7 @@ async def test_email_gets_one_code_a_minute_and_five_an_hour(
     assert (await ask(client, email=EMAIL)).status_code == 204
 
 
+@needs_open
 async def test_number_gets_one_sms_a_minute_five_an_hour_and_ten_a_day(
     client: AsyncClient, clock: list[int]
 ) -> None:
@@ -254,6 +261,7 @@ async def test_number_gets_one_sms_a_minute_five_an_hour_and_ten_a_day(
     assert (await send()).json()["detail"] == "Ten SMS a day to this number"
 
 
+@needs_open
 async def test_ip_asks_ten_sms_an_hour(client: AsyncClient) -> None:
     """An IP asks for ten SMS an hour, to any numbers."""
     numbers = [f"+5622123{index:04d}" for index in range(11)]
@@ -261,6 +269,7 @@ async def test_ip_asks_ten_sms_an_hour(client: AsyncClient) -> None:
     assert answers == [204] * 10 + [429]
 
 
+@needs_open
 @needs_passkey
 async def test_existing_account_is_a_409(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
@@ -273,6 +282,7 @@ async def test_existing_account_is_a_409(
     assert (await register(client, Authenticator(), code)).status_code == 409
 
 
+@needs_open
 async def test_ten_conflicts_block_the_ip_for_30_minutes(
     client: AsyncClient, session: AsyncSession, clock: list[int]
 ) -> None:
@@ -323,6 +333,7 @@ async def test_creation_options_ask_a_discoverable_passkey(client: AsyncClient) 
     assert 590 <= await store.client.ttl(attestation.creation_key(raw)) <= 600
 
 
+@needs_open
 @needs_passkey
 @pytest.mark.parametrize("form", ["cookie", "token"])
 async def test_registration_links_the_passkey_and_opens_the_session(
@@ -372,6 +383,7 @@ async def test_registration_links_the_passkey_and_opens_the_session(
 @pytest.mark.parametrize(
     ("fmt", "status"), [("none", 200), ("packed", 200), ("packed-x5c", 400), ("fido-u2f", 400)]
 )
+@needs_open
 async def test_registration_takes_none_and_self_attestation(
     client: AsyncClient, sent: list[httpx.Request], clock: list[int], fmt: str, status: int
 ) -> None:
@@ -395,6 +407,7 @@ async def test_registration_takes_none_and_self_attestation(
         ({"hmac-secret": True}, 400),
     ],
 )
+@needs_open
 async def test_registration_takes_only_cred_protect(
     client: AsyncClient,
     sent: list[httpx.Request],
@@ -411,6 +424,7 @@ async def test_registration_takes_only_cred_protect(
         assert recorded[-1].details == {"reason": "extensions", "extensions": ["hmac-secret"]}
 
 
+@needs_open
 @needs_passkey
 async def test_registration_client_must_be_clean(
     client: AsyncClient, sent: list[httpx.Request], clock: list[int]
@@ -426,6 +440,7 @@ async def test_registration_client_must_be_clean(
         assert (await register(client, Authenticator(), code, create=create)).status_code == 400
 
 
+@needs_open
 @needs_passkey
 async def test_credential_id_longer_than_1023_bytes_or_taken_fails(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
@@ -444,6 +459,7 @@ async def test_credential_id_longer_than_1023_bytes_or_taken_fails(
     assert (await register(client, copy, code)).status_code == 400
 
 
+@needs_open
 @needs_passkey
 async def test_wrong_code_fails_and_a_failed_passkey_keeps_the_code(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
@@ -473,6 +489,17 @@ async def test_setup_code_registers_the_first_superadmin_once(
     await session.execute(sa.update(Account).values(email="first@example.com"))
     response = await register(client, Authenticator(), None, setupCode=settings.setup_code)
     assert response.status_code == 403
+
+
+@needs_open
+@needs_passkey
+async def test_code_registers_a_user_after_the_superadmin(
+    client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
+) -> None:
+    """With a superadmin, a registration with the code makes a user."""
+    response = await register(client, Authenticator(), None, setupCode=settings.setup_code)
+    assert response.status_code == 200
+    await session.execute(sa.update(Account).values(email="first@example.com"))
     code = await new_code(client, sent, clock, email=EMAIL)
     assert (await register(client, Authenticator(), code)).status_code == 200
     roles = await session.scalars(sa.select(Account.role).order_by(Account.created_at))
@@ -493,6 +520,7 @@ async def test_closed_registration_takes_only_the_setup_code(
     assert await session.scalar(sa.select(Account.role)) == Role.SUPERADMIN
 
 
+@needs_open
 @needs_passkey
 async def test_setup_code_replaces_the_code(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]
@@ -523,6 +551,7 @@ async def test_superadmin_registers_a_passkey_that_verified_the_user(
     assert await session.scalar(sa.select(sa.func.count()).select_from(Account)) == 0
 
 
+@needs_open
 @needs_passkey
 async def test_registration_by_phone_verifies_the_phone(
     client: AsyncClient, session: AsyncSession, sent: list[httpx.Request], clock: list[int]

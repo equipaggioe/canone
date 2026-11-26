@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import errors, methods
 from app.config import settings
 from app.enums import Method, Role
-from app.methods import METHODS
+from app.methods import METHODS, OPEN_REGISTRATION
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.account.phone import Phone
@@ -28,6 +28,9 @@ from app.services import codes, limits, sessions, sms
 from app.services.sessions import Client
 
 pytestmark = pytest.mark.skipif(Method.SMS not in METHODS, reason="the product offers no SMS code")
+# A test that registers with a code needs the open registration.
+needs_open = pytest.mark.skipif(not OPEN_REGISTRATION, reason="the registration is closed")
+
 
 PHONE = "+56221234567"
 NEW_PHONE = "+56221234568"
@@ -233,6 +236,7 @@ async def test_reauth_with_sms_renews_the_session(
     assert response.status_code == 409
 
 
+@needs_open
 async def test_registration_by_phone_takes_no_authenticator(
     client: AsyncClient,
     session: AsyncSession,

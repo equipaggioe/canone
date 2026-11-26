@@ -22,12 +22,16 @@ from app import errors, methods
 from app.config import settings
 from app.dependencies import PrincipalDep
 from app.enums import Method, Role
-from app.methods import METHODS
+from app.methods import METHODS, OPEN_REGISTRATION
 from app.models.account.account import Account
 from app.models.account.account_session import AccountSession
 from app.models.account.password import Password
 from app.models.event.event_log import EventLog
 from app.services import events, limits, passwords, sessions
+
+# A test that registers with a code needs the open registration.
+needs_open = pytest.mark.skipif(not OPEN_REGISTRATION, reason="the registration is closed")
+
 
 pytestmark = pytest.mark.skipif(
     Method.PASSWORD not in METHODS, reason="the product offers no password"
@@ -280,6 +284,7 @@ async def code_for(client: AsyncClient, sent: list[httpx.Request], email: str) -
     return found[0]
 
 
+@needs_open
 async def test_registration_takes_a_password(
     client: AsyncClient,
     session: AsyncSession,

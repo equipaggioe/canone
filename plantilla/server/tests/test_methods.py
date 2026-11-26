@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 from app import errors, methods
 from app.enums import Method
 from app.main import api_router
+from app.methods import OPEN_REGISTRATION
 from tests.authenticator import Authenticator
 
 
@@ -53,6 +54,7 @@ async def test_a_method_the_product_does_not_use_has_no_routes() -> None:
         assert (await client.get("/api/health")).status_code == 204
 
 
+@pytest.mark.skipif(not OPEN_REGISTRATION, reason="the registration is closed")
 @pytest.mark.parametrize(
     ("chosen", "field"), [(Method.PASSKEY, "password"), (Method.PASSWORD, "credential")]
 )

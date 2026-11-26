@@ -1,6 +1,6 @@
 # ADR-0210 · `despliegue.md` resume las cabeceras en *Security Headers*, deja entrar solo el ICMP que pide NIST, y saca lo que no decide nada
 
-- **Estado:** Aceptada. El usuario pidió aplicar los veredictos de la revisión (2026-11-21). Los valores de la retención de los respaldos no los confirmó: quedan en [pendientes/retencion-de-respaldos.md](../pendientes/retencion-de-respaldos.md)
+- **Estado:** Aceptada. El usuario pidió aplicar los veredictos de la revisión (2026-11-21). Los valores de la retención de los respaldos no los confirmó: quedan en `pendientes/retencion-de-respaldos.md`
 - **Fecha:** 2026-11-21
 - **Alcance:** [plataformas/despliegue.md](../plataformas/despliegue.md), `plantilla/infra/Caddyfile`, `plantilla/infra/nftables.conf`, `scripts/infra/` y `scripts/verificar.py`
 

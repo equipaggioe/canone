@@ -24,8 +24,11 @@ El segundo término aparece solo cuando hay más de una pieza en el mismo lugar,
 | `docs/` | `arquitectura/`, `adr/`, `planes/` y su `README.md`. Nada más — ver [documentacion.md](documentacion.md) |
 | `scripts/` | Lo que es del repositorio entero |
 | `brand/` | Logo y colores del producto, con los colores en `tokens/` ([transversal.md](plataformas/transversal.md#tema)). No es una pieza: no corre en ningún lado y lo leen las piezas ([ADR-0017](adr/0017-la-marca-vive-en-brand.md)) |
+| `<pieza en Java>/` | Una pieza en Java de [java.md](plataformas/java.md), con el nombre de su jar |
 
 `panel/` y `landing/` son las dos excepciones al patrón, y lo son porque la industria ya las nombra así: un *admin panel* es la interfaz interna de gestión y una *landing page* es el sitio público. `backoffice/` es sinónimo de `panel/` y no se usa; `frontend/`, `pwa/`, `flet_app/` y `app/` nombran la tecnología o nada, y tampoco.
+
+Una pieza en Java tampoco sigue el patrón: la carpeta lleva el nombre de su jar, que es también el de su unidad ([java.md](plataformas/java.md#proyecto)).
 
 Un cliente que se instala es `mobile/` o `desktop/` según dónde se instala, no según con qué está construido: Flet en un teléfono es `mobile/` y Flet en una computadora es `desktop/`.
 

@@ -254,6 +254,8 @@ Página: [flet.md](plataformas/flet.md). Se suma a [Python](#python), y en `pack
 | :--- | :--- | :--- |
 | Flet, con los extras `cli` y `test` en `dev` | 1.1.3 | — |
 | Flutter, en lugar de la de [Flutter](#flutter) | 3.47.9, la que pide Flet 1.1.3 | [Proyecto](plataformas/flet.md#proyecto) |
+| AGP, en lugar del de [Android](#android) | 8.13.2, el de Flet 1.1.3 | [Código por SMS](plataformas/flet.md#código-por-sms) y [Passkeys](plataformas/flet.md#passkeys) |
+| La API de Android, en `compileSdk` de `packages/passkey/` | 36, la que encuentra AGP 8.13.2 | [Passkeys](plataformas/flet.md#passkeys) |
 | flet-secure-storage | 1.1.3 | [Almacenamiento](plataformas/flet.md#almacenamiento) |
 | smart_auth, en `packages/sms/` | 4.0.0 | [Código por SMS](plataformas/flet.md#código-por-sms) |
 | httpx-ws | 0.10.0 | [WebSocket](plataformas/flet.md#websocket) |
@@ -308,3 +310,4 @@ Página: [repositorio.md](repositorio.md#ci). Los contenedores corresponden a De
 | La versión de uv, en cada `pyproject.toml` | [scripts/verificar.py](scripts/verificar.py) |
 | Las acciones y los contenedores de CI | [scripts/verificar.py](scripts/verificar.py) |
 | Que la plantilla y los scripts de Canone no declaran otra versión | `scripts/verificar.py --canone` en CI |
+| Una tecnología que está en dos bloques lleva la misma versión, salvo la fila que dice «en lugar de» | `scripts/verificar.py --canone` en CI |

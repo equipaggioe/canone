@@ -109,7 +109,7 @@ python scripts/verificar.py --todos ..
 Con `--canone` comprueba Canone:
 
 - Los orígenes de `plataformas/` contra `fuentes/`.
-- Las versiones de la plantilla contra `stack.md`.
+- Las versiones de la plantilla contra `stack.md`, y que una tecnología que está en dos bloques de `stack.md` lleve la misma versión.
 - Que la lista de bloqueo de la plantilla salga de la del NCSC, y sus colores, de `plantilla/brand/tokens/`.
 - Que cada archivo de `plantilla/server/` esté en una lista de `verificar.py`, y que cada archivo de sus listas exista.
 - Que los workflows de Canone usen las acciones, los contenedores y las versiones de `stack.md`, y que sus scripts de `sh` no nieguen con `!` bajo `set -e`.

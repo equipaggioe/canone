@@ -1,4 +1,5 @@
-# plataformas/sveltekit.md: esbuild trae su binario como dependencia opcional, y su script
-# de instalación solo lo comprueba. Con CI=true, pnpm falla en cada build que nadie decidió.
-allowBuilds:
-  esbuild: false
+# plataformas/sveltekit.md, «Proyecto»: openapi-typescript pide TypeScript 5 y genera igual con
+# el de stack.md.
+peerDependencyRules:
+  allowedVersions:
+    openapi-typescript>typescript: "6"

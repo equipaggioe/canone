@@ -37,7 +37,7 @@ Las razones que salen de la página, porque las convenciones no se apartan de un
 ## Consecuencias
 
 - Una revisión de «Contraseñas» compara con ASVS V6, y V6 entra en `fuentes/`.
-- «Cumplimiento» de `autenticacion.md` sigue sin poder escribirse: queda en [pendientes/](../pendientes/autenticacion-sin-cumplimiento.md).
+- «Cumplimiento» de `autenticacion.md` sigue sin poder escribirse: queda en `pendientes/autenticacion-sin-cumplimiento.md`.
 
 ## Descartado
 

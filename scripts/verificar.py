@@ -214,7 +214,8 @@ PASSKEY = [
 ]
 
 # Una pieza se llama por dónde corre; el sufijo, cuando hay varias en el mismo lugar, es del
-# dominio. `panel` y `landing` son las dos excepciones, con el nombre que ya usa la industria.
+# dominio. `panel` y `landing` son las dos excepciones, con el nombre que ya usa la industria, y una
+# pieza en Java, con `dependencies.txt`, lleva el nombre de su jar (java.md).
 PREFIJOS = ("server", "web", "mobile", "desktop")
 FIJAS = {"panel", "landing", "packages", "docs", "scripts", "brand"}
 
@@ -482,6 +483,30 @@ def catalogos(repo: Path) -> list[str]:
     return fallas
 
 
+
+# stack.md, «Versiones»: una tecnología lleva la misma versión en todas las piezas. Una fila que se
+# repite en otro bloque lleva la misma versión, salvo la que dice «en lugar de».
+def repetidas() -> list[str]:
+    """Devuelve las filas de stack.md que repiten otra con otra versión."""
+    vistas: dict[str, tuple[str, str]] = {}
+    fallas = []
+    titulo = ""
+    for linea in (CANONE / "stack.md").read_text(encoding="utf-8").splitlines():
+        if linea.startswith("## "):
+            titulo = linea[3:].strip()
+        elif linea.startswith("| ") and titulo in STACK and not linea.startswith(("| Se usa", "| :---")):
+            celdas = [celda.strip() for celda in linea.strip("|").split(" | ")]
+            if "en lugar de" in celdas[0] or celdas[0].startswith("La API de Android"):
+                continue
+            clave = celdas[0].split(",")[0].replace("`", "").strip()
+            version = STACK[titulo][clave]
+            if clave in vistas and vistas[clave][1] != version:
+                fallas.append(
+                    f"stack.md: {clave} lleva {vistas[clave][1]} en «{vistas[clave][0]}» y {version} en «{titulo}»"
+                )
+            vistas.setdefault(clave, (titulo, version))
+    return fallas
+
 def sin_clasificar() -> list[str]:
     """Los archivos de plantilla/server/ que ninguna lista nombra: nadie compararía su copia."""
     listados = {rel.as_posix() for rel in (*CANONICOS, *CUENTAS, *COMPLETABLES)}
@@ -527,6 +552,8 @@ EXTRAS = {
     )
 }
 ANDROID = STACK["Android"]
+# stack.md, «Flet»: el plugin de packages/passkey/ compila con la API que encuentra el AGP de Flet.
+PASSKEY_SDK = "La API de Android, en compileSdk de packages/passkey/"
 CI = STACK["CI"]
 DESPLIEGUE = STACK["Despliegue"]
 FLUTTER = STACK["Flutter"]
@@ -848,7 +875,9 @@ def tope(version: str) -> str:
 PYPROJECT = {
     "autenticacion.md": pypi(STACK["Autenticación"]),
     "fastapi.md": pypi(STACK["FastAPI"]),
-    "flet.md": pypi(menos("Flet", "Flutter", "Pydantic", "Inno Setup", "appimagetool", "smart_auth")),
+    "flet.md": pypi(
+        menos("Flet", "Flutter", "AGP", PASSKEY_SDK, "Pydantic", "Inno Setup", "appimagetool", "smart_auth")
+    ),
     "postgres.md": pypi(menos("PostgreSQL", "PostgreSQL", "PostGIS")),
     "python.md": pypi(menos("Python", "Python", "uv")),
     "qt.md": pypi(STACK["Qt"]),
@@ -905,6 +934,11 @@ PROGRAMAS = [
         "plantilla/packages/passkey/src/flutter/flet_passkey/passkey/android/build.gradle.kts",
         r"androidx\.credentials:[\w-]+:([\d.]+)",
         ANDROID["androidx.credentials"],
+    ),
+    (
+        "plantilla/packages/passkey/src/flutter/flet_passkey/passkey/android/build.gradle.kts",
+        r"compileSdk = (\d+)",
+        STACK["Flet"][PASSKEY_SDK],
     ),
     ("plantilla/receiver/backup.ps1", r'\$version = "([^"]+)"', DESPLIEGUE["rest-server"]),
     ("plantilla/receiver/backup.ps1", r"restic (\d[\d.]*\d)", DESPLIEGUE["restic"]),
@@ -1435,7 +1469,7 @@ def revisar(repo: Path) -> list[str]:
     for carpeta in sorted(p for p in repo.iterdir() if p.is_dir()):
         if carpeta.name.startswith("."):
             continue
-        if not nombre_valido(carpeta.name):
+        if not nombre_valido(carpeta.name) and not (carpeta / "dependencies.txt").is_file():
             fallas.append(f"repositorio.md: {carpeta.name}/ no es un nombre de pieza")
 
     if not (repo / ".gitignore").exists():
@@ -1679,6 +1713,7 @@ def main() -> int:
         fallas += bloqueo()
         fallas += sin_clasificar()
         fallas += colores_plantilla()
+        fallas += repetidas()
         print(f"\ncanone: {len(fallas)} incumplimientos")
         for falla in fallas:
             print(f"  - {falla}")

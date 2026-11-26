@@ -22,15 +22,16 @@ Además de documentar las convenciones, proporciona plantillas y herramientas pa
 
 ## Aplicación
 
-Canone distingue entre convenciones generales y convenciones específicas de cada tecnología o ámbito.
+Canone distingue entre convenciones generales y convenciones específicas de cada tecnología o ámbito. Lo que se lee depende del objetivo, y de si se trabaja en una aplicación o en Canone:
 
-Las siguientes convenciones aplican a todas las aplicaciones:
+| Objetivo | Qué se lee |
+| :--- | :--- |
+| Escribir código de una pieza de una aplicación | [principios.md](principios.md), [repositorio.md](repositorio.md), la página de la pieza y las que nombra su «Se lee con» en [plataformas/README.md](plataformas/README.md#páginas), y su bloque de [stack.md](stack.md) |
+| Documentar una aplicación | [documentacion.md](documentacion.md) |
+| Instalar o cambiar la máquina de una aplicación | [despliegue.md](plataformas/despliegue.md) |
+| Trabajar en Canone | [principios.md](principios.md), salvo lo que dice que es de una aplicación, este README, [plataformas/README.md](plataformas/README.md), [fuentes/README.md](fuentes/README.md), [plantilla/README.md](plantilla/README.md), [adr/README.md](adr/README.md) y [pendientes/](pendientes/) |
 
-- [principios.md](principios.md)
-- [repositorio.md](repositorio.md)
-- [documentacion.md](documentacion.md)
-
-Las convenciones de `plataformas/` dependen de las tecnologías utilizadas por cada proyecto. Qué páginas se leen para trabajar en una pieza está en [plataformas/README.md](plataformas/README.md), y qué se usa en cada plataforma y en qué versión, en [stack.md](stack.md).
+[repositorio.md](repositorio.md), [documentacion.md](documentacion.md), [stack.md](stack.md) y las páginas de `plataformas/` son solo de las aplicaciones, y de las páginas, cada aplicación lee las de las tecnologías que usa.
 
 ## Principios
 

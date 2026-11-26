@@ -2,7 +2,7 @@
 
 Cada página reúne las convenciones de una tecnología o ámbito de implementación. `transversal.md` reúne las que deben cumplir conjuntamente varias piezas de un sistema, y `autenticacion.md`, las del registro, la autenticación y la sesión de una cuenta, en el servidor y en sus clientes.
 
-Para trabajar en una pieza se leen enteras su página y las que nombra «Se lee con» en [Páginas](#páginas), y de [stack.md](../stack.md), el bloque de cada una. Las demás páginas no aplican.
+Qué se lee para trabajar en una pieza está en [Aplicación](../README.md#aplicación), del README: se leen enteras su página y las que nombra «Se lee con» en [Páginas](#páginas). Las demás páginas no aplican.
 
 El resto de este documento dice cómo se escribe y cómo se revisa una página.
 

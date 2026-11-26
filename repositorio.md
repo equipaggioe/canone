@@ -1,6 +1,6 @@
 # Estructura y git
 
-Lo que aplica a cualquier repositorio, tenga las piezas que tenga.
+Lo que aplica al repositorio de cualquier aplicación, tenga las piezas que tenga.
 
 ## Carpetas de primer nivel
 

@@ -1,12 +1,12 @@
 # Principios
 
-Reglas de método. Valen en cualquier repositorio y no dependen del stack: lo que depende de una tecnología está en [plataformas/](plataformas/), y solo aplica a los repositorios que la usan.
+Reglas de método. Valen al trabajar en una aplicación y en Canone, salvo las que dicen que son de una aplicación, y no dependen del stack: lo que depende de una tecnología está en [plataformas/](plataformas/), y solo aplica a las aplicaciones que la usan.
 
-Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
+Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta al [README](README.md) de Canone.
 
 ## Idioma
 
-- **El código se escribe en inglés**: variables, funciones, clases, tablas, columnas, endpoints, enums y comentarios.
+- **El código de una aplicación se escribe en inglés**: variables, funciones, clases, tablas, columnas, endpoints, enums y comentarios.
 - **Los mensajes de commit se escriben en español.**
 - **La documentación se escribe en español.** La UI se diseña multilingüe, con el español como idioma base ([transversal.md](plataformas/transversal.md#idiomas)).
 - **Español neutro.** Ni rioplatense ni de España.
@@ -17,16 +17,16 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
 
 ## Nombres
 
-- Un identificador lleva las menos palabras posibles, y nunca más de cuatro. No repite lo que ya dice su contexto: el repositorio, la carpeta, el módulo o la clase.
+- En el código de una aplicación, un identificador lleva las menos palabras posibles, y nunca más de cuatro. No repite lo que ya dice su contexto: el repositorio, la carpeta, el módulo o la clase.
 - Sin abreviaturas, salvo las que son más comunes que la palabra entera, como `id`, `url` o `http`.
 - Quedan fuera del límite:
   - Las pruebas: su nombre describe el caso.
   - Los nombres que no se eligen: los métodos que se sobrescriben del framework, como `didChangeDependencies`; los campos de una API externa, y los que genera una convención, como las restricciones que nombra Alembic.
   - El sufijo que distingue los esquemas de un mismo recurso, como `Create` o `Update`: no cuenta como palabra.
 
-## Qué se lee al escribir código
+## Qué se lee
 
-Al escribir código bastan [stack.md](stack.md) y las páginas de [plataformas/](plataformas/) de la pieza: escriben cada convención que rige.
+Qué se lee para cada objetivo está en [Aplicación](README.md#aplicación), del README.
 
 ## Sin fallbacks
 
@@ -34,7 +34,7 @@ Nada de valores por defecto silenciosos, handlers vacíos ni degradados silencio
 
 ## Compatibilidad
 
-Depende del estado que el repositorio declara en su `README.md` ([repositorio.md](repositorio.md#archivos-del-raíz)). Si no lo declara, no se supone ninguno: se pregunta.
+Es de una aplicación, y depende del estado que declara en su `README.md` ([repositorio.md](repositorio.md#archivos-del-raíz)). Si no lo declara, no se supone ninguno: se pregunta.
 
 Las migraciones normales de esquema van en los dos estados: no son compatibilidad, son la única forma de abrir una base existente.
 

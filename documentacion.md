@@ -1,6 +1,6 @@
 # Documentación: arquitectura, ADR y planes
 
-Cómo se documenta **cada** repositorio. Esta es la única copia: el `docs/README.md` de un repositorio no repite estas reglas, las enlaza.
+Cómo se documenta el repositorio de **cada** aplicación. Esta es la única copia: el `docs/README.md` de un repositorio no repite estas reglas, las enlaza.
 
 ## El problema que resuelve
 

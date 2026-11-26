@@ -22,6 +22,8 @@ sin passkey se recupera en el momento.
 
 ## Decisión
 
+Las reglas están en `autenticacion.md`, «Cuentas» y «Superadministrador»; aquí va el porqué.
+
 1. El superadministrador crea otra cuenta por `PUT /api/accounts/{id}`, con un correo o un teléfono
    y su rol, sin código ni autenticador. El titular la toma con el código de recuperación, con el
    que vincula su primer autenticador.

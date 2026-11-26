@@ -156,7 +156,7 @@ Página: [sveltekit.md](plataformas/sveltekit.md).
 | `@stripe/stripe-js`, con Stripe | 10.3.0 | [Pagos](plataformas/sveltekit.md#pagos) |
 | Vitest | 5.1.1 | [Pruebas](plataformas/sveltekit.md#pruebas) |
 | Playwright | 1.65.1 | [Pruebas](plataformas/sveltekit.md#pruebas) |
-| `@axe-core/playwright` | 4.14.0 | [Accesibilidad](plataformas/sveltekit.md#accesibilidad) |
+| `@axe-core/playwright` | 4.14.1 | [Accesibilidad](plataformas/sveltekit.md#accesibilidad) |
 
 ## Flutter
 

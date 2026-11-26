@@ -91,6 +91,7 @@ def changes(account_id: object) -> list[tuple[str, str, dict[str, str] | None]]:
         ("POST", f"{path}/enable", None),
         ("PUT", f"{path}/email", {"email": NEW_EMAIL}),
         ("PUT", f"{path}/phone", {"phone": NEW_PHONE}),
+        ("PUT", f"{path}/role", {"role": "superadmin"}),
         ("DELETE", f"{path}/sessions", None),
         ("DELETE", path, None),
     ]
@@ -470,6 +471,112 @@ async def test_superadmin_gives_an_address_the_holder_has(
     assert (await client.put(path, json=taken, headers=headers)).status_code == 409
     if METHODS & {Method.PASSKEY, Method.PASSWORD}:
         assert (await ask(client, **{address: new})).status_code == 204
+
+
+async def test_creating_an_account_asks_a_superadmin_freshly_authenticated(
+    client: AsyncClient, session: AsyncSession, account: Account, headers: dict[str, str]
+) -> None:
+    """Another account gets 403, and an old authentication too."""
+    path = f"/api/accounts/{uuid4()}"
+    sent = {"phone": NEW_PHONE, "role": "user"}
+    theirs = await opened(session, account)
+    assert (await client.put(path, json=sent, headers=theirs)).status_code == 403
+    await age(session, timedelta(minutes=6))
+    response = await client.put(path, json=sent, headers=headers)
+    assert response.status_code == 403
+    assert response.json()["type"] == errors.REAUTHENTICATION_REQUIRED.uri
+    found = sa.select(sa.func.count()).where(Account.phone == NEW_PHONE)
+    assert await session.scalar(found) == 0
+
+
+@needs_passkey
+@pytest.mark.parametrize("role", [Role.USER, Role.SUPERADMIN])
+async def test_superadmin_creates_an_account_its_holder_takes(
+    client: AsyncClient,
+    session: AsyncSession,
+    superadmin: Account,
+    headers: dict[str, str],
+    sent: list[httpx.Request],
+    role: Role,
+) -> None:
+    """Without an authenticator; the holder recovers it with a passkey.
+
+    The address hears, repeated it answers the same account, and an ID
+    or an address of another account is a 409. A superadmin takes the
+    code at that address until it signs in.
+    """
+    account_id = uuid4()
+    path = f"/api/accounts/{account_id}"
+    created = await client.put(path, json={"phone": NEW_PHONE, "role": role}, headers=headers)
+    assert created.status_code == 201
+    assert created.json()["id"] == str(account_id)
+    assert (created.json()["phone"], created.json()["role"]) == (NEW_PHONE, role)
+    target = await session.get_one(Account, account_id)
+    assert (target.email, target.role, target.language) == (None, role, "es")
+    assert [await count(session, model, target) for model in (Passkey, Password)] == [0, 0]
+    assert to(sent) == {NEW_PHONE}
+    for action in ("user_created", "authz_admin"):
+        row = await logged(session, action)
+        assert (row.actor_id, row.target_id) == (superadmin.id, str(account_id))
+    again = await client.put(path, json={"phone": NEW_PHONE, "role": role}, headers=headers)
+    assert (again.status_code, again.json()) == (200, created.json())
+    assert len(sent) == 1
+    other = {"phone": PHONE, "role": role}
+    assert (await client.put(path, json=other, headers=headers)).status_code == 409
+    taken = {"phone": NEW_PHONE, "role": role}
+    assert (
+        await client.put(f"/api/accounts/{uuid4()}", json=taken, headers=headers)
+    ).status_code == 409
+    sent.clear()
+    assert (await ask(client, phone=NEW_PHONE)).status_code == 204
+    proof = {"phone": NEW_PHONE, "code": code_in(sent[0])}
+    options = await client.post("/api/auth/recovery/options", json=proof)
+    authenticator = Authenticator()
+    credential = authenticator.create(options.json()["challenge"])
+    response = await client.post(
+        "/api/auth/recovery/passkey",
+        json={**proof, "passkeyName": "New", "credential": credential},
+    )
+    assert response.status_code == 204
+    login = await client.post("/api/auth/passkey/options")
+    signed = authenticator.sign(login.json()["challenge"], target.user_handle)
+    assert (await client.post("/api/auth/passkey/token", json=signed)).status_code == 200
+    if role == Role.SUPERADMIN:
+        assert (await ask(client, phone=NEW_PHONE)).status_code == 403
+
+
+async def test_superadmin_changes_the_role_of_another_account(
+    client: AsyncClient,
+    session: AsyncSession,
+    account: Account,
+    superadmin: Account,
+    headers: dict[str, str],
+    sent: list[httpx.Request],
+) -> None:
+    """It rules from the next request, and every address hears.
+
+    The event names both roles, and the same role changes nothing.
+    """
+    theirs = await opened(session, account)
+    path = f"/api/accounts/{account.id}/role"
+    assert (await client.get("/api/accounts", headers=theirs)).status_code == 403
+    promoted = await client.put(path, json={"role": "superadmin"}, headers=headers)
+    assert promoted.status_code == 204
+    await session.refresh(account)
+    assert account.role == Role.SUPERADMIN
+    assert (await client.get("/api/accounts", headers=theirs)).status_code == 200
+    assert to(sent) == {EMAIL, PHONE}
+    change = await logged(session, "authz_change")
+    assert (change.level, change.actor_id) == ("warn", superadmin.id)
+    assert change.details == {"from": "user", "to": "superadmin"}
+    admin = await logged(session, "authz_admin")
+    assert admin.target_id == str(account.id)
+    assert (
+        await client.put(path, json={"role": "superadmin"}, headers=headers)
+    ).status_code == 204
+    assert len(sent) == 2
+    assert (await client.put(path, json={"role": "user"}, headers=headers)).status_code == 204
+    assert (await client.get("/api/accounts", headers=theirs)).status_code == 403
 
 
 @needs_passkey

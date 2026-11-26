@@ -10,7 +10,7 @@ from app import errors, ijson, store, tracing
 from app.database import engine
 from app.dependencies import check_client_version, check_origin, deny_by_default
 from app.enums import EventLevel, Method, Push
-from app.methods import METHODS
+from app.methods import METHODS, OPEN_REGISTRATION
 from app.push import PUSH
 from app.routers import (
     account,
@@ -52,10 +52,12 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
         await web_push_service.client.aclose()
 
 
-def api_router(methods: frozenset[Method], push: frozenset[Push]) -> APIRouter:
+def api_router(
+    methods: frozenset[Method], push: frozenset[Push], open_registration: bool
+) -> APIRouter:
     """Mount the routers of /api: a method if the product has it.
 
-    So with each service of push.
+    So with each service of push, and with the code of a new account.
     """
     api = APIRouter(
         prefix="/api",
@@ -86,6 +88,8 @@ def api_router(methods: frozenset[Method], push: frozenset[Push]) -> APIRouter:
     # A recovery restores a passkey or a password.
     if methods & {Method.PASSKEY, Method.PASSWORD}:
         api.include_router(recovery.router)
+    if open_registration:
+        api.include_router(auth.signup)
     if Push.FCM in push:
         api.include_router(fcm.router)
     if Push.WEB in push:
@@ -109,4 +113,4 @@ app.openapi = errors.with_schemas(  # pyrefly: ignore[method-assign]
 )
 ijson.install(app)
 tracing.install()
-app.include_router(api_router(METHODS, PUSH))
+app.include_router(api_router(METHODS, PUSH, OPEN_REGISTRATION))

@@ -3,9 +3,24 @@
 from uuid import UUID
 
 from app.enums import Role
-from app.schemas.auth import Email, Phone
+from app.schemas.auth import Email, Identifier, Phone
 from app.schemas.base import InputSchema, Schema, Timestamp
 from app.schemas.page import PageParams
+
+
+class AccountCreate(Identifier):
+    """An account a superadmin creates: an address the holder has.
+
+    The holder takes it with the code of the recovery.
+    """
+
+    role: Role
+
+
+class RoleSet(InputSchema):
+    """The role a superadmin gives another account."""
+
+    role: Role
 
 
 class AccountSummary(Schema):

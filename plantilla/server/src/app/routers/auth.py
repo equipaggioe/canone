@@ -17,6 +17,8 @@ from app.services.sessions import Client, Principal
 from app.translations import language
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+# The code of a new account, mounted only where anyone registers.
+signup = APIRouter(prefix="/auth", tags=["auth"])
 
 FORM = "application/x-www-form-urlencoded"
 # RFC 6749: the tokens are not cached.
@@ -165,7 +167,7 @@ async def logout(
         sessions.clear_cookie(response)
 
 
-@router.post("/register/code", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
+@signup.post("/register/code", status_code=HTTPStatus.NO_CONTENT, dependencies=[Depends(public)])
 async def register_code(
     request: Request, session: SessionDep, body: Identifier, caller: ClientDep
 ) -> None:

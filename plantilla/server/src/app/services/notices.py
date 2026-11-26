@@ -37,6 +37,8 @@ class Notice(StrEnum):
     RECOVERED = "recovered"
     ACCOUNT_DISABLED = "account_disabled"
     ACCOUNT_DELETED = "account_deleted"
+    ACCOUNT_CREATED = "account_created"
+    ROLE_CHANGED = "role_changed"
 
 
 # Each notice says what happened, what to do and whom to write to, if
@@ -110,6 +112,17 @@ TEXTS = {
     Notice.ACCOUNT_DELETED: (
         "Your account was deleted",
         "Your account was deleted. If you did not delete it, write to {contact}.",
+    ),
+    Notice.ACCOUNT_CREATED: (
+        "An account was created for you",
+        "An administrator created an account for you with this address. To sign in the first "
+        "time, recover it in the app with a code sent here. If you did not expect it, write to "
+        "{contact}.",
+    ),
+    Notice.ROLE_CHANGED: (
+        "The role of your account changed",
+        "An administrator changed what your account may do. If you did not expect it, write to "
+        "{contact}.",
     ),
 }
 

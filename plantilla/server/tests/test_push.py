@@ -385,7 +385,7 @@ async def test_service_the_product_does_not_use_has_no_routes() -> None:
     """None of them, without a service."""
     probe = FastAPI()
     errors.install(probe)
-    probe.include_router(api_router(METHODS, frozenset()))
+    probe.include_router(api_router(METHODS, frozenset(), open_registration=True))
     async with AsyncClient(transport=ASGITransport(app=probe), base_url="http://test") as client:
         assert (await client.put("/api/account/push/fid")).status_code == 404
         assert (await client.put("/api/account/push/subscription")).status_code == 404

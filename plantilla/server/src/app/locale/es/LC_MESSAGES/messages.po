@@ -109,3 +109,15 @@ msgstr "Se borró tu cuenta"
 
 msgid "Your account was deleted. If you did not delete it, write to {contact}."
 msgstr "Se borró tu cuenta. Si no la borraste tú, escribe a {contact}."
+
+msgid "An account was created for you"
+msgstr "Se creó una cuenta para ti"
+
+msgid "An administrator created an account for you with this address. To sign in the first time, recover it in the app with a code sent here. If you did not expect it, write to {contact}."
+msgstr "Un administrador creó una cuenta para ti con esta dirección. Para entrar la primera vez, recupérala en la app con un código que llega aquí. Si no la esperabas, escribe a {contact}."
+
+msgid "The role of your account changed"
+msgstr "Cambió el rol de tu cuenta"
+
+msgid "An administrator changed what your account may do. If you did not expect it, write to {contact}."
+msgstr "Un administrador cambió lo que puede hacer tu cuenta. Si no lo esperabas, escribe a {contact}."

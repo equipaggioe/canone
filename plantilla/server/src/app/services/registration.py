@@ -121,9 +121,12 @@ async def register(
     Each authenticator only if the product offers it. The passkey is
     checked first: a failed ceremony leaves the code. The first
     superadmin brings the setup code instead of the code, and its
-    address stays unverified.
+    address stays unverified. Where the registration is closed, only
+    that superadmin registers.
     """
     await check_open(client)
+    if body.code is not None and not methods.OPEN_REGISTRATION:
+        raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin creates each account")
     created = None
     check_offered(body)
     if body.credential is not None:

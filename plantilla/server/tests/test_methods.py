@@ -15,11 +15,12 @@ from tests.authenticator import Authenticator
 async def test_a_method_the_product_does_not_use_has_no_routes() -> None:
     """Without a method its routes are gone; the rest of /api stays.
 
-    The authorization code goes with the passkey, which its page asks.
+    The authorization code goes with the passkey, which its page asks,
+    and the code of a new account with the open registration.
     """
     probe = FastAPI()
     errors.install(probe)
-    probe.include_router(api_router(frozenset(), frozenset()))
+    probe.include_router(api_router(frozenset(), frozenset(), open_registration=False))
     async with AsyncClient(transport=ASGITransport(app=probe), base_url="http://test") as client:
         for path in (
             "/api/auth/password/token",
@@ -29,6 +30,7 @@ async def test_a_method_the_product_does_not_use_has_no_routes() -> None:
             "/api/auth/passkey/token",
             "/api/auth/reauth/passkey",
             "/api/auth/register/options",
+            "/api/auth/register/code",
             "/api/account/passkeys/options",
             "/api/auth/authorize",
             "/api/auth/sms/code",

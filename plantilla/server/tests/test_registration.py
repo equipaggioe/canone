@@ -13,7 +13,7 @@ from httpx import AsyncClient, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from webauthn.helpers import base64url_to_bytes
 
-from app import errors, store
+from app import errors, methods, store
 from app.config import settings
 from app.enums import Method, Role
 from app.methods import METHODS
@@ -477,6 +477,20 @@ async def test_setup_code_registers_the_first_superadmin_once(
     assert (await register(client, Authenticator(), code)).status_code == 200
     roles = await session.scalars(sa.select(Account.role).order_by(Account.created_at))
     assert sorted(roles) == [Role.SUPERADMIN, Role.USER]
+
+
+@needs_passkey
+async def test_closed_registration_takes_only_the_setup_code(
+    client: AsyncClient, session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A code is a 403, and the first superadmin still registers."""
+    monkeypatch.setattr(methods, "OPEN_REGISTRATION", False)
+    response = await register(client, Authenticator(), "123456")
+    assert response.status_code == 403
+    assert await session.scalar(sa.select(sa.func.count()).select_from(Account)) == 0
+    response = await register(client, Authenticator(), None, setupCode=settings.setup_code)
+    assert response.status_code == 200
+    assert await session.scalar(sa.select(Account.role)) == Role.SUPERADMIN
 
 
 @needs_passkey

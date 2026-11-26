@@ -131,6 +131,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Los fallos consecutivos y la hora del siguiente intento viven en la base.
 - Cada repositorio elige qué métodos para entrar usa su producto: la passkey, el código por SMS y la contraseña, en cualquier combinación.
 - El repositorio declara sus métodos en `METHODS` de `methods.py`. El servidor monta solo las rutas de esos métodos, y el registro acepta solo esos: un método que el producto no usa no tiene rutas que un atacante pueda llamar.
+- El repositorio declara en `OPEN_REGISTRATION` de `methods.py` si se registra cualquiera que tenga un correo o un teléfono. Con el registro cerrado, el servidor no monta `POST /api/auth/register/code`, un registro con un código responde 403, y solo se registra el primer [superadministrador](#superadministrador), con el código de instalación: las demás cuentas las crea un superadministrador.
 - Cada pieza ofrece los métodos del producto que tiene su plataforma, según la tabla de esta sección.
 - La pantalla para entrar ofrece primero la passkey, si el producto la usa y el dispositivo la tiene, y luego los demás métodos del producto, entre los que elige el usuario.
 - La app guarda en el dispositivo el último método con que entró, y lo ofrece primero la próxima vez.
@@ -139,7 +140,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Desde el quinto fallo consecutivo, el siguiente intento espera 30 segundos, que se duplican con cada fallo hasta una hora, y un intento antes de tiempo responde 429 ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
 - Cada autenticador guarda cuándo se vinculó y cuándo cambió, y cada uno de esos eventos va al registro de eventos con su IP y su user agent ([NIST SP 800-63B-4 §4.1](../fuentes/nist/sp800-63b-4.txt)).
 - Un inicio de sesión exitoso pone en cero los fallos de los autenticadores que usó ([NIST SP 800-63B-4 §3.2.2](../fuentes/nist/sp800-63b-4.txt)).
-- Una cuenta se registra con un correo o con un teléfono, verificado con un código como el de [Recuperación](#recuperación), salvo el primer [superadministrador](#superadministrador) ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
+- Una cuenta se registra con un correo o con un teléfono, verificado con un código como el de [Recuperación](#recuperación), salvo el primer [superadministrador](#superadministrador). La que crea un superadministrador se verifica con el código de recuperación cuando el titular la toma ([NIST SP 800-63B-4 §4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Una cuenta puede tener un correo, un teléfono, varias passkeys y una contraseña ([NIST SP 800-63B-4 §4.1.2.1](../fuentes/nist/sp800-63b-4.txt) y [§4.2.1.2](../fuentes/nist/sp800-63b-4.txt)).
 - Agregar, borrar o volver a habilitar una passkey, agregar o cambiar la contraseña, volver a habilitar el teléfono y cambiar el correo o el teléfono piden volver a autenticarse en ese momento ([ASVS 5.0 §7.5.1](../fuentes/owasp/ASVS_V7_Session_Management.md)).
 - Borrar la cuenta pide volver a autenticarse en ese momento ([ASVS 5.0 §7.5.3](../fuentes/owasp/ASVS_V7_Session_Management.md)).
@@ -297,6 +298,8 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 - Si el producto usa la passkey, el registro con el código de instalación lleva una passkey, y con una contraseña o sin autenticador responde 403. Si no la usa, el superadministrador se registra y entra con los métodos del producto.
 - Si el producto usa la passkey, el superadministrador que presenta una contraseña correcta recibe 403, y con una passkey sin el flag UV, 403 de tipo `user-verification-required`, sin contar un fallo. Lo mismo al volver a autenticarse.
 - Si el producto usa la passkey, el superadministrador que recupera su cuenta con una contraseña recibe 403, y con una passkey sin el flag UV, 403 de tipo `user-verification-required`.
+- El superadministrador crea otra cuenta por `PUT /api/accounts/{id}`, con el correo o el teléfono que tiene el titular y su rol, sin código ni autenticador, en el idioma de la petición. Responde 201 con la cuenta, 200 si la petición se repite, y 409 si el id es de otra cuenta o la dirección ya tiene una. La cuenta recibe un aviso, y el titular la toma con el código de [Recuperación](#recuperación), con el que vincula su primer autenticador: el código vale en esa dirección aunque la cuenta sea de un superadministrador, hasta que entra.
+- El superadministrador cambia el rol de otra cuenta por `PUT /api/accounts/{id}/role`. El rol nuevo rige desde la petición siguiente, el cambio va al registro de eventos como `authz_change`, con el rol anterior y el nuevo, y la cuenta recibe un aviso. El mismo rol no cambia nada.
 - El superadministrador ve las cuentas en `GET /api/accounts`, de la más vieja a la más nueva, cada una con su correo, su teléfono, su rol, su creación y cuándo se deshabilitó, y la busca con `email` o `phone` exactos.
 - El superadministrador deshabilita otra cuenta por `POST /api/accounts/{id}/disable`, la vuelve a habilitar por `POST /api/accounts/{id}/enable` y la borra por `DELETE /api/accounts/{id}`.
 - El superadministrador le pone a otra cuenta un correo por `PUT /api/accounts/{id}/email`, o un teléfono por `PUT /api/accounts/{id}/phone`, sin código: lo verifica el de [Recuperación](#recuperación).
@@ -439,7 +442,8 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `handshake` de `depende
 | Agregar o cambiar la contraseña pide volver a autenticarse | `test_password_change_needs_a_reauth` |
 | El registro acepta una contraseña: una de la lista no gasta el código, y con el código de instalación responde 403 | `test_registration_takes_a_password` |
 | El registro lleva una passkey con su nombre o una contraseña, no las dos | `test_registration_takes_one_authenticator` |
-| Un método que el producto no usa no tiene rutas, y el código de autorización va con la passkey | `test_a_method_the_product_does_not_use_has_no_routes` |
+| Un método que el producto no usa no tiene rutas, el código de autorización va con la passkey, y la solicitud del código de una cuenta nueva, con el registro abierto | `test_a_method_the_product_does_not_use_has_no_routes` |
+| Con el registro cerrado, un registro con un código responde 403, y el primer superadministrador se registra con el código de instalación | `test_closed_registration_takes_only_the_setup_code` |
 | El registro acepta solo los autenticadores que usa el producto, y otro responde 422 | `test_registration_takes_only_the_methods_of_the_product` |
 | Si el producto no usa la passkey, el superadministrador se registra con el código de instalación y una contraseña, y entra y la cambia | `test_superadmin_without_passkey_uses_the_password` |
 | Volver a autenticarse con la contraseña renueva la sesión, y una equivocada responde 401 | `test_reauth_with_the_password_renews_the_session` |
@@ -485,6 +489,9 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `handshake` de `depende
 | Pedir o presentar el código por SMS de una cuenta deshabilitada responde 403 de tipo `account-disabled` | `test_disabled_account_gets_no_code_to_sign_in` |
 | El superadministrador borra otra cuenta, con aviso a todas las direcciones | `test_superadmin_deletes_another_account` |
 | El superadministrador le pone a otra cuenta un correo o un teléfono sin código, el viejo recibe un aviso, y uno de otra cuenta responde 409 | `test_superadmin_gives_an_address_the_holder_has` |
+| Crear una cuenta pide un superadministrador que volvió a autenticarse, y otra cuenta recibe 403 | `test_creating_an_account_asks_a_superadmin_freshly_authenticated` |
+| El superadministrador crea otra cuenta sin código ni autenticador: la cuenta recibe un aviso, la petición repetida responde 200 con la misma cuenta, y un id o una dirección de otra cuenta responden 409. El titular la toma con el código de recuperación y una passkey, y uno creado como superadministrador toma el código en esa dirección hasta que entra | `test_superadmin_creates_an_account_its_holder_takes` |
+| El superadministrador cambia el rol de otra cuenta: rige desde la petición siguiente, avisa a todas las direcciones y deja `authz_change` con los dos roles; el mismo rol no cambia nada | `test_superadmin_changes_the_role_of_another_account` |
 | Un superadministrador recupera a otro: el código vale solo en la dirección que le puso, hasta que entra; con una contraseña responde 403, y con una passkey sin el flag UV, 403 de tipo `user-verification-required` | `test_superadmin_recovers_another_superadmin` |
 | El superadministrador cierra las sesiones de otra cuenta, o las de todas menos la que llama | `test_superadmin_closes_the_sessions_of_an_account_or_of_all` |
 | La web se conecta al WebSocket con la cookie, y una app, con `Authorization: Bearer` | `test_the_web_and_an_app_connect` |

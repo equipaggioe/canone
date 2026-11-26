@@ -20,7 +20,7 @@ from app.models.account.recovery import Recovery
 from app.models.account.recovery_address import RecoveryAddress
 from app.models.account.recovery_code import RecoveryCode
 from app.models.event.event_log import EventLog
-from app.schemas.accounts import AccountFilter
+from app.schemas.accounts import AccountCreate, AccountFilter
 from app.services import account, events, notices, recovery, sessions, sms
 from app.services.sessions import Client, Principal
 
@@ -91,6 +91,63 @@ async def other(session: AsyncSession, principal: Principal, account_id: UUID) -
     if found.id == principal.account.id:
         raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin does not act on itself here")
     return found
+
+
+async def create(
+    session: AsyncSession,
+    principal: Principal,
+    account_id: UUID,
+    body: AccountCreate,
+    context: tuple[Client, str],
+) -> tuple[Account, bool]:
+    """Create an account, with no authenticator, and say if it is new.
+
+    Its holder takes it with the code of the recovery, at the address
+    the superadmin set: a superadmin too, until it signs in. Repeated,
+    it finds the same account; another one with the ID is a 409.
+    """
+    client, language = context
+    found = await session.get(Account, account_id, with_for_update=True)
+    if found is not None:
+        if found.id == principal.account.id:
+            raise HTTPException(HTTPStatus.FORBIDDEN, "A superadmin does not act on itself here")
+        if (found.email, found.phone, found.role) != (body.email, body.phone, body.role):
+            raise HTTPException(HTTPStatus.CONFLICT, "Another account has the ID")
+        return found, False
+    kind = Address.EMAIL if body.email is not None else Address.PHONE
+    column = Account.email if kind == Address.EMAIL else Account.phone
+    await account.check_free(session, column == body.address)
+    target = Account(
+        id=account_id, email=body.email, phone=body.phone, role=body.role, language=language
+    )
+    session.add(target)
+    await session.flush()
+    if body.phone is not None:
+        sms.bind(session, target)
+    await recovery.reopen(session, target, kind, granted=True)
+    row = changed("user_created", EventLevel.INFO, principal, client, target)
+    row.details = events.changes("account", {"identifier": body.address, "role": body.role})
+    session.add(row)
+    admin_event(session, principal, client, "user_created", ("account", str(target.id)))
+    await notices.notify(session, target, notices.Notice.ACCOUNT_CREATED)
+    return target, True
+
+
+async def set_role(
+    session: AsyncSession, principal: Principal, target: Account, role: Role, client: Client
+) -> None:
+    """Give another account a role; it rules from its next request.
+
+    The same role changes nothing.
+    """
+    if target.role == role:
+        return
+    previous, target.role = target.role, role
+    row = changed("authz_change", EventLevel.WARN, principal, client, target)
+    row.details = {"from": previous.value, "to": role.value}
+    session.add(row)
+    admin_event(session, principal, client, "authz_change", ("account", str(target.id)))
+    await notices.notify(session, target, notices.Notice.ROLE_CHANGED)
 
 
 async def disable(

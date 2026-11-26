@@ -23,8 +23,8 @@ class AccessTokenMessage(InputSchema):
     data: AccessTokenData
 
 
-# ADR-0237: openapi-generator merges a union of problems into one class
-# that requires the errors.
+# canone ADR-0237: openapi-generator merges a union of problems into
+# one class that requires the errors.
 class MessageProblem(Problem):
     """The problem of a message, with its errors if it has fields."""
 

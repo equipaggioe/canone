@@ -23,7 +23,6 @@ Este archivo es la fuente. `~/.claude/CLAUDE.md` no las repite: apunta aquí.
   - Las pruebas: su nombre describe el caso.
   - Los nombres que no se eligen: los métodos que se sobrescriben del framework, como `didChangeDependencies`; los campos de una API externa, y los que genera una convención, como las restricciones que nombra Alembic.
   - El sufijo que distingue los esquemas de un mismo recurso, como `Create` o `Update`: no cuenta como palabra.
-- [scripts/verificar.py](scripts/verificar.py) revisa el largo de las funciones, los métodos y las clases, y que la configuración no repita el nombre del repositorio.
 
 ## Qué se lee al escribir código
 
@@ -80,3 +79,10 @@ Si al implementar no se puede nombrar el síntoma concreto que el cambio elimina
 5. **¿La prueba que falla ya fallaba antes?** Se corre sobre el commit anterior (`git worktree`) antes de culpar al cambio.
 
 Si alguna falla, se arregla o se dice explícitamente que quedó fuera y por qué. **Nunca se reporta «terminado» con parte del alcance faltante.**
+
+## Cumplimiento
+
+| Convención | Herramienta |
+| :--- | :--- |
+| Una función, un método o una clase lleva a lo sumo cuatro palabras | [scripts/verificar.py](scripts/verificar.py) |
+| La configuración no repite el nombre del repositorio: las claves de `.env.example`, los `String.fromEnvironment` de Dart y el `env_prefix` de pydantic-settings | [scripts/verificar.py](scripts/verificar.py) |

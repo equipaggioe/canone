@@ -253,3 +253,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0245](0245-flet-pasa-a-la-1-1-3-y-deja-de-fijar-jni.md) | Flet pasa a la 1.1.3 con Pydantic 2.14.3, y deja de fijar `jni` | `flet.md` |
 | [0246](0246-flutter-pasa-a-la-3-50-con-material-ui.md) | Flutter pasa a la 3.50 con material_ui, y Flet sigue en la 3.47 | `flutter.md` y `flet.md` |
 | [0247](0247-swagger-parser-genera-los-modelos-y-el-cliente-de-flutter.md) | swagger_parser genera los modelos y el cliente de la API en Flutter | `flutter.md` |
+| [0248](0248-canone-no-es-una-aplicacion-una-desviacion-se-declara-con-se-aparta-de-y-las-pruebas-canonicas-van-en-toda-pieza.md) | Canone no es una aplicación, una desviación se declara con «Se aparta de», y las pruebas canónicas de Qt y de Flet van en toda pieza | `README.md`, `principios.md`, `repositorio.md`, `documentacion.md`, `plantilla/README.md`, `fuentes/README.md`, `scripts/` y con Qt o Flet |

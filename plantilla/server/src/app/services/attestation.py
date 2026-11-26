@@ -96,8 +96,8 @@ async def options(
 
 def check_attestation(found: AttestationObject) -> None:
     """Accept none, and packed without x5c: the self attestation."""
-    # ADR-0226: without root certificates the library checks no chain,
-    # and takes packed with any certificate that signs.
+    # canone ADR-0226: without root certificates the library checks no
+    # chain, and takes packed with any certificate that signs.
     if found.fmt == "none":
         return
     if found.fmt == "packed" and found.att_stmt is not None and found.att_stmt.x5c is None:

@@ -87,7 +87,7 @@ Un pendiente se **borra** de aquí en el commit que lo resuelve. No se tacha ni 
 1. **Un ADR por decisión con consecuencias**, no por tarea. Va un ADR si leer el código no basta para saber por qué es así, o si alguien podría «arreglarlo» y romper algo. **Se escribe cuando la decisión está bien definida**, no con cada cambio mientras se discute. Corregir un error no es una decisión y no lleva ADR.
 2. **Un ADR no se edita para cambiar de opinión.** Una decisión que reemplaza a otra es un ADR nuevo; en el viejo solo cambia el estado a «Reemplazada por ADR-NNNN», con enlace. Si reemplaza solo algunos puntos, el estado del viejo los nombra: «Aceptada. El punto N lo reemplaza el ADR-NNNN». Nadie lee como vigente una regla que ya no rige. A un ADR anterior se le puede agregar en su «Contexto» lo que se comprobó y no quedó registrado, con su resultado y sus versiones: eso no cambia su decisión.
 3. **Estados:** `Propuesta` · `Aceptada` · `En evaluación` · `Reemplazada por ADR-NNNN` · `Descartada`. **El estado es de la decisión, no de la implementación.** «Aceptada y sin construir» es normal: lo que falta construir va en el 30, nunca en el ADR.
-4. **`Aceptada` solo si la persona que decide la confirmó explícitamente.** Lo que se eligió al implementar sin preguntar va como `Propuesta`, o como un punto marcado *(propuesta)* dentro de un ADR aceptado. Que algo «siga la misma lógica» que otra decisión confirmada no lo convierte en confirmado.
+4. **`Aceptada` solo si la persona que decide la confirmó explícitamente.** El estado puede decir quién la confirmó y cuándo. Lo que se eligió al implementar sin preguntar va como `Propuesta`, o como un punto marcado *(propuesta)* dentro de un ADR aceptado. Que algo «siga la misma lógica» que otra decisión confirmada no lo convierte en confirmado.
 5. **Numeración correlativa**, `NNNN-titulo-corto.md`. Los números no se reutilizan.
 6. El `README.md` de `adr/` es un índice con las columnas «#» y «Título». Lleva además «Aplica a» cuando hay decisiones que tocan solo algunas piezas. El estado no va en el índice: está en cada ADR.
 
@@ -114,6 +114,8 @@ Cada alternativa con el motivo concreto. Evita que alguien vuelva a proponerla s
 ```
 
 Título mal: «Geocerca». Título bien: «La geocerca dispara por el estado que encuentra al armar».
+
+Un ADR que aparta al repositorio de una convención de Canone que `scripts/verificar.py` comprueba lleva en el encabezado una línea `- **Se aparta de:**` por cada incumplimiento, con el texto exacto que reporta `verificar.py` entre acentos graves. Solo cuenta en un ADR aceptado.
 
 ## `planes/`
 
@@ -148,3 +150,10 @@ Título mal: «Geocerca». Título bien: «La geocerca dispara por el estado que
 8. Borrar los documentos viejos, comprobar que todos los enlaces de `docs/` resuelven y buscar en el código referencias a los archivos borrados.
 
 Lo borrado sigue en el historial de git (`git show <commit>^:docs/archivo.md`) si hace falta recuperar algo.
+
+## Cumplimiento
+
+| Convención | Herramienta |
+| :--- | :--- |
+| `docs/` lleva solo `arquitectura/`, `adr/`, `planes/` y su `README.md` | [scripts/verificar.py](scripts/verificar.py) |
+| Cada «Se aparta de» de un ADR aceptado nombra un incumplimiento que `verificar.py` reporta | [scripts/verificar.py](scripts/verificar.py) |

@@ -2,6 +2,8 @@
 
 Convenciones, plantillas y herramientas compartidas para construir, organizar y mantener proyectos de software.
 
+**Canone no es una aplicación.** Es una serie de documentos que definen aplicaciones, y las convenciones que escribe para ellas no se aplican a Canone.
+
 ## Propósito
 
 Los proyectos que usan Canone comparten sus convenciones y decisiones en un solo lugar para leerse, construirse, organizarse y mantenerse de la misma manera.
@@ -10,7 +12,7 @@ Canone está escrito para un asistente de IA: le dice con qué y cómo se constr
 
 Canone escribe decisiones: lo que tiene más de una forma que funciona. No escribe cómo funciona una tecnología, que el asistente ya sabe.
 
-Lo que Canone escribe rige, y una herramienta lo comprueba cuando puede. Un repositorio se aparta de una convención solo con un ADR propio, en `docs/adr/`, que identifica la convención y explica el motivo.
+Lo que Canone escribe rige, y una herramienta lo comprueba cuando puede. Un repositorio se aparta de una convención solo con un ADR propio, en `docs/adr/`, que identifica la convención y explica el motivo, y su `docs/arquitectura/` describe lo que hace en su lugar. Si `scripts/verificar.py` comprueba esa convención, el ADR nombra el incumplimiento en «Se aparta de» ([documentacion.md](documentacion.md#formato)), y `verificar.py` y `copiar.py` lo respetan.
 
 Cada proyecto elige las tecnologías que utiliza y consulta únicamente las convenciones correspondientes. Canone responde a la pregunta «si se usa X, ¿cómo se usa?», sin convertir su catálogo en una lista de requisitos universales.
 
@@ -22,7 +24,7 @@ Además de documentar las convenciones, proporciona plantillas y herramientas pa
 
 Canone distingue entre convenciones generales y convenciones específicas de cada tecnología o ámbito.
 
-Las siguientes convenciones aplican a todos los repositorios:
+Las siguientes convenciones aplican a todas las aplicaciones:
 
 - [principios.md](principios.md)
 - [repositorio.md](repositorio.md)
@@ -82,12 +84,15 @@ El repositorio organiza sus convenciones, fuentes, decisiones, plantillas y herr
 | [adr/](adr/) | Registro de las decisiones de Canone, con su alcance y estado. |
 | [pendientes/](pendientes/) | Temas de Canone documentados para retomarlos después, con su estado verificado; cada uno se borra cuando se cierra. |
 | [plantilla/](plantilla/) | Plantillas que se copian a los repositorios o se instalan desde Canone: qué es cada tipo y cómo se mantiene. |
+| [scripts/bloqueo.py](scripts/bloqueo.py) | Escribe la lista de bloqueo de contraseñas de la plantilla del servidor desde la lista del NCSC de `fuentes/`. |
 | [scripts/copiar.py](scripts/copiar.py) | Copia a un repositorio los archivos de la plantilla que se copian sin editar y que le faltan o se separaron. |
-| [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables, los orígenes de `plataformas/` contra `fuentes/` y las versiones de la plantilla contra `stack.md`. |
+| [scripts/infra/](scripts/infra/) | Las pruebas de los programas de `plantilla/infra/`, de `plantilla/receiver/` y de `plantilla/scripts/java.py`. |
+| [scripts/verificar.py](scripts/verificar.py) | Comprueba que los repositorios cumplan las convenciones verificables, y las páginas, la plantilla y los workflows de Canone. |
+| [.github/workflows/](.github/workflows/) | El CI de Canone: `fuentes.yml` corre `verificar.py --canone`, e `infra.yml`, las pruebas de `scripts/infra/` y las del servidor de la plantilla. |
 
 ## Verificación
 
-`scripts/verificar.py` comprueba que los repositorios cumplan las convenciones verificables automáticamente y, con `--canone`, los orígenes de `plataformas/` contra `fuentes/` y las versiones de la plantilla contra `stack.md`, y falla si encuentra un incumplimiento.
+`scripts/verificar.py` comprueba que los repositorios cumplan las convenciones verificables automáticamente, y falla si encuentra un incumplimiento. Un incumplimiento que un ADR aceptado del repositorio nombra en «Se aparta de» lo informa aparte y no cuenta, y un «Se aparta de» que no es un incumplimiento falla.
 
 Para comprobar un repositorio:
 
@@ -101,7 +106,13 @@ Para comprobar todos los repositorios dentro de un directorio:
 python scripts/verificar.py --todos ..
 ```
 
-Para comprobar los orígenes de `plataformas/` y las versiones de la plantilla:
+Con `--canone` comprueba Canone:
+
+- Los orígenes de `plataformas/` contra `fuentes/`.
+- Las versiones de la plantilla contra `stack.md`.
+- Que la lista de bloqueo de la plantilla salga de la del NCSC, y sus colores, de `plantilla/brand/tokens/`.
+- Que cada archivo de `plantilla/server/` esté en una lista de `verificar.py`, y que cada archivo de sus listas exista.
+- Que los workflows de Canone usen las acciones, los contenedores y las versiones de `stack.md`, y que sus scripts de `sh` no nieguen con `!` bajo `set -e`.
 
 ```bash
 python scripts/verificar.py --canone
@@ -114,6 +125,6 @@ python scripts/copiar.py ../<repo>             # solo los nombra
 python scripts/copiar.py ../<repo> --aplicar
 ```
 
-Con `--cuentas` copia también los de un servidor con cuentas a uno que todavía no las tiene. No toca los archivos que cada repositorio completa, y si reemplazaría uno cuyo contenido no está en un commit, no copia nada.
+Con `--cuentas` copia también los de un servidor con cuentas a uno que todavía no las tiene. No toca los archivos que cada repositorio completa ni uno del que un ADR aceptado del repositorio se aparta, y si reemplazaría uno cuyo contenido no está en un commit, no copia nada.
 
 La verificación de cada repositorio considera únicamente las tecnologías que utiliza. Por ejemplo, si no tiene `server/`, no exige las convenciones de FastAPI.

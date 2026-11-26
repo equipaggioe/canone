@@ -5,10 +5,11 @@
     python scripts/verificar.py --todos ..
     python scripts/verificar.py --canone
 
-Con --canone revisa los enlaces de plataformas/ a fuentes/ y las versiones de la plantilla.
+Con --canone comprueba las páginas, la plantilla y los workflows de canone.
 
-Cada comprobación cita el ADR que la fija. Falla con código 1 y la lista de incumplimientos: una
-regla que no rompe CI es una sugerencia, no una regla.
+Cada incumplimiento nombra el documento que escribe su regla. Falla con código 1 y la lista de
+incumplimientos. Un incumplimiento que un ADR aceptado del repositorio nombra en «Se aparta de» se
+informa aparte y no cuenta (documentacion.md, «Formato»).
 """
 from __future__ import annotations
 
@@ -29,8 +30,7 @@ PLANTILLA = CANONE / "plantilla"
 PAGINAS = {pagina.name for pagina in (CANONE / "plataformas").glob("*.md")}
 
 # plataformas/README.md, «En desarrollo»: de una página que empieza con la nota no se exige nada.
-# Solo cuenta la nota anterior a la primera sección: la de una sección, como «Tema», no marca la
-# página entera.
+# Solo cuenta la nota anterior a la primera sección.
 NOTA = "> **En desarrollo; no se implementa"
 
 
@@ -432,11 +432,11 @@ def colores_plantilla() -> list[str]:
 
 def comparar(copia: Path, canonico: Path, nombre: str) -> list[str]:
     if not copia.exists():
-        return [f"ADR-0002: falta {nombre}"]
+        return [f"plantilla/README.md: falta {nombre}"]
     if normalizar(copia.read_text(encoding="utf-8")) != normalizar(
         canonico.read_text(encoding="utf-8")
     ):
-        return [f"ADR-0002: {nombre} no coincide con el canónico de canone"]
+        return [f"plantilla/README.md: {nombre} no coincide con el canónico de canone"]
     return []
 
 
@@ -1242,16 +1242,16 @@ def origenes() -> list[str]:
             nombre, fuente = enlace.groups()
             archivo = CANONE / "fuentes" / fuente
             if not archivo.is_file():
-                fallas.append(f"ADR-0129: {pagina.name} enlaza fuentes/{fuente}, que no existe")
+                fallas.append(f"plataformas/README.md: {pagina.name} enlaza fuentes/{fuente}, que no existe")
                 continue
             enlazados.add(fuente)
             texto = archivo.read_text(encoding="utf-8", errors="replace")
             for numero in NUMERO.findall(nombre):
                 if not tiene_numero(texto, numero):
-                    fallas.append(f"ADR-0129: {pagina.name} cita §{numero}, que no está en fuentes/{fuente}")
+                    fallas.append(f"plataformas/README.md: {pagina.name} cita §{numero}, que no está en fuentes/{fuente}")
             for titulo in TITULO.findall(nombre):
                 if not tiene_titulo(texto, titulo, archivo.suffix not in SIN_ETIQUETAS):
-                    fallas.append(f"ADR-0129: {pagina.name} cita *{titulo}*, que no está en fuentes/{fuente}")
+                    fallas.append(f"plataformas/README.md: {pagina.name} cita *{titulo}*, que no está en fuentes/{fuente}")
     listas = set()
     for linea in (CANONE / "fuentes/README.md").read_text(encoding="utf-8").splitlines():
         celdas = [celda.strip() for celda in linea.split("|")]
@@ -1260,7 +1260,7 @@ def origenes() -> list[str]:
             if "no fuente" in celdas[3]:
                 listas.add(fuente)
             elif fuente not in enlazados:
-                fallas.append(f"ADR-0129: fuentes/{fuente} no es el origen de ninguna convención")
+                fallas.append(f"plataformas/README.md: fuentes/{fuente} no es el origen de ninguna convención")
     return fallas + estandar_de_secciones(listas) + un_origen(listas)
 
 
@@ -1316,12 +1316,12 @@ def estandar_de_secciones(listas: set[str]) -> list[str]:
                 faltan = ", ".join(sorted(origenes - nombrados)) or "nada"
                 sobran = ", ".join(sorted(nombrados - origenes)) or "nada"
                 fallas.append(
-                    f"ADR-0130: {pagina.name} «{titulo.strip()}»: a «Estándar:» le falta {faltan}"
+                    f"plataformas/README.md: {pagina.name} «{titulo.strip()}»: a «Estándar:» le falta {faltan}"
                     f" y le sobra {sobran}"
                 )
             if origenes and de_mas:
                 fallas.append(
-                    f"ADR-0130: {pagina.name} «{titulo.strip()}»: «Estándar:» nombra más que"
+                    f"plataformas/README.md: {pagina.name} «{titulo.strip()}»: «Estándar:» nombra más que"
                     f" documentos: {', '.join(sorted(set(de_mas)))}"
                 )
     return fallas
@@ -1344,7 +1344,7 @@ def permisos(repo: Path) -> list[str]:
         return []
     validas = funciones_permitidas()
     return [
-        f"ADR-0136: permissions, línea {numero}: {linea!r} no es una función de Permissions-Policy"
+        f"repositorio.md: permissions, línea {numero}: {linea!r} no es una función de Permissions-Policy"
         for numero, linea in enumerate(archivo.read_text(encoding="utf-8").splitlines(), start=1)
         if linea not in validas
     ]
@@ -1398,13 +1398,15 @@ def copias(repo: Path, cuentas: bool = False) -> list[tuple[str, Path]]:
         pares.append((f"{app.name}/.editorconfig", PLANTILLA / "android/.editorconfig"))
         pares.append((f"{app.name}/{WRAPPER.as_posix()}", PLANTILLA / "android" / WRAPPER))
 
+    # qt.md y flet.md: las pruebas canónicas van en toda pieza; un archivo de api/ o de services/,
+    # solo en la pieza que tiene esa carpeta.
     for pieza, pagina in piezas_python(repo).items():
         if pagina in paginas:
             plantilla = PLANTILLA / pagina.removesuffix(".md")
             pares.extend(
                 (f"{pieza}/{rel.as_posix()}", plantilla / rel)
                 for rel in COPIAS_SRC[pagina]
-                if (repo / pieza / rel).parent.is_dir()
+                if rel.parts[0] == "tests" or (repo / pieza / rel).parent.is_dir()
             )
 
     # transversal.md, «Tema»: con un cliente. Si los colores de la marca no se pueden leer, lo dice
@@ -1454,7 +1456,7 @@ def revisar(repo: Path) -> list[str]:
     if not ci.exists():
         fallas.append("repositorio.md: falta .github/workflows/ci.yml")
     elif not re.search(r"^\s+schedule:\s*\n\s+- cron:", ci.read_text(encoding="utf-8"), re.M):
-        fallas.append("ADR-0019: .github/workflows/ci.yml no corre cada semana (falta schedule)")
+        fallas.append("repositorio.md: .github/workflows/ci.yml no corre cada semana (falta schedule)")
 
     fallas.extend(configuracion_suelta(repo))
 
@@ -1637,11 +1639,28 @@ def bloqueo() -> list[str]:
     return []
 
 
+# README.md y documentacion.md, «Formato»: un ADR aceptado del repositorio nombra en «Se aparta de»
+# cada incumplimiento del que se aparta, con el texto que reporta este script.
+SE_APARTA = re.compile(r"^- \*\*Se aparta de:\*\* `(.+)`\s*$", re.M)
+ACEPTADA = re.compile(r"^- \*\*Estado:\*\* Aceptada", re.M)
+
+
+def desviaciones(repo: Path) -> dict[str, str]:
+    """Devuelve cada incumplimiento del que el repositorio se aparta, con el ADR que lo dice."""
+    apartados: dict[str, str] = {}
+    for adr in sorted((repo / "docs/adr").glob("[0-9]*.md")):
+        texto = adr.read_text(encoding="utf-8")
+        if ACEPTADA.search(texto):
+            for incumplimiento in SE_APARTA.findall(texto):
+                apartados[incumplimiento] = adr.name
+    return apartados
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", type=Path)
     parser.add_argument("--todos", type=Path, help="directorio que contiene los repositorios")
-    parser.add_argument("--canone", action="store_true", help="revisa los enlaces de plataformas/ a fuentes/ y las versiones de la plantilla")
+    parser.add_argument("--canone", action="store_true", help="comprueba las páginas, la plantilla y los workflows de canone")
     parser.add_argument("--variables", help="las variables de GitHub Actions del repositorio, en JSON")
     args = parser.parse_args()
 
@@ -1680,10 +1699,19 @@ def main() -> int:
         fallas = revisar(repo)
         if args.variables is not None:
             fallas += variables_release(repo, json.loads(args.variables))
-        total += len(fallas)
-        print(f"\n{repo.name}: {len(fallas)} incumplimientos")
-        for falla in fallas:
+        apartados = desviaciones(repo)
+        cuentan = [falla for falla in fallas if falla not in apartados] + [
+            f"documentacion.md: docs/adr/{adr} se aparta de «{incumplimiento}», que no es un incumplimiento"
+            for incumplimiento, adr in apartados.items()
+            if incumplimiento not in fallas
+        ]
+        total += len(cuentan)
+        print(f"\n{repo.name}: {len(cuentan)} incumplimientos")
+        for falla in cuentan:
             print(f"  - {falla}")
+        for falla in fallas:
+            if falla in apartados:
+                print(f"  · se aparta por docs/adr/{apartados[falla]}: {falla}")
 
     return 1 if total else 0
 

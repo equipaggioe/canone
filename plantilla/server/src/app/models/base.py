@@ -58,9 +58,9 @@ if find_spec("geoalchemy2") is not None:
     GeoPoint = WKBElement
     GeoLine = WKBElement
 
-    # ADR-0004: a Geography shared through an Annotated takes the
-    # nullable of the last column that uses it, so each column builds
-    # its own.
+    # canone ADR-0004: a Geography shared through an Annotated takes
+    # the nullable of the last column that uses it, so each column
+    # builds its own.
     def geo_point(*, nullable: bool, spatial_index: bool) -> MappedColumn[Any]:
         """Declare a point in WGS 84, with its GiST index if asked."""
         kind = Geography("POINT", srid=4326, spatial_index=spatial_index)

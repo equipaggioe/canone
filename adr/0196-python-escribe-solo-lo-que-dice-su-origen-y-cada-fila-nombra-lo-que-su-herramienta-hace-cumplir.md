@@ -1,4 +1,4 @@
-# ADR-0196 · python.md escribe solo lo que dice su origen, y cada fila de Cumplimiento nombra lo que su herramienta hace cumplir
+# ADR-0196 · `python.md` escribe solo lo que dice su origen, y cada fila de Cumplimiento nombra lo que su herramienta hace cumplir
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-11-19

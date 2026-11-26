@@ -1,4 +1,4 @@
-# ADR-0218 · Lo que faltaba en las revisiones de las páginas
+# ADR-0218 · Lo que faltaba en las revisiones: la base ordena en español, el permiso niega por defecto, los clientes escriben sus contratos y `stack.md` vuelve a la última versión
 
 - **Estado:** Aceptada. El 2026-11-22 el usuario pidió aplicar las recomendaciones de la revisión de lo que faltaba en cada página. Lo que es preferencia suya queda en «Abierto»
 - **Fecha:** 2026-11-22

@@ -17,8 +17,9 @@ from sqlalchemy.ext.asyncio import (
 from alembic import command
 from app.config import settings
 
-# ADR-0199: a pooled connection that PostgreSQL closed on a restart
-# fails the request that takes it; the ping replaces it first.
+# canone ADR-0199: a pooled connection that PostgreSQL closed on a
+# restart fails the request that takes it; the ping replaces it
+# first.
 engine = create_async_engine(settings.database_url, pool_pre_ping=True)
 SessionFactory = async_sessionmaker(engine, expire_on_commit=False)
 

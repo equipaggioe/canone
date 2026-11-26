@@ -7,6 +7,7 @@ Sin --aplicar solo los nombra. Son los que compara verificar.py: los que se comp
     python scripts/copiar.py ../<repo> --cuentas --aplicar   # también los de las cuentas, en un servidor sin ellas
 
 No reemplaza un archivo con cambios sin commit, ni uno que git no sigue: lo que tenía se perdería.
+Tampoco toca uno del que un ADR aceptado del repositorio se aparta (documentacion.md, «Formato»).
 """
 
 import argparse
@@ -14,7 +15,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from verificar import comparar, copias
+from verificar import comparar, copias, desviaciones
 
 
 def sin_commit(repo: Path, nombres: list[str]) -> list[str]:
@@ -48,11 +49,14 @@ def main() -> int:
         raise SystemExit(f"{repo} no es la raíz de un repositorio de git.")
     if args.cuentas and not (repo / "server").is_dir():
         raise SystemExit(f"{repo.name} no tiene server/.")
-    pendientes = [
-        (nombre, canonico)
-        for nombre, canonico in copias(repo, args.cuentas)
-        if comparar(repo / nombre, canonico, nombre)
-    ]
+    apartados = desviaciones(repo)
+    pendientes = []
+    for nombre, canonico in copias(repo, args.cuentas):
+        fallas = comparar(repo / nombre, canonico, nombre)
+        if fallas and all(falla in apartados for falla in fallas):
+            print(f"se aparta de {nombre} por docs/adr/{apartados[fallas[0]]}")
+        elif fallas:
+            pendientes.append((nombre, canonico))
     for nombre, _ in pendientes:
         print(f"{'reemplaza' if (repo / nombre).exists() else 'crea'} {nombre}")
 

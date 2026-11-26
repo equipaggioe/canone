@@ -2,7 +2,7 @@
 
 Los archivos que se copian a un repositorio. No es un proyecto que corra, y **no es una lista de lo que un repositorio debe tener**: se copia solo lo de las plataformas que el producto use.
 
-Cada archivo sale de una convención de [repositorio.md](../repositorio.md) o de una página de [plataformas/](../plataformas/), y esa página lo nombra. Un archivo **canónico** se copia sin editar y `scripts/verificar.py` comprueba que la copia no se haya separado; `scripts/copiar.py` hace la copia. Un **punto de partida** se copia y después es del repositorio. Un archivo que **se instala** no se copia al repositorio: un script de Canone lo instala en el servidor con los datos de cada app. Un archivo **en desarrollo** todavía no se copia.
+Cada archivo sale de una convención de [repositorio.md](../repositorio.md) o de una página de [plataformas/](../plataformas/), y esa página lo nombra. Un archivo **canónico** se copia sin editar y `scripts/verificar.py` comprueba que la copia no se haya separado; `scripts/copiar.py` hace la copia. Un **punto de partida** se copia y después es del repositorio. Un archivo que **se instala** no se copia al repositorio: un script de Canone lo instala en el servidor con los datos de cada app. Un archivo **en desarrollo** todavía no se copia. Un archivo **de la receptora** no se copia: la receptora de los respaldos lo corre desde Canone. Un archivo **generado** no se copia: lo escribe un script canónico del repositorio.
 
 Un archivo canónico tiene una única versión aquí. Toda modificación se hace primero aquí y después se propaga a los repositorios que lo usan; una copia de un repositorio no sirve de origen para actualizar las demás. Lo que se instala se mantiene y se actualiza aquí, sin implementaciones paralelas en los repositorios.
 
@@ -13,7 +13,7 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `.github/workflows/ci.yml` | Raíz | Punto de partida: se quitan los jobs de las piezas que no hay, `PIEZA` toma el nombre de la carpeta y `PRODUCTO`, el del repositorio | [repositorio.md](../repositorio.md), [python.md](../plataformas/python.md) |
 | `.github/workflows/release.yml` | Raíz | Punto de partida: se quitan los jobs y los pasos de las piezas que no hay, `PIEZA` toma el nombre de la carpeta, `PAQUETE`, el identificador de la app en Play, y `PIEZA_JAVA` y `CLASE`, la carpeta de una pieza en Java y su clase con `main` | [despliegue.md](../plataformas/despliegue.md) |
 | `infra/` | El servidor | Se instala: `authorize.py`, `packages.py`, `swap.py`, `uv.py`, `install.py`, `credentials.py`, `deploy.py`, `database.py` y `uninstall.py` corren en el servidor e instalan las unidades, los sitios y la configuración de la carpeta, con los datos de cada app. Qué hace y qué recibe cada uno está en [despliegue.md](../plataformas/despliegue.md) | [despliegue.md](../plataformas/despliegue.md), [java.md](../plataformas/java.md) |
-| `receiver/` | La receptora de los respaldos | No se copia: corre en la receptora, `backup.ps1` en Windows y `backup.sh` en Linux | [despliegue.md](../plataformas/despliegue.md#respaldos) |
+| `receiver/` | La receptora de los respaldos | De la receptora: `backup.ps1` en Windows y `backup.sh` en Linux | [despliegue.md](../plataformas/despliegue.md#respaldos) |
 | `scripts/play.py` | `scripts/` | Canónico, con una app de `mobile/` | [despliegue.md](../plataformas/despliegue.md) |
 | `scripts/apple.py` | `scripts/` | Canónico, con una versión de iOS o de macOS | [despliegue.md](../plataformas/despliegue.md) |
 | `scripts/java.py` | `scripts/` | Canónico, con una pieza en Java | [java.md](../plataformas/java.md) |
@@ -25,10 +25,10 @@ Un archivo canónico tiene una única versión aquí. Toda modificación se hace
 | `server/src/app/database.py`<br>`openapi.py`<br>`store.py`<br>`tracing.py`<br>`models/base.py`<br>`models/ruff.toml`<br>`routers/problems.py`<br>`schemas/base.py`<br>`schemas/page.py`<br>`services/files.py`<br>cada `__init__.py` | `server/src/app/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
 | `server/tests/__init__.py`<br>`test_conventions.py`<br>`test_events.py`<br>`test_files.py`<br>`test_tasks.py` | `server/tests/` | Canónico | [fastapi.md](../plataformas/fastapi.md), [postgres.md](../plataformas/postgres.md) |
 | `server/`, los archivos que nombra la plantilla de cada sección de `autenticacion.md`, salvo `clients.py`, `dependencies.py`, `methods.py`, `push.py` y la migración | `server/`, en un servidor con cuentas | Canónico | [fastapi.md](../plataformas/fastapi.md), [autenticacion.md](../plataformas/autenticacion.md) |
-| `server/src/app/colors.py` | `server/src/app/`, en un servidor con cuentas | Lo genera `scripts/tokens.py` del repositorio | [transversal.md](../plataformas/transversal.md) |
+| `server/src/app/colors.py` | `server/src/app/`, en un servidor con cuentas | Generado, por `scripts/tokens.py` | [transversal.md](../plataformas/transversal.md) |
 | `server/` (el resto) | `server/` | Punto de partida | [fastapi.md](../plataformas/fastapi.md) |
 | `qt/pyproject.toml`<br>`pysidedeploy.spec` | `desktop/` | Punto de partida | [python.md](../plataformas/python.md), [qt.md](../plataformas/qt.md) |
-| `qt/src/app/api/ruff.toml`<br>`services/ruff.toml` | `desktop/src/app/` | Canónico | [qt.md](../plataformas/qt.md) |
+| `qt/src/app/api/ruff.toml`<br>`services/ruff.toml`<br>`services/language.py` | `desktop/src/app/` | Canónico | [qt.md](../plataformas/qt.md) |
 | `qt/theme.py` | `desktop/src/app/` | Punto de partida | [qt.md](../plataformas/qt.md) |
 | `qt/tests/test_theme.py`<br>`test_accessibility.py` | `desktop/tests/` | Canónico | [qt.md](../plataformas/qt.md) |
 | `qt/tests/conftest.py` | `desktop/tests/` | Punto de partida: el fixture `screen` con la ventana y las bandas de la app | [qt.md](../plataformas/qt.md) |

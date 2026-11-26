@@ -291,7 +291,7 @@ Estándares: [NIST SP 800-63B-4](../fuentes/nist/sp800-63b-4.txt) y el capítulo
 
 - El superadministrador es el dueño del producto, que lo administra para todos sus clientes: su cuenta tiene `role` `superadmin`. El administrador de una empresa cliente tiene una cuenta como las demás.
 - El registro del primer superadministrador lleva el código de instalación, `setup_code` de `Settings`, en lugar del código enviado, con su correo o su teléfono y su primer autenticador. El correo o el teléfono quedan como los escribe quien tiene el código de instalación.
-- El código de instalación se define en Consola, en la configuración del repositorio: uno por repositorio, el mismo en todas sus instalaciones. Llega al servidor por `credentials.py`, como las demás credenciales.
+- El código de instalación es uno por repositorio, el mismo en todas sus instalaciones, y llega al servidor por `credentials.py`, como las demás credenciales.
 - El registro acepta el código de instalación mientras la base no tiene un superadministrador. Uno equivocado, o uno que llega con el primero ya registrado, responde 403. Dos registros con el código de instalación se esperan con un candado de PostgreSQL, y el primero en tomarlo queda como superadministrador.
 - Un registro lleva el código enviado o el código de instalación: con los dos o con ninguno responde 422.
 - Si el producto usa la passkey, el registro con el código de instalación lleva una passkey, y con una contraseña o sin autenticador responde 403. Si no la usa, el superadministrador se registra y entra con los métodos del producto.

@@ -3,7 +3,7 @@
 Copia de los textos de las fuentes de las que salen las convenciones adoptadas de las páginas de [plataformas/](../plataformas/), y de las listas de las que un programa de Canone toma valores. Una página se revisa contra el texto de aquí, no de memoria. Una fuente que solo cita un ADR no se copia: el ADR la usa como argumento de su decisión, y ninguna página adopta sus convenciones.
 
 - Cada archivo es el texto de su fuente, sin editar. Cuando la fuente es una página web, es su contenido convertido a Markdown.
-- Cada archivo se descarga del tag o la rama de la versión que se usa, nunca de `main` ni de `master`. Una fuente sin versiones se descarga de un commit fijo, y su URL lleva el SHA.
+- Cada archivo se descarga del tag o la rama de la versión que se usa, nunca de `main` ni de `master`. Una fuente sin versiones se descarga de un commit fijo, y su URL lleva el SHA. Una página web sin versiones ni commit lleva en «Nota» la fecha de su copia.
 - La publicación de una nueva versión no implica su adopción automática. Decidir si se incorpora corresponde al mantenimiento de Canone: requiere revisar sus cambios y determinar si justifican modificar las convenciones existentes.
 - Al cambiar la versión de una tecnología, se vuelven a descargar sus fuentes.
 - Para actualizar un archivo se vuelve a descargar de su fuente; `git diff` muestra qué cambió, y cada cambio que se adopta se pasa a las convenciones que lo tienen como origen.
@@ -96,19 +96,19 @@ Copia de los textos de las fuentes de las que salen las convenciones adoptadas d
 | [riverpod/auto_dispose.mdx](riverpod/auto_dispose.mdx) | [URL](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/auto_dispose.mdx) | Tag de flutter_riverpod 3.5.0 |
 | [riverpod/containers.mdx](riverpod/containers.mdx) | [URL](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts2/containers.mdx) | Tag de flutter_riverpod 3.5.0 |
 | [riverpod/about_code_generation.mdx](riverpod/about_code_generation.mdx) | [URL](https://raw.githubusercontent.com/rrousselGit/riverpod/flutter_riverpod-v3.5.0/website/docs/concepts/about_code_generation.mdx) | Tag de flutter_riverpod 3.5.0 |
-| [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | [URL](https://osmfoundation.org/wiki/Licence/Attribution_Guidelines) | Página web convertida a Markdown |
+| [osm/attribution-guidelines.md](osm/attribution-guidelines.md) | [URL](https://osmfoundation.org/wiki/Licence/Attribution_Guidelines) | Página web convertida a Markdown el 2026-09-28 |
 | [kotlin/coding-conventions.md](kotlin/coding-conventions.md) | [URL](https://raw.githubusercontent.com/JetBrains/kotlin-web-site/f51dacdc4420c6690ad88d513caf3c1a0a25b75f/docs/topics/coding-conventions.md) |  |
-| [android/architecture.md](android/architecture.md) | [URL](https://developer.android.com/topic/architecture) | Página web convertida a Markdown |
-| [android/architecture-recommendations.md](android/architecture-recommendations.md) | [URL](https://developer.android.com/topic/architecture/recommendations) | Página web convertida a Markdown |
-| [android/data-layer.md](android/data-layer.md) | [URL](https://developer.android.com/topic/architecture/data-layer) | Página web convertida a Markdown |
-| [android/kotlin-style-guide.md](android/kotlin-style-guide.md) | [URL](https://developer.android.com/kotlin/style-guide) | Página web convertida a Markdown |
-| [android/coroutines-best-practices.md](android/coroutines-best-practices.md) | [URL](https://developer.android.com/kotlin/coroutines/coroutines-best-practices) | Página web convertida a Markdown |
-| [android/hilt.md](android/hilt.md) | [URL](https://developer.android.com/training/dependency-injection/hilt-android) | Página web convertida a Markdown |
-| [android/localization.md](android/localization.md) | [URL](https://developer.android.com/guide/topics/resources/localization) | Página web convertida a Markdown |
-| [android/create-passkeys.md](android/create-passkeys.md) | [URL](https://developer.android.com/identity/passkeys/create-passkeys) | Página web convertida a Markdown |
-| [android/sign-in-with-passkeys.md](android/sign-in-with-passkeys.md) | [URL](https://developer.android.com/identity/passkeys/sign-in-with-passkeys) | Página web convertida a Markdown |
-| [android/notification-permission.md](android/notification-permission.md) | [URL](https://developer.android.com/develop/ui/compose/notifications/notification-permission) | Página web convertida a Markdown |
-| [compose/state.md](compose/state.md) | [URL](https://developer.android.com/develop/ui/compose/state) | Página web convertida a Markdown |
+| [android/architecture.md](android/architecture.md) | [URL](https://developer.android.com/topic/architecture) | Página web convertida a Markdown el 2026-09-28 |
+| [android/architecture-recommendations.md](android/architecture-recommendations.md) | [URL](https://developer.android.com/topic/architecture/recommendations) | Página web convertida a Markdown el 2026-11-04 |
+| [android/data-layer.md](android/data-layer.md) | [URL](https://developer.android.com/topic/architecture/data-layer) | Página web convertida a Markdown el 2026-09-28 |
+| [android/kotlin-style-guide.md](android/kotlin-style-guide.md) | [URL](https://developer.android.com/kotlin/style-guide) | Página web convertida a Markdown el 2026-11-04 |
+| [android/coroutines-best-practices.md](android/coroutines-best-practices.md) | [URL](https://developer.android.com/kotlin/coroutines/coroutines-best-practices) | Página web convertida a Markdown el 2026-09-28 |
+| [android/hilt.md](android/hilt.md) | [URL](https://developer.android.com/training/dependency-injection/hilt-android) | Página web convertida a Markdown el 2026-09-28 |
+| [android/localization.md](android/localization.md) | [URL](https://developer.android.com/guide/topics/resources/localization) | Página web convertida a Markdown el 2026-09-28 |
+| [android/create-passkeys.md](android/create-passkeys.md) | [URL](https://developer.android.com/identity/passkeys/create-passkeys) | Página web convertida a Markdown el 2026-10-16 |
+| [android/sign-in-with-passkeys.md](android/sign-in-with-passkeys.md) | [URL](https://developer.android.com/identity/passkeys/sign-in-with-passkeys) | Página web convertida a Markdown el 2026-10-16 |
+| [android/notification-permission.md](android/notification-permission.md) | [URL](https://developer.android.com/develop/ui/compose/notifications/notification-permission) | Página web convertida a Markdown el 2026-10-16 |
+| [compose/state.md](compose/state.md) | [URL](https://developer.android.com/develop/ui/compose/state) | Página web convertida a Markdown el 2026-09-28 |
 | [flet/publish.md](flet/publish.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/publish/index.md) |  |
 | [flet/publish-android.md](flet/publish-android.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/publish/android.md) |  |
 | [flet/publish-windows.md](flet/publish-windows.md) | [URL](https://raw.githubusercontent.com/flet-dev/flet/v1.1.3/website/docs/publish/windows.md) |  |

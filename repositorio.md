@@ -21,7 +21,7 @@ El segundo término aparece solo cuando hay más de una pieza en el mismo lugar,
 | `mobile/` | Cliente instalable en un teléfono |
 | `desktop/` | Cliente instalable en una computadora |
 | `packages/` | Código compartido entre piezas, como paquete instalable y no copiado. Dentro, el nombre es el del dominio a secas: `packages/mobile/`, `packages/protocol/` |
-| `docs/` | `arquitectura/`, `adr/`, `planes/`. Nada más — ver [documentacion.md](documentacion.md) |
+| `docs/` | `arquitectura/`, `adr/`, `planes/` y su `README.md`. Nada más — ver [documentacion.md](documentacion.md) |
 | `scripts/` | Lo que es del repositorio entero |
 | `brand/` | Logo y colores del producto, con los colores en `tokens/` ([transversal.md](plataformas/transversal.md#tema)). No es una pieza: no corre en ningún lado y lo leen las piezas ([ADR-0017](adr/0017-la-marca-vive-en-brand.md)) |
 
@@ -62,7 +62,7 @@ Lo propio del repositorio se agrega al archivo de su pieza, con un comentario qu
 
 ## Scripts de shell
 
-- Un script de `sh` con `set -e` no niega un comando con `!`: POSIX ignora `-e` en un comando que empieza con `!`, así que si el comando tiene éxito la línea no corta el script y la comprobación nunca falla. Se niega con `if <comando>; then exit 1; fi`. `scripts/verificar.py` lo revisa en canone y en cada repositorio. [POSIX.1-2024, *set*](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html)
+- Un script de `sh` con `set -e` no niega un comando con `!`: POSIX ignora `-e` en un comando que empieza con `!`, así que si el comando tiene éxito la línea no corta el script y la comprobación nunca falla. Se niega con `if <comando>; then exit 1; fi`. [POSIX.1-2024, *set*](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html)
 
 ## Git
 
@@ -81,3 +81,14 @@ Cada workflow da al token `contents: read`, y solo el job que sube archivos a un
 Los workflows usan las acciones y los contenedores de [stack.md](stack.md#ci).
 
 Una convención que puede verificarse automáticamente se agrega junto con lo que la verifica ([README.md](README.md#principios)).
+
+## Cumplimiento
+
+| Convención | Herramienta |
+| :--- | :--- |
+| El nombre de cada carpeta de primer nivel | [scripts/verificar.py](scripts/verificar.py) |
+| El `README.md` con su línea de estado, el `.gitignore` del raíz y el de `server/`, y `node_modules/` en el de cada carpeta con `package.json` | [scripts/verificar.py](scripts/verificar.py) |
+| `.gitattributes` sin editar | [scripts/verificar.py](scripts/verificar.py) |
+| Cada línea de `permissions`, una función que acepta `install.py --allow` | [scripts/verificar.py](scripts/verificar.py) |
+| Un script de `sh` con `set -e` no niega con `!` | [scripts/verificar.py](scripts/verificar.py) |
+| `ci.yml`, con su corrida semanal | [scripts/verificar.py](scripts/verificar.py) |

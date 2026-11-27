@@ -13,7 +13,7 @@ Una app en Flutter.
 - Lo que genera build_runner, `*.g.dart` y `*.freezed.dart`, y lo que genera swagger_parser, en `lib/data/services/api/`, no se versiona, y CI revisa el formato antes de generarlo: riverpod_generator no escribe con líneas de 99.
 - `analysis_options.yaml` excluye del análisis `lib/data/services/api/`: lo que genera swagger_parser no pasa las reglas de «Nombres» ni de «Estilo».
 - `analysis_options.yaml` excluye del análisis `lib/l10n/app_localizations*.dart`: lo que genera `gen-l10n` usa los delegados de flutter_localizations, obsoletos en Flutter 3.50.
-- `analysis_options.yaml` excluye del análisis `build/`, `android/` e `ios/`: si falta la exclusión, `flutter pub get` y `flutter analyze` la agregan, y la copia deja de ser la canónica. [Flutter 3.50.1](https://raw.githubusercontent.com/flutter/flutter/3.50.1/packages/flutter_tools/lib/src/migrations/analysis_options_migration.dart)
+- `analysis_options.yaml` excluye del análisis `build/` y las carpetas de cada plataforma, `android/`, `ios/`, `web/`, `windows/`, `macos/` y `linux/`: si falta la exclusión de una que la app tiene, `flutter pub get` y `flutter analyze` la agregan, y la copia deja de ser la canónica. [Flutter 3.50.1](https://raw.githubusercontent.com/flutter/flutter/3.50.1/packages/flutter_tools/lib/src/migrations/analysis_options_migration.dart)
 
 ```text
 <pieza>/

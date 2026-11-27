@@ -1386,6 +1386,26 @@ def permisos(repo: Path) -> list[str]:
     ]
 
 
+# autenticacion.md, «Passkeys»: con passkey y una web, permissions las permite.
+PASSKEY_FUNCIONES = ("publickey-credentials-create", "publickey-credentials-get")
+
+
+def permisos_passkey(repo: Path) -> list[str]:
+    metodos = repo / "server/src/app/methods.py"
+    if not metodos.is_file() or not any((repo / web).is_dir() for web in ("web", "panel")):
+        return []
+    declarado = re.search(r"^METHODS\b.*$", metodos.read_text(encoding="utf-8"), re.M)
+    if declarado is None or "Method.PASSKEY" not in declarado.group(0):
+        return []
+    archivo = repo / "permissions"
+    lineas = archivo.read_text(encoding="utf-8").splitlines() if archivo.exists() else []
+    return [
+        f"autenticacion.md: permissions no permite {funcion}, y la web usa la passkey"
+        for funcion in PASSKEY_FUNCIONES
+        if funcion not in lineas
+    ]
+
+
 def copias(repo: Path, cuentas: bool = False) -> list[tuple[str, Path]]:
     """Devuelve cada archivo que el repositorio copia sin editar, con su canónico.
 
@@ -1486,6 +1506,7 @@ def revisar(repo: Path) -> list[str]:
         fallas.append("repositorio.md: README.md no declara si está en desarrollo o en producción")
 
     fallas.extend(permisos(repo))
+    fallas.extend(permisos_passkey(repo))
     fallas.extend(negaciones(repo, listar(repo)))
 
     ci = repo / ".github/workflows/ci.yml"

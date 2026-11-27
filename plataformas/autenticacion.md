@@ -172,6 +172,7 @@ Vale si el producto usa la passkey.
 
 - El servidor verifica las passkeys con `verify_registration_response` y `verify_authentication_response` de `webauthn`, de Duo, con `supported_pub_key_algs` igual a `pubKeyCredParams`. La biblioteca no mira el largo del credential ID, `crossOrigin`, `topOrigin`, las extensiones, la atestación que se acepta, que BE sea el guardado ni el user handle, y compara el `signCount` antes que la firma: el servidor comprueba lo que ella no mira, y le pasa el `signCount` en 0 para compararlo él después de la firma, así una aserción falsa no denuncia una passkey clonada. [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/registration/verify_registration_response.py), [webauthn 3.0.1](https://raw.githubusercontent.com/duo-labs/py_webauthn/v3.0.1/webauthn/authentication/verify_authentication_response.py)
 - El servidor no pide extensiones.
+- Un repositorio con passkey y una web, `web/` o `panel/`, permite `publickey-credentials-create` y `publickey-credentials-get` en su archivo `permissions` ([repositorio.md](../repositorio.md#archivos-del-raíz)): sin ellas, la `Permissions-Policy` que escribe `install.py` las niega, y el navegador rechaza `create()` y `get()` antes de preguntarle al usuario ([*Web Authentication Level 3*, *Permissions Policy integration*](../fuentes/w3c/webauthn-3.html)).
 - El cliente le manda al servidor la respuesta de `create()` o de `get()` entera, con `clientExtensionResults` y `transports`.
 - La landing sirve `https://<dominio>/.well-known/assetlinks.json` como archivo estático, desde `static/.well-known/assetlinks.json`.
 - El dominio es `domain` de `Settings`: cada máquina tiene el suyo.
@@ -343,6 +344,7 @@ Plantilla: de [plantilla/server/](../plantilla/server/), `handshake` de `depende
 
 | Convención | Herramienta |
 | :--- | :--- |
+| Con passkey y una web, `permissions` permite `publickey-credentials-create` y `publickey-credentials-get` | [scripts/verificar.py](../scripts/verificar.py) |
 | La cookie de la web es `__Host-session`, `Secure`, `HttpOnly` y `SameSite=Strict`, con `Path=/` y 30 días de `Max-Age` | `test_cookie_is_host_secure_httponly_strict` |
 | El token de la web es un valor aleatorio de 256 bits, y la fila guarda su SHA-256 | `test_web_token_is_random_and_hashed` |
 | Un 401 a la cookie de la web no lleva `WWW-Authenticate` | `test_cookie_without_session_is_401_without_challenge` |

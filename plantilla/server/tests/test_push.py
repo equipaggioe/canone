@@ -476,6 +476,25 @@ async def test_fcm_message_names_its_channel_its_route_and_its_expiry(
     }
 
 
+def test_tag_replaces_the_push_still_shown() -> None:
+    """The same tag on Android, on iOS and on the web; none, no tag."""
+    tagged = Content("Título", "Texto", "/lugar", "canal", timedelta(days=2), "probe-1")
+    to = fcm.Installation(uuid4(), FID, "es")
+    message = fcm.message(to, tagged)
+    assert message.android is not None
+    assert message.android.notification is not None
+    assert message.android.notification.tag == "probe-1"
+    assert message.apns is not None
+    assert message.apns.headers is not None
+    assert message.apns.headers["apns-collapse-id"] == "probe-1"
+    assert json.loads(web_push.declarative(tagged))["notification"]["tag"] == "probe-1"
+    untagged = fcm.message(to, CONTENT)
+    assert untagged.apns is not None
+    assert untagged.apns.headers is not None
+    assert "apns-collapse-id" not in untagged.apns.headers
+    assert "tag" not in json.loads(web_push.declarative(CONTENT))["notification"]
+
+
 @needs_fcm
 async def test_fcm_takes_500_messages_at_once(services: Services) -> None:
     """A longer list goes in batches."""

@@ -1,4 +1,4 @@
-"""The messages to Equipaggio go after the commit, and best effort."""
+"""The messages of a request go after the commit, and best effort."""
 
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime, timedelta
@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 from app import errors
 from app.dependencies import SessionDep
 from app.errors import KeptError
-from app.services import messages
+from app.services import messages, transport
 
 probe = FastAPI()
 errors.install(probe)
@@ -20,7 +20,7 @@ errors.install(probe)
 
 async def send() -> None:
     """Send an SMS that expires in a minute."""
-    await messages.sms("+56221234567", "Hola", datetime.now(UTC) + timedelta(minutes=1))
+    await transport.sms("+56221234567", "Hola", datetime.now(UTC) + timedelta(minutes=1))
 
 
 @probe.post("/{outcome}")
@@ -54,13 +54,12 @@ async def test_messages_go_after_the_commit(
 async def test_failed_delivery_does_not_fail_the_request(
     probed: AsyncClient, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
 ) -> None:
-    """Equipaggio failing goes to the log and leaves the answer."""
+    """A transport failing goes to the log and leaves the answer."""
 
-    def refuse(request: httpx.Request) -> httpx.Response:
-        """Answer as Equipaggio down."""
-        return httpx.Response(503)
+    async def refuse(to: str, text: str, expires: datetime) -> None:
+        """Fail as a transport that cannot reach its queue."""
+        raise ConnectionError(to)
 
-    fake = httpx.AsyncClient(base_url=messages.API, transport=httpx.MockTransport(refuse))
-    monkeypatch.setattr(messages, "client", fake)
+    monkeypatch.setattr(transport, "sms", refuse)
     assert (await probed.post("/ends")).status_code == 200
-    assert "A message did not reach Equipaggio" in caplog.text
+    assert "A message did not go out" in caplog.text

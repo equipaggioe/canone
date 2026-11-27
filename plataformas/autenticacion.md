@@ -162,7 +162,7 @@ Qué métodos puede ofrecer cada pieza en su plataforma:
 | Una app de Flutter o de Flet, en Windows o en macOS | Sí | Sí | Sí |
 | Una app de Flutter o de Flet en Linux, o de Qt | Sí, por el navegador del sistema | Sí | Sí |
 
-Plantilla: de [plantilla/server/](../plantilla/server/), `methods.py`, `models/account/throttled.py`, `schemas/account.py`, `routers/account.py`, `services/authenticators.py`, `services/registration.py`, `services/account.py`, `services/codes.py`, `services/limits.py`, `services/messages.py`, `services/notices.py`, `tests/test_registration.py`, `tests/test_account.py`, `tests/test_messages.py` y `tests/test_methods.py`; y los de [Push](fastapi.md#push): `push.py`, `models/account/push_fid.py`, `models/account/push_subscription.py`, `schemas/fcm.py`, `schemas/web_push.py`, `routers/fcm.py`, `routers/web_push.py`, `services/push.py`, `services/fcm.py`, `services/web_push.py` y `tests/test_push.py`.
+Plantilla: de [plantilla/server/](../plantilla/server/), `methods.py`, `models/account/throttled.py`, `schemas/account.py`, `routers/account.py`, `services/authenticators.py`, `services/registration.py`, `services/account.py`, `services/codes.py`, `services/limits.py`, `services/messages.py`, `services/transport.py`, `services/notices.py`, `tests/test_registration.py`, `tests/test_account.py`, `tests/test_messages.py`, `tests/test_transport.py` y `tests/test_methods.py`; y los de [Push](fastapi.md#push): `push.py`, `models/account/push_fid.py`, `models/account/push_subscription.py`, `schemas/fcm.py`, `schemas/web_push.py`, `routers/fcm.py`, `routers/web_push.py`, `services/push.py`, `services/fcm.py`, `services/web_push.py` y `tests/test_push.py`.
 
 ## Passkeys
 

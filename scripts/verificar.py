@@ -166,9 +166,11 @@ COMPLETABLES = [
     Path("server/src/app/schemas/health.py"),
     Path("server/src/app/services/events.py"),
     Path("server/src/app/services/health.py"),
+    Path("server/src/app/services/transport.py"),
     Path("server/src/app/tasks.py"),
     Path("server/tests/conftest.py"),
     Path("server/tests/test_health.py"),
+    Path("server/tests/test_transport.py"),
     Path("server/uv.lock"),
 ]
 

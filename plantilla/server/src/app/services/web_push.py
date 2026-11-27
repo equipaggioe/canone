@@ -148,6 +148,8 @@ async def find(session: AsyncSession, live: sa.Select[UUID]) -> list[Subscriptio
 def declarative(content: Content) -> bytes:
     """Write a push as a declarative message."""
     notification = {"title": content.title, "body": content.body, "navigate": content.navigate}
+    if content.tag:
+        notification["tag"] = content.tag
     document = {"web_push": 8030, "notification": notification}
     return json.dumps(document, ensure_ascii=False).encode()
 

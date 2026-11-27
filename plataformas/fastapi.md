@@ -121,6 +121,7 @@ server/
       registration.py
       sessions.py
       sms.py
+      transport.py
       web_push.py
       websocket.py
       <recurso>.py
@@ -149,11 +150,12 @@ server/
     test_sessions.py
     test_sms.py
     test_tasks.py
+    test_transport.py
     test_websocket.py
     test_<recurso>.py
 ```
 
-Plantilla: [plantilla/server/](../plantilla/server/) y el job `server` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml). Se copian sin editar `alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako`, cada `__init__.py`, `database.py`, `openapi.py`, `store.py`, `tracing.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py`, `services/files.py`, `tests/test_conventions.py`, `tests/test_events.py`, `tests/test_files.py` y `tests/test_tasks.py`. Un servidor con cuentas, que es el que tiene `models/account/`, copia sin editar también los archivos que nombra la plantilla de cada sección de [autenticacion.md](autenticacion.md), salvo `clients.py`, `dependencies.py`, `methods.py`, `push.py` y la migración. Los demás se copian y se completan.
+Plantilla: [plantilla/server/](../plantilla/server/) y el job `server` de [plantilla/.github/workflows/ci.yml](../plantilla/.github/workflows/ci.yml). Se copian sin editar `alembic.ini`, `alembic/README`, `alembic/env.py`, `alembic/script.py.mako`, cada `__init__.py`, `database.py`, `openapi.py`, `store.py`, `tracing.py`, `models/base.py`, `models/ruff.toml`, `routers/problems.py`, `schemas/base.py`, `schemas/page.py`, `services/files.py`, `tests/test_conventions.py`, `tests/test_events.py`, `tests/test_files.py` y `tests/test_tasks.py`. Un servidor con cuentas, que es el que tiene `models/account/`, copia sin editar también los archivos que nombra la plantilla de cada sección de [autenticacion.md](autenticacion.md), salvo `clients.py`, `dependencies.py`, `methods.py`, `push.py`, `services/transport.py`, `tests/test_transport.py` y la migración. Los demás se copian y se completan.
 
 ## Estilo
 
@@ -287,7 +289,8 @@ Contrato: [transversal.md](transversal.md#archivos).
 Estándar: el [*Webhook Security Cheat Sheet*](../fuentes/owasp/Webhook_Security.md) de OWASP.
 
 - El correo sale por la API de correo de Equipaggio, `PUT /email/{id}`, y el SMS, por su pasarela, `PUT /sms/{id}`.
-- La URL de la API de Equipaggio es la constante `API` de `services/messages.py`, la misma en todo despliegue, y la clave del cliente, `equipaggio_key` de `Settings`.
+- Cómo sale un correo o un SMS lo declara el repositorio en `email` y `sms` de `services/transport.py`. El de la plantilla los pone en la API de Equipaggio: su URL es la constante `API`, la misma en todo despliegue, y la clave del cliente, `equipaggio_key` de `Settings`.
+- Cuándo sale lo decide `services/messages.py`, el mismo en todo repositorio: después del commit de la petición, y un envío que falla, con cualquier error, va al log sin cambiar la respuesta, que ya se confirmó.
 - Cada correo lleva una parte en texto y otra en HTML.
 - Un correo rebotado llega por el webhook de Equipaggio. El servidor marca la dirección como inválida, y la app le dice al usuario que su correo no llega.
 - La clave pública de una firma asimétrica sale de `Settings`, nunca de la petición.
@@ -423,6 +426,7 @@ Contrato: [transversal.md](transversal.md#push).
 - El token de Google se renueva solo antes de enviar y en un hilo: la credencial es una `service_account.Credentials` de google-auth, con el alcance `firebase.messaging`, que no se renueva durante el envío. `send_each_async` renueva con una llamada síncrona, que detiene el bucle de eventos hasta que Google responde, un token vencido y, dos veces por mensaje, el que recibe 401. FCM responde 401 también cuando falta la clave de APNs o no vale. [firebase-admin 7.8.0](https://raw.githubusercontent.com/firebase/firebase-admin-python/v7.8.0/firebase_admin/_http_client.py) y [FCM](https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode)
 - Los push de un aviso salen a la vez, y cada uno espera a lo sumo 5 segundos: un endpoint que no responde no retiene la petición.
 - El log de un push que falla lleva el id de la sesión y el estado o el tipo del error, sin traceback: su mensaje puede traer el endpoint, y con él se le puede enviar.
+- El `tag` de un aviso va en `tag` de `AndroidNotification` y en el encabezado `apns-collapse-id` de APNs, que reemplazan en el dispositivo la notificación con el mismo. [FCM](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidnotification) y [APNs](https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns)
 - Un FID al que FCM responde `UNREGISTERED` se borra: FCM ya no le entrega nada. [FCM](https://firebase.google.com/docs/cloud-messaging/manage-tokens)
 - El servidor cifra el Web Push con `WebPusher.encode` de pywebpush, lo firma con `Vapid02` de py-vapid y lo envía con una sola `aiohttp.ClientSession` para toda la app.
 - El endpoint de una suscripción web lo elige el cliente, y el servidor le hace un `POST`. Por eso la `ClientSession` abre cada conexión con un `socket_factory` que rechaza la dirección que `ipaddress` no marca como global, y el servidor no sigue una redirección, no lee el cuerpo de la respuesta ni guarda sus cookies: un endpoint no lleva al servidor a su propia red, a la máquina ni a los metadatos del proveedor, ni le llena la memoria. `webpush_async` sigue la redirección y lee el cuerpo entero, descomprimido. [pywebpush 2.5.0](https://raw.githubusercontent.com/web-push-libs/pywebpush/4a2b66dae1408a19eb2c3f724ef0792f5258e72b/pywebpush/__init__.py)
@@ -585,6 +589,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Un archivo se responde como `attachment`, y de tipo desconocido como `application/octet-stream` | `test_download_is_an_attachment` |
 | Un correo o un SMS sale después del commit, también el de un `KeptError`, y una petición que se deshace no envía nada | `test_messages_go_after_the_commit` |
 | Un envío que falla va al log y no cambia la respuesta | `test_failed_delivery_does_not_fail_the_request` |
+| El correo y el SMS de la plantilla van por `PUT` a un id nuevo de la API de Equipaggio, con la clave del cliente | `test_email_goes_to_the_api_of_equipaggio` y `test_sms_goes_to_the_api_of_equipaggio`, de `test_transport.py`, que cada repositorio escribe para su transporte |
 | Una petición que pasa su límite responde 429 con `Retry-After`, el `detail` del límite y el evento `excess_rate_limit_exceeded`, en una ventana deslizante | `test_email_gets_one_code_a_minute_and_five_an_hour` |
 | La cuenta guarda el idioma de `Accept-Language` al entrar | `test_sign_in_keeps_the_language_of_the_account` |
 | Un mensaje para un usuario llega a cada conexión suya, y a ninguna de otro | `test_message_reaches_each_connection_of_the_account` |
@@ -603,6 +608,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | La clave pública de VAPID sale de `vapid_key` | `test_key_is_the_public_one_of_vapid` |
 | El FID y la suscripción guardan el idioma de `Accept-Language` | `test_app_registers_its_fid` y `test_web_registers_its_subscription` |
 | FCM recibe los mensajes de a 500, con el FID en `fid` | `test_fcm_takes_500_messages_at_once` y `test_fcm_message_names_its_channel_its_route_and_its_expiry` |
+| El `tag` de un aviso va en `tag` de Android, en `apns-collapse-id` y en el mensaje declarativo; sin `tag`, en ninguno | `test_tag_replaces_the_push_still_shown` |
 | El token de Google se renueva solo antes de enviar y en un hilo, con el alcance `firebase.messaging` | `test_token_of_google_is_renewed_in_a_thread`, `test_token_of_google_stays_while_it_sends` y `test_token_of_google_is_only_for_fcm` |
 | Un FID que responde `UNREGISTERED` y una suscripción que responde 404 o 410 se borran, si nadie los registró de nuevo | `test_device_that_no_longer_receives_is_deleted` y `test_device_that_registered_again_meanwhile_stays` |
 | Los push salen a la vez y esperan a lo sumo 5 segundos | `test_pushes_go_at_once_and_wait_a_little` y `test_push_waits_5_seconds` |

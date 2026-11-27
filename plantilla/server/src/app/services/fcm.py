@@ -39,6 +39,8 @@ class Content:
     navigate: str
     channel: str
     ttl: timedelta
+    # A push with the tag of one still shown replaces it on the device.
+    tag: str | None = None
 
 
 @dataclass(frozen=True)
@@ -110,15 +112,20 @@ async def find(session: AsyncSession, live: sa.Select[UUID]) -> list[Installatio
 def message(installation: Installation, content: Content) -> messaging.Message:
     """Build the message of an installation."""
     expires = datetime.now(UTC) + content.ttl
+    apns = {"apns-expiration": str(int(expires.timestamp()))}
+    if content.tag:
+        apns["apns-collapse-id"] = content.tag
     return messaging.Message(
         fid=installation.fid,
         notification=messaging.Notification(title=content.title, body=content.body),
         data={"navigate": content.navigate},
         android=messaging.AndroidConfig(
             ttl=content.ttl,
-            notification=messaging.AndroidNotification(channel_id=content.channel),
+            notification=messaging.AndroidNotification(
+                channel_id=content.channel, tag=content.tag
+            ),
         ),
-        apns=messaging.APNSConfig(headers={"apns-expiration": str(int(expires.timestamp()))}),
+        apns=messaging.APNSConfig(headers=apns),
     )
 
 

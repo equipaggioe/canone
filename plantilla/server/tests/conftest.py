@@ -15,7 +15,7 @@ from app import store
 from app.database import SessionFactory, engine
 from app.main import app
 from app.models.event.event_log import EventLog
-from app.services import messages
+from app.services import transport
 
 # The roles of the server and of the owner of the schema, as
 # install.py creates them.
@@ -98,9 +98,9 @@ def sent(monkeypatch: pytest.MonkeyPatch) -> list[httpx.Request]:
         requests.append(request)
         return httpx.Response(200, json={})
 
-    headers = dict(messages.client.headers)
+    headers = dict(transport.client.headers)
     fake = httpx.AsyncClient(
-        base_url=messages.API, transport=httpx.MockTransport(answer), headers=headers
+        base_url=transport.API, transport=httpx.MockTransport(answer), headers=headers
     )
-    monkeypatch.setattr(messages, "client", fake)
+    monkeypatch.setattr(transport, "client", fake)
     return requests

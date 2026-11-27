@@ -28,7 +28,7 @@ from app.routers import (
     websocket,
 )
 from app.schemas.websocket import CLIENT, SERVER
-from app.services import events, messages
+from app.services import events, transport
 from app.services import web_push as web_push_service
 
 
@@ -48,7 +48,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
     finally:
         await engine.dispose()
         await store.client.aclose()
-        await messages.client.aclose()
+        await transport.client.aclose()
         await web_push_service.client.aclose()
 
 

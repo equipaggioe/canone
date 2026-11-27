@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import store
 from app.config import settings
-from app.services import clients, limits, messages
+from app.services import clients, limits, messages, transport
 from app.services.limits import Rule
 from app.services.sessions import Client
 from app.translations import catalog
@@ -126,7 +126,7 @@ def send_email(session: AsyncSession, email: str, code: str, language: str) -> N
     t = catalog(language).gettext
     text = t("Your code is {code}. It lasts 10 minutes.").format(code=code)
     expires = datetime.now(UTC) + LIFETIME
-    send = partial(messages.email, email, t("Your code"), text, f"<p>{escape(text)}</p>", expires)
+    send = partial(transport.email, email, t("Your code"), text, f"<p>{escape(text)}</p>", expires)
     messages.later(session, send)
 
 
@@ -148,4 +148,4 @@ def sms_text(code: str, language: str, host: str, piece: str) -> str:
 
 def send_sms(session: AsyncSession, phone: str, text: str) -> None:
     """Send the SMS of a code once the request commits."""
-    messages.later(session, partial(messages.sms, phone, text, datetime.now(UTC) + LIFETIME))
+    messages.later(session, partial(transport.sms, phone, text, datetime.now(UTC) + LIFETIME))

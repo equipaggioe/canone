@@ -226,6 +226,7 @@ Estándares: la [*Push API*](../fuentes/w3c/push-api.html) de W3C, [RFC 8030](..
 - En la web, el push de una llamada entrante lleva `Urgency: high` ([RFC 8030 §5.3](../fuentes/rfc/rfc8030.txt)).
 - El JWT lleva en `sub` un `mailto:` de contacto del producto ([RFC 8292 §2.1](../fuentes/rfc/rfc8292.txt)).
 - Un Web Push es un mensaje declarativo: `web_push` vale 8030, y `notification` lleva `title`, `body` y, en `navigate`, la ruta que abre ([Push API, *Declarative push message*](../fuentes/w3c/push-api.html)).
+- Un aviso que reemplaza al anterior del mismo asunto, como el nuevo estado de algo vigilado, lleva un `tag`: el dispositivo cambia por él la notificación con el mismo `tag` que todavía muestra, en vez de apilar otra. Un aviso que cuenta algo aparte, como uno de seguridad, no lleva ([Push API, *Declarative push message*](../fuentes/w3c/push-api.html)).
 - La web le manda al servidor su suscripción como la serializa `toJSON()`: `endpoint`, `expirationTime` y, en `keys`, `p256dh` y `auth` en base64url ([Push API, *PushSubscription interface*](../fuentes/w3c/push-api.html) y [*PushEncryptionKeyName enumeration*](../fuentes/w3c/push-api.html)).
 - Cada Web Push lleva el JWT de VAPID del servidor ([RFC 8292 §2](../fuentes/rfc/rfc8292.txt)).
 - La web se suscribe con `applicationServerKey`, la clave pública de VAPID del servidor: un punto de P-256 sin comprimir, en base64url ([Push API, *PushSubscriptionOptions Interface*](../fuentes/w3c/push-api.html)).

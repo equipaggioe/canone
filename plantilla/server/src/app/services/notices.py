@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.models.account.account import Account
-from app.services import messages, push
+from app.services import messages, push, transport
 from app.services.fcm import Content
 from app.translations import catalog
 
@@ -153,9 +153,9 @@ async def notify(
     addresses = {account.email, account.phone, previous} - {None}
     for address in sorted(address for address in addresses if address is not None):
         if address.startswith("+"):
-            messages.later(session, partial(messages.sms, address, text, expires))
+            messages.later(session, partial(transport.sms, address, text, expires))
         else:
             html = f"<p>{escape(text)}</p>"
-            send = partial(messages.email, address, written.title, text, html, expires)
+            send = partial(transport.email, address, written.title, text, html, expires)
             messages.later(session, send)
     await push.later(session, account.id, partial(content, notice=notice, name=name))

@@ -99,7 +99,8 @@ def empty() -> None:
         f"WHERE r.rolname <> '{APP}_owner' AND extname <> 'plpgsql' ORDER BY extname",
         APP,
     ).split()
-    subprocess.run(["systemctl", "stop", SERVICE], check=True)
+    # ADR-0251: the workers use the database too.
+    subprocess.run(["systemctl", "stop", SERVICE, f"{APP}-worker@*.service"], check=True)
     # The purge or the sweep may still be connected.
     psql(f"DROP DATABASE {APP} WITH (FORCE)")
     create_database(APP, extensions)

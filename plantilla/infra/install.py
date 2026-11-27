@@ -6,7 +6,7 @@ r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn
         [--turn [--turn-ip <public ipv4>]] \
         [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>] \
         [--java <piece>] [--task <task>=<OnCalendar>] [--browser <task>=<OnCalendar>] \
-        [--development]
+        [--worker <task>] [--development]
 
 The first time it runs as root, and creates the account that administers the machine with its
 keys and the password it asks for. Afterwards ssh only takes keys and root does not log in, so it
@@ -14,7 +14,8 @@ runs with sudo from that account, and --admin, --key and --signer only add keys.
 
 --task runs python -m app.tasks <task> on its own calendar, like --task alert=minutely, and
 --browser runs a task that drives Chromium the same way, in a unit that lets it run; a task that no
---task or --browser names any more loses its timer.
+--task or --browser names any more loses its timer. --worker runs a task of WORKERS without end, in
+its own unit, and a worker that no --worker names any more loses its unit.
 
 --development marks a machine whose database database.py may empty; without it, the mark goes.
 
@@ -121,6 +122,11 @@ OWN_UNITS = ("migrate", "mock", "purge", "sweep")
 # Chromium of Debian that packages.py --browser installs.
 BROWSER_UNIT = "PRODUCTO-browser@"
 CHROMIUM = Path("/usr/bin/chromium-headless-shell")
+# ADR-0251: a task of WORKERS runs without end in an instance of PRODUCTO-worker@, which
+# deploy.py restarts with the server.
+WORKER_UNIT = "PRODUCTO-worker@"
+WANTS = UNITS / "multi-user.target.wants"
+CURRENT = "/srv/PRODUCTO/current"
 
 
 def task_timer(spec: str) -> tuple[str, str]:
@@ -135,11 +141,22 @@ def task_timer(spec: str) -> tuple[str, str]:
     return name, calendar
 
 
-def check_tasks(tasks: list[tuple[str, str]]) -> None:
+def worker(name: str) -> str:
+    """Return name if it can name a task of WORKERS, without a unit of its own."""
+    if not TASK.fullmatch(name):
+        raise argparse.ArgumentTypeError(f"{name} is not a task, like mailer")
+    if name in OWN_UNITS:
+        raise argparse.ArgumentTypeError(f"{name} has its own unit, and takes no --worker")
+    return name
+
+
+def check_tasks(tasks: list[tuple[str, str]], workers: list[str]) -> None:
     """Fail on a task named twice, or on a calendar that systemd does not read."""
-    names = [name for name, _ in tasks]
+    names = [name for name, _ in tasks] + workers
     if len(set(names)) != len(names):
-        raise SystemExit(f"A task goes in one --task or --browser: {', '.join(names)}.")
+        raise SystemExit(
+            f"A task goes in one --task, --browser or --worker: {', '.join(names)}."
+        )
     for _, calendar in tasks:
         check = ["systemd-analyze", "calendar", calendar]
         if subprocess.run(check, capture_output=True, check=False).returncode != 0:
@@ -163,6 +180,24 @@ def install_tasks(app: str, unit: str, tasks: list[tuple[str, str]]) -> list[str
         drop_in.parent.mkdir(parents=True, exist_ok=True)
         drop_in.write_text(f"[Timer]\nOnCalendar={calendar}\n", encoding="utf-8")
     return [f"{prefix}{name}.timer" for name in names]
+
+
+def install_workers(app: str, workers: list[str]) -> None:
+    """Disable each worker that no --worker names, and take its unit if none is left."""
+    prefix = WORKER_UNIT.replace("PRODUCTO", app)
+    for link in sorted(WANTS.glob(f"{prefix}*.service")):
+        if link.name.removeprefix(prefix).removesuffix(".service") not in workers:
+            subprocess.run(["systemctl", "disable", "--now", link.name], check=True)
+    if not workers:
+        (UNITS / f"{prefix}.service").unlink(missing_ok=True)
+
+
+def enable_workers(app: str, workers: list[str]) -> None:
+    """Enable each worker, and start it if a version is live: deploy.py starts it otherwise."""
+    units = [f"{WORKER_UNIT.replace('PRODUCTO', app)}{name}.service" for name in workers]
+    live = ["--now"] if Path(CURRENT.replace("PRODUCTO", app)).exists() else []
+    if units:
+        subprocess.run(["systemctl", "enable", *live, *units], check=True)
 
 
 # Units and sites of a piece the app may not have.
@@ -293,6 +328,13 @@ def parse() -> argparse.Namespace:
         default=[],
         type=task_timer,
         help="a task like --task that drives Chromium, like attempt=minutely",
+    )
+    parser.add_argument(
+        "--worker",
+        action="append",
+        default=[],
+        type=worker,
+        help="a task of python -m app.tasks that runs without end, like mailer",
     )
     parser.add_argument(
         "--development", action="store_true", help="database.py may empty the database"
@@ -516,7 +558,7 @@ def main() -> None:
     if arguments.browser and not CHROMIUM.is_file():
         raise SystemExit("chromium-headless-shell is not installed, and --browser needs it.")
     check_logs(arguments)
-    check_tasks(arguments.task + arguments.browser)
+    check_tasks(arguments.task + arguments.browser, arguments.worker)
     admin = find_admin(arguments)
     check_keys(arguments.key + arguments.signer)
     create_admin(admin, arguments.key)
@@ -543,6 +585,7 @@ def main() -> None:
             + tuple(f"{piece}.apk" for piece in arguments.mobile)
         ),
         "PIEZAS_JAVA": repr(tuple(arguments.java)),
+        "TRABAJADORES": repr(tuple(arguments.worker)),
     }
     journal = Path(TARGETS["journald.conf"].replace("PRODUCTO", app))
     journal_before = journal.read_bytes() if journal.is_file() else None
@@ -585,6 +628,8 @@ def main() -> None:
         skipped += (TASK_UNIT,)
     if not arguments.browser:
         skipped += (BROWSER_UNIT,)
+    if not arguments.worker:
+        skipped += (WORKER_UNIT,)
     triggers = []
     for source in sorted(HERE.glob("PRODUCTO*")):
         if source.name.startswith(skipped):
@@ -597,6 +642,7 @@ def main() -> None:
             triggers.append(target.name)
     triggers += install_tasks(app, TASK_UNIT, arguments.task)
     triggers += install_tasks(app, BROWSER_UNIT, arguments.browser)
+    install_workers(app, arguments.worker)
     subprocess.run(["systemd-sysusers"], check=True)
     subprocess.run(["systemd-tmpfiles", "--create", f"/etc/tmpfiles.d/{app}.conf"], check=True)
     subprocess.run(["sysctl", "--system"], check=True)
@@ -623,6 +669,7 @@ def main() -> None:
     for piece in arguments.java:
         unit = f"{JAVA_UNIT.replace('PRODUCTO', app)}{piece}.service"
         subprocess.run(["systemctl", "enable", unit], check=True)
+    enable_workers(app, arguments.worker)
     subprocess.run(["systemctl", "enable", "--now", *triggers], check=True)
     subprocess.run(["systemctl", "reload", "caddy.service"], check=True)
     if arguments.turn:

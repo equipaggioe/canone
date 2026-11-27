@@ -40,6 +40,8 @@ PRIVATE: bool = PRIVADO
 DESKTOP: tuple[str, ...] = INSTALABLES
 # despliegue.md: the pieces in Java, each with its unit, which run the current version too.
 JAVA: tuple[str, ...] = PIEZAS_JAVA
+# ADR-0251: the workers, each with its unit, which run the current version too.
+WORKERS: tuple[str, ...] = TRABAJADORES
 # A private repository downloads with a read-only token, which
 # credentials.py encrypts.
 TOKEN = Path("/etc/credstore.encrypted") / f"{APP}-deploy" / "github_token"
@@ -185,6 +187,8 @@ def restart() -> None:
     # Before the server, which calls them.
     for piece in JAVA:
         run("systemctl", "restart", f"{APP}-java@{piece}.service")
+    for name in WORKERS:
+        run("systemctl", "restart", f"{APP}-worker@{name}.service")
     run("systemctl", "restart", SERVICE)
     problem = "no answer"
     for _ in range(HEALTH_SECONDS):
@@ -203,7 +207,7 @@ def migrate(version: str, target: Path, previous: Path | None, migrates: bool) -
     """Migrate to version, with the server stopped if it changes."""
     # The previous code must not run on the migrated schema.
     if migrates:
-        run("systemctl", "stop", SERVICE)
+        run("systemctl", "stop", SERVICE, *(f"{APP}-worker@{name}.service" for name in WORKERS))
     try:
         run("systemctl", "start", MIGRATE.format(version))
     except subprocess.CalledProcessError:

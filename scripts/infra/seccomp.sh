@@ -32,7 +32,7 @@ LINES
 }
 for unit in PRODUCTO.service PRODUCTO-migrate@.service PRODUCTO-mock@.service \
     PRODUCTO-purge.service PRODUCTO-sweep.service PRODUCTO-task@.service \
-    PRODUCTO-browser@.service; do
+    PRODUCTO-browser@.service PRODUCTO-worker@.service; do
   step "$unit imports numpy"
   # The filter is there, with its exception: without them the check proves nothing.
   sandboxing "$infra/$unit" | grep -qx 'SystemCallFilter=~@privileged @resources'

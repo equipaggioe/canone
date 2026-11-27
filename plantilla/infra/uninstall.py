@@ -128,14 +128,14 @@ def instances(app: str) -> list[str]:
 
 
 def triggers(app: str) -> list[str]:
-    """Return the server, and the timers and path units that start the others."""
+    """Return the server, its workers, and the timers and path units that start the others."""
     # A template is no unit that runs: systemctl takes its instances.
     found = [
         path.name
         for path in owned(UNITS, app)
         if path.suffix in (".timer", ".path") and "@." not in path.name
     ]
-    return [f"{app}.service", *found, *instances(app)]
+    return [f"{app}.service", f"{app}-worker@*.service", *found, *instances(app)]
 
 
 def drop(kind: str, names: tuple[str, ...], catalog: str, column: str) -> None:

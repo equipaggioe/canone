@@ -1,6 +1,6 @@
 # ADR-0043 · Una tarea periódica la dispara un timer de systemd
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada. El punto 3, para lo que corre más seguido que cada minuto, lo reemplaza el [ADR-0251](0251-lo-que-corre-mas-seguido-que-cada-minuto-es-un-worker-en-su-unidad.md)
 - **Fecha:** 2026-10-10
 - **Alcance:** la sección «Tareas periódicas» de [`plataformas/fastapi.md`](../plataformas/fastapi.md)
   y la sección «Procesos» de [`plataformas/despliegue.md`](../plataformas/despliegue.md)

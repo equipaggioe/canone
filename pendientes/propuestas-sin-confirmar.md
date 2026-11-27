@@ -23,6 +23,7 @@ Tema pendiente: lo que un ADR deja en propuesta, sin que el desarrollador lo hay
 | [0180](../adr/0180-cada-plataforma-se-escribe-como-si-hubiera-cuenta-y-cada-repositorio-elige-donde-publica.md) | Puntos 6 y 7: `apple.py` instala en el runner el certificado y el perfil, y Flutter firma Release a mano |
 | [0199](../adr/0199-fastapi-cada-fila-detecta-lo-que-promete-y-el-servidor-reconecta-compara-los-server-default-y-limita-cada-subida.md) | Punto 4: `migrate`, `mock` y los seeders pasan de `tasks.py` a `database.py` |
 | [0209](../adr/0209-un-estado-que-el-colorscheme-no-tiene-lleva-un-custom-color-de-material.md) | Punto 7: `brand/tokens/` de la plantilla trae `success` y `warning` |
+| [0251](../adr/0251-lo-que-corre-mas-seguido-que-cada-minuto-es-un-worker-en-su-unidad.md) | Puntos 6 a 8: `install.py --worker` arranca el worker si hay una versión activa, los workers se detienen con el servidor antes de migrar y en `database.py empty`, y la unidad lleva `Restart=on-failure` |
 
 ## Qué hay que decidir
 

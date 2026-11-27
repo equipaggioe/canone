@@ -8,7 +8,10 @@
 # --private and its token, which does not follow the redirect of a download to another host. The
 # server reads the credentials of credentials.py, and the daily purge and sweep run on what goes
 # live. A task of --task runs on its calendar as the server, and a reinstall without it takes its
-# timer, and a task with a unit of its own or a calendar that systemd does not read fails. The database.py that install.py installs empties the database only on a machine set up with
+# timer, and a task with a unit of its own or a calendar that systemd does not read fails. A worker
+# of --worker runs its rounds as the server, a round that fails does not end it, deploy.py restarts
+# it, a reinstall without it takes its unit, and a worker with a unit of its own or also in --task
+# fails. The database.py that install.py installs empties the database only on a machine set up with
 # --development, with the extensions of install.py, and migrate runs the migrations of the active
 # version. The account that administers reads as <app>_read, also over a tunnel to the socket, and
 # changes nothing. Each deployment runs the seeders after the migrations without duplicating a row,
@@ -123,7 +126,8 @@ tags.mkdir(parents=True, exist_ok=True)
 EOF
 }
 broken() { echo 'raise RuntimeError("broken")' >> "$1/server/src/app/main.py"; }
-# ticking <tree>: a task for --task, which writes the account it runs as.
+# ticking <tree>: a task for --task and a worker for --worker, which write the account they run
+# as; each round of the worker fails.
 ticking() {
     python3 - "$1/server/src/app/tasks.py" <<'EOF'
 import sys
@@ -135,7 +139,15 @@ task = '''async def tick() -> None:
     print(f"tick as {getpass.getuser()}")
 
 
+async def beat() -> None:
+    """Write the account the worker runs as, and fail."""
+    print(f"beat as {getpass.getuser()}", flush=True)
+    raise RuntimeError("the round fails")
+
+
 TASKS["tick"] = tick
+TASKS["beat"] = beat
+WORKERS["beat"] = 1
 
 
 '''
@@ -336,6 +348,40 @@ test ! -e /etc/systemd/system/demo-task@tick.timer.d
 test ! -e /etc/systemd/system/demo-task@.service
 test ! -e /etc/systemd/system/timers.target.wants/demo-task@tick.timer
 test "$(systemctl is-active demo-task@tick.timer)" != active
+
+step "A worker of --worker runs its rounds as the server, deploy.py restarts it, and it loses its unit when no --worker names it"
+fails install --worker purge
+grep -qF "purge has its own unit" "$work/error"
+fails install --worker tick --task tick=minutely
+grep -qF "goes in one --task, --browser or --worker" "$work/error"
+setup --worker beat
+grep -qxF "WORKERS: tuple[str, ...] = ('beat',)" /usr/local/sbin/demo-deploy
+systemctl is-enabled --quiet demo-worker@beat.service
+beats() { journalctl --unit=demo-worker@beat.service --output=cat | grep -cx 'beat as demo' || true; }
+for attempt in $(seq 30); do
+    [ "$(beats)" -ge 2 ] && break
+    sleep 1
+done
+test "$(beats)" -ge 2
+journalctl --unit=demo-worker@beat.service --output=cat | grep -qF 'A round of beat failed'
+systemctl is-active --quiet demo-worker@beat.service
+before=$(systemctl show -p InvocationID --value demo-worker@beat.service)
+python3 - <<'EOF'
+import importlib.machinery
+import importlib.util
+
+loader = importlib.machinery.SourceFileLoader("deploy", "/usr/local/sbin/demo-deploy")
+deploy = importlib.util.module_from_spec(importlib.util.spec_from_loader("deploy", loader))
+loader.exec_module(deploy)
+deploy.restart()
+EOF
+test "$(systemctl show -p InvocationID --value demo-worker@beat.service)" != "$before"
+systemctl is-active --quiet demo-worker@beat.service
+setup
+grep -qxF 'WORKERS: tuple[str, ...] = ()' /usr/local/sbin/demo-deploy
+test ! -e /etc/systemd/system/demo-worker@.service
+test ! -e /etc/systemd/system/multi-user.target.wants/demo-worker@beat.service
+test "$(systemctl is-active demo-worker@beat.service)" != active
 
 step "The live tag does not go in again"
 fails deploy v1.0.0

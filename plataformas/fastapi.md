@@ -259,6 +259,10 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - La purga y el barrido corren cada día, en sus unidades de [despliegue.md](despliegue.md#procesos). Cualquier otra tarea declara su calendario en `TIMERS` de `tasks.py`, como `{"alert": "minutely"}`, el `OnCalendar=` que recibe `install.py --task`: el calendario queda en el código, junto a la tarea.
 - Una tarea que maneja un navegador declara su calendario en `BROWSER_TIMERS` de `tasks.py`, con la forma de `TIMERS`, y no en `TIMERS`: corre en la unidad de [despliegue.md](despliegue.md#procesos) que deja correr a Chromium, con `install.py --browser`.
 - Esa tarea maneja con Playwright el Chromium de Debian, `executable_path="/usr/bin/chromium-headless-shell"`, que instala `packages.py --browser`: se actualiza con la máquina, y el que baja Playwright solo cambia con su versión.
+- Lo que corre más seguido que cada minuto es un *worker*: declara en `WORKERS` de `tasks.py` los segundos entre sus vueltas, como `{"mailer": 1}`, y `python -m app.tasks <tarea>` lo corre sin fin, en su unidad de [despliegue.md](despliegue.md#procesos), con `install.py --worker`. Un timer arrancaría un proceso de Python en cada vuelta.
+- Una vuelta de un worker que falla va al log, y el worker sigue con la siguiente.
+- Un worker corre en una sola copia, la de su unidad, y no lleva candado.
+- Un worker que toma filas de una cola las toma con `FOR UPDATE SKIP LOCKED`: una vuelta no espera la fila que otra transacción tiene tomada, y una copia lanzada a mano no toma las mismas.
 
 ## Archivos
 

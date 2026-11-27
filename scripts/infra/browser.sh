@@ -39,7 +39,7 @@ test ! -e /etc/systemd/system/demo-browser@.service
 
 step "A task in --task and in --browser fails, and so does one with its own unit"
 fails run --task probe=minutely --browser probe=minutely
-grep -qF "goes in one --task or --browser" "$work/error"
+grep -qF "goes in one --task, --browser or --worker" "$work/error"
 fails run --browser purge=daily
 grep -qF "purge has its own unit" "$work/error"
 

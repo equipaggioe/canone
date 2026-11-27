@@ -1,5 +1,6 @@
 """The tasks of the machine."""
 
+import asyncio
 import os
 import time
 from pathlib import Path
@@ -9,7 +10,7 @@ import pytest
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import database
+from app import database, tasks
 from app.services import files
 
 
@@ -61,3 +62,29 @@ def test_seeders_run_by_module_and_name(tmp_path: Path, monkeypatch: pytest.Monk
         "fake_seeders.a_roles.seed_users",
         "fake_seeders.b_places.seed_places",
     ]
+
+
+class Stop(BaseException):
+    """Ends the loop of a worker in a test."""
+
+
+async def test_worker_runs_after_a_failed_round(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    """A failed round goes to the log, and the next one runs."""
+    rounds = 0
+
+    async def flaky() -> None:
+        nonlocal rounds
+        rounds += 1
+        if rounds == 1:
+            raise RuntimeError("the first round fails")
+        if rounds == 3:
+            raise Stop
+
+    monkeypatch.setitem(tasks.TASKS, "flaky", flaky)
+    monkeypatch.setitem(tasks.WORKERS, "flaky", 0)
+    with pytest.raises(Stop):
+        await asyncio.wait_for(tasks.work("flaky"), 5)
+    assert rounds == 3
+    assert "the first round fails" in caplog.text

@@ -9,7 +9,8 @@
 # server reads the credentials of credentials.py, and the daily purge and sweep run on what goes
 # live. A task of --task runs on its calendar as the server, and a reinstall without it takes its
 # timer, and a task with a unit of its own or a calendar that systemd does not read fails. A worker
-# of --worker runs its rounds as the server, a round that fails does not end it, deploy.py restarts
+# of --worker runs its rounds as the server, a round that fails goes to the log in one line with its
+# trace-id and does not end it, deploy.py restarts it, it ends its round and exits when systemd stops
 # it, a reinstall without it takes its unit, and a worker with a unit of its own or also in --task
 # fails. The database.py that install.py installs empties the database only on a machine set up with
 # --development, with the extensions of install.py, and migrate runs the migrations of the active
@@ -349,7 +350,7 @@ test ! -e /etc/systemd/system/demo-task@.service
 test ! -e /etc/systemd/system/timers.target.wants/demo-task@tick.timer
 test "$(systemctl is-active demo-task@tick.timer)" != active
 
-step "A worker of --worker runs its rounds as the server, deploy.py restarts it, and it loses its unit when no --worker names it"
+step "A worker of --worker runs its rounds as the server, deploy.py restarts it, it exits when stopped, and it loses its unit when no --worker names it"
 fails install --worker purge
 grep -qF "purge has its own unit" "$work/error"
 fails install --worker tick --task tick=minutely
@@ -363,7 +364,9 @@ for attempt in $(seq 30); do
     sleep 1
 done
 test "$(beats)" -ge 2
-journalctl --unit=demo-worker@beat.service --output=cat | grep -qF 'A round of beat failed'
+# One line, with the trace-id and the traceback escaped.
+journalctl --unit=demo-worker@beat.service --output=cat |
+    grep -qE '^ERROR [a-z_.]+ [0-9a-f]{32} A round of beat failed\\n.*RuntimeError: the round fails$'
 systemctl is-active --quiet demo-worker@beat.service
 before=$(systemctl show -p InvocationID --value demo-worker@beat.service)
 python3 - <<'EOF'
@@ -377,6 +380,10 @@ deploy.restart()
 EOF
 test "$(systemctl show -p InvocationID --value demo-worker@beat.service)" != "$before"
 systemctl is-active --quiet demo-worker@beat.service
+systemctl stop demo-worker@beat.service
+# A worker that SIGTERM killed would end with CLD_KILLED, 2, and status 15.
+test "$(systemctl show -p ExecMainCode --value demo-worker@beat.service)" = 1
+test "$(systemctl show -p ExecMainStatus --value demo-worker@beat.service)" = 0
 setup
 grep -qxF 'WORKERS: tuple[str, ...] = ()' /usr/local/sbin/demo-deploy
 test ! -e /etc/systemd/system/demo-worker@.service

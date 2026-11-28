@@ -51,6 +51,8 @@ Al implementar se eligió *(propuesta)*:
 - Cada vuelta deja de pagar el arranque de Python, y un proceso que corre cada segundo no queda en
   manos de quien despliega.
 - Sale el candado de cada proceso: systemd no arranca una segunda copia de la unidad.
+- Con `FOR UPDATE SKIP LOCKED`, una vuelta no espera la fila que otra transacción tiene tomada, y
+  una copia lanzada a mano no toma las mismas filas.
 - El código anterior no corre sobre la base migrada, ni en el servidor ni en un worker.
 - Un worker que se cae lo reinicia systemd, y uno que pierde la base registra cada vuelta fallida
   hasta que vuelve.

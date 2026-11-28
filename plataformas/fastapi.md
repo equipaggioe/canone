@@ -259,10 +259,11 @@ Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 - La purga y el barrido corren cada día, en sus unidades de [despliegue.md](despliegue.md#procesos). Cualquier otra tarea declara su calendario en `TIMERS` de `tasks.py`, como `{"alert": "minutely"}`, el `OnCalendar=` que recibe `install.py --task`: el calendario queda en el código, junto a la tarea.
 - Una tarea que maneja un navegador declara su calendario en `BROWSER_TIMERS` de `tasks.py`, con la forma de `TIMERS`, y no en `TIMERS`: corre en la unidad de [despliegue.md](despliegue.md#procesos) que deja correr a Chromium, con `install.py --browser`.
 - Esa tarea maneja con Playwright el Chromium de Debian, `executable_path="/usr/bin/chromium-headless-shell"`, que instala `packages.py --browser`: se actualiza con la máquina, y el que baja Playwright solo cambia con su versión.
-- Lo que corre más seguido que cada minuto es un *worker*: declara en `WORKERS` de `tasks.py` los segundos entre sus vueltas, como `{"mailer": 1}`, y `python -m app.tasks <tarea>` lo corre sin fin, en su unidad de [despliegue.md](despliegue.md#procesos), con `install.py --worker`. Un timer arrancaría un proceso de Python en cada vuelta.
+- Lo que corre más seguido que cada minuto es un *worker*: declara en `WORKERS` de `tasks.py` los segundos entre sus vueltas, como `{"mailer": 1}`, y `python -m app.tasks <tarea>` lo corre sin fin, en su unidad de [despliegue.md](despliegue.md#procesos), con `install.py --worker`. Su vuelta es una función en `services/`, como una tarea periódica. Un timer arrancaría un proceso de Python en cada vuelta.
 - Una vuelta de un worker que falla va al log, y el worker sigue con la siguiente.
+- Un worker que recibe `SIGTERM` termina la vuelta que corre y sale, sin empezar otra.
 - Un worker corre en una sola copia, la de su unidad, y no lleva candado.
-- Un worker que toma filas de una cola las toma con `FOR UPDATE SKIP LOCKED`: una vuelta no espera la fila que otra transacción tiene tomada, y una copia lanzada a mano no toma las mismas.
+- Un worker que toma filas de una cola las toma con `FOR UPDATE SKIP LOCKED`.
 
 ## Archivos
 
@@ -494,7 +495,7 @@ Estándares: el [*Logging Cheat Sheet*](../fuentes/owasp/Logging.md) y el [*Appl
 - La app configura un `TracerProvider` del SDK de OpenTelemetry: sin él, FastAPI no crea spans y no hay trace-id.
 - La telemetría no sale del proceso: el `TracerProvider` no tiene exportador, y la app crea FastAPI con `telemetry={"auto_configure": False}`. Una traza no ve la base ni sigue a otro servicio, y su trace-id ya está en cada log y en cada error. Sin ese parámetro, si el exportador OTLP llega instalado, como con `fastapi[standard]`, `FASTAPI_OTEL_AUTO_CONFIGURE=true` y `OTEL_EXPORTER_OTLP_ENDPOINT` le agregan uno sin cambiar el código. [FastAPI 0.165.0](https://raw.githubusercontent.com/fastapi/fastapi/0.165.0/fastapi/telemetry/_runtime.py)
 - El propagador global de OpenTelemetry ignora `traceparent`: cada petición y cada WebSocket empiezan una traza nueva. El cliente no elige el id con el que se buscan sus registros. Es un propagador propio: con `OTEL_PROPAGATORS=none`, FastAPI falla en cada petición.
-- Cada vuelta de una tarea periódica empieza su propia traza.
+- Cada vuelta de una tarea periódica o de un worker empieza su propia traza.
 - Cada línea de log lleva el trace-id del span actual.
 
 ## Versión mínima de cliente
@@ -562,6 +563,7 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Un enum hereda de `StrEnum` | `test_enums_are_strenums`, `test_enums_are_checked_text` y ruff `UP042` |
 | Una columna o relación por línea, y `models/` sin el límite de 99 | `test_mapped_attributes_fit_one_line`, y `ruff format` con `line-length = 320`, el máximo de ruff, en `models/ruff.toml` |
 | `traceparent` no continúa la traza | `test_traceparent_starts_a_new_trace` |
+| Cada vuelta de una tarea periódica o de un worker empieza su propia traza | `test_each_round_has_its_own_trace` |
 | La app no se configura la telemetría desde el entorno, y las variables OTLP no agregan un exportador | `test_otlp_variables_export_nothing` |
 | Un solo tag por router y el `operationId` en camelCase | `test_operation_ids` |
 | Cada operación declara sus errores solo como problem+json, con el esquema de su problema, y el 422 con el de `validation` | `test_errors_are_problems` |
@@ -574,6 +576,8 @@ Contrato: [transversal.md](transversal.md#websocket) y [autenticacion.md](autent
 | Las migraciones de prueba como el dueño, y las pruebas con los permisos del servidor | `python -m app.tasks migrate` con la credencial del dueño en el job `server` de CI, y `run_as_server` de `tests/conftest.py` |
 | Que los seeders corren por módulo y por nombre, y solo las funciones `seed_` asíncronas del módulo | `test_seeders_run_by_module_and_name` |
 | Que un seeder que falla deshace las migraciones, que cada despliegue corre los seeders, y que `mock_data/` corre solo en desarrollo | [scripts/infra/deploy.sh](../scripts/infra/deploy.sh) de Canone, como dice [despliegue.md](despliegue.md#cumplimiento), sobre el `database.py` que se copia sin editar |
+| Una vuelta de un worker que falla va al log, y el worker sigue con la siguiente | `test_worker_runs_after_a_failed_round` |
+| Un worker que recibe `SIGTERM` termina la vuelta que corre y sale, sin empezar otra | `test_worker_ends_its_round_on_sigterm` |
 | Las pruebas nunca llaman a la app con `TestClient` | ruff `TID251` con `fastapi.testclient` y `starlette.testclient` en `banned-api` |
 | El rol de la app no cambia ni borra `event_log`, y la purga respeta la retención | `test_server_cannot_change_events` y `test_purge_deletes_only_expired_events` |
 | Solo el rol de la app y el dueño leen `event_log` | `test_only_the_server_and_owner_read_events` |

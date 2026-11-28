@@ -2,13 +2,19 @@
 
 import argparse
 import asyncio
+import contextlib
 import logging
+import signal
 from collections.abc import Awaitable, Callable
 
+from opentelemetry import trace
+
+from app import tracing
 from app.database import engine, migrate, mock
 from app.services import events, files, recovery, sessions, web_push
 
 logger = logging.getLogger(__name__)
+tracer = trace.get_tracer(__name__)
 
 
 async def purge() -> None:
@@ -31,20 +37,38 @@ WORKERS: dict[str, float] = {}
 
 
 async def work(task: str) -> None:
-    """Run the worker in rounds, and log the round that fails."""
-    while True:
-        # ADR-0251: a round that fails does not end the worker.
-        try:
-            await TASKS[task]()
-        except Exception:
-            logger.exception("A round of %s failed", task)
-        await asyncio.sleep(WORKERS[task])
+    """Run the worker in rounds until SIGTERM, and log the failures."""
+    stop = asyncio.Event()
+    loop = asyncio.get_running_loop()
+
+    def ask(*_: object) -> None:
+        """Let the round end, and start no other."""
+        loop.call_soon_threadsafe(stop.set)
+
+    # ADR-0252: systemd stops the worker between two rounds.
+    previous = signal.signal(signal.SIGTERM, ask)
+    try:
+        while not stop.is_set():
+            with tracer.start_as_current_span(task):
+                # ADR-0251: a round that fails does not end the worker.
+                try:
+                    await TASKS[task]()
+                except Exception:
+                    logger.exception("A round of %s failed", task)
+            with contextlib.suppress(TimeoutError):
+                await asyncio.wait_for(stop.wait(), WORKERS[task])
+    finally:
+        signal.signal(signal.SIGTERM, previous)
 
 
 async def run(task: str) -> None:
     """Run the task, or the worker, and close the connections."""
     try:
-        await (work(task) if task in WORKERS else TASKS[task]())
+        if task in WORKERS:
+            await work(task)
+        else:
+            with tracer.start_as_current_span(task):
+                await TASKS[task]()
     finally:
         await engine.dispose()
         await web_push.client.aclose()
@@ -54,7 +78,9 @@ def main() -> None:
     """Read the task from the command line and run it."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("task", choices=TASKS)
-    asyncio.run(run(parser.parse_args().task))
+    task = parser.parse_args().task
+    tracing.install()
+    asyncio.run(run(task))
 
 
 if __name__ == "__main__":

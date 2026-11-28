@@ -2,6 +2,7 @@
 
 import asyncio
 import os
+import signal
 import time
 from pathlib import Path
 from uuid import UUID
@@ -10,8 +11,8 @@ import pytest
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import database, tasks
-from app.services import files
+from app import database, tasks, tracing
+from app.services import files, web_push
 
 
 async def test_sweep_deletes_only_old_files_without_row(
@@ -64,8 +65,9 @@ def test_seeders_run_by_module_and_name(tmp_path: Path, monkeypatch: pytest.Monk
     ]
 
 
-class Stop(BaseException):
-    """Ends the loop of a worker in a test."""
+def stop() -> None:
+    """Send SIGTERM to the process, as systemd stops a worker."""
+    signal.raise_signal(signal.SIGTERM)
 
 
 async def test_worker_runs_after_a_failed_round(
@@ -80,11 +82,56 @@ async def test_worker_runs_after_a_failed_round(
         if rounds == 1:
             raise RuntimeError("the first round fails")
         if rounds == 3:
-            raise Stop
+            stop()
 
     monkeypatch.setitem(tasks.TASKS, "flaky", flaky)
     monkeypatch.setitem(tasks.WORKERS, "flaky", 0)
-    with pytest.raises(Stop):
-        await asyncio.wait_for(tasks.work("flaky"), 5)
+    await asyncio.wait_for(tasks.work("flaky"), 5)
     assert rounds == 3
     assert "the first round fails" in caplog.text
+
+
+async def test_worker_ends_its_round_on_sigterm(monkeypatch: pytest.MonkeyPatch) -> None:
+    """SIGTERM lets the round end, and no other starts."""
+    rounds: list[str] = []
+
+    async def slow() -> None:
+        rounds.append("started")
+        stop()
+        await asyncio.sleep(0.05)
+        rounds.append("ended")
+
+    monkeypatch.setitem(tasks.TASKS, "slow", slow)
+    monkeypatch.setitem(tasks.WORKERS, "slow", 3600)
+    await asyncio.wait_for(tasks.work("slow"), 5)
+    assert rounds == ["started", "ended"]
+
+
+class Idle:
+    """A pool and a client that close nothing."""
+
+    async def dispose(self) -> None:
+        """Keep the pool of the tests."""
+
+    async def aclose(self) -> None:
+        """Keep the connections of the tests."""
+
+
+async def test_each_round_has_its_own_trace(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A task and each round of a worker start a trace."""
+    traces: list[str] = []
+
+    async def probe() -> None:
+        traces.append(tracing.trace_id())
+        if len(traces) == 2:
+            stop()
+
+    monkeypatch.setitem(tasks.TASKS, "probe", probe)
+    monkeypatch.setitem(tasks.WORKERS, "probe", 0)
+    await asyncio.wait_for(tasks.work("probe"), 5)
+    monkeypatch.delitem(tasks.WORKERS, "probe")
+    monkeypatch.setattr(tasks, "engine", Idle())
+    monkeypatch.setattr(web_push, "client", Idle())
+    await tasks.run("probe")
+    assert "" not in traces
+    assert len(set(traces)) == 3

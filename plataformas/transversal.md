@@ -240,7 +240,6 @@ Estándar: [RFC 9110](../fuentes/rfc/rfc9110.txt).
 
 - Un recurso que el usuario crea desde un cliente se crea por `PUT /<recurso>/{id}`, con un uuid v4 que genera el cliente. Si la respuesta se pierde, la petición repetida cae sobre la misma fila en vez de crear otra.
 - El cliente reintenta ante un fallo de red, un 502, un 503 o un 504, hasta 3 veces, con espera exponencial y jitter, también con un servicio externo: un reinicio del servidor, propio o externo, no le muestra un error al usuario.
-- Una operación cuyo 201 lleva cuerpo declara también el 200, con el mismo cuerpo, y lo responde al reemplazar el recurso ([RFC 9110 §9.3.4](../fuentes/rfc/rfc9110.txt)).
 - El cliente reintenta solo una petición idempotente ([RFC 9110 §9.2.2](../fuentes/rfc/rfc9110.txt)).
 - Un `PUT` o un `DELETE` repetido tiene el mismo efecto que uno solo ([RFC 9110 §9.2.2](../fuentes/rfc/rfc9110.txt)).
 - Un `PUT` que crea el recurso responde 201, y uno que lo reemplaza, 200 o 204 ([RFC 9110 §9.3.4](../fuentes/rfc/rfc9110.txt)).
@@ -310,7 +309,6 @@ Estándar: el [*WebSocket Security Cheat Sheet*](../fuentes/owasp/WebSocket_Secu
 | El servidor rechaza un cuerpo JSON con un nombre repetido, un número fuera de un `double`, un sustituto suelto, un no-carácter, otra codificación que UTF-8 o un nivel superior que no es objeto ni arreglo | `test_body_that_is_not_ijson`, `test_body_that_is_ijson_or_not_json` y `test_repeated_member_is_a_validation_error`, del servidor |
 | Un cuerpo que no es JSON responde 400 | `test_body_that_is_not_json_is_a_bad_request`, del servidor |
 | Una versión menor que la mínima, o mal formada, recibe un 400 de tipo `client-outdated` | `test_outdated_client_is_rejected`, del servidor |
-| Una operación cuyo 201 lleva cuerpo declara también el 200, con el mismo cuerpo | `test_created_body_is_also_the_replaced_one`, del servidor |
 | Un `pageToken` ilegible o con otros parámetros que los de su petición responde 422 con `parameter` en `pageToken` | `test_invalid_page_token_points_to_the_parameter`, del servidor |
 | Un mensaje del WebSocket que el servidor no acepta recibe uno de `type` `error` con su problem+json, y la conexión sigue | `test_message_that_is_not_taken_is_an_error`, del servidor |
 | Los esquemas de los mensajes del WebSocket van en `components` del `openapi.json` | `test_messages_are_in_the_openapi`, del servidor |

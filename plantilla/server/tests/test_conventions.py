@@ -704,22 +704,6 @@ def test_operation_ids() -> None:
     assert not offenders
 
 
-def test_created_body_is_also_the_replaced_one() -> None:
-    """A 201 with a body comes with a 200 of the same body.
-
-    transversal.md, «Reintentos»: the client of a Flutter app gets that
-    201 as the 200, the only one its generated client takes.
-    """
-    offenders = [
-        f"{method.upper()} {path}"
-        for path, operations in main_app.openapi()["paths"].items()
-        for method, operation in operations.items()
-        if (created := operation["responses"].get("201", {}).get("content"))
-        and operation["responses"].get("200", {}).get("content") != created
-    ]
-    assert not offenders
-
-
 def problem_schema(status: str) -> dict[str, Any]:
     """Return the only content an error may declare, by its status."""
     name = "ValidationProblem" if status == "422" else "Problem"

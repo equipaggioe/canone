@@ -322,6 +322,7 @@ Contrato: [transversal.md](transversal.md#mapas).
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
 - swagger_parser genera los modelos del cable y el cliente de la API desde `../server/openapi.json`, en `lib/data/services/api/`. `swagger_parser.yaml` lleva en `generation` `serializer: freezed` y `http_client: http`.
+- El `http.Client` de la app entrega como 200 un 201 que trae cuerpo: el cliente que genera swagger_parser acepta, de los 2xx con cuerpo, solo el más bajo, y la operación declara también el 200, con el mismo cuerpo ([transversal.md](transversal.md#reintentos)). [swagger_parser 2.4.0](https://raw.githubusercontent.com/Carapacik/swagger_parser/2.4.0/swagger_parser/lib/src/dart/dart_client_mapper.dart)
 
 ## Paginación
 

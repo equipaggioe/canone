@@ -1028,6 +1028,28 @@ def scripts_package(superficie: Path, datos: dict) -> list[str]:
     return fallas
 
 
+# plataformas/flutter.md, «OpenAPI y clientes»: el modo por defecto de swagger_parser acepta un solo
+# 2xx con cuerpo, y rechaza el 201 de un PUT que crea.
+GENERACION_SWAGGER = {"serializer": "freezed", "http_client": "http", "response_mode": "all_statuses"}
+
+
+def generacion_swagger(repo: Path) -> list[str]:
+    fallas = []
+    for ruta in sorted(listar(repo)):
+        relativo = Path(ruta)
+        if relativo.name != "swagger_parser.yaml" or not (repo / relativo).is_file():
+            continue
+        texto = (repo / relativo).read_text(encoding="utf-8")
+        bloque = re.search(r"^  generation:\n((?:    .*\n?)*)", texto, re.M)
+        declarados = dict(re.findall(r"^    (\w+):[ \t]*(\S+)", bloque[1], re.M)) if bloque else {}
+        for clave, valor in GENERACION_SWAGGER.items():
+            if declarados.get(clave) != valor:
+                fallas.append(
+                    f"plataformas/flutter.md: {relativo.as_posix()} no lleva {clave}: {valor} en generation"
+                )
+    return fallas
+
+
 def versiones_pubspec(repo: Path) -> list[str]:
     fallas = []
     for ruta in sorted(listar(repo)):
@@ -1627,6 +1649,7 @@ def revisar(repo: Path) -> list[str]:
     fallas.extend(versiones_pyproject(repo, paginas))
     if "flutter.md" in paginas:
         fallas.extend(versiones_pubspec(repo))
+        fallas.extend(generacion_swagger(repo))
     fallas.extend(versiones_workflows(repo, paginas))
 
     return fallas

@@ -258,3 +258,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0250](0250-cada-repositorio-elige-como-salen-su-correo-y-su-sms-y-un-aviso-puede-reemplazar-al-anterior.md) | Cada repositorio elige cómo salen su correo y su SMS, y un aviso puede reemplazar al anterior | `fastapi.md`, `transversal.md`, `autenticacion.md` y con `server/` |
 | [0251](0251-lo-que-corre-mas-seguido-que-cada-minuto-es-un-worker-en-su-unidad.md) | Lo que corre más seguido que cada minuto es un worker, en su unidad | `fastapi.md`, `despliegue.md` y con `server/` |
 | [0252](0252-un-worker-que-systemd-detiene-termina-la-vuelta-que-corre.md) | Un worker que systemd detiene termina la vuelta que corre | `fastapi.md` y con `server/` |
+| [0254](0254-el-cliente-de-swagger-parser-devuelve-una-variante-por-status.md) | El cliente de swagger_parser devuelve una variante por status, y los errores los sigue leyendo el `http.Client` | `flutter.md` y con Flutter |

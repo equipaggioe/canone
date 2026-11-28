@@ -283,7 +283,7 @@ Contrato: [autenticacion.md](autenticacion.md#contraseñas).
 
 Contrato: [transversal.md](transversal.md#errores).
 
-- El `http.Client` de la app convierte una respuesta que no es 2xx en la excepción tipada del sobre antes de devolverla: el cliente que genera swagger_parser descarta el cuerpo de esa respuesta y lanza `ClientException('HTTP <status>')`. [swagger_parser 2.4.0](https://raw.githubusercontent.com/Carapacik/swagger_parser/2.4.0/swagger_parser/lib/src/dart/dart_package_http_builder.dart)
+- El `http.Client` de la app convierte una respuesta que no es 2xx en la excepción tipada del sobre antes de devolverla: el cliente que genera swagger_parser falla ante una respuesta sin problem+json y ante un problem+json sin un miembro obligatorio o con un miembro de otro tipo, que el cliente toma como `about:blank` o ignora. [swagger_parser 2.4.0](https://raw.githubusercontent.com/Carapacik/swagger_parser/2.4.0/swagger_parser/lib/src/dart/dart_package_http_builder.dart)
 
 ## Fechas
 
@@ -321,7 +321,8 @@ Contrato: [transversal.md](transversal.md#mapas).
 
 Contrato: [transversal.md](transversal.md#openapi-y-clientes).
 
-- swagger_parser genera los modelos del cable y el cliente de la API desde `../server/openapi.json`, en `lib/data/services/api/`. `swagger_parser.yaml` lleva en `generation` `serializer: freezed` y `http_client: http`.
+- swagger_parser genera los modelos del cable y el cliente de la API desde `../server/openapi.json`, en `lib/data/services/api/`. `swagger_parser.yaml` lleva en `generation` `serializer: freezed`, `http_client: http` y `response_mode: all_statuses`: con el modo por defecto, el cliente acepta de los 2xx con cuerpo solo el más bajo, y lanza `ClientException` ante el 201 de un `PUT` que crea ([transversal.md](transversal.md#reintentos)). [swagger_parser 2.4.0](https://raw.githubusercontent.com/Carapacik/swagger_parser/2.4.0/swagger_parser/lib/src/dart/dart_client_mapper.dart)
+- Quien llama al cliente generado toma el valor de cada variante 2xx del resultado, y trata cualquier otra variante como un error de programación: el `http.Client` de la app ya lanzó esa respuesta como la excepción tipada del sobre.
 
 ## Paginación
 
@@ -416,6 +417,7 @@ Contrato: [transversal.md](transversal.md#distribución).
 | :--- | :--- |
 | Material de material_ui | `deprecated_member_use` de `dart analyze --fatal-infos` en CI |
 | `analysis_options.yaml` igual al de la plantilla | [scripts/verificar.py](../scripts/verificar.py) |
+| `swagger_parser.yaml` lleva en `generation` `serializer: freezed`, `http_client: http` y `response_mode: all_statuses` | [scripts/verificar.py](../scripts/verificar.py) |
 | La lista de flutter_lints, riverpod_lint y los tipos estrictos | `dart analyze --fatal-infos` en CI |
 | Las versiones exactas de Riverpod | [scripts/verificar.py](../scripts/verificar.py) |
 | Todo paquete que importa el código está declarado, y toda dependencia declarada se usa | `dart run dependency_validator` en CI |

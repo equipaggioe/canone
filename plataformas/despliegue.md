@@ -52,7 +52,11 @@ Estándar: el [*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt) 3.0.
 ├── fstab                           la línea de /swapfile
 ├── nftables.conf
 ├── nftables.d/
+│   ├── mail.nft                    solo con --mail
 │   └── turn.nft                    solo con TURN
+├── postfix/
+│   ├── main.cf                     solo con --mail
+│   └── master.cf                   solo con --mail
 ├── postgresql/17/main/
 │   ├── conf.d/
 │   │   └── <app>.conf
@@ -115,7 +119,8 @@ Estándar: el [*Filesystem Hierarchy Standard*](../fuentes/fhs/fhs-3.0.txt) 3.0.
 ├── bin/
 │   └── uv
 ├── lib/<app>/
-│   └── backup-request              el único comando de la receptora
+│   ├── backup-request              el único comando de la receptora
+│   └── mail                        solo con --mail
 └── sbin/
     ├── <app>-database              database.py
     └── <app>-deploy                deploy.py
@@ -155,9 +160,20 @@ Estándar: [systemd.exec](../fuentes/systemd/systemd.exec.xml) de systemd.
 - Las unidades cargan entera la carpeta `/etc/credstore.encrypted/<app>/` con el prefijo `app`: un campo nuevo de `Settings` no cambia las unidades. Cada archivo se llama como su campo y se cifra con `--name=app_<campo>`, el nombre con que lo carga systemd, que `systemd-creds` compara al descifrar. [systemd 257](https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd-creds.xml)
 - Las credenciales que el servidor no usa, como las de las migraciones, el respaldo y el despliegue, van en otra carpeta: el servidor no las recibe. `<app>-migrate/database_url` también se cifra con `--name=app_database_url`, porque reemplaza al de la carpeta de la app.
 - `credentials.py <app>` cifra las credenciales que lee por stdin, una línea `campo=valor` por credencial y el valor sin comillas: cada campo de `Settings` en `<app>/`, `restic_password` en `<app>-backup/` y `github_token` en `<app>-deploy/`, estas dos con su propio nombre en `--name`. Escribe solo los campos que recibe y reinicia el servidor si corre, así que cambiar un secreto no pasa por `install.py`.
-- `credentials.py` falla sin escribir nada si una línea no es `campo=valor`, si un valor está vacío o un campo repetido, o si recibe `database_url`, `turn_secret` o `valkey_url`, que escribe `install.py`. Su mensaje nunca lleva el valor.
+- `credentials.py` falla sin escribir nada si una línea no es `campo=valor`, si un valor está vacío o un campo repetido, o si recibe `database_url`, `mail_secret`, `turn_secret` o `valkey_url`, que escribe `install.py`. Su mensaje nunca lleva el valor.
 - Cada campo de `Settings` llega al servicio con `LoadCredentialEncrypted=`, desde `/etc/credstore.encrypted/` y cifrado con `systemd-creds encrypt`: no queda en claro en el disco ([systemd.exec, *Credentials*](../fuentes/systemd/systemd.exec.xml)).
 - Ningún secreto llega a una unidad por una variable de entorno ([systemd.exec, *Environment*](../fuentes/systemd/systemd.exec.xml)).
+
+## Correo
+
+- Solo la máquina de Equipaggio entrega correo: `install.py --mail <host>` instala el Postfix de Debian con `/etc/postfix/main.cf` y `master.cf`, y abre el 25 con `/etc/nftables.d/mail.nft`. Sin `--mail` borra ese archivo y `/usr/local/lib/<app>/mail`.
+- Postfix se presenta como `<host>` y recibe solo el correo para `<host>`. No entrega nada en la máquina, y solo el loopback envía por él: la app le pasa cada correo por SMTP en `127.0.0.1:25`.
+- Postfix envía solo por IPv4, con `inet_protocols = ipv4`: el PTR y el SPF del host son los de la IPv4 de la máquina.
+- Postfix avisa él mismo de cada entrega, con `smtp_discard_ehlo_keywords = dsn`: si el servidor del destinatario anuncia DSN, Postfix le pasa el pedido del aviso de éxito, y muchos no lo mandan. [RFC 3461 §5.2.1 y §5.2.2](https://www.rfc-editor.org/rfc/rfc3461.txt)
+- Postfix no convierte el cuerpo a 7 bits, con `disable_mime_output_conversion = yes`: la conversión rompe la firma DKIM que pone la app.
+- Postfix ofrece STARTTLS al recibir, con el certificado de `ssl-cert`, y lo usa al enviar si el otro servidor lo ofrece, sin comprobar su certificado.
+- Postfix le pasa cada mensaje que recibe a `/usr/local/lib/<app>/mail`, de a un destinatario y con `X-Original-To`, y el programa lo manda con `POST` a `http://127.0.0.1:8000/api/email-notices`, como `message/rfc822` y con `Authorization: Bearer <mail_secret>`. Si la app no responde con 2xx, sale con 75, y Postfix guarda el mensaje y lo vuelve a intentar.
+- `install.py` genera `mail_secret` la primera vez y lo conserva. Va en `/usr/local/lib/<app>/mail`, que solo lee la cuenta de la app, con la que lo corre Postfix, y como la credencial `mail_secret` de la app.
 
 ## Coturn
 
@@ -191,7 +207,7 @@ Estándar: [RFC 8656](../fuentes/rfc/rfc8656.txt).
 Estándar: NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*](../fuentes/nist/sp800-41r1.txt).
 
 - El firewall es el nftables de Debian 13, con `/etc/nftables.conf`, que `install.py` instala y carga. Incluye `/etc/nftables.d/*.nft`, donde una pieza que la app puede no tener agrega sus reglas.
-- Entran el 22 y el 80 por TCP, y el 443 por TCP y por UDP, el del HTTP/3 de Caddy. Con TURN entran también los puertos de «Coturn».
+- Entran el 22 y el 80 por TCP, y el 443 por TCP y por UDP, el del HTTP/3 de Caddy. Con TURN entran también los puertos de «Coturn», y con `--mail`, el 25 por TCP, el de «Correo».
 - Lo que sale no se filtra: la app habla con dominios de terceros, cuyas direcciones cambian.
 - De ICMPv6 entra lo que el [RFC 4890 §4.4.1 y §4.4.2](https://www.rfc-editor.org/rfc/rfc4890.txt) no deja descartar, y de ICMPv4, el tipo 3 y el ping, como en IPv6: la máquina no tiene una red interna que esconder.
 - Lo que entra se descarta salvo lo que deja entrar esta sección, con las mismas reglas en IPv4 y en IPv6 ([NIST SP 800-41 §4](../fuentes/nist/sp800-41r1.txt), [§4.1.2](../fuentes/nist/sp800-41r1.txt) y [§4.1.3](../fuentes/nist/sp800-41r1.txt)).
@@ -202,11 +218,11 @@ Estándar: NIST SP 800-41 Rev. 1, [*Guidelines on Firewalls and Firewall Policy*
 
 ## Máquina
 
-- Cada programa sale de los paquetes de Debian, salvo Caddy: `postgresql`, `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`, `nftables`, `unattended-upgrades`, `systemd-timesyncd` y `ca-certificates`, con el que `deploy.py` comprueba el certificado de GitHub; `coturn` si usa TURN, `systemd-journal-remote` y `wireguard-tools` si envía su journal con `--logs`, `openjdk-21-jre-headless` si tiene una pieza en Java ([java.md](java.md)), y `chromium-headless-shell` si tiene una tarea que maneja un navegador ([fastapi.md](fastapi.md#tareas)).
+- Cada programa sale de los paquetes de Debian, salvo Caddy: `postgresql`, `postgresql-17-postgis-3` si la app usa PostGIS, `valkey-server`, `restic`, `sudo`, `python3`, `nftables`, `unattended-upgrades`, `systemd-timesyncd` y `ca-certificates`, con el que `deploy.py` comprueba el certificado de GitHub; `coturn` si usa TURN, `postfix` y `ssl-cert` con `--mail`, `systemd-journal-remote` y `wireguard-tools` si envía su journal con `--logs`, `openjdk-21-jre-headless` si tiene una pieza en Java ([java.md](java.md)), y `chromium-headless-shell` si tiene una tarea que maneja un navegador ([fastapi.md](fastapi.md#tareas)).
 - `caddy` sale de su repositorio APT: recibe cada petición de internet, el de Debian 13 es el 2.6.2, de 2022, y Debian da a sus paquetes en Go un soporte de seguridad limitado, con los arreglos en sus actualizaciones menores. [Debian 13, *Go- and Rust-based packages*](https://www.debian.org/releases/trixie/release-notes/issues.en.html#go-and-rust-based-packages)
 - Antes de instalar, `packages.py` escribe en apt el repositorio de Caddy, `caddy.sources`, con su llave, `caddy.asc`, y la serie de [stack.md](../stack.md#despliegue), en `caddy.pref`: apt no instala otra serie ni el `caddy` de Debian, y sin la serie falla.
 - `unattended-upgrades` instala también cada versión de Caddy de esa serie, por el origen de su repositorio en `/etc/apt/apt.conf.d/51caddy-upgrades`: sin él, Caddy queda en la versión que se instaló. Una serie nueva espera a que la fije stack.md.
-- `sudo python3 packages.py` instala esos paquetes antes de `install.py`, con las mismas `--extension`, `--turn`, `--logs`, `--java` y `--browser` que recibe `install.py`. `packages.py --list` los nombra sin instalarlos, en cualquier sistema: quien despliega ve qué instala antes de entrar a la máquina. `--all` vale por todas las opciones: con `--list`, nombra todo lo que `packages.py` puede instalar.
+- `sudo python3 packages.py` instala esos paquetes antes de `install.py`, con las mismas `--extension`, `--turn`, `--mail`, `--logs`, `--java` y `--browser` que recibe `install.py`. `packages.py --list` los nombra sin instalarlos, en cualquier sistema: quien despliega ve qué instala antes de entrar a la máquina. `--all` vale por todas las opciones: con `--list`, nombra todo lo que `packages.py` puede instalar.
 - `sudo python3 swap.py` crea `/swapfile` con lo que le falta al swap para llegar a la memoria, como pide «Valkey», y lo agrega a `/etc/fstab`. Un `/swapfile` que no alcanza lo vuelve a crear, y con tanto swap como memoria no cambia nada.
 - La máquina llega a `install.py` con los paquetes de `packages.py` y el swap de `swap.py`, e `install.py` falla si faltan, o si Caddy no es de la serie de `caddy.pref`.
 - `systemd-timesyncd` sincroniza la hora, e `install.py` falla si no está habilitado: las credenciales temporales de TURN, las sesiones y las fechas del journal dependen del reloj. `systemd-timesyncd` choca con cualquier otro paquete de hora, como `chrony`, y lo reemplaza.
@@ -397,7 +413,8 @@ Estándares: de Valkey, [*Administration*](../fuentes/valkey/admin.md) y [*Secur
 | Que numpy importa con el filtro de llamadas de cada unidad que corre la app, y no sin su excepción de `mbind` | Python con el filtro de cada unidad, por `systemd-run`, con [scripts/infra/seccomp.sh](../scripts/infra/seccomp.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
 | Que `install.py --browser` instala el timer de la tarea en su calendario y falla sin `chromium-headless-shell`, con una tarea que también va en `--task` o con una que tiene unidad propia; que su vuelta termina a la hora; que la tarea abre una página en el Chromium de Debian con Playwright, como la cuenta del servidor, y que sin cada excepción de su filtro, o con `MemoryDenyWriteExecute=`, no la abre; y que una reinstalación sin `--browser` le quita el timer y `uninstall.py` borra la unidad | [scripts/infra/browser.sh](../scripts/infra/browser.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
 | Exposición de cada unidad | `systemd-analyze security --offline=yes --threshold=20 <unidad>`, en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
-| Los puertos que entran, que no entra un origen de enlace local, `169.254.0.0/16`, ni una petición de TURN desde un túnel, y que lo que sale no se filtra, de «Firewall» | `nftables.conf` cargado en el nftables de Debian 13, con y sin `turn.nft`, con conexiones desde otro namespace de red, en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
+| Los puertos que entran, que no entra un origen de enlace local, `169.254.0.0/16`, ni una petición de TURN desde un túnel, y que lo que sale no se filtra, de «Firewall» | `nftables.conf` cargado en el nftables de Debian 13, solo, con `turn.nft` y con `mail.nft`, con conexiones desde otro namespace de red, en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
+| Que `install.py --mail` falla con un host que no es un nombre; que Postfix recibe de afuera, con STARTTLS, solo el correo para su host, y se lo pasa a la app con `X-Original-To` y su secreto; que entrega sin cambiarlo lo que la app le pasa en `127.0.0.1:25` y le manda a la app el aviso de cada resultado, también si el servidor del destinatario anuncia DSN, y que sin sus dos opciones pasa el pedido del aviso, no avisa y convierte el cuerpo; que con la app caída guarda el mensaje y lo entrega cuando vuelve; que una segunda corrida conserva el secreto, y que sin `--mail` cierra el 25 y borra el programa | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn`, con el servidor del destinatario en otro namespace de red y una app que registra lo que recibe, con [scripts/infra/mail.sh](../scripts/infra/mail.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
 | Que coturn releva hacia internet, y no hacia una red privada o loopback, con otro secreto ni pasada la cuota, y que `denied-peer-ip` sigue los registros de IANA y niega 6to4 | `turnserver.conf` en el coturn de Debian 13, con `turnutils_uclient` desde otro namespace de red, y [scripts/infra/peers.py](../scripts/infra/peers.py), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
 | Que el journal llega al registro central por el túnel de la plantilla, en el archivo de la dirección de su llave, y que otra llave con la misma dirección no llega | `logs.conf` y `journal-upload.conf` con el `systemd-journal-upload` y el WireGuard de Debian 13, desde otro namespace de red, con [scripts/infra/logs.sh](../scripts/infra/logs.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |
 | Que `install.py --logs` exige sus tres banderas juntas, envía el journal y el registro de PostgreSQL por el túnel, conserva la llave, falla sin `--logs` en una máquina que envía e instala aunque quien despliega tenga la umask 077; que el uploader reintenta sin quedar en `failed`; y que journald borra una entrada a más tardar un archivo después de su retención | `install.py` en un Debian 13 con systemd, arrancado con `systemd-nspawn` y con la umask 077, con un extremo en otro namespace de red y la retención reducida a 20 s con archivos de 5 s, con [scripts/infra/install-logs.sh](../scripts/infra/install-logs.sh), en [.github/workflows/infra.yml](../.github/workflows/infra.yml) de Canone |

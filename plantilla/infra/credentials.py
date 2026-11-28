@@ -20,8 +20,8 @@ CREDENTIALS = Path("/etc/credstore.encrypted")
 # The credentials the server does not get, and the unit whose folder holds each one.
 APART = {"restic_password": "backup", "github_token": "deploy"}
 # install.py writes them: database_url for the roles it creates, valkey_url for the socket
-# of its instance, and turn_secret once.
-INSTALLED = ("database_url", "turn_secret", "valkey_url")
+# of its instance, and turn_secret and mail_secret once.
+INSTALLED = ("database_url", "mail_secret", "turn_secret", "valkey_url")
 FIELD = re.compile(r"[a-z][a-z0-9_]*")
 
 

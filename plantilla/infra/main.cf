@@ -1,0 +1,32 @@
+# From canone: plataformas/despliegue.md, «Correo». Postfix delivers the email of the app and
+# receives on 25 only for CORREO, whose mail it hands to the app.
+compatibility_level = 3.6
+myhostname = CORREO
+myorigin = $myhostname
+smtpd_banner = $myhostname ESMTP
+biff = no
+
+# Nothing is delivered on the machine: what comes for CORREO goes to the app.
+mydestination =
+local_recipient_maps =
+local_transport = error:5.1.1 no mailboxes here
+alias_maps =
+alias_database =
+relay_domains = CORREO
+transport_maps = inline:{ CORREO=notice: }
+notice_destination_recipient_limit = 1
+
+# The app hands over its email on 127.0.0.1:25, and only loopback relays.
+inet_interfaces = all
+inet_protocols = ipv4
+mynetworks = 127.0.0.0/8
+smtpd_relay_restrictions = permit_mynetworks, reject_unauth_destination
+
+# Postfix reports each delivery itself, and does not touch the signed message.
+smtp_discard_ehlo_keywords = dsn
+disable_mime_output_conversion = yes
+
+smtpd_tls_cert_file = /etc/ssl/certs/ssl-cert-snakeoil.pem
+smtpd_tls_key_file = /etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_tls_security_level = may
+smtp_tls_security_level = may

@@ -112,6 +112,7 @@ jobs:
       - run: apt-get update && apt-get install --yes --no-install-recommends nftables iproute2 python3
       - run: sh scripts/infra/nftables.sh plantilla/infra/nftables.conf
       - run: sh scripts/infra/nftables.sh plantilla/infra/nftables.conf plantilla/infra/turn.nft
+      - run: sh scripts/infra/nftables.sh plantilla/infra/nftables.conf plantilla/infra/mail.nft
 
   coturn:
     runs-on: ubuntu-latest
@@ -173,7 +174,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        script: [install.sh, install-logs.sh, deploy.sh, backup.sh, uninstall.sh, java.sh, browser.sh]
+        script: [install.sh, install-logs.sh, mail.sh, deploy.sh, backup.sh, uninstall.sh, java.sh, browser.sh]
     steps:
       - uses: actions/checkout@v7
       # install.py asks for as much swap as memory, and the machine sees those of the runner.
@@ -201,6 +202,7 @@ jobs:
           python3 /canone/plantilla/infra/packages.py
           ${{ matrix.script == 'browser.sh' && '--browser probe=minutely' || '' }}
           ${{ matrix.script == 'java.sh' && '--java ping' || '' }}
+          ${{ matrix.script == 'mail.sh' && '--mail mail.demo.example' || '' }}
       # java.md: the piece of java.sh, built outside the machine with the JDK of the CI, as
       # release.yml builds it.
       - if: matrix.script == 'java.sh'

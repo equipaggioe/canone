@@ -259,3 +259,4 @@ Formato y reglas: [documentacion.md](../documentacion.md).
 | [0251](0251-lo-que-corre-mas-seguido-que-cada-minuto-es-un-worker-en-su-unidad.md) | Lo que corre más seguido que cada minuto es un worker, en su unidad | `fastapi.md`, `despliegue.md` y con `server/` |
 | [0252](0252-un-worker-que-systemd-detiene-termina-la-vuelta-que-corre.md) | Un worker que systemd detiene termina la vuelta que corre | `fastapi.md` y con `server/` |
 | [0254](0254-el-cliente-de-swagger-parser-devuelve-una-variante-por-status.md) | El cliente de swagger_parser devuelve una variante por status, y los errores los sigue leyendo el `http.Client` | `flutter.md` y con Flutter |
+| [0255](0255-la-maquina-de-equipaggio-entrega-el-correo-con-postfix-y-le-pasa-a-la-app-lo-que-recibe.md) | La máquina de Equipaggio entrega el correo con Postfix, y le pasa a la app lo que recibe | `despliegue.md` |

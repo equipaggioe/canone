@@ -1,9 +1,9 @@
-r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn and ssh of an app.
+r"""Install the users, database, units, Valkey, Caddy, firewall, journal, coturn, Postfix and ssh.
 
     python3 install.py <app> <domain> <memory> --admin <name> --key <key> --key <key> \
         --signer <key> --signer <key> --owner <owner> [--private] [--desktop linux|windows|macos] [--mobile <piece>] \
         [--without sweep|web|panel|landing] [--allow <feature>] [--extension <name>] \
-        [--turn [--turn-ip <public ipv4>]] \
+        [--turn [--turn-ip <public ipv4>]] [--mail <host>] \
         [--logs <host:port> --logs-key <key of equipaggio> --logs-ip <address in the tunnel>] \
         [--java <piece>] [--task <task>=<OnCalendar>] [--browser <task>=<OnCalendar>] \
         [--worker <task>] [--development]
@@ -16,6 +16,9 @@ runs with sudo from that account, and --admin, --key and --signer only add keys.
 --browser runs a task that drives Chromium the same way, in a unit that lets it run; a task that no
 --task or --browser names any more loses its timer. --worker runs a task of WORKERS without end, in
 its own unit, and a worker that no --worker names any more loses its unit.
+
+--mail installs Postfix, for the machine of equipaggio: it delivers the email of the app, and hands
+the mail it receives for <host> to the app.
 
 --development marks a machine whose database database.py may empty; without it, the mark goes.
 
@@ -73,6 +76,15 @@ HBA = Path("/etc/postgresql/17/main/pg_hba.conf")
 IDENT = Path("/etc/postgresql/17/main/pg_ident.conf")
 # The files of coturn and its ports, only with --turn.
 TURN = {"turnserver.conf": "/etc/turnserver.conf", "turn.nft": "/etc/nftables.d/turn.nft"}
+# Postfix, its port and the program that hands its mail to the app, only with --mail.
+MAIL = {
+    "main.cf": "/etc/postfix/main.cf",
+    "master.cf": "/etc/postfix/master.cf",
+    "mail.nft": "/etc/nftables.d/mail.nft",
+    "mail": "/usr/local/lib/PRODUCTO/mail",
+}
+# The certificate of ssl-cert, which Postfix offers with STARTTLS.
+SNAKEOIL = Path("/etc/ssl/certs/ssl-cert-snakeoil.pem")
 # The tunnel to equipaggio and its uploader, only with --logs.
 LOGS = {
     "logs.conf": "/etc/wireguard/logs.conf",
@@ -303,6 +315,9 @@ def parse() -> argparse.Namespace:
         type=ipaddress.IPv4Address,
         help="the public IPv4 of the machine, when its interface has only a private one",
     )
+    parser.add_argument(
+        "--mail", type=mail_host, help="the host Postfix answers as and receives for"
+    )
     parser.add_argument("--logs", help="the WireGuard endpoint of equipaggio, like host:51820")
     parser.add_argument("--logs-key", help="the WireGuard public key of equipaggio")
     parser.add_argument(
@@ -454,6 +469,23 @@ def encrypt(folder: str, name: str, value: str) -> None:
     )
 
 
+def mail_host(name: str) -> str:
+    """Return name if it is a host name: Postfix answers as it."""
+    if not re.fullmatch(r"([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}", name):
+        raise argparse.ArgumentTypeError(f"{name} is not a host name in lowercase")
+    return name
+
+
+def mail_secret(app: str) -> str:
+    """Return the secret the app takes the mail with, new the first time: the app keeps it."""
+    program = Path(MAIL["mail"].replace("PRODUCTO", app))
+    if program.is_file():
+        for line in program.read_text(encoding="utf-8").splitlines():
+            if line.startswith('SECRET = "'):
+                return line.removeprefix('SECRET = "').removesuffix('"')
+    return secrets.token_urlsafe(32)
+
+
 def turn_secret() -> str:
     """Return the secret of coturn, new the first time: a credential handed out keeps working."""
     for line in Path(TURN["turnserver.conf"]).read_text(encoding="utf-8").splitlines():
@@ -553,6 +585,8 @@ def main() -> None:
         raise SystemExit("coturn is not installed, and --turn needs it.")
     if arguments.turn_ip is not None and not arguments.turn:
         raise SystemExit("--turn-ip needs --turn.")
+    if arguments.mail and (shutil.which("postfix") is None or not SNAKEOIL.is_file()):
+        raise SystemExit("postfix or ssl-cert is not installed, and --mail needs them.")
     if arguments.java and shutil.which("java") is None:
         raise SystemExit("openjdk-21-jre-headless is not installed, and --java needs it.")
     if arguments.browser and not CHROMIUM.is_file():
@@ -573,6 +607,8 @@ def main() -> None:
         "PERMISOS": policy,
         "MEMORIA": arguments.memory,
         "SECRETO": turn_secret() if arguments.turn else "",
+        "CORREO": arguments.mail or "",
+        "CLAVE": mail_secret(app) if arguments.mail else "",
         "LLAVE": logs_key() if arguments.logs else "",
         "TUNEL": str(arguments.logs_ip),
         "CENTRAL": arguments.logs_key or "",
@@ -644,6 +680,17 @@ def main() -> None:
     triggers += install_tasks(app, BROWSER_UNIT, arguments.browser)
     install_workers(app, arguments.worker)
     subprocess.run(["systemd-sysusers"], check=True)
+    # Postfix hands the mail for the machine to the app, and its program holds the secret.
+    if arguments.mail:
+        for name, target in MAIL.items():
+            write(HERE / name, Path(target.replace("PRODUCTO", app)), values)
+        program = Path(MAIL["mail"].replace("PRODUCTO", app))
+        shutil.chown(program, "root", app)
+        program.chmod(0o750)
+        encrypt(app, "mail_secret", values["CLAVE"])
+    else:
+        Path(MAIL["mail.nft"]).unlink(missing_ok=True)
+        Path(MAIL["mail"].replace("PRODUCTO", app)).unlink(missing_ok=True)
     subprocess.run(["systemd-tmpfiles", "--create", f"/etc/tmpfiles.d/{app}.conf"], check=True)
     subprocess.run(["sysctl", "--system"], check=True)
     # ADR-0093: what comes in is denied unless the ruleset lists it.
@@ -675,6 +722,9 @@ def main() -> None:
     if arguments.turn:
         subprocess.run(["systemctl", "enable", "coturn.service"], check=True)
         subprocess.run(["systemctl", "restart", "coturn.service"], check=True)
+    if arguments.mail:
+        subprocess.run(["systemctl", "enable", "postfix.service"], check=True)
+        subprocess.run(["systemctl", "restart", "postfix.service"], check=True)
     if arguments.logs:
         for unit in ("wg-quick@logs.service", "systemd-journal-upload.service"):
             subprocess.run(["systemctl", "enable", unit], check=True)

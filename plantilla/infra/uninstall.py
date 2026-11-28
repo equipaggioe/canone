@@ -60,6 +60,7 @@ MACHINE = (
     "/etc/apt/apt.conf.d/52automatic-reboot",
     "/etc/sysctl.d/valkey.conf",
     "/etc/nftables.d/turn.nft",
+    "/etc/nftables.d/mail.nft",
     "/etc/wireguard/logs.conf",
     "/usr/local/bin/uv",
     "/root/.cache/uv",

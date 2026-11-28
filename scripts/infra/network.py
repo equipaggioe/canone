@@ -1,7 +1,7 @@
 """Listen on the ports of the server, or probe them from outside.
 
     python3 network.py listen
-    python3 network.py probe <address> [turn]
+    python3 network.py probe <address> [turn|mail]
     python3 network.py out <address>
     python3 network.py invalid <address> <source>
     python3 network.py tunneled <address> <native source>
@@ -22,6 +22,8 @@ UDP_CLOSED = (53,)
 # ADR-0096: what comes in only with TURN.
 TURN_TCP = (3478,)
 TURN_UDP = (3478, 49152, 65535)
+# despliegue.md, «Firewall»: what comes in only with --mail.
+MAIL_TCP = (25,)
 # RFC 8656, 21.4: TURN takes no request from Teredo or 6to4.
 TUNNELED = ("2001:0:102:302::2", "2002:102:302::2")
 TIMEOUT = 2
@@ -42,7 +44,7 @@ def echo(server: socket.socket) -> None:
 
 def listen() -> None:
     """Listen on every port the probe tries."""
-    for port in TCP_OPEN + TCP_CLOSED + TURN_TCP:
+    for port in TCP_OPEN + TCP_CLOSED + TURN_TCP + MAIL_TCP:
         server = socket.create_server(("0.0.0.0", port))
         threading.Thread(target=accept, args=(server,), daemon=True).start()
     for port in UDP_OPEN + UDP_CLOSED + TURN_UDP:
@@ -90,8 +92,8 @@ def reaches_udp6(address: str, port: int, source: str) -> bool:
     return True
 
 
-def probe(address: str, *turn: str) -> None:
-    """Fail unless exactly the open ports get through, with those of TURN if turn is given."""
+def probe(address: str, *rules: str) -> None:
+    """Fail unless exactly the open ports get through, with those of the rules given."""
     wrong = [
         f"{kind} {port}"
         for kind, reaches, ports, expected in (
@@ -99,8 +101,9 @@ def probe(address: str, *turn: str) -> None:
             ("tcp", reaches_tcp, TCP_CLOSED, False),
             ("udp", reaches_udp, UDP_OPEN, True),
             ("udp", reaches_udp, UDP_CLOSED, False),
-            ("tcp", reaches_tcp, TURN_TCP, bool(turn)),
-            ("udp", reaches_udp, TURN_UDP, bool(turn)),
+            ("tcp", reaches_tcp, TURN_TCP, "turn" in rules),
+            ("udp", reaches_udp, TURN_UDP, "turn" in rules),
+            ("tcp", reaches_tcp, MAIL_TCP, "mail" in rules),
         )
         for port in ports
         if reaches(address, port) != expected

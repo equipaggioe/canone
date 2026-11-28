@@ -24,6 +24,7 @@ Tema pendiente: lo que un ADR deja en propuesta, sin que el desarrollador lo hay
 | [0199](../adr/0199-fastapi-cada-fila-detecta-lo-que-promete-y-el-servidor-reconecta-compara-los-server-default-y-limita-cada-subida.md) | Punto 4: `migrate`, `mock` y los seeders pasan de `tasks.py` a `database.py` |
 | [0209](../adr/0209-un-estado-que-el-colorscheme-no-tiene-lleva-un-custom-color-de-material.md) | Punto 7: `brand/tokens/` de la plantilla trae `success` y `warning` |
 | [0251](../adr/0251-lo-que-corre-mas-seguido-que-cada-minuto-es-un-worker-en-su-unidad.md) | Puntos 6 a 8: `install.py --worker` arranca el worker si hay una versión activa, los workers se detienen con el servidor antes de migrar y en `database.py empty`, y la unidad lleva `Restart=on-failure` |
+| [0255](../adr/0255-la-maquina-de-equipaggio-entrega-el-correo-con-postfix-y-le-pasa-a-la-app-lo-que-recibe.md) | Puntos 4 a 7: un solo host para Postfix, el envío solo por IPv4, el certificado de `ssl-cert` y la forma en que el programa le pasa el mensaje a la API |
 
 ## Qué hay que decidir
 

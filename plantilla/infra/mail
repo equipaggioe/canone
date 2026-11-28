@@ -1,0 +1,38 @@
+#!/usr/bin/python3
+"""Hand a message that Postfix received for the machine to the app.
+
+Postfix runs it with the account of the app and the message on stdin, with X-Original-To. It posts
+the message to the server of the app; without a 2xx, it exits with EX_TEMPFAIL, and Postfix keeps
+the message and tries again.
+
+From canone: plataformas/despliegue.md, «Correo».
+"""
+
+import sys
+import urllib.error
+import urllib.request
+
+URL = "http://127.0.0.1:8000/api/email-notices"
+SECRET = "CLAVE"
+# sysexits.h: Postfix keeps the message and tries again.
+TEMPFAIL = 75
+
+
+def main() -> None:
+    """Post the message, and tell Postfix whether the app took it."""
+    request = urllib.request.Request(
+        URL,
+        data=sys.stdin.buffer.read(),
+        headers={"Authorization": f"Bearer {SECRET}", "Content-Type": "message/rfc822"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30):
+            pass
+    except (urllib.error.URLError, TimeoutError) as error:
+        print(f"mail: the app did not take the message: {error}", file=sys.stderr)
+        sys.exit(TEMPFAIL)
+
+
+if __name__ == "__main__":
+    main()

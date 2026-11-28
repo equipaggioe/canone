@@ -1,12 +1,12 @@
 r"""Install the packages of the machine, before install.py.
 
-    sudo python3 packages.py [--extension <name>]... [--turn] [--logs] [--java <piece>]...
-        [--browser <task>=<OnCalendar>]... [--all]
-    python3 packages.py --list [--extension <name>]... [--turn] [--logs] [--java <piece>]...
-        [--browser <task>=<OnCalendar>]... [--all]
+    sudo python3 packages.py [--extension <name>]... [--turn] [--mail <host>] [--logs]
+        [--java <piece>]... [--browser <task>=<OnCalendar>]... [--all]
+    python3 packages.py --list [--extension <name>]... [--turn] [--mail <host>] [--logs]
+        [--java <piece>]... [--browser <task>=<OnCalendar>]... [--all]
 
---extension, --turn, --logs, --java and --browser say what install.py receives with the same names,
-and --all stands for all of them: every package this program can install. --list prints the
+--extension, --turn, --mail, --logs, --java and --browser say what install.py receives with the same
+names, and --all stands for all of them: every package this program can install. --list prints the
 packages, one per line, and installs nothing: it runs on any system, also outside the machine.
 
 Caddy comes from its own repository: packages.py writes it to apt, with its key, the series of
@@ -46,6 +46,8 @@ BASE = (
 # The package of each extension that the postgresql package does not bring.
 EXTENSIONS = {"postgis": ("postgresql-17-postgis-3",)}
 TURN = ("coturn",)
+# despliegue.md, «Correo»: Postfix, and the certificate it offers with STARTTLS.
+MAIL = ("postfix", "ssl-cert")
 LOGS = ("systemd-journal-remote", "wireguard-tools")
 # despliegue.md, «Máquina»: the JRE of Debian 13 that runs each piece in Java.
 JAVA = ("openjdk-21-jre-headless",)
@@ -54,7 +56,7 @@ BROWSER = ("chromium-headless-shell",)
 
 
 def packages(
-    extensions: list[str], turn: bool, logs: bool, java: bool, browser: bool
+    extensions: list[str], turn: bool, mail: bool, logs: bool, java: bool, browser: bool
 ) -> list[str]:
     """Return the packages of a machine with those options of install.py."""
     names = list(BASE)
@@ -62,6 +64,8 @@ def packages(
         names += EXTENSIONS.get(extension, ())
     if turn:
         names += TURN
+    if mail:
+        names += MAIL
     if logs:
         names += LOGS
     if java:
@@ -90,6 +94,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Install the packages of the machine.")
     parser.add_argument("--extension", action="append", default=[], help="like postgis")
     parser.add_argument("--turn", action="store_true", help="the app relays calls with coturn")
+    parser.add_argument("--mail", help="the host Postfix answers as, on the machine of equipaggio")
     parser.add_argument("--logs", action="store_true", help="the machine sends its journal")
     parser.add_argument("--java", action="append", default=[], help="a piece in Java")
     parser.add_argument(
@@ -99,11 +104,14 @@ def main() -> None:
     parser.add_argument("--list", action="store_true", help="print them and install nothing")
     arguments = parser.parse_args()
     if arguments.all:
-        names = packages(list(EXTENSIONS), turn=True, logs=True, java=True, browser=True)
+        names = packages(
+            list(EXTENSIONS), turn=True, mail=True, logs=True, java=True, browser=True
+        )
     else:
         names = packages(
             arguments.extension,
             arguments.turn,
+            arguments.mail is not None,
             arguments.logs,
             bool(arguments.java),
             bool(arguments.browser),
